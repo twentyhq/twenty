@@ -953,125 +953,6 @@ export type ConnectionParametersOutput = {
   username?: Maybe<Scalars['String']>;
 };
 
-export type View = {
-  __typename?: 'View';
-  anyFieldFilterValue?: Maybe<Scalars['String']>;
-  calendarFieldMetadataId?: Maybe<Scalars['UUID']>;
-  calendarLayout?: Maybe<ViewCalendarLayout>;
-  createdAt: Scalars['DateTime'];
-  createdByUserWorkspaceId?: Maybe<Scalars['UUID']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  icon: Scalars['String'];
-  id: Scalars['UUID'];
-  isCompact: Scalars['Boolean'];
-  isCustom: Scalars['Boolean'];
-  kanbanAggregateOperation?: Maybe<AggregateOperations>;
-  kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
-  key?: Maybe<ViewKey>;
-  mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
-  name: Scalars['String'];
-  objectMetadataId: Scalars['UUID'];
-  openRecordIn: ViewOpenRecordIn;
-  position: Scalars['Float'];
-  shouldHideEmptyGroups: Scalars['Boolean'];
-  type: ViewType;
-  updatedAt: Scalars['DateTime'];
-  viewFieldGroups: Array<ViewFieldGroup>;
-  viewFields: Array<ViewField>;
-  viewFilterGroups: Array<ViewFilterGroup>;
-  viewFilters: Array<ViewFilter>;
-  viewGroups: Array<ViewGroup>;
-  viewSorts: Array<ViewSort>;
-  visibility: ViewVisibility;
-  workspaceId: Scalars['UUID'];
-};
-
-export type ViewField = {
-  __typename?: 'ViewField';
-  aggregateOperation?: Maybe<AggregateOperations>;
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
-  isOverridden: Scalars['Boolean'];
-  isVisible: Scalars['Boolean'];
-  position: Scalars['Float'];
-  size: Scalars['Float'];
-  updatedAt: Scalars['DateTime'];
-  viewFieldGroupId?: Maybe<Scalars['UUID']>;
-  viewId: Scalars['UUID'];
-  workspaceId: Scalars['UUID'];
-};
-
-export type ViewFieldGroup = {
-  __typename?: 'ViewFieldGroup';
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  id: Scalars['UUID'];
-  isOverridden: Scalars['Boolean'];
-  isVisible: Scalars['Boolean'];
-  name: Scalars['String'];
-  position: Scalars['Float'];
-  updatedAt: Scalars['DateTime'];
-  viewFields: Array<ViewField>;
-  viewId: Scalars['UUID'];
-  workspaceId: Scalars['UUID'];
-};
-
-export type ViewFilter = {
-  __typename?: 'ViewFilter';
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
-  operand: ViewFilterOperand;
-  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
-  subFieldName?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-  value: Scalars['JSON'];
-  viewFilterGroupId?: Maybe<Scalars['UUID']>;
-  viewId: Scalars['UUID'];
-  workspaceId: Scalars['UUID'];
-};
-
-export type ViewFilterGroup = {
-  __typename?: 'ViewFilterGroup';
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  id: Scalars['UUID'];
-  logicalOperator: ViewFilterGroupLogicalOperator;
-  parentViewFilterGroupId?: Maybe<Scalars['UUID']>;
-  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
-  updatedAt: Scalars['DateTime'];
-  viewId: Scalars['UUID'];
-  workspaceId: Scalars['UUID'];
-};
-
-export type ViewGroup = {
-  __typename?: 'ViewGroup';
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  fieldValue: Scalars['String'];
-  id: Scalars['UUID'];
-  isVisible: Scalars['Boolean'];
-  position: Scalars['Float'];
-  updatedAt: Scalars['DateTime'];
-  viewId: Scalars['UUID'];
-  workspaceId: Scalars['UUID'];
-};
-
-export type ViewSort = {
-  __typename?: 'ViewSort';
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  direction: ViewSortDirection;
-  fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
-  updatedAt: Scalars['DateTime'];
-  viewId: Scalars['UUID'];
-  workspaceId: Scalars['UUID'];
-};
-
 export type CreateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
   evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
@@ -2483,13 +2364,6 @@ export type Mutation = {
   createApprovedAccessDomain: ApprovedAccessDomain;
   createChatThread: AgentChatThread;
   createCommandMenuItem: CommandMenuItem;
-  createView: View;
-  createViewField: ViewField;
-  createViewFieldGroup: ViewFieldGroup;
-  createViewFilter: ViewFilter;
-  createViewFilterGroup: ViewFilterGroup;
-  createViewGroup: ViewGroup;
-  createViewSort: ViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDevelopmentApplication: DevelopmentApplication;
   createEmailingDomain: EmailingDomain;
@@ -2512,19 +2386,19 @@ export type Mutation = {
   createPublicDomain: PublicDomain;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
+  createView: View;
+  createViewField: ViewField;
+  createViewFieldGroup: ViewFieldGroup;
+  createViewFilter: ViewFilter;
+  createViewFilterGroup: ViewFilterGroup;
+  createViewGroup: ViewGroup;
+  createViewSort: ViewSort;
   createWebhook: Webhook;
   deactivateSkill: Skill;
   deleteApplicationRegistration: Scalars['Boolean'];
   deleteApplicationRegistrationVariable: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCommandMenuItem: CommandMenuItem;
-  deleteView: Scalars['Boolean'];
-  deleteViewField: ViewField;
-  deleteViewFieldGroup: ViewFieldGroup;
-  deleteViewFilter: ViewFilter;
-  deleteViewFilterGroup: Scalars['Boolean'];
-  deleteViewGroup: ViewGroup;
-  deleteViewSort: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
@@ -2542,8 +2416,18 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod;
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
+  deleteView: Scalars['Boolean'];
+  deleteViewField: ViewField;
+  deleteViewFieldGroup: ViewFieldGroup;
+  deleteViewFilter: ViewFilter;
+  deleteViewFilterGroup: Scalars['Boolean'];
+  deleteViewGroup: ViewGroup;
+  deleteViewSort: Scalars['Boolean'];
   deleteWebhook: Webhook;
   deleteWorkspaceInvitation: Scalars['String'];
+  destroyPageLayout: Scalars['Boolean'];
+  destroyPageLayoutTab: Scalars['Boolean'];
+  destroyPageLayoutWidget: Scalars['Boolean'];
   destroyView: Scalars['Boolean'];
   destroyViewField: ViewField;
   destroyViewFieldGroup: ViewFieldGroup;
@@ -2551,9 +2435,6 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean'];
-  destroyPageLayout: Scalars['Boolean'];
-  destroyPageLayoutTab: Scalars['Boolean'];
-  destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   duplicateDashboard: DuplicatedDashboard;
   editSSOIdentityProvider: EditSso;
@@ -2608,13 +2489,6 @@ export type Mutation = {
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
   updateCommandMenuItem: CommandMenuItem;
-  updateView: View;
-  updateViewField: ViewField;
-  updateViewFieldGroup: ViewFieldGroup;
-  updateViewFilter: ViewFilter;
-  updateViewFilterGroup: ViewFilterGroup;
-  updateViewGroup: ViewGroup;
-  updateViewSort: ViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlag;
@@ -2632,6 +2506,13 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePassword;
   updateSkill: Skill;
   updateUserEmail: Scalars['Boolean'];
+  updateView: View;
+  updateViewField: ViewField;
+  updateViewFieldGroup: ViewFieldGroup;
+  updateViewFilter: ViewFilter;
+  updateViewFilterGroup: ViewFilterGroup;
+  updateViewGroup: ViewGroup;
+  updateViewSort: ViewSort;
   updateWebhook: Webhook;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
@@ -2730,41 +2611,6 @@ export type MutationCreateApprovedAccessDomainArgs = {
 
 export type MutationCreateCommandMenuItemArgs = {
   input: CreateCommandMenuItemInput;
-};
-
-
-export type MutationCreateViewArgs = {
-  input: CreateViewInput;
-};
-
-
-export type MutationCreateViewFieldArgs = {
-  input: CreateViewFieldInput;
-};
-
-
-export type MutationCreateViewFieldGroupArgs = {
-  input: CreateViewFieldGroupInput;
-};
-
-
-export type MutationCreateViewFilterArgs = {
-  input: CreateViewFilterInput;
-};
-
-
-export type MutationCreateViewFilterGroupArgs = {
-  input: CreateViewFilterGroupInput;
-};
-
-
-export type MutationCreateViewGroupArgs = {
-  input: CreateViewGroupInput;
-};
-
-
-export type MutationCreateViewSortArgs = {
-  input: CreateViewSortInput;
 };
 
 
@@ -2884,6 +2730,41 @@ export type MutationCreateSkillArgs = {
 };
 
 
+export type MutationCreateViewArgs = {
+  input: CreateViewInput;
+};
+
+
+export type MutationCreateViewFieldArgs = {
+  input: CreateViewFieldInput;
+};
+
+
+export type MutationCreateViewFieldGroupArgs = {
+  input: CreateViewFieldGroupInput;
+};
+
+
+export type MutationCreateViewFilterArgs = {
+  input: CreateViewFilterInput;
+};
+
+
+export type MutationCreateViewFilterGroupArgs = {
+  input: CreateViewFilterGroupInput;
+};
+
+
+export type MutationCreateViewGroupArgs = {
+  input: CreateViewGroupInput;
+};
+
+
+export type MutationCreateViewSortArgs = {
+  input: CreateViewSortInput;
+};
+
+
 export type MutationCreateWebhookArgs = {
   input: CreateWebhookInput;
 };
@@ -2911,41 +2792,6 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 export type MutationDeleteCommandMenuItemArgs = {
   id: Scalars['UUID'];
-};
-
-
-export type MutationDeleteViewArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteViewFieldArgs = {
-  input: DeleteViewFieldInput;
-};
-
-
-export type MutationDeleteViewFieldGroupArgs = {
-  input: DeleteViewFieldGroupInput;
-};
-
-
-export type MutationDeleteViewFilterArgs = {
-  input: DeleteViewFilterInput;
-};
-
-
-export type MutationDeleteViewFilterGroupArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteViewGroupArgs = {
-  input: DeleteViewGroupInput;
-};
-
-
-export type MutationDeleteViewSortArgs = {
-  input: DeleteViewSortInput;
 };
 
 
@@ -3025,6 +2871,41 @@ export type MutationDeleteUserFromWorkspaceArgs = {
 };
 
 
+export type MutationDeleteViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteViewFieldArgs = {
+  input: DeleteViewFieldInput;
+};
+
+
+export type MutationDeleteViewFieldGroupArgs = {
+  input: DeleteViewFieldGroupInput;
+};
+
+
+export type MutationDeleteViewFilterArgs = {
+  input: DeleteViewFilterInput;
+};
+
+
+export type MutationDeleteViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteViewGroupArgs = {
+  input: DeleteViewGroupInput;
+};
+
+
+export type MutationDeleteViewSortArgs = {
+  input: DeleteViewSortInput;
+};
+
+
 export type MutationDeleteWebhookArgs = {
   id: Scalars['UUID'];
 };
@@ -3032,6 +2913,21 @@ export type MutationDeleteWebhookArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutWidgetArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -3067,21 +2963,6 @@ export type MutationDestroyViewGroupArgs = {
 
 export type MutationDestroyViewSortArgs = {
   input: DestroyViewSortInput;
-};
-
-
-export type MutationDestroyPageLayoutArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDestroyPageLayoutTabArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDestroyPageLayoutWidgetArgs = {
-  id: Scalars['String'];
 };
 
 
@@ -3342,43 +3223,6 @@ export type MutationUpdateCommandMenuItemArgs = {
 };
 
 
-export type MutationUpdateViewArgs = {
-  id: Scalars['String'];
-  input: UpdateViewInput;
-};
-
-
-export type MutationUpdateViewFieldArgs = {
-  input: UpdateViewFieldInput;
-};
-
-
-export type MutationUpdateViewFieldGroupArgs = {
-  input: UpdateViewFieldGroupInput;
-};
-
-
-export type MutationUpdateViewFilterArgs = {
-  input: UpdateViewFilterInput;
-};
-
-
-export type MutationUpdateViewFilterGroupArgs = {
-  id: Scalars['String'];
-  input: UpdateViewFilterGroupInput;
-};
-
-
-export type MutationUpdateViewGroupArgs = {
-  input: UpdateViewGroupInput;
-};
-
-
-export type MutationUpdateViewSortArgs = {
-  input: UpdateViewSortInput;
-};
-
-
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
@@ -3470,6 +3314,43 @@ export type MutationUpdateSkillArgs = {
 export type MutationUpdateUserEmailArgs = {
   newEmail: Scalars['String'];
   verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateViewArgs = {
+  id: Scalars['String'];
+  input: UpdateViewInput;
+};
+
+
+export type MutationUpdateViewFieldArgs = {
+  input: UpdateViewFieldInput;
+};
+
+
+export type MutationUpdateViewFieldGroupArgs = {
+  input: UpdateViewFieldGroupInput;
+};
+
+
+export type MutationUpdateViewFilterArgs = {
+  input: UpdateViewFilterInput;
+};
+
+
+export type MutationUpdateViewFilterGroupArgs = {
+  id: Scalars['String'];
+  input: UpdateViewFilterGroupInput;
+};
+
+
+export type MutationUpdateViewGroupArgs = {
+  input: UpdateViewGroupInput;
+};
+
+
+export type MutationUpdateViewSortArgs = {
+  input: UpdateViewSortInput;
 };
 
 
@@ -4106,20 +3987,6 @@ export type Query = {
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariables;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
-  getView?: Maybe<View>;
-  getViewField?: Maybe<ViewField>;
-  getViewFieldGroup?: Maybe<ViewFieldGroup>;
-  getViewFieldGroups: Array<ViewFieldGroup>;
-  getViewFields: Array<ViewField>;
-  getViewFilter?: Maybe<ViewFilter>;
-  getViewFilterGroup?: Maybe<ViewFilterGroup>;
-  getViewFilterGroups: Array<ViewFilterGroup>;
-  getViewFilters: Array<ViewFilter>;
-  getViewGroup?: Maybe<ViewGroup>;
-  getViewGroups: Array<ViewGroup>;
-  getViewSort?: Maybe<ViewSort>;
-  getViewSorts: Array<ViewSort>;
-  getViews: Array<View>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
@@ -4140,6 +4007,20 @@ export type Query = {
   getSystemHealthStatus: SystemHealth;
   getToolIndex: Array<ToolIndexEntry>;
   getToolInputSchema?: Maybe<Scalars['JSON']>;
+  getView?: Maybe<View>;
+  getViewField?: Maybe<ViewField>;
+  getViewFieldGroup?: Maybe<ViewFieldGroup>;
+  getViewFieldGroups: Array<ViewFieldGroup>;
+  getViewFields: Array<ViewField>;
+  getViewFilter?: Maybe<ViewFilter>;
+  getViewFilterGroup?: Maybe<ViewFilterGroup>;
+  getViewFilterGroups: Array<ViewFilterGroup>;
+  getViewFilters: Array<ViewFilter>;
+  getViewGroup?: Maybe<ViewGroup>;
+  getViewGroups: Array<ViewGroup>;
+  getViewSort?: Maybe<ViewSort>;
+  getViewSorts: Array<ViewSort>;
+  getViews: Array<View>;
   index: Index;
   indexMetadatas: IndexConnection;
   lineChartData: LineChartData;
@@ -4324,6 +4205,76 @@ export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
 };
 
 
+export type QueryGetDatabaseConfigVariableArgs = {
+  key: Scalars['String'];
+};
+
+
+export type QueryGetIndicatorHealthStatusArgs = {
+  indicatorId: HealthIndicatorId;
+};
+
+
+export type QueryGetLogicFunctionSourceCodeArgs = {
+  input: LogicFunctionIdInput;
+};
+
+
+export type QueryGetPageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutTabsArgs = {
+  pageLayoutId: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutWidgetArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutWidgetsArgs = {
+  pageLayoutTabId: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutsArgs = {
+  objectMetadataId?: InputMaybe<Scalars['String']>;
+  pageLayoutType?: InputMaybe<PageLayoutType>;
+};
+
+
+export type QueryGetPublicWorkspaceDataByDomainArgs = {
+  origin?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetQueueJobsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  queueName: Scalars['String'];
+  state: JobState;
+};
+
+
+export type QueryGetQueueMetricsArgs = {
+  queueName: Scalars['String'];
+  timeRange?: InputMaybe<QueueMetricsTimeRange>;
+};
+
+
+export type QueryGetToolInputSchemaArgs = {
+  toolName: Scalars['String'];
+};
+
+
 export type QueryGetViewArgs = {
   id: Scalars['String'];
 };
@@ -4392,76 +4343,6 @@ export type QueryGetViewSortsArgs = {
 export type QueryGetViewsArgs = {
   objectMetadataId?: InputMaybe<Scalars['String']>;
   viewTypes?: InputMaybe<Array<ViewType>>;
-};
-
-
-export type QueryGetDatabaseConfigVariableArgs = {
-  key: Scalars['String'];
-};
-
-
-export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorId: HealthIndicatorId;
-};
-
-
-export type QueryGetLogicFunctionSourceCodeArgs = {
-  input: LogicFunctionIdInput;
-};
-
-
-export type QueryGetPageLayoutArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutTabArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutTabsArgs = {
-  pageLayoutId: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutWidgetArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutWidgetsArgs = {
-  pageLayoutTabId: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutsArgs = {
-  objectMetadataId?: InputMaybe<Scalars['String']>;
-  pageLayoutType?: InputMaybe<PageLayoutType>;
-};
-
-
-export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetQueueJobsArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  queueName: Scalars['String'];
-  state: JobState;
-};
-
-
-export type QueryGetQueueMetricsArgs = {
-  queueName: Scalars['String'];
-  timeRange?: InputMaybe<QueueMetricsTimeRange>;
-};
-
-
-export type QueryGetToolInputSchemaArgs = {
-  toolName: Scalars['String'];
 };
 
 
@@ -5483,6 +5364,39 @@ export type VersionInfo = {
   latestVersion: Scalars['String'];
 };
 
+export type View = {
+  __typename?: 'View';
+  anyFieldFilterValue?: Maybe<Scalars['String']>;
+  calendarFieldMetadataId?: Maybe<Scalars['UUID']>;
+  calendarLayout?: Maybe<ViewCalendarLayout>;
+  createdAt: Scalars['DateTime'];
+  createdByUserWorkspaceId?: Maybe<Scalars['UUID']>;
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id: Scalars['UUID'];
+  isCompact: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  kanbanAggregateOperation?: Maybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
+  key?: Maybe<ViewKey>;
+  mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  openRecordIn: ViewOpenRecordIn;
+  position: Scalars['Float'];
+  shouldHideEmptyGroups: Scalars['Boolean'];
+  type: ViewType;
+  updatedAt: Scalars['DateTime'];
+  viewFieldGroups: Array<ViewFieldGroup>;
+  viewFields: Array<ViewField>;
+  viewFilterGroups: Array<ViewFilterGroup>;
+  viewFilters: Array<ViewFilter>;
+  viewGroups: Array<ViewGroup>;
+  viewSorts: Array<ViewSort>;
+  visibility: ViewVisibility;
+  workspaceId: Scalars['UUID'];
+};
+
 export enum ViewCalendarLayout {
   DAY = 'DAY',
   MONTH = 'MONTH',
@@ -5492,6 +5406,67 @@ export enum ViewCalendarLayout {
 export type ViewConfiguration = {
   __typename?: 'ViewConfiguration';
   configurationType: WidgetConfigurationType;
+};
+
+export type ViewField = {
+  __typename?: 'ViewField';
+  aggregateOperation?: Maybe<AggregateOperations>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  isOverridden: Scalars['Boolean'];
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  size: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewFieldGroupId?: Maybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type ViewFieldGroup = {
+  __typename?: 'ViewFieldGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  isOverridden: Scalars['Boolean'];
+  isVisible: Scalars['Boolean'];
+  name: Scalars['String'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewFields: Array<ViewField>;
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type ViewFilter = {
+  __typename?: 'ViewFilter';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  operand: ViewFilterOperand;
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  subFieldName?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  value: Scalars['JSON'];
+  viewFilterGroupId?: Maybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type ViewFilterGroup = {
+  __typename?: 'ViewFilterGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  logicalOperator: ViewFilterGroupLogicalOperator;
+  parentViewFilterGroupId?: Maybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 export enum ViewFilterGroupLogicalOperator {
@@ -5519,6 +5494,19 @@ export enum ViewFilterOperand {
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
 
+export type ViewGroup = {
+  __typename?: 'ViewGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldValue: Scalars['String'];
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
 export enum ViewKey {
   INDEX = 'INDEX'
 }
@@ -5527,6 +5515,18 @@ export enum ViewOpenRecordIn {
   RECORD_PAGE = 'RECORD_PAGE',
   SIDE_PANEL = 'SIDE_PANEL'
 }
+
+export type ViewSort = {
+  __typename?: 'ViewSort';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  direction: ViewSortDirection;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
 
 export enum ViewSortDirection {
   ASC = 'ASC',
@@ -7170,6 +7170,27 @@ export type ViewGroupFragmentFragment = { __typename?: 'ViewGroup', id: string, 
 
 export type ViewSortFragmentFragment = { __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string };
 
+export type CreateManyViewFieldGroupsMutationVariables = Exact<{
+  inputs: Array<CreateViewFieldGroupInput> | CreateViewFieldGroupInput;
+}>;
+
+
+export type CreateManyViewFieldGroupsMutation = { __typename?: 'Mutation', createManyViewFieldGroups: Array<{ __typename?: 'ViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, isOverridden: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, isOverridden: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
+
+export type CreateManyViewFieldsMutationVariables = Exact<{
+  inputs: Array<CreateViewFieldInput> | CreateViewFieldInput;
+}>;
+
+
+export type CreateManyViewFieldsMutation = { __typename?: 'Mutation', createManyViewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, isOverridden: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+
+export type CreateManyViewGroupsMutationVariables = Exact<{
+  inputs: Array<CreateViewGroupInput> | CreateViewGroupInput;
+}>;
+
+
+export type CreateManyViewGroupsMutation = { __typename?: 'Mutation', createManyViewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+
 export type CreateViewMutationVariables = Exact<{
   input: CreateViewInput;
 }>;
@@ -7218,27 +7239,6 @@ export type CreateViewSortMutationVariables = Exact<{
 
 
 export type CreateViewSortMutation = { __typename?: 'Mutation', createViewSort: { __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string } };
-
-export type CreateManyViewFieldGroupsMutationVariables = Exact<{
-  inputs: Array<CreateViewFieldGroupInput> | CreateViewFieldGroupInput;
-}>;
-
-
-export type CreateManyViewFieldGroupsMutation = { __typename?: 'Mutation', createManyViewFieldGroups: Array<{ __typename?: 'ViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, isOverridden: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, isOverridden: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
-
-export type CreateManyViewFieldsMutationVariables = Exact<{
-  inputs: Array<CreateViewFieldInput> | CreateViewFieldInput;
-}>;
-
-
-export type CreateManyViewFieldsMutation = { __typename?: 'Mutation', createManyViewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, isOverridden: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
-
-export type CreateManyViewGroupsMutationVariables = Exact<{
-  inputs: Array<CreateViewGroupInput> | CreateViewGroupInput;
-}>;
-
-
-export type CreateManyViewGroupsMutation = { __typename?: 'Mutation', createManyViewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type DeleteViewMutationVariables = Exact<{
   id: Scalars['String'];
@@ -7788,6 +7788,9 @@ export const VerifyTwoFactorAuthenticationMethodForAuthenticatedUserDocument = {
 export const DeleteUserAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUserAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
 export const DeleteUserWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUserWorkspace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceMemberIdToDelete"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUserFromWorkspace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workspaceMemberIdToDelete"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceMemberIdToDelete"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>;
 export const GetCurrentUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCurrentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserQueryFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkspaceMemberQueryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkspaceMember"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"colorScheme"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"locale"}},{"kind":"Field","name":{"kind":"Name","value":"userEmail"}},{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"timeZone"}},{"kind":"Field","name":{"kind":"Name","value":"dateFormat"}},{"kind":"Field","name":{"kind":"Name","value":"timeFormat"}},{"kind":"Field","name":{"kind":"Name","value":"calendarStartDay"}},{"kind":"Field","name":{"kind":"Name","value":"numberFormat"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PartialWorkspaceMemberQueryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkspaceMember"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"userEmail"}},{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DeletedWorkspaceMemberQueryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"DeletedWorkspaceMember"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"userEmail"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicate"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"operand"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberSubFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentRowLevelPermissionPredicateGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"logicalOperator"}},{"kind":"Field","name":{"kind":"Name","value":"positionInRowLevelPermissionPredicateGroup"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ObjectPermissionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ObjectPermission"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"canReadObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDeleteObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canDestroyObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"restrictedFields"}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicates"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rowLevelPermissionPredicateGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RowLevelPermissionPredicateGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WorkspaceUrlsFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"WorkspaceUrls"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subdomainUrl"}},{"kind":"Field","name":{"kind":"Name","value":"customUrl"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItem"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhase"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"start_date"}},{"kind":"Field","name":{"kind":"Name","value":"end_date"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseItemFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"interval"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"currentPeriodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptionItems"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"hasReachedCurrentPeriodCap"}},{"kind":"Field","name":{"kind":"Name","value":"quantity"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"billingProduct"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"productKey"}},{"kind":"Field","name":{"kind":"Name","value":"planKey"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageBased"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingSubscriptionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingSubscription"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"phases"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionSchedulePhaseFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RoleFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Role"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllSettings"}},{"kind":"Field","name":{"kind":"Name","value":"canAccessAllTools"}},{"kind":"Field","name":{"kind":"Name","value":"isEditable"}},{"kind":"Field","name":{"kind":"Name","value":"canReadAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDeleteAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canDestroyAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToUsers"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToAgents"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToApiKeys"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AvailableWorkspaceFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AvailableWorkspace"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"loginToken"}},{"kind":"Field","name":{"kind":"Name","value":"inviteHash"}},{"kind":"Field","name":{"kind":"Name","value":"personalInviteToken"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"subdomainUrl"}},{"kind":"Field","name":{"kind":"Name","value":"customUrl"}}]}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"sso"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"issuer"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AvailableWorkspacesFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AvailableWorkspaces"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"availableWorkspacesForSignIn"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AvailableWorkspaceFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"availableWorkspacesForSignUp"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AvailableWorkspaceFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserQueryFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"hasPassword"}},{"kind":"Field","name":{"kind":"Name","value":"canAccessFullAdminPanel"}},{"kind":"Field","name":{"kind":"Name","value":"canImpersonate"}},{"kind":"Field","name":{"kind":"Name","value":"supportUserHash"}},{"kind":"Field","name":{"kind":"Name","value":"onboardingStatus"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMember"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkspaceMemberQueryFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMembers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PartialWorkspaceMemberQueryFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"deletedWorkspaceMembers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DeletedWorkspaceMemberQueryFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"currentUserWorkspace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"permissionFlags"}},{"kind":"Field","name":{"kind":"Name","value":"objectsPermissions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ObjectPermissionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"twoFactorAuthenticationMethodSummary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"twoFactorAuthenticationMethodId"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"strategy"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"currentWorkspace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"inviteHash"}},{"kind":"Field","name":{"kind":"Name","value":"allowImpersonation"}},{"kind":"Field","name":{"kind":"Name","value":"activationStatus"}},{"kind":"Field","name":{"kind":"Name","value":"isPublicInviteLinkEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isGoogleAuthEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isMicrosoftAuthEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isPasswordAuthEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isGoogleAuthBypassEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isMicrosoftAuthBypassEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isPasswordAuthBypassEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"subdomain"}},{"kind":"Field","name":{"kind":"Name","value":"customDomain"}},{"kind":"Field","name":{"kind":"Name","value":"hasValidEnterpriseKey"}},{"kind":"Field","name":{"kind":"Name","value":"hasValidSignedEnterpriseKey"}},{"kind":"Field","name":{"kind":"Name","value":"hasValidEnterpriseValidityToken"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceCustomApplication"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isCustomDomainEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceUrls"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WorkspaceUrlsFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"featureFlags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"metadataVersion"}},{"kind":"Field","name":{"kind":"Name","value":"currentBillingSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"CurrentBillingSubscriptionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingSubscriptions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"BillingSubscriptionFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"billingEntitlements"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMembersCount"}},{"kind":"Field","name":{"kind":"Name","value":"defaultRole"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RoleFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"fastModel"}},{"kind":"Field","name":{"kind":"Name","value":"smartModel"}},{"kind":"Field","name":{"kind":"Name","value":"aiAdditionalInstructions"}},{"kind":"Field","name":{"kind":"Name","value":"autoEnableNewAiModels"}},{"kind":"Field","name":{"kind":"Name","value":"disabledAiModelIds"}},{"kind":"Field","name":{"kind":"Name","value":"enabledAiModelIds"}},{"kind":"Field","name":{"kind":"Name","value":"useRecommendedModels"}},{"kind":"Field","name":{"kind":"Name","value":"isTwoFactorAuthenticationEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"trashRetentionDays"}},{"kind":"Field","name":{"kind":"Name","value":"eventLogRetentionDays"}},{"kind":"Field","name":{"kind":"Name","value":"editableProfileFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"availableWorkspaces"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AvailableWorkspacesFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"userVars"}}]}}]} as unknown as DocumentNode<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export const CreateManyViewFieldGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateManyViewFieldGroups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewFieldGroupInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createManyViewFieldGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFieldGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}}]} as unknown as DocumentNode<CreateManyViewFieldGroupsMutation, CreateManyViewFieldGroupsMutationVariables>;
+export const CreateManyViewFieldsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateManyViewFields"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewFieldInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createManyViewFields"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<CreateManyViewFieldsMutation, CreateManyViewFieldsMutationVariables>;
+export const CreateManyViewGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateManyViewGroups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewGroupInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createManyViewGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"fieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<CreateManyViewGroupsMutation, CreateManyViewGroupsMutationVariables>;
 export const CreateViewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateView"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createView"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFieldGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFilterFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFilter"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"operand"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"viewFilterGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"positionInViewFilterGroup"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFilterGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFilterGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentViewFilterGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"logicalOperator"}},{"kind":"Field","name":{"kind":"Name","value":"positionInViewFilterGroup"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewSortFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewSort"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"fieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"View"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isCompact"}},{"kind":"Field","name":{"kind":"Name","value":"openRecordIn"}},{"kind":"Field","name":{"kind":"Name","value":"kanbanAggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"kanbanAggregateOperationFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"mainGroupByFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"shouldHideEmptyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"anyFieldFilterValue"}},{"kind":"Field","name":{"kind":"Name","value":"calendarFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"calendarLayout"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"createdByUserWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewFieldGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldGroupFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewFilters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFilterFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewFilterGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFilterGroupFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewSorts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewSortFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewGroupFragment"}}]}}]}}]} as unknown as DocumentNode<CreateViewMutation, CreateViewMutationVariables>;
 export const CreateViewFieldDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateViewField"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewFieldInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createViewField"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<CreateViewFieldMutation, CreateViewFieldMutationVariables>;
 export const CreateViewFieldGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateViewFieldGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewFieldGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createViewFieldGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFieldGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}}]} as unknown as DocumentNode<CreateViewFieldGroupMutation, CreateViewFieldGroupMutationVariables>;
@@ -7795,9 +7798,6 @@ export const CreateViewFilterDocument = {"kind":"Document","definitions":[{"kind
 export const CreateViewFilterGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateViewFilterGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewFilterGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createViewFilterGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFilterGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFilterGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFilterGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentViewFilterGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"logicalOperator"}},{"kind":"Field","name":{"kind":"Name","value":"positionInViewFilterGroup"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}}]}}]} as unknown as DocumentNode<CreateViewFilterGroupMutation, CreateViewFilterGroupMutationVariables>;
 export const CreateViewGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateViewGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createViewGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"fieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<CreateViewGroupMutation, CreateViewGroupMutationVariables>;
 export const CreateViewSortDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateViewSort"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewSortInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createViewSort"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewSortFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewSortFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewSort"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<CreateViewSortMutation, CreateViewSortMutationVariables>;
-export const CreateManyViewFieldGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateManyViewFieldGroups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewFieldGroupInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createManyViewFieldGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFieldGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}}]} as unknown as DocumentNode<CreateManyViewFieldGroupsMutation, CreateManyViewFieldGroupsMutationVariables>;
-export const CreateManyViewFieldsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateManyViewFields"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewFieldInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createManyViewFields"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<CreateManyViewFieldsMutation, CreateManyViewFieldsMutationVariables>;
-export const CreateManyViewGroupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateManyViewGroups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateViewGroupInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createManyViewGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inputs"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inputs"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"fieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<CreateManyViewGroupsMutation, CreateManyViewGroupsMutationVariables>;
 export const DeleteViewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteView"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteView"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteViewMutation, DeleteViewMutationVariables>;
 export const DeleteViewFieldDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteViewField"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteViewFieldInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteViewField"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<DeleteViewFieldMutation, DeleteViewFieldMutationVariables>;
 export const DeleteViewFieldGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteViewFieldGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DeleteViewFieldGroupInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteViewFieldGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFieldGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isOverridden"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}}]} as unknown as DocumentNode<DeleteViewFieldGroupMutation, DeleteViewFieldGroupMutationVariables>;
