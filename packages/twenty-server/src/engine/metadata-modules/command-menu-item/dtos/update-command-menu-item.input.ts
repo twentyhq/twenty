@@ -60,4 +60,9 @@ export class UpdateCommandMenuItemInput {
   @IsOptional()
   @Field(() => EngineComponentKey, { nullable: true })
   engineComponentKey?: EngineComponentKey;
+
+  @IsString({ each: true })
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  hotKeys?: string[];
 }

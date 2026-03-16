@@ -104,6 +104,7 @@ const buildCommandMenuItemFromFrontComponent = ({
     position: item.position,
     isPinned,
     Icon,
+    hotKeys: item.hotKeys ?? undefined,
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
@@ -152,6 +153,7 @@ const buildCommandItemFromEngineKey = ({
     position: item.position,
     isPinned,
     Icon,
+    hotKeys: item.hotKeys ?? undefined,
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
