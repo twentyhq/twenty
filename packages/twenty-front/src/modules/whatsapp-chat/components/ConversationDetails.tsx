@@ -6,6 +6,8 @@ import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
 import { useContact } from '@/whatsapp-chat/hooks/useContact';
 import { useCloseCalls } from '@/whatsapp-chat/hooks/useCloseCalls';
 import { useCloseOpportunities } from '@/whatsapp-chat/hooks/useCloseOpportunities';
+import { useMopSummary } from '@/whatsapp-chat/hooks/useMopSummary';
+import { useMopDetails } from '@/whatsapp-chat/hooks/useMopDetails';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
 import { useProfilePicture } from '@/whatsapp-chat/hooks/useProfilePicture';
 
@@ -300,6 +302,84 @@ const StyledEmptyState = styled.div`
   text-align: center;
 `;
 
+const StyledMopCard = styled.div`
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+`;
+
+const StyledMopOfferName = styled.span`
+  color: #111827;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+`;
+
+const StyledMopIconRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`;
+
+const StyledMopIcon = styled.span<{ active: boolean }>`
+  align-items: center;
+  background: ${({ active }) => (active ? '#DCFCE7' : '#F3F4F6')};
+  border-radius: 4px;
+  color: ${({ active }) => (active ? '#166534' : '#9CA3AF')};
+  display: inline-flex;
+  font-size: 10px;
+  font-weight: 600;
+  gap: 3px;
+  padding: 2px 6px;
+`;
+
+const StyledShowMore = styled.button`
+  background: none;
+  border: none;
+  color: #1A6CFF;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 4px 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const StyledStatGrid = styled.div`
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+`;
+
+const StyledStatBox = styled.div`
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+`;
+
+const StyledStatValue = styled.span`
+  color: #111827;
+  font-size: 16px;
+  font-weight: 600;
+`;
+
+const StyledStatLabel = styled.span`
+  color: #9CA3AF;
+  font-size: 10px;
+  text-transform: uppercase;
+`;
+
 // ── Helpers ─────────────────────────────────────────────────────
 
 const formatDate = (isoString: string | null): string => {
@@ -313,7 +393,28 @@ const formatDate = (isoString: string | null): string => {
   });
 };
 
-type TabId = 'profile' | 'conversation' | 'assignment' | 'calls' | 'opportunities';
+type TabId = 'profile' | 'mop' | 'conversation' | 'assignment' | 'calls' | 'opportunities';
+
+const cleanMopName = (name?: string): string => {
+  if (!name) return '';
+  // Remove ID prefix like "ABF123 - " from offer name
+  const parts = name.split(' — ');
+  return parts[parts.length - 1];
+};
+
+const formatWatchTime = (minutes: number): string => {
+  if (minutes < 60) return `${Math.round(minutes)}m`;
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+};
+
+const formatCallDuration = (seconds: number): string => {
+  if (seconds < 60) return `${seconds}s`;
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+};
 
 // ── Component ───────────────────────────────────────────────────
 
@@ -341,7 +442,13 @@ export const ConversationDetails = ({
     conversation.sessionName,
     conversation.leadPhoneNumber,
   );
+  const contactEmail = contact?.email || conversation.contactEmail || null;
+  const { summary: mopSummary, loading: mopSummaryLoading } =
+    useMopSummary(contactEmail);
+  const { records: mopRecords, loading: mopRecordsLoading } =
+    useMopDetails(contactEmail);
   const [activeTab, setActiveTab] = useState<TabId>('profile');
+  const [mopExpanded, setMopExpanded] = useState(false);
   const [assignEmail, setAssignEmail] = useState(
     conversation.assignedToEmail ?? '',
   );
@@ -392,6 +499,12 @@ export const ConversationDetails = ({
           onClick={() => setActiveTab('profile')}
         >
           Profile
+        </StyledTab>
+        <StyledTab
+          isActive={activeTab === 'mop'}
+          onClick={() => setActiveTab('mop')}
+        >
+          MOP{mopRecords.length > 0 ? ` (${mopRecords.length})` : ''}
         </StyledTab>
         <StyledTab
           isActive={activeTab === 'conversation'}
@@ -641,6 +754,138 @@ export const ConversationDetails = ({
                   </StyledBadge>
                 </StyledBadgeRow>
               </StyledSection>
+            )}
+          </>
+        )}
+
+        {/* ── MOP Tab ─────────────────────────────────────── */}
+        {activeTab === 'mop' && (
+          <>
+            {!contactEmail && (
+              <StyledEmptyState>No email found for this contact</StyledEmptyState>
+            )}
+
+            {contactEmail && mopSummaryLoading && (
+              <StyledLoadingText>Loading MOP data...</StyledLoadingText>
+            )}
+
+            {contactEmail && !mopSummaryLoading && mopSummary && (
+              <StyledSection>
+                <StyledSectionTitle>Summary</StyledSectionTitle>
+                <StyledStatGrid>
+                  <StyledStatBox>
+                    <StyledStatValue>{mopSummary.mopCount}</StyledStatValue>
+                    <StyledStatLabel>Offers</StyledStatLabel>
+                  </StyledStatBox>
+                  <StyledStatBox>
+                    <StyledStatValue>
+                      {formatWatchTime(mopSummary.mopTotalWatchTimeMinutes)}
+                    </StyledStatValue>
+                    <StyledStatLabel>Watch Time</StyledStatLabel>
+                  </StyledStatBox>
+                  {mopSummary.mopLastCallDurationSeconds != null &&
+                    mopSummary.mopLastCallDurationSeconds > 0 && (
+                      <StyledStatBox>
+                        <StyledStatValue>
+                          {formatCallDuration(mopSummary.mopLastCallDurationSeconds)}
+                        </StyledStatValue>
+                        <StyledStatLabel>Last Call</StyledStatLabel>
+                      </StyledStatBox>
+                    )}
+                </StyledStatGrid>
+                {mopSummary.mopFirstSignupDate && (
+                  <StyledField>
+                    <StyledFieldLabel>First Signup</StyledFieldLabel>
+                    <StyledFieldValue>
+                      {formatDate(mopSummary.mopFirstSignupDate)}
+                    </StyledFieldValue>
+                  </StyledField>
+                )}
+                {mopSummary.mopLastActivityDate && (
+                  <StyledField>
+                    <StyledFieldLabel>Last Activity</StyledFieldLabel>
+                    <StyledFieldValue>
+                      {formatDate(mopSummary.mopLastActivityDate)}
+                    </StyledFieldValue>
+                  </StyledField>
+                )}
+                {mopSummary.mopLatestOfferName && (
+                  <StyledField>
+                    <StyledFieldLabel>Latest Offer</StyledFieldLabel>
+                    <StyledFieldValue>
+                      {cleanMopName(mopSummary.mopLatestOfferName)}
+                    </StyledFieldValue>
+                  </StyledField>
+                )}
+                {mopSummary.mopLastCallDate && (
+                  <StyledField>
+                    <StyledFieldLabel>Last Call Date</StyledFieldLabel>
+                    <StyledFieldValue>
+                      {formatDate(mopSummary.mopLastCallDate)}
+                    </StyledFieldValue>
+                  </StyledField>
+                )}
+              </StyledSection>
+            )}
+
+            {contactEmail && !mopSummaryLoading && !mopSummary && (
+              <StyledEmptyState>No marketing participation data</StyledEmptyState>
+            )}
+
+            {contactEmail && mopRecords.length > 0 && (
+              <>
+                <StyledDivider />
+                <StyledSection>
+                  <StyledSectionTitle>Marketing History</StyledSectionTitle>
+                  {mopRecordsLoading && (
+                    <StyledLoadingText>Loading offers...</StyledLoadingText>
+                  )}
+                  {(mopExpanded ? mopRecords : mopRecords.slice(0, 3)).map(
+                    (mop) => (
+                      <StyledMopCard key={mop.id}>
+                        <StyledMopOfferName>
+                          {cleanMopName(mop.marketingOfferName)}
+                        </StyledMopOfferName>
+                        {mop.mopZoomLastActive && (
+                          <StyledCardMeta>
+                            Last active: {formatDate(mop.mopZoomLastActive)}
+                          </StyledCardMeta>
+                        )}
+                        <StyledMopIconRow>
+                          <StyledMopIcon active={mop.attendedSession}>
+                            {mop.attendedSession ? '✓' : '✗'} Attended
+                          </StyledMopIcon>
+                          {mop.totalWatchTime > 0 && (
+                            <StyledMopIcon active>
+                              {formatWatchTime(mop.totalWatchTime)}
+                            </StyledMopIcon>
+                          )}
+                          <StyledMopIcon active={mop.hasConverted}>
+                            {mop.hasConverted ? '✓' : '✗'} Converted
+                          </StyledMopIcon>
+                          <StyledMopIcon active={mop.docusealIsSigned}>
+                            {mop.docusealIsSigned ? '✓' : '✗'} Signed
+                          </StyledMopIcon>
+                          {mop.completedStrukturanalyse != null && (
+                            <StyledMopIcon active={mop.completedStrukturanalyse}>
+                              {mop.completedStrukturanalyse ? '✓' : '✗'} SA
+                            </StyledMopIcon>
+                          )}
+                        </StyledMopIconRow>
+                      </StyledMopCard>
+                    ),
+                  )}
+                  {mopRecords.length > 3 && (
+                    <StyledShowMore
+                      onClick={() => setMopExpanded((prev) => !prev)}
+                    >
+                      {mopExpanded
+                        ? 'Show less'
+                        : `Show ${mopRecords.length - 3} more offers`}
+                    </StyledShowMore>
+                  )}
+                </StyledSection>
+              </>
             )}
           </>
         )}
