@@ -4030,11 +4030,6 @@ msgstr "The role you are trying to modify could not be found. It may have been d
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr "The server address you entered is not allowed. Please use a public server address."
 
-#. js-lingui-id: H1tAJD
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
-msgid "The singular and plural labels cannot be the same for an object"
-msgstr "The singular and plural labels cannot be the same for an object"
-
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
