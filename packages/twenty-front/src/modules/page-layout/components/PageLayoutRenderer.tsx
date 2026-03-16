@@ -1,3 +1,4 @@
+import { PageLayoutEditModeProvider } from '@/page-layout/components/PageLayoutEditModeProvider';
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
 import { PageLayoutRelationWidgetsSyncEffect } from '@/page-layout/components/PageLayoutRelationWidgetsSyncEffect';
@@ -35,10 +36,15 @@ export const PageLayoutRenderer = ({
           instanceId: tabListInstanceId,
         }}
       >
-        <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
-        <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-        <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
-        <PageLayoutRendererContent />
+        <PageLayoutEditModeProvider
+          layoutType={layoutType}
+          pageLayoutId={pageLayoutId}
+        >
+          <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+          <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+          <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
+          <PageLayoutRendererContent />
+        </PageLayoutEditModeProvider>
       </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>
   );
