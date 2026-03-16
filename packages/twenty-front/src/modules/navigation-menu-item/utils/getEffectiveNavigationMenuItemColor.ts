@@ -7,7 +7,16 @@ import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/p
 
 export const getEffectiveNavigationMenuItemColor = (
   navigationMenuItem: ProcessedNavigationMenuItem,
+  objectColor?: string,
 ): string | undefined => {
+  if (navigationMenuItem.itemType === NavigationMenuItemType.RECORD) {
+    return undefined;
+  }
+  if (navigationMenuItem.itemType === NavigationMenuItemType.VIEW) {
+    return isNonEmptyString(navigationMenuItem.color)
+      ? navigationMenuItem.color
+      : objectColor;
+  }
   if (isNonEmptyString(navigationMenuItem.color)) {
     return navigationMenuItem.color;
   }
