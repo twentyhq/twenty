@@ -372,6 +372,86 @@ const StyledCompactStep = styled.div<{ active: boolean }>`
   padding: 2px 3px;
 `;
 
+// ── MOP stats row styles ────────────────────────────────────────
+
+const StyledMetricsRow = styled.div`
+  align-items: stretch;
+  border-bottom: 1px solid #E5E7EB;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  margin-top: 8px;
+`;
+
+const StyledMetricItem = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 2px;
+`;
+
+const StyledMetricIcon = styled.span`
+  color: #9CA3AF;
+  display: flex;
+`;
+
+const StyledMetricValue = styled.span`
+  color: #111827;
+  font-size: 11px;
+  font-weight: 700;
+`;
+
+const StyledMetricLabel = styled.span`
+  color: #9CA3AF;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+`;
+
+const StyledMopBanner = styled.div`
+  background: #FEF3C7;
+  border-radius: 4px;
+  color: #92400E;
+  font-size: 12px;
+  margin-top: 6px;
+  overflow: hidden;
+  padding: 4px 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+// ── MOP metric icons (SVG) ──────────────────────────────────────
+
+const MOP_ICONS = {
+  watch: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
+    </svg>
+  ),
+  registered: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  ),
+  active: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  call: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  ),
+  events: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  ),
+};
+
 // ── Context menu styles ─────────────────────────────────────────
 
 const StyledContextOverlay = styled.div`
@@ -445,6 +525,46 @@ const formatTimestamp = (isoString: string): string => {
     month: 'short',
     day: 'numeric',
   });
+};
+
+const formatWatchTime = (minutes?: number): string => {
+  if (!minutes) return '-';
+  if (minutes < 60) return `${Math.round(minutes)}m`;
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  return mins > 0 ? `${hours}h${mins}m` : `${hours}h`;
+};
+
+const getDaysAgo = (isoString?: string): string => {
+  if (!isoString) return '-';
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return '-';
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return '1d';
+  if (diffDays < 30) return `${diffDays}d`;
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)}m`;
+  const years = Math.floor(diffDays / 365);
+  const remainingMonths = Math.floor((diffDays % 365) / 30);
+  return remainingMonths > 0 ? `${years}y${remainingMonths}m` : `${years}y`;
+};
+
+const formatCallDuration = (seconds?: number): string => {
+  if (!seconds) return '-';
+  if (seconds < 60) return `${seconds}s`;
+  const mins = Math.floor(seconds / 60);
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  const remainMins = mins % 60;
+  return remainMins > 0 ? `${hours}h${remainMins}m` : `${hours}h`;
+};
+
+const cleanMopName = (name?: string): string => {
+  if (!name) return '';
+  const parts = name.split(' — ');
+  return parts[parts.length - 1];
 };
 
 const getInitials = (conversation: WaConversation): string => {
@@ -631,6 +751,54 @@ export const ConversationListItem = ({
         {/* ── Expanded section (selected only) ── */}
         {isSelected && (
           <>
+            {/* MOP stats row */}
+            {(conversation.mopCount != null || conversation.mopTotalWatchTimeMinutes != null) && (
+              <StyledMetricsRow>
+                <StyledMetricItem>
+                  <StyledMetricIcon>{MOP_ICONS.watch}</StyledMetricIcon>
+                  <StyledMetricValue>
+                    {formatWatchTime(conversation.mopTotalWatchTimeMinutes)}
+                  </StyledMetricValue>
+                  <StyledMetricLabel>Watch</StyledMetricLabel>
+                </StyledMetricItem>
+                <StyledMetricItem>
+                  <StyledMetricIcon>{MOP_ICONS.registered}</StyledMetricIcon>
+                  <StyledMetricValue>
+                    {getDaysAgo(conversation.mopFirstSignupDate)}
+                  </StyledMetricValue>
+                  <StyledMetricLabel>Registered</StyledMetricLabel>
+                </StyledMetricItem>
+                <StyledMetricItem>
+                  <StyledMetricIcon>{MOP_ICONS.active}</StyledMetricIcon>
+                  <StyledMetricValue>
+                    {getDaysAgo(conversation.mopLastActivityDate)}
+                  </StyledMetricValue>
+                  <StyledMetricLabel>Active</StyledMetricLabel>
+                </StyledMetricItem>
+                <StyledMetricItem>
+                  <StyledMetricIcon>{MOP_ICONS.call}</StyledMetricIcon>
+                  <StyledMetricValue>
+                    {formatCallDuration(conversation.mopLastCallDurationSeconds ?? undefined)}
+                  </StyledMetricValue>
+                  <StyledMetricLabel>Call</StyledMetricLabel>
+                </StyledMetricItem>
+                <StyledMetricItem>
+                  <StyledMetricIcon>{MOP_ICONS.events}</StyledMetricIcon>
+                  <StyledMetricValue>
+                    {conversation.mopCount ?? '-'}
+                  </StyledMetricValue>
+                  <StyledMetricLabel>Events</StyledMetricLabel>
+                </StyledMetricItem>
+              </StyledMetricsRow>
+            )}
+
+            {/* Yellow MOP event banner */}
+            {conversation.mopLatestOfferName && (
+              <StyledMopBanner>
+                📅 {cleanMopName(conversation.mopLatestOfferName)}
+              </StyledMopBanner>
+            )}
+
             <StyledExpandedSection>
               <StyledDetailRow>
                 <StyledDetailIcon>

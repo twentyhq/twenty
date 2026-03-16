@@ -27,6 +27,14 @@ export interface WaConversation {
   contractSent?: boolean;
   contractViewed?: boolean;
   completedStrukturanalyse?: boolean;
+  // MOP (Marketing Offer Participation) summary fields
+  mopCount?: number;
+  mopTotalWatchTimeMinutes?: number;
+  mopFirstSignupDate?: string;
+  mopLastActivityDate?: string;
+  mopLatestOfferName?: string;
+  mopLastCallDate?: string;
+  mopLastCallDurationSeconds?: number;
 }
 
 export interface WaMessage {
