@@ -2,11 +2,15 @@ import styled from '@emotion/styled';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentConversationIdState } from '@/whatsapp-chat/states/currentConversationIdState';
 import { ChatHeader } from '@/whatsapp-chat/components/ChatHeader';
 import { ChatThread } from '@/whatsapp-chat/components/ChatThread';
 import { ConversationDetails } from '@/whatsapp-chat/components/ConversationDetails';
 import { ConversationList } from '@/whatsapp-chat/components/ConversationList';
+import { FlagLeadModal } from '@/whatsapp-chat/components/FlagLeadModal';
+import { ForwardMessageModal } from '@/whatsapp-chat/components/ForwardMessageModal';
 import { SessionPicker } from '@/whatsapp-chat/components/SessionPicker';
 import { useLabels } from '@/whatsapp-chat/hooks/useLabels';
 import { useMessages } from '@/whatsapp-chat/hooks/useMessages';
@@ -116,6 +120,10 @@ const StyledSessionName = styled.span`
 export const WhatsAppChatContainer = () => {
   const { bridgeFetch } = useWhatsAppBridge();
   const { sessions, loading: sessionsLoading, error: sessionsError } = useSessions();
+  const currentMember = useRecoilValueV2(currentWorkspaceMemberState);
+  const currentUserName = currentMember?.name?.firstName
+    ? `${currentMember.name.firstName} ${currentMember.name.lastName ?? ''}`.trim()
+    : currentMember?.userEmail ?? '';
 
   const [activeSession, setActiveSession] = useState<WaSession | null>(null);
 
@@ -126,6 +134,8 @@ export const WhatsAppChatContainer = () => {
   const [selectedConversation, setSelectedConversation] =
     useState<WaConversation | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [forwardingMessage, setForwardingMessage] = useState<WaMessage | null>(null);
+  const [showFlagLead, setShowFlagLead] = useState(false);
 
   const handleSelectSession = useCallback((session: WaSession) => {
     setActiveSession(session);
@@ -424,6 +434,32 @@ export const WhatsAppChatContainer = () => {
     [selectedConversation],
   );
 
+  const handleForwardSend = useCallback(
+    (targetConversationId: string, text: string) => {
+      const target = conversationsRef.current.find(
+        (c) => c.id === targetConversationId,
+      );
+      if (!target) return;
+
+      sendTextMessage({
+        conversationId: target.id,
+        sessionName: target.sessionName,
+        toJid: target.leadPhoneNumber,
+        body: text,
+      });
+      setForwardingMessage(null);
+    },
+    [sendTextMessage],
+  );
+
+  const handleForwardMessage = useCallback((message: WaMessage) => {
+    setForwardingMessage(message);
+  }, []);
+
+  const handleFlagLead = useCallback(() => {
+    setShowFlagLead(true);
+  }, []);
+
   if (!activeSession) {
     return (
       <SessionPicker
@@ -490,6 +526,8 @@ export const WhatsAppChatContainer = () => {
               onSendMedia={handleSendMedia}
               onEditMessage={handleEditMessage}
               onDeleteMessage={handleDeleteMessage}
+              onForwardMessage={handleForwardMessage}
+              onFlagLead={handleFlagLead}
             />
           </>
         ) : (
@@ -507,6 +545,26 @@ export const WhatsAppChatContainer = () => {
           conversation={selectedConversation}
           onClose={() => setShowDetails(false)}
           onUpdate={handleConversationUpdate}
+        />
+      )}
+
+      {forwardingMessage && selectedConversation && (
+        <ForwardMessageModal
+          message={forwardingMessage}
+          sourceConversation={selectedConversation}
+          conversations={conversationsRef.current}
+          currentUserName={currentUserName}
+          onClose={() => setForwardingMessage(null)}
+          onSend={handleForwardSend}
+        />
+      )}
+
+      {showFlagLead && selectedConversation && (
+        <FlagLeadModal
+          conversation={selectedConversation}
+          currentUserName={currentUserName}
+          onClose={() => setShowFlagLead(false)}
+          onFlagged={() => setShowFlagLead(false)}
         />
       )}
     </StyledContainer>

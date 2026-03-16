@@ -50,6 +50,8 @@ type MessageContextMenuProps = {
   onCopy: (message: WaMessage) => void;
   onEdit?: (message: WaMessage) => void;
   onDelete?: (message: WaMessage) => void;
+  onForward?: (message: WaMessage) => void;
+  onFlagLead?: () => void;
 };
 
 export const MessageContextMenu = ({
@@ -59,6 +61,8 @@ export const MessageContextMenu = ({
   onCopy,
   onEdit,
   onDelete,
+  onForward,
+  onFlagLead,
 }: MessageContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -93,6 +97,28 @@ export const MessageContextMenu = ({
             }}
           >
             Copy text
+          </StyledMenuItem>
+        )}
+
+        {onForward && message.body && !message.isDeleted && (
+          <StyledMenuItem
+            onClick={() => {
+              onForward(message);
+              onClose();
+            }}
+          >
+            Forward message
+          </StyledMenuItem>
+        )}
+
+        {onFlagLead && (
+          <StyledMenuItem
+            onClick={() => {
+              onFlagLead();
+              onClose();
+            }}
+          >
+            Flag lead
           </StyledMenuItem>
         )}
 

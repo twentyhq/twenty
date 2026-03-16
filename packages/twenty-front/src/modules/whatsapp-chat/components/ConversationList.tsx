@@ -141,6 +141,7 @@ export const ConversationList = ({
     useState<NeedsReplyThreshold>('any');
   const [selectedPrograms, setSelectedPrograms] = useState<string[]>([]);
   const [selectedDurations, setSelectedDurations] = useState<string[]>([]);
+  const [selectedMops, setSelectedMops] = useState<string[]>([]);
   const previousConversationsRef = useRef<WaConversation[]>([]);
 
   // Always filter by the active session (passed from parent)
@@ -160,18 +161,21 @@ export const ConversationList = ({
   }
 
   // Compute available filter values from loaded conversations
-  const { availablePrograms, availableDurations } = useMemo(() => {
+  const { availablePrograms, availableDurations, availableMops } = useMemo(() => {
     const programs = new Set<string>();
     const durations = new Set<string>();
+    const mops = new Set<string>();
 
     for (const c of conversations) {
       if (c.justusProgram) programs.add(c.justusProgram);
       if (c.justusDuration) durations.add(c.justusDuration);
+      if (c.mopLatestOfferName) mops.add(c.mopLatestOfferName);
     }
 
     return {
       availablePrograms: Array.from(programs).sort(),
       availableDurations: Array.from(durations).sort(),
+      availableMops: Array.from(mops).sort(),
     };
   }, [conversations]);
 
@@ -240,6 +244,13 @@ export const ConversationList = ({
       );
     }
 
+    // MOP filter
+    if (selectedMops.length > 0) {
+      result = result.filter((c) =>
+        selectedMops.includes(c.mopLatestOfferName ?? ''),
+      );
+    }
+
     // Sort
     result = [...result].sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
@@ -262,6 +273,7 @@ export const ConversationList = ({
     needsReplyThreshold,
     selectedPrograms,
     selectedDurations,
+    selectedMops,
     currentUserEmail,
   ]);
 
@@ -270,7 +282,8 @@ export const ConversationList = ({
     segmentFilter !== 'all' ||
     stateFilter !== 'all' ||
     selectedPrograms.length > 0 ||
-    selectedDurations.length > 0;
+    selectedDurations.length > 0 ||
+    selectedMops.length > 0;
 
   const handleClearFilters = useCallback(() => {
     setAssignmentFilter('all');
@@ -279,6 +292,7 @@ export const ConversationList = ({
     setNeedsReplyThreshold('any');
     setSelectedPrograms([]);
     setSelectedDurations([]);
+    setSelectedMops([]);
   }, []);
 
   const pinnedConversations = filteredConversations.filter((c) => c.isPinned);
@@ -319,8 +333,11 @@ export const ConversationList = ({
           onSelectedProgramsChange={setSelectedPrograms}
           selectedDurations={selectedDurations}
           onSelectedDurationsChange={setSelectedDurations}
+          selectedMops={selectedMops}
+          onSelectedMopsChange={setSelectedMops}
           availablePrograms={availablePrograms}
           availableDurations={availableDurations}
+          availableMops={availableMops}
           resultCount={filteredConversations.length}
           totalCount={conversations.length}
           hasActiveFilters={hasActiveFilters}

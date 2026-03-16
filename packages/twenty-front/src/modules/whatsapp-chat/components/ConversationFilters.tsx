@@ -273,8 +273,11 @@ type ConversationFiltersProps = {
   onSelectedProgramsChange: (programs: string[]) => void;
   selectedDurations: string[];
   onSelectedDurationsChange: (durations: string[]) => void;
+  selectedMops: string[];
+  onSelectedMopsChange: (mops: string[]) => void;
   availablePrograms: string[];
   availableDurations: string[];
+  availableMops: string[];
   resultCount?: number;
   totalCount?: number;
   onClearFilters?: () => void;
@@ -378,8 +381,11 @@ export const ConversationFilters = ({
   onSelectedProgramsChange,
   selectedDurations,
   onSelectedDurationsChange,
+  selectedMops,
+  onSelectedMopsChange,
   availablePrograms,
   availableDurations,
+  availableMops,
   resultCount,
   totalCount,
   onClearFilters,
@@ -523,6 +529,14 @@ export const ConversationFilters = ({
           options={availableDurations}
           onChange={onSelectedDurationsChange}
         />
+        {availableMops.length > 0 && (
+          <MultiSelectDropdown
+            label="MOP"
+            selected={selectedMops}
+            options={availableMops}
+            onChange={onSelectedMopsChange}
+          />
+        )}
         <StyledSpacer />
       </StyledRow>
 
