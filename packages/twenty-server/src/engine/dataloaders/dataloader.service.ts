@@ -630,6 +630,36 @@ export class DataloaderService {
           },
         );
 
+      const viewFieldsByResolvedGroupId = new Map<
+        string,
+        ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
+      >();
+
+      for (const flatViewField of Object.values(
+        flatViewFieldMaps.byUniversalIdentifier,
+      )) {
+        if (!isDefined(flatViewField) || flatViewField.deletedAt !== null) {
+          continue;
+        }
+
+        const resolvedGroupId =
+          flatViewField.overrides?.viewFieldGroupId !== undefined
+            ? flatViewField.overrides.viewFieldGroupId
+            : flatViewField.viewFieldGroupId;
+
+        if (!isDefined(resolvedGroupId)) {
+          continue;
+        }
+
+        if (!viewFieldsByResolvedGroupId.has(resolvedGroupId)) {
+          viewFieldsByResolvedGroupId.set(resolvedGroupId, []);
+        }
+
+        viewFieldsByResolvedGroupId
+          .get(resolvedGroupId)!
+          .push(fromFlatViewFieldToViewFieldDto(flatViewField));
+      }
+
       return dataLoaderParams.map(({ viewFieldGroupId }) => {
         const flatViewFieldGroup = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewFieldGroupId,
@@ -640,12 +670,7 @@ export class DataloaderService {
           return [];
         }
 
-        return findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatViewFieldGroup.viewFieldIds,
-          flatEntityMaps: flatViewFieldMaps,
-        })
-          .filter((flatViewField) => flatViewField.deletedAt === null)
-          .map(fromFlatViewFieldToViewFieldDto);
+        return viewFieldsByResolvedGroupId.get(viewFieldGroupId) ?? [];
       });
     });
   }

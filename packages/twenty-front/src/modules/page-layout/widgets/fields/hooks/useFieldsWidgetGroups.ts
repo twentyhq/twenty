@@ -25,9 +25,10 @@ export const useFieldsWidgetGroups = ({
     objectNameSingular,
   });
 
-  const { inlineFieldMetadataItems } = useFieldsWidgetFieldMetadataItems({
-    objectNameSingular,
-  });
+  const { inlineFieldMetadataItems, legacyActivityTargetFieldMetadataItems } =
+    useFieldsWidgetFieldMetadataItems({
+      objectNameSingular,
+    });
 
   const groups = useMemo<FieldsWidgetGroup[]>(() => {
     if (!isDefined(objectMetadataItem)) {
@@ -118,7 +119,10 @@ export const useFieldsWidgetGroups = ({
       }
     }
 
-    const fieldsToDisplay = inlineFieldMetadataItems;
+    const fieldsToDisplay = [
+      ...inlineFieldMetadataItems,
+      ...legacyActivityTargetFieldMetadataItems,
+    ];
 
     if (fieldsToDisplay.length === 0) {
       return [];
@@ -190,6 +194,7 @@ export const useFieldsWidgetGroups = ({
     t,
     view,
     inlineFieldMetadataItems,
+    legacyActivityTargetFieldMetadataItems,
   ]);
 
   const displayMode: FieldsWidgetDisplayMode =

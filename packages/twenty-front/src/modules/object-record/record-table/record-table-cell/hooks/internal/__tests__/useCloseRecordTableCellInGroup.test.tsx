@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -26,8 +26,8 @@ import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockO
 const recordTableId = 'record-table-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  jotaiStore.set(
-    objectMetadataItemsState.atom,
+  setTestObjectMetadataItemsInMetadataStore(
+    jotaiStore,
     generatedMockObjectMetadataItems,
   );
 

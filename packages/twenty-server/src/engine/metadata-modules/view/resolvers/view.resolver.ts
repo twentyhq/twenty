@@ -94,7 +94,7 @@ export class ViewResolver {
 
   @Query(() => [ViewDTO])
   @UseGuards(CustomPermissionGuard)
-  async getCoreViews(
+  async getViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
@@ -120,7 +120,7 @@ export class ViewResolver {
 
   @Query(() => ViewDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreView(
+  async getView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO | null> {
@@ -135,7 +135,7 @@ export class ViewResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(CreateViewPermissionGuard)
-  async createCoreView(
+  async createView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
@@ -153,7 +153,7 @@ export class ViewResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(UpdateViewPermissionGuard)
-  async updateCoreView(
+  async updateView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -168,7 +168,7 @@ export class ViewResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DeleteViewPermissionGuard)
-  async deleteCoreView(
+  async deleteView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
@@ -182,7 +182,7 @@ export class ViewResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DestroyViewPermissionGuard)
-  async destroyCoreView(
+  async destroyView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {

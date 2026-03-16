@@ -16,4 +16,5 @@ export type MetadataEventBatch<
   events: MetadataEvent[];
   userId?: string;
   apiKeyId?: string;
+  updatedCollectionHash?: string;
 };

@@ -1,29 +1,23 @@
+import { useMutation } from '@apollo/client/react';
 import {
   type UpdateOneFieldMetadataItemMutationVariables,
-  useUpdateOneFieldMetadataItemMutation,
+  UpdateOneFieldMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useUpdateOneFieldMetadataItem = () => {
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
-
-  const [updateOneFieldMetadataItemMutation] =
-    useUpdateOneFieldMetadataItemMutation();
+  const [updateOneFieldMetadataItemMutation] = useMutation(
+    UpdateOneFieldMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
 
@@ -64,9 +58,6 @@ export const useUpdateOneFieldMetadataItem = () => {
         },
       });
 
-      await refreshObjectMetadataItems();
-      await refreshCoreViewsByObjectMetadataId(objectMetadataId);
-
       setLastFieldMetadataItemUpdate({
         fieldMetadataItemId: fieldMetadataIdToUpdate,
         objectMetadataId,
@@ -78,7 +69,7 @@ export const useUpdateOneFieldMetadataItem = () => {
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.UPDATE,

@@ -173,7 +173,7 @@ export const useUpdateOneRecord = () => {
           input: sanitizedInput,
         },
         update: (cache, { data }) => {
-          const record = data?.[mutationResponseField];
+          const record = (data as Record<string, any>)?.[mutationResponseField];
           if (!isDefined(record)) return;
 
           const recordToUpsert = getRecordFromRecordNode({
@@ -246,7 +246,9 @@ export const useUpdateOneRecord = () => {
       objectMetadataNamePlural: objectMetadataItem.namePlural,
     });
 
-    const resultRecord = updatedRecord?.data?.[mutationResponseField] ?? null;
+    const resultRecord =
+      (updatedRecord?.data as Record<string, any>)?.[mutationResponseField] ??
+      null;
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,

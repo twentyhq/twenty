@@ -1,7 +1,4 @@
-import { currentUserState } from '@/auth/states/currentUserState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -83,18 +80,12 @@ export const NavigationDrawerSectionTitle = ({
     isNavigationDrawerExpandedState,
   );
   const isSettingsPage = useIsSettingsPage();
-  const currentUser = useAtomStateValue(currentUserState);
-  const loading = useIsPrefetchLoading();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (isDefined(onClick) && (isNavigationDrawerExpanded || isSettingsPage)) {
       onClick();
     }
   };
-
-  if (loading && isDefined(currentUser)) {
-    return <NavigationDrawerSectionTitleSkeletonLoader />;
-  }
 
   const ChevronIcon = isOpen === true ? IconChevronDown : IconChevronRight;
 

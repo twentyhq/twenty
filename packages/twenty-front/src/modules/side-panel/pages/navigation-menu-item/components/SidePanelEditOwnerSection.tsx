@@ -7,7 +7,8 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 
 type SidePanelEditOwnerSectionProps = {
   applicationId?: string | null;
@@ -28,7 +29,7 @@ export const SidePanelEditOwnerSection = ({
 
   const applicationId = applicationIdProp ?? applicationIdFromDraft;
 
-  const { data } = useFindOneApplicationQuery({
+  const { data } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId ?? '' },
     skip: !isDefined(applicationId),
   });

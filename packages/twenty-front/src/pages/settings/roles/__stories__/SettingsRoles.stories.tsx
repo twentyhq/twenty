@@ -7,7 +7,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
-import { getOperationName } from '@apollo/client/utilities';
+import { getOperationName } from '~/utils/getOperationName';
 import { graphql, HttpResponse } from 'msw';
 import { SettingsRoles } from '~/pages/settings/roles/SettingsRoles';
 

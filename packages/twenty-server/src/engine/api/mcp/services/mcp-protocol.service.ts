@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { type ToolSet, zodSchema } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
@@ -11,7 +10,6 @@ import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entit
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
@@ -43,27 +41,12 @@ const MCP_EXCLUDED_TOOLS = new Set(['code_interpreter', 'http_request']);
 @Injectable()
 export class McpProtocolService {
   constructor(
-    private readonly featureFlagService: FeatureFlagService,
     private readonly toolRegistry: ToolRegistryService,
     private readonly userRoleService: UserRoleService,
     private readonly mcpToolExecutorService: McpToolExecutorService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly skillService: SkillService,
   ) {}
-
-  async checkAiEnabled(workspaceId: string): Promise<void> {
-    const isAiEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_ENABLED,
-      workspaceId,
-    );
-
-    if (!isAiEnabled) {
-      throw new HttpException(
-        'AI feature is not enabled for this workspace',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-  }
 
   handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
@@ -184,8 +167,6 @@ export class McpProtocolService {
     },
   ): Promise<Record<string, unknown>> {
     try {
-      await this.checkAiEnabled(workspace.id);
-
       if (method === 'initialize') {
         return this.handleInitialize(id);
       }

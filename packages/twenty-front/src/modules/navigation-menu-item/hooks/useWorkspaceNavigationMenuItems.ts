@@ -4,20 +4,17 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavig
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 import { isDefined } from 'twenty-shared/utils';
-import { usePrefetchedNavigationMenuItemsData } from './usePrefetchedNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
 export const useWorkspaceNavigationMenuItems = (): {
   workspaceNavigationMenuItemsObjectMetadataItems: ObjectMetadataItem[];
 } => {
   const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
-  const coreViews = useAtomStateValue(coreViewsState);
-
-  const views = coreViews.map(convertCoreViewToView);
+    useNavigationMenuItemsData();
+  const views = useAtomStateValue(viewsSelector);
 
   const workspaceFolderIds = useMemo(
     () =>

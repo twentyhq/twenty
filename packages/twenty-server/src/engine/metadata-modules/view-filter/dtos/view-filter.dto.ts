@@ -11,7 +11,7 @@ registerEnumType(ViewFilterOperand, {
   name: 'ViewFilterOperand',
 });
 
-@ObjectType('CoreViewFilter')
+@ObjectType('ViewFilter')
 export class ViewFilterDTO {
   @IDField(() => UUIDScalarType)
   id: string;

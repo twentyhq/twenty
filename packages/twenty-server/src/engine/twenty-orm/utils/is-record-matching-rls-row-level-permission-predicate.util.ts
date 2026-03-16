@@ -23,7 +23,7 @@ import {
   type RatingFilter,
   type RawJsonFilter,
   type RecordGqlOperationFilter,
-  type RichTextV2Filter,
+  type RichTextFilter,
   type SelectFilter,
   type StringFilter,
   type TSVectorFilter,
@@ -40,7 +40,7 @@ import {
   isMatchingMultiSelectFilter,
   isMatchingRatingFilter,
   isMatchingRawJsonFilter,
-  isMatchingRichTextV2Filter,
+  isMatchingRichTextFilter,
   isMatchingSelectFilter,
   isMatchingStringFilter,
   isMatchingTSVectorFilter,
@@ -244,17 +244,8 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         });
       }
       case FieldMetadataType.RICH_TEXT: {
-        // TODO: Implement a better rich text filter once it becomes a composite field
-        // See this issue for more context: https://github.com/twentyhq/twenty/issues/7613#issuecomment-2408944585
-        // This should be tackled in Q4'24
-        return isMatchingStringFilter({
-          stringFilter: filterValue as StringFilter,
-          value: recordFieldValue,
-        });
-      }
-      case FieldMetadataType.RICH_TEXT_V2: {
-        return isMatchingRichTextV2Filter({
-          richTextV2Filter: filterValue as RichTextV2Filter,
+        return isMatchingRichTextFilter({
+          richTextFilter: filterValue as RichTextFilter,
           value: recordFieldValue,
         });
       }

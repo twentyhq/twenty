@@ -1,34 +1,15 @@
 import { gql } from '@apollo/client';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  DeleteOneFieldMetadataItemDocument,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const FIELD_RELATION_METADATA_ID =
   '4da0302d-358a-45cd-9973-9f92723ed3c1';
 
 export const queries = {
-  deleteMetadataField: gql`
-    mutation DeleteOneFieldMetadataItem($idToDelete: UUID!) {
-      deleteOneField(input: { id: $idToDelete }) {
-        id
-        type
-        name
-        label
-        description
-        icon
-        isCustom
-        isActive
-        isUnique
-        isNullable
-        createdAt
-        updatedAt
-        settings
-        applicationId
-        object {
-          id
-        }
-      }
-    }
-  `,
+  deleteMetadataField: DeleteOneFieldMetadataItemDocument,
   activateMetadataField: gql`
     mutation UpdateOneFieldMetadataItem(
       $idToUpdate: UUID!

@@ -44,7 +44,7 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
-      .filter((view) => view.key !== ViewKey.Index)
+      .filter((view) => view.key !== ViewKey.INDEX)
       .map((view) => view.objectMetadataId),
   );
 

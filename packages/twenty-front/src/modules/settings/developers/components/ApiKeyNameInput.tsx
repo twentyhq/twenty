@@ -6,7 +6,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useUpdateApiKeyMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateApiKeyDocument } from '~/generated-metadata/graphql';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ export const ApiKeyNameInput = ({
   disabled,
   onNameUpdate,
 }: ApiKeyNameInputProps) => {
-  const [updateApiKey] = useUpdateApiKeyMutation();
+  const [updateApiKey] = useMutation(UpdateApiKeyDocument);
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   // oxlint-disable-next-line react-hooks/exhaustive-deps

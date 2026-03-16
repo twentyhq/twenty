@@ -18,7 +18,7 @@ export const triggerDetachRelationOptimisticEffect = ({
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
 }: {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   sourceObjectNameSingular: string;
   sourceRecordId: string;
   targetObjectMetadataItem: Pick<

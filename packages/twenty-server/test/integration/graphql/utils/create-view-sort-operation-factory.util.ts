@@ -13,8 +13,8 @@ export const createViewSortOperationFactory = ({
   data = {},
 }: CreateViewSortOperationFactoryParams = {}) => ({
   query: gql`
-    mutation CreateCoreViewSort($input: CreateViewSortInput!) {
-      createCoreViewSort(input: $input) {
+    mutation CreateViewSort($input: CreateViewSortInput!) {
+      createViewSort(input: $input) {
         ${gqlFields}
       }
     }

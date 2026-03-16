@@ -9,8 +9,8 @@ export const findViewSortsOperationFactory = ({
   viewId: string;
 }) => ({
   query: gql`
-    query GetCoreViewSorts($viewId: String!) {
-      getCoreViewSorts(viewId: $viewId) {
+    query GetViewSorts($viewId: String!) {
+      getViewSorts(viewId: $viewId) {
         ${gqlFields}
       }
     }

@@ -28,7 +28,7 @@ export class ViewFilterGroupResolver {
 
   @Query(() => [ViewFilterGroupDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFilterGroups(
+  async getViewFilterGroups(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
@@ -42,7 +42,7 @@ export class ViewFilterGroupResolver {
 
   @Query(() => ViewFilterGroupDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFilterGroup(
+  async getViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO | null> {
@@ -51,7 +51,7 @@ export class ViewFilterGroupResolver {
 
   @Mutation(() => ViewFilterGroupDTO)
   @UseGuards(CreateViewFilterGroupPermissionGuard)
-  async createCoreViewFilterGroup(
+  async createViewFilterGroup(
     @Args('input') input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
@@ -63,7 +63,7 @@ export class ViewFilterGroupResolver {
 
   @Mutation(() => ViewFilterGroupDTO)
   @UseGuards(UpdateViewFilterGroupPermissionGuard)
-  async updateCoreViewFilterGroup(
+  async updateViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -77,7 +77,7 @@ export class ViewFilterGroupResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DeleteViewFilterGroupPermissionGuard)
-  async deleteCoreViewFilterGroup(
+  async deleteViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
@@ -91,7 +91,7 @@ export class ViewFilterGroupResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(DestroyViewFilterGroupPermissionGuard)
-  async destroyCoreViewFilterGroup(
+  async destroyViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {

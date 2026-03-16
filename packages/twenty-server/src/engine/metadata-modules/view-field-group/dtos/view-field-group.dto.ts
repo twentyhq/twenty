@@ -1,11 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type ViewFieldGroupOverrides } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 
-@ObjectType('CoreViewFieldGroup')
+@ObjectType('ViewFieldGroup')
 export class ViewFieldGroupDTO {
   @IDField(() => UUIDScalarType)
   id: string;
@@ -36,4 +37,10 @@ export class ViewFieldGroupDTO {
 
   @Field(() => [ViewFieldDTO])
   viewFields?: ViewFieldDTO[];
+
+  @Field(() => Boolean, { nullable: false })
+  isOverridden: boolean;
+
+  @HideField()
+  overrides?: ViewFieldGroupOverrides | null;
 }

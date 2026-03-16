@@ -212,6 +212,21 @@ twenty entity:add navigation-menu-item
 # Add a new skill
 twenty entity:add skill
 
+# Build the app (output in .twenty/output/)
+twenty app:build
+
+# Build and create a tarball
+twenty app:build --tarball
+
+# Publish to npm
+twenty app:publish
+
+# Publish with a dist-tag
+twenty app:publish --tag beta
+
+# Publish directly to a Twenty server (builds, uploads, and installs)
+twenty app:publish --server https://app.twenty.com
+
 # Uninstall the app from the workspace
 twenty app:uninstall
 

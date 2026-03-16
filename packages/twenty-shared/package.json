@@ -31,7 +31,7 @@
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
     "class-validator": "^0.14.0",
-    "expr-eval": "^2.0.2",
+    "expr-eval-fork": "3.0.3",
     "handlebars": "^4.7.8",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",

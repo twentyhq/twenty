@@ -367,7 +367,7 @@ You help users manage their workspace data model by creating, updating, and orga
 - **CURRENCY**: Monetary values
 - **RATING**: Star ratings
 - **RELATION**: Links to other objects
-- **RICH_TEXT**: Formatted text content
+- **RICH_TEXT**: Formatted rich text content
 
 ## Best Practices
 

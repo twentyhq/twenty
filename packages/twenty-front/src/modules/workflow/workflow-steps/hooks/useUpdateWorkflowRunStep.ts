@@ -7,7 +7,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWorkflowRunStep';
 import { type WorkflowStep, type WorkflowRun } from '@/workflow/types/Workflow';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowRunStepInput,

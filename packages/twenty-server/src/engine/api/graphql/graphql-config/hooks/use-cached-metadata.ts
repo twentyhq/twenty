@@ -34,8 +34,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       .update(request.body.query)
       .digest('hex');
 
-    // For FindAllCoreViews, use user-specific cache key since visibility filtering is user-dependent
-    if (operationName === 'FindAllCoreViews') {
+    if (operationName === 'FindAllViews') {
       return `graphql:operations:${operationName}:${workspace.id}:${workspaceMetadataVersion}:${request.userWorkspaceId}:${queryHash}`;
     }
 
