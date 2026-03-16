@@ -825,6 +825,34 @@ check_file_contains \
   "packages/twenty-front/src/modules/sse-db-event/hooks/useDispatchObjectRecordEventsFromSseToBrowserEvents.ts" \
   "store.get" \
   "SSE dispatch must use store.get() snapshot, not useObjectMetadataItems() hook"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/hooks/useLazyFindManyRecordsWithOffset.ts" \
+  "fetchPolicy: 'no-cache'" \
+  "Offset fetch must use no-cache (record table reads from jotai, Apollo 3 has no cache GC)"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-index/hooks/useRecordIndexTableFetchMore.ts" \
+  "fetchPolicy: 'no-cache'" \
+  "Initial table fetch must use no-cache (record table reads from jotai, Apollo 3 has no cache GC)"
+check_file_not_contains \
+  "packages/twenty-front/src/modules/apollo/components/ApolloProvider.tsx" \
+  "connectToDevTools: true" \
+  "connectToDevTools must not be hardcoded true (wastes memory in production)"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric.tsx" \
+  "useMemo" \
+  "FieldContext value must be memoized (rendered per cell, O(rows × fields))"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier.tsx" \
+  "useMemo" \
+  "Label identifier FieldContext value must be memoized"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellBaseContainer.tsx" \
+  "useCallback" \
+  "Cell click handler must use useCallback (created per cell)"
+check_file_not_contains \
+  "packages/twenty-front/package.json" \
+  "apollo3-cache-persist" \
+  "apollo3-cache-persist dependency must be removed (dead code after ApolloProvider fix)"
 
 echo ""
 

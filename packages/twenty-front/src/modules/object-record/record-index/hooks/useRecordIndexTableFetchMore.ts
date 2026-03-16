@@ -14,10 +14,14 @@ export const useRecordIndexTableFetchMore = (objectNameSingular: string) => {
     objectMetadataItem,
   });
 
+  // OMNIA-CUSTOM: Use no-cache because the record table reads from jotai
+  // (recordStoreFamilyState), not Apollo cache. With Apollo 3 (no automatic
+  // cache GC), caching here causes unbounded memory growth → mobile OOM.
   const { fetchMoreRecordsLazy, queryIdentifier, findManyRecordsLazy } =
     useLazyFindManyRecords({
       ...params,
       recordGqlFields,
+      fetchPolicy: 'no-cache',
     });
 
   return {

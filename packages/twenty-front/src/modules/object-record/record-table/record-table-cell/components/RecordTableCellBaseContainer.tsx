@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { useCallback, useContext, type ReactNode } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
@@ -63,9 +63,10 @@ export const RecordTableCellBaseContainer = ({
     isLabelIdentifier,
   );
 
-  const handleContainerClick = () => {
+  // OMNIA-CUSTOM: Memoize — created per cell, prevents re-render from new ref.
+  const handleContainerClick = useCallback(() => {
     openTableCell();
-  };
+  }, [openTableCell]);
 
   return (
     <StyledBaseContainer

@@ -49,12 +49,16 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
+  // OMNIA-CUSTOM: Use no-cache because the record table reads from jotai
+  // (recordStoreFamilyState), not Apollo cache. With Apollo 3 (no automatic
+  // cache GC), caching here causes unbounded memory growth → mobile OOM.
   const [findManyRecords] = useLazyQuery<RecordGqlOperationFindManyResult>(
     findManyRecordsQuery,
     {
       variables: {
         ...params,
       },
+      fetchPolicy: 'no-cache',
       onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     },

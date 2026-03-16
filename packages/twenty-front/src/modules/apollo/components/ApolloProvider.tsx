@@ -16,7 +16,7 @@ export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
 
   const apolloClient = useApolloFactory({
     uri: `${REACT_APP_SERVER_BASE_URL}/metadata`,
-    connectToDevTools: true,
+    connectToDevTools: process.env.NODE_ENV === 'development',
     extraLinks: [captchaRefreshLink],
   });
 

@@ -12,7 +12,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useContext, type ReactNode } from 'react';
+import { useContext, useMemo, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 type RecordTableCellFieldContextGenericProps = {
   recordField: RecordField;
@@ -84,35 +84,53 @@ export const RecordTableCellFieldContextGeneric = ({
     }
   }
 
+  // OMNIA-CUSTOM: Memoize context value — this component renders per cell
+  // (O(rows × fields)). Without memoization, every parent re-render creates
+  // a new object reference, forcing all FieldContext consumers to re-render.
+  const useUpdateRecordHook = useMemo(
+    () => (): [(params: any) => void, any] => [updateRecord, {}],
+    [updateRecord],
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
+      recordId,
+      fieldDefinition: fieldDefinition,
+      useUpdateRecord: useUpdateRecordHook,
+      isLabelIdentifier: isLabelIdentifierField({
+        fieldMetadataItem: {
+          id: fieldDefinition.fieldMetadataId,
+          name: fieldDefinition.metadata.fieldName,
+        },
+        objectMetadataItem,
+      }),
+      displayedMaxRows: 1,
+      isRecordFieldReadOnly: isRecordFieldReadOnly({
+        isRecordReadOnly: isRecordReadOnly ?? false,
+        isSystemObject: objectMetadataItem.isSystem,
+        objectPermissions,
+        fieldMetadataItem: {
+          id: fieldDefinition.fieldMetadataId,
+          isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+          isCustom: fieldDefinition.metadata.isCustom ?? false,
+        },
+      }),
+      isForbidden: !hasObjectReadPermissions,
+    }),
+    [
+      recordField.fieldMetadataItemId,
+      recordId,
+      fieldDefinition,
+      useUpdateRecordHook,
+      objectMetadataItem,
+      isRecordReadOnly,
+      objectPermissions,
+      hasObjectReadPermissions,
+    ],
+  );
+
   return (
-    <FieldContext.Provider
-      value={{
-        fieldMetadataItemId: recordField.fieldMetadataItemId,
-        recordId,
-        fieldDefinition: fieldDefinition,
-        useUpdateRecord: () => [updateRecord, {}],
-        isLabelIdentifier: isLabelIdentifierField({
-          fieldMetadataItem: {
-            id: fieldDefinition.fieldMetadataId,
-            name: fieldDefinition.metadata.fieldName,
-          },
-          objectMetadataItem,
-        }),
-        displayedMaxRows: 1,
-        isRecordFieldReadOnly: isRecordFieldReadOnly({
-          isRecordReadOnly: isRecordReadOnly ?? false,
-          isSystemObject: objectMetadataItem.isSystem,
-          objectPermissions,
-          fieldMetadataItem: {
-            id: fieldDefinition.fieldMetadataId,
-            isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
-            isCustom: fieldDefinition.metadata.isCustom ?? false,
-          },
-        }),
-        isForbidden: !hasObjectReadPermissions,
-      }}
-    >
-      {children}
-    </FieldContext.Provider>
+    <FieldContext.Provider value={contextValue}>{children}</FieldContext.Provider>
   );
 };
