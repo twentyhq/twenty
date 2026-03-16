@@ -236,12 +236,12 @@ export class ImapClientProvider implements OnModuleDestroy {
 
   async onModuleDestroy() {
     this.logger.log('Closing all cached IMAP connections...');
-    
-    // Using iterator directly to avoid TS2802 (downlevelIteration) and 
+
+    // Using iterator directly to avoid TS2802 (downlevelIteration) and
     // prevent missing concurrently added clients during shutdown
     const iterator = this.connectionCache.entries();
     let result = iterator.next();
-    
+
     while (!result.done) {
       const [id, cached] = result.value;
       try {
@@ -254,7 +254,7 @@ export class ImapClientProvider implements OnModuleDestroy {
       }
       result = iterator.next();
     }
-    
+
     this.connectionCache.clear();
   }
 }
