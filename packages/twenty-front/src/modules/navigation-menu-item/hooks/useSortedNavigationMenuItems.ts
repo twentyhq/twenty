@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/utils/filterAndSortNavigationMenuItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -11,7 +11,7 @@ export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
   const views = useAtomStateValue(viewsSelector);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const navigationMenuItemsSorted = useMemo(() => {
     return filterAndSortNavigationMenuItems(

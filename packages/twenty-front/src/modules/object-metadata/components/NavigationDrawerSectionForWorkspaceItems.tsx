@@ -12,7 +12,7 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/u
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
 import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/components/WorkspaceSectionListEditModeFallback';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -63,7 +63,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const views = useAtomStateValue(viewsSelector);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,
   );

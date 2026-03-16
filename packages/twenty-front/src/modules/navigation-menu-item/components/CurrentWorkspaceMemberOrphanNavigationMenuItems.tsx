@@ -19,7 +19,7 @@ import { getNavigationMenuItemLabel } from '@/navigation-menu-item/utils/getNavi
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/utils/getNavigationMenuItemObjectNameSingular';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -34,7 +34,7 @@ const StyledOrphanNavigationMenuItemsContainer = styled.div`
 `;
 
 export const CurrentWorkspaceMemberOrphanNavigationMenuItems = () => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();

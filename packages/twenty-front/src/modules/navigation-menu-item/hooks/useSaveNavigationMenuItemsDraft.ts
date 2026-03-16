@@ -15,7 +15,7 @@ import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigat
 import { orderFoldersForCreation } from '@/navigation-menu-item/utils/orderFoldersForCreation';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
@@ -37,7 +37,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
 
     if (!draft) return;
 
-    const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
     for (const draftItem of draft) {
       if (draftItem.type !== NavigationMenuItemType.OBJECT) {

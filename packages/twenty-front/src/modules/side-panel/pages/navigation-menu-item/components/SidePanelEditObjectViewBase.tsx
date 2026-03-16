@@ -3,7 +3,7 @@ import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navig
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/utils/getNavigationMenuItemObjectNameSingular';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelEditColorOption } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption';
@@ -39,7 +39,7 @@ export const SidePanelEditObjectViewBase = ({
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
   const objectNameSingular = isDefined(selectedItem)
