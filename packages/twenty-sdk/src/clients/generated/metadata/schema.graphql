@@ -4283,38 +4283,6 @@ enum WorkspaceMigrationActionType {
   update
 }
 
-<<<<<<< HEAD
-enum AllMetadataName {
-  fieldMetadata
-  objectMetadata
-  view
-  viewField
-  viewFieldGroup
-  viewGroup
-  viewSort
-  rowLevelPermissionPredicate
-  rowLevelPermissionPredicateGroup
-  viewFilterGroup
-  index
-  logicFunction
-  viewFilter
-  role
-  roleTarget
-  agent
-  skill
-  pageLayout
-  pageLayoutWidget
-  pageLayoutTab
-  commandMenuItem
-  navigationMenuItem
-  permissionFlag
-  objectPermission
-  frontComponent
-  webhook
-}
-
-=======
->>>>>>> migrate-permission-flag-to-syncable-entity
 enum FileFolder {
   ProfilePicture
   WorkspaceLogo
