@@ -25,7 +25,7 @@ import { Card } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
@@ -146,25 +146,24 @@ export const SettingsDataModelObjectAboutForm = ({
       shouldValidate: true,
     });
     if (isLabelSyncedWithName) {
-      fillNamePluralFromLabelPlural(labelPluralFromSingularLabel);
+      fillNamesFromLabels(labelSingular, labelPluralFromSingularLabel);
     }
   };
 
-  const fillNameSingularFromLabelSingular = (
-    labelSingular: string | undefined,
+  const fillNamesFromLabels = (
+    currentLabelSingular: string,
+    currentLabelPlural: string,
   ) => {
-    if (!isDefined(labelSingular)) return;
+    const { nameSingular, namePlural } = computeMetadataNamesFromLabels(
+      currentLabelSingular,
+      currentLabelPlural,
+    );
 
-    setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
+    setValue('nameSingular', nameSingular, {
       shouldDirty: true,
       shouldValidate: true,
     });
-  };
-
-  const fillNamePluralFromLabelPlural = (labelPlural: string | undefined) => {
-    if (!isDefined(labelPlural)) return;
-
-    setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
+    setValue('namePlural', namePlural, {
       shouldDirty: true,
       shouldValidate: true,
     });
@@ -215,9 +214,6 @@ export const SettingsDataModelObjectAboutForm = ({
               onChange={(value) => {
                 onChange(capitalize(value));
                 fillLabelPlural(capitalize(value));
-                if (isLabelSyncedWithName === true) {
-                  fillNameSingularFromLabelSingular(value);
-                }
               }}
               onBlur={() => onNewDirtyField?.()}
               disabled={disableEdition}
@@ -243,7 +239,7 @@ export const SettingsDataModelObjectAboutForm = ({
               onChange={(value) => {
                 onChange(capitalize(value));
                 if (isLabelSyncedWithName === true) {
-                  fillNamePluralFromLabelPlural(value);
+                  fillNamesFromLabels(labelSingular, capitalize(value));
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
@@ -411,8 +407,7 @@ export const SettingsDataModelObjectAboutForm = ({
                             value === true &&
                             (isCustomObject || isbeingCreatedObject)
                           ) {
-                            fillNamePluralFromLabelPlural(labelPlural);
-                            fillNameSingularFromLabelSingular(labelSingular);
+                            fillNamesFromLabels(labelSingular, labelPlural);
                           }
                           onNewDirtyField?.();
                         }}

@@ -4035,11 +4035,6 @@ msgstr "Không thể tìm thấy vai trò bạn đang cố gắng sửa đổi. 
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr ""
 
-#. js-lingui-id: H1tAJD
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
-msgid "The singular and plural labels cannot be the same for an object"
-msgstr "Nhãn số ít và số nhiều không thể giống nhau cho một đối tượng"
-
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
