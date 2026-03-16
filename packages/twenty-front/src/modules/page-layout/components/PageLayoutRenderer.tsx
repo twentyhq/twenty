@@ -34,12 +34,12 @@ export const PageLayoutRenderer = ({
         value={{
           instanceId: tabListInstanceId,
         }}
-        >
-          <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
-          <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-          <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
-          <PageLayoutRendererContent />
-        </TabListComponentInstanceContext.Provider>
+      >
+        <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+        <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+        <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
+        <PageLayoutRendererContent />
+      </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>
   );
 };
