@@ -4,7 +4,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, Label } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -80,7 +80,7 @@ export const NavigationDrawerSectionTitle = ({
   alwaysShowRightIcon = false,
   isOpen,
 }: NavigationDrawerSectionTitleProps) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
