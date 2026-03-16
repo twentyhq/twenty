@@ -1,3 +1,4 @@
+import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
 import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { parseThemeColor } from '@/navigation-menu-item/utils/parseThemeColor';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -9,6 +10,7 @@ import {
 } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions';
 import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigation-menu-item/utils/getOrganizeActionsSelectableItemIds';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type SidePanelEditObjectViewBaseProps = OrganizeActionsProps & {
@@ -31,6 +33,12 @@ export const SidePanelEditObjectViewBase = ({
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
   const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
+  const objectColor = useObjectNavItemColor(
+    selectedItem?.objectNameSingular ?? '',
+  );
+  const displayColor = isNonEmptyString(selectedItem?.color)
+    ? selectedItem.color
+    : objectColor;
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
@@ -38,7 +46,7 @@ export const SidePanelEditObjectViewBase = ({
         <SidePanelGroup heading={t`Customize`}>
           <SidePanelEditColorOption
             navigationMenuItemId={selectedItem.id}
-            color={parseThemeColor(selectedItem.color)}
+            color={parseThemeColor(displayColor)}
           />
         </SidePanelGroup>
       )}

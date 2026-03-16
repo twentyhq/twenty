@@ -14,10 +14,12 @@ export const getEffectiveNavigationMenuItemColor = (
       ? navigationMenuItem.color
       : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER;
   }
-  if (
-    navigationMenuItem.itemType === NavigationMenuItemType.OBJECT ||
-    navigationMenuItem.itemType === NavigationMenuItemType.VIEW
-  ) {
+  if (navigationMenuItem.itemType === NavigationMenuItemType.OBJECT) {
+    return isNonEmptyString(navigationMenuItem.color)
+      ? navigationMenuItem.color
+      : objectColor;
+  }
+  if (navigationMenuItem.itemType === NavigationMenuItemType.VIEW) {
     return objectColor;
   }
   if (navigationMenuItem.itemType === NavigationMenuItemType.LINK) {
