@@ -70,11 +70,16 @@ export const NavigationMenuItemIcon = ({
     );
   }
 
+  const isIndexView =
+    navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
+    navigationMenuItem.viewKey === ViewKey.INDEX;
+
   const iconToUse =
     StandardIcon ??
     (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
-  const effectiveColor =
-    getEffectiveNavigationMenuItemColor(navigationMenuItem);
+  const effectiveColor = isIndexView
+    ? objectNavItemColor
+    : getEffectiveNavigationMenuItemColor(navigationMenuItem);
   const useStyledIcon = !isRecord && isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon
     ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
