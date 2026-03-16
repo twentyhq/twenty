@@ -41,10 +41,28 @@ export const splitViewWithRelated = (
 
     flatViews.push(viewProperties);
 
+    const viewFieldIdToGroupId = new Map<string, string>();
+
+    for (const viewFieldGroup of viewFieldGroups) {
+      const { viewFields: groupViewFields, ...viewFieldGroupProperties } =
+        viewFieldGroup;
+
+      flatViewFieldGroups.push(viewFieldGroupProperties);
+
+      for (const groupViewField of groupViewFields) {
+        viewFieldIdToGroupId.set(groupViewField.id, viewFieldGroup.id);
+      }
+    }
+
     for (const viewField of viewFields) {
+      const { viewFieldGroupId: _viewFieldGroupId, ...viewFieldProperties } =
+        viewField;
+      const viewFieldGroupId = viewFieldIdToGroupId.get(viewField.id);
+
       flatViewFields.push({
-        ...viewField,
+        ...viewFieldProperties,
         viewId: viewWithRelated.id,
+        ...(viewFieldGroupId !== undefined ? { viewFieldGroupId } : {}),
       });
     }
 
@@ -71,13 +89,6 @@ export const splitViewWithRelated = (
 
     for (const viewFilterGroup of viewFilterGroups) {
       flatViewFilterGroups.push(viewFilterGroup);
-    }
-
-    for (const viewFieldGroup of viewFieldGroups) {
-      const { viewFields: _viewFields, ...viewFieldGroupProperties } =
-        viewFieldGroup;
-
-      flatViewFieldGroups.push(viewFieldGroupProperties);
     }
   }
 

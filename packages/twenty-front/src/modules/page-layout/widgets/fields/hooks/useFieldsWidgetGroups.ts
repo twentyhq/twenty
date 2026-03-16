@@ -42,7 +42,7 @@ export const useFieldsWidgetGroups = ({
 
       let globalIndex = 0;
 
-      const resolvedGroups = sortedGroups
+      return sortedGroups
         .filter((group) => group.isVisible)
         .map((group) => {
           const groupFields = [...(group.viewFields ?? [])].sort(
@@ -80,10 +80,6 @@ export const useFieldsWidgetGroups = ({
           };
         })
         .filter((group) => group.fields.length > 0);
-
-      if (resolvedGroups.length > 0) {
-        return resolvedGroups;
-      }
     }
 
     if (isDefined(view) && view.viewFields.length > 0) {
