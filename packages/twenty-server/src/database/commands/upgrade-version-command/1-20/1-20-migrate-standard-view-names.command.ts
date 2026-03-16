@@ -67,6 +67,14 @@ export class MigrateStandardViewNamesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
+    if (isDryRun) {
+      this.logger.log(
+        `[DRY RUN] Would migrate standard view names for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
     try {
       const migratedViews = await dataSource.query(
         `UPDATE "core"."view"
@@ -83,12 +91,8 @@ export class MigrateStandardViewNamesCommand extends ActiveOrSuspendedWorkspaces
       const migratedViewsCount = migratedViews.length;
 
       this.logger.log(
-        `${isDryRun ? '[DRY RUN] Would migrate' : 'Migrated'} ${migratedViewsCount} standard view(s) in workspace ${workspaceId}`,
+        `Migrated ${migratedViewsCount} standard view(s) in workspace ${workspaceId}`,
       );
-
-      if (isDryRun) {
-        return;
-      }
 
       await this.featureFlagService.enableFeatureFlags(
         [
