@@ -1,8 +1,8 @@
-# Task 4 — Meeting Transcripts Viewer
+# Task 5 — Meeting Transcripts Viewer
 
-**Status:** FEEDBACK RECEIVED — implementing changes
+**Status:** DONE — all 7 feedback items implemented, deployed, and approved by Pablo
 **Assigned to:** Saba
-**Last updated:** 2026-03-13
+**Last updated:** 2026-03-16
 
 ---
 
