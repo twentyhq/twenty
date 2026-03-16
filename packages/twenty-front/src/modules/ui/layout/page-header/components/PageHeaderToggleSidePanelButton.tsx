@@ -47,15 +47,17 @@ const AnimatedIcon = ({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={theme.icon.size.sm}
-      height={theme.icon.size.sm}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth={theme.icon.stroke.md}
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ display: 'block' }}
+      style={{
+        display: 'block',
+        width: theme.icon.size.sm,
+        height: theme.icon.size.sm,
+      }}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       {/* Center dot */}

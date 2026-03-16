@@ -24173,6 +24173,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lz-string@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@types/lz-string@npm:1.5.0"
+  dependencies:
+    lz-string: "npm:*"
+  checksum: 10c0/201878368ba68fc270ada4710488054e0841427c888968dcc093134693645259be3a972801649b5b1e818ee2f24886ba08a651b5cb36c778b857f1a18ef14d7f
+  languageName: node
+  linkType: hard
+
 "@types/mailparser@npm:^3.4.6":
   version: 3.4.6
   resolution: "@types/mailparser@npm:3.4.6"
@@ -44193,7 +44202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lz-string@npm:^1.4.4, lz-string@npm:^1.5.0":
+"lz-string@npm:*, lz-string@npm:^1.4.4, lz-string@npm:^1.5.0":
   version: 1.5.0
   resolution: "lz-string@npm:1.5.0"
   bin:
@@ -56483,6 +56492,7 @@ __metadata:
     "@types/file-saver": "npm:^2.0.7"
     "@types/js-cookie": "npm:^3.0.3"
     "@types/json-logic-js": "npm:^2"
+    "@types/lz-string": "npm:^1.5.0"
     "@types/marked": "npm:^6.0.0"
     "@types/react-grid-layout": "npm:^1"
     "@xyflow/react": "npm:^12.4.2"
@@ -56504,6 +56514,7 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     linkify-react: "npm:^4.1.3"
     linkifyjs: "npm:^4.1.3"
+    lz-string: "npm:^1.5.0"
     marked: "npm:^17.0.1"
     monaco-editor: "npm:^0.51.0"
     monaco-editor-auto-typings: "npm:^0.4.5"

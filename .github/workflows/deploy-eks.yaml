@@ -78,6 +78,7 @@ jobs:
             REACT_APP_SERVER_BASE_URL=/api
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             SENTRY_RELEASE=${{ github.sha }}
+            APP_VERSION=1.20.0
 
   deploy:
     name: Deploy to EKS

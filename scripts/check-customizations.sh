@@ -123,6 +123,22 @@ check_file_not_contains \
   "packages/twenty-front/src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerHeader.tsx" \
   "IconSearch" \
   "Inline search icon beside the workspace name should remain removed"
+check_file_contains \
+  "packages/twenty-front/src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx" \
+  "OMNIA-CUSTOM: inline Log out" \
+  "Workspace dropdown should have inline Log out and no nested three-dots menu"
+check_file_not_contains \
+  "packages/twenty-front/src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx" \
+  "IconDotsVertical" \
+  "Nested three-dots dropdown should be removed from workspace menu"
+check_file_not_contains \
+  "packages/twenty-front/src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx" \
+  "SignUpInNewWorkspaceDocument" \
+  "Create Workspace mutation should be removed from workspace menu"
+check_file_not_contains \
+  "packages/twenty-front/src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx" \
+  "IconUserPlus" \
+  "Invite user option should be removed from workspace menu"
 
 echo ""
 echo "--- Critical: Member Home Page Redirect ---"
@@ -890,6 +906,38 @@ echo "--- Custom UI Components ---"
 check_file_exists \
   "packages/twenty-ui/src/navigation/link/components/AudioLink.tsx" \
   "AudioLink component for call recording playback"
+
+echo ""
+echo "--- Auth / Branding ---"
+check_file_contains \
+  "packages/twenty-front/src/modules/auth/components/Logo.tsx" \
+  "OMNIA-CUSTOM" \
+  "Logo.tsx must show workspace logo as primary when no custom primary logo set"
+check_file_contains \
+  "packages/twenty-front/src/pages/auth/SignInUp.tsx" \
+  "OMNIA-CUSTOM" \
+  "SignInUp.tsx must show workspace name instead of 'Welcome, X.'"
+
+echo ""
+echo "--- Compressed localStorage ---"
+check_file_contains \
+  "packages/twenty-front/src/modules/metadata-store/states/metadataStoreState.ts" \
+  "createCompressedLocalStorage" \
+  "metadataStoreState must use compressed localStorage adapter (Safari 5MB quota)"
+check_file_contains \
+  "packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createAtomFamilyState.ts" \
+  "customStringStorage" \
+  "createAtomFamilyState must support custom string storage adapter"
+check_file_exists \
+  "packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createCompressedLocalStorage.ts" \
+  "Compressed localStorage adapter using lz-string"
+
+echo ""
+echo "--- Deployment ---"
+check_file_contains \
+  ".github/workflows/deploy-eks.yaml" \
+  "APP_VERSION" \
+  "deploy-eks.yaml must pass APP_VERSION build arg for upgrade migrations"
 
 echo ""
 

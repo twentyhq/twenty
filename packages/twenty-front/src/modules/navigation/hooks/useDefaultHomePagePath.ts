@@ -58,12 +58,13 @@ export const useDefaultHomePagePath = () => {
   );
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
-    // For non-admin users, prefer "person" (Leads) over alphabetical first
-    const preferredItem = !isAdmin
-      ? readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
-          (item) => item.nameSingular === 'person',
-        )
-      : undefined;
+    // OMNIA-CUSTOM: Prefer "person" (Leads) as the default landing page for
+    // all users. Without this, alphabetical sort lands admins on "company"
+    // which is deactivated in our workspace.
+    const preferredItem =
+      readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      );
 
     const targetItem =
       preferredItem ?? readableAlphaSortedActiveNonSystemObjectMetadataItems[0];
@@ -75,11 +76,7 @@ export const useDefaultHomePagePath = () => {
     const view = getFirstView(targetItem.id);
 
     return { objectMetadataItem: targetItem, view };
-  }, [
-    getFirstView,
-    isAdmin,
-    readableAlphaSortedActiveNonSystemObjectMetadataItems,
-  ]);
+  }, [getFirstView, readableAlphaSortedActiveNonSystemObjectMetadataItems]);
 
   const getDefaultObjectPathInfo = useCallback(() => {
     // Only use last-visited storage for admins; members always land on Leads (People)

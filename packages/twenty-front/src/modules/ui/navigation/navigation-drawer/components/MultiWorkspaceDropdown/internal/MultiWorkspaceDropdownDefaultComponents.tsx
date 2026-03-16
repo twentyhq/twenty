@@ -7,8 +7,6 @@ import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils'
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -24,34 +22,27 @@ import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
   Avatar,
-  IconDotsVertical,
   IconLogout,
   IconMessage,
-  IconPlus,
   IconSettings,
   IconSwitchHorizontal,
-  IconUserPlus,
 } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 import {
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui/navigation';
-import { useMutation } from '@apollo/client/react';
 import {
   type AvailableWorkspace,
-  SignUpInNewWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
@@ -70,16 +61,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const { colorScheme, colorSchemeList } = useColorScheme();
   const supportChat = useAtomStateValue(supportChatState);
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
-
-  const [signUpInNewWorkspaceMutation] = useMutation(
-    SignUpInNewWorkspaceDocument,
-  );
 
   const setMultiWorkspaceDropdown = useSetAtomState(
     multiWorkspaceDropdownState,
@@ -106,26 +92,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     );
   };
 
-  const createWorkspace = () => {
-    signUpInNewWorkspaceMutation({
-      onCompleted: async (data) => {
-        return await redirectToWorkspaceDomain(
-          getWorkspaceUrl(data.signUpInNewWorkspace.workspace.workspaceUrls),
-          AppPath.Verify,
-          {
-            loginToken: data.signUpInNewWorkspace.loginToken.token,
-          },
-          '_blank',
-        );
-      },
-      onError: (error) => {
-        enqueueErrorSnackBar({
-          ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-        });
-      },
-    });
-  };
-
+  /* OMNIA-CUSTOM: inline Log out, remove Create Workspace, Invite user, and nested dropdown */
   return (
     <DropdownContent>
       <DropdownMenuHeader
@@ -136,34 +103,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                 placeholder={currentWorkspace?.displayName || ''}
                 avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
               />
-            }
-          />
-        }
-        EndComponent={
-          <Dropdown
-            clickableComponent={
-              <LightIconButton
-                Icon={IconDotsVertical}
-                size="small"
-                accent="tertiary"
-              />
-            }
-            dropdownId="multi-workspace-dropdown-context-menu"
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconPlus}
-                    text={t`Create Workspace`}
-                    onClick={createWorkspace}
-                  />
-                  <MenuItem
-                    LeftIcon={IconLogout}
-                    text={t`Log out`}
-                    onClick={signOut}
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
             }
           />
         }
@@ -229,14 +168,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           onClick={() => setMultiWorkspaceDropdown('themes')}
         />
         <UndecoratedLink
-          to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
-          onClick={() => {
-            closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
-          }}
-        >
-          <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
-        </UndecoratedLink>
-        <UndecoratedLink
           to={getSettingsPath(SettingsPath.ProfilePage)}
           onClick={() => {
             setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
@@ -254,6 +185,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             onClick={handleSupport}
           />
         )}
+        <MenuItem
+          LeftIcon={IconLogout}
+          text={t`Log out`}
+          onClick={signOut}
+        />
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
+import { type SyncStringStorage } from 'jotai/vanilla/utils/atomWithStorage';
+import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 
 import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
 
@@ -8,11 +9,13 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   defaultValue,
   useLocalStorage = false,
   localStorageOptions,
+  customStringStorage,
 }: {
   key: string;
   defaultValue: ValueType;
   useLocalStorage?: boolean;
   localStorageOptions?: { getOnInit?: boolean };
+  customStringStorage?: SyncStringStorage;
 }): FamilyState<ValueType, FamilyKey> => {
   const atomCache = new Map<
     string,
@@ -32,11 +35,14 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
     }
 
     const atomKey = `${key}__${cacheKey}`;
+    const storage = customStringStorage
+      ? createJSONStorage<ValueType>(() => customStringStorage)
+      : undefined;
     const baseAtom = useLocalStorage
       ? atomWithStorage<ValueType>(
           atomKey,
           defaultValue,
-          undefined,
+          storage,
           localStorageOptions ?? undefined,
         )
       : atom(defaultValue);
