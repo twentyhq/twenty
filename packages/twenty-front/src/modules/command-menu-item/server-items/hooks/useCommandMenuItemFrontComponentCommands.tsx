@@ -100,11 +100,11 @@ const buildCommandMenuItemFromFrontComponent = ({
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
-    shortLabel: item.shortLabel ?? undefined,
+    shortLabel: item.shortLabel,
     position: item.position,
     isPinned,
     Icon,
-    hotKeys: item.hotKeys ?? undefined,
+    hotKeys: item.hotKeys,
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
@@ -149,11 +149,11 @@ const buildCommandItemFromEngineKey = ({
     key: `command-menu-item-engine-${item.id}`,
     scope,
     label: item.label,
-    shortLabel: item.shortLabel ?? undefined,
+    shortLabel: item.shortLabel,
     position: item.position,
     isPinned,
     Icon,
-    hotKeys: item.hotKeys ?? undefined,
+    hotKeys: item.hotKeys,
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
