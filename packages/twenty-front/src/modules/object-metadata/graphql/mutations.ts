@@ -19,6 +19,71 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      fieldsList {
+        id
+        universalIdentifier
+        type
+        name
+        label
+        description
+        icon
+        isCustom
+        isActive
+        isSystem
+        isUIReadOnly
+        isNullable
+        isUnique
+        createdAt
+        updatedAt
+        defaultValue
+        options
+        settings
+        isLabelSyncedWithName
+        morphId
+        applicationId
+        relation {
+          type
+          sourceObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          targetObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          sourceFieldMetadata {
+            id
+            name
+          }
+          targetFieldMetadata {
+            id
+            name
+          }
+        }
+        morphRelations {
+          type
+          sourceObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          targetObjectMetadata {
+            id
+            nameSingular
+            namePlural
+          }
+          sourceFieldMetadata {
+            id
+            name
+          }
+          targetFieldMetadata {
+            id
+            name
+          }
+        }
+      }
     }
   }
 `;

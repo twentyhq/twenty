@@ -169,6 +169,14 @@ export const useTriggerEventStreamCreation = () => {
                 dispatchObjectRecordEventsFromSseToBrowserEvents(
                   objectRecordEventsWithQueryIds,
                 );
+
+                const metadataEventsWithQueryIds =
+                  result?.data?.onEventSubscription
+                    ?.metadataEventsWithQueryIds ?? [];
+
+                dispatchMetadataEventsFromSseToBrowserEvents(
+                  metadataEventsWithQueryIds,
+                );
               }
             }
           } catch (error) {

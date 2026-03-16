@@ -1,22 +1,32 @@
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type CreateObjectInput,
   CreateOneObjectMetadataItemDocument,
+  FindManyNavigationMenuItemsDocument,
+  FindManyViewsDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
+import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { CrudOperationType } from 'twenty-shared/types';
+
 export const useCreateOneObjectMetadataItem = () => {
   const [createOneObjectMetadataItemMutation] = useMutation(
     CreateOneObjectMetadataItemDocument,
   );
 
+  const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { createDraftItems, replaceDraft, applyChanges } = useMetadataStore();
 
   const createOneObjectMetadataItem = async (
     input: CreateObjectInput,
@@ -31,6 +41,69 @@ export const useCreateOneObjectMetadataItem = () => {
           input: { object: input },
         },
       });
+
+      const createdObject = createdObjectMetadata.data?.createOneObject;
+
+      if (isDefined(createdObject)) {
+        const { __typename: _objectTypename, fieldsList, ...objectData } =
+          createdObject;
+
+        createDraftItems(
+          'objectMetadataItems',
+          [objectData as FlatObjectMetadataItem],
+        );
+
+        const flatFields = fieldsList.map((field) => {
+          const { __typename: _fieldTypename, ...fieldData } = field;
+
+          return {
+            ...fieldData,
+            objectMetadataId: createdObject.id,
+          } as FlatFieldMetadataItem;
+        });
+
+        createDraftItems('fieldMetadataItems', flatFields);
+
+        applyChanges();
+
+        const [viewsResult, navItemsResult] = await Promise.all([
+          client.query({
+            query: FindManyViewsDocument,
+            variables: { objectMetadataId: createdObject.id },
+            fetchPolicy: 'network-only',
+          }),
+          client.query({
+            query: FindManyNavigationMenuItemsDocument,
+            fetchPolicy: 'network-only',
+          }),
+        ]);
+
+        const fetchedViews = viewsResult.data?.getViews ?? [];
+
+        const {
+          flatViews,
+          flatViewFields,
+          flatViewFilters,
+          flatViewSorts,
+          flatViewGroups,
+          flatViewFilterGroups,
+          flatViewFieldGroups,
+        } = splitViewWithRelated(fetchedViews);
+
+        createDraftItems('views', flatViews);
+        createDraftItems('viewFields', flatViewFields);
+        createDraftItems('viewFilters', flatViewFilters);
+        createDraftItems('viewSorts', flatViewSorts);
+        createDraftItems('viewGroups', flatViewGroups);
+        createDraftItems('viewFilterGroups', flatViewFilterGroups);
+        createDraftItems('viewFieldGroups', flatViewFieldGroups);
+
+        replaceDraft('navigationMenuItems',
+          navItemsResult.data?.navigationMenuItems ?? [],
+        );
+
+        applyChanges();
+      }
 
       return {
         status: 'successful',

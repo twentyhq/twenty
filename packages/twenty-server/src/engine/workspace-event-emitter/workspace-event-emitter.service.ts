@@ -136,10 +136,6 @@ export class WorkspaceEventEmitterService {
         continue;
       }
 
-      if (Object.keys(streamData.queries).length === 0) {
-        continue;
-      }
-
       if (isMetadata) {
         await this.processMetadataStreamEvents(
           streamChannelId,
@@ -147,6 +143,10 @@ export class WorkspaceEventEmitterService {
           eventBatch as MetadataEventBatch,
         );
       } else {
+        if (Object.keys(streamData.queries).length === 0) {
+          continue;
+        }
+
         if (!isDefined(objectRecordStreamContext)) {
           continue;
         }
