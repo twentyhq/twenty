@@ -2,18 +2,18 @@ import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
-import { APP_ERROR_CODES, type CommandResult } from './types';
+import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
 export type AppUninstallOptions = {
   appPath: string;
-  workspace?: string;
+  remote?: string;
 };
 
 const innerAppUninstall = async (
   options: AppUninstallOptions,
 ): Promise<CommandResult> => {
-  if (options.workspace) {
-    ConfigService.setActiveWorkspace(options.workspace);
+  if (options.remote) {
+    ConfigService.setActiveRemote(options.remote);
   }
 
   const apiService = new ApiService();
@@ -24,7 +24,7 @@ const innerAppUninstall = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
-        message: 'Manifest not found. Run `app:build` or `app:dev` first.',
+        message: 'Manifest not found. Run `build` or `dev` first.',
       },
     };
   }

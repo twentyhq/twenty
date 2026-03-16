@@ -5,8 +5,8 @@ const mockApiService = {
   generateApplicationToken: vi.fn().mockResolvedValue({
     success: true,
     data: {
-      applicationAccessToken: { token: 'mock-access-token', expiresAt: '' },
-      applicationRefreshToken: { token: 'mock-refresh-token', expiresAt: '' },
+      accessToken: { token: 'mock-access-token', expiresAt: '' },
+      refreshToken: { token: 'mock-refresh-token', expiresAt: '' },
     },
   }),
   refreshToken: vi.fn().mockResolvedValue('mock-renewed-access-token'),

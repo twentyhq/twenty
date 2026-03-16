@@ -1,12 +1,10 @@
-import { appPublish } from '@/cli/public-operations/app-publish';
+import { appPublish } from '@/cli/operations/publish';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
 
 export type AppPublishCommandOptions = {
   appPath?: string;
-  server?: string;
-  token?: string;
   tag?: string;
 };
 
@@ -16,22 +14,12 @@ export class AppPublishCommand {
 
     await checkSdkVersionCompatibility(appPath);
 
-    const isServerPublish = !!options.server;
-
-    console.log(
-      chalk.blue(
-        isServerPublish
-          ? `Publishing to server ${options.server}...`
-          : 'Publishing to npm...',
-      ),
-    );
+    console.log(chalk.blue('Publishing to npm...'));
     console.log(chalk.gray(`App path: ${appPath}`));
     console.log('');
 
     const result = await appPublish({
       appPath,
-      server: options.server,
-      token: options.token,
       npmTag: options.tag,
       onProgress: (message) => console.log(chalk.gray(message)),
     });
@@ -41,12 +29,6 @@ export class AppPublishCommand {
       process.exit(1);
     }
 
-    if (result.data.target === 'npm') {
-      console.log(chalk.green('✓ Published to npm successfully'));
-    } else {
-      console.log(
-        chalk.green('✓ Published to server and installed successfully'),
-      );
-    }
+    console.log(chalk.green('✓ Published to npm successfully'));
   }
 }

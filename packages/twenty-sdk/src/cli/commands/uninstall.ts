@@ -1,4 +1,4 @@
-import { appUninstall } from '@/cli/public-operations/app-uninstall';
+import { appUninstall } from '@/cli/operations/uninstall';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';

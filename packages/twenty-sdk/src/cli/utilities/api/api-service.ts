@@ -28,13 +28,14 @@ export class ApiService {
 
       config.baseURL = serverUrl ?? twentyConfig.apiUrl;
 
+      const envToken = process.env.TWENTY_TOKEN;
       const authToken =
-        token ?? twentyConfig.applicationAccessToken ?? twentyConfig.apiKey;
+        token ?? envToken ?? twentyConfig.accessToken ?? twentyConfig.apiKey;
 
       if (!config.headers.Authorization && authToken) {
         if (
           !token &&
-          authToken === twentyConfig.applicationAccessToken &&
+          authToken === twentyConfig.accessToken &&
           this.isTokenExpired(authToken)
         ) {
           const refreshed = await this.refreshToken();
@@ -62,7 +63,7 @@ export class ApiService {
         if (error.response?.status === 401) {
           console.error(
             chalk.red(
-              'Authentication failed. Please run `yarn twenty auth:login`.',
+              'Authentication failed. Run `twenty remote add` to authenticate.',
             ),
           );
         } else if (error.response?.status === 403) {
@@ -119,14 +120,14 @@ export class ApiService {
   async refreshToken(): Promise<string | null> {
     const config = await this.configService.getConfig();
 
-    if (!config.applicationRefreshToken || !config.oauthClientId) {
+    if (!config.refreshToken || !config.oauthClientId) {
       return null;
     }
 
     try {
       const tokenResponse = await axios.post(`${config.apiUrl}/oauth/token`, {
         grant_type: 'refresh_token',
-        refresh_token: config.applicationRefreshToken,
+        refresh_token: config.refreshToken,
         client_id: config.oauthClientId,
       });
 
@@ -134,8 +135,8 @@ export class ApiService {
         tokenResponse.data;
 
       await this.configService.setConfig({
-        applicationAccessToken: newAccessToken,
-        applicationRefreshToken: newRefreshToken,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       });
 
       return newAccessToken;

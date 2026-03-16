@@ -6,11 +6,11 @@ import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import axios from 'axios';
 
-import { AUTH_ERROR_CODES, type CommandResult } from './types';
+import { AUTH_ERROR_CODES, type CommandResult } from '@/cli/types';
 
 export type AuthLoginOAuthOptions = {
   apiUrl: string;
-  workspace?: string;
+  remote?: string;
   timeoutMs?: number;
 };
 
@@ -23,10 +23,10 @@ export type OAuthDiscoveryResponse = {
 const innerAuthLoginOAuth = async (
   options: AuthLoginOAuthOptions,
 ): Promise<CommandResult> => {
-  const { apiUrl, workspace, timeoutMs } = options;
+  const { apiUrl, remote, timeoutMs } = options;
 
-  if (workspace) {
-    ConfigService.setActiveWorkspace(workspace);
+  if (remote) {
+    ConfigService.setActiveRemote(remote);
   }
 
   const configService = new ConfigService();
@@ -101,21 +101,19 @@ const innerAuthLoginOAuth = async (
       client_id: clientId,
     });
 
-    const {
-      access_token: applicationAccessToken,
-      refresh_token: applicationRefreshToken,
-    } = tokenResponse.data;
+    const { access_token: accessToken, refresh_token: refreshToken } =
+      tokenResponse.data;
 
     await configService.setConfig({
       apiUrl,
-      applicationAccessToken,
-      applicationRefreshToken,
+      accessToken,
+      refreshToken,
       oauthClientId: clientId,
     });
 
     const apiService = new ApiService({
       serverUrl: apiUrl,
-      token: applicationAccessToken,
+      token: accessToken,
     });
 
     const validateAuth = await apiService.validateAuth();
