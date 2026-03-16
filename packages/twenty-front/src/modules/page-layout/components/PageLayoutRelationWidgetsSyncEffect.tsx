@@ -1,3 +1,4 @@
+import { useIsGlobalLayoutCustomizationActive } from '@/app/hooks/useIsGlobalLayoutCustomizationActive';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -45,6 +46,8 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
     useAtomComponentStateCallbackState(pageLayoutCurrentLayoutsComponentState);
 
   const store = useStore();
+  const isGlobalLayoutCustomizationActive =
+    useIsGlobalLayoutCustomizationActive();
 
   const syncPageLayoutWithRelationWidgets = useCallback(
     (layout: PageLayout) => {
@@ -54,19 +57,22 @@ export const PageLayoutRelationWidgetsSyncEffect = ({
 
       if (!isDeeplyEqual(layout, currentPersisted)) {
         store.set(pageLayoutPersistedComponentCallbackState, layout);
-        store.set(pageLayoutDraftComponentCallbackState, {
-          id: layout.id,
-          name: layout.name,
-          type: layout.type,
-          objectMetadataId: layout.objectMetadataId,
-          tabs: layout.tabs,
-        });
+        if (!isGlobalLayoutCustomizationActive) {
+          store.set(pageLayoutDraftComponentCallbackState, {
+            id: layout.id,
+            name: layout.name,
+            type: layout.type,
+            objectMetadataId: layout.objectMetadataId,
+            tabs: layout.tabs,
+          });
 
-        const tabLayouts = convertPageLayoutToTabLayouts(layout);
-        store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
+          const tabLayouts = convertPageLayoutToTabLayouts(layout);
+          store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
+        }
       }
     },
     [
+      isGlobalLayoutCustomizationActive,
       pageLayoutCurrentLayoutsComponentCallbackState,
       pageLayoutDraftComponentCallbackState,
       pageLayoutPersistedComponentCallbackState,
