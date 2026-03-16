@@ -15,6 +15,7 @@ export const HeadlessEngineCommandMountRoot = () => {
           <CommandMenuItemErrorBoundary
             key={engineCommandId}
             resetKeys={[engineCommandId]}
+            shouldReportToSentry
           >
             <ContextStoreComponentInstanceContext.Provider
               value={{ instanceId: mountContext.contextStoreInstanceId }}
