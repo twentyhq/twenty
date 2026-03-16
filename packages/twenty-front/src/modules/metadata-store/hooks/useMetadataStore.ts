@@ -1,4 +1,4 @@
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import {
   ALL_METADATA_ENTITY_KEYS,
   metadataStoreState,
@@ -36,7 +36,7 @@ export const resetMetadataStore = (store: JotaiStore) => {
     store.set(metadataStoreState.atomFamily(key), EMPTY_ENTRY);
   }
 
-  store.set(isAppMetadataReadyState.atom, false);
+  store.set(isMinimalMetadataReadyState.atom, false);
 };
 
 const changeMetadataEntityAsUpToDate = (
@@ -49,6 +49,9 @@ const changeMetadataEntityAsUpToDate = (
     current: entry.draft,
     draft: [],
     status: 'up-to-date',
+    currentCollectionHash:
+      entry.draftCollectionHash ?? entry.currentCollectionHash,
+    draftCollectionHash: undefined,
   });
 };
 
@@ -56,7 +59,11 @@ export const useMetadataStore = () => {
   const store = useStore();
 
   const updateDraft = useCallback(
-    <K extends MetadataEntityKey>(key: K, data: MetadataEntityTypeMap[K][]) => {
+    <K extends MetadataEntityKey>(
+      key: K,
+      data: MetadataEntityTypeMap[K][],
+      collectionHash?: string,
+    ) => {
       const currentEntry = store.get(metadataStoreState.atomFamily(key));
 
       if (
@@ -70,6 +77,9 @@ export const useMetadataStore = () => {
         ...prev,
         draft: data,
         status: 'draft-pending' as const,
+        ...(collectionHash !== undefined
+          ? { draftCollectionHash: collectionHash }
+          : {}),
       }));
     },
     [store],

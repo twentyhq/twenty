@@ -1,5 +1,5 @@
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { type View } from '@/views/types/View';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
@@ -11,7 +11,7 @@ export const coreViewFromViewIdFamilySelector = createAtomFamilySelector<
   get:
     ({ viewId }) =>
     ({ get }) => {
-      const coreViews = get(coreViewsState);
+      const coreViews = get(coreViewsSelector);
       const views = coreViews.map(convertCoreViewToView);
       return views?.find((view) => view.id === viewId);
     },

@@ -4,7 +4,7 @@ import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/com
 import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/WorkspaceSectionItemContentProps';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
 type NavigationDrawerSectionForWorkspaceItemObjectContentProps =
@@ -17,7 +17,7 @@ export const NavigationDrawerSectionForWorkspaceItemObjectContent = ({
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemObjectContentProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const coreViews = useAtomStateValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsSelector);
   const views = coreViews.map(convertCoreViewToView);
   const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
     item as ProcessedNavigationMenuItem,

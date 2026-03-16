@@ -1,4 +1,4 @@
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useTriggerEventStreamCreation } from '@/sse-db-event/hooks/useTriggerEventStreamCreation';
@@ -27,7 +27,7 @@ export const SSEEventStreamEffect = () => {
     isDestroyingEventStreamState,
   );
 
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const currentUser = useAtomStateValue(currentUserState);
 
   const { triggerEventStreamCreation } = useTriggerEventStreamCreation();
@@ -39,7 +39,7 @@ export const SSEEventStreamEffect = () => {
 
     const willCreateEventStream =
       isSseClientAvailable &&
-      isLoggedIn &&
+      hasAccessTokenPair &&
       isDefined(currentUser) &&
       currentUser.onboardingStatus === OnboardingStatus.COMPLETED &&
       !shouldDestroyEventStream &&
@@ -59,7 +59,7 @@ export const SSEEventStreamEffect = () => {
   }, [
     isCreatingSseEventStream,
     triggerEventStreamCreation,
-    isLoggedIn,
+    hasAccessTokenPair,
     currentUser,
     isDestroyingEventStream,
     triggerEventStreamDestroy,

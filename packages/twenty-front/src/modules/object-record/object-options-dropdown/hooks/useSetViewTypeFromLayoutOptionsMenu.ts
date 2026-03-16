@@ -5,11 +5,10 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -39,7 +38,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }),
       );
 
-      const existingCoreViews = store.get(coreViewsState.atom);
+      const existingCoreViews = store.get(coreViewsSelector.atom);
 
       if (!isDefined(currentViewId)) {
         throw new Error('No view id found');
@@ -74,16 +73,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           }
 
           setRecordIndexViewType(viewType);
-          store.set(coreViewsState.atom, [
-            ...existingCoreViews.filter(
-              (coreView) => coreView.id !== currentView.id,
-            ),
-            {
-              ...currentCoreView,
-              type: convertViewTypeToCore(viewType),
-              mainGroupByFieldMetadataId,
-            },
-          ]);
           await updateCurrentView(updateCurrentViewParams);
           return;
         }
@@ -95,16 +84,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           await updateCurrentView(updateCurrentViewParams);
           setRecordIndexViewType(viewType);
-          store.set(coreViewsState.atom, [
-            ...existingCoreViews.filter(
-              (coreView) => coreView.id !== currentView.id,
-            ),
-            {
-              ...currentCoreView,
-              mainGroupByFieldMetadataId: null,
-              type: convertViewTypeToCore(viewType),
-            },
-          ]);
           return;
         }
         case ViewType.Calendar: {
@@ -115,18 +94,6 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
 
           setRecordIndexViewType(viewType);
-          store.set(coreViewsState.atom, [
-            ...existingCoreViews.filter(
-              (coreView) => coreView.id !== currentView.id,
-            ),
-            {
-              ...currentCoreView,
-              mainGroupByFieldMetadataId: null,
-              type: convertViewTypeToCore(viewType),
-              calendarLayout: ViewCalendarLayout.MONTH,
-              calendarFieldMetadataId,
-            },
-          ]);
 
           loadRecordIndexStates(
             {

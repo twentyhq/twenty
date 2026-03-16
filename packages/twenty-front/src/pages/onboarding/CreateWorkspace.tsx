@@ -9,8 +9,6 @@ import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useFetchAndLoadIndexViews } from '@/metadata-store/hooks/useFetchAndLoadIndexViews';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -70,9 +68,6 @@ export const CreateWorkspace = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
-  const { fetchAndLoadIndexViews } = useFetchAndLoadIndexViews();
-
   const { loadCurrentUser } = useLoadCurrentUser();
   const [activateWorkspace] = useMutation(ActivateWorkspaceDocument);
   const [pendingCreationLoaderStep, setPendingCreationLoaderStep] = useState(
@@ -126,10 +121,6 @@ export const CreateWorkspace = () => {
           throw result.error ?? new Error(t`Unknown error`);
         }
 
-        await refreshObjectMetadataItems();
-
-        await fetchAndLoadIndexViews();
-
         await loadCurrentUser();
         setNextOnboardingStatus();
       } catch (error: any) {
@@ -144,8 +135,6 @@ export const CreateWorkspace = () => {
       activateWorkspace,
       enqueueErrorSnackBar,
       loadCurrentUser,
-      refreshObjectMetadataItems,
-      fetchAndLoadIndexViews,
       setNextOnboardingStatus,
       t,
     ],

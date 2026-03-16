@@ -16,4 +16,7 @@ export class MetadataEventDTO {
 
   @Field(() => ObjectRecordEventPropertiesDTO)
   properties: ObjectRecordEventPropertiesDTO;
+
+  @Field(() => String, { nullable: true })
+  updatedCollectionHash?: string;
 }

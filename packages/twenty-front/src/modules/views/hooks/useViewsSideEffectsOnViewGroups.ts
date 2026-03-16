@@ -1,23 +1,16 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type CoreViewGroup } from '~/generated-metadata/graphql';
 
 const useViewsSideEffectsOnViewGroups = () => {
-  const { triggerViewGroupOptimisticEffect } =
-    useTriggerViewGroupOptimisticEffect();
-
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const triggerViewGroupOptimisticEffectAtViewCreation = ({
-    newViewId,
     mainGroupByFieldMetadataId,
     objectMetadataItemId,
   }: {
-    newViewId: string;
     mainGroupByFieldMetadataId?: string | null;
     objectMetadataItemId: string;
   }) => {
@@ -62,19 +55,6 @@ const useViewsSideEffectsOnViewGroups = () => {
         isVisible: true,
       } satisfies ViewGroup);
     }
-
-    triggerViewGroupOptimisticEffect({
-      createdViewGroups: viewGroupsToCreate.map(
-        ({ __typename, ...viewGroup }) =>
-          ({
-            ...viewGroup,
-            viewId: newViewId,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            deletedAt: null,
-          }) as Omit<CoreViewGroup, 'workspaceId'>,
-      ),
-    });
 
     return { viewGroupsToCreate };
   };

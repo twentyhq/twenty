@@ -974,6 +974,7 @@ export interface MetadataEvent {
     metadataName: Scalars['String']
     recordId: Scalars['String']
     properties: ObjectRecordEventProperties
+    updatedCollectionHash?: Scalars['String']
     __typename: 'MetadataEvent'
 }
 
@@ -1885,6 +1886,43 @@ export interface AgentTurn {
     __typename: 'AgentTurn'
 }
 
+export interface CollectionHash {
+    collectionName: AllMetadataName
+    hash: Scalars['String']
+    __typename: 'CollectionHash'
+}
+
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'frontComponent' | 'webhook'
+
+export interface MinimalObjectMetadata {
+    id: Scalars['UUID']
+    nameSingular: Scalars['String']
+    namePlural: Scalars['String']
+    labelSingular: Scalars['String']
+    labelPlural: Scalars['String']
+    icon?: Scalars['String']
+    isCustom: Scalars['Boolean']
+    isActive: Scalars['Boolean']
+    isSystem: Scalars['Boolean']
+    isRemote: Scalars['Boolean']
+    __typename: 'MinimalObjectMetadata'
+}
+
+export interface MinimalView {
+    id: Scalars['UUID']
+    type: ViewType
+    key?: ViewKey
+    objectMetadataId: Scalars['UUID']
+    __typename: 'MinimalView'
+}
+
+export interface MinimalMetadata {
+    objectMetadataItems: MinimalObjectMetadata[]
+    views: MinimalView[]
+    collectionHashes: CollectionHash[]
+    __typename: 'MinimalMetadata'
+}
+
 export interface Webhook {
     id: Scalars['UUID']
     targetUrl: Scalars['String']
@@ -2595,6 +2633,7 @@ export interface Query {
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     webhooks: Webhook[]
     webhook?: Webhook
+    minimalMetadata: MinimalMetadata
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     getAISystemPromptPreview: AISystemPromptPreview
@@ -2838,8 +2877,6 @@ export interface Mutation {
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
-
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'frontComponent' | 'webhook'
 
 export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'AppTarball'
 
@@ -3872,6 +3909,7 @@ export interface MetadataEventGenqlSelection{
     metadataName?: boolean | number
     recordId?: boolean | number
     properties?: ObjectRecordEventPropertiesGenqlSelection
+    updatedCollectionHash?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4848,6 +4886,45 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CollectionHashGenqlSelection{
+    collectionName?: boolean | number
+    hash?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalObjectMetadataGenqlSelection{
+    id?: boolean | number
+    nameSingular?: boolean | number
+    namePlural?: boolean | number
+    labelSingular?: boolean | number
+    labelPlural?: boolean | number
+    icon?: boolean | number
+    isCustom?: boolean | number
+    isActive?: boolean | number
+    isSystem?: boolean | number
+    isRemote?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalViewGenqlSelection{
+    id?: boolean | number
+    type?: boolean | number
+    key?: boolean | number
+    objectMetadataId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MinimalMetadataGenqlSelection{
+    objectMetadataItems?: MinimalObjectMetadataGenqlSelection
+    views?: MinimalViewGenqlSelection
+    collectionHashes?: CollectionHashGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WebhookGenqlSelection{
     id?: boolean | number
     targetUrl?: boolean | number
@@ -5618,6 +5695,7 @@ export interface QueryGenqlSelection{
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    minimalMetadata?: MinimalMetadataGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
@@ -7611,6 +7689,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const CollectionHash_possibleTypes: string[] = ['CollectionHash']
+    export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
+      return CollectionHash_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
+    export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
+      return MinimalObjectMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalView_possibleTypes: string[] = ['MinimalView']
+    export const isMinimalView = (obj?: { __typename?: any } | null): obj is MinimalView => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalView"')
+      return MinimalView_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MinimalMetadata_possibleTypes: string[] = ['MinimalMetadata']
+    export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
+      return MinimalMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Webhook_possibleTypes: string[] = ['Webhook']
     export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
@@ -8658,6 +8768,33 @@ export const enumCommandMenuItemAvailabilityType = {
    FALLBACK: 'FALLBACK' as const
 }
 
+export const enumAllMetadataName = {
+   fieldMetadata: 'fieldMetadata' as const,
+   objectMetadata: 'objectMetadata' as const,
+   view: 'view' as const,
+   viewField: 'viewField' as const,
+   viewFieldGroup: 'viewFieldGroup' as const,
+   viewGroup: 'viewGroup' as const,
+   viewSort: 'viewSort' as const,
+   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate' as const,
+   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup' as const,
+   viewFilterGroup: 'viewFilterGroup' as const,
+   index: 'index' as const,
+   logicFunction: 'logicFunction' as const,
+   viewFilter: 'viewFilter' as const,
+   role: 'role' as const,
+   roleTarget: 'roleTarget' as const,
+   agent: 'agent' as const,
+   skill: 'skill' as const,
+   pageLayout: 'pageLayout' as const,
+   pageLayoutWidget: 'pageLayoutWidget' as const,
+   pageLayoutTab: 'pageLayoutTab' as const,
+   commandMenuItem: 'commandMenuItem' as const,
+   navigationMenuItem: 'navigationMenuItem' as const,
+   frontComponent: 'frontComponent' as const,
+   webhook: 'webhook' as const
+}
+
 export const enumModelFamily = {
    OPENAI: 'OPENAI' as const,
    ANTHROPIC: 'ANTHROPIC' as const,
@@ -8799,33 +8936,6 @@ export const enumWorkspaceMigrationActionType = {
    delete: 'delete' as const,
    create: 'create' as const,
    update: 'update' as const
-}
-
-export const enumAllMetadataName = {
-   fieldMetadata: 'fieldMetadata' as const,
-   objectMetadata: 'objectMetadata' as const,
-   view: 'view' as const,
-   viewField: 'viewField' as const,
-   viewFieldGroup: 'viewFieldGroup' as const,
-   viewGroup: 'viewGroup' as const,
-   viewSort: 'viewSort' as const,
-   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate' as const,
-   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup' as const,
-   viewFilterGroup: 'viewFilterGroup' as const,
-   index: 'index' as const,
-   logicFunction: 'logicFunction' as const,
-   viewFilter: 'viewFilter' as const,
-   role: 'role' as const,
-   roleTarget: 'roleTarget' as const,
-   agent: 'agent' as const,
-   skill: 'skill' as const,
-   pageLayout: 'pageLayout' as const,
-   pageLayoutWidget: 'pageLayoutWidget' as const,
-   pageLayoutTab: 'pageLayoutTab' as const,
-   commandMenuItem: 'commandMenuItem' as const,
-   navigationMenuItem: 'navigationMenuItem' as const,
-   frontComponent: 'frontComponent' as const,
-   webhook: 'webhook' as const
 }
 
 export const enumFileFolder = {

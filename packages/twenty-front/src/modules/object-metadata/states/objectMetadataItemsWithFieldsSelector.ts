@@ -1,7 +1,7 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { fieldMetadataItemsSelector } from '@/metadata-store/states/fieldMetadataItemsSelector';
 import { indexMetadataItemsSelector } from '@/metadata-store/states/indexMetadataItemsSelector';
-import { objectMetadataItemsSelector } from '@/metadata-store/states/objectMetadataItemsSelector';
+import { flatObjectMetadataItemsSelector } from '@/object-metadata/states/flatObjectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
@@ -15,7 +15,7 @@ export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
 >({
   key: 'objectMetadataItemsWithFieldsSelector',
   get: ({ get }) => {
-    const flatObjects = get(objectMetadataItemsSelector);
+    const flatObjects = get(flatObjectMetadataItemsSelector);
     const allFlatFields = get(fieldMetadataItemsSelector);
     const allFlatIndexes = get(indexMetadataItemsSelector);
     const currentUserWorkspace = get(currentUserWorkspaceState);

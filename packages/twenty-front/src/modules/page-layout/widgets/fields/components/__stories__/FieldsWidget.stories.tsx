@@ -4,10 +4,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, waitFor, within } from 'storybook/test';
 
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -23,8 +21,8 @@ import { FieldsWidget } from '@/page-layout/widgets/fields/components/FieldsWidg
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   ViewOpenRecordIn as CoreViewOpenRecordIn,
@@ -41,6 +39,8 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
   CoreObjectNameSingular.Company,
@@ -206,6 +206,39 @@ const createCoreView = (
   ...overrides,
 });
 
+const createViewField = (
+  id: string,
+  fieldMetadataId: string,
+  position: number,
+  viewFieldGroupId?: string,
+) => ({
+  id,
+  fieldMetadataId,
+  position,
+  isVisible: true,
+  size: 200,
+  aggregateOperation: null,
+  isOverridden: false,
+  viewId: FIELDS_VIEW_ID,
+  ...(viewFieldGroupId !== undefined && { viewFieldGroupId }),
+});
+
+const createViewFieldGroup = (
+  id: string,
+  name: string,
+  position: number,
+  viewFields: ReturnType<typeof createViewField>[],
+  isVisible = true,
+) => ({
+  id,
+  name,
+  position,
+  isVisible,
+  isOverridden: false,
+  viewId: FIELDS_VIEW_ID,
+  viewFields,
+});
+
 const meta: Meta<typeof FieldsWidget> = {
   title: 'Modules/PageLayout/Widgets/FieldsWidget',
   component: FieldsWidget,
@@ -229,88 +262,38 @@ type Story = StoryObj<typeof FieldsWidget>;
 
 export const WithViewFieldGroups: Story = {
   render: () => {
+    const contactInfoFields = [
+      createViewField('vf-name', nameField.id, 0, 'group-contact-info'),
+      createViewField('vf-address', addressField.id, 1, 'group-contact-info'),
+      createViewField('vf-linkedin', linkedinField.id, 2, 'group-contact-info'),
+    ];
+
+    const businessFields = [
+      createViewField('vf-employees', employeesField.id, 0, 'group-business'),
+      createViewField(
+        'vf-arr',
+        annualRecurringRevenueField.id,
+        1,
+        'group-business',
+      ),
+      createViewField(
+        'vf-icp',
+        idealCustomerProfileField.id,
+        2,
+        'group-business',
+      ),
+    ];
+
     const coreView = createCoreView({
+      viewFields: [...contactInfoFields, ...businessFields],
       viewFieldGroups: [
-        {
-          id: 'group-contact-info',
-          name: 'Contact Info',
-          position: 0,
-          isVisible: true,
-          isOverridden: false,
-          viewId: FIELDS_VIEW_ID,
-          viewFields: [
-            {
-              id: 'vf-name',
-              fieldMetadataId: nameField.id,
-              position: 0,
-              isVisible: true,
-              size: 200,
-              aggregateOperation: null,
-              isOverridden: false,
-              viewId: FIELDS_VIEW_ID,
-            },
-            {
-              id: 'vf-address',
-              fieldMetadataId: addressField.id,
-              position: 1,
-              isVisible: true,
-              size: 200,
-              aggregateOperation: null,
-              isOverridden: false,
-              viewId: FIELDS_VIEW_ID,
-            },
-            {
-              id: 'vf-linkedin',
-              fieldMetadataId: linkedinField.id,
-              position: 2,
-              isVisible: true,
-              size: 200,
-              aggregateOperation: null,
-              isOverridden: false,
-              viewId: FIELDS_VIEW_ID,
-            },
-          ],
-        },
-        {
-          id: 'group-business',
-          name: 'Business',
-          position: 1,
-          isVisible: true,
-          isOverridden: false,
-          viewId: FIELDS_VIEW_ID,
-          viewFields: [
-            {
-              id: 'vf-employees',
-              fieldMetadataId: employeesField.id,
-              position: 0,
-              isVisible: true,
-              size: 200,
-              aggregateOperation: null,
-              isOverridden: false,
-              viewId: FIELDS_VIEW_ID,
-            },
-            {
-              id: 'vf-arr',
-              fieldMetadataId: annualRecurringRevenueField.id,
-              position: 1,
-              isVisible: true,
-              size: 200,
-              aggregateOperation: null,
-              isOverridden: false,
-              viewId: FIELDS_VIEW_ID,
-            },
-            {
-              id: 'vf-icp',
-              fieldMetadataId: idealCustomerProfileField.id,
-              position: 2,
-              isVisible: true,
-              size: 200,
-              aggregateOperation: null,
-              isOverridden: false,
-              viewId: FIELDS_VIEW_ID,
-            },
-          ],
-        },
+        createViewFieldGroup(
+          'group-contact-info',
+          'Contact Info',
+          0,
+          contactInfoFields,
+        ),
+        createViewFieldGroup('group-business', 'Business', 1, businessFields),
       ],
     });
 
@@ -325,8 +308,8 @@ export const WithViewFieldGroups: Story = {
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
-    jotaiStore.set(coreViewsState.atom, [coreView]);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
+    setTestCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -394,36 +377,9 @@ export const WithInlineViewFields: Story = {
   render: () => {
     const coreView = createCoreView({
       viewFields: [
-        {
-          id: 'vf-name',
-          fieldMetadataId: nameField.id,
-          position: 0,
-          isVisible: true,
-          size: 200,
-          aggregateOperation: null,
-          isOverridden: false,
-          viewId: FIELDS_VIEW_ID,
-        },
-        {
-          id: 'vf-employees',
-          fieldMetadataId: employeesField.id,
-          position: 1,
-          isVisible: true,
-          size: 200,
-          aggregateOperation: null,
-          isOverridden: false,
-          viewId: FIELDS_VIEW_ID,
-        },
-        {
-          id: 'vf-address',
-          fieldMetadataId: addressField.id,
-          position: 2,
-          isVisible: true,
-          size: 200,
-          aggregateOperation: null,
-          isOverridden: false,
-          viewId: FIELDS_VIEW_ID,
-        },
+        createViewField('vf-name', nameField.id, 0),
+        createViewField('vf-employees', employeesField.id, 1),
+        createViewField('vf-address', addressField.id, 2),
       ],
     });
 
@@ -438,8 +394,8 @@ export const WithInlineViewFields: Story = {
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
-    jotaiStore.set(coreViewsState.atom, [coreView]);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
+    setTestCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -507,15 +463,7 @@ export const Empty: Story = {
   render: () => {
     const coreView = createCoreView({
       viewFieldGroups: [
-        {
-          id: 'group-empty',
-          name: 'Empty Group',
-          position: 0,
-          isVisible: false,
-          isOverridden: false,
-          viewId: FIELDS_VIEW_ID,
-          viewFields: [],
-        },
+        createViewFieldGroup('group-empty', 'Empty Group', 0, [], false),
       ],
     });
 
@@ -530,8 +478,8 @@ export const Empty: Story = {
       jotaiStore,
       generatedMockObjectMetadataItems,
     );
-    jotaiStore.set(isAppMetadataReadyState.atom, true);
-    jotaiStore.set(coreViewsState.atom, [coreView]);
+    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
+    setTestCoreViewsInMetadataStore(jotaiStore, [coreView]);
     jotaiStore.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,

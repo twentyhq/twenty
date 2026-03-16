@@ -7,7 +7,6 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type View } from '@/views/types/View';
@@ -32,8 +31,6 @@ export const useUpdateCurrentView = () => {
   const store = useStore();
 
   const [updateOneCoreView] = useMutation(UpdateCoreViewDocument);
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
 
   const getViewGroupsToCreateAtViewUpdate = useMemo(() => {
     return ({
@@ -143,8 +140,6 @@ export const useUpdateCurrentView = () => {
         if (isDefined(view.type)) {
           setRecordIndexViewType(view.type);
         }
-
-        await refreshCoreViewsByObjectMetadataId(currentView.objectMetadataId);
       }
     },
     [
@@ -153,7 +148,6 @@ export const useUpdateCurrentView = () => {
       getViewGroupsToCreateAtViewUpdate,
       loadRecordIndexStates,
       objectMetadataItem,
-      refreshCoreViewsByObjectMetadataId,
       setRecordIndexViewType,
       store,
       updateOneCoreView,

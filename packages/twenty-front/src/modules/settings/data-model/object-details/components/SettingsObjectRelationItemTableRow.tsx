@@ -242,7 +242,6 @@ export const SettingsObjectRelationItemTableRow = ({
             onDelete={() =>
               deleteOneFieldMetadataItem({
                 idToDelete: fieldMetadataItem.id,
-                objectMetadataId: objectMetadataItem.id,
               })
             }
           />

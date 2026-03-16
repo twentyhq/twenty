@@ -1246,6 +1246,7 @@ type MetadataEvent {
   metadataName: String!
   recordId: String!
   properties: ObjectRecordEventProperties!
+  updatedCollectionHash: String
 }
 
 """Metadata Event Action"""
@@ -2205,6 +2206,64 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
+type CollectionHash {
+  collectionName: AllMetadataName!
+  hash: String!
+}
+
+enum AllMetadataName {
+  fieldMetadata
+  objectMetadata
+  view
+  viewField
+  viewFieldGroup
+  viewGroup
+  viewSort
+  rowLevelPermissionPredicate
+  rowLevelPermissionPredicateGroup
+  viewFilterGroup
+  index
+  logicFunction
+  viewFilter
+  role
+  roleTarget
+  agent
+  skill
+  pageLayout
+  pageLayoutWidget
+  pageLayoutTab
+  commandMenuItem
+  navigationMenuItem
+  frontComponent
+  webhook
+}
+
+type MinimalObjectMetadata {
+  id: UUID!
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  icon: String
+  isCustom: Boolean!
+  isActive: Boolean!
+  isSystem: Boolean!
+  isRemote: Boolean!
+}
+
+type MinimalView {
+  id: UUID!
+  type: ViewType!
+  key: ViewKey
+  objectMetadataId: UUID!
+}
+
+type MinimalMetadata {
+  objectMetadataItems: [MinimalObjectMetadata!]!
+  views: [MinimalView!]!
+  collectionHashes: [CollectionHash!]!
+}
+
 type Webhook {
   id: UUID!
   targetUrl: String!
@@ -2956,6 +3015,7 @@ type Query {
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
+  minimalMetadata: MinimalMetadata!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   getAISystemPromptPreview: AISystemPromptPreview!
@@ -4221,33 +4281,6 @@ enum WorkspaceMigrationActionType {
   delete
   create
   update
-}
-
-enum AllMetadataName {
-  fieldMetadata
-  objectMetadata
-  view
-  viewField
-  viewFieldGroup
-  viewGroup
-  viewSort
-  rowLevelPermissionPredicate
-  rowLevelPermissionPredicateGroup
-  viewFilterGroup
-  index
-  logicFunction
-  viewFilter
-  role
-  roleTarget
-  agent
-  skill
-  pageLayout
-  pageLayoutWidget
-  pageLayoutTab
-  commandMenuItem
-  navigationMenuItem
-  frontComponent
-  webhook
 }
 
 enum FileFolder {

@@ -11,7 +11,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 
@@ -38,7 +38,7 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
     isNavigationMenuInEditModeState,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const coreViews = useAtomStateValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsSelector);
   const views = coreViews.map(convertCoreViewToView);
   const objectMetadataItem =
     navigationMenuItem.itemType === NavigationMenuItemType.VIEW ||

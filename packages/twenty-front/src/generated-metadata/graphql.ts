@@ -832,6 +832,12 @@ export type ClientConfig = {
   support: Support;
 };
 
+export type CollectionHash = {
+  __typename?: 'CollectionHash';
+  collectionName: AllMetadataName;
+  hash: Scalars['String'];
+};
+
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
   applicationId?: Maybe<Scalars['UUID']>;
@@ -2405,6 +2411,7 @@ export type MetadataEvent = {
   properties: ObjectRecordEventProperties;
   recordId: Scalars['String'];
   type: MetadataEventAction;
+  updatedCollectionHash?: Maybe<Scalars['String']>;
 };
 
 /** Metadata Event Action */
@@ -2418,6 +2425,35 @@ export type MetadataEventWithQueryIds = {
   __typename?: 'MetadataEventWithQueryIds';
   metadataEvent: MetadataEvent;
   queryIds: Array<Scalars['String']>;
+};
+
+export type MinimalMetadata = {
+  __typename?: 'MinimalMetadata';
+  collectionHashes: Array<CollectionHash>;
+  objectMetadataItems: Array<MinimalObjectMetadata>;
+  views: Array<MinimalView>;
+};
+
+export type MinimalObjectMetadata = {
+  __typename?: 'MinimalObjectMetadata';
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+};
+
+export type MinimalView = {
+  __typename?: 'MinimalView';
+  id: Scalars['UUID'];
+  key?: Maybe<ViewKey>;
+  objectMetadataId: Scalars['UUID'];
+  type: ViewType;
 };
 
 export enum ModelFamily {
@@ -4109,6 +4145,7 @@ export type Query = {
   indexMetadatas: IndexConnection;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
+  minimalMetadata: MinimalMetadata;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;

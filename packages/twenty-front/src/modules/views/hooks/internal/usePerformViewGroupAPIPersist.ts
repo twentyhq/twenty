@@ -3,11 +3,9 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
   type UpdateCoreViewGroupMutationVariables,
@@ -15,9 +13,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewGroupAPIPersist = () => {
-  const { triggerViewGroupOptimisticEffect } =
-    useTriggerViewGroupOptimisticEffect();
-
   const [updateCoreViewGroupMutation] = useMutation(
     UpdateCoreViewGroupDocument,
   );
@@ -45,16 +40,6 @@ export const usePerformViewGroupAPIPersist = () => {
           updateCoreViewGroupInputs.map((variables) =>
             updateCoreViewGroupMutation({
               variables,
-              update: (_cache, { data }) => {
-                const updatedViewGroup = data?.updateCoreViewGroup;
-                if (!isDefined(updatedViewGroup)) {
-                  return;
-                }
-
-                triggerViewGroupOptimisticEffect({
-                  updatedViewGroups: [updatedViewGroup],
-                });
-              },
             }),
           ),
         );
@@ -79,12 +64,7 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewGroupOptimisticEffect,
-      updateCoreViewGroupMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [updateCoreViewGroupMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {

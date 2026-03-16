@@ -6,7 +6,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,6 +38,8 @@ const getViewId = (
   return undefined;
 };
 
+const SIGN_IN_BACKGROUND_OBJECT_NAME_PLURAL = 'companies';
+
 export const MainContextStoreProvider = () => {
   const location = useLocation();
   const isRecordIndexPage = isMatchingLocation(
@@ -46,16 +48,21 @@ export const MainContextStoreProvider = () => {
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
   const isSettingsPage = useIsSettingsPage();
+  const showAuthModal = useShowAuthModal();
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
+  const objectNamePluralFromParams = useParams().objectNamePlural ?? '';
   const objectNameSingular = useParams().objectNameSingular ?? '';
+
+  const objectNamePlural = showAuthModal
+    ? SIGN_IN_BACKGROUND_OBJECT_NAME_PLURAL
+    : objectNamePluralFromParams;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
   const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
-  const coreViews = useAtomStateValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -108,11 +115,11 @@ export const MainContextStoreProvider = () => {
     firstAvailableViewId,
   );
 
-  const showAuthModal = useShowAuthModal();
-
   const shouldComputeContextStore =
-    (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
-    !showAuthModal &&
+    (isRecordIndexPage ||
+      isRecordShowPage ||
+      isSettingsPage ||
+      showAuthModal) &&
     metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {

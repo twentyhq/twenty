@@ -6,7 +6,7 @@ import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item
 import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -26,7 +26,7 @@ type NavigationMenuItemFolderEntry = Pick<
 >;
 
 export const useNavigationMenuItemsByFolder = () => {
-  const coreViews = useAtomStateValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
