@@ -2233,6 +2233,7 @@ enum AllMetadataName {
   pageLayoutTab
   commandMenuItem
   navigationMenuItem
+  permissionFlag
   frontComponent
   webhook
 }
@@ -4280,34 +4281,6 @@ enum WorkspaceMigrationActionType {
   delete
   create
   update
-}
-
-enum AllMetadataName {
-  fieldMetadata
-  objectMetadata
-  view
-  viewField
-  viewFieldGroup
-  viewGroup
-  viewSort
-  rowLevelPermissionPredicate
-  rowLevelPermissionPredicateGroup
-  viewFilterGroup
-  index
-  logicFunction
-  viewFilter
-  role
-  roleTarget
-  agent
-  skill
-  pageLayout
-  pageLayoutWidget
-  pageLayoutTab
-  commandMenuItem
-  navigationMenuItem
-  permissionFlag
-  frontComponent
-  webhook
 }
 
 enum FileFolder {
