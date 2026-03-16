@@ -47,7 +47,9 @@ export const WorkspaceNavigationMenuItems = () => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const store = useStore();
   const enterEditMode = () => {
-    const currentNavigationMenuItems = store.get(navigationMenuItemsSelector.atom);
+    const currentNavigationMenuItems = store.get(
+      navigationMenuItemsSelector.atom,
+    );
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
       currentNavigationMenuItems,
     );

@@ -72,13 +72,10 @@ export const NavigationMenuItemIcon = ({
     );
   }
 
-  const isView =
-    navigationMenuItem.itemType === NavigationMenuItemType.VIEW;
+  const isView = navigationMenuItem.itemType === NavigationMenuItemType.VIEW;
 
   const persistedItem = isView
-    ? navigationMenuItems.find(
-        (item) => item.id === navigationMenuItem.id,
-      )
+    ? navigationMenuItems.find((item) => item.id === navigationMenuItem.id)
     : undefined;
   const draftColorChanged =
     isView && navigationMenuItem.color !== persistedItem?.color;
