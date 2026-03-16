@@ -1,10 +1,8 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsToCreate';
 import { getViewFilterGroupsToDelete } from '@/views/utils/getViewFilterGroupsToDelete';
 import { getViewFilterGroupsToUpdate } from '@/views/utils/getViewFilterGroupsToUpdate';
@@ -27,8 +25,6 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
     useAtomComponentStateCallbackState(currentRecordFilterGroupsComponentState);
 
   const store = useStore();
-
-  const setCoreViews = useSetAtomState(coreViewsState);
 
   const saveRecordFilterGroupsToViewFilterGroups = useCallback(async () => {
     if (!canPersistChanges || !isDefined(currentView)) {
@@ -59,33 +55,6 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
       newViewFilterGroups,
     );
 
-    const viewFiltersToOptimisticallyCascadeDelete =
-      currentView.viewFilters.filter((viewFilter) =>
-        viewFilterGroupsToDelete.some(
-          (viewFilterGroupToDelete) =>
-            viewFilterGroupToDelete.id === viewFilter.viewFilterGroupId,
-        ),
-      );
-
-    for (const viewFilterToCascadeDelete of viewFiltersToOptimisticallyCascadeDelete) {
-      setCoreViews((currentCoreViews) => {
-        const updatedCoreViews = currentCoreViews.map((coreView) => {
-          if (coreView.id !== currentView.id) {
-            return coreView;
-          }
-
-          return {
-            ...coreView,
-            viewFilters: coreView.viewFilters.filter(
-              (viewFilter) => viewFilter.id !== viewFilterToCascadeDelete.id,
-            ),
-          };
-        });
-
-        return updatedCoreViews;
-      });
-    }
-
     const viewFilterGroupsToUpdate = getViewFilterGroupsToUpdate(
       currentViewFilterGroups,
       newViewFilterGroups,
@@ -109,7 +78,6 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
     performViewFilterGroupAPICreate,
     performViewFilterGroupAPIUpdate,
     performViewFilterGroupAPIDelete,
-    setCoreViews,
   ]);
 
   return {

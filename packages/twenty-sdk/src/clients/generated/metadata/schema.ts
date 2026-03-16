@@ -1886,6 +1886,14 @@ export interface AgentTurn {
     __typename: 'AgentTurn'
 }
 
+export interface CollectionHash {
+    collectionName: AllMetadataName
+    hash: Scalars['String']
+    __typename: 'CollectionHash'
+}
+
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'frontComponent' | 'webhook'
+
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
     nameSingular: Scalars['String']
@@ -1911,7 +1919,7 @@ export interface MinimalView {
 export interface MinimalMetadata {
     objectMetadataItems: MinimalObjectMetadata[]
     views: MinimalView[]
-    collectionHashes: Scalars['JSON']
+    collectionHashes: CollectionHash[]
     __typename: 'MinimalMetadata'
 }
 
@@ -2870,8 +2878,11 @@ export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
+<<<<<<< HEAD
 export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'frontComponent' | 'webhook'
 
+=======
+>>>>>>> migrate-permission-flag-to-syncable-entity
 export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'AppTarball'
 
 export interface Subscription {
@@ -4880,6 +4891,13 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CollectionHashGenqlSelection{
+    collectionName?: boolean | number
+    hash?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MinimalObjectMetadataGenqlSelection{
     id?: boolean | number
     nameSingular?: boolean | number
@@ -4907,7 +4925,7 @@ export interface MinimalViewGenqlSelection{
 export interface MinimalMetadataGenqlSelection{
     objectMetadataItems?: MinimalObjectMetadataGenqlSelection
     views?: MinimalViewGenqlSelection
-    collectionHashes?: boolean | number
+    collectionHashes?: CollectionHashGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7676,6 +7694,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const CollectionHash_possibleTypes: string[] = ['CollectionHash']
+    export const isCollectionHash = (obj?: { __typename?: any } | null): obj is CollectionHash => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCollectionHash"')
+      return CollectionHash_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MinimalObjectMetadata_possibleTypes: string[] = ['MinimalObjectMetadata']
     export const isMinimalObjectMetadata = (obj?: { __typename?: any } | null): obj is MinimalObjectMetadata => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalObjectMetadata"')
@@ -8746,6 +8772,34 @@ export const enumCommandMenuItemAvailabilityType = {
    FALLBACK: 'FALLBACK' as const
 }
 
+export const enumAllMetadataName = {
+   fieldMetadata: 'fieldMetadata' as const,
+   objectMetadata: 'objectMetadata' as const,
+   view: 'view' as const,
+   viewField: 'viewField' as const,
+   viewFieldGroup: 'viewFieldGroup' as const,
+   viewGroup: 'viewGroup' as const,
+   viewSort: 'viewSort' as const,
+   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate' as const,
+   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup' as const,
+   viewFilterGroup: 'viewFilterGroup' as const,
+   index: 'index' as const,
+   logicFunction: 'logicFunction' as const,
+   viewFilter: 'viewFilter' as const,
+   role: 'role' as const,
+   roleTarget: 'roleTarget' as const,
+   agent: 'agent' as const,
+   skill: 'skill' as const,
+   pageLayout: 'pageLayout' as const,
+   pageLayoutWidget: 'pageLayoutWidget' as const,
+   pageLayoutTab: 'pageLayoutTab' as const,
+   commandMenuItem: 'commandMenuItem' as const,
+   navigationMenuItem: 'navigationMenuItem' as const,
+   permissionFlag: 'permissionFlag' as const,
+   frontComponent: 'frontComponent' as const,
+   webhook: 'webhook' as const
+}
+
 export const enumModelFamily = {
    OPENAI: 'OPENAI' as const,
    ANTHROPIC: 'ANTHROPIC' as const,
@@ -8889,6 +8943,7 @@ export const enumWorkspaceMigrationActionType = {
    update: 'update' as const
 }
 
+<<<<<<< HEAD
 export const enumAllMetadataName = {
    fieldMetadata: 'fieldMetadata' as const,
    objectMetadata: 'objectMetadata' as const,
@@ -8918,6 +8973,8 @@ export const enumAllMetadataName = {
    webhook: 'webhook' as const
 }
 
+=======
+>>>>>>> migrate-permission-flag-to-syncable-entity
 export const enumFileFolder = {
    ProfilePicture: 'ProfilePicture' as const,
    WorkspaceLogo: 'WorkspaceLogo' as const,

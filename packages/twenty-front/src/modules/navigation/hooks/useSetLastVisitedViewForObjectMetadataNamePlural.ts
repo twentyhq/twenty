@@ -1,6 +1,6 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
       objectNamePlural: string;
       viewId: string;
     }) => {
-      const views = store.get(coreViewsState.atom);
+      const views = store.get(coreViewsSelector.atom);
 
       const view = views.find(
         (view: CoreViewWithRelations) => view.id === viewId,

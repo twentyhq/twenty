@@ -5,7 +5,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
@@ -43,7 +43,7 @@ export const useDefaultHomePagePath = () => {
     [readableAlphaSortedActiveNonSystemObjectMetadataItems],
   );
 
-  const coreViews = useAtomStateValue(coreViewsState);
+  const coreViews = useAtomStateValue(coreViewsSelector);
 
   const getFirstView = useCallback(
     (objectMetadataItemId: string | undefined | null) => {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -13,7 +13,7 @@ export const VerifyLoginTokenEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
 
-  const isLogged = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
 
@@ -28,7 +28,7 @@ export const VerifyLoginTokenEffect = () => {
 
     if (isDefined(loginToken)) {
       verifyLoginToken(loginToken);
-    } else if (!isLogged) {
+    } else if (!hasAccessTokenPair) {
       navigate(AppPath.SignInUp);
     }
     // Verify only needs to run once at mount

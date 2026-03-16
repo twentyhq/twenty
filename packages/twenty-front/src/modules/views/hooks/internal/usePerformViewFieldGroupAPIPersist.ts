@@ -6,7 +6,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CREATE_MANY_CORE_VIEW_FIELD_GROUPS } from '@/views/graphql/mutations/createManyCoreViewFieldGroups';
 import { DELETE_CORE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/deleteCoreViewFieldGroup';
 import { UPDATE_CORE_VIEW_FIELD_GROUP } from '@/views/graphql/mutations/updateCoreViewFieldGroup';
-import { useTriggerViewFieldGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldGroupOptimisticEffect';
 import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
@@ -32,9 +31,6 @@ type DeleteCoreViewFieldGroupMutationResult = {
 };
 
 export const usePerformViewFieldGroupAPIPersist = () => {
-  const { triggerViewFieldGroupOptimisticEffect } =
-    useTriggerViewFieldGroupOptimisticEffect();
-
   const [createManyCoreViewFieldGroupsMutation] = useMutation<
     CreateManyCoreViewFieldGroupsMutationResult,
     MutationCreateManyCoreViewFieldGroupsArgs
@@ -70,16 +66,6 @@ export const usePerformViewFieldGroupAPIPersist = () => {
       try {
         const result = await createManyCoreViewFieldGroupsMutation({
           variables: createCoreViewFieldGroupInputs,
-          update: (_cache, { data }) => {
-            const createdViewFieldGroups = data?.createManyCoreViewFieldGroups;
-            if (!isDefined(createdViewFieldGroups)) {
-              return;
-            }
-
-            triggerViewFieldGroupOptimisticEffect({
-              createdViewFieldGroups,
-            });
-          },
         });
 
         return {
@@ -103,7 +89,6 @@ export const usePerformViewFieldGroupAPIPersist = () => {
       }
     },
     [
-      triggerViewFieldGroupOptimisticEffect,
       createManyCoreViewFieldGroupsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
@@ -128,16 +113,6 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           updateCoreViewFieldGroupInputs.map((variables) =>
             updateCoreViewFieldGroupMutation({
               variables,
-              update: (_cache, { data }) => {
-                const updatedViewFieldGroup = data?.updateCoreViewFieldGroup;
-                if (!isDefined(updatedViewFieldGroup)) {
-                  return;
-                }
-
-                triggerViewFieldGroupOptimisticEffect({
-                  updatedViewFieldGroups: [updatedViewFieldGroup],
-                });
-              },
             }),
           ),
         );
@@ -165,7 +140,6 @@ export const usePerformViewFieldGroupAPIPersist = () => {
       }
     },
     [
-      triggerViewFieldGroupOptimisticEffect,
       updateCoreViewFieldGroupMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
@@ -190,16 +164,6 @@ export const usePerformViewFieldGroupAPIPersist = () => {
           deleteCoreViewFieldGroupInputs.map((variables) =>
             deleteCoreViewFieldGroupMutation({
               variables,
-              update: (_cache, { data }) => {
-                const deletedViewFieldGroup = data?.deleteCoreViewFieldGroup;
-                if (!isDefined(deletedViewFieldGroup)) {
-                  return;
-                }
-
-                triggerViewFieldGroupOptimisticEffect({
-                  deletedViewFieldGroups: [deletedViewFieldGroup],
-                });
-              },
             }),
           ),
         );
@@ -227,7 +191,6 @@ export const usePerformViewFieldGroupAPIPersist = () => {
       }
     },
     [
-      triggerViewFieldGroupOptimisticEffect,
       deleteCoreViewFieldGroupMutation,
       handleMetadataError,
       enqueueErrorSnackBar,

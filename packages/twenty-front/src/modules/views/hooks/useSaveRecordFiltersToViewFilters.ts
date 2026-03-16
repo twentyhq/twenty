@@ -4,7 +4,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsSelector } from '@/views/states/selectors/coreViewsSelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
@@ -33,7 +33,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
   const store = useStore();
 
   const saveRecordFiltersToViewFilters = useCallback(async () => {
-    const views = store.get(coreViewsState.atom);
+    const views = store.get(coreViewsSelector.atom);
 
     const currentCoreView = views.find(
       (view) => view.id === contextStoreCurrentViewId,

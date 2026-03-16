@@ -6,17 +6,17 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
-import { coreViewsState } from '@/views/states/coreViewState';
+import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
+import { type ViewSort } from '@/views/types/ViewSort';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
-import { type ViewSort } from '@/views/types/ViewSort';
+import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -93,7 +93,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
           onInitializeJotaiStore: (store) => {
-            store.set(coreViewsState.atom, [mockCoreView]);
+            setTestCoreViewsInMetadataStore(store, [mockCoreView]);
           },
         }),
       },
@@ -182,7 +182,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeJotaiStore: (store) => {
-            store.set(coreViewsState.atom, [viewWithNoSorts]);
+            setTestCoreViewsInMetadataStore(store, [viewWithNoSorts]);
             store.set(
               contextStoreCurrentViewIdComponentState.atomFamily({
                 instanceId: 'instanceId',

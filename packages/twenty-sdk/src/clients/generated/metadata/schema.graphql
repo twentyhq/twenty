@@ -2205,6 +2205,39 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
+type CollectionHash {
+  collectionName: AllMetadataName!
+  hash: String!
+}
+
+enum AllMetadataName {
+  fieldMetadata
+  objectMetadata
+  view
+  viewField
+  viewFieldGroup
+  viewGroup
+  viewSort
+  rowLevelPermissionPredicate
+  rowLevelPermissionPredicateGroup
+  viewFilterGroup
+  index
+  logicFunction
+  viewFilter
+  role
+  roleTarget
+  agent
+  skill
+  pageLayout
+  pageLayoutWidget
+  pageLayoutTab
+  commandMenuItem
+  navigationMenuItem
+  permissionFlag
+  frontComponent
+  webhook
+}
+
 type MinimalObjectMetadata {
   id: UUID!
   nameSingular: String!
@@ -2228,7 +2261,7 @@ type MinimalView {
 type MinimalMetadata {
   objectMetadataItems: [MinimalObjectMetadata!]!
   views: [MinimalView!]!
-  collectionHashes: JSON!
+  collectionHashes: [CollectionHash!]!
 }
 
 type Webhook {
@@ -4250,6 +4283,7 @@ enum WorkspaceMigrationActionType {
   update
 }
 
+<<<<<<< HEAD
 enum AllMetadataName {
   fieldMetadata
   objectMetadata
@@ -4279,6 +4313,8 @@ enum AllMetadataName {
   webhook
 }
 
+=======
+>>>>>>> migrate-permission-flag-to-syncable-entity
 enum FileFolder {
   ProfilePicture
   WorkspaceLogo

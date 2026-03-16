@@ -3,22 +3,21 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -27,6 +26,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { setTestCoreViewsInMetadataStore } from '~/testing/utils/setTestCoreViewsInMetadataStore';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
   title: 'Modules/Views/ViewBarFilterDropdown',
@@ -42,8 +42,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         currentRecordFieldsComponentState,
         instanceId,
       );
-
-      const setCoreViews = useSetAtomState(coreViewsState);
 
       const mockCoreView = mockedCoreViews.find(
         (v) => v.name === 'All Companies',
@@ -72,12 +70,11 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       const [isLoaded, setIsLoaded] = useState(false);
 
       useEffect(() => {
-        setCoreViews([mockCoreView]);
+        setTestCoreViewsInMetadataStore(jotaiStore, [mockCoreView]);
         setContextStoreCurrentViewId(mockCoreView.id);
         setCurrentRecordFields(columns);
         setIsLoaded(true);
       }, [
-        setCoreViews,
         setContextStoreCurrentViewId,
         setCurrentRecordFields,
         mockCoreView,

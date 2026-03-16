@@ -30,12 +30,6 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
   })),
 }));
 
-jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItems', () => ({
-  useRefreshObjectMetadataItems: jest.fn().mockImplementation(() => ({
-    refreshObjectMetadataItems: jest.fn(),
-  })),
-}));
-
 jest.mock('@/domain-manager/hooks/useOrigin', () => ({
   useOrigin: jest.fn().mockImplementation(() => ({
     origin: 'http://localhost',

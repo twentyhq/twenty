@@ -1,4 +1,4 @@
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -37,7 +37,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
         jotaiStore,
         generatedMockObjectMetadataItems,
       );
-      jotaiStore.set(isAppMetadataReadyState.atom, true);
+      jotaiStore.set(isMinimalMetadataReadyState.atom, true);
       jotaiStore.set(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
