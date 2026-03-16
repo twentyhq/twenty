@@ -29,9 +29,8 @@ const computeBorderColor = (
   return 'transparent';
 };
 
+// oxlint-disable-next-line twenty/sort-css-properties-alphabetically
 const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
-  box-sizing: border-box;
-
   background: ${(props) => {
     if (props.isEditable && props.isDragging) {
       return `linear-gradient(0deg, ${themeCssVariables.background.transparent.lighter} 0%, ${themeCssVariables.background.transparent.lighter} 100%), ${themeCssVariables.background.secondary}`;
@@ -54,6 +53,7 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     props.isEditable
       ? `1px solid ${computeBorderColor(props)}`
       : 'none'};
+
   border-bottom: ${(props) => {
     const { variant, isEditable, isLastWidget } = props;
 
@@ -65,11 +65,12 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
 
     return `1px solid ${computeBorderColor(props)}`;
   }};
-
   border-radius: ${({ variant, isEditable }) =>
     variant === 'dashboard' || variant === 'record-page' || isEditable
       ? themeCssVariables.border.radius.md
       : '0'};
+
+  box-sizing: border-box;
 
   cursor: ${({
     isEditable,
@@ -103,6 +104,7 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   width: 100%;
 
   &:hover {
+    // border-color shorthand must precede border-bottom-color longhand for correct CSS cascade
     border-color: ${(props) => {
       if (
         props.isEditable &&
