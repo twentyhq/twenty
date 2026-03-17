@@ -27,6 +27,7 @@ export type CommandMenuButtonProps = {
   };
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
+  disabled?: boolean;
 };
 
 const getCommandMenuButtonLabel = (
@@ -39,6 +40,7 @@ export const CommandMenuButton = ({
   command,
   onClick,
   to,
+  disabled = false,
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuButtonLabel(command.label);
 
@@ -58,6 +60,7 @@ export const CommandMenuButton = ({
           accent={buttonAccent}
           to={to}
           onClick={onClick}
+          disabled={disabled}
           title={resolvedShortLabel}
           ariaLabel={resolvedLabel}
         />
@@ -70,6 +73,7 @@ export const CommandMenuButton = ({
             accent={buttonAccent}
             to={to}
             onClick={onClick}
+            disabled={disabled}
             ariaLabel={resolvedLabel}
           />
           <StyledWrapper>

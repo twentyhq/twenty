@@ -1,6 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';
@@ -15,8 +15,8 @@ export const useIsRecordReadOnly = ({
   recordId,
   objectMetadataId,
 }: UseIsRecordReadOnlyParams) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -33,7 +33,7 @@ export const useIsRecordReadOnly = ({
   const isRecordDeleted = useIsRecordDeleted({ recordId });
 
   return (
-    isNavigationMenuInEditMode ||
+    isLayoutCustomizationModeEnabled ||
     isRecordReadOnly({
       objectPermissions,
       isRecordDeleted,

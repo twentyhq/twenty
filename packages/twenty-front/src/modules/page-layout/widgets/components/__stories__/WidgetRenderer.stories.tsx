@@ -24,7 +24,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -1053,7 +1053,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       false,
@@ -1172,7 +1172,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       false,
@@ -1283,7 +1283,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       false,
@@ -1795,7 +1795,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       isInEditMode,

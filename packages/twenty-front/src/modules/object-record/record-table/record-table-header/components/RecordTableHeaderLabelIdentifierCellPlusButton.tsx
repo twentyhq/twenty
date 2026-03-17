@@ -1,4 +1,4 @@
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -22,8 +22,8 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
@@ -37,7 +37,7 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
   };
 
   const isReadOnly =
-    isNavigationMenuInEditMode ||
+    isLayoutCustomizationModeEnabled ||
     isObjectMetadataReadOnly({
       objectPermissions,
       objectMetadataItem,

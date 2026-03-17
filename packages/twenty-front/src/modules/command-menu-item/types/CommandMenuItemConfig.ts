@@ -27,4 +27,5 @@ export type CommandMenuItemConfig = {
   component: React.ReactNode;
   hotKeys?: Nullable<string[]>;
   requiredPermissionFlag?: PermissionFlagType;
+  isAllowedDuringGlobalLayoutCustomization?: boolean;
 };
