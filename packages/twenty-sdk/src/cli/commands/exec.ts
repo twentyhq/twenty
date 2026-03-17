@@ -1,8 +1,5 @@
-import { functionExecute } from '@/cli/public-operations/function-execute';
-import {
-  APP_ERROR_CODES,
-  FUNCTION_ERROR_CODES,
-} from '@/cli/public-operations/types';
+import { functionExecute } from '@/cli/operations/execute';
+import { APP_ERROR_CODES, FUNCTION_ERROR_CODES } from '@/cli/types';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
@@ -80,7 +77,7 @@ export class LogicFunctionExecuteCommand {
           } else {
             console.log(
               chalk.yellow(
-                'No functions found for this application. Have you synced your app with `yarn app:dev`?',
+                'No functions found for this application. Have you synced your app with `twenty dev`?',
               ),
             );
           }

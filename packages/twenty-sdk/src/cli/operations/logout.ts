@@ -1,16 +1,16 @@
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
-import { AUTH_ERROR_CODES, type CommandResult } from './types';
+import { AUTH_ERROR_CODES, type CommandResult } from '@/cli/types';
 
 export type AuthLogoutOptions = {
-  workspace?: string;
+  remote?: string;
 };
 
 const innerAuthLogout = async (
   options?: AuthLogoutOptions,
 ): Promise<CommandResult> => {
-  if (options?.workspace) {
-    ConfigService.setActiveWorkspace(options.workspace);
+  if (options?.remote) {
+    ConfigService.setActiveRemote(options.remote);
   }
 
   const configService = new ConfigService();
