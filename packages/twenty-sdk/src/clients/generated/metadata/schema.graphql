@@ -1750,28 +1750,6 @@ type UpsertRowLevelPermissionPredicatesResult {
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
 }
 
-type Relation {
-  type: RelationType!
-  sourceObjectMetadata: Object!
-  targetObjectMetadata: Object!
-  sourceFieldMetadata: Field!
-  targetFieldMetadata: Field!
-}
-
-"""Relation type"""
-enum RelationType {
-  ONE_TO_MANY
-  MANY_TO_ONE
-}
-
-type FieldConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [FieldEdge!]!
-}
-
 type VersionDistributionEntry {
   version: String!
   count: Int!
@@ -1798,6 +1776,28 @@ type PublicApplicationRegistration {
 
 type RotateClientSecret {
   clientSecret: String!
+}
+
+type Relation {
+  type: RelationType!
+  sourceObjectMetadata: Object!
+  targetObjectMetadata: Object!
+  sourceFieldMetadata: Field!
+  targetFieldMetadata: Field!
+}
+
+"""Relation type"""
+enum RelationType {
+  ONE_TO_MANY
+  MANY_TO_ONE
+}
+
+type FieldConnection {
+  """Paging information"""
+  pageInfo: PageInfo!
+
+  """Array of edges."""
+  edges: [FieldEdge!]!
 }
 
 type DeleteSso {
@@ -2075,6 +2075,7 @@ type CommandMenuItem {
   position: Float!
   isPinned: Boolean!
   availabilityType: CommandMenuItemAvailabilityType!
+  hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
   applicationId: UUID
@@ -3011,10 +3012,6 @@ type Query {
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
-  checkUserExists(email: String!, captchaToken: String): CheckUserExist!
-  checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
-  findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
-  validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -3022,6 +3019,10 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   applicationRegistrationTarballUrl(id: String!): String
+  checkUserExists(email: String!, captchaToken: String): CheckUserExist!
+  checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
+  findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
+  validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
@@ -3287,6 +3288,15 @@ type Mutation {
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
+  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
+  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
+  deleteApplicationRegistration(id: String!): Boolean!
+  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
+  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
+  deleteApplicationRegistrationVariable(id: String!): Boolean!
+  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
+  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String, origin: String!): LoginToken!
   signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -3303,15 +3313,6 @@ type Mutation {
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
   emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
-  createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
-  updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
-  deleteApplicationRegistration(id: String!): Boolean!
-  rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
-  createApplicationRegistrationVariable(input: CreateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  updateApplicationRegistrationVariable(input: UpdateApplicationRegistrationVariableInput!): ApplicationRegistrationVariable!
-  deleteApplicationRegistrationVariable(id: String!): Boolean!
-  uploadAppTarball(file: Upload!, universalIdentifier: String): ApplicationRegistration!
-  transferApplicationRegistrationOwnership(applicationRegistrationId: String!, targetWorkspaceSubdomain: String!): ApplicationRegistration!
   initiateOTPProvisioning(loginToken: String!, origin: String!): InitiateTwoFactorAuthenticationProvisioning!
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -3729,6 +3730,7 @@ input CreateCommandMenuItemInput {
   position: Float
   isPinned: Boolean
   availabilityType: CommandMenuItemAvailabilityType
+  hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
 }
@@ -3743,6 +3745,7 @@ input UpdateCommandMenuItemInput {
   availabilityType: CommandMenuItemAvailabilityType
   availabilityObjectMetadataId: UUID
   engineComponentKey: EngineComponentKey
+  hotKeys: [String!]
 }
 
 input CreateFrontComponentInput {
@@ -4133,11 +4136,6 @@ input UpdateWorkspaceInput {
   useRecommendedModels: Boolean
 }
 
-input GetAuthorizationUrlForSSOInput {
-  identityProviderId: UUID!
-  workspaceInviteHash: String
-}
-
 input CreateApplicationRegistrationInput {
   name: String!
   description: String
@@ -4183,6 +4181,11 @@ input UpdateApplicationRegistrationVariableInput {
 input UpdateApplicationRegistrationVariablePayload {
   value: String
   description: String
+}
+
+input GetAuthorizationUrlForSSOInput {
+  identityProviderId: UUID!
+  workspaceInviteHash: String
 }
 
 input SetupOIDCSsoInput {

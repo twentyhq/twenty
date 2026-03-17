@@ -10,8 +10,9 @@ export type CommandResult<T = void> =
 
 export const AUTH_ERROR_CODES = {
   AUTH_FAILED: 'AUTH_FAILED',
-  NO_WORKSPACES: 'NO_WORKSPACES',
-  WORKSPACE_NOT_FOUND: 'WORKSPACE_NOT_FOUND',
+  NO_REMOTES: 'NO_REMOTES',
+  REMOTE_NOT_FOUND: 'REMOTE_NOT_FOUND',
+  OAUTH_NOT_SUPPORTED: 'OAUTH_NOT_SUPPORTED',
 } as const;
 
 export const APP_ERROR_CODES = {
@@ -22,6 +23,7 @@ export const APP_ERROR_CODES = {
   UNINSTALL_FAILED: 'UNINSTALL_FAILED',
   SYNC_FAILED: 'SYNC_FAILED',
   TYPECHECK_FAILED: 'TYPECHECK_FAILED',
+  DEPLOY_FAILED: 'DEPLOY_FAILED',
 } as const;
 
 export const FUNCTION_ERROR_CODES = {
@@ -31,14 +33,14 @@ export const FUNCTION_ERROR_CODES = {
 } as const;
 
 export type AuthStatusResult = {
-  workspace: string;
+  remote: string;
   apiUrl: string;
   apiKeyMasked: string | null;
   isAuthenticated: boolean;
   isValid: boolean;
 };
 
-export type AuthListWorkspace = {
+export type AuthListRemote = {
   name: string;
   apiUrl: string;
   hasCredentials: boolean;

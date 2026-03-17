@@ -8,11 +8,11 @@ import {
   FUNCTION_ERROR_CODES,
   type CommandResult,
   type FunctionExecutionResult,
-} from './types';
+} from '@/cli/types';
 
 export type FunctionExecuteOptions = {
   appPath: string;
-  workspace?: string;
+  remote?: string;
   payload?: Record<string, unknown>;
 } & (
   | { postInstall: true }
@@ -49,8 +49,8 @@ const resolveIdentifier = (options: FunctionExecuteOptions): string => {
 const innerFunctionExecute = async (
   options: FunctionExecuteOptions,
 ): Promise<CommandResult<FunctionExecutionResult>> => {
-  if (options.workspace) {
-    ConfigService.setActiveWorkspace(options.workspace);
+  if (options.remote) {
+    ConfigService.setActiveRemote(options.remote);
   }
 
   const apiService = new ApiService();
@@ -61,7 +61,7 @@ const innerFunctionExecute = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.MANIFEST_NOT_FOUND,
-        message: 'Manifest not found. Run `app:build` or `app:dev` first.',
+        message: 'Manifest not found. Run `build` or `dev` first.',
       },
     };
   }

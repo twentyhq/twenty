@@ -1,2 +1,2 @@
-// Stub — overwritten by `twenty app:build` or `twenty app:dev`
+// Stub — overwritten by `twenty build` or `twenty dev`
 export class CoreApiClient {}

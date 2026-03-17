@@ -4,7 +4,6 @@ import { ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { BuildManifestOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/build-manifest-orchestrator-step';
 import { CheckServerOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
-import { EnsureValidTokensOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/ensure-valid-tokens-orchestrator-step';
 import { GenerateApiClientOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
 import { RegisterAppOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/register-app-orchestrator-step';
 import {
@@ -33,7 +32,6 @@ export class DevModeOrchestrator {
   private clientService: ClientService;
   private skipTypecheck = true;
   private checkServerStep: CheckServerOrchestratorStep;
-  private ensureValidTokensStep: EnsureValidTokensOrchestratorStep;
   private buildManifestStep: BuildManifestOrchestratorStep;
   private registerAppStep: RegisterAppOrchestratorStep;
   private uploadFilesStep: UploadFilesOrchestratorStep;
@@ -54,11 +52,6 @@ export class DevModeOrchestrator {
     this.checkServerStep = new CheckServerOrchestratorStep({
       ...stepDeps,
       apiService,
-    });
-    this.ensureValidTokensStep = new EnsureValidTokensOrchestratorStep({
-      ...stepDeps,
-      apiService,
-      configService,
     });
     this.buildManifestStep = new BuildManifestOrchestratorStep(stepDeps);
     this.registerAppStep = new RegisterAppOrchestratorStep({
@@ -167,10 +160,6 @@ export class DevModeOrchestrator {
       return;
     }
 
-    await this.ensureValidTokensStep.execute({
-      applicationId: this.state.steps.resolveApplication.output.applicationId,
-    });
-
     const buildResult = await this.buildManifestStep.execute({
       appPath: this.state.appPath,
     });
@@ -243,10 +232,6 @@ export class DevModeOrchestrator {
     this.state.applyStepEvents([
       { message: 'Application created', status: 'success' },
     ]);
-
-    await this.ensureValidTokensStep.exchangeTokens({
-      applicationId: createResult.data.id,
-    });
 
     this.uploadFilesStep.initialize({
       appPath: this.state.appPath,

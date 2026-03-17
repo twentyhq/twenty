@@ -1,26 +1,32 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
-import { AUTH_ERROR_CODES, type CommandResult } from './types';
+import { AUTH_ERROR_CODES, type CommandResult } from '@/cli/types';
 
 export type AuthLoginOptions = {
   apiKey: string;
   apiUrl: string;
-  workspace?: string;
+  remote?: string;
 };
 
 const innerAuthLogin = async (
   options: AuthLoginOptions,
 ): Promise<CommandResult> => {
-  const { apiKey, apiUrl, workspace } = options;
+  const { apiKey, apiUrl, remote } = options;
 
-  if (workspace) {
-    ConfigService.setActiveWorkspace(workspace);
+  if (remote) {
+    ConfigService.setActiveRemote(remote);
   }
 
   const configService = new ConfigService();
 
-  await configService.setConfig({ apiUrl, apiKey });
+  await configService.setConfig({
+    apiUrl,
+    apiKey,
+    accessToken: undefined,
+    refreshToken: undefined,
+    oauthClientId: undefined,
+  });
 
   const apiService = new ApiService();
   const validateAuth = await apiService.validateAuth();
