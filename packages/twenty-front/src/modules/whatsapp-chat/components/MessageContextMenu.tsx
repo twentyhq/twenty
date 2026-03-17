@@ -52,6 +52,7 @@ type MessageContextMenuProps = {
   onDelete?: (message: WaMessage) => void;
   onForward?: (message: WaMessage) => void;
   onFlagLead?: () => void;
+  onStrukturanalyse?: (message: WaMessage) => void;
 };
 
 export const MessageContextMenu = ({
@@ -63,6 +64,7 @@ export const MessageContextMenu = ({
   onDelete,
   onForward,
   onFlagLead,
+  onStrukturanalyse,
 }: MessageContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -119,6 +121,18 @@ export const MessageContextMenu = ({
             }}
           >
             Flag lead
+          </StyledMenuItem>
+        )}
+
+        {onStrukturanalyse && !message.fromAgent && message.hasMedia &&
+          message.mediaMimetype?.startsWith('image/') && (
+          <StyledMenuItem
+            onClick={() => {
+              onStrukturanalyse(message);
+              onClose();
+            }}
+          >
+            Strukturanalyse
           </StyledMenuItem>
         )}
 

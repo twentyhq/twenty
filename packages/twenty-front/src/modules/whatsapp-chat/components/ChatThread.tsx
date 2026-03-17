@@ -127,6 +127,7 @@ type ChatThreadProps = {
   onDeleteMessage?: (message: WaMessage) => void;
   onForwardMessage?: (message: WaMessage) => void;
   onFlagLead?: () => void;
+  onStrukturanalyse?: (message: WaMessage) => void;
 };
 
 export const ChatThread = ({
@@ -141,6 +142,7 @@ export const ChatThread = ({
   onDeleteMessage,
   onForwardMessage,
   onFlagLead,
+  onStrukturanalyse,
 }: ChatThreadProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -191,12 +193,13 @@ export const ChatThread = ({
           onDelete={onDeleteMessage}
           onForward={onForwardMessage}
           onFlagLead={onFlagLead}
+          onStrukturanalyse={onStrukturanalyse}
         />,
       );
     }
 
     return elements;
-  }, [messages, onEditMessage, onDeleteMessage, onForwardMessage, onFlagLead]);
+  }, [messages, onEditMessage, onDeleteMessage, onForwardMessage, onFlagLead, onStrukturanalyse]);
 
   return (
     <StyledContainer>

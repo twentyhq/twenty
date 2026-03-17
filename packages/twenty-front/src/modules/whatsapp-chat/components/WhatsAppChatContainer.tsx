@@ -12,6 +12,7 @@ import { ConversationList } from '@/whatsapp-chat/components/ConversationList';
 import { FlagLeadModal } from '@/whatsapp-chat/components/FlagLeadModal';
 import { ForwardMessageModal } from '@/whatsapp-chat/components/ForwardMessageModal';
 import { SessionPicker } from '@/whatsapp-chat/components/SessionPicker';
+import { StrukturanalyseModal } from '@/whatsapp-chat/components/StrukturanalyseModal';
 import { useLabels } from '@/whatsapp-chat/hooks/useLabels';
 import { useMessages } from '@/whatsapp-chat/hooks/useMessages';
 import { useSendMessage } from '@/whatsapp-chat/hooks/useSendMessage';
@@ -136,6 +137,11 @@ export const WhatsAppChatContainer = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [forwardingMessage, setForwardingMessage] = useState<WaMessage | null>(null);
   const [showFlagLead, setShowFlagLead] = useState(false);
+  const [saMessage, setSaMessage] = useState<WaMessage | null>(null);
+  const [saWsComplete, setSaWsComplete] = useState<{
+    pictureId: string;
+    status: string;
+  } | null>(null);
 
   const handleSelectSession = useCallback((session: WaSession) => {
     setActiveSession(session);
@@ -240,6 +246,23 @@ export const WhatsAppChatContainer = () => {
             updateMessageById(id, { isDeleted: true });
           } else if (wahaId) {
             updateMessageByWahaId(wahaId, { isDeleted: true });
+          }
+
+          break;
+        }
+
+        case 'strukturanalyse.complete': {
+          const saData = event.data as {
+            picture_id?: string;
+            status?: string;
+            conversation_id?: string;
+          };
+
+          if (saData.picture_id && saData.status) {
+            setSaWsComplete({
+              pictureId: saData.picture_id,
+              status: saData.status,
+            });
           }
 
           break;
@@ -460,6 +483,10 @@ export const WhatsAppChatContainer = () => {
     setShowFlagLead(true);
   }, []);
 
+  const handleStrukturanalyse = useCallback((message: WaMessage) => {
+    setSaMessage(message);
+  }, []);
+
   if (!activeSession) {
     return (
       <SessionPicker
@@ -528,6 +555,7 @@ export const WhatsAppChatContainer = () => {
               onDeleteMessage={handleDeleteMessage}
               onForwardMessage={handleForwardMessage}
               onFlagLead={handleFlagLead}
+              onStrukturanalyse={handleStrukturanalyse}
             />
           </>
         ) : (
@@ -565,6 +593,18 @@ export const WhatsAppChatContainer = () => {
           currentUserName={currentUserName}
           onClose={() => setShowFlagLead(false)}
           onFlagged={() => setShowFlagLead(false)}
+        />
+      )}
+
+      {saMessage && selectedConversation && (
+        <StrukturanalyseModal
+          message={saMessage}
+          conversation={selectedConversation}
+          onWsComplete={saWsComplete}
+          onClose={() => {
+            setSaMessage(null);
+            setSaWsComplete(null);
+          }}
         />
       )}
     </StyledContainer>

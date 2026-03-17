@@ -164,9 +164,10 @@ type ChatMessageProps = {
   onDelete?: (message: WaMessage) => void;
   onForward?: (message: WaMessage) => void;
   onFlagLead?: () => void;
+  onStrukturanalyse?: (message: WaMessage) => void;
 };
 
-export const ChatMessage = ({ message, onEdit, onDelete, onForward, onFlagLead }: ChatMessageProps) => {
+export const ChatMessage = ({ message, onEdit, onDelete, onForward, onFlagLead, onStrukturanalyse }: ChatMessageProps) => {
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -306,6 +307,7 @@ export const ChatMessage = ({ message, onEdit, onDelete, onForward, onFlagLead }
           onDelete={onDelete}
           onForward={onForward}
           onFlagLead={onFlagLead}
+          onStrukturanalyse={onStrukturanalyse}
         />
       )}
     </StyledRow>
