@@ -275,10 +275,10 @@ const StyledCompactPipeline = styled.div`
 
 const StyledCompactStep = styled.div<{ active: boolean }>`
   background: ${({ active }) =>
-    active ? '#DCFCE7' : '#F3F4F6'};
+    active ? '#DCFCE7' : '#E5E7EB'};
   border-radius: 2px;
   color: ${({ active }) =>
-    active ? '#22C55E' : '#D1D5DB'};
+    active ? '#16A34A' : '#9CA3AF'};
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.03em;
