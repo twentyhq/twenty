@@ -5,7 +5,7 @@ import { isDefined } from '../validation/isDefined';
 
 import { safeGetNestedProperty } from './safeGetNestedProperty';
 
-const TEMPLATE_VARIABLE_REGEX = /\$\{([^}]+)\}/g;
+const TEMPLATE_VARIABLE_REGEX = /\$\{([^{}]+)\}/g;
 const TRANSFORM_FUNCTION_CALL_REGEX = /^(\w+)\((.+)\)$/;
 
 const LABEL_TRANSFORM_FUNCTIONS: Record<string, (value: string) => string> = {
