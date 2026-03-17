@@ -2,7 +2,10 @@ import { type CommandMenuItemScope } from '@/command-menu-item/types/CommandMenu
 import { type CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types/ShouldBeRegisteredFunctionParams';
 import { type MessageDescriptor } from '@lingui/core';
-import { type CommandMenuItemViewType, type Nullable } from 'twenty-shared/types';
+import {
+  type CommandMenuItemViewType,
+  type Nullable,
+} from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { type MenuItemAccent } from 'twenty-ui/navigation';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
