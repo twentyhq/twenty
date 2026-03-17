@@ -13,7 +13,7 @@ const StyledList = styled.div`
   padding-top: ${themeCssVariables.betweenSiblingsGap};
 `;
 
-type NavigationDrawerSectionForWorkspaceItemsListReadOnlyProps = Pick<
+type WorkspaceSectionListReadOnlyProps = Pick<
   NavigationMenuItemSectionListDndKitProps,
   'filteredItems' | 'folderChildrenById' | 'onActiveObjectMetadataItemClick'
 >;
@@ -23,11 +23,11 @@ const READ_ONLY_EDIT_MODE_PROPS = {
   onEditModeClick: undefined,
 } as const;
 
-export const NavigationDrawerSectionForWorkspaceItemsListReadOnly = ({
+export const WorkspaceSectionListReadOnly = ({
   filteredItems,
   folderChildrenById,
   onActiveObjectMetadataItemClick,
-}: NavigationDrawerSectionForWorkspaceItemsListReadOnlyProps) => {
+}: WorkspaceSectionListReadOnlyProps) => {
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;

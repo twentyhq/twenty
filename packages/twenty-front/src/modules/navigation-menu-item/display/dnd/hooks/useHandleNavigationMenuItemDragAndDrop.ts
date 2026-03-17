@@ -7,7 +7,7 @@ import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/common/hooks
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
-import { validateAndExtractFolderId } from '@/ui/layout/draggable-list/utils/validateAndExtractFolderId';
+import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
 
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
@@ -64,16 +64,14 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
       return;
     }
 
-    const destinationFolderId = validateAndExtractFolderId({
-      droppableId: destination.droppableId,
-      orphanDroppableId:
-        NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS,
-    });
-    const sourceFolderId = validateAndExtractFolderId({
-      droppableId: source.droppableId,
-      orphanDroppableId:
-        NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS,
-    });
+    const destinationFolderId = extractFolderIdFromDroppableId(
+      destination.droppableId,
+      'favorite',
+    );
+    const sourceFolderId = extractFolderIdFromDroppableId(
+      source.droppableId,
+      'favorite',
+    );
 
     if (
       destination.droppableId.startsWith(

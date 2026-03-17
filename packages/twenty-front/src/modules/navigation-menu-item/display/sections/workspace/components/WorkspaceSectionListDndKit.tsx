@@ -29,7 +29,7 @@ const StyledListItemRow = styled.div`
   gap: 0;
 `;
 
-export const NavigationMenuItemSectionListDndKit = ({
+export const WorkspaceSectionListDndKit = ({
   filteredItems,
   getEditModeProps,
   folderChildrenById,

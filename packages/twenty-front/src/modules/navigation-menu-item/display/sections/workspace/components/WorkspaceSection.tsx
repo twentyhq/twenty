@@ -28,7 +28,7 @@ import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/commo
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
-import { NavigationDrawerSectionForWorkspaceItems } from '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItems';
+import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
@@ -45,7 +45,7 @@ const StyledRightIconsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-export const WorkspaceNavigationMenuItems = () => {
+export const WorkspaceSection = () => {
   const items = useNavigationMenuItemSectionItems();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -186,7 +186,7 @@ export const WorkspaceNavigationMenuItems = () => {
   };
 
   return (
-    <NavigationDrawerSectionForWorkspaceItems
+    <WorkspaceSectionContainer
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={

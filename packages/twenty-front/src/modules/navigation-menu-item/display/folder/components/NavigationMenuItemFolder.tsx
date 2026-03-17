@@ -1,154 +1,169 @@
-import { styled } from '@linaria/react';
-import { useContext, useState, type ReactNode } from 'react';
+import { Suspense, lazy } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent, useIcons } from 'twenty-ui/display';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
-import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
+import { NavigationMenuItemFolderLayout } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderLayout';
+import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
+import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
+import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 
-const StyledFolderExpandableWrapper = styled.div`
-  & > div {
-    overflow: visible !important;
+const LazyNavigationMenuItemFolderDnd = lazy(() =>
+  import(
+    '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd'
+  ).then((module) => ({ default: module.NavigationMenuItemFolderDnd })),
+);
+
+type NavigationMenuItemFolderProps = Pick<
+  NavigationMenuItemSectionContentProps,
+  | 'item'
+  | 'isEditInPlace'
+  | 'editModeProps'
+  | 'isDragging'
+  | 'folderChildrenById'
+  | 'folderCount'
+  | 'selectedNavigationMenuItemId'
+  | 'onNavigationMenuItemClick'
+  | 'readOnly'
+>;
+
+export const NavigationMenuItemFolder = ({
+  item,
+  isEditInPlace = false,
+  editModeProps,
+  isDragging,
+  folderChildrenById,
+  folderCount,
+  selectedNavigationMenuItemId,
+  onNavigationMenuItemClick,
+  readOnly = false,
+}: NavigationMenuItemFolderProps) => {
+  const folderId = item.id;
+  const folderName = item.name ?? 'Folder';
+  const folderIconKey = item.icon;
+  const folderColor = 'color' in item ? (item.color as string | null) : null;
+  const navigationMenuItems = folderChildrenById.get(folderId) ?? [];
+  const isGroup = folderCount > 1;
+
+  if (readOnly) {
+    return (
+      <NavigationMenuItemFolderReadOnlyContent
+        folderId={folderId}
+        folderName={folderName}
+        folderIconKey={folderIconKey}
+        folderColor={folderColor}
+        navigationMenuItems={navigationMenuItems}
+        isGroup={isGroup}
+      />
+    );
   }
-`;
 
-export type SubItemsRenderParams = {
-  navigationMenuItems: NavigationMenuItem[];
-  selectedNavigationMenuItemIndex: number;
-  isDragging: boolean;
-  folderId: string;
+  return (
+    <Suspense
+      fallback={
+        <NavigationMenuItemFolderReadOnlyContent
+          folderId={folderId}
+          folderName={folderName}
+          folderIconKey={folderIconKey}
+          folderColor={folderColor}
+          navigationMenuItems={navigationMenuItems}
+          isGroup={isGroup}
+        />
+      }
+    >
+      <LazyNavigationMenuItemFolderDnd
+        folderId={folderId}
+        folderName={folderName}
+        folderIconKey={folderIconKey}
+        folderColor={folderColor}
+        navigationMenuItems={navigationMenuItems}
+        isGroup={isGroup}
+        isEditInPlace={isEditInPlace}
+        editModeProps={editModeProps}
+        isDragging={isDragging}
+        selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+        onNavigationMenuItemClick={onNavigationMenuItemClick}
+      />
+    </Suspense>
+  );
 };
 
-type NavigationMenuItemFolderProps = {
+type NavigationMenuItemFolderReadOnlyContentProps = {
   folderId: string;
   folderName: string;
   folderIconKey?: string | null;
   folderColor?: string | null;
   navigationMenuItems: NavigationMenuItem[];
   isGroup: boolean;
-  isDragging?: boolean;
-
-  isOpen: boolean;
-  onToggle: () => void;
-  selectedNavigationMenuItemIndex: number;
-
-  headerIcon?: IconComponent;
-  headerRightOptions?: ReactNode;
-  headerActive?: boolean;
-  alwaysShowRightOptions?: boolean;
-  isRightOptionsDropdownOpen?: boolean;
-  onHeaderClick?: () => void;
-
-  headerOverride?: ReactNode;
-
-  renderHeaderWrapper?: (header: ReactNode) => ReactNode;
-  renderSubItems: (params: SubItemsRenderParams) => ReactNode;
-  renderContainer?: (content: ReactNode) => ReactNode;
-
-  containExpandOverflow?: boolean;
 };
 
-export const NavigationMenuItemFolder = ({
+const NavigationMenuItemFolderReadOnlyContent = ({
   folderId,
   folderName,
   folderIconKey,
   folderColor,
   navigationMenuItems,
   isGroup,
-  isDragging: isDraggingProp = false,
-  isOpen,
-  onToggle,
-  selectedNavigationMenuItemIndex,
-  headerIcon: headerIconProp,
-  headerRightOptions,
-  headerActive,
-  alwaysShowRightOptions,
-  isRightOptionsDropdownOpen,
-  onHeaderClick,
-  headerOverride,
-  renderHeaderWrapper,
-  renderSubItems,
-  renderContainer,
-  containExpandOverflow = false,
-}: NavigationMenuItemFolderProps) => {
-  const isMobile = useIsMobile();
+}: NavigationMenuItemFolderReadOnlyContentProps) => {
   const { getIcon } = useIcons();
-
-  const { isDragging: isContextDragging } = useContext(
-    NavigationMenuItemDragContext,
-  );
-  const isDragging = isDraggingProp || isContextDragging;
-
-  const [skipInitialExpandAnimation] = useState(() => isOpen);
-
+  const isMobile = useIsMobile();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
-  const iconColor = isDefined(folderColor)
-    ? folderColor
-    : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER;
 
-  const effectiveHeaderIcon = headerIconProp ?? FolderIcon;
-  const handleClick = onHeaderClick ?? onToggle;
+  const { isOpen, handleToggle, selectedNavigationMenuItemIndex } =
+    useNavigationMenuItemFolderOpenState({ folderId, navigationMenuItems });
 
-  const headerItem = (
-    <NavigationDrawerItem
-      label={folderName}
-      Icon={effectiveHeaderIcon}
-      iconColor={iconColor}
-      active={headerActive}
-      onClick={handleClick}
-      rightOptions={headerRightOptions}
-      className="navigation-drawer-item"
-      isRightOptionsDropdownOpen={isRightOptionsDropdownOpen}
-      triggerEvent="CLICK"
-      preventCollapseOnMobile={isMobile}
-      isDragging={isDragging}
-      alwaysShowRightOptions={alwaysShowRightOptions}
-    />
-  );
-
-  const header =
-    headerOverride ??
-    (renderHeaderWrapper ? renderHeaderWrapper(headerItem) : headerItem);
-
-  const expandable = (
-    <AnimatedExpandableContainer
-      isExpanded={isOpen}
-      dimension="height"
-      mode="fit-content"
-      containAnimation
-      initial={!skipInitialExpandAnimation}
+  return (
+    <NavigationMenuItemFolderLayout
+      header={
+        <NavigationDrawerItem
+          label={folderName}
+          Icon={FolderIcon}
+          iconColor={
+            isDefined(folderColor)
+              ? folderColor
+              : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
+          }
+          active={!isOpen && selectedNavigationMenuItemIndex >= 0}
+          onClick={handleToggle}
+          className="navigation-drawer-item"
+          triggerEvent="CLICK"
+          preventCollapseOnMobile={isMobile}
+          alwaysShowRightOptions
+          rightOptions={
+            isOpen ? (
+              <IconChevronDown
+                size={themeCssVariables.icon.size.sm}
+                stroke={themeCssVariables.icon.stroke.sm}
+                color={themeCssVariables.font.color.tertiary}
+              />
+            ) : (
+              <IconChevronRight
+                size={themeCssVariables.icon.size.sm}
+                stroke={themeCssVariables.icon.stroke.sm}
+                color={themeCssVariables.font.color.tertiary}
+              />
+            )
+          }
+        />
+      }
+      isOpen={isOpen}
+      isGroup={isGroup}
     >
-      {renderSubItems({
-        navigationMenuItems,
-        selectedNavigationMenuItemIndex,
-        isDragging,
-        folderId,
-      })}
-    </AnimatedExpandableContainer>
+      {navigationMenuItems.map((navigationMenuItem, index) => (
+        <NavigationMenuItemFolderSubItem
+          key={navigationMenuItem.id}
+          navigationMenuItem={navigationMenuItem}
+          index={index}
+          arrayLength={navigationMenuItems.length}
+          selectedNavigationMenuItemIndex={selectedNavigationMenuItemIndex}
+          isDragging={false}
+        />
+      ))}
+    </NavigationMenuItemFolderLayout>
   );
-
-  const content = (
-    <NavigationDrawerItemsCollapsableContainer isGroup={isGroup}>
-      {header}
-      {containExpandOverflow ? (
-        <StyledFolderExpandableWrapper>
-          {expandable}
-        </StyledFolderExpandableWrapper>
-      ) : (
-        expandable
-      )}
-    </NavigationDrawerItemsCollapsableContainer>
-  );
-
-  if (renderContainer) {
-    return renderContainer(content);
-  }
-
-  return content;
 };

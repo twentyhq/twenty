@@ -171,20 +171,22 @@ export const FavoritesSection = () => {
       )}
       {topLevelItems.length > 0 ? (
         <StyledList>
-          <NavigationMenuItemDroppableSlot
-            droppableId={ORPHAN_DROPPABLE_ID}
-            index={0}
-            disabled={favoritesDropDisabled}
-          >
-            <NavigationMenuItemOrphanDropTarget
-              index={0}
-              sectionId={NavigationSections.FAVORITES}
-              droppableId={ORPHAN_DROPPABLE_ID}
-            />
-          </NavigationMenuItemDroppableSlot>
           {topLevelItems.map((item, index) => (
             <StyledListItemRow key={item.id}>
-              {index > 0 && (
+              {index === 0 ? (
+                <NavigationMenuItemDroppableSlot
+                  droppableId={ORPHAN_DROPPABLE_ID}
+                  index={0}
+                  disabled={favoritesDropDisabled}
+                >
+                  <NavigationMenuItemOrphanDropTarget
+                    index={0}
+                    compact
+                    sectionId={NavigationSections.FAVORITES}
+                    droppableId={ORPHAN_DROPPABLE_ID}
+                  />
+                </NavigationMenuItemDroppableSlot>
+              ) : (
                 <NavigationMenuItemOrphanDropTarget
                   index={index}
                   compact

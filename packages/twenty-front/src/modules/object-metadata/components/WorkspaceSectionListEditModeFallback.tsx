@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
+import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
 import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -22,7 +22,7 @@ export const WorkspaceSectionListEditModeFallback = ({
   onActiveObjectMetadataItemClick,
 }: WorkspaceSectionListEditModeFallbackProps) => (
   <StyledFallback>
-    <NavigationDrawerSectionForWorkspaceItemsListReadOnly
+    <WorkspaceSectionListReadOnly
       filteredItems={filteredItems}
       folderChildrenById={folderChildrenById}
       onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}

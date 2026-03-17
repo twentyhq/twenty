@@ -10,7 +10,7 @@ import { NavigationDropTargetContext } from '@/navigation-menu-item/common/conte
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
-import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
+import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/components/WorkspaceSectionListEditModeFallback';
@@ -22,17 +22,17 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
-const LazyNavigationMenuItemSectionListDndKit = lazy(() =>
+const LazyWorkspaceSectionListDndKit = lazy(() =>
   import(
-    '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
-  ).then((m) => ({ default: m.NavigationMenuItemSectionListDndKit })),
+    '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit'
+  ).then((m) => ({ default: m.WorkspaceSectionListDndKit })),
 );
 
 const StyledWorkspaceSectionContentGapOffset = styled.div`
   margin-top: calc(-1 * ${themeCssVariables.betweenSiblingsGap});
 `;
 
-type NavigationDrawerSectionForWorkspaceItemsProps = {
+type WorkspaceSectionContainerProps = {
   sectionTitle: string;
   items: NavigationMenuItem[];
   rightIcon?: React.ReactNode;
@@ -44,14 +44,14 @@ type NavigationDrawerSectionForWorkspaceItemsProps = {
   ) => void;
 };
 
-export const NavigationDrawerSectionForWorkspaceItems = ({
+export const WorkspaceSectionContainer = ({
   sectionTitle,
   items,
   rightIcon,
   selectedNavigationMenuItemId = null,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-}: NavigationDrawerSectionForWorkspaceItemsProps) => {
+}: WorkspaceSectionContainerProps) => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -165,7 +165,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
             />
           }
         >
-          <LazyNavigationMenuItemSectionListDndKit
+          <LazyWorkspaceSectionListDndKit
             filteredItems={filteredItems}
             getEditModeProps={getEditModeProps}
             folderChildrenById={folderChildrenById}
@@ -175,7 +175,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           />
         </Suspense>
       ) : (
-        <NavigationDrawerSectionForWorkspaceItemsListReadOnly
+        <WorkspaceSectionListReadOnly
           filteredItems={filteredItems}
           folderChildrenById={folderChildrenById}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
