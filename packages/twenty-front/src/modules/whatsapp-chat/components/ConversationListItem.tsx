@@ -47,12 +47,12 @@ const PIPELINE_ICONS = {
 
 // ── Styled components ───────────────────────────────────────────
 
-const StyledItem = styled.div<{ isSelected: boolean }>`
-  background: ${({ isSelected }) =>
-    isSelected ? '#EBF0FF' : 'transparent'};
+const StyledItem = styled.div<{ isSelected: boolean; needsReply: boolean }>`
+  background: ${({ isSelected, needsReply }) =>
+    isSelected ? '#EBF0FF' : needsReply ? '#FFFBEB' : 'transparent'};
   border-bottom: 1px solid #F3F4F6;
-  border-left: 3px solid ${({ isSelected }) =>
-    isSelected ? '#1A6CFF' : 'transparent'};
+  border-left: 3px solid ${({ isSelected, needsReply }) =>
+    isSelected ? '#1A6CFF' : needsReply ? '#F59E0B' : 'transparent'};
   border-radius: 0;
   cursor: pointer;
   display: flex;
@@ -61,8 +61,8 @@ const StyledItem = styled.div<{ isSelected: boolean }>`
   transition: background 120ms ease, border-color 120ms ease;
 
   &:hover {
-    background: ${({ isSelected }) =>
-      isSelected ? '#EBF0FF' : '#F5F6FA'};
+    background: ${({ isSelected, needsReply }) =>
+      isSelected ? '#EBF0FF' : needsReply ? '#FEF3C7' : '#F5F6FA'};
   }
 `;
 
@@ -590,6 +590,7 @@ export const ConversationListItem = ({
     <>
       <StyledItem
         isSelected={isSelected}
+        needsReply={needsReply}
         onClick={() => onClick(conversation.id)}
         onContextMenu={handleContextMenu}
       >
