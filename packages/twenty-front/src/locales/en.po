@@ -947,7 +947,7 @@ msgstr "Add item to folder"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/display/folder/components/WorkspaceNavigationMenuItemsFolder.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Add menu item"
 msgstr "Add menu item"
 
@@ -4390,7 +4390,7 @@ msgid "Delete field"
 msgstr "Delete field"
 
 #. js-lingui-id: 97QUV6
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Delete Folder"
 msgstr "Delete Folder"
 
@@ -4932,7 +4932,7 @@ msgstr "Edit Fields"
 
 #. js-lingui-id: uPHscS
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit folder"
 msgstr "Edit folder"
@@ -4955,7 +4955,7 @@ msgstr "Edit Layout"
 
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit link"
 msgstr "Edit link"
@@ -9120,7 +9120,7 @@ msgstr "New record"
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "New sidebar item"
 msgstr "New sidebar item"
 
@@ -11138,15 +11138,17 @@ msgstr "Remote"
 msgid "Remove"
 msgstr "Remove"
 
-#. js-lingui-id: 0Urj9q
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu item?"
-msgstr "Remove {navigationMenuItemCount} navigation menu item?"
+#. js-lingui-id: XABoh4
+#. placeholder {0}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {0} navigation menu items?"
+msgstr "Remove {0} navigation menu items?"
 
-#. js-lingui-id: Ef5jwi
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu items?"
-msgstr "Remove {navigationMenuItemCount} navigation menu items?"
+#. js-lingui-id: p/lN7X
+#. placeholder {1}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {1} navigation menu item?"
+msgstr "Remove {1} navigation menu item?"
 
 #. js-lingui-id: 1O32oy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -13492,13 +13494,14 @@ msgstr "This action cannot be undone. This will permanently remove your membersh
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 
-#. js-lingui-id: lAHIY2
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
-msgstr "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
+#. js-lingui-id: XxxrMw
+#. placeholder {2}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "This action will delete this folder and all {2} navigation menu items inside. Do you want to continue?"
+msgstr "This action will delete this folder and all {2} navigation menu items inside. Do you want to continue?"
 
 #. js-lingui-id: gSO0+U
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 
@@ -15110,7 +15113,7 @@ msgstr "Workflows"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Workspace"
 msgstr "Workspace"
 
