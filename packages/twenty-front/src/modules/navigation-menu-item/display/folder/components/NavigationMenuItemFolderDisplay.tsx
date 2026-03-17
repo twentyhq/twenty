@@ -22,7 +22,7 @@ import {
 } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
-import { NavigationMenuItemFolderFavoritesWrapper } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderFavoritesWrapper';
+import { NavigationMenuItemFolderFavoritesEditWrapper } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderFavoritesEditWrapper';
 import { NavigationMenuItemFolderReadOnly } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderReadOnly';
 import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
@@ -42,7 +42,9 @@ const LazyNavigationMenuItemFolder = lazy(() =>
   ).then((m) => ({ default: m.NavigationMenuItemFolder })),
 );
 
-const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
+export const StyledFolderContainer = styled.div<{
+  $isSelectedInEditMode: boolean;
+}>`
   border: ${({ $isSelectedInEditMode }) =>
     $isSelectedInEditMode
       ? `1px solid ${themeCssVariables.color.blue}`
@@ -59,7 +61,7 @@ const StyledFolderContainer = styled.div<{ $isSelectedInEditMode: boolean }>`
   }
 `;
 
-const StyledFolderDroppableContent = styled.div`
+export const StyledFolderDroppableContent = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -69,7 +71,7 @@ type NavigationMenuItemFolderDisplayProps =
 
 export const NavigationMenuItemFolderDisplay = ({
   item,
-  section,
+  isEditInPlace = false,
   editModeProps,
   isDragging,
   folderChildrenById,
@@ -98,11 +100,13 @@ export const NavigationMenuItemFolderDisplay = ({
     );
   }
 
-  if (section === NavigationSections.FAVORITES) {
+  if (isEditInPlace) {
     return (
-      <NavigationMenuItemFolderFavoritesWrapper
+      <NavigationMenuItemFolderFavoritesEditWrapper
         folderId={folderId}
         folderName={folderName}
+        folderIconKey={folderIconKey}
+        folderColor={folderColor}
         navigationMenuItems={navigationMenuItems}
         isGroup={isGroup}
       />

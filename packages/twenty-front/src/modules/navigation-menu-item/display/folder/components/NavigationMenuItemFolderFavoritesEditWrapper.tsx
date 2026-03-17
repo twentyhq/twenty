@@ -1,20 +1,31 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { useLingui } from '@lingui/react/macro';
-import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
+import { IconFolder, IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
+import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
+import {
+  FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
+  NavigationMenuItemDroppableSlot,
+} from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
 import {
   NavigationMenuItemFolder,
   type SubItemsRenderParams,
 } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
+import {
+  StyledFolderContainer,
+  StyledFolderDroppableContent,
+} from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDisplay';
 import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown';
 import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
@@ -22,24 +33,35 @@ import { useFavoritesFolderEdit } from '@/navigation-menu-item/edit/folder/hooks
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 
-type NavigationMenuItemFolderFavoritesWrapperProps = {
+type NavigationMenuItemFolderFavoritesEditWrapperProps = {
   folderId: string;
   folderName: string;
+  folderIconKey?: string | null;
+  folderColor?: string | null;
   navigationMenuItems: NavigationMenuItem[];
   isGroup: boolean;
 };
 
-export const NavigationMenuItemFolderFavoritesWrapper = ({
+export const NavigationMenuItemFolderFavoritesEditWrapper = ({
   folderId,
   folderName,
+  folderIconKey,
+  folderColor,
   navigationMenuItems,
   isGroup,
-}: NavigationMenuItemFolderFavoritesWrapperProps) => {
+}: NavigationMenuItemFolderFavoritesEditWrapperProps) => {
   const { t } = useLingui();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
 
   const { isOpen, handleToggle, selectedNavigationMenuItemIndex } =
     useNavigationMenuItemFolderOpenState({ folderId, navigationMenuItems });
+
+  const setSortableDropTargetRef = useContext(SortableDropTargetRefContext);
+  const favoritesDropDisabled = useIsDropDisabledForSection(false);
+
+  const { activeDropTargetId, forbiddenDropTargetId } = useContext(
+    NavigationDropTargetContext,
+  );
 
   const {
     isRenaming,
@@ -57,6 +79,17 @@ export const NavigationMenuItemFolderFavoritesWrapper = ({
     isModalOpened,
     navigationMenuItemCount,
   } = useFavoritesFolderEdit({ folderId, folderName, navigationMenuItems });
+
+  const folderHeaderDroppableId = `folder-header-${folderId}`;
+  const folderContentDroppableId = `folder-${folderId}`;
+  const folderHeaderSlotId = getDndKitDropTargetId(folderHeaderDroppableId, 0);
+
+  const isForbiddenDropTarget =
+    isDefined(forbiddenDropTargetId) &&
+    (forbiddenDropTargetId.startsWith(`${folderContentDroppableId}::`) ||
+      forbiddenDropTargetId.startsWith(`${folderHeaderDroppableId}::`));
+  const isDragOverFolderHeader =
+    !isForbiddenDropTarget && activeDropTargetId === folderHeaderSlotId;
 
   const headerRightOptions = (
     <NavigationMenuItemFolderNavigationDrawerItemDropdown
@@ -80,20 +113,21 @@ export const NavigationMenuItemFolderFavoritesWrapper = ({
 
   const renderHeaderWrapper = useCallback(
     (header: React.ReactNode) => (
-      <NavigationItemDropTarget
-        folderId={folderId}
-        index={0}
-        sectionId={NavigationSections.FAVORITES}
-        dropTargetIdOverride={getDndKitDropTargetId(
-          `folder-header-${folderId}`,
-          0,
-        )}
-      >
-        {header}
-      </NavigationItemDropTarget>
+      <div ref={setSortableDropTargetRef ?? undefined}>
+        <NavigationMenuItemDroppableSlot
+          droppableId={folderHeaderDroppableId}
+          index={0}
+          disabled={favoritesDropDisabled}
+          collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
+        >
+          {header}
+        </NavigationMenuItemDroppableSlot>
+      </div>
     ),
-    [folderId],
+    [setSortableDropTargetRef, folderHeaderDroppableId, favoritesDropDisabled],
   );
+
+  const isCompact = true;
 
   const renderSubItems = useCallback(
     ({
@@ -104,20 +138,21 @@ export const NavigationMenuItemFolderFavoritesWrapper = ({
     }: SubItemsRenderParams) => {
       const group = `folder-${currentFolderId}`;
       return (
-        <>
+        <StyledFolderDroppableContent>
           {items.map((navigationMenuItem, index) => (
             <React.Fragment key={navigationMenuItem.id}>
               <NavigationItemDropTarget
                 folderId={currentFolderId}
                 index={index}
                 sectionId={NavigationSections.FAVORITES}
-                compact
+                compact={isCompact}
                 dropTargetIdOverride={getDndKitDropTargetId(group, index)}
               />
               <NavigationMenuItemSortableItem
                 id={navigationMenuItem.id}
                 index={index}
                 group={group}
+                disabled={favoritesDropDisabled}
               >
                 <NavigationMenuItemFolderSubItem
                   navigationMenuItem={navigationMenuItem}
@@ -135,17 +170,36 @@ export const NavigationMenuItemFolderFavoritesWrapper = ({
               </NavigationMenuItemSortableItem>
             </React.Fragment>
           ))}
-          <NavigationItemDropTarget
-            folderId={currentFolderId}
+          <NavigationMenuItemDroppableSlot
+            droppableId={group}
             index={items.length}
-            sectionId={NavigationSections.FAVORITES}
-            compact
-            dropTargetIdOverride={getDndKitDropTargetId(group, items.length)}
-          />
-        </>
+            disabled={favoritesDropDisabled}
+          >
+            <NavigationItemDropTarget
+              folderId={currentFolderId}
+              index={items.length}
+              sectionId={NavigationSections.FAVORITES}
+              compact
+              dropTargetIdOverride={getDndKitDropTargetId(group, items.length)}
+            />
+          </NavigationMenuItemDroppableSlot>
+        </StyledFolderDroppableContent>
       );
     },
-    [deleteNavigationMenuItem],
+    [deleteNavigationMenuItem, favoritesDropDisabled, isCompact],
+  );
+
+  const renderContainer = useCallback(
+    (content: React.ReactNode) => (
+      <StyledFolderContainer
+        $isSelectedInEditMode={false}
+        data-drag-over-header={isDragOverFolderHeader ? 'true' : undefined}
+        data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
+      >
+        {content}
+      </StyledFolderContainer>
+    ),
+    [isDragOverFolderHeader, isForbiddenDropTarget],
   );
 
   const deleteModal = isModalOpened
@@ -174,17 +228,22 @@ export const NavigationMenuItemFolderFavoritesWrapper = ({
       <NavigationMenuItemFolder
         folderId={folderId}
         folderName={folderName}
+        folderIconKey={folderIconKey}
+        folderColor={folderColor}
         navigationMenuItems={navigationMenuItems}
         isGroup={isGroup}
         isOpen={isOpen}
         onToggle={handleToggle}
         selectedNavigationMenuItemIndex={selectedNavigationMenuItemIndex}
-        headerIcon={isOpen ? IconFolderOpen : IconFolder}
         headerRightOptions={headerRightOptions}
+        headerActive={!isOpen && selectedNavigationMenuItemIndex >= 0}
+        alwaysShowRightOptions
         isRightOptionsDropdownOpen={isDropdownOpen}
         headerOverride={headerOverride}
         renderHeaderWrapper={renderHeaderWrapper}
         renderSubItems={renderSubItems}
+        renderContainer={renderContainer}
+        containExpandOverflow
       />
       {deleteModal}
     </>

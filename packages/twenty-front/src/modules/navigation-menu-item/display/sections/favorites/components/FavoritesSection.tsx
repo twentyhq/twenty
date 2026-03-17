@@ -11,14 +11,15 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
 import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/common/states/isNavigationMenuItemFolderCreatingState';
-import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
-import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
+import { NavigationMenuItemDroppableSlot } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
+import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
 import { useCreateNavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/hooks/useCreateNavigationMenuItemFolder';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
+import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -27,12 +28,21 @@ import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-d
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
-const StyledEmptyContainer = styled.div`
-  width: 100%;
+const StyledList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.betweenSiblingsGap};
+  padding-top: ${themeCssVariables.betweenSiblingsGap};
 `;
 
-const StyledOrphanItemContainer = styled.div`
-  margin-bottom: ${themeCssVariables.betweenSiblingsGap};
+const StyledListItemRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+`;
+
+const StyledEmptyContainer = styled.div`
+  width: 100%;
 `;
 
 const ORPHAN_DROPPABLE_ID =
@@ -43,6 +53,7 @@ export const FavoritesSection = () => {
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
+  const favoritesDropDisabled = useIsDropDisabledForSection(false);
 
   const [newFolderName, setNewFolderName] = useState('');
   const { createNewNavigationMenuItemFolder } =
@@ -159,58 +170,62 @@ export const FavoritesSection = () => {
         </NavigationDrawerAnimatedCollapseWrapper>
       )}
       {topLevelItems.length > 0 ? (
-        <>
+        <StyledList>
+          <NavigationMenuItemDroppableSlot
+            droppableId={ORPHAN_DROPPABLE_ID}
+            index={0}
+            disabled={favoritesDropDisabled}
+          >
+            <NavigationMenuItemOrphanDropTarget
+              index={0}
+              sectionId={NavigationSections.FAVORITES}
+              droppableId={ORPHAN_DROPPABLE_ID}
+            />
+          </NavigationMenuItemDroppableSlot>
           {topLevelItems.map((item, index) => (
-            <div key={item.id}>
-              <NavigationItemDropTarget
-                folderId={null}
-                index={index}
-                sectionId={NavigationSections.FAVORITES}
-                compact
-                dropTargetIdOverride={getDndKitDropTargetId(
-                  ORPHAN_DROPPABLE_ID,
-                  index,
-                )}
-              />
+            <StyledListItemRow key={item.id}>
+              {index > 0 && (
+                <NavigationMenuItemOrphanDropTarget
+                  index={index}
+                  compact
+                  sectionId={NavigationSections.FAVORITES}
+                  droppableId={ORPHAN_DROPPABLE_ID}
+                />
+              )}
               <NavigationMenuItemSortableItem
                 id={item.id}
                 index={index}
                 group={ORPHAN_DROPPABLE_ID}
+                disabled={favoritesDropDisabled}
               >
-                {isNavigationMenuItemFolder(item) ? (
-                  <NavigationMenuItemDisplay
-                    item={item}
-                    section={NavigationSections.FAVORITES}
-                    isDragging={isDragging}
-                    folderChildrenById={folderChildrenById}
-                    folderCount={folderCount}
-                  />
-                ) : (
-                  <StyledOrphanItemContainer>
-                    <NavigationMenuItemDisplay
-                      item={item}
-                      section={NavigationSections.FAVORITES}
-                      isDragging={isDragging}
-                      folderChildrenById={folderChildrenById}
-                      folderCount={folderCount}
-                      rightOptions={makeRightOptions(item)}
-                    />
-                  </StyledOrphanItemContainer>
-                )}
+                <NavigationMenuItemDisplay
+                  item={item}
+                  isEditInPlace={isNavigationMenuItemFolder(item)}
+                  isDragging={isDragging}
+                  folderChildrenById={folderChildrenById}
+                  folderCount={folderCount}
+                  rightOptions={
+                    isNavigationMenuItemFolder(item)
+                      ? undefined
+                      : makeRightOptions(item)
+                  }
+                />
               </NavigationMenuItemSortableItem>
-            </div>
+            </StyledListItemRow>
           ))}
-          <NavigationItemDropTarget
-            folderId={null}
+          <NavigationMenuItemDroppableSlot
+            droppableId={ORPHAN_DROPPABLE_ID}
             index={topLevelItems.length}
-            sectionId={NavigationSections.FAVORITES}
-            compact
-            dropTargetIdOverride={getDndKitDropTargetId(
-              ORPHAN_DROPPABLE_ID,
-              topLevelItems.length,
-            )}
-          />
-        </>
+            disabled={favoritesDropDisabled}
+          >
+            <NavigationMenuItemOrphanDropTarget
+              index={topLevelItems.length}
+              compact
+              sectionId={NavigationSections.FAVORITES}
+              droppableId={ORPHAN_DROPPABLE_ID}
+            />
+          </NavigationMenuItemDroppableSlot>
+        </StyledList>
       ) : (
         <StyledEmptyContainer style={{ height: isDragging ? '24px' : '1px' }} />
       )}

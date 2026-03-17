@@ -3,7 +3,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 
@@ -39,7 +38,6 @@ export const NavigationDrawerSectionForWorkspaceItemsListReadOnly = ({
         <NavigationMenuItemDisplay
           key={item.id}
           item={item}
-          section={NavigationSections.WORKSPACE}
           editModeProps={READ_ONLY_EDIT_MODE_PROPS}
           isDragging={false}
           folderChildrenById={folderChildrenById}

@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import type { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -9,7 +8,7 @@ import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 
 export type NavigationMenuItemSectionContentProps = {
   item: NavigationMenuItem;
-  section: NavigationSections;
+  isEditInPlace?: boolean;
   editModeProps?: EditModeProps;
   isDragging: boolean;
   folderChildrenById: Map<string, NavigationMenuItem[]>;

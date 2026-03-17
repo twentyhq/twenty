@@ -60,16 +60,26 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
       return;
     }
 
-    const destinationFolderId = validateAndExtractFolderId({
-      droppableId: destination.droppableId,
-      orphanDroppableId:
-        NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS,
-    });
-    const sourceFolderId = validateAndExtractFolderId({
-      droppableId: source.droppableId,
-      orphanDroppableId:
-        NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS,
-    });
+    let destinationFolderId: string | null;
+    let sourceFolderId: string | null;
+    try {
+      destinationFolderId = validateAndExtractFolderId({
+        droppableId: destination.droppableId,
+        orphanDroppableId:
+          NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS,
+      });
+    } catch {
+      return;
+    }
+    try {
+      sourceFolderId = validateAndExtractFolderId({
+        droppableId: source.droppableId,
+        orphanDroppableId:
+          NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS,
+      });
+    } catch {
+      return;
+    }
 
     if (
       destination.droppableId.startsWith(

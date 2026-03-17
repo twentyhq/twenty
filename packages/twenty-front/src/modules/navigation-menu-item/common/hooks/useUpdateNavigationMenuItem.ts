@@ -10,6 +10,7 @@ export const useUpdateNavigationMenuItem = () => {
     UpdateNavigationMenuItemDocument,
     {
       refetchQueries: ['FindManyNavigationMenuItems'],
+      awaitRefetchQueries: false,
     },
   );
 

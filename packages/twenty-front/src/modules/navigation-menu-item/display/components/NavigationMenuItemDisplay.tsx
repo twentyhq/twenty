@@ -8,7 +8,7 @@ type NavigationMenuItemDisplayProps = NavigationMenuItemSectionContentProps;
 
 export const NavigationMenuItemDisplay = ({
   item,
-  section,
+  isEditInPlace,
   editModeProps,
   isDragging,
   folderChildrenById,
@@ -24,7 +24,7 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemFolderDisplay
           item={item}
-          section={section}
+          isEditInPlace={isEditInPlace}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
@@ -39,7 +39,7 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemLinkDisplay
           item={item}
-          section={section}
+          isEditInPlace={isEditInPlace}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
@@ -55,7 +55,7 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemObjectDisplay
           item={item}
-          section={section}
+          isEditInPlace={isEditInPlace}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
