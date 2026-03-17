@@ -9,7 +9,6 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -17,17 +16,19 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useResetDraftPageLayoutToPersistedPageLayout = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const useResetDraftPageLayoutToPersistedPageLayout = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId?: string;
+  tabListInstanceId: string;
+}) => {
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
 
   const store = useStore();
-  const tabListComponentInstanceId =
-    getTabListInstanceIdFromPageLayoutId(componentInstanceId);
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
@@ -45,7 +46,7 @@ export const useResetDraftPageLayoutToPersistedPageLayout = (
   );
 
   const activeTabId = activeTabIdComponentState.atomFamily({
-    instanceId: tabListComponentInstanceId,
+    instanceId: tabListInstanceId,
   });
 
   const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(

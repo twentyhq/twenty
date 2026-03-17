@@ -1,10 +1,12 @@
 import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useResetDraftPageLayoutToPersistedPageLayout } from '@/page-layout/hooks/useResetDraftPageLayoutToPersistedPageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const CancelDashboardSingleRecordCommand = () => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -13,13 +15,22 @@ export const CancelDashboardSingleRecordCommand = () => {
 
   const pageLayoutId = recordStore?.pageLayoutId;
 
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId: pageLayoutId ?? '',
+    layoutType: PageLayoutType.DASHBOARD,
+    targetRecordIdentifier: { id: recordId, targetObjectNameSingular: '' },
+  });
+
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
   const { resetDraftPageLayoutToPersistedPageLayout } =
-    useResetDraftPageLayoutToPersistedPageLayout(pageLayoutId);
+    useResetDraftPageLayoutToPersistedPageLayout({
+      pageLayoutId,
+      tabListInstanceId,
+    });
 
   const handleClick = () => {
     closeSidePanelMenu();
