@@ -15,10 +15,7 @@ const deriveRemoteName = (url: string): string => {
   }
 };
 
-const authenticate = async (
-  apiUrl: string,
-  token?: string,
-): Promise<void> => {
+const authenticate = async (apiUrl: string, token?: string): Promise<void> => {
   const result = token
     ? await authLogin({ apiKey: token, apiUrl })
     : await runOAuthWithApiKeyFallback(apiUrl);
@@ -105,9 +102,7 @@ export const registerRemoteCommands = (program: Command): void => {
 
           ConfigService.setActiveRemote(remoteName);
           await authenticate('http://localhost:3000', token);
-          console.log(
-            chalk.green(`✓ Authenticated remote "${remoteName}".`),
-          );
+          console.log(chalk.green(`✓ Authenticated remote "${remoteName}".`));
 
           return;
         }
@@ -117,14 +112,11 @@ export const registerRemoteCommands = (program: Command): void => {
           nameOrUrl !== undefined && existingRemotes.includes(nameOrUrl);
 
         if (isExistingRemote) {
-          const config =
-            await configService.getConfigForRemote(nameOrUrl);
+          const config = await configService.getConfigForRemote(nameOrUrl);
 
           ConfigService.setActiveRemote(nameOrUrl);
           await authenticate(config.apiUrl, options.token);
-          console.log(
-            chalk.green(`✓ Re-authenticated remote "${nameOrUrl}".`),
-          );
+          console.log(chalk.green(`✓ Re-authenticated remote "${nameOrUrl}".`));
 
           return;
         }
@@ -165,9 +157,7 @@ export const registerRemoteCommands = (program: Command): void => {
           await configService.setDefaultRemote(name);
         }
 
-        console.log(
-          chalk.green(`✓ Authenticated remote "${name}".`),
-        );
+        console.log(chalk.green(`✓ Authenticated remote "${name}".`));
       },
     );
 

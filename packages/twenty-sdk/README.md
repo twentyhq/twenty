@@ -88,6 +88,7 @@ Manage remote server connections and authentication.
 - `twenty remote list` — List all configured remotes with their auth status and URLs.
 
 - `twenty remote switch [name]` — Set the default remote.
+
   - If omitted, shows an interactive selection.
 
 - `twenty whoami` — Print the current remote name, server URL, and auth status.
