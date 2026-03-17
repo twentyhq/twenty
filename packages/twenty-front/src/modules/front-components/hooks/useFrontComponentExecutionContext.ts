@@ -75,7 +75,7 @@ export const useFrontComponentExecutionContext = ({
   const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
     async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
       openConfirmationModal({
-        frontComponentId,
+        callerId: frontComponentId,
         title,
         subtitle,
         confirmButtonText,

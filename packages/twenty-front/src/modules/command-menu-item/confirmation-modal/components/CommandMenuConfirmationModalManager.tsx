@@ -23,7 +23,7 @@ export const CommandMenuConfirmationModalManager = () => {
     commandMenuItemConfirmationModalConfigState,
   );
 
-  const callerId = commandMenuItemConfirmationModalConfig?.frontComponentId;
+  const callerId = commandMenuItemConfirmationModalConfig?.callerId;
 
   const emitConfirmationResult = (
     confirmationResult: CommandMenuConfirmationModalResult,
@@ -37,7 +37,7 @@ export const CommandMenuConfirmationModalManager = () => {
         COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
         {
           detail: {
-            frontComponentId: callerId,
+            callerId,
             confirmationResult,
           },
         },

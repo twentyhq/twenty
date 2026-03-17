@@ -11,7 +11,7 @@ const COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
   'command-menu-item-confirmation-modal-result';
 
 type CommandMenuItemConfirmationModalResultBrowserEventDetail = {
-  frontComponentId: string;
+  callerId: string;
   confirmationResult: CommandConfirmationModalResult;
 };
 
@@ -74,7 +74,7 @@ export const FrontComponentWorkerEffect = ({
         event.detail;
 
       if (
-        commandMenuItemConfirmationModalResultBrowserEventDetail.frontComponentId !==
+        commandMenuItemConfirmationModalResultBrowserEventDetail.callerId !==
         frontComponentId
       ) {
         return;

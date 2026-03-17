@@ -33,7 +33,7 @@ export const useCommandMenuConfirmationModal = () => {
         isCommandMenuItemConfirmationModalOpened
       ) {
         throw new Error(
-          'Command menu item confirmation modal is already active for another front component',
+          'Command menu item confirmation modal is already active for another caller',
         );
       }
 

@@ -40,7 +40,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
     setIsInitialized(true);
 
     openConfirmationModal({
-      frontComponentId: engineCommandId,
+      callerId: engineCommandId,
       title,
       subtitle,
       confirmButtonText,
@@ -62,7 +62,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       const customEvent =
         event as CustomEvent<CommandMenuConfirmationModalResultBrowserEventDetail>;
 
-      if (customEvent.detail.frontComponentId !== engineCommandId) {
+      if (customEvent.detail.callerId !== engineCommandId) {
         return;
       }
 
