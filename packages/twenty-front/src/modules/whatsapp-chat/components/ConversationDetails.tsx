@@ -392,8 +392,35 @@ const StyledSaCard = styled.div`
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+`;
+
+const StyledSaCardHeader = styled.div`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
   gap: 8px;
-  padding: 12px;
+  padding: 10px 12px;
+  user-select: none;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+`;
+
+const StyledSaChevron = styled.span<{ expanded: boolean }>`
+  color: #9ca3af;
+  display: inline-flex;
+  font-size: 12px;
+  transform: rotate(${({ expanded }) => (expanded ? '90deg' : '0deg')});
+  transition: transform 0.15s ease;
+`;
+
+const StyledSaCardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px 12px;
 `;
 
 const StyledSaImagesRow = styled.div`
@@ -677,6 +704,7 @@ const SaTabContent = ({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [displayCount, setDisplayCount] = useState(5);
   const [fullResults, setFullResults] = useState<Record<string, SaResult>>({});
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const fetchedRef = useRef<Set<string>>(new Set());
 
   // Auto-fetch full details for completed results missing image/text
@@ -754,76 +782,98 @@ const SaTabContent = ({
         const runId = rawResult.run_id || rawResult.picture_id || '';
         const result = fullResults[runId] ?? rawResult;
         const saStatus = getSaStatus(result);
-        const hasInput = !!result.annotated_image_b64; // input is always shown if we have any image
         const hasOutput =
           saStatus === 'success' && !!result.annotated_image_b64;
+        const isExpanded =
+          collapsed[runId] === undefined
+            ? saStatus === 'success'
+            : !collapsed[runId];
 
         return (
           <StyledSaCard key={runId}>
-            <StyledSaTimestamp>{formatSaDate(result.created_at)}</StyledSaTimestamp>
+            <StyledSaCardHeader
+              onClick={() =>
+                setCollapsed((prev) => ({
+                  ...prev,
+                  [runId]: isExpanded,
+                }))
+              }
+            >
+              <StyledSaChevron expanded={isExpanded}>&#9654;</StyledSaChevron>
+              <StyledSaTimestamp style={{ flex: 1 }}>
+                {formatSaDate(result.created_at)}
+              </StyledSaTimestamp>
+              <StyledSaStatusBadge saStatus={saStatus}>
+                {getSaStatusLabel(saStatus)}
+              </StyledSaStatusBadge>
+            </StyledSaCardHeader>
 
-            <StyledSaStatusBadge saStatus={saStatus}>
-              {getSaStatusLabel(saStatus)}
-            </StyledSaStatusBadge>
-
-            {result.error && (
-              <StyledSaErrorBox
-                variant={saStatus === 'invalid' ? 'warning' : 'error'}
-              >
-                {result.error}
-              </StyledSaErrorBox>
-            )}
-
-            {result.annotated_image_b64 && (
-              <StyledSaImagesRow>
-                <StyledSaImageWrapper>
-                  <StyledSaImageLabel>
-                    {hasOutput ? 'Analyzed' : 'Image'}
-                  </StyledSaImageLabel>
-                  <StyledSaImage
-                    src={`data:image/jpeg;base64,${result.annotated_image_b64}`}
-                    alt="Structure analysis"
-                  />
-                </StyledSaImageWrapper>
-              </StyledSaImagesRow>
-            )}
-
-            <StyledSaButtonsRow>
-              <StyledSaSendOriginal
-                disabled={sendingId === `${runId}-input`}
-                onClick={() => handleSend(result, 'input')}
-              >
-                {sendingId === `${runId}-input` ? 'Sending...' : 'Send Original'}
-              </StyledSaSendOriginal>
-              {hasOutput && (
-                <StyledSaSendAnalyzed
-                  disabled={sendingId === `${runId}-output`}
-                  onClick={() => handleSend(result, 'output')}
-                >
-                  {sendingId === `${runId}-output`
-                    ? 'Sending...'
-                    : 'Send Analyzed'}
-                </StyledSaSendAnalyzed>
-              )}
-            </StyledSaButtonsRow>
-
-            {result.analysis_text && (
-              <StyledSaInterpretation>
-                <StyledSaInterpretationHeader>
-                  <StyledSaInterpretationTitle>
-                    Interpretation
-                  </StyledSaInterpretationTitle>
-                  <StyledSaCopyButton
-                    onClick={() => handleCopy(result.analysis_text!, runId)}
-                    title="Copy to clipboard"
+            {isExpanded && (
+              <StyledSaCardBody>
+                {result.error && (
+                  <StyledSaErrorBox
+                    variant={saStatus === 'invalid' ? 'warning' : 'error'}
                   >
-                    {copiedId === runId ? '✓' : '⎘'}
-                  </StyledSaCopyButton>
-                </StyledSaInterpretationHeader>
-                <StyledSaInterpretationBody>
-                  {result.analysis_text}
-                </StyledSaInterpretationBody>
-              </StyledSaInterpretation>
+                    {result.error}
+                  </StyledSaErrorBox>
+                )}
+
+                {result.annotated_image_b64 && (
+                  <StyledSaImagesRow>
+                    <StyledSaImageWrapper>
+                      <StyledSaImageLabel>
+                        {hasOutput ? 'Analyzed' : 'Image'}
+                      </StyledSaImageLabel>
+                      <StyledSaImage
+                        src={`data:image/jpeg;base64,${result.annotated_image_b64}`}
+                        alt="Structure analysis"
+                      />
+                    </StyledSaImageWrapper>
+                  </StyledSaImagesRow>
+                )}
+
+                <StyledSaButtonsRow>
+                  <StyledSaSendOriginal
+                    disabled={sendingId === `${runId}-input`}
+                    onClick={() => handleSend(result, 'input')}
+                  >
+                    {sendingId === `${runId}-input`
+                      ? 'Sending...'
+                      : 'Send Original'}
+                  </StyledSaSendOriginal>
+                  {hasOutput && (
+                    <StyledSaSendAnalyzed
+                      disabled={sendingId === `${runId}-output`}
+                      onClick={() => handleSend(result, 'output')}
+                    >
+                      {sendingId === `${runId}-output`
+                        ? 'Sending...'
+                        : 'Send Analyzed'}
+                    </StyledSaSendAnalyzed>
+                  )}
+                </StyledSaButtonsRow>
+
+                {result.analysis_text && (
+                  <StyledSaInterpretation>
+                    <StyledSaInterpretationHeader>
+                      <StyledSaInterpretationTitle>
+                        Interpretation
+                      </StyledSaInterpretationTitle>
+                      <StyledSaCopyButton
+                        onClick={() =>
+                          handleCopy(result.analysis_text!, runId)
+                        }
+                        title="Copy to clipboard"
+                      >
+                        {copiedId === runId ? '✓' : '⎘'}
+                      </StyledSaCopyButton>
+                    </StyledSaInterpretationHeader>
+                    <StyledSaInterpretationBody>
+                      {result.analysis_text}
+                    </StyledSaInterpretationBody>
+                  </StyledSaInterpretation>
+                )}
+              </StyledSaCardBody>
             )}
           </StyledSaCard>
         );
