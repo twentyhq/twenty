@@ -1,5 +1,6 @@
 import { authLogin } from '@/cli/operations/login';
 import { authLoginOAuth } from '@/cli/operations/login-oauth';
+import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import type { Command } from 'commander';
@@ -230,6 +231,39 @@ export const registerRemoteCommands = (program: Command): void => {
 
       await configService.setDefaultRemote(remoteName);
       console.log(chalk.green(`✓ Default remote set to "${remoteName}".`));
+    });
+
+  remote
+    .command('status')
+    .description('Show active remote and authentication status')
+    .action(async () => {
+      const configService = new ConfigService();
+      const apiService = new ApiService();
+      const activeRemote = ConfigService.getActiveRemote();
+      const config = await configService.getConfig();
+
+      const authMethod = config.accessToken
+        ? 'oauth'
+        : config.apiKey
+          ? 'api-key'
+          : 'none';
+
+      console.log(`  Remote:  ${chalk.bold(activeRemote)}`);
+      console.log(`  Server:  ${config.apiUrl}`);
+
+      if (authMethod === 'none') {
+        console.log(`  Auth:    ${chalk.yellow('not configured')}`);
+
+        return;
+      }
+
+      const { authValid } = await apiService.validateAuth();
+
+      const statusText = authValid
+        ? chalk.green(`${authMethod} (valid)`)
+        : chalk.red(`${authMethod} (invalid)`);
+
+      console.log(`  Auth:    ${statusText}`);
     });
 
   remote

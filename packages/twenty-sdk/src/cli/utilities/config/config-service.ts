@@ -15,9 +15,12 @@ export type RemoteConfig = {
 };
 
 type PersistedConfig = {
+  version?: number;
   defaultRemote?: string;
   remotes?: Record<string, RemoteConfig>;
 };
+
+const CONFIG_VERSION = 1;
 
 const DEFAULT_REMOTE_NAME = 'local';
 
@@ -55,6 +58,10 @@ export class ConfigService {
   private async migrateConfigIfNeeded(
     raw: Record<string, unknown>,
   ): Promise<PersistedConfig> {
+    if ((raw as PersistedConfig).version === CONFIG_VERSION) {
+      return raw as PersistedConfig;
+    }
+
     const hasLegacyProfiles = 'profiles' in raw;
     const hasTopLevelApiUrl = 'apiUrl' in raw && !('remotes' in raw);
 
@@ -62,7 +69,7 @@ export class ConfigService {
       return raw as PersistedConfig;
     }
 
-    const migrated: PersistedConfig = {};
+    const migrated: PersistedConfig = { version: CONFIG_VERSION };
 
     const str = (value: unknown): string | undefined =>
       typeof value === 'string' ? value : undefined;
@@ -159,6 +166,8 @@ export class ConfigService {
   async setConfig(config: Partial<RemoteConfig>): Promise<void> {
     const raw = await this.readRawConfig();
     const remote = this.getActiveRemoteName();
+
+    raw.version = CONFIG_VERSION;
 
     if (!raw.remotes) {
       raw.remotes = {};

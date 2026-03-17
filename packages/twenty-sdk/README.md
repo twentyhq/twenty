@@ -55,7 +55,6 @@ Commands:
   typecheck [appPath] Run TypeScript type checking on the application
   uninstall [appPath] Uninstall application from Twenty
   remote              Manage remote Twenty servers
-  whoami              Show active remote and authentication status
   add [entityType]    Add a new entity to your application
   exec [appPath]      Execute a logic function with a JSON payload
   logs [appPath]      Watch application function logs
@@ -91,7 +90,7 @@ Manage remote server connections and authentication.
 
   - If omitted, shows an interactive selection.
 
-- `twenty whoami` — Print the current remote name, server URL, and auth status.
+- `twenty remote status` — Print the current remote name, server URL, and auth status.
 
 Examples:
 
@@ -112,7 +111,7 @@ twenty remote add https://api.twenty.com --as production
 twenty remote add production
 
 # Check status
-twenty whoami
+twenty remote status
 
 # List all configured remotes
 twenty remote list
@@ -334,7 +333,7 @@ After building, you can run the CLI directly:
 
 ```bash
 npx nx run twenty-sdk:start -- <command>
-# Example: npx nx run twenty-sdk:start -- whoami
+# Example: npx nx run twenty-sdk:start -- remote status
 ```
 
 Or run the built CLI directly:

@@ -15,8 +15,8 @@ describe('Application: install delete and reinstall postcard-app', () => {
     expect(existsSync(appPath)).toBe(true);
 
     const result = await runCliCommand({
-      command: 'whoami',
-      args: [appPath],
+      command: 'remote',
+      args: ['status'],
       timeout: 5_000,
       waitForOutput: '(valid)',
     });

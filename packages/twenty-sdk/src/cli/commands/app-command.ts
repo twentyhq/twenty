@@ -7,7 +7,6 @@ import { AppPublishCommand } from './publish';
 import { AppTypecheckCommand } from './typecheck';
 import { AppUninstallCommand } from './uninstall';
 import { DeployCommand } from './deploy';
-import { WhoamiCommand } from './whoami';
 import { LogicFunctionExecuteCommand } from './exec';
 import { LogicFunctionLogsCommand } from './logs';
 import { EntityAddCommand } from './add';
@@ -21,7 +20,6 @@ export const registerCommands = (program: Command): void => {
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
   const deployCommand = new DeployCommand();
-  const whoamiCommand = new WhoamiCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
   const executeCommand = new LogicFunctionExecuteCommand();
@@ -94,13 +92,6 @@ export const registerCommands = (program: Command): void => {
     });
 
   registerRemoteCommands(program);
-
-  program
-    .command('whoami')
-    .description('Show active remote and authentication status')
-    .action(async () => {
-      await whoamiCommand.execute();
-    });
 
   program
     .command('add [entityType]')
