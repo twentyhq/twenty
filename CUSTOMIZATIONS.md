@@ -307,6 +307,8 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `packages/twenty-front/src/modules/metadata-store/states/metadataStoreState.ts`                                             | Use lz-string compressed localStorage adapter — upstream raw JSON exceeds Safari's 5MB quota                                    |
 | `packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createAtomFamilyState.ts`                                 | Added `customStringStorage` option to support compressed localStorage adapter                                                   |
 | `packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createCompressedLocalStorage.ts`                          | **NEW** — lz-string compressed `SyncStringStorage` adapter for Jotai `atomWithStorage`                                          |
+| `packages/twenty-front/src/modules/metadata-store/hooks/useLoadMinimalMetadata.ts`                                           | Treat missing collection hashes as stale when local store is empty — fixes nav items lost after Redis flush                     |
+| `packages/twenty-server/src/engine/metadata-modules/minimal-metadata/minimal-metadata.service.ts`                            | Fire-and-forget cache priming for entity keys missing from Redis — ensures hashes exist for subsequent requests                 |
 
 ### Frontend Performance
 

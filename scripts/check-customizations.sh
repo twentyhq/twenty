@@ -955,6 +955,14 @@ check_file_contains \
 check_file_exists \
   "packages/twenty-front/src/modules/ui/utilities/state/jotai/utils/createCompressedLocalStorage.ts" \
   "Compressed localStorage adapter using lz-string"
+check_file_contains \
+  "packages/twenty-front/src/modules/metadata-store/hooks/useLoadMinimalMetadata.ts" \
+  "entry.status === 'empty'" \
+  "useLoadMinimalMetadata must treat missing hashes as stale when local store is empty (Redis flush fix)"
+check_file_contains \
+  "packages/twenty-server/src/engine/metadata-modules/minimal-metadata/minimal-metadata.service.ts" \
+  "missingCacheKeys" \
+  "MinimalMetadataService must fire-and-forget cache priming for missing entity hashes"
 
 echo ""
 echo "--- Deployment ---"

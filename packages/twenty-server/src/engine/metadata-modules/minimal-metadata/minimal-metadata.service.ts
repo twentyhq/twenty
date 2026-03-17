@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   ALL_METADATA_NAME,
@@ -14,6 +14,7 @@ import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type FlatEntityMapsCacheKeyName } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const flatMapsKeyToMetadataName = (
@@ -30,6 +31,8 @@ const flatMapsKeyToMetadataName = (
 
 @Injectable()
 export class MinimalMetadataService {
+  private readonly logger = new Logger(MinimalMetadataService.name);
+
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -100,6 +103,27 @@ export class MinimalMetadataService {
         key: flatView.key,
         objectMetadataId: flatView.objectMetadataId,
       }));
+
+    // OMNIA-CUSTOM: Fire-and-forget cache priming for missing entity hashes.
+    // After a Redis flush, most flat entity caches are empty. Prime them in the
+    // background so the *next* minimalMetadata request returns complete hashes.
+    const cachedKeys = new Set(Object.keys(cacheHashes));
+    const missingCacheKeys = (
+      ALL_FLAT_ENTITY_MAPS_PROPERTIES as FlatEntityMapsCacheKeyName[]
+    ).filter((key) => !cachedKeys.has(key));
+
+    if (missingCacheKeys.length > 0) {
+      this.flatEntityMapsCacheService
+        .getOrRecomputeManyOrAllFlatEntityMaps({
+          workspaceId,
+          flatMapsKeys: missingCacheKeys,
+        })
+        .catch((error) => {
+          this.logger.warn(
+            `Failed to prime missing entity caches: ${error.message}`,
+          );
+        });
+    }
 
     return {
       objectMetadataItems,
