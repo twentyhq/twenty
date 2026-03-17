@@ -305,8 +305,9 @@ describe('WorkspaceEventEmitterService', () => {
         {
           provide: NavigationMenuItemRecordIdentifierService,
           useValue: {
-            enrichNavigationMenuItemEventsWithRecordIdentifiers:
-              jest.fn().mockResolvedValue(undefined),
+            enrichNavigationMenuItemEventsWithRecordIdentifiers: jest
+              .fn()
+              .mockResolvedValue(undefined),
           },
         },
       ],
