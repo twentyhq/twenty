@@ -138,6 +138,7 @@
     "@yarnpkg/types": "^4.0.0",
     "chromatic": "^6.18.0",
     "concurrently": "^8.2.2",
+    "cross-env": "^10.1.0",
     "danger": "^13.0.4",
     "dotenv-cli": "^7.4.4",
     "esbuild": "^0.25.10",

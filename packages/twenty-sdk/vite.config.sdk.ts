@@ -11,6 +11,16 @@ const isExternal = (id: string): boolean => {
     return false;
   }
 
+  // Workspace packages must be bundled, not externalized
+  if (id.startsWith('twenty-shared') || id.startsWith('twenty-ui')) {
+    return false;
+  }
+
+  // On Windows, absolute paths with drive letters (e.g. D:\...) should not be external
+  if (/^[a-zA-Z]:/.test(id)) {
+    return false;
+  }
+
   return true;
 };
 
