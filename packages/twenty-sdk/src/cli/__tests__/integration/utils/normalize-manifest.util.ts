@@ -21,7 +21,12 @@ export const normalizeManifestForComparison = <T extends Manifest>(
       ? '[checksum]'
       : null,
   },
-  objects: sortById(manifest.objects),
+  objects: sortById(
+    manifest.objects.map((object) => ({
+      ...object,
+      fields: sortById(object.fields),
+    })),
+  ),
   fields: sortById(manifest.fields),
   roles: sortById(manifest.roles),
   skills: sortById(manifest.skills),
