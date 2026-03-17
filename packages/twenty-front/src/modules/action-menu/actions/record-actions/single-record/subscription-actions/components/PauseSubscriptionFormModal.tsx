@@ -146,23 +146,16 @@ export const PauseSubscriptionFormModal = ({
         },
       });
 
-      const noteBody = [
-        `Pause Duration: ${pauseDays} days`,
-        `Reason: ${reason}`,
-        isDefined(notes) && notes.trim().length > 0 ? `Notes: ${notes}` : null,
-        `Activated by: ${memberName}`,
-        `Date: ${new Date().toLocaleDateString('en-GB')}`,
-        `Previous End Date: ${formatDate(currentEndDate)}`,
-        `New End Date: ${formatDate(newEndDate)}`,
-        `Total Accumulated Pause Days: ${totalPauseDays}`,
-      ]
-        .filter(isDefined)
-        .join('\n');
+      // Create audit note — non-blocking, subscription update already succeeded
+      try {
+        const noteTitle = `Pause: ${pauseDays} days — ${reason}`;
 
-      await createNote({
-        title: `Pause: ${pauseDays} days`,
-        body: noteBody,
-      });
+        await createNote({
+          title: noteTitle,
+        });
+      } catch {
+        // Note creation is non-critical — subscription was already updated
+      }
 
       enqueueSuccessSnackBar({
         message: `Subscription paused for ${pauseDays} days`,
