@@ -1,11 +1,47 @@
-# === Stage 1: Reuse existing Twenty build ===
-FROM twentycrm/twenty:latest AS twenty-app
+# === Stage 1: Common dependencies ===
+FROM node:22-alpine AS common-deps
 
-# === Stage 2: s6-overlay ===
+WORKDIR /app
+
+COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
+COPY ./.yarn/releases /app/.yarn/releases
+COPY ./.yarn/patches /app/.yarn/patches
+
+COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
+COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
+COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
+COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
+COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
+COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
+COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
+
+RUN yarn && yarn cache clean && npx nx reset
+
+# === Stage 2: Build server from source ===
+FROM common-deps AS twenty-server-build
+
+COPY ./packages/twenty-emails /app/packages/twenty-emails
+COPY ./packages/twenty-shared /app/packages/twenty-shared
+COPY ./packages/twenty-ui /app/packages/twenty-ui
+COPY ./packages/twenty-sdk /app/packages/twenty-sdk
+COPY ./packages/twenty-server /app/packages/twenty-server
+
+RUN npx nx run twenty-server:build
+RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-server
+
+# === Stage 3: Build frontend from source ===
+FROM common-deps AS twenty-front-build
+
+COPY ./packages/twenty-front /app/packages/twenty-front
+COPY ./packages/twenty-ui /app/packages/twenty-ui
+COPY ./packages/twenty-shared /app/packages/twenty-shared
+COPY ./packages/twenty-sdk /app/packages/twenty-sdk
+RUN NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front
+
+# === Stage 4: s6-overlay ===
 FROM alpine:3.20 AS s6-fetch
 ARG S6_OVERLAY_VERSION=3.2.0.2
 ARG TARGETARCH
-# Map Docker arch names to s6-overlay arch names (amd64->x86_64, arm64->aarch64)
 RUN if [ "$TARGETARCH" = "arm64" ]; then echo "aarch64" > /tmp/s6arch; \
     else echo "x86_64" > /tmp/s6arch; fi
 RUN S6_ARCH=$(cat /tmp/s6arch) && \
@@ -14,8 +50,8 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     wget -O /tmp/s6-overlay-arch.tar.xz \
       "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz"
 
-# === Stage 3: Final image ===
-FROM node:24-alpine
+# === Stage 5: Final all-in-one image ===
+FROM node:22-alpine
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/
@@ -33,13 +69,14 @@ RUN apk add --no-cache \
 # tsx for database setup scripts
 RUN npm install -g tsx
 
-# Twenty application (reuse the existing production build)
-COPY --from=twenty-app /app /app
+# Twenty application (both server and frontend built from source)
+COPY --from=twenty-server-build /app /app
+COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
 # s6 service definitions
-COPY rootfs/ /
+COPY packages/twenty-docker/twenty-dev/rootfs/ /
 
-# Data directories (only chown new dirs — /app is already owned by 1000 from the source image)
+# Data directories
 RUN mkdir -p /data/postgres /data/redis /app/.local-storage \
  && chown -R postgres:postgres /data/postgres \
  && chown 1000:1000 /data/redis /app/.local-storage
@@ -53,6 +90,7 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     REDIS_URL=redis://localhost:6379 \
     STORAGE_TYPE=local \
     APP_SECRET=change-me-in-production \
+    APP_VERSION=0.42.0 \
     NODE_PORT=3000 \
     DISABLE_DB_MIGRATIONS=true \
     DISABLE_CRON_JOBS_REGISTRATION=true

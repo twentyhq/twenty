@@ -14,6 +14,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 
 @Injectable()
 export class WorkspaceManagerService {
@@ -32,6 +33,7 @@ export class WorkspaceManagerService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   public async init({
@@ -70,6 +72,8 @@ export class WorkspaceManagerService {
         workspaceId,
       },
     );
+
+    await this.applicationRegistrationService.createCliRegistrationIfNotExists();
 
     const dataSourceMetadataCreationEnd = performance.now();
 

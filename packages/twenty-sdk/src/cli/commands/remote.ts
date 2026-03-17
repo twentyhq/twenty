@@ -86,23 +86,9 @@ export const registerRemoteCommands = (program: Command): void => {
 
         if (options.local) {
           const remoteName = options.as ?? 'local';
-          const token =
-            options.token ??
-            (
-              await inquirer.prompt<{ apiKey: string }>([
-                {
-                  type: 'password',
-                  name: 'apiKey',
-                  message: 'API Key for local server:',
-                  mask: '*',
-                  validate: (input: string) =>
-                    input.length > 0 || 'API key is required',
-                },
-              ])
-            ).apiKey;
 
           ConfigService.setActiveRemote(remoteName);
-          await authenticate('http://localhost:2020', token);
+          await authenticate('http://localhost:2020', options.token);
           console.log(chalk.green(`✓ Authenticated remote "${remoteName}".`));
 
           return;

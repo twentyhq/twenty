@@ -10,7 +10,6 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
-import { execSync } from 'node:child_process';
 import * as path from 'path';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -73,10 +72,6 @@ export class CreateAppCommand {
 
         if (needsLocalInstance) {
           localResult = await setupLocalInstance();
-        }
-
-        if (isDefined(localResult.apiKey)) {
-          this.runAuthLogin(appDirectory, localResult.apiKey);
         }
       }
 
@@ -201,26 +196,10 @@ export class CreateAppCommand {
     appDirectory: string;
     appName: string;
   }): void {
-    console.log(chalk.blue('🎯 Creating Twenty Application'));
-    console.log(chalk.gray(`📁 Directory: ${appDirectory}`));
-    console.log(chalk.gray(`📝 Name: ${appName}`));
+    console.log(chalk.blue('Creating Twenty Application'));
+    console.log(chalk.gray(`  Directory: ${appDirectory}`));
+    console.log(chalk.gray(`  Name: ${appName}`));
     console.log('');
-  }
-
-  private runAuthLogin(appDirectory: string, apiKey: string): void {
-    try {
-      execSync(
-        `yarn twenty remote add --local --token "${apiKey}" --as local`,
-        { cwd: appDirectory, stdio: 'inherit' },
-      );
-      console.log(chalk.green('✅ Authenticated with local Twenty instance.'));
-    } catch {
-      console.log(
-        chalk.yellow(
-          '⚠️  Auto-authentication failed. Run `yarn twenty remote add --local` manually.',
-        ),
-      );
-    }
   }
 
   private logSuccess(
@@ -229,27 +208,19 @@ export class CreateAppCommand {
   ): void {
     const dirName = appDirectory.split('/').reverse()[0] ?? '';
 
-    console.log(chalk.green('✅ Application created!'));
+    console.log(chalk.green('Application created!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(chalk.gray(`  cd ${dirName}`));
 
-    if (localResult.apiKey) {
-      console.log(chalk.gray('  yarn twenty app:dev     # Start dev mode'));
-    } else if (localResult.running) {
+    if (!localResult.running) {
       console.log(
         chalk.gray(
           '  yarn twenty remote add --local  # Authenticate with Twenty',
         ),
       );
-      console.log(chalk.gray('  yarn twenty app:dev     # Start dev mode'));
-    } else {
-      console.log(
-        chalk.gray(
-          '  yarn twenty remote add --local  # Authenticate with Twenty',
-        ),
-      );
-      console.log(chalk.gray('  yarn twenty app:dev     # Start dev mode'));
     }
+
+    console.log(chalk.gray('  yarn twenty dev                  # Start dev mode'));
   }
 }

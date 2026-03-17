@@ -22,6 +22,7 @@ import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/tw
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 import { WorkspaceManagerService } from './workspace-manager.service';
+import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     PermissionsModule,
     AiAgentModule,
     TwentyStandardApplicationModule,
+    ApplicationRegistrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
     RoleModule,
