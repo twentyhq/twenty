@@ -187,6 +187,7 @@ export const PauseSubscriptionFormModal = ({
       size="medium"
       padding="large"
       ignoreContainer
+      dataGloballyPreventClickOutside
     >
       <Modal.Header>
         <H1Title
