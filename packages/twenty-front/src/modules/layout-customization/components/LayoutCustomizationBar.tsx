@@ -1,7 +1,7 @@
-import { useCancelLayoutCustomization } from '@/app/hooks/useCancelLayoutCustomization';
-import { useIsLayoutCustomizationDirty } from '@/app/hooks/useIsLayoutCustomizationDirty';
-import { useSaveLayoutCustomization } from '@/app/hooks/useSaveLayoutCustomization';
-import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
+import { useCancelLayoutCustomization } from '@/layout-customization/hooks/useCancelLayoutCustomization';
+import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
+import { useSaveLayoutCustomization } from '@/layout-customization/hooks/useSaveLayoutCustomization';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
