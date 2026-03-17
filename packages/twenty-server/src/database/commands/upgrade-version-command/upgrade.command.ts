@@ -37,6 +37,7 @@ import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-v
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
+import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -91,6 +92,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
     protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
     protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
+    protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
   ) {
     super(
       workspaceRepository,
@@ -141,6 +143,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillCommandMenuItemsCommand,
       this.backfillPageLayoutsCommand,
       this.seedCliApplicationRegistrationCommand,
+      this.updateStandardIndexViewNamesCommand,
     ];
 
     this.allCommands = {
