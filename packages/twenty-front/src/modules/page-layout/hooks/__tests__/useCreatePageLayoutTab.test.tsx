@@ -30,7 +30,9 @@ describe('useCreatePageLayoutTab', () => {
 
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
         pageLayoutDraft: useAtomComponentStateValue(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -75,7 +77,9 @@ describe('useCreatePageLayoutTab', () => {
 
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
         pageLayoutDraft: useAtomComponentStateValue(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -103,7 +107,9 @@ describe('useCreatePageLayoutTab', () => {
 
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
         pageLayoutDraft: useAtomComponentStateValue(
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -145,7 +151,9 @@ describe('useCreatePageLayoutTab', () => {
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createTab = useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID);
+        const createTab = useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        });
         return { setPageLayoutDraft, pageLayoutDraft, createTab };
       },
       {
@@ -181,7 +189,9 @@ describe('useCreatePageLayoutTab', () => {
 
     const { result } = renderHook(
       () => ({
-        createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+        createTab: useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        }),
         pageLayoutCurrentLayouts: useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -227,7 +237,9 @@ describe('useCreatePageLayoutTab', () => {
           `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
         );
         return {
-          createTab: useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID),
+          createTab: useCreatePageLayoutTab({
+            pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          }),
           activeTabId: activeTabId,
         };
       },
@@ -259,7 +271,9 @@ describe('useCreatePageLayoutTab', () => {
           pageLayoutDraftComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createTab = useCreatePageLayoutTab(PAGE_LAYOUT_TEST_INSTANCE_ID);
+        const createTab = useCreatePageLayoutTab({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+        });
         return { setPageLayoutDraft, pageLayoutDraft, createTab };
       },
       {

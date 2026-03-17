@@ -68,7 +68,16 @@ export const PageLayoutRendererContent = () => {
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
-  const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId: currentPageLayout?.id ?? '',
+    layoutType,
+    targetRecordIdentifier,
+  });
+
+  const { createPageLayoutTab } = useCreatePageLayoutTab({
+    pageLayoutId: currentPageLayout?.id,
+    tabListInstanceId,
+  });
   const { reorderRecordPageTabs } = useReorderRecordPageLayoutTabs(
     currentPageLayout?.id ?? '',
   );
@@ -141,12 +150,6 @@ export const PageLayoutRendererContent = () => {
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInSidePanel,
-  });
-
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-    pageLayoutId: currentPageLayout.id,
-    layoutType,
-    targetRecordIdentifier,
   });
 
   const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
