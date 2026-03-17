@@ -175,7 +175,7 @@ const buildCommandItemFromEngineKey = ({
   };
 };
 
-export const useCommandMenuItemFrontComponentCommands = (
+export const useCommandMenuItemsFromBackend = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();
