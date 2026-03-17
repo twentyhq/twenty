@@ -56,16 +56,12 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
       objectMetadataIdsWithDisplayableViews,
     });
 
-  const handleSelectObject = (
-    objectMetadataItem: ObjectMetadataItem,
-    defaultViewId: string,
-  ) => {
+  const handleSelectObject = (objectMetadataItem: ObjectMetadataItem) => {
     if (objectMetadataIdsInWorkspace.has(objectMetadataItem.id)) {
       return;
     }
     const itemId = addObjectToDraft(
       objectMetadataItem.id,
-      defaultViewId,
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId,
       addMenuItemInsertionContext?.targetIndex,

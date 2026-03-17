@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsAllFolders';
 import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItemsWorkspaceFolders';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/hooks/useNavigationMenuItemMoveRemove';
@@ -45,7 +45,7 @@ export const useFolderPickerSelectionData = () => {
     selectedNavigationMenuItemInEditModeState,
   );
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
-  const selectedItemType = selectedItem?.itemType ?? null;
+  const selectedItemType = selectedItem?.type ?? null;
   const { allFolders } = useDraftNavigationMenuItemsAllFolders();
   const { workspaceFolders } = useDraftNavigationMenuItemsWorkspaceFolders();
 

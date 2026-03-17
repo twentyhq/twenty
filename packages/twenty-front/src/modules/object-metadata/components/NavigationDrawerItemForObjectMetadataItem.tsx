@@ -1,22 +1,29 @@
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/utils/getStandardObjectIconColor';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/utils/getNavigationMenuItemComputedLink';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemLabel';
+import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/utils/recordIdentifierToObjectRecordIdentifier';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useLocation } from 'react-router-dom';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  NavigationMenuItemType,
+} from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, useIcons } from 'twenty-ui/display';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
   objectMetadataItem: ObjectMetadataItem;
-  navigationMenuItem?: ProcessedNavigationMenuItem;
+  navigationMenuItem?: NavigationMenuItem;
   isSelectedInEditMode?: boolean;
   onEditModeClick?: () => void;
   onActiveItemClickWhenNotInEditMode?: () => void;
@@ -37,6 +44,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
 
   const lastVisitedViewId =
     lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
@@ -49,22 +58,28 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const currentPath = location.pathname;
   const currentPathWithSearch = `${location.pathname}${location.search}`;
 
-  const isRecord =
-    navigationMenuItem?.itemType === NavigationMenuItemType.RECORD;
-  const isView = navigationMenuItem?.itemType === NavigationMenuItemType.VIEW;
-  const hasCustomLink = isRecord || isView;
+  const isRecord = navigationMenuItem?.type === NavigationMenuItemType.RECORD;
+  const isView = navigationMenuItem?.type === NavigationMenuItemType.VIEW;
+  const isObject = navigationMenuItem?.type === NavigationMenuItemType.OBJECT;
+  const hasCustomLink = isRecord || isView || isObject;
 
   const navigationPath = hasCustomLink
-    ? navigationMenuItem!.link
+    ? getNavigationMenuItemComputedLink(
+        navigationMenuItem!,
+        objectMetadataItems,
+        views,
+      )
     : getAppPath(
         AppPath.RecordIndexPage,
         { objectNamePlural: objectMetadataItem.namePlural },
         lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
       );
 
+  const computedLink = hasCustomLink ? navigationPath : '';
+
   const isActive = hasCustomLink
-    ? (isView ? currentPathWithSearch : currentPath) ===
-      navigationMenuItem!.link
+    ? (isView || isObject ? currentPathWithSearch : currentPath) ===
+      computedLink
     : currentPath ===
         getAppPath(AppPath.RecordIndexPage, {
           objectNamePlural: objectMetadataItem.namePlural,
@@ -80,16 +95,31 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const shouldNavigate = !isNavigationMenuInEditMode;
 
+  const view = isDefined(navigationMenuItem?.viewId)
+    ? views.find((view) => view.id === navigationMenuItem!.viewId)
+    : undefined;
+  const viewKey = view?.key ?? null;
+
   const isViewWithCustomName =
-    isView &&
-    navigationMenuItem?.viewKey !== ViewKey.INDEX &&
-    isDefined(navigationMenuItem?.labelIdentifier);
+    isView && viewKey !== ViewKey.INDEX && isDefined(view);
+
+  const itemLabel = isDefined(navigationMenuItem)
+    ? getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views)
+    : objectMetadataItem.labelPlural;
 
   const label = isRecord
-    ? navigationMenuItem!.labelIdentifier
+    ? itemLabel
     : isViewWithCustomName
-      ? navigationMenuItem!.labelIdentifier
+      ? itemLabel
       : objectMetadataItem.labelPlural;
+
+  const recordIdentifier =
+    isRecord && isDefined(navigationMenuItem?.targetRecordIdentifier)
+      ? recordIdentifierToObjectRecordIdentifier({
+          recordIdentifier: navigationMenuItem!.targetRecordIdentifier!,
+          objectMetadataItem,
+        })
+      : null;
 
   const Icon = isRecord
     ? () => (
@@ -99,26 +129,22 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
               ? 'squared'
               : 'rounded'
           }
-          avatarUrl={navigationMenuItem!.avatarUrl}
+          avatarUrl={recordIdentifier?.avatarUrl}
           placeholderColorSeed={navigationMenuItem!.targetRecordId ?? undefined}
-          placeholder={navigationMenuItem!.labelIdentifier}
+          placeholder={itemLabel}
         />
       )
-    : isViewWithCustomName && isDefined(navigationMenuItem?.Icon)
+    : isViewWithCustomName && isDefined(view?.icon)
       ? () => (
           <ObjectIconWithViewOverlay
             ObjectIcon={getIcon(objectMetadataItem.icon)}
-            ViewIcon={getIcon(navigationMenuItem!.Icon!)}
+            ViewIcon={getIcon(view!.icon)}
             objectColor={objectNavItemColor}
           />
         )
       : getIcon(objectMetadataItem.icon);
 
-  const iconThemeColor = !isRecord
-    ? isDefined(navigationMenuItem?.color)
-      ? navigationMenuItem.color
-      : (getStandardObjectIconColor(objectMetadataItem.nameSingular) ?? 'gray')
-    : undefined;
+  const iconThemeColor = !isRecord ? objectNavItemColor : undefined;
 
   const secondaryLabel =
     isRecord || isViewWithCustomName

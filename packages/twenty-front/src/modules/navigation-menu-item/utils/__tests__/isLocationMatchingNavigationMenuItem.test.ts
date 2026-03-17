@@ -1,4 +1,4 @@
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
 
 describe('isLocationMatchingNavigationMenuItem', () => {
@@ -7,20 +7,16 @@ describe('isLocationMatchingNavigationMenuItem', () => {
       isLocationMatchingNavigationMenuItem(
         '/app/objects/people',
         '/app/objects/people?viewId=123',
-        {
-          itemType: NavigationMenuItemType.RECORD,
-          link: '/app/objects/people',
-        },
+        NavigationMenuItemType.RECORD,
+        '/app/objects/people',
       ),
     ).toBe(true);
     expect(
       isLocationMatchingNavigationMenuItem(
         '/app/objects/companies',
         '/app/objects/companies?viewId=123',
-        {
-          itemType: NavigationMenuItemType.VIEW,
-          link: '/app/objects/companies?viewId=123',
-        },
+        NavigationMenuItemType.VIEW,
+        '/app/objects/companies?viewId=123',
       ),
     ).toBe(true);
   });
@@ -30,20 +26,16 @@ describe('isLocationMatchingNavigationMenuItem', () => {
       isLocationMatchingNavigationMenuItem(
         '/app/objects/people',
         '/app/objects/people?viewId=123',
-        {
-          itemType: NavigationMenuItemType.RECORD,
-          link: '/app/objects/company',
-        },
+        NavigationMenuItemType.RECORD,
+        '/app/objects/company',
       ),
     ).toBe(false);
     expect(
       isLocationMatchingNavigationMenuItem(
         '/app/objects/companies',
         '/app/objects/companies?viewId=123',
-        {
-          itemType: NavigationMenuItemType.VIEW,
-          link: '/app/objects/companies?viewId=456',
-        },
+        NavigationMenuItemType.VIEW,
+        '/app/objects/companies?viewId=456',
       ),
     ).toBe(false);
   });

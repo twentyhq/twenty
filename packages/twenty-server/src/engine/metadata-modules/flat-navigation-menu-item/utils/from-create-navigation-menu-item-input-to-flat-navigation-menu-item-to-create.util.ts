@@ -69,6 +69,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
 
     return {
       id,
+      type: createNavigationMenuItemInput.type,
       universalIdentifier: id,
       userWorkspaceId: createNavigationMenuItemInput.userWorkspaceId ?? null,
       targetRecordId: createNavigationMenuItemInput.targetRecordId ?? null,

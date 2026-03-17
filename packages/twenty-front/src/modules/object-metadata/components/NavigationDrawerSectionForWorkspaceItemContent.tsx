@@ -1,4 +1,4 @@
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationDrawerSectionForWorkspaceItemFolderContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemFolderContent';
 import { NavigationDrawerSectionForWorkspaceItemLinkContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemLinkContent';
 import { NavigationDrawerSectionForWorkspaceItemObjectContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemObjectContent';
@@ -18,7 +18,7 @@ export const NavigationDrawerSectionForWorkspaceItemContent = ({
   onActiveObjectMetadataItemClick,
   readOnly,
 }: NavigationDrawerSectionForWorkspaceItemContentProps) => {
-  switch (item.itemType) {
+  switch (item.type) {
     case NavigationMenuItemType.FOLDER:
       return (
         <NavigationDrawerSectionForWorkspaceItemFolderContent

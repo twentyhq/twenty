@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import type { FlatWorkspaceItem } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import type { NavigationMenuItem } from '~/generated-metadata/graphql';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/WorkspaceSectionListDndKitProps';
 import { NavigationDrawerSectionForWorkspaceItemContent } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemContent';
 
@@ -29,12 +29,12 @@ export const NavigationDrawerSectionForWorkspaceItemsListReadOnly = ({
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsListReadOnlyProps) => {
   const folderCount = filteredItems.filter(
-    (item) => item.itemType === NavigationMenuItemType.FOLDER,
+    (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
 
   return (
     <StyledList>
-      {filteredItems.map((item: FlatWorkspaceItem) => (
+      {filteredItems.map((item: NavigationMenuItem) => (
         <NavigationDrawerSectionForWorkspaceItemContent
           key={item.id}
           item={item}

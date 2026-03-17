@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { getAbsoluteUrl } from 'twenty-shared/utils';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
 import { extractDomainFromUrl } from '@/navigation-menu-item/utils/extractDomainFromUrl';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -16,7 +16,7 @@ import { getOrganizeActionsSelectableItemIds } from '@/side-panel/pages/navigati
 import { TextInput } from '@/ui/input/components/TextInput';
 
 type SidePanelEditLinkItemViewProps = OrganizeActionsProps & {
-  selectedItem: ProcessedNavigationMenuItem;
+  selectedItem: NavigationMenuItem;
   onUpdateLink: (
     linkId: string,
     updates: { link?: string; name?: string },
@@ -78,7 +78,7 @@ export const SidePanelEditLinkItemView = ({
         <TextInput
           fullWidth
           placeholder="www.google.com"
-          value={urlEditInput || selectedItem.link}
+          value={urlEditInput || selectedItem.link || ''}
           onChange={handleUrlChange}
           onBlur={handleUrlBlur}
         />

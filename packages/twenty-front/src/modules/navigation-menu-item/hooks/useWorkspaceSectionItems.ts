@@ -1,12 +1,11 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/types/processed-navigation-menu-item';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,32 +16,25 @@ import { useNavigationMenuItemsByFolder } from './useNavigationMenuItemsByFolder
 import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 
-export type FlatWorkspaceItem =
-  | ProcessedNavigationMenuItem
-  | (NavigationMenuItem & {
-      itemType: NavigationMenuItemType.FOLDER;
-      Icon: string;
-    });
-
 export type NavigationMenuItemClickParams = {
-  item: FlatWorkspaceItem;
+  item: NavigationMenuItem;
   objectMetadataItem?: ObjectMetadataItem | null;
 };
 
-export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
+export const useWorkspaceSectionItems = (): NavigationMenuItem[] => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
   const views = useAtomStateValue(viewsSelector);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const flatWorkspaceItems = workspaceNavigationMenuItems
     .filter((item) => !isDefined(item.folderId))
     .sort((a, b) => a.position - b.position);
 
-  const processedObjectViewsById = new Map(
+  const processedItemsById = new Map(
     workspaceNavigationMenuItemsSorted.map((item) => [item.id, item]),
   );
 
@@ -53,25 +45,24 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
     ]),
   );
 
-  const flatItems: FlatWorkspaceItem[] = flatWorkspaceItems.reduce<
-    FlatWorkspaceItem[]
+  const flatItems: NavigationMenuItem[] = flatWorkspaceItems.reduce<
+    NavigationMenuItem[]
   >((acc, item) => {
     if (isNavigationMenuItemFolder(item)) {
       acc.push({
         ...item,
-        itemType: NavigationMenuItemType.FOLDER,
-        Icon: item.icon ?? FOLDER_ICON_DEFAULT,
+        icon: item.icon ?? FOLDER_ICON_DEFAULT,
       });
     } else {
-      const processedItem = processedObjectViewsById.get(item.id);
-      if (!isDefined(processedItem)) {
+      const validItem = processedItemsById.get(item.id);
+      if (!isDefined(validItem)) {
         return acc;
       }
-      if (processedItem.itemType === NavigationMenuItemType.LINK) {
-        acc.push(processedItem);
+      if (validItem.type === NavigationMenuItemType.LINK) {
+        acc.push(validItem);
       } else {
         const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
-          processedItem,
+          validItem,
           objectMetadataItems,
           views,
         );
@@ -82,7 +73,7 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
             objectMetadataItem.id,
           ).canReadObjectRecords
         ) {
-          acc.push(processedItem);
+          acc.push(validItem);
         }
       }
     }
@@ -90,7 +81,7 @@ export const useWorkspaceSectionItems = (): FlatWorkspaceItem[] => {
   }, []);
 
   return flatItems.flatMap((item) =>
-    item.itemType === NavigationMenuItemType.FOLDER
+    item.type === NavigationMenuItemType.FOLDER
       ? [item, ...(folderChildrenById.get(item.id) ?? [])]
       : [item],
   );

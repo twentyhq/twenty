@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
@@ -40,6 +41,7 @@ export const useCreateNavigationMenuItemFolder = () => {
     await createNavigationMenuItemMutation({
       variables: {
         input: {
+          type: NavigationMenuItemType.FOLDER,
           name,
           targetRecordId: null,
           targetObjectMetadataId: null,

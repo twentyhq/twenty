@@ -1,12 +1,7 @@
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
-import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
-import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/utils/recordIdentifierToObjectRecordIdentifier';
-import { sortNavigationMenuItems } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/utils/filterAndSortNavigationMenuItems';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -16,98 +11,23 @@ export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
   const views = useAtomStateValue(viewsSelector);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-
-  const targetRecordIdentifiers = useMemo(() => {
-    const identifiersMap = new Map<string, ObjectRecordIdentifier>();
-
-    [...navigationMenuItems, ...workspaceNavigationMenuItems].forEach(
-      (navigationMenuItem) => {
-        if (isDefined(navigationMenuItem.viewId)) {
-          return;
-        }
-
-        const itemTargetRecordId = navigationMenuItem.targetRecordId;
-        if (!isDefined(itemTargetRecordId)) {
-          return;
-        }
-
-        const targetRecordIdentifier =
-          navigationMenuItem.targetRecordIdentifier;
-        if (!isDefined(targetRecordIdentifier)) {
-          return;
-        }
-
-        const objectMetadataItem = objectMetadataItems.find(
-          (item) => item.id === navigationMenuItem.targetObjectMetadataId,
-        );
-
-        if (!isDefined(objectMetadataItem)) {
-          return;
-        }
-
-        const objectRecordIdentifier = recordIdentifierToObjectRecordIdentifier(
-          {
-            recordIdentifier: targetRecordIdentifier,
-            objectMetadataItem,
-          },
-        );
-
-        identifiersMap.set(itemTargetRecordId, objectRecordIdentifier);
-      },
-    );
-
-    return identifiersMap;
-  }, [navigationMenuItems, workspaceNavigationMenuItems, objectMetadataItems]);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const navigationMenuItemsSorted = useMemo(() => {
-    return sortNavigationMenuItems(
+    return filterAndSortNavigationMenuItems(
       navigationMenuItems,
-      true,
       views,
       objectMetadataItems,
-      targetRecordIdentifiers,
     );
-  }, [
-    navigationMenuItems,
-    views,
-    objectMetadataItems,
-    targetRecordIdentifiers,
-  ]);
+  }, [navigationMenuItems, views, objectMetadataItems]);
 
   const workspaceNavigationMenuItemsSorted = useMemo(() => {
-    const filtered = workspaceNavigationMenuItems.filter((item) => {
-      if (isNavigationMenuItemFolder(item)) {
-        return true;
-      }
-      if (isNavigationMenuItemLink(item)) {
-        return true;
-      }
-      if (isDefined(item.viewId)) {
-        return views.some((view) => view.id === item.viewId);
-      }
-
-      const itemTargetRecordId = item.targetRecordId;
-      if (!isDefined(itemTargetRecordId)) {
-        return false;
-      }
-      const matchesTargetRecord =
-        targetRecordIdentifiers.has(itemTargetRecordId);
-      return matchesTargetRecord;
-    });
-    return sortNavigationMenuItems(
-      filtered,
-      true,
+    return filterAndSortNavigationMenuItems(
+      workspaceNavigationMenuItems,
       views,
       objectMetadataItems,
-      targetRecordIdentifiers,
     );
-  }, [
-    workspaceNavigationMenuItems,
-    views,
-    objectMetadataItems,
-    targetRecordIdentifiers,
-  ]);
+  }, [workspaceNavigationMenuItems, views, objectMetadataItems]);
 
   return {
     navigationMenuItemsSorted,

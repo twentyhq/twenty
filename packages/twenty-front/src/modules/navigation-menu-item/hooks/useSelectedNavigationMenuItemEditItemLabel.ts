@@ -1,19 +1,31 @@
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemLabel';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const getLabelForItemType = (
-  itemType: NavigationMenuItemType,
-  item: { name?: string | null; labelIdentifier?: string | null },
+const getLabelForItem = (
+  item: NavigationMenuItem,
+  objectMetadataItems: Parameters<typeof getNavigationMenuItemLabel>[1],
+  views: Parameters<typeof getNavigationMenuItemLabel>[2],
   objectLabelSingular?: string | null,
 ): string => {
-  switch (itemType) {
+  switch (item.type) {
     case NavigationMenuItemType.FOLDER:
       return item.name ?? 'Folder';
     case NavigationMenuItemType.LINK:
       return item.name ?? 'Link';
+    case NavigationMenuItemType.OBJECT:
     case NavigationMenuItemType.VIEW:
-      return item.labelIdentifier ?? objectLabelSingular ?? '';
+      return (
+        getNavigationMenuItemLabel(item, objectMetadataItems, views) ||
+        objectLabelSingular ||
+        ''
+      );
     default:
       return objectLabelSingular ?? '';
   }
@@ -23,11 +35,14 @@ export const useSelectedNavigationMenuItemEditItemLabel = () => {
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const { selectedItemObjectMetadata } =
     useSelectedNavigationMenuItemEditItemObjectMetadata();
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
 
   const selectedItemLabel = selectedItem
-    ? getLabelForItemType(
-        selectedItem.itemType,
+    ? getLabelForItem(
         selectedItem,
+        objectMetadataItems,
+        views,
         selectedItemObjectMetadata?.labelSingular,
       )
     : null;

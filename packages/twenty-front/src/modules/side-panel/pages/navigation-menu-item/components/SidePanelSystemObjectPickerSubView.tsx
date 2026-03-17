@@ -14,10 +14,7 @@ type SidePanelSystemObjectPickerSubViewProps = {
   onSearchChange: (value: string) => void;
   isViewItem: boolean;
   onSelectObjectForViewEdit?: (objectMetadataItem: ObjectMetadataItem) => void;
-  onChangeObject: (
-    objectMetadataItem: ObjectMetadataItem,
-    defaultViewId: string,
-  ) => void;
+  onChangeObject: (objectMetadataItem: ObjectMetadataItem) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   emptyNoResultsText?: string;
   disableDrag?: boolean;

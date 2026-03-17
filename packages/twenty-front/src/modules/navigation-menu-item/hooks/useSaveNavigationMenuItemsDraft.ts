@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
@@ -12,7 +13,9 @@ import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/utils/isNavigationMenuItemLink';
 import { orderFoldersForCreation } from '@/navigation-menu-item/utils/orderFoldersForCreation';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
@@ -24,14 +27,45 @@ export const useSaveNavigationMenuItemsDraft = () => {
       refetchQueries: ['FindManyNavigationMenuItems'],
     },
   );
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const store = useStore();
 
   const saveDraft = useCallback(async () => {
     const draft = store.get(navigationMenuItemsDraftState.atom);
-    const currentItems = store.get(navigationMenuItemsState.atom);
+    const currentItems = store.get(navigationMenuItemsSelector.atom);
 
     if (!draft) return;
+
+    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+
+    for (const draftItem of draft) {
+      if (draftItem.type !== NavigationMenuItemType.OBJECT) {
+        continue;
+      }
+      if (!isDefined(draftItem.targetObjectMetadataId)) {
+        continue;
+      }
+      if (!isDefined(draftItem.color)) {
+        continue;
+      }
+
+      const objectMetadataItem = objectMetadataItems.find(
+        (item) => item.id === draftItem.targetObjectMetadataId,
+      );
+
+      if (!isDefined(objectMetadataItem)) {
+        continue;
+      }
+      if (objectMetadataItem.color === draftItem.color) {
+        continue;
+      }
+
+      await updateOneObjectMetadataItem({
+        idToUpdate: draftItem.targetObjectMetadataId,
+        updatePayload: { color: draftItem.color },
+      });
+    }
 
     const workspaceItems = filterWorkspaceNavigationMenuItems(currentItems);
     const topLevelWorkspace = workspaceItems.filter(
@@ -131,13 +165,17 @@ export const useSaveNavigationMenuItemsDraft = () => {
       const iconChanged =
         isNavigationMenuItemFolder(draftItem) &&
         (original.icon ?? null) !== (draftItem.icon ?? null);
+      const colorChanged =
+        isNavigationMenuItemFolder(draftItem) &&
+        (original.color ?? null) !== (draftItem.color ?? null);
 
       if (
         positionChanged ||
         folderIdChanged ||
         nameChanged ||
         linkChanged ||
-        iconChanged
+        iconChanged ||
+        colorChanged
       ) {
         const updateInput: {
           id: string;
@@ -146,6 +184,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
           name?: string;
           link?: string | null;
           icon?: string | null;
+          color?: string | null;
         } = { id: draftItem.id };
 
         if (positionChanged) {
@@ -174,6 +213,9 @@ export const useSaveNavigationMenuItemsDraft = () => {
         if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
           updateInput.icon = draftItem.icon ?? null;
         }
+        if (colorChanged) {
+          updateInput.color = draftItem.color ?? null;
+        }
 
         await updateNavigationMenuItem(updateInput);
       }
@@ -182,6 +224,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
     updateNavigationMenuItem,
     deleteNavigationMenuItem,
     createNavigationMenuItemMutation,
+    updateOneObjectMetadataItem,
     store,
   ]);
 

@@ -13,7 +13,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/hooks/useOpenNavigationMenuItemInSidePanel';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/hooks/useSortedNavigationMenuItems';
 import {
@@ -25,16 +25,19 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/nav
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/utils/getNavigationMenuItemComputedLink';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemLabel';
 import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItems';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/states/navigationMenuItemsSelector';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
-import { SidePanelPages } from 'twenty-shared/types';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -45,9 +48,13 @@ const StyledRightIconsContainer = styled.div`
 export const WorkspaceNavigationMenuItems = () => {
   const items = useWorkspaceSectionItems();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const store = useStore();
   const enterEditMode = () => {
-    const currentNavigationMenuItems = store.get(navigationMenuItemsState.atom);
+    const currentNavigationMenuItems = store.get(
+      navigationMenuItemsSelector.atom,
+    );
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
       currentNavigationMenuItems,
     );
@@ -86,16 +93,27 @@ export const WorkspaceNavigationMenuItems = () => {
     );
     openNavigationMenuItemInSidePanel({
       pageTitle: t`Edit folder`,
-      pageIcon: getIcon(item.icon ?? item.Icon ?? FOLDER_ICON_DEFAULT),
+      pageIcon: getIcon(item.icon ?? FOLDER_ICON_DEFAULT),
     });
-    const firstChild = workspaceNavigationMenuItemsSorted.find(
-      (navItem) =>
-        navItem.folderId === folderId &&
-        navItem.itemType !== NavigationMenuItemType.LINK &&
-        isNonEmptyString(navItem.link),
-    );
-    if (firstChild?.link) {
-      navigate(firstChild.link);
+    const firstChild = workspaceNavigationMenuItemsSorted.find((navItem) => {
+      if (navItem.folderId !== folderId) return false;
+      if (navItem.type === NavigationMenuItemType.LINK) return false;
+      const link = getNavigationMenuItemComputedLink(
+        navItem,
+        objectMetadataItems,
+        views,
+      );
+      return isNonEmptyString(link);
+    });
+    if (firstChild) {
+      const link = getNavigationMenuItemComputedLink(
+        firstChild,
+        objectMetadataItems,
+        views,
+      );
+      if (isNonEmptyString(link)) {
+        navigate(link);
+      }
     }
   };
 
@@ -104,15 +122,21 @@ export const WorkspaceNavigationMenuItems = () => {
     objectMetadataItem: ObjectMetadataItem | null | undefined,
   ) => {
     if (objectMetadataItem) {
+      const label =
+        item.type === NavigationMenuItemType.VIEW ||
+        item.type === NavigationMenuItemType.OBJECT
+          ? getNavigationMenuItemLabel(item, objectMetadataItems, views)
+          : objectMetadataItem.labelSingular;
       openNavigationMenuItemInSidePanel({
-        pageTitle:
-          item.itemType === NavigationMenuItemType.VIEW
-            ? item.labelIdentifier
-            : objectMetadataItem.labelSingular,
+        pageTitle: label,
         pageIcon: getIcon(objectMetadataItem.icon),
       });
     }
-    const link = 'link' in item ? item.link : undefined;
+    const link = getNavigationMenuItemComputedLink(
+      item,
+      objectMetadataItems,
+      views,
+    );
     if (isNonEmptyString(link)) {
       navigate(link);
     }
@@ -124,7 +148,7 @@ export const WorkspaceNavigationMenuItems = () => {
     const { item, objectMetadataItem } = params;
     setSelectedNavigationMenuItemInEditMode(item.id);
 
-    switch (item.itemType) {
+    switch (item.type) {
       case NavigationMenuItemType.FOLDER:
         openFolderAndNavigateToFirstChild(item.id, item);
         break;

@@ -1,12 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemFolderContent } from '@/navigation-menu-item/components/NavigationMenuItemFolderContent';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 
 type NavigationMenuItemFolderContentDispatcherEffectProps = {
   folderName: string;
   folderId: string;
-  navigationMenuItems?: ProcessedNavigationMenuItem[];
+  navigationMenuItems?: NavigationMenuItem[];
 };
 
 export const NavigationMenuItemFolderContentDispatcherEffect = ({

@@ -26,6 +26,11 @@ export class ObjectStandardOverridesDTO {
   @Field(() => String, { nullable: true })
   icon?: string | null;
 
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  color?: string | null;
+
   @IsJSON()
   @IsOptional()
   @Field(() => GraphQLJSON, {
