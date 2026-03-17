@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { IconX } from 'twenty-ui/display';
 import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
@@ -663,6 +663,7 @@ type SaTabContentProps = {
     conversationId: string;
     caption?: string;
   }) => Promise<boolean>;
+  getFullResult: (pictureId: string) => Promise<SaResult | null>;
 };
 
 const SaTabContent = ({
@@ -670,10 +671,34 @@ const SaTabContent = ({
   loading,
   conversation,
   sendImage,
+  getFullResult,
 }: SaTabContentProps) => {
   const [sendingId, setSendingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [displayCount, setDisplayCount] = useState(5);
+  const [fullResults, setFullResults] = useState<Record<string, SaResult>>({});
+  const fetchedRef = useRef<Set<string>>(new Set());
+
+  // Auto-fetch full details for completed results missing image/text
+  useEffect(() => {
+    results.forEach((r) => {
+      const id = r.run_id || r.picture_id || '';
+      if (!id) return;
+      const status = getSaStatus(r);
+      if (
+        status === 'success' &&
+        !r.annotated_image_b64 &&
+        !fetchedRef.current.has(id)
+      ) {
+        fetchedRef.current.add(id);
+        getFullResult(id).then((full) => {
+          if (full) {
+            setFullResults((prev) => ({ ...prev, [id]: full }));
+          }
+        });
+      }
+    });
+  }, [results, getFullResult]);
 
   const handleSend = useCallback(
     async (result: SaResult, type: 'input' | 'output') => {
@@ -725,9 +750,10 @@ const SaTabContent = ({
         <StyledSectionTitle>Struktur Analyse</StyledSectionTitle>
       </StyledSection>
 
-      {visible.map((result) => {
+      {visible.map((rawResult) => {
+        const runId = rawResult.run_id || rawResult.picture_id || '';
+        const result = fullResults[runId] ?? rawResult;
         const saStatus = getSaStatus(result);
-        const runId = result.run_id || result.picture_id || '';
         const hasInput = !!result.annotated_image_b64; // input is always shown if we have any image
         const hasOutput =
           saStatus === 'success' && !!result.annotated_image_b64;
@@ -855,6 +881,7 @@ export const ConversationDetails = ({
     results: saResults,
     loading: saLoading,
     sendImage: saSendImage,
+    getFullResult: saGetFullResult,
   } = useStrukturanalyse(conversation.id);
   const [activeTab, setActiveTab] = useState<TabId>('sa');
   const [mopExpanded, setMopExpanded] = useState(false);
@@ -978,6 +1005,7 @@ export const ConversationDetails = ({
             loading={saLoading}
             conversation={conversation}
             sendImage={saSendImage}
+            getFullResult={saGetFullResult}
           />
         )}
 
