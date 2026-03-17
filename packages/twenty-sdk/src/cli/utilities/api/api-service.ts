@@ -13,6 +13,7 @@ import { pascalCase } from 'twenty-shared/utils';
 export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
+  private readonly tokenOverride?: string;
 
   constructor(options?: {
     disableInterceptors?: boolean;
@@ -21,6 +22,7 @@ export class ApiService {
   }) {
     const { disableInterceptors = false, serverUrl, token } = options || {};
     this.configService = new ConfigService();
+    this.tokenOverride = token;
     this.client = axios.create();
 
     this.client.interceptors.request.use(async (config) => {
@@ -29,7 +31,7 @@ export class ApiService {
       config.baseURL = serverUrl ?? twentyConfig.apiUrl;
 
       if (!config.headers.Authorization) {
-        const authToken = token ?? (await this.resolveAuthToken());
+        const authToken = await this.resolveAuthToken();
 
         if (authToken) {
           config.headers.Authorization = `Bearer ${authToken}`;
@@ -878,6 +880,10 @@ export class ApiService {
   }
 
   private async resolveAuthToken(): Promise<string | undefined> {
+    if (this.tokenOverride) {
+      return this.tokenOverride;
+    }
+
     const envToken = process.env.TWENTY_TOKEN;
 
     if (envToken) {

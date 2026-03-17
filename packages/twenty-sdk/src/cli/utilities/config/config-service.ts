@@ -96,7 +96,11 @@ export class ConfigService {
     const existingRemotes =
       (raw.remotes as Record<string, RemoteConfig> | undefined) ?? {};
 
-    Object.assign(migrated.remotes, existingRemotes);
+    for (const [name, remote] of Object.entries(existingRemotes)) {
+      const remoteName = name === 'default' ? DEFAULT_REMOTE_NAME : name;
+
+      migrated.remotes[remoteName] = remote;
+    }
 
     if (hasTopLevelApiUrl && !migrated.remotes[DEFAULT_REMOTE_NAME]) {
       migrated.remotes[DEFAULT_REMOTE_NAME] = migrateRemoteFields(
