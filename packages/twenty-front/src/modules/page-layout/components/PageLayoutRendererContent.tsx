@@ -6,7 +6,7 @@ import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabL
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { useReorderPageLayoutTabs } from '@/page-layout/hooks/useReorderPageLayoutTabs';
+import { useReorderRecordPageLayoutTabs } from '@/page-layout/hooks/useReorderRecordPageLayoutTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
@@ -30,7 +30,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -69,7 +69,9 @@ export const PageLayoutRendererContent = () => {
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
-  const { reorderTabs } = useReorderPageLayoutTabs(currentPageLayout?.id ?? '');
+  const { reorderRecordPageTabs } = useReorderRecordPageLayoutTabs(
+    currentPageLayout?.id ?? '',
+  );
   const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
@@ -176,7 +178,16 @@ export const PageLayoutRendererContent = () => {
               componentInstanceId={tabListInstanceId}
               onAddTab={handleAddTab}
               isReorderEnabled={canEnableTabEditing}
-              onReorder={canEnableTabEditing ? reorderTabs : undefined}
+              onReorder={
+                canEnableTabEditing
+                  ? (result, provided) =>
+                      reorderRecordPageTabs(
+                        result,
+                        provided,
+                        isDefined(pinnedLeftTab),
+                      )
+                  : undefined
+              }
               pageLayoutType={currentPageLayout.type}
             />
           </StyledPageLayoutTabListContainer>
