@@ -74,6 +74,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       createdAt,
       updatedAt: createdAt,
       duplicateCriteria: null,
+      color: createObjectInput.color ?? null,
       description: createObjectInput.description ?? null,
       icon: createObjectInput.icon ?? null,
       isActive: true,

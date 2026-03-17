@@ -6,6 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 const mockObjectMetadata: FlatObjectMetadata = {
   id: '1',
   icon: 'Icon123',
+  color: null,
   nameSingular: 'Object',
   namePlural: 'Objects',
   labelSingular: 'Object',

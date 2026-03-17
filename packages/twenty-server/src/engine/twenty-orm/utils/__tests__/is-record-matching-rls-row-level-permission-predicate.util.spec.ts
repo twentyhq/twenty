@@ -15,6 +15,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     labelSingular: 'Test',
     labelPlural: 'Tests',
     icon: 'IconTest',
+    color: null,
     targetTableName: 'test',
     isCustom: false,
     isRemote: false,

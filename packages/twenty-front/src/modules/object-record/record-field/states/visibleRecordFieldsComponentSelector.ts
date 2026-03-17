@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isActiveFieldMetadataItem } from '@/object-metadata/utils/isActiveFieldMetadataItem';
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
@@ -21,7 +21,7 @@ export const visibleRecordFieldsComponentSelector = createAtomComponentSelector<
         componentStateKey,
       );
 
-      const objectMetadataItems = get(objectMetadataItemsState);
+      const objectMetadataItems = get(objectMetadataItemsSelector);
 
       return filterVisibleAndReadableRecordFields(
         currentRecordFields,

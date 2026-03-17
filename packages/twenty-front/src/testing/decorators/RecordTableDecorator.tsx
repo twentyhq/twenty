@@ -5,7 +5,7 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -103,7 +103,7 @@ const InternalTableContextProviders = ({
   children: React.ReactNode;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const currentRecordFields = useAtomComponentStateValue(
@@ -206,7 +206,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   const { recordTableObjectNameSingular: objectNameSingular } =
     context.parameters;
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

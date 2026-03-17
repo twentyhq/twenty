@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -22,88 +23,79 @@ const NAVIGATION_MENU_ITEM_MAX_DEPTH = 2;
 @Injectable()
 export class FlatNavigationMenuItemValidatorService {
   private validateNavigationMenuItemType({
+    type,
     hasTargetRecordId,
     hasTargetObjectMetadataId,
     hasViewId,
     hasLink,
     name,
-    isUpdate = false,
   }: {
+    type: NavigationMenuItemType | null | undefined;
     hasTargetRecordId: boolean;
     hasTargetObjectMetadataId: boolean;
     hasViewId: boolean;
     hasLink: boolean;
     name: string | null | undefined;
-    isUpdate?: boolean;
   }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
     const errors: FlatEntityValidationError<NavigationMenuItemExceptionCode>[] =
       [];
 
-    if (hasTargetObjectMetadataId && !hasTargetRecordId) {
+    if (!isDefined(type)) {
       errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`targetRecordId is required when targetObjectMetadataId is provided`,
-        userFriendlyMessage: msg`targetRecordId is required when targetObjectMetadataId is provided`,
+        message: t`Navigation menu item type is required`,
+        userFriendlyMessage: msg`Navigation menu item type is required`,
       });
+
+      return errors;
     }
 
-    if (hasTargetRecordId && !hasTargetObjectMetadataId) {
-      errors.push({
-        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`targetObjectMetadataId is required when targetRecordId is provided`,
-        userFriendlyMessage: msg`targetObjectMetadataId is required when targetRecordId is provided`,
-      });
-    }
-
-    if (hasViewId && (hasTargetRecordId || hasTargetObjectMetadataId)) {
-      errors.push({
-        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`viewId cannot be provided together with targetRecordId or targetObjectMetadataId`,
-        userFriendlyMessage: msg`viewId cannot be provided together with targetRecordId or targetObjectMetadataId`,
-      });
-    }
-
-    const isFolder =
-      !hasTargetRecordId &&
-      !hasTargetObjectMetadataId &&
-      !hasViewId &&
-      !hasLink;
-    const isViewLink = hasViewId;
-    const isRecordLink = hasTargetRecordId && hasTargetObjectMetadataId;
-    const isExternalLink =
-      !hasTargetRecordId && !hasTargetObjectMetadataId && !hasViewId && hasLink;
-    const typeCount =
-      (isFolder ? 1 : 0) +
-      (isViewLink ? 1 : 0) +
-      (isRecordLink ? 1 : 0) +
-      (isExternalLink ? 1 : 0);
-
-    if (typeCount === 0) {
-      errors.push({
-        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)`,
-        userFriendlyMessage: msg`Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)`,
-      });
-    }
-
-    if (typeCount > 1) {
-      errors.push({
-        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: t`Navigation menu item cannot be multiple types simultaneously`,
-        userFriendlyMessage: msg`Navigation menu item cannot be multiple types simultaneously`,
-      });
-    }
-
-    if (isFolder && (!isDefined(name) || name.trim() === '')) {
-      errors.push({
-        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        message: isUpdate
-          ? t`Folder name is required and cannot be empty`
-          : t`Folder name is required when creating a folder`,
-        userFriendlyMessage: isUpdate
-          ? msg`Folder name is required and cannot be empty`
-          : msg`Folder name is required when creating a folder`,
-      });
+    switch (type) {
+      case NavigationMenuItemType.FOLDER:
+        if (!isDefined(name) || name.trim() === '') {
+          errors.push({
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`Folder name is required`,
+            userFriendlyMessage: msg`Folder name is required`,
+          });
+        }
+        break;
+      case NavigationMenuItemType.OBJECT:
+        if (!hasTargetObjectMetadataId) {
+          errors.push({
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`targetObjectMetadataId is required for OBJECT type`,
+            userFriendlyMessage: msg`targetObjectMetadataId is required for OBJECT type`,
+          });
+        }
+        break;
+      case NavigationMenuItemType.VIEW:
+        if (!hasViewId) {
+          errors.push({
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`viewId is required for VIEW type`,
+            userFriendlyMessage: msg`viewId is required for VIEW type`,
+          });
+        }
+        break;
+      case NavigationMenuItemType.RECORD:
+        if (!hasTargetRecordId || !hasTargetObjectMetadataId) {
+          errors.push({
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`targetRecordId and targetObjectMetadataId are required for RECORD type`,
+            userFriendlyMessage: msg`targetRecordId and targetObjectMetadataId are required for RECORD type`,
+          });
+        }
+        break;
+      case NavigationMenuItemType.LINK:
+        if (!hasLink) {
+          errors.push({
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`link is required for LINK type`,
+            userFriendlyMessage: msg`link is required for LINK type`,
+          });
+        }
+        break;
     }
 
     return errors;
@@ -187,6 +179,7 @@ export class FlatNavigationMenuItemValidatorService {
     }
 
     const typeValidationErrors = this.validateNavigationMenuItemType({
+      type: flatNavigationMenuItem.type,
       hasTargetRecordId: isDefined(flatNavigationMenuItem.targetRecordId),
       hasTargetObjectMetadataId: isDefined(
         flatNavigationMenuItem.targetObjectMetadataUniversalIdentifier,
@@ -196,7 +189,6 @@ export class FlatNavigationMenuItemValidatorService {
         isDefined(flatNavigationMenuItem.link) &&
         isNonEmptyString(flatNavigationMenuItem.link),
       name: flatNavigationMenuItem.name,
-      isUpdate: false,
     });
 
     validationResult.errors.push(...typeValidationErrors);
@@ -322,6 +314,7 @@ export class FlatNavigationMenuItemValidatorService {
     const nameUpdate = flatEntityUpdate.name;
 
     const typeValidationErrors = this.validateNavigationMenuItemType({
+      type: toFlatNavigationMenuItem.type,
       hasTargetRecordId: isDefined(toFlatNavigationMenuItem.targetRecordId),
       hasTargetObjectMetadataId: isDefined(
         toFlatNavigationMenuItem.targetObjectMetadataUniversalIdentifier,
@@ -329,7 +322,6 @@ export class FlatNavigationMenuItemValidatorService {
       hasViewId: isDefined(toFlatNavigationMenuItem.viewUniversalIdentifier),
       hasLink: isNonEmptyString((toFlatNavigationMenuItem.link ?? '').trim()),
       name: isDefined(nameUpdate) ? nameUpdate : toFlatNavigationMenuItem.name,
-      isUpdate: true,
     });
 
     validationResult.errors.push(...typeValidationErrors);

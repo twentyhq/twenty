@@ -1,7 +1,7 @@
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 
 type AddToNavPayload = { type?: string } | null;
 
@@ -9,5 +9,5 @@ export const isFolderDrag = (
   payload: AddToNavPayload,
   sourceItem: NavigationMenuItem | undefined,
 ): boolean =>
-  payload?.type === 'folder' ||
+  payload?.type === 'FOLDER' ||
   (isDefined(sourceItem) && isNavigationMenuItemFolder(sourceItem));

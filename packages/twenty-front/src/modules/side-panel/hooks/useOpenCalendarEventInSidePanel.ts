@@ -24,7 +24,7 @@ export const useOpenCalendarEventInSidePanel = () => {
 
       // TODO: Uncomment this once we need to calendar event title in the navigation
       // const objectMetadataItem = snapshot
-      //   .getLoadable(objectMetadataItemsState)
+      //   .getLoadable(objectMetadataItemsSelector)
       //   .getValue()
       //   .find(
       //     ({ nameSingular }) =>

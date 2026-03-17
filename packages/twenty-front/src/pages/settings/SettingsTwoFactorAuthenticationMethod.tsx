@@ -47,6 +47,11 @@ const StyledOTPContainer = styled.div`
 const StyledQRCodeSizer = styled.div`
   height: 137px;
   width: 137px;
+
+  & > svg {
+    height: 100%;
+    width: 100%;
+  }
 `;
 
 const StyledCopySetupKeyText = styled.div`

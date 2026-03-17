@@ -3,7 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { type ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-object-metadata/types/object-metadata-minimal-information.type';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { IDENTIFIER_MAX_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-max-char-length.constants';
+import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -35,19 +35,6 @@ export const validateFlatObjectMetadataLabel = ({
         value: label,
       });
     }
-  }
-
-  // Check if labels are identical
-  const labelsAreIdentical =
-    labelSingular.trim().toLowerCase() === labelPlural.trim().toLowerCase();
-
-  if (labelsAreIdentical) {
-    errors.push({
-      code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      message: `The singular and plural labels cannot be the same for an object`,
-      userFriendlyMessage: msg`The singular and plural labels cannot be the same for an object`,
-      value: labelSingular,
-    });
   }
 
   return errors;

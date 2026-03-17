@@ -5,16 +5,16 @@ import { useStore } from 'jotai';
 import { type ComponentProps, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
-import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/hooks/useHandleAddToNavigationDrop';
-import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
-import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/hooks/useNavigationMenuItemsDraftState';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/states/addToNavPayloadRegistryState';
-import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
-import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
-import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/utils/validateAndExtractWorkspaceFolderId';
+import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
+import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop';
+import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
+import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
+import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isWorkspaceDroppableId } from '@/navigation-menu-item/common/utils/isWorkspaceDroppableId';
+import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 
 import { DROP_RESULT_OPTIONS } from '@/navigation/constants/workspaceDndKitDropResultOptions';
 import type { DraggableData } from '@/navigation/types/workspaceDndKitDraggableData';
@@ -229,7 +229,7 @@ export const useWorkspaceDndKit = (): {
           resolved.destination.droppableId,
         );
         const folderDrag =
-          getPayload()?.type === 'folder' && isDefined(folderId);
+          getPayload()?.type === 'FOLDER' && isDefined(folderId);
         setForbiddenDropTargetId(
           folderDrag ? resolved.effectiveDropTargetId : null,
         );
