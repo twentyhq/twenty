@@ -69,20 +69,16 @@ export class ConfigService {
 
     const migrateRemoteFields = (
       source: Record<string, unknown>,
-    ): RemoteConfig => {
-      const remote: RemoteConfig = {
-        apiUrl: str(source.apiUrl) ?? '',
-        apiKey: str(source.apiKey),
-        accessToken:
-          str(source.accessToken) ?? str(source.applicationAccessToken),
-        refreshToken:
-          str(source.refreshToken) ?? str(source.applicationRefreshToken),
-        oauthClientId: str(source.oauthClientId),
-        oauthClientSecret: str(source.oauthClientSecret),
-      };
-
-      return remote;
-    };
+    ): RemoteConfig => ({
+      apiUrl: str(source.apiUrl) ?? '',
+      apiKey: str(source.apiKey),
+      accessToken:
+        str(source.accessToken) ?? str(source.applicationAccessToken),
+      refreshToken:
+        str(source.refreshToken) ?? str(source.applicationRefreshToken),
+      oauthClientId: str(source.oauthClientId),
+      oauthClientSecret: str(source.oauthClientSecret),
+    });
 
     const profiles =
       (raw.profiles as Record<string, Record<string, unknown>> | undefined) ??
@@ -91,13 +87,17 @@ export class ConfigService {
     migrated.remotes = {};
 
     for (const [name, profile] of Object.entries(profiles)) {
-      // Rename the 'default' profile to 'local'
       const remoteName = name === 'default' ? DEFAULT_REMOTE_NAME : name;
 
       migrated.remotes[remoteName] = migrateRemoteFields(profile);
     }
 
-    // Migrate top-level keys as the 'local' remote if no profile existed for it
+    // Current-format remotes override legacy profiles — they're newer.
+    const existingRemotes =
+      (raw.remotes as Record<string, RemoteConfig> | undefined) ?? {};
+
+    Object.assign(migrated.remotes, existingRemotes);
+
     if (hasTopLevelApiUrl && !migrated.remotes[DEFAULT_REMOTE_NAME]) {
       migrated.remotes[DEFAULT_REMOTE_NAME] = migrateRemoteFields(
         raw as Record<string, unknown>,

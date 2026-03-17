@@ -28,26 +28,12 @@ export class ApiService {
 
       config.baseURL = serverUrl ?? twentyConfig.apiUrl;
 
-      const envToken = process.env.TWENTY_TOKEN;
-      const authToken =
-        token ?? envToken ?? twentyConfig.accessToken ?? twentyConfig.apiKey;
+      if (!config.headers.Authorization) {
+        const authToken = token ?? (await this.resolveAuthToken());
 
-      if (!config.headers.Authorization && authToken) {
-        if (
-          !token &&
-          authToken === twentyConfig.accessToken &&
-          this.isTokenExpired(authToken)
-        ) {
-          const refreshed = await this.refreshToken();
-
-          if (refreshed) {
-            config.headers.Authorization = `Bearer ${refreshed}`;
-
-            return config;
-          }
+        if (authToken) {
+          config.headers.Authorization = `Bearer ${authToken}`;
         }
-
-        config.headers.Authorization = `Bearer ${authToken}`;
       }
 
       return config;
@@ -627,10 +613,14 @@ export class ApiService {
 
     const wsClient = createClient({
       url: twentyConfig.apiUrl + '/metadata',
-      headers: {
-        Authorization: `Bearer ${twentyConfig.apiKey}`,
-        'Content-Type': 'application/json',
-        Accept: 'text/event-stream',
+      headers: async () => {
+        const authToken = await this.resolveAuthToken();
+
+        return {
+          Authorization: authToken ? `Bearer ${authToken}` : '',
+          'Content-Type': 'application/json',
+          Accept: 'text/event-stream',
+        };
       },
     });
 
@@ -885,6 +875,27 @@ export class ApiService {
         error,
       };
     }
+  }
+
+  private async resolveAuthToken(): Promise<string | undefined> {
+    const envToken = process.env.TWENTY_TOKEN;
+
+    if (envToken) {
+      return envToken;
+    }
+
+    const config = await this.configService.getConfig();
+    const accessToken = config.accessToken;
+
+    if (accessToken && this.isTokenExpired(accessToken)) {
+      const refreshed = await this.refreshToken();
+
+      if (refreshed) {
+        return refreshed;
+      }
+    }
+
+    return accessToken ?? config.apiKey;
   }
 
   private isTokenExpired(token: string): boolean {
