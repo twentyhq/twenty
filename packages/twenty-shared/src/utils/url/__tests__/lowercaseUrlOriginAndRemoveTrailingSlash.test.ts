@@ -81,7 +81,7 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       expected: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
     },
     {
-      title: 'should return non-HTTP(S) URLs unmodified',
+      title: 'should return URLs with opaque origins (e.g. data:) unmodified',
       input: 'data:text/html,<h1>Hello</h1>',
       expected: 'data:text/html,<h1>Hello</h1>',
     },

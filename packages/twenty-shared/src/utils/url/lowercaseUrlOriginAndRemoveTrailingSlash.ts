@@ -15,6 +15,12 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
     return rawUrl;
   }
 
+  // Only process HTTP(S) URLs. For other schemes (e.g., blob:, file:, data:),
+  // return the original URL to avoid stripping the scheme or rewriting it.
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return rawUrl;
+  }
+
   const lowercaseOrigin = url.origin.toLowerCase();
 
   const protocolIndex = rawUrl.indexOf('://');
