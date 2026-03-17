@@ -12,6 +12,7 @@ export const NavigationMenuItemObjectDisplay = ({
   item,
   editModeProps,
   isDragging,
+  rightOptions,
   onActiveObjectMetadataItemClick,
 }: NavigationMenuItemObjectDisplayProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -28,9 +29,10 @@ export const NavigationMenuItemObjectDisplay = ({
     <NavigationDrawerItemForObjectMetadataItem
       objectMetadataItem={objectMetadataItem}
       navigationMenuItem={item}
-      isSelectedInEditMode={editModeProps.isSelectedInEditMode}
-      onEditModeClick={editModeProps.onEditModeClick}
+      isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
+      onEditModeClick={editModeProps?.onEditModeClick}
       isDragging={isDragging}
+      rightOptions={rightOptions}
       onActiveItemClickWhenNotInEditMode={
         onActiveObjectMetadataItemClick
           ? () => onActiveObjectMetadataItemClick(objectMetadataItem, item.id)

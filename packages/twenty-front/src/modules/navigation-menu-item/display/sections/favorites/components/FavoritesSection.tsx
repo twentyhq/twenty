@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { IconFolder, IconFolderPlus, IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
@@ -12,31 +12,20 @@ import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/con
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
 import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/common/states/isNavigationMenuItemFolderCreatingState';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
-import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
-import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { useCreateNavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/hooks/useCreateNavigationMenuItemFolder';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
-import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
-import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
-import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 const StyledEmptyContainer = styled.div`
   width: 100%;
@@ -52,12 +41,8 @@ const ORPHAN_DROPPABLE_ID =
 export const FavoritesSection = () => {
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
-  const currentPath = useLocation().pathname;
-  const currentViewPath = useLocation().pathname + useLocation().search;
 
   const [newFolderName, setNewFolderName] = useState('');
   const { createNewNavigationMenuItemFolder } =
@@ -82,16 +67,18 @@ export const FavoritesSection = () => {
     [navigationMenuItemsSorted],
   );
 
-  const folderChildrenMap = useMemo(() => {
-    const map = new Map<
-      string,
-      (typeof userNavigationMenuItemsByFolder)[number]
-    >();
+  const folderChildrenById = useMemo(() => {
+    const map = new Map<string, NavigationMenuItem[]>();
     for (const folder of userNavigationMenuItemsByFolder) {
-      map.set(folder.id, folder);
+      map.set(folder.id, folder.navigationMenuItems);
     }
     return map;
   }, [userNavigationMenuItemsByFolder]);
+
+  const folderCount = useMemo(
+    () => topLevelItems.filter(isNavigationMenuItemFolder).length,
+    [topLevelItems],
+  );
 
   const toggleNewFolder = () => {
     openNavigationSection();
@@ -124,6 +111,20 @@ export const FavoritesSection = () => {
     setIsNavigationMenuItemFolderCreating(false);
   };
 
+  const makeRightOptions = useCallback(
+    (item: NavigationMenuItem) => (
+      <LightIconButton
+        Icon={IconHeartOff}
+        onClick={(event) => {
+          event.stopPropagation();
+          deleteNavigationMenuItem(item.id);
+        }}
+        accent="tertiary"
+      />
+    ),
+    [deleteNavigationMenuItem],
+  );
+
   if (
     topLevelItems.length === 0 &&
     !isNavigationMenuItemFolderCreating &&
@@ -131,8 +132,6 @@ export const FavoritesSection = () => {
   ) {
     return null;
   }
-
-  const hasFolders = userNavigationMenuItemsByFolder.length > 1;
 
   return (
     <NavigationMenuItemSection
@@ -161,8 +160,8 @@ export const FavoritesSection = () => {
       )}
       {topLevelItems.length > 0 ? (
         <>
-          {topLevelItems.map((item, index) => {
-            const dropIndicator = (
+          {topLevelItems.map((item, index) => (
+            <div key={item.id}>
               <NavigationItemDropTarget
                 folderId={null}
                 index={index}
@@ -173,98 +172,34 @@ export const FavoritesSection = () => {
                   index,
                 )}
               />
-            );
-
-            if (isNavigationMenuItemFolder(item)) {
-              const folderData = folderChildrenMap.get(item.id);
-              return (
-                <div key={item.id}>
-                  {dropIndicator}
-                  <NavigationMenuItemSortableItem
-                    id={item.id}
-                    index={index}
-                    group={ORPHAN_DROPPABLE_ID}
-                  >
-                    <NavigationMenuItemFolder
-                      folderId={item.id}
-                      folderName={
-                        folderData?.folderName ?? item.name ?? 'Folder'
-                      }
-                      navigationMenuItems={
-                        folderData?.navigationMenuItems ?? []
-                      }
-                      section={NavigationSections.FAVORITES}
-                      isGroup={hasFolders}
-                    />
-                  </NavigationMenuItemSortableItem>
-                </div>
-              );
-            }
-
-            const label = getNavigationMenuItemLabel(
-              item,
-              objectMetadataItems,
-              views,
-            );
-            const computedLink = getNavigationMenuItemComputedLink(
-              item,
-              objectMetadataItems,
-              views,
-            );
-            const objectNameSingular =
-              getNavigationMenuItemObjectNameSingular(
-                item,
-                objectMetadataItems,
-                views,
-              );
-
-            return (
-              <div key={item.id}>
-                {dropIndicator}
-                <NavigationMenuItemSortableItem
-                  id={item.id}
-                  index={index}
-                  group={ORPHAN_DROPPABLE_ID}
-                >
+              <NavigationMenuItemSortableItem
+                id={item.id}
+                index={index}
+                group={ORPHAN_DROPPABLE_ID}
+              >
+                {isNavigationMenuItemFolder(item) ? (
+                  <NavigationMenuItemDisplay
+                    item={item}
+                    section={NavigationSections.FAVORITES}
+                    isDragging={isDragging}
+                    folderChildrenById={folderChildrenById}
+                    folderCount={folderCount}
+                  />
+                ) : (
                   <StyledOrphanItemContainer>
-                    <NavigationDrawerItem
-                      secondaryLabel={getObjectNavigationMenuItemSecondaryLabel(
-                        {
-                          objectMetadataItems,
-                          navigationMenuItemObjectNameSingular:
-                            objectNameSingular ?? '',
-                        },
-                      )}
-                      label={label}
-                      Icon={() => (
-                        <NavigationMenuItemIcon navigationMenuItem={item} />
-                      )}
-                      iconColor={getEffectiveNavigationMenuItemColor(item)}
-                      active={isLocationMatchingNavigationMenuItem(
-                        currentPath,
-                        currentViewPath,
-                        item.type,
-                        computedLink,
-                      )}
-                      to={isDragging ? undefined : computedLink}
-                      rightOptions={
-                        <LightIconButton
-                          Icon={IconHeartOff}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            deleteNavigationMenuItem(item.id);
-                          }}
-                          accent="tertiary"
-                        />
-                      }
+                    <NavigationMenuItemDisplay
+                      item={item}
+                      section={NavigationSections.FAVORITES}
                       isDragging={isDragging}
-                      triggerEvent="CLICK"
+                      folderChildrenById={folderChildrenById}
+                      folderCount={folderCount}
+                      rightOptions={makeRightOptions(item)}
                     />
                   </StyledOrphanItemContainer>
-                </NavigationMenuItemSortableItem>
-              </div>
-            );
-          })}
+                )}
+              </NavigationMenuItemSortableItem>
+            </div>
+          ))}
           <NavigationItemDropTarget
             folderId={null}
             index={topLevelItems.length}
@@ -277,9 +212,7 @@ export const FavoritesSection = () => {
           />
         </>
       ) : (
-        <StyledEmptyContainer
-          style={{ height: isDragging ? '24px' : '1px' }}
-        />
+        <StyledEmptyContainer style={{ height: isDragging ? '24px' : '1px' }} />
       )}
     </NavigationMenuItemSection>
   );

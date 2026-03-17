@@ -1,6 +1,7 @@
 import { NavigationMenuItemDroppableSlot } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
@@ -64,6 +65,7 @@ export const NavigationMenuItemSectionListDndKit = ({
           >
             <NavigationMenuItemDisplay
               item={item}
+              section={NavigationSections.WORKSPACE}
               editModeProps={getEditModeProps(item)}
               isDragging={isDragging}
               folderChildrenById={folderChildrenById}

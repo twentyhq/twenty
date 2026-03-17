@@ -1,3 +1,6 @@
+import { IconArrowUpRight } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
@@ -5,8 +8,6 @@ import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/l
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconArrowUpRight } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type NavigationMenuItemLinkDisplayProps = NavigationMenuItemSectionContentProps;
 
@@ -14,6 +15,7 @@ export const NavigationMenuItemLinkDisplay = ({
   item,
   editModeProps,
   isDragging,
+  rightOptions,
 }: NavigationMenuItemLinkDisplayProps) => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
@@ -22,27 +24,27 @@ export const NavigationMenuItemLinkDisplay = ({
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
 
+  const defaultRightOptions = !isNavigationMenuInEditMode && (
+    <IconArrowUpRight
+      size={themeCssVariables.icon.size.sm}
+      stroke={themeCssVariables.icon.stroke.md}
+      color={themeCssVariables.font.color.light}
+    />
+  );
+
   return (
     <NavigationDrawerItem
       label={label}
       to={isNavigationMenuInEditMode || isDragging ? undefined : computedLink}
       onClick={
-        isNavigationMenuInEditMode ? editModeProps.onEditModeClick : undefined
+        isNavigationMenuInEditMode ? editModeProps?.onEditModeClick : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={false}
-      isSelectedInEditMode={editModeProps.isSelectedInEditMode}
+      isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent="CLICK"
-      rightOptions={
-        !isNavigationMenuInEditMode && (
-          <IconArrowUpRight
-            size={themeCssVariables.icon.size.sm}
-            stroke={themeCssVariables.icon.stroke.md}
-            color={themeCssVariables.font.color.light}
-          />
-        )
-      }
+      rightOptions={rightOptions ?? defaultRightOptions}
     />
   );
 };

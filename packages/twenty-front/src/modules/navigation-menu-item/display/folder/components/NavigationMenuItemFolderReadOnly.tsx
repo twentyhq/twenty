@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
@@ -101,7 +100,6 @@ export const NavigationMenuItemFolderReadOnly = ({
               {navigationMenuItems.map((navigationMenuItem, index) => (
                 <NavigationMenuItemFolderSubItem
                   key={navigationMenuItem.id}
-                  section={NavigationSections.WORKSPACE}
                   navigationMenuItem={navigationMenuItem}
                   index={index}
                   arrayLength={navigationMenuItems.length}

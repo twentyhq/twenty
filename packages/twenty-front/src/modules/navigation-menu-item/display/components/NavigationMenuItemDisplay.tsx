@@ -8,10 +8,12 @@ type NavigationMenuItemDisplayProps = NavigationMenuItemSectionContentProps;
 
 export const NavigationMenuItemDisplay = ({
   item,
+  section,
   editModeProps,
   isDragging,
   folderChildrenById,
   folderCount,
+  rightOptions,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
@@ -22,10 +24,12 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemFolderDisplay
           item={item}
+          section={section}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
+          rightOptions={rightOptions}
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           readOnly={readOnly}
@@ -35,10 +39,12 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemLinkDisplay
           item={item}
+          section={section}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
+          rightOptions={rightOptions}
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
@@ -49,10 +55,12 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemObjectDisplay
           item={item}
+          section={section}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
+          rightOptions={rightOptions}
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}

@@ -1,3 +1,6 @@
+import type { ReactNode } from 'react';
+
+import type { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -6,11 +9,13 @@ import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 
 export type NavigationMenuItemSectionContentProps = {
   item: NavigationMenuItem;
-  editModeProps: EditModeProps;
+  section: NavigationSections;
+  editModeProps?: EditModeProps;
   isDragging: boolean;
   folderChildrenById: Map<string, NavigationMenuItem[]>;
   folderCount: number;
-  selectedNavigationMenuItemId: string | null;
+  rightOptions?: ReactNode;
+  selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
     objectMetadataItem: ObjectMetadataItem,

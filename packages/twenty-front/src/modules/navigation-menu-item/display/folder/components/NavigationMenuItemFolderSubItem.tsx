@@ -1,15 +1,11 @@
+import { type ReactNode } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconHeartOff } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
@@ -23,34 +19,33 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
 
 type NavigationMenuItemFolderSubItemProps = {
-  section: NavigationSections;
   navigationMenuItem: NavigationMenuItem;
   index: number;
   arrayLength: number;
   selectedNavigationMenuItemIndex: number;
   isDragging: boolean;
-  onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
+  rightOptions?: ReactNode;
+  onClick?: () => void;
+  onNavigationMenuItemClick?: (params: {
+    item: NavigationMenuItem;
+    objectMetadataItem?: ObjectMetadataItem;
+  }) => void;
   selectedNavigationMenuItemId?: string | null;
 };
 
 export const NavigationMenuItemFolderSubItem = ({
-  section,
   navigationMenuItem,
   index,
   arrayLength,
   selectedNavigationMenuItemIndex,
   isDragging,
+  rightOptions,
+  onClick,
   onNavigationMenuItemClick,
   selectedNavigationMenuItemId,
 }: NavigationMenuItemFolderSubItemProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
-  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
-
-  const isFavoritesSection = section === NavigationSections.FAVORITES;
 
   const label = getNavigationMenuItemLabel(
     navigationMenuItem,
@@ -84,32 +79,20 @@ export const NavigationMenuItemFolderSubItem = ({
         )
       : null;
 
-  const isEditableInEditMode =
-    !isFavoritesSection &&
-    isNavigationMenuInEditMode &&
+  const isEditable =
     isDefined(onNavigationMenuItemClick) &&
     (navigationMenuItem.type === NavigationMenuItemType.LINK ||
       isDefined(objectMetadataItem));
 
-  const handleEditModeClick =
-    isEditableInEditMode && isDefined(onNavigationMenuItemClick)
+  const handleClick =
+    onClick ??
+    (isEditable
       ? () =>
           onNavigationMenuItemClick({
             item: navigationMenuItem,
             objectMetadataItem: objectMetadataItem ?? undefined,
           })
-      : undefined;
-
-  const rightOptions = isFavoritesSection ? (
-    <LightIconButton
-      Icon={IconHeartOff}
-      onClick={(event) => {
-        event.stopPropagation();
-        deleteNavigationMenuItem(navigationMenuItem.id);
-      }}
-      accent="tertiary"
-    />
-  ) : undefined;
+      : undefined);
 
   return (
     <NavigationDrawerSubItem
@@ -126,8 +109,8 @@ export const NavigationMenuItemFolderSubItem = ({
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
       )}
       iconColor={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
-      to={isDragging || handleEditModeClick ? undefined : computedLink}
-      onClick={handleEditModeClick}
+      to={isDragging || handleClick ? undefined : computedLink}
+      onClick={handleClick}
       active={index === selectedNavigationMenuItemIndex}
       isSelectedInEditMode={
         selectedNavigationMenuItemId === navigationMenuItem.id
