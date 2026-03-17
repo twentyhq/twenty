@@ -1,7 +1,7 @@
 import { lazy, Suspense, useContext, type ReactNode } from 'react';
 
-import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
-import { NavigationDragSourceContext } from '@/navigation-menu-item/contexts/NavigationDragSourceContext';
+import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
+import { NavigationDragSourceContext } from '@/navigation-menu-item/common/contexts/NavigationDragSourceContext';
 
 import type { AddToNavDroppableProvided } from '@/command-menu/components/CommandMenuAddToNavDroppableTypes';
 

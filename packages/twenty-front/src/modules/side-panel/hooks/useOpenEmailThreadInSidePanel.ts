@@ -24,7 +24,7 @@ export const useOpenEmailThreadInSidePanel = () => {
 
       // TODO: Uncomment this once we need to show the thread title in the navigation
       // const objectMetadataItem = snapshot
-      //   .getLoadable(objectMetadataItemsState)
+      //   .getLoadable(objectMetadataItemsSelector)
       //   .getValue()
       //   .find(
       //     ({ nameSingular }) =>

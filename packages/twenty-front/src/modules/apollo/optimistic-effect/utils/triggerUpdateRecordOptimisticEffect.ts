@@ -25,7 +25,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
 }: {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   objectMetadataItem: ObjectMetadataItem;
   currentRecord: RecordGqlNode;
   updatedRecord: RecordGqlNode;

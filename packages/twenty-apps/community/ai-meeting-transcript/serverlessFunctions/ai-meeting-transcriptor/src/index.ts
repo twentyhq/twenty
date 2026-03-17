@@ -30,7 +30,7 @@ type AnalysisResult = {
   commitments: Commitment[];
 };
 
-type RichTextV2Data = {
+type RichTextData = {
   markdown: string;
   blocknote: null;
 };
@@ -123,7 +123,7 @@ const createNoteInTwenty = async (
     bodyV2: {
       markdown: noteBodyMarkdown,
       blocknote: null,
-    } satisfies RichTextV2Data,
+    } satisfies RichTextData,
   };
 
   try {
@@ -159,7 +159,7 @@ const createTaskInTwenty = async (
 
   const taskData: {
     title: string;
-    bodyV2: RichTextV2Data;
+    bodyV2: RichTextData;
     dueAt?: string;
   } = {
     title: actionItem.title,

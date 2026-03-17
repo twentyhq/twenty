@@ -1,6 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { PIE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/pieChartData';
 import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graph-widget-pie-chart/types/PieChartDataItem';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
@@ -8,12 +7,15 @@ import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/deter
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { extractPieChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractPieChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type PieChartConfiguration } from '~/generated-metadata/graphql';
+import {
+  PieChartDataDocument,
+  type PieChartConfiguration,
+} from '~/generated-metadata/graphql';
 
 type UseGraphPieChartWidgetDataProps = {
   objectMetadataItemId: string;
@@ -50,7 +52,7 @@ export const useGraphPieChartWidgetData = ({
     data: queryData,
     loading,
     error,
-  } = useQuery(PIE_CHART_DATA, {
+  } = useQuery(PieChartDataDocument, {
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
@@ -101,7 +103,7 @@ export const useGraphPieChartWidgetData = ({
   );
 
   return {
-    data: chartData,
+    data: chartData ?? [],
     showLegend: configuration.displayLegend ?? true,
     showDataLabels: configuration.displayDataLabel ?? false,
     showCenterMetric: configuration.showCenterMetric ?? true,

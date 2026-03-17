@@ -1,13 +1,11 @@
 import { type ReactNode } from 'react';
-import { useParams } from 'react-router-dom';
 
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
 import { QueryParamsSortsEffect } from '@/views/components/QueryParamsSortsEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
-import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
@@ -28,18 +26,25 @@ type ViewBarProps = {
   viewBarId: string;
   className?: string;
   optionsDropdownButton: ReactNode;
+  isReadOnly?: boolean;
 };
 
 export const ViewBar = ({
   viewBarId,
   className,
   optionsDropdownButton,
+  isReadOnly = false,
 }: ViewBarProps) => {
-  const { objectNamePlural } = useParams();
-  const loading = useIsPrefetchLoading();
+  const { objectNamePlural } = useRecordIndexContextOrThrow();
 
   if (!objectNamePlural) {
     return;
+  }
+
+  if (isReadOnly) {
+    return (
+      <TopBar className={className} leftComponent={<ViewPickerDropdown />} />
+    );
   }
 
   return (
@@ -57,9 +62,7 @@ export const ViewBar = ({
       <ViewBarPageTitle />
       <TopBar
         className={className}
-        leftComponent={
-          loading ? <ViewBarSkeletonLoader /> : <ViewPickerDropdown />
-        }
+        leftComponent={<ViewPickerDropdown />}
         rightComponent={
           <>
             <ObjectFilterDropdownComponentInstanceContext.Provider

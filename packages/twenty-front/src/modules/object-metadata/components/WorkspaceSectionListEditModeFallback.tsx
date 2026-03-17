@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 
-import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
-import { WorkspaceSectionAddMenuItemButton } from '@/object-metadata/components/WorkspaceSectionAddMenuItemButton';
-import type { WorkspaceSectionListDndKitProps } from '@/object-metadata/components/WorkspaceSectionListDndKitProps';
+import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
+import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
+import type { WorkspaceSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionListDndKitProps';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFallback = styled.div`

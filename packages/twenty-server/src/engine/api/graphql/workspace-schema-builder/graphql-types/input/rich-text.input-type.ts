@@ -1,7 +1,7 @@
 import { GraphQLInputObjectType, GraphQLString } from 'graphql';
 
-const richTextV2LeafFilter = new GraphQLInputObjectType({
-  name: 'RichTextV2LeafFilter',
+const richTextLeafFilter = new GraphQLInputObjectType({
+  name: 'RichTextLeafFilter',
   fields: {
     ilike: {
       type: GraphQLString,
@@ -10,10 +10,10 @@ const richTextV2LeafFilter = new GraphQLInputObjectType({
   },
 });
 
-export const RichTextV2FilterType = new GraphQLInputObjectType({
-  name: 'RichTextV2Filter',
+export const RichTextFilterType = new GraphQLInputObjectType({
+  name: 'RichTextFilter',
   fields: {
-    blocknote: { type: richTextV2LeafFilter },
-    markdown: { type: richTextV2LeafFilter },
+    blocknote: { type: richTextLeafFilter },
+    markdown: { type: richTextLeafFilter },
   },
 });

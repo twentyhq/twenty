@@ -92,6 +92,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       case ApplicationRegistrationSourceType.TARBALL:
         return this.resolveFromTarball(appRegistration);
       case ApplicationRegistrationSourceType.LOCAL:
+      case ApplicationRegistrationSourceType.OAUTH_ONLY:
         return null;
     }
   }

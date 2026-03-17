@@ -113,7 +113,7 @@ export const usePerformCombinedFindManyRecords = () => {
     client: customClient,
   }: {
     operationSignatures: RecordGqlOperationSignature[];
-    client?: ApolloClient<object>;
+    client?: ApolloClient;
   }) => {
     const apolloClient = customClient || apolloCoreClient;
 
@@ -126,7 +126,7 @@ export const usePerformCombinedFindManyRecords = () => {
       operationSignatures,
     });
 
-    const { data, loading } =
+    const { data } =
       await apolloClient.query<CombinedFindManyRecordsQueryResult>({
         query: findManyQuery ?? EMPTY_QUERY,
         variables: queryVariables,
@@ -143,7 +143,6 @@ export const usePerformCombinedFindManyRecords = () => {
 
     return {
       result: resultWithoutConnection,
-      loading,
     };
   };
 

@@ -10,6 +10,9 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
 import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
+import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import {
   ViewFieldException,
@@ -22,9 +25,13 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
   flatViewFieldMaps,
   flatViewFieldGroupMaps,
+  callerApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: {
   updateViewFieldInput: UpdateViewFieldInput;
   flatViewFieldMaps: FlatViewFieldMaps;
+  callerApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<
   AllFlatEntityMaps,
   'flatViewFieldGroupMaps'
@@ -47,29 +54,60 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     );
   }
 
-  const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
+  const editableProperties = extractAndSanitizeObjectStringFields(
     rawUpdateViewFieldInput.update,
     FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
   );
 
-  const flatViewFieldToUpdate = mergeUpdateInExistingRecord({
-    existing: existingFlatViewFieldToUpdate,
-    properties: FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
-    update: updatedEditableFieldProperties,
+  const shouldOverride = isCallerOverridingEntity({
+    callerApplicationUniversalIdentifier,
+    entityApplicationUniversalIdentifier:
+      existingFlatViewFieldToUpdate.applicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier,
   });
 
-  if (updatedEditableFieldProperties.viewFieldGroupId !== undefined) {
+  const { overrides, updatedEditableProperties } =
+    sanitizeOverridableEntityInput({
+      metadataName: 'viewField',
+      existingFlatEntity: existingFlatViewFieldToUpdate,
+      updatedEditableProperties: editableProperties,
+      shouldOverride,
+    });
+
+  const mergedRecord = mergeUpdateInExistingRecord({
+    existing: existingFlatViewFieldToUpdate,
+    properties: [...FLAT_VIEW_FIELD_EDITABLE_PROPERTIES],
+    update: updatedEditableProperties,
+  });
+
+  const flatViewFieldToUpdate = {
+    ...mergedRecord,
+    overrides,
+  } as UniversalFlatViewField;
+
+  if (updatedEditableProperties.viewFieldGroupId !== undefined) {
     const { viewFieldGroupUniversalIdentifier } =
       resolveEntityRelationUniversalIdentifiers({
         metadataName: 'viewField',
         foreignKeyValues: {
-          viewFieldGroupId: flatViewFieldToUpdate.viewFieldGroupId,
+          viewFieldGroupId: mergedRecord.viewFieldGroupId,
         },
         flatEntityMaps: { flatViewFieldGroupMaps },
       });
 
     flatViewFieldToUpdate.viewFieldGroupUniversalIdentifier =
       viewFieldGroupUniversalIdentifier;
+  }
+
+  if (isDefined(overrides)) {
+    flatViewFieldToUpdate.universalOverrides =
+      fromViewFieldOverridesToUniversalOverrides({
+        overrides,
+        viewFieldGroupUniversalIdentifierById:
+          flatViewFieldGroupMaps.universalIdentifierById,
+      });
+  } else {
+    flatViewFieldToUpdate.universalOverrides = null;
   }
 
   return flatViewFieldToUpdate;

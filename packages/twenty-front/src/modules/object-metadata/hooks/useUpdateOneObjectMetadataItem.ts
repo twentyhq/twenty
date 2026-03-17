@@ -1,27 +1,21 @@
+import { useMutation } from '@apollo/client/react';
 import {
-  useUpdateOneObjectMetadataItemMutation,
   type UpdateOneObjectInput,
+  UpdateOneObjectMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 
 // TODO: Slice the Apollo store synchronously in the update function instead of subscribing, so we can use update after read in the same function call
 export const useUpdateOneObjectMetadataItem = () => {
-  const [updateOneObjectMetadataItemMutation, { loading }] =
-    useUpdateOneObjectMetadataItemMutation();
-
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
+  const [updateOneObjectMetadataItemMutation, { loading }] = useMutation(
+    UpdateOneObjectMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -45,15 +39,12 @@ export const useUpdateOneObjectMetadataItem = () => {
         },
       });
 
-      await refreshObjectMetadataItems();
-      await refreshCoreViewsByObjectMetadataId(idToUpdate);
-
       return {
         status: 'successful',
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'objectMetadata',
           operationType: CrudOperationType.UPDATE,

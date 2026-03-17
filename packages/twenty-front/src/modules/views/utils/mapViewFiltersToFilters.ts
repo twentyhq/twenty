@@ -5,11 +5,11 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilter } from '~/generated-metadata/graphql';
+import { type ViewFilter as GqlViewFilter } from '~/generated-metadata/graphql';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
-  viewFilters: ViewFilter[] | CoreViewFilter[],
+  viewFilters: ViewFilter[] | GqlViewFilter[],
   availableFieldMetadataItems: FieldMetadataItem[],
 ): RecordFilter[] => {
   return viewFilters

@@ -3,8 +3,8 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
-import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,20 +31,20 @@ describe('field-for-group-by-deactivation-deletes-views', () => {
 
   const verifyViewExists = async (viewId: string, shouldExist: boolean) => {
     const {
-      data: { getCoreView },
-    } = await findOneCoreView({
+      data: { getView },
+    } = await findOneView({
       viewId,
       gqlFields: VIEW_FIELDS,
       expectToFail: false,
     });
 
     if (shouldExist) {
-      expect(isDefined(getCoreView)).toBe(true);
+      expect(isDefined(getView)).toBe(true);
     } else {
-      expect(getCoreView).toBeNull();
+      expect(getView).toBeNull();
     }
 
-    return getCoreView;
+    return getView;
   };
 
   const deactivateFieldAndVerify = async (fieldId: string) => {
@@ -117,8 +117,8 @@ describe('field-for-group-by-deactivation-deletes-views', () => {
     });
 
     const {
-      data: { createCoreView: viewWithGroup },
-    } = await createOneCoreView({
+      data: { createView: viewWithGroup },
+    } = await createOneView({
       input: {
         name: generateRecordName('View With Group'),
         objectMetadataId,
@@ -131,8 +131,8 @@ describe('field-for-group-by-deactivation-deletes-views', () => {
     });
 
     const {
-      data: { createCoreView: viewWithoutGroup },
-    } = await createOneCoreView({
+      data: { createView: viewWithoutGroup },
+    } = await createOneView({
       input: {
         name: generateRecordName('View Without Group'),
         objectMetadataId,
@@ -190,8 +190,8 @@ describe('field-for-group-by-deactivation-deletes-views', () => {
 
   it('should delete multiple views when they all use the same field in view groups', async () => {
     const {
-      data: { createCoreView: secondViewWithGroup },
-    } = await createOneCoreView({
+      data: { createView: secondViewWithGroup },
+    } = await createOneView({
       input: {
         name: generateRecordName('Second View With Group'),
         objectMetadataId: testSetup.objectMetadataId,

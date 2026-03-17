@@ -2,10 +2,11 @@ import { SettingsAdminTableCard } from '@/settings/admin-panel/components/Settin
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
 import { t } from '@lingui/core/macro';
 import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
-import { useGetVersionInfoQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetVersionInfoDocument } from '~/generated-metadata/graphql';
 
 export const SettingsAdminVersionContainer = () => {
-  const { data, loading } = useGetVersionInfoQuery();
+  const { data, loading } = useQuery(GetVersionInfoDocument);
   const { currentVersion, latestVersion } = data?.versionInfo ?? {};
 
   const versionItems = [

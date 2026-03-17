@@ -1,14 +1,11 @@
 import { type Decorator } from '@storybook/react-vite';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -28,18 +25,21 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { type View } from '@/views/types/View';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
-const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
+const companyView = mockedViews.find((v) => v.name === 'All Companies')!;
 
 const InternalTableStateLoaderEffect = ({
   objectMetadataItem,
@@ -56,8 +56,6 @@ const InternalTableStateLoaderEffect = ({
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
-
-  const setCoreViews = useSetAtomState(coreViewsState);
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
@@ -81,7 +79,9 @@ const InternalTableStateLoaderEffect = ({
 
     setCurrentRecordFields(recordFields);
 
-    setCoreViews([view as unknown as CoreViewWithRelations]);
+    setTestViewsInMetadataStore(jotaiStore, [
+      view as unknown as ViewWithRelations,
+    ]);
 
     setContextStoreCurrentViewId(view.id);
   }, [
@@ -91,7 +91,6 @@ const InternalTableStateLoaderEffect = ({
     view,
     setCurrentRecordFields,
     setContextStoreCurrentViewId,
-    setCoreViews,
   ]);
 
   return null;
@@ -104,7 +103,7 @@ const InternalTableContextProviders = ({
   children: React.ReactNode;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const currentRecordFields = useAtomComponentStateValue(
@@ -207,7 +206,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
   const { recordTableObjectNameSingular: objectNameSingular } =
     context.parameters;
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

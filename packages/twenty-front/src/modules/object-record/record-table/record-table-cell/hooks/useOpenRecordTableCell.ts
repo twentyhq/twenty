@@ -27,7 +27,7 @@ import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/po
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 
 export type OpenTableCellArgs = {
   initialValue?: string;
@@ -110,7 +110,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
 
         const openRecordIn = store.get(recordIndexOpenRecordInState.atom);
 
-        if (openRecordIn === ViewOpenRecordInType.SIDE_PANEL) {
+        if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
           activateRecordTableRow(cellPosition.row);
           unfocusRecordTableRow();
         }

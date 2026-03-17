@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useIcons } from 'twenty-ui/display';
@@ -28,7 +28,7 @@ const StyledFieldName = styled.div`
 
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
   const { theme } = useContext(ThemeContext);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { getIcon } = useIcons();
 
   const relatedObjectId = field.relation?.targetObjectMetadata.id;

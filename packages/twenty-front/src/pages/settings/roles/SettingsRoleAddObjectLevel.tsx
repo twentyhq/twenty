@@ -8,7 +8,8 @@ import { t } from '@lingui/core/macro';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useFindOneAgentQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindOneAgentDocument } from '~/generated-metadata/graphql';
 
 export const SettingsRoleAddObjectLevel = () => {
   const { roleId } = useParams();
@@ -20,7 +21,7 @@ export const SettingsRoleAddObjectLevel = () => {
     roleId ?? '',
   );
 
-  const { data: agentData } = useFindOneAgentQuery({
+  const { data: agentData } = useQuery(FindOneAgentDocument, {
     variables: { id: fromAgentId || '' },
     skip: !fromAgentId,
   });

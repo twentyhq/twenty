@@ -20,8 +20,8 @@ import { createRelationBetweenObjects } from 'test/integration/metadata/suites/o
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   FieldMetadataType,
@@ -863,7 +863,7 @@ describe('group-by resolver (integration)', () => {
       );
 
       // create a view with a filter: city eq cityToKeep
-      const { data: createViewData } = await createOneCoreView({
+      const { data: createViewData } = await createOneView({
         input: {
           name: 'People View City Keep',
           objectMetadataId: personObjectMetadataId,
@@ -872,7 +872,7 @@ describe('group-by resolver (integration)', () => {
         expectToFail: false,
       });
 
-      viewId = createViewData.createCoreView.id;
+      viewId = createViewData.createView.id;
 
       // create a filter group and a filter for the view
       const viewFilterGroupResponse = await makeMetadataAPIRequest(
@@ -886,10 +886,10 @@ describe('group-by resolver (integration)', () => {
       );
 
       const viewFilterGroupId = viewFilterGroupResponse.body.data
-        .createCoreViewFilterGroup.id as string;
+        .createViewFilterGroup.id as string;
 
       jestExpectToBeDefined(cityFieldMetadataId);
-      await createOneCoreViewFilter({
+      await createOneViewFilter({
         input: {
           viewId,
           viewFilterGroupId,
@@ -953,7 +953,7 @@ describe('group-by resolver (integration)', () => {
       );
 
       // create a view with any field filter
-      const { data: createViewData } = await createOneCoreView({
+      const { data: createViewData } = await createOneView({
         input: {
           name: 'People View City Keep',
           objectMetadataId: personObjectMetadataId,
@@ -963,7 +963,7 @@ describe('group-by resolver (integration)', () => {
         expectToFail: false,
       });
 
-      viewId = createViewData.createCoreView.id;
+      viewId = createViewData.createView.id;
 
       const response = await makeGraphqlAPIRequest(
         groupByOperationFactory({

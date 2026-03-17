@@ -12,10 +12,10 @@ import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { mockedCoreViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { sleep } from '~/utils/sleep';
 
-const companyView = mockedCoreViews.find((v) => v.name === 'All Companies')!;
+const companyView = mockedViews.find((v) => v.name === 'All Companies')!;
 
 const meta: Meta = {
   title: 'Modules/ObjectRecord/RecordTable/RecordTable',

@@ -2,14 +2,16 @@ import { useCallback } from 'react';
 
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
-import { useResendEmailVerificationTokenMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [resendEmailVerificationToken, { loading }] =
-    useResendEmailVerificationTokenMutation();
+  const [resendEmailVerificationToken, { loading }] = useMutation(
+    ResendEmailVerificationTokenDocument,
+  );
   const { origin } = useOrigin();
 
   const handleResendEmailVerificationToken = useCallback(
@@ -38,9 +40,11 @@ export const useHandleResendEmailVerificationToken = () => {
             enqueueErrorSnackBar({});
           }
         } catch (error) {
-          enqueueErrorSnackBar({
-            ...(error instanceof ApolloError ? { apolloError: error } : {}),
-          });
+          enqueueErrorSnackBar(
+            CombinedGraphQLErrors.is(error)
+              ? { apolloError: error }
+              : { message: error instanceof Error ? error.message : undefined },
+          );
         }
       };
     },

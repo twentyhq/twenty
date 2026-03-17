@@ -1,5 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { updateOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/update-one-core-view-sort.util';
+import { updateOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/update-one-view-sort.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -30,7 +30,7 @@ describe('View Sort update should fail', () => {
   it.each(eachTestingContextFilter(failingViewSortUpdateTestCases))(
     '$title',
     async ({ context }) => {
-      const { errors } = await updateOneCoreViewSort({
+      const { errors } = await updateOneViewSort({
         expectToFail: true,
         input: context.input,
       });

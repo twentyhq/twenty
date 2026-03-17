@@ -3,7 +3,6 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
-import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { FieldsWidgetFieldItem } from '@/page-layout/widgets/fields/components/FieldsWidgetFieldItem';
@@ -23,7 +22,7 @@ export const FieldsWidgetFieldList = ({
 }: FieldsWidgetFieldListProps) => {
   const targetRecord = useTargetRecord();
 
-  const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
+  const { recordLoading } = useRecordShowContainerData({
     objectRecordId: targetRecord.id,
   });
 
@@ -52,10 +51,6 @@ export const FieldsWidgetFieldList = ({
     recordId: targetRecord.id,
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
-
-  if (isPrefetchLoading) {
-    return <PropertyBoxSkeletonLoader />;
-  }
 
   return fields
     .filter(({ fieldMetadataItem }) => !hiddenFieldNames.has(fieldMetadataItem.name))

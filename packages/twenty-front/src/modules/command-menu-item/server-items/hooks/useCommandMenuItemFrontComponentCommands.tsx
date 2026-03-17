@@ -7,7 +7,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,11 +20,12 @@ import { type IconComponent, useIcons } from 'twenty-ui/display';
 
 import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { useQuery } from '@apollo/client/react';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
   type EngineComponentKey,
-  useFindManyCommandMenuItemsQuery,
+  FindManyCommandMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
@@ -179,7 +180,7 @@ export const useCommandMenuItemFrontComponentCommands = (
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const currentObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === contextStoreCurrentObjectMetadataItemId,
@@ -202,7 +203,7 @@ export const useCommandMenuItemFrontComponentCommands = (
         }
       : undefined;
 
-  const { data } = useFindManyCommandMenuItemsQuery();
+  const { data } = useQuery(FindManyCommandMenuItemsDocument);
 
   const allItems = data?.commandMenuItems ?? [];
 

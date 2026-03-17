@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterFilterableFieldMetadataItems } from '@/object-metadata/utils/getFilterFilterableFieldMetadataItems';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
@@ -17,7 +17,7 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
       ({ objectMetadataItemId }: { objectMetadataItemId: string }) =>
       ({ get }) => {
         const currentWorkspace = get(currentWorkspaceState);
-        const objectMetadataItems = get(objectMetadataItemsState);
+        const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
 
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.id === objectMetadataItemId,

@@ -1,11 +1,24 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Float,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
+
+import { AggregateOperations } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
@@ -25,9 +38,46 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
 
+  @ResolveField(() => Boolean)
+  isVisible(@Parent() viewField: ViewFieldDTO): boolean {
+    return resolveOverridableEntityProperty(viewField, 'isVisible');
+  }
+
+  @ResolveField(() => Int)
+  size(@Parent() viewField: ViewFieldDTO): number {
+    return resolveOverridableEntityProperty(viewField, 'size');
+  }
+
+  @ResolveField(() => Float)
+  position(@Parent() viewField: ViewFieldDTO): number {
+    return resolveOverridableEntityProperty(viewField, 'position');
+  }
+
+  @ResolveField(() => AggregateOperations, { nullable: true })
+  aggregateOperation(
+    @Parent() viewField: ViewFieldDTO,
+  ): AggregateOperations | null | undefined {
+    return resolveOverridableEntityProperty(viewField, 'aggregateOperation');
+  }
+
+  @ResolveField(() => UUIDScalarType, { nullable: true })
+  viewFieldGroupId(
+    @Parent() viewField: ViewFieldDTO,
+  ): string | null | undefined {
+    return resolveOverridableEntityProperty(viewField, 'viewFieldGroupId');
+  }
+
+  @ResolveField(() => Boolean)
+  isOverridden(@Parent() viewField: ViewFieldDTO): boolean {
+    return (
+      isDefined(viewField.overrides) &&
+      Object.keys(viewField.overrides).length > 0
+    );
+  }
+
   @Query(() => [ViewFieldDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFields(
+  async getViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldEntity[]> {
@@ -36,7 +86,7 @@ export class ViewFieldResolver {
 
   @Query(() => ViewFieldDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewField(
+  async getViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFieldEntity | null> {
@@ -45,7 +95,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(UpdateViewFieldPermissionGuard)
-  async updateCoreViewField(
+  async updateViewField(
     @Args('input') updateViewFieldInput: UpdateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
@@ -57,7 +107,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(CreateViewFieldPermissionGuard)
-  async createCoreViewField(
+  async createViewField(
     @Args('input') createViewFieldInput: CreateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
@@ -69,7 +119,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => [ViewFieldDTO])
   @UseGuards(CreateViewFieldPermissionGuard)
-  async createManyCoreViewFields(
+  async createManyViewFields(
     @Args('inputs', { type: () => [CreateViewFieldInput] })
     createViewFieldInputs: CreateViewFieldInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -82,7 +132,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(DeleteViewFieldPermissionGuard)
-  async deleteCoreViewField(
+  async deleteViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {
@@ -94,7 +144,7 @@ export class ViewFieldResolver {
 
   @Mutation(() => ViewFieldDTO)
   @UseGuards(DestroyViewFieldPermissionGuard)
-  async destroyCoreViewField(
+  async destroyViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO> {

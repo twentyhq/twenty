@@ -26,7 +26,7 @@ export class ViewFilterResolver {
 
   @Query(() => [ViewFilterDTO])
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFilters(
+  async getViewFilters(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
@@ -40,7 +40,7 @@ export class ViewFilterResolver {
 
   @Query(() => ViewFilterDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  async getCoreViewFilter(
+  async getViewFilter(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterDTO | null> {
@@ -49,7 +49,7 @@ export class ViewFilterResolver {
 
   @Mutation(() => ViewFilterDTO)
   @UseGuards(CreateViewFilterPermissionGuard)
-  async createCoreViewFilter(
+  async createViewFilter(
     @Args('input') createViewFilterInput: CreateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
@@ -61,7 +61,7 @@ export class ViewFilterResolver {
 
   @Mutation(() => ViewFilterDTO)
   @UseGuards(UpdateViewFilterPermissionGuard)
-  async updateCoreViewFilter(
+  async updateViewFilter(
     @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
@@ -73,7 +73,7 @@ export class ViewFilterResolver {
 
   @Mutation(() => ViewFilterDTO)
   @UseGuards(DeleteViewFilterPermissionGuard)
-  async deleteCoreViewFilter(
+  async deleteViewFilter(
     @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
@@ -85,7 +85,7 @@ export class ViewFilterResolver {
 
   @Mutation(() => ViewFilterDTO)
   @UseGuards(DestroyViewFilterPermissionGuard)
-  async destroyCoreViewFilter(
+  async destroyViewFilter(
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {

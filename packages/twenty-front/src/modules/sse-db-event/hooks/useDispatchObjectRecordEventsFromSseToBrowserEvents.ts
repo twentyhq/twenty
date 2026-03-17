@@ -1,5 +1,5 @@
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/sse-db-event/utils/groupObjectRecordSseEventsByObjectMetadataItemNameSingular';
 import { turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents } from '@/sse-db-event/utils/turnSseObjectRecordEventToObjectRecordOperationBrowserEvent';
 import { useStore } from 'jotai';
@@ -25,7 +25,7 @@ export const useDispatchObjectRecordEventsFromSseToBrowserEvents = () => {
         objectRecordEventsByObjectMetadataItemNameSingular.keys(),
       );
 
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       for (const objectMetadataItemNameSingular of objectMetadataItemNamesSingular) {
         const objectRecordEventsForThisObjectMetadataItem =

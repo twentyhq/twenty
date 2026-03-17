@@ -1543,16 +1543,10 @@ msgstr ""
 msgid "Flow"
 msgstr ""
 
-#. js-lingui-id: 9110hD
+#. js-lingui-id: Fzrzfe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Folder name is required and cannot be empty"
-msgstr ""
-
-#. js-lingui-id: 2WhlK8
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Folder name is required when creating a folder"
+msgid "Folder name is required"
 msgstr ""
 
 #. js-lingui-id: eWmJYU
@@ -2322,7 +2316,7 @@ msgid "Invalid value for position: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Sf+6YJ
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr ""
 
@@ -2598,6 +2592,12 @@ msgstr ""
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr ""
 
+#. js-lingui-id: oDC0sf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "link is required for LINK type"
+msgstr ""
+
 #. js-lingui-id: V5AXjr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function already exists"
@@ -2801,12 +2801,6 @@ msgstr "Namen sind nicht mit Bezeichnungen synchronisiert"
 msgid "Navigation menu item cannot be its own parent"
 msgstr ""
 
-#. js-lingui-id: xSvMwa
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Navigation menu item cannot be multiple types simultaneously"
-msgstr ""
-
 #. js-lingui-id: t38VAr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2816,12 +2810,6 @@ msgstr ""
 #. js-lingui-id: E+iJnK
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item hierarchy exceeds maximum depth."
-msgstr ""
-
-#. js-lingui-id: JePSNf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)"
 msgstr ""
 
 #. js-lingui-id: s+CGNO
@@ -2835,6 +2823,12 @@ msgstr ""
 #. js-lingui-id: p5qcyl
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item not found."
+msgstr ""
+
+#. js-lingui-id: Ii6d/e
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Navigation menu item type is required"
 msgstr ""
 
 #. js-lingui-id: TYhxR+
@@ -3856,8 +3850,12 @@ msgstr ""
 
 #. js-lingui-id: sndTPB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be updated"
+msgstr ""
+
+#. js-lingui-id: aF4zgq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+msgid "System objects cannot be updated directly. Use standardOverrides for cosmetic changes."
 msgstr ""
 
 #. js-lingui-id: 8UWeLh
@@ -3891,16 +3889,16 @@ msgstr ""
 msgid "Target URL is required"
 msgstr ""
 
-#. js-lingui-id: 9Q/KBa
+#. js-lingui-id: L3vVWc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetObjectMetadataId is required when targetRecordId is provided"
+msgid "targetObjectMetadataId is required for OBJECT type"
 msgstr ""
 
-#. js-lingui-id: vdVtAE
+#. js-lingui-id: NGynR3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetRecordId is required when targetObjectMetadataId is provided"
+msgid "targetRecordId and targetObjectMetadataId are required for RECORD type"
 msgstr ""
 
 #. js-lingui-id: GtycJ/
@@ -4034,11 +4032,6 @@ msgstr "Die Rolle, die Sie ändern möchten, konnte nicht gefunden werden. Mögl
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr ""
-
-#. js-lingui-id: H1tAJD
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
-msgid "The singular and plural labels cannot be the same for an object"
-msgstr "Die Singular- und Pluralbezeichnungen dürfen nicht gleich sein für ein Objekt"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -4824,10 +4817,10 @@ msgstr "Ansicht zum Aktualisieren nicht gefunden"
 msgid "View with same universal identifier already exists"
 msgstr ""
 
-#. js-lingui-id: qTtxHh
+#. js-lingui-id: 14WoDD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "viewId cannot be provided together with targetRecordId or targetObjectMetadataId"
+msgid "viewId is required for VIEW type"
 msgstr ""
 
 #. js-lingui-id: l88nXn

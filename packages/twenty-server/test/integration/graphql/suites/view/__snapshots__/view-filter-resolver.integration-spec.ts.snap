@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`View Filter Resolver deleteCoreViewFilter should throw an error when deleting non-existent view filter 1`] = `
+exports[`View Filter Resolver deleteViewFilter should throw an error when deleting non-existent view filter 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -11,7 +11,7 @@ exports[`View Filter Resolver deleteCoreViewFilter should throw an error when de
 }
 `;
 
-exports[`View Filter Resolver destroyCoreViewFilter should throw an error when destroying non-existent view filter 1`] = `
+exports[`View Filter Resolver destroyViewFilter should throw an error when destroying non-existent view filter 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -22,7 +22,7 @@ exports[`View Filter Resolver destroyCoreViewFilter should throw an error when d
 }
 `;
 
-exports[`View Filter Resolver updateCoreViewFilter should throw an error when updating non-existent view filter 1`] = `
+exports[`View Filter Resolver updateViewFilter should throw an error when updating non-existent view filter 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",

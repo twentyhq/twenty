@@ -5,9 +5,9 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
+import { useWorkspaceSectionItems } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
@@ -18,7 +18,6 @@ import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLa
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { useContext } from 'react';
@@ -51,19 +50,20 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     : undefined;
 
   if (isNavigationMenuItemEditPage && isDefined(selectedNavItem)) {
-    const itemType = selectedNavItem.itemType;
+    const navItemType = selectedNavItem.type;
 
-    if (itemType === NavigationMenuItemType.FOLDER) {
+    if (navItemType === NavigationMenuItemType.FOLDER) {
       return <SidePanelFolderInfo />;
     }
 
-    if (itemType === NavigationMenuItemType.LINK) {
+    if (navItemType === NavigationMenuItemType.LINK) {
       return <SidePanelLinkInfo />;
     }
 
     if (
-      itemType === NavigationMenuItemType.VIEW ||
-      itemType === NavigationMenuItemType.RECORD
+      navItemType === NavigationMenuItemType.OBJECT ||
+      navItemType === NavigationMenuItemType.VIEW ||
+      navItemType === NavigationMenuItemType.RECORD
     ) {
       return <SidePanelObjectViewRecordInfo />;
     }

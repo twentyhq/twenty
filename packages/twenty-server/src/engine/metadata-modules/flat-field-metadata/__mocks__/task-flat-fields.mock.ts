@@ -59,7 +59,7 @@ export const TASK_FLAT_FIELDS_MOCK = {
   bodyV2: getFlatFieldMetadataMock({
     id: '161570ed-7fcd-4172-a5d1-c773cd9afe76',
     objectMetadataId: '3186920d-2a15-4b5f-96c7-2bf6567024b0',
-    type: FieldMetadataType.RICH_TEXT_V2,
+    type: FieldMetadataType.RICH_TEXT,
     name: 'bodyV2',
     label: 'Body',
     defaultValue: null,

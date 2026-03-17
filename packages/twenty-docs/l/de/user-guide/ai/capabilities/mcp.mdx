@@ -1,0 +1,142 @@
+---
+title: MCP-Server
+description: Verbinden Sie KI-Assistenten mit Ihrem Twenty-Workspace über das Model Context Protocol.
+---
+
+<Warning>
+MCP befindet sich derzeit in **alpha** und ist nur in einigen Workspaces verfügbar. Möglicherweise ist es für Ihren Workspace noch nicht aktiviert.
+</Warning>
+
+Twenty stellt einen [MCP](https://modelcontextprotocol.io/)-Server bereit, damit KI-Assistenten — Claude Desktop, Claude Code, Cursor, ChatGPT und andere — Ihre CRM-Daten in natürlicher Sprache lesen und schreiben können.
+
+Verwenden Sie Ihre **Workspace-URL** (die URL, mit der Sie auf Twenty zugreifen) als MCP-Endpunkt. In Twenty Cloud kann Ihre Workspace-URL `https://{mycompany}.twenty.com` oder eine benutzerdefinierte Domain sein. Der Server ist verfügbar unter:
+
+| Umgebung          | MCP-Endpunkt                                                                  |
+| ----------------- | ----------------------------------------------------------------------------- |
+| **Cloud**         | `https://{your-workspace-url}/mcp` (z. B. `https://mycompany.twenty.com/mcp`) |
+| **Selbsthosting** | `https://{your-domain}/mcp`                                                   |
+
+## Authentifizierungsmethoden
+
+Sie haben zwei Möglichkeiten, Ihren MCP-Client zu authentifizieren: **OAuth** (empfohlen) oder **API-Schlüssel**.
+
+### Option A — OAuth (empfohlen)
+
+Mit OAuth öffnet Ihr MCP-Client ein Browserfenster, damit Sie sich anmelden können. Es werden keine geheimen Informationen in Konfigurationsdateien gespeichert, und Token werden automatisch erneuert.
+
+<Note>
+OAuth erfordert einen MCP-Client, der die [MCP-Autorisierungsspezifikation](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) unterstützt. Claude Desktop, Claude Code, Cursor und ChatGPT unterstützen dies.
+</Note>
+
+Fügen Sie dies zu Ihrer MCP-Client-Konfiguration hinzu und ersetzen Sie `{your-workspace-url}` durch den Host Ihrer Workspace-URL (z. B. `mycompany.twenty.com`):
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp"
+    }
+  }
+}
+```
+
+Das ist alles — kein API-Schlüssel erforderlich. Wenn der Client sich zum ersten Mal verbindet, wird er:
+
+1. Die OAuth-Metadaten von Twenty über `/.well-known/oauth-protected-resource` und `/.well-known/oauth-authorization-server` ermitteln
+2. Sich über die dynamische Client-Registrierung (RFC 7591) als OAuth-Client registrieren
+3. Ihren Browser öffnen, um den Zugriff zu autorisieren
+4. Token empfangen und eine Verbindung zum MCP-Server herstellen
+
+Nachfolgende Verbindungen verwenden die gespeicherten Token erneut und erneuern sie automatisch.
+
+### Option B — API-Schlüssel
+
+Wenn Ihr MCP-Client OAuth nicht unterstützt oder Sie statische Anmeldeinformationen bevorzugen, übergeben Sie einen API-Schlüssel im `Authorization`-Header:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+Ihr API-Schlüssel gewährt Zugriff auf Workspace-Daten. Halten Sie es von der Versionskontrolle und von gemeinsam genutzten Dotfiles fern.
+</Warning>
+
+Um einen API-Schlüssel zu erstellen, gehen Sie zu **Settings > APIs & Webhooks > + Create key**. Details finden Sie unter [APIs](/l/de/developers/extend/api#create-an-api-key).
+
+## Schnellstart
+
+### 1. Konfiguration kopieren
+
+Gehen Sie in Twenty zu **Settings > AI > More > MCP Server**. Wählen Sie Ihre Authentifizierungsmethode (OAuth oder API-Schlüssel), kopieren Sie das JSON-Snippet (es verwendet bereits Ihre Workspace-URL) und fügen Sie es in die Konfigurationsdatei Ihres MCP-Clients ein.
+
+| Client             | Speicherort der Konfigurationsdatei                                                                                                                                                              |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) oder `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                                           |
+| **Claude Code**    | `~/.claude.json` (Benutzer) oder `.mcp.json` (Projekt)                                                                                                                                           |
+| **Cursor**         | `.cursor/mcp.json` in Ihrem Projekt oder `~/.cursor/mcp.json` global                                                                                                                             |
+| **ChatGPT**        | Aktivieren Sie den Entwicklermodus in **Settings > Apps & Connectors > Advanced settings** und verwenden Sie dann **Create** in **Settings > Apps & Connectors**, um den MCP-Server hinzuzufügen |
+
+### 2. Verbinden
+
+Starten Sie Ihren MCP-Client neu (oder laden Sie die Konfiguration neu). Bei Verwendung von OAuth werden Sie zu Twenty weitergeleitet, um den Zugriff zu autorisieren. Bei Verwendung eines API-Schlüssels wird die Verbindung sofort hergestellt.
+
+### 3. Jetzt loslegen
+
+Bitten Sie Ihren KI-Assistenten, mit Ihrem CRM zu interagieren:
+
+* *"Zeige mir die 5 zuletzt erstellten Unternehmen"*
+* *"Erstelle eine neue Person namens Jane Doe bei Acme Corp"*
+* *"Finde alle offenen Verkaufschancen mit einem Wert von mehr als $10k"*
+
+## Verfügbare Tools
+
+Nach der Verbindung stellt der MCP-Server Tools bereit, die die Twenty-API widerspiegeln. Der empfohlene Workflow ist:
+
+1. **`get_tool_catalog`** — alle verfügbaren Tools entdecken
+2. **`learn_tools`** — das Eingabeschema für bestimmte Tools abrufen
+3. **`execute_tool`** — ein Tool ausführen
+
+Sie müssen sich die Tool-Namen nicht merken. Fragen Sie Ihren KI-Assistenten, was er tun kann, und er ruft `get_tool_catalog` automatisch auf.
+
+## Berechtigungen
+
+MCP-Verbindungen erben die Berechtigungen des authentifizierten Benutzers (OAuth) oder die dem API-Schlüssel zugewiesene Rolle. So beschränken Sie, was der MCP-Server tun darf:
+
+* **OAuth**: Es gilt die Workspace-Rolle des Benutzers.
+* **API-Schlüssel**: Weisen Sie dem API-Schlüssel unter **Settings > Roles** eine Rolle zu. Siehe [Berechtigungen](/l/de/user-guide/permissions-access/capabilities/permissions).
+
+## Selbstgehostete Konfiguration
+
+Für selbstgehostete Instanzen ersetzen Sie `{your-workspace-url}` durch die URL Ihres Servers. Stellen Sie sicher, dass `SERVER_URL` in Ihrer Umgebung der öffentlichen URL Ihrer Twenty-Instanz entspricht — dieser Wert wird verwendet, um die OAuth-Discovery-Metadaten zu generieren.
+
+```bash
+SERVER_URL=https://twenty.yourcompany.com
+```
+
+Der MCP-Endpunkt, die OAuth-Endpunkte und die Discovery-Metadaten leiten sich alle von diesem Wert ab.
+
+## Fehlerbehebung
+
+**"Unauthorized"- oder 401-Fehler**
+
+* OAuth: Autorisieren Sie erneut, indem Sie die gespeicherten Token in Ihrem MCP-Client löschen und die Verbindung wiederherstellen.
+* API-Schlüssel: Überprüfen Sie, ob der Schlüssel gültig ist und nicht abgelaufen ist. Generieren Sie ihn bei Bedarf neu.
+
+**Der OAuth-Flow öffnet keinen Browser**
+
+* Stellen Sie sicher, dass Ihr MCP-Client MCP Authorization unterstützt. Wechseln Sie andernfalls zur API-Schlüssel-Methode.
+
+**Verbindungszeitüberschreitung**
+
+* Stellen Sie sicher, dass die MCP-Endpunkt-URL von Ihrem Rechner aus erreichbar ist. Bei selbstgehosteten Instanzen prüfen Sie, ob der Server läuft und `SERVER_URL` korrekt gesetzt ist.

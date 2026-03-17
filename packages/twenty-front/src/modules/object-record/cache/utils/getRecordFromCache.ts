@@ -11,7 +11,7 @@ import { capitalize, isEmptyObject } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type GetRecordFromCacheArgs = {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   recordId: string;
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<

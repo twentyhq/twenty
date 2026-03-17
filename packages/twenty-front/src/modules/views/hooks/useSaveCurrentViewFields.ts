@@ -5,11 +5,11 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
+import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewField } from '@/views/types/ViewField';
 import {
   type CreateViewFieldInput,
-  type UpdateCoreViewFieldMutationVariables,
+  type UpdateViewFieldMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -19,7 +19,7 @@ export const useSaveCurrentViewFields = () => {
   const { performViewFieldAPICreate, performViewFieldAPIUpdate } =
     usePerformViewFieldAPIPersist();
 
-  const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
+  const { getViewFromState } = useGetViewFromState();
 
   const currentViewIdCallbackState = useAtomComponentStateCallbackState(
     contextStoreCurrentViewIdComponentState,
@@ -39,7 +39,7 @@ export const useSaveCurrentViewFields = () => {
         return;
       }
 
-      const view = getViewFromPrefetchState(currentViewId);
+      const view = getViewFromState(currentViewId);
 
       if (isUndefinedOrNull(view)) {
         return;
@@ -50,14 +50,19 @@ export const useSaveCurrentViewFields = () => {
       const { viewFieldsToCreate, viewFieldsToUpdate } =
         viewFieldsToSave.reduce<{
           viewFieldsToCreate: CreateViewFieldInput[];
-          viewFieldsToUpdate: UpdateCoreViewFieldMutationVariables[];
+          viewFieldsToUpdate: UpdateViewFieldMutationVariables[];
         }>(
           (
             { viewFieldsToCreate, viewFieldsToUpdate },
-            { __typename, ...viewFieldToCreateOrUpdate },
+            viewFieldToCreateOrUpdate,
           ) => {
             const createViewFieldInput: CreateViewFieldInput = {
-              ...viewFieldToCreateOrUpdate,
+              id: viewFieldToCreateOrUpdate.id,
+              fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
+              position: viewFieldToCreateOrUpdate.position,
+              isVisible: viewFieldToCreateOrUpdate.isVisible,
+              size: viewFieldToCreateOrUpdate.size,
+              aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
             };
             const existingField = currentViewFields.find(
@@ -133,7 +138,7 @@ export const useSaveCurrentViewFields = () => {
       canPersistChanges,
       performViewFieldAPICreate,
       currentViewIdCallbackState,
-      getViewFromPrefetchState,
+      getViewFromState,
       performViewFieldAPIUpdate,
     ],
   );

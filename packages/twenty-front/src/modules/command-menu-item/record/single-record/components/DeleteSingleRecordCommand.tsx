@@ -1,9 +1,7 @@
 import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
-import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
@@ -25,11 +23,8 @@ export const DeleteSingleRecordCommand = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { sortedFavorites: favorites } = useFavorites();
-  const { deleteFavorite } = useDeleteFavorite();
-
   const { navigationMenuItems, workspaceNavigationMenuItems } =
-    usePrefetchedNavigationMenuItemsData();
+    useNavigationMenuItemsData();
   const { removeNavigationMenuItemsByTargetRecordIds } =
     useRemoveNavigationMenuItemByTargetRecordId();
 
@@ -37,14 +32,6 @@ export const DeleteSingleRecordCommand = () => {
     removeSelectedRecordsFromRecordBoard();
 
     resetTableRowSelection();
-
-    const foundFavorite = favorites?.find(
-      (favorite) => favorite.recordId === recordId,
-    );
-
-    if (isDefined(foundFavorite)) {
-      deleteFavorite(foundFavorite.id);
-    }
 
     const foundNavigationMenuItem = [
       ...navigationMenuItems,

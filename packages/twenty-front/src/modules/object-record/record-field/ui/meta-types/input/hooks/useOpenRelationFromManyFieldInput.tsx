@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import {
   type FieldRelationFromManyValue,
   type FieldRelationValue,
@@ -47,7 +47,7 @@ export const useOpenRelationFromManyFieldInput = () => {
           recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
         ) as FieldRelationValue<FieldRelationFromManyValue>) ?? [];
 
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>

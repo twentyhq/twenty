@@ -11,7 +11,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useUserLookupAdminPanelMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UserLookupAdminPanelDocument } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -52,7 +53,7 @@ export const SettingsAdminGeneral = () => {
   );
   const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
 
-  const [userLookup] = useUserLookupAdminPanelMutation();
+  const [userLookup] = useMutation(UserLookupAdminPanelDocument);
 
   const currentUser = useAtomStateValue(currentUserState);
 

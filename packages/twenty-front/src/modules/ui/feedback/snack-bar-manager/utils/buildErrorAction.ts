@@ -1,4 +1,4 @@
-import { type ApolloError } from '@apollo/client';
+import { type ErrorLike } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -6,7 +6,7 @@ import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-rec
 import { type SnackBarOptions } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalComponentState';
 
 export const buildErrorAction = (
-  apolloError?: ApolloError,
+  apolloError?: ErrorLike,
 ): Pick<SnackBarOptions, 'actionText' | 'actionTo'> | null => {
   if (!apolloError) {
     return null;

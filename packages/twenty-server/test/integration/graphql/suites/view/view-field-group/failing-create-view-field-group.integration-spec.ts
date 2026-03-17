@@ -4,9 +4,9 @@ import {
   setupViewFieldGroupTest,
   type ViewFieldGroupTestSetup,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-group-test.util';
-import { createOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/create-one-core-view-field-group.util';
-import { deleteOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-core-view-field-group.util';
-import { destroyOneCoreViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-core-view-field-group.util';
+import { createOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/create-one-view-field-group.util';
+import { deleteOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/delete-one-view-field-group.util';
+import { destroyOneViewFieldGroup } from 'test/integration/metadata/suites/view-field-group/utils/destroy-one-view-field-group.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
@@ -35,14 +35,14 @@ describe('View Field Group Resolver - Failing Create Operation', () => {
 
   afterEach(async () => {
     for (const viewFieldGroupId of createdViewFieldGroupIds) {
-      await deleteOneCoreViewFieldGroup({
+      await deleteOneViewFieldGroup({
         input: {
           id: viewFieldGroupId,
         },
         expectToFail: false,
       });
 
-      await destroyOneCoreViewFieldGroup({
+      await destroyOneViewFieldGroup({
         input: {
           id: viewFieldGroupId,
         },
@@ -76,7 +76,7 @@ describe('View Field Group Resolver - Failing Create Operation', () => {
     'should fail to create view field group when $title',
     async ({ context }) => {
       const { input } = context(testSetup);
-      const response = await createOneCoreViewFieldGroup({
+      const response = await createOneViewFieldGroup({
         input,
         expectToFail: true,
       });

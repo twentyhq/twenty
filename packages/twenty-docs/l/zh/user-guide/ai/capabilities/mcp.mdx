@@ -1,0 +1,142 @@
+---
+title: MCP服务器
+description: 使用 Model Context Protocol 将 AI 助手连接到你的 Twenty 工作区。
+---
+
+<Warning>
+MCP 目前处于**alpha**阶段，并且仅在部分工作区可用。 它可能尚未在你的工作区启用。
+</Warning>
+
+Twenty 提供一个 [MCP](https://modelcontextprotocol.io/) 服务器，使 AI 助手——Claude Desktop、Claude Code、Cursor、ChatGPT 等——能够通过自然语言读取和写入您的 CRM 数据。
+
+将您的**工作区 URL**（用于访问 Twenty 的 URL）用作 MCP 端点。 在 Twenty Cloud 上，您的工作区 URL 可能是 `https://{mycompany}.twenty.com`，也可能是自定义域名。 服务器可通过以下地址访问：
+
+| 环境      | MCP 端点                                                                     |
+| ------- | -------------------------------------------------------------------------- |
+| **云端**  | `https://{your-workspace-url}/mcp` (例如 `https://mycompany.twenty.com/mcp`) |
+| **自托管** | `https://{your-domain}/mcp`                                                |
+
+## 身份验证方法
+
+您可以通过两种方式对 MCP 客户端进行身份验证：**OAuth**（推荐）或 **API 密钥**。
+
+### 选项 A — OAuth（推荐）
+
+使用 OAuth 时，您的 MCP 客户端会打开浏览器窗口供您登录。 不会在配置文件中存储任何机密，令牌会自动刷新。
+
+<Note>
+OAuth 需要支持[MCP 授权规范](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)的 MCP 客户端。 Claude Desktop、Claude Code、Cursor 和 ChatGPT 均支持它。
+</Note>
+
+将以下内容添加到 MCP 客户端配置中，并将 `{your-workspace-url}` 替换为您的工作区主机（例如 `mycompany.twenty.com`）：
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp"
+    }
+  }
+}
+```
+
+就这样——无需 API 密钥。 客户端首次连接时将：
+
+1. 通过 `/.well-known/oauth-protected-resource` 和 `/.well-known/oauth-authorization-server` 发现 Twenty 的 OAuth 元数据
+2. 通过动态客户端注册（RFC 7591）将自身注册为 OAuth 客户端
+3. 打开您的浏览器以授权访问
+4. 接收令牌并连接到 MCP 服务器
+
+后续连接会重用已存储的令牌并自动刷新。
+
+### 选项 B — API 密钥
+
+如果您的 MCP 客户端不支持 OAuth，或您更喜欢静态凭据，请在 `Authorization` 请求头中传递 API 密钥：
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+您的 API 密钥可访问工作区数据。 请不要将其纳入版本控制，也不要放入共享的 dotfiles。
+</Warning>
+
+要创建 API 密钥，请前往 **Settings > APIs & Webhooks > + Create key**。 详见[API](/l/zh/developers/extend/api#create-an-api-key)。
+
+## 快速开始
+
+### 1. 复制配置
+
+在 Twenty 中前往 **Settings > AI > More > MCP Server**。 选择您的身份验证方式（OAuth 或 API 密钥），复制 JSON 片段（其中已包含您的工作区 URL），并将其粘贴到 MCP 客户端的配置文件中。
+
+| 客户端                | 配置文件位置                                                                                                                              |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) 或 `%APPDATA%\Claude\claude_desktop_config.json` (Windows) |
+| **Claude Code**    | `~/.claude.json` (用户) 或 `.mcp.json` (项目)                                                                                            |
+| **Cursor**         | 在您的项目中为 `.cursor/mcp.json`，或全局为 `~/.cursor/mcp.json`                                                                                |
+| **ChatGPT**        | 在 **Settings > Apps & Connectors > Advanced settings** 中开启开发者模式，然后在 **Settings > Apps & Connectors** 中使用 **Create** 添加 MCP 服务器      |
+
+### 2. 连接
+
+重启您的 MCP 客户端（或重新加载配置）。 如果使用 OAuth，您将被重定向到 Twenty 以授权访问。 如果使用 API 密钥，连接会立即建立。
+
+### 3. 开始使用
+
+让您的 AI 助手与您的 CRM 交互：
+
+* *"给我展示最近创建的 5 家公司"*
+* *"在 Acme Corp 新建一位名为 Jane Doe 的联系人"*
+* *"查找所有价值超过 $10k 的未关闭商机"*
+
+## 可用工具
+
+连接后，MCP 服务器会提供与 Twenty API 一一对应的工具。 推荐的工作流程是：
+
+1. **`get_tool_catalog`** — 发现所有可用工具
+2. **`learn_tools`** — 获取特定工具的输入模式
+3. **`execute_tool`** — 运行工具
+
+您无需记住工具名称。 询问您的 AI 助手它能做什么，它会自动调用 `get_tool_catalog`。
+
+## 权限
+
+MCP 连接将继承已通过身份验证的用户（OAuth）的权限，或继承分配给 API 密钥的角色。 要限制 MCP 服务器的操作范围：
+
+* **OAuth**：生效的是该用户在工作区中的角色。
+* **API 密钥**：在 **Settings > Roles** 下为该 API 密钥分配角色。 参见[权限](/l/zh/user-guide/permissions-access/capabilities/permissions)。
+
+## 自托管配置
+
+对于自托管实例，请将 `{your-workspace-url}` 替换为您的服务器 URL。 请确保您环境中的 `SERVER_URL` 与 Twenty 实例的公共 URL 一致——该值用于生成 OAuth 发现元数据。
+
+```bash
+SERVER_URL=https://twenty.yourcompany.com
+```
+
+MCP 端点、OAuth 端点以及发现元数据都基于该值生成。
+
+## 故障排除
+
+**"Unauthorized" 或 401 错误**
+
+* OAuth：清除 MCP 客户端中存储的令牌并重新连接以重新授权。
+* API 密钥：验证该密钥有效且未过期。 如有需要，请重新生成。
+
+**OAuth 流程未打开浏览器**
+
+* 确保您的 MCP 客户端支持 MCP 授权。 如果不支持，请改用 API 密钥方法。
+
+**连接超时**
+
+* 确认从您的机器可以访问 MCP 端点 URL。 对于自托管实例，请检查服务器是否正在运行，并确认 `SERVER_URL` 设置正确。

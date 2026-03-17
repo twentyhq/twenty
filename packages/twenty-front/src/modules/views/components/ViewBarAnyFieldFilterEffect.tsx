@@ -6,7 +6,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { hasInitializedAnyFieldFilterComponentFamilyState } from '@/views/states/hasInitializedAnyFieldFilterComponentFamilyState';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,12 +17,9 @@ export const ViewBarAnyFieldFilterEffect = () => {
 
   const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
 
-  const currentView = useAtomFamilySelectorValue(
-    coreViewFromViewIdFamilySelector,
-    {
-      viewId: contextStoreCurrentViewId ?? '',
-    },
-  );
+  const currentView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
+    viewId: contextStoreCurrentViewId ?? '',
+  });
 
   const [hasInitializedAnyFieldFilter, setHasInitializedAnyFieldFilter] =
     useAtomComponentFamilyState(

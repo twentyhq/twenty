@@ -2,8 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { type ToolSet, zodSchema } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
+import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
@@ -11,7 +14,6 @@ import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entit
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
@@ -43,7 +45,6 @@ const MCP_EXCLUDED_TOOLS = new Set(['code_interpreter', 'http_request']);
 @Injectable()
 export class McpProtocolService {
   constructor(
-    private readonly featureFlagService: FeatureFlagService,
     private readonly toolRegistry: ToolRegistryService,
     private readonly userRoleService: UserRoleService,
     private readonly mcpToolExecutorService: McpToolExecutorService,
@@ -51,31 +52,17 @@ export class McpProtocolService {
     private readonly skillService: SkillService,
   ) {}
 
-  async checkAiEnabled(workspaceId: string): Promise<void> {
-    const isAiEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_AI_ENABLED,
-      workspaceId,
-    );
-
-    if (!isAiEnabled) {
-      throw new HttpException(
-        'AI feature is not enabled for this workspace',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-  }
-
   handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
       result: {
+        protocolVersion: MCP_PROTOCOL_VERSION,
         capabilities: {
           tools: { listChanged: false },
           resources: { listChanged: false },
           prompts: { listChanged: false },
         },
-        tools: [],
-        resources: [],
-        prompts: [],
+        serverInfo: MCP_SERVER_INFO,
+        instructions: MCP_SERVER_INSTRUCTIONS,
       },
     });
   }
@@ -169,6 +156,7 @@ export class McpProtocolService {
     };
   }
 
+  // Returns null for JSON-RPC notifications (no id), which require no response body
   async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
@@ -182,22 +170,40 @@ export class McpProtocolService {
       userWorkspaceId?: string;
       apiKey: ApiKeyEntity | undefined;
     },
-  ): Promise<Record<string, unknown>> {
+  ): Promise<Record<string, unknown> | null> {
     try {
-      await this.checkAiEnabled(workspace.id);
+      // JSON-RPC notifications have no id and expect no response
+      if (!isDefined(id)) {
+        return null;
+      }
 
       if (method === 'initialize') {
         return this.handleInitialize(id);
       }
 
       if (method === 'ping') {
-        return wrapJsonRpcResponse(
-          id,
-          {
-            result: {},
+        return wrapJsonRpcResponse(id, { result: {} });
+      }
+
+      if (method === 'prompts/list') {
+        return wrapJsonRpcResponse(id, {
+          result: { prompts: [] },
+        });
+      }
+
+      if (method === 'resources/list') {
+        return wrapJsonRpcResponse(id, {
+          result: { resources: [] },
+        });
+      }
+
+      if (method !== 'tools/list' && method !== 'tools/call') {
+        return wrapJsonRpcResponse(id, {
+          error: {
+            code: JSON_RPC_ERROR_CODE.METHOD_NOT_FOUND,
+            message: `Method '${method}' not found`,
           },
-          true,
-        );
+        });
       }
 
       const roleId = await this.getRoleId(
@@ -216,7 +222,16 @@ export class McpProtocolService {
         userWorkspaceId,
       });
 
-      if (method === 'tools/call' && params) {
+      if (method === 'tools/call') {
+        if (!params) {
+          return wrapJsonRpcResponse(id, {
+            error: {
+              code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
+              message: 'tools/call requires params with name and arguments',
+            },
+          });
+        }
+
         return await this.mcpToolExecutorService.handleToolCall(
           id,
           toolSet,
@@ -224,40 +239,22 @@ export class McpProtocolService {
         );
       }
 
-      if (method === 'tools/list') {
-        return this.mcpToolExecutorService.handleToolsListing(id, toolSet);
-      }
-
-      if (method === 'prompts/list') {
-        return wrapJsonRpcResponse(id, {
-          result: {
-            capabilities: {
-              prompts: { listChanged: false },
-            },
-            prompts: [],
-          },
-        });
-      }
-
-      if (method === 'resources/list') {
-        return wrapJsonRpcResponse(id, {
-          result: {
-            capabilities: {
-              resources: { listChanged: false },
-            },
-            resources: [],
-          },
-        });
-      }
-
-      return wrapJsonRpcResponse(id, {
-        result: {},
-      });
+      return this.mcpToolExecutorService.handleToolsListing(id, toolSet);
     } catch (error) {
-      return wrapJsonRpcResponse(id, {
+      if (error instanceof HttpException) {
+        return wrapJsonRpcResponse(id ?? 0, {
+          error: {
+            code: JSON_RPC_ERROR_CODE.SERVER_ERROR,
+            message: error.message || 'Request failed',
+          },
+        });
+      }
+
+      return wrapJsonRpcResponse(id ?? 0, {
         error: {
-          code: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-          message: error.message || 'Failed to execute tool',
+          code: JSON_RPC_ERROR_CODE.INTERNAL_ERROR,
+          message:
+            error instanceof Error ? error.message : 'Internal server error',
         },
       });
     }

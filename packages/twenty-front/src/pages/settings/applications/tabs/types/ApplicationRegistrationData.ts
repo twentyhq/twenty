@@ -3,7 +3,7 @@ import type { ApplicationRegistrationSourceType } from '~/generated-metadata/gra
 export type ApplicationRegistrationData = {
   id: string;
   name: string;
-  description: string;
+  description?: string | null;
   universalIdentifier: string;
   sourceType: ApplicationRegistrationSourceType;
   sourcePackage?: string | null;

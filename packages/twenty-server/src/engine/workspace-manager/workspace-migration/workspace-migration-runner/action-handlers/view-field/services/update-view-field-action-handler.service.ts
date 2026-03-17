@@ -9,6 +9,7 @@ import {
   FlatUpdateViewFieldAction,
   UniversalUpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
+import { fromUniversalOverridesToViewFieldOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/utils/from-universal-overrides-to-view-field-overrides.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -33,11 +34,26 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
       universalIdentifier: action.universalIdentifier,
     });
 
-    const update = resolveUniversalUpdateRelationIdentifiersToIds({
-      metadataName: 'viewField',
-      universalUpdate: action.update,
-      allFlatEntityMaps,
-    });
+    const { universalOverrides, ...updateWithResolvedForeignKeys } =
+      resolveUniversalUpdateRelationIdentifiersToIds({
+        metadataName: 'viewField',
+        universalUpdate: action.update,
+        allFlatEntityMaps,
+      });
+
+    const update =
+      universalOverrides === undefined
+        ? updateWithResolvedForeignKeys
+        : universalOverrides === null
+          ? { ...updateWithResolvedForeignKeys, overrides: null }
+          : {
+              ...updateWithResolvedForeignKeys,
+              overrides: fromUniversalOverridesToViewFieldOverrides({
+                universalOverrides,
+                flatViewFieldGroupMaps:
+                  allFlatEntityMaps.flatViewFieldGroupMaps,
+              }),
+            };
 
     return {
       type: 'update',
