@@ -1,9 +1,5 @@
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 
-// Computes the new position for a dragged item in a sorted list.
-// Handles the DnD kit index offset: when dragging downward in the
-// same list, the destination index doesn't account for the dragged
-// item being visually removed, so we adjust by -1.
 export const computeDndReorderPosition = ({
   sortedList,
   draggableId,

@@ -152,7 +152,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    // Drop on folder header: append to end of that folder
     if (destination.droppableId.startsWith(config.folderHeaderPrefix)) {
       if (destinationFolderId === null) {
         throw new Error('Invalid folder header ID');
@@ -176,7 +175,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    // Same-list reorder
     if (sourceFolderId === destinationFolderId) {
       const sourceList = getSortedItems().filter((item) =>
         matchesFolderId(item, sourceFolderId),
@@ -199,7 +197,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    // Cross-list move
     const destinationList = getSortedItems().filter((item) =>
       matchesFolderId(item, destinationFolderId),
     );
