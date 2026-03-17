@@ -385,23 +385,6 @@ export const useNavigationMenuItemDndKit = (
       return;
     }
 
-    console.log('[DnD handleDragEnd] favorites path:', {
-      draggableId,
-      sourceId,
-      resolved: resolved
-        ? {
-            destination: resolved.destination,
-            isTargetFolder: resolved.isTargetFolder,
-            effectiveDropTargetId: resolved.effectiveDropTargetId,
-          }
-        : null,
-      destination,
-      dropResult: {
-        source: dropResult.source,
-        destination: dropResult.destination,
-        draggableId: dropResult.draggableId,
-      },
-    });
     handleNavigationMenuItemDragAndDrop(dropResult, provided);
   };
 

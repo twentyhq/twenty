@@ -7,7 +7,7 @@ import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPosit
 export const computeDndReorderPosition = ({
   sortedList,
   draggableId,
-  sourceIndex,
+  sourceIndex: _sourceIndex,
   destinationIndex,
   isSameList,
 }: {

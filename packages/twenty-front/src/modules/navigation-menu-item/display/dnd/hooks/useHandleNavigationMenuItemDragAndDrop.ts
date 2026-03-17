@@ -209,8 +209,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       const newPosition = computeDndReorderPosition({
         sortedList: sourceList,
         draggableId,
-        sourceIndex:
-          sourceIndexInList >= 0 ? sourceIndexInList : source.index,
+        sourceIndex: sourceIndexInList >= 0 ? sourceIndexInList : source.index,
         destinationIndex,
         isSameList: true,
       });

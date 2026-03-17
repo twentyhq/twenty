@@ -26,9 +26,10 @@ export const useCreateNavigationMenuItemFolder = () => {
         item.userWorkspaceId === currentWorkspaceMemberId,
     );
 
-    const minPosition = topLevelItems.length > 0
-      ? Math.min(...topLevelItems.map((item) => item.position))
-      : 1;
+    const minPosition =
+      topLevelItems.length > 0
+        ? Math.min(...topLevelItems.map((item) => item.position))
+        : 1;
 
     await createNavigationMenuItemMutation({
       variables: {
