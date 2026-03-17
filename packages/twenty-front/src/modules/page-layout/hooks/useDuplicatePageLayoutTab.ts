@@ -132,13 +132,13 @@ export const useDuplicatePageLayoutTab = ({
 
       setActiveTabId(newTabId);
 
-      setPageLayoutTabSettingsOpenTabId(newTabId);
-
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         pageTitle: newTab.title,
         focusTitleInput: true,
       });
+
+      setPageLayoutTabSettingsOpenTabId(newTabId);
 
       return newTabId;
     },
