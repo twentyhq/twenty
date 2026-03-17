@@ -36,7 +36,7 @@ export class CheckServerOrchestratorStep {
         this.state.applyStepEvents([
           {
             message:
-              'Cannot reach Twenty at localhost:2020.\n\n' +
+              'Cannot reach Twenty at localhost:3000.\n\n' +
               '  Start a local server:\n' +
               '    curl -sL https://twenty.com/docker-compose.dev.yml -o docker-compose.yml\n' +
               '    docker compose up -d\n\n' +

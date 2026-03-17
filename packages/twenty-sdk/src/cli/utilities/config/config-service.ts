@@ -190,7 +190,7 @@ export class ConfigService {
 
   private getDefaultConfig(): RemoteConfig {
     return {
-      apiUrl: 'http://localhost:2020',
+      apiUrl: 'http://localhost:3000',
     };
   }
 

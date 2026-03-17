@@ -81,8 +81,8 @@ Manage remote server connections and authentication.
 
   - Options:
     - `--api-key <key>`: API key for authentication.
-    - `--api-url <url>`: Twenty API URL (defaults to your current remote's value or `http://localhost:2020`).
-    - `--local`: Shorthand for `--api-url http://localhost:2020`.
+    - `--api-url <url>`: Twenty API URL (defaults to your current remote's value or `http://localhost:3000`).
+    - `--local`: Shorthand for `--api-url http://localhost:3000`.
   - Behavior: Prompts for any missing values, persists them to the active remote, and validates the credentials.
 
 - `twenty logout` — Remove authentication credentials for the active remote.
@@ -276,7 +276,7 @@ Example configuration file:
   "defaultRemote": "prod",
   "remotes": {
     "default": {
-      "apiUrl": "http://localhost:2020",
+      "apiUrl": "http://localhost:3000",
       "apiKey": "<your-api-key>"
     },
     "prod": {
@@ -289,7 +289,7 @@ Example configuration file:
 
 Notes:
 
-- If a remote is missing, `apiUrl` defaults to `http://localhost:2020` until set.
+- If a remote is missing, `apiUrl` defaults to `http://localhost:3000` until set.
 - `twenty remote add` writes the `apiUrl` and `apiKey` for the active remote.
 - `twenty remote add --remote custom-remote` writes the `apiUrl` and `apiKey` for a custom `custom-remote` remote.
 - `twenty remote switch` sets the `defaultRemote` field, which is used when `--remote` is not specified.

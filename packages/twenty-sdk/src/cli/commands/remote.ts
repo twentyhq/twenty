@@ -3,8 +3,8 @@ import { authLoginOAuth } from '@/cli/operations/login-oauth';
 import { authLogout } from '@/cli/operations/logout';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
-import inquirer from 'inquirer';
 import type { Command } from 'commander';
+import inquirer from 'inquirer';
 
 const deriveRemoteName = (url: string): string => {
   try {
@@ -72,7 +72,7 @@ export const registerRemoteCommands = (program: Command): void => {
         const configService = new ConfigService();
 
         if (options.local) {
-          const localUrl = 'http://localhost:2020';
+          const localUrl = 'http://localhost:3000';
           const remoteName = options.as ?? 'local';
 
           const apiKey =
@@ -112,7 +112,7 @@ export const registerRemoteCommands = (program: Command): void => {
         // Non-interactive CI mode
         if (options.token) {
           const apiUrl =
-            positionalUrl ?? options.url ?? 'http://localhost:2020';
+            positionalUrl ?? options.url ?? 'http://localhost:3000';
           const name = options.as ?? deriveRemoteName(apiUrl);
 
           ConfigService.setActiveRemote(name);
