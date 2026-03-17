@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 
 import { CommandMenuItemErrorBoundary } from '@/command-menu-item/display/components/CommandMenuItemErrorBoundary';
+import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,6 +18,7 @@ export const HeadlessFrontComponentMountRoot = () => {
   const mountedHeadlessFrontComponentMaps = useAtomStateValue(
     mountedHeadlessFrontComponentMapsState,
   );
+  const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
 
   return (
     <>
@@ -25,6 +27,7 @@ export const HeadlessFrontComponentMountRoot = () => {
           <CommandMenuItemErrorBoundary
             key={frontComponentId}
             resetKeys={[frontComponentId]}
+            onError={() => unmountHeadlessFrontComponent(frontComponentId)}
           >
             <Suspense fallback={null}>
               <LayoutRenderingProvider
