@@ -1,15 +1,13 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorLink';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/types/add-to-navigation-drag-payload';
+import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
 
 const StyledIconSlot = styled.div<{
   $hasFixedSize: boolean;
@@ -83,14 +81,14 @@ export const AddToNavigationDragHandle = ({
   disableDrag = false,
 }: AddToNavigationDragHandleProps) => {
   const { theme } = useContext(ThemeContext);
-  const effectiveColor =
-    payload.type === 'object' && isNonEmptyString(payload.iconColor)
+  const objectColor =
+    payload.type === NavigationMenuItemType.OBJECT
       ? payload.iconColor
-      : payload.type === 'folder'
-        ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
-        : payload.type === 'link'
-          ? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK
-          : undefined;
+      : undefined;
+  const effectiveColor = getEffectiveNavigationMenuItemColor(
+    { type: payload.type as NavigationMenuItemType },
+    objectColor,
+  );
   const hasBackgroundColor =
     payload.type !== NavigationMenuItemType.RECORD &&
     isDefined(effectiveColor) &&

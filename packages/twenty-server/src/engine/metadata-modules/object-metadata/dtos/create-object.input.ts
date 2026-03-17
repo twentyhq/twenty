@@ -55,6 +55,11 @@ export class CreateObjectInput {
   @Field({ nullable: true })
   shortcut?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  color?: string;
+
   @HideField()
   dataSourceId: string;
 

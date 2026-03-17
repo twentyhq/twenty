@@ -1,19 +1,23 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/utils/getNavigationMenuItemComputedLink';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
-import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { currentNavigationMenuItemFolderIdState } from '@/ui/navigation/navigation-drawer/states/currentNavigationMenuItemFolderIdState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 type UseWorkspaceFolderOpenStateParams = {
   folderId: string;
-  navigationMenuItems: ProcessedNavigationMenuItem[];
+  navigationMenuItems: NavigationMenuItem[];
 };
 
 export const useWorkspaceFolderOpenState = ({
@@ -25,6 +29,8 @@ export const useWorkspaceFolderOpenState = ({
   const currentPath = location.pathname;
   const currentViewPath = location.pathname + location.search;
   const isMobile = useIsMobile();
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
 
   const [openNavigationMenuItemFolderIds, setOpenNavigationMenuItemFolderIds] =
     useAtomState(openNavigationMenuItemFolderIdsState);
@@ -48,20 +54,44 @@ export const useWorkspaceFolderOpenState = ({
     }
 
     if (!isOpen) {
-      const firstNonLinkItem = navigationMenuItems.find(
-        (item) =>
-          item.itemType !== NavigationMenuItemType.LINK &&
-          isNonEmptyString(item.link),
-      );
-      if (isDefined(firstNonLinkItem?.link)) {
-        navigate(firstNonLinkItem.link);
+      const firstNonLinkItem = navigationMenuItems.find((item) => {
+        if (item.type === NavigationMenuItemType.LINK) {
+          return false;
+        }
+        const computedLink = getNavigationMenuItemComputedLink(
+          item,
+          objectMetadataItems,
+          views,
+        );
+        return isNonEmptyString(computedLink);
+      });
+      if (isDefined(firstNonLinkItem)) {
+        const link = getNavigationMenuItemComputedLink(
+          firstNonLinkItem,
+          objectMetadataItems,
+          views,
+        );
+        if (isNonEmptyString(link)) {
+          navigate(link);
+        }
       }
     }
   };
 
   const selectedNavigationMenuItemIndex = navigationMenuItems.findIndex(
-    (item) =>
-      isLocationMatchingNavigationMenuItem(currentPath, currentViewPath, item),
+    (item) => {
+      const computedLink = getNavigationMenuItemComputedLink(
+        item,
+        objectMetadataItems,
+        views,
+      );
+      return isLocationMatchingNavigationMenuItem(
+        currentPath,
+        currentViewPath,
+        item.type,
+        computedLink,
+      );
+    },
   );
 
   return {

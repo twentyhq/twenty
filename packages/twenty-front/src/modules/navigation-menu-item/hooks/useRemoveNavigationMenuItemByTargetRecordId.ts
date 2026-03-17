@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
 
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { FindManyNavigationMenuItemsDocument } from '~/generated-metadata/graphql';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import {
+  FindManyNavigationMenuItemsDocument,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
@@ -11,15 +14,16 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
-
-  const setNavigationMenuItems = useSetAtomState(navigationMenuItemsState);
+  const { updateDraft, applyChanges } = useMetadataStore();
 
   const removeNavigationMenuItemsByTargetRecordIds = useCallback(
     (targetRecordIds: string[]) => {
       const targetRecordIdsSet = new Set(targetRecordIds);
-      const currentNavigationMenuItems = store.get(
-        navigationMenuItemsState.atom,
+      const entry = store.get(
+        metadataStoreState.atomFamily('navigationMenuItems'),
       );
+      const currentNavigationMenuItems =
+        entry.current as unknown as NavigationMenuItem[];
 
       const updatedNavigationMenuItems = currentNavigationMenuItems.filter(
         (item) =>
@@ -27,7 +31,8 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
           !targetRecordIdsSet.has(item.targetRecordId),
       );
 
-      setNavigationMenuItems(updatedNavigationMenuItems);
+      updateDraft('navigationMenuItems', updatedNavigationMenuItems);
+      applyChanges();
 
       cache.updateQuery(
         { query: FindManyNavigationMenuItemsDocument },
@@ -43,7 +48,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
         },
       );
     },
-    [cache, setNavigationMenuItems, store],
+    [cache, store, updateDraft, applyChanges],
   );
 
   return {

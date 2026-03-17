@@ -43,7 +43,7 @@ export const SidePanelNewSidebarItemObjectSystemPickerSubPage = () => {
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
-      .filter((view) => view.key !== ViewKey.Index)
+      .filter((view) => view.key !== ViewKey.INDEX)
       .map((view) => view.objectMetadataId),
   );
 
@@ -55,16 +55,12 @@ export const SidePanelNewSidebarItemObjectSystemPickerSubPage = () => {
       objectMetadataIdsWithDisplayableViews,
     });
 
-  const handleSelectObject = (
-    objectMetadataItem: ObjectMetadataItem,
-    defaultViewId: string,
-  ) => {
+  const handleSelectObject = (objectMetadataItem: ObjectMetadataItem) => {
     if (objectMetadataIdsInWorkspace.has(objectMetadataItem.id)) {
       return;
     }
     const itemId = addObjectToDraft(
       objectMetadataItem.id,
-      defaultViewId,
       currentDraft,
       addMenuItemInsertionContext?.targetFolderId,
       addMenuItemInsertionContext?.targetIndex,

@@ -29,12 +29,7 @@ type ViewPickerOptionDropdownProps = {
   isLastView: boolean;
   view: Pick<
     View,
-    | 'id'
-    | 'name'
-    | 'icon'
-    | '__typename'
-    | 'visibility'
-    | 'createdByUserWorkspaceId'
+    'id' | 'name' | 'icon' | 'visibility' | 'createdByUserWorkspaceId'
   >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;

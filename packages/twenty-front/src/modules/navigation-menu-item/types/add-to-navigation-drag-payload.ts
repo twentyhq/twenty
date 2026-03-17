@@ -1,19 +1,18 @@
 export type AddToNavigationDragPayloadObject = {
-  type: 'object';
+  type: 'OBJECT';
   objectMetadataId: string;
-  defaultViewId: string;
   label: string;
   iconColor?: string;
 };
 
 export type AddToNavigationDragPayloadView = {
-  type: 'view';
+  type: 'VIEW';
   viewId: string;
   label: string;
 };
 
 export type AddToNavigationDragPayloadRecord = {
-  type: 'record';
+  type: 'RECORD';
   recordId: string;
   objectMetadataId: string;
   objectNameSingular: string;
@@ -22,13 +21,13 @@ export type AddToNavigationDragPayloadRecord = {
 };
 
 export type AddToNavigationDragPayloadFolder = {
-  type: 'folder';
+  type: 'FOLDER';
   folderId: string;
   name: string;
 };
 
 export type AddToNavigationDragPayloadLink = {
-  type: 'link';
+  type: 'LINK';
   linkId: string;
   name: string;
   link: string;

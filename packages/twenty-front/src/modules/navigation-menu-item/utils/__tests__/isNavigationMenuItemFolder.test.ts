@@ -1,45 +1,26 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
+
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
 
 describe('isNavigationMenuItemFolder', () => {
-  it('should return true only when item has name and no link/view/record metadata', () => {
+  it('should return true when type is folder', () => {
     expect(
-      isNavigationMenuItemFolder({
-        name: 'My Folder',
-        link: null,
-        viewId: null,
-        targetRecordId: null,
-        targetObjectMetadataId: null,
-      }),
+      isNavigationMenuItemFolder({ type: NavigationMenuItemType.FOLDER }),
     ).toBe(true);
   });
 
-  it('should return false when name is missing or when link/view/record is defined', () => {
+  it('should return false for other types', () => {
     expect(
-      isNavigationMenuItemFolder({
-        name: undefined,
-        link: null,
-        viewId: null,
-        targetRecordId: null,
-        targetObjectMetadataId: null,
-      }),
+      isNavigationMenuItemFolder({ type: NavigationMenuItemType.LINK }),
     ).toBe(false);
     expect(
-      isNavigationMenuItemFolder({
-        name: 'My Folder',
-        link: 'https://example.com',
-        viewId: null,
-        targetRecordId: null,
-        targetObjectMetadataId: null,
-      }),
+      isNavigationMenuItemFolder({ type: NavigationMenuItemType.VIEW }),
     ).toBe(false);
     expect(
-      isNavigationMenuItemFolder({
-        name: 'My Folder',
-        link: null,
-        viewId: 'view-1',
-        targetRecordId: null,
-        targetObjectMetadataId: null,
-      }),
+      isNavigationMenuItemFolder({ type: NavigationMenuItemType.RECORD }),
+    ).toBe(false);
+    expect(
+      isNavigationMenuItemFolder({ type: NavigationMenuItemType.OBJECT }),
     ).toBe(false);
   });
 });

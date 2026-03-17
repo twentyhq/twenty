@@ -100,6 +100,7 @@ describe('WorkspaceEntityManager', () => {
       labelPlural: 'Test Entities',
       workspaceId: 'test-workspace-id',
       icon: 'test-icon',
+      color: null,
       isCustom: false,
       isRemote: false,
       isAuditLogged: false,

@@ -9,7 +9,7 @@ registerEnumType(ViewFilterGroupLogicalOperator, {
   name: 'ViewFilterGroupLogicalOperator',
 });
 
-@ObjectType('CoreViewFilterGroup')
+@ObjectType('ViewFilterGroup')
 export class ViewFilterGroupDTO {
   @IDField(() => UUIDScalarType)
   id: string;

@@ -1,68 +1,86 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/components/LinkIconWithLinkOverlay';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { useObjectNavItemColor } from '@/navigation-menu-item/hooks/useObjectNavItemColor';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/utils/getNavigationMenuItemComputedLink';
+import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/utils/getNavigationMenuItemIconStyleFromColor';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemLabel';
+import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/utils/getNavigationMenuItemObjectNameSingular';
+import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/utils/recordIdentifierToObjectRecordIdentifier';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
 }: {
-  navigationMenuItem: ProcessedNavigationMenuItem;
+  navigationMenuItem: NavigationMenuItem;
 }) => {
   const { getIcon } = useIcons();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
-    navigationMenuItem.objectNameSingular ?? '',
-  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
 
-  const isRecord =
-    navigationMenuItem.itemType === NavigationMenuItemType.RECORD;
+  const objectNameSingular =
+    getNavigationMenuItemObjectNameSingular(
+      navigationMenuItem,
+      objectMetadataItems,
+      views,
+    ) ?? '';
+
+  const { Icon: StandardIcon, IconColor } =
+    useGetStandardObjectIcon(objectNameSingular);
+
+  const isRecord = navigationMenuItem.type === NavigationMenuItemType.RECORD;
+
+  const view = isDefined(navigationMenuItem.viewId)
+    ? views.find((view) => view.id === navigationMenuItem.viewId)
+    : undefined;
   const isViewWithOverlay =
-    navigationMenuItem.itemType === NavigationMenuItemType.VIEW &&
-    navigationMenuItem.viewKey !== ViewKey.Index;
+    navigationMenuItem.type === NavigationMenuItemType.VIEW &&
+    isDefined(view) &&
+    view.key !== ViewKey.INDEX;
 
   const objectMetadataItem = objectMetadataItems.find(
-    (item) => item.nameSingular === navigationMenuItem.objectNameSingular,
+    (item) => item.nameSingular === objectNameSingular,
   );
-  const objectNavItemColor = useObjectNavItemColor(
-    navigationMenuItem.objectNameSingular ?? '',
-  );
+  const objectNavItemColor = useObjectNavItemColor(objectNameSingular);
   const objectIconForView =
     objectMetadataItem?.icon != null
       ? getIcon(objectMetadataItem.icon)
       : StandardIcon;
 
   const canShowViewOverlay =
-    isViewWithOverlay &&
-    isDefined(objectIconForView) &&
-    isDefined(navigationMenuItem.Icon);
+    isViewWithOverlay && isDefined(objectIconForView) && isDefined(view?.icon);
 
   if (canShowViewOverlay) {
     return (
       <ObjectIconWithViewOverlay
         ObjectIcon={objectIconForView}
-        ViewIcon={getIcon(navigationMenuItem.Icon!)}
+        ViewIcon={getIcon(view!.icon)}
         objectColor={objectNavItemColor}
       />
     );
   }
 
-  if (navigationMenuItem.itemType === NavigationMenuItemType.LINK) {
+  if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
+    const computedLink = getNavigationMenuItemComputedLink(
+      navigationMenuItem,
+      objectMetadataItems,
+      views,
+    );
     return (
       <LinkIconWithLinkOverlay
-        link={navigationMenuItem.link}
+        link={computedLink}
         LinkIcon={IconLink}
         DefaultIcon={IconWorld}
         color={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
@@ -70,11 +88,17 @@ export const NavigationMenuItemIcon = ({
     );
   }
 
-  const iconToUse =
-    StandardIcon ??
-    (navigationMenuItem.Icon ? getIcon(navigationMenuItem.Icon) : undefined);
-  const effectiveColor =
-    getEffectiveNavigationMenuItemColor(navigationMenuItem);
+  const itemIcon = isRecord
+    ? undefined
+    : objectMetadataItem?.icon
+      ? getIcon(objectMetadataItem.icon)
+      : undefined;
+  const iconToUse = StandardIcon ?? itemIcon;
+
+  const effectiveColor = getEffectiveNavigationMenuItemColor(
+    navigationMenuItem,
+    objectNavItemColor,
+  );
   const useStyledIcon = !isRecord && isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon
     ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
@@ -86,14 +110,30 @@ export const NavigationMenuItemIcon = ({
       ? IconColor
       : themeCssVariables.font.color.secondary;
 
+  const labelIdentifier = getNavigationMenuItemLabel(
+    navigationMenuItem,
+    objectMetadataItems,
+    views,
+  );
+
+  const recordIdentifier =
+    isRecord &&
+    isDefined(navigationMenuItem.targetRecordIdentifier) &&
+    isDefined(objectMetadataItem)
+      ? recordIdentifierToObjectRecordIdentifier({
+          recordIdentifier: navigationMenuItem.targetRecordIdentifier,
+          objectMetadataItem,
+        })
+      : null;
+
   const avatar = (
     <Avatar
       size={iconStyle ? 'sm' : 'md'}
-      type={navigationMenuItem.avatarType}
+      type={recordIdentifier?.avatarType ?? 'icon'}
       Icon={iconToUse}
       iconColor={iconColorToUse}
-      avatarUrl={navigationMenuItem.avatarUrl}
-      placeholder={navigationMenuItem.labelIdentifier}
+      avatarUrl={recordIdentifier?.avatarUrl ?? ''}
+      placeholder={labelIdentifier}
       placeholderColorSeed={navigationMenuItem.targetRecordId ?? undefined}
     />
   );

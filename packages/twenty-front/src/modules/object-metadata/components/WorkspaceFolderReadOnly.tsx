@@ -5,12 +5,12 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/components/WorkspaceNavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { useWorkspaceFolderOpenState } from '@/navigation-menu-item/hooks/useWorkspaceFolderOpenState';
-import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 
@@ -35,7 +35,7 @@ type WorkspaceFolderReadOnlyProps = {
   folderName: string;
   folderIconKey?: string | null;
   folderColor?: string | null;
-  navigationMenuItems: ProcessedNavigationMenuItem[];
+  navigationMenuItems: NavigationMenuItem[];
   isGroup: boolean;
 };
 

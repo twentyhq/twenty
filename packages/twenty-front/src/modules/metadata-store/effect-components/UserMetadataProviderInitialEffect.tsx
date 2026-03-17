@@ -1,4 +1,4 @@
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -27,7 +27,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserMetadataProviderInitialEffect = () => {
-  const isLoggedIn = useIsLogged();
+  const hasAccessTokenPair = useHasAccessTokenPair();
   const currentUser = useAtomStateValue(currentUserState);
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -65,7 +65,7 @@ export const UserMetadataProviderInitialEffect = () => {
     [store],
   );
 
-  const shouldSkipUserQuery = !isLoggedIn || isDefined(currentUser);
+  const shouldSkipUserQuery = !hasAccessTokenPair || isDefined(currentUser);
 
   const { data: userQueryData, loading: userQueryLoading } = useQuery(
     GetCurrentUserDocument,
@@ -79,7 +79,7 @@ export const UserMetadataProviderInitialEffect = () => {
       return;
     }
 
-    if (!isLoggedIn) {
+    if (!hasAccessTokenPair) {
       setIsCurrentUserLoaded(true);
       setIsInitialized(true);
       return;
@@ -165,7 +165,7 @@ export const UserMetadataProviderInitialEffect = () => {
     setIsInitialized(true);
   }, [
     isInitialized,
-    isLoggedIn,
+    hasAccessTokenPair,
     userQueryLoading,
     userQueryData?.currentUser,
     setCurrentUser,

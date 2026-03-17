@@ -75,6 +75,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
 
   return {
     id: navigationMenuItemEntity.id,
+    type: navigationMenuItemEntity.type,
     userWorkspaceId: navigationMenuItemEntity.userWorkspaceId,
     targetRecordId: navigationMenuItemEntity.targetRecordId,
     targetObjectMetadataId: navigationMenuItemEntity.targetObjectMetadataId,

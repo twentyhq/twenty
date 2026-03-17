@@ -11,12 +11,9 @@ import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerform
 import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
 import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
 import { usePerformViewSortAPIPersist } from '@/views/hooks/internal/usePerformViewSortAPIPersist';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType } from '@/views/types/ViewType';
-import { convertViewOpenRecordInToCore } from '@/views/utils/convertViewOpenRecordInToCore';
-import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
 import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
@@ -53,9 +50,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     usePerformViewFilterGroupAPIPersist();
 
   const store = useStore();
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
@@ -103,7 +97,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       }
 
       const sourceView = store.get(
-        coreViewFromViewIdFamilySelector.selectorFamily({
+        viewFromViewIdFamilySelector.selectorFamily({
           viewId: existingCurrentViewId,
         }),
       );
@@ -131,18 +125,16 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             mainGroupByFieldMetadataId: shouldCopyFiltersAndSortsAndAggregate
               ? sourceView.mainGroupByFieldMetadataId
               : mainGroupByFieldMetadataId,
-            type: convertViewTypeToCore(viewType),
+            type: viewType,
             objectMetadataId: sourceView.objectMetadataId,
-            openRecordIn: convertViewOpenRecordInToCore(
-              sourceView.openRecordIn,
-            ),
+            openRecordIn: sourceView.openRecordIn,
             anyFieldFilterValue: anyFieldFilterValue,
             calendarLayout:
-              viewType === ViewType.Calendar
+              viewType === ViewType.CALENDAR
                 ? ViewCalendarLayout.MONTH
                 : undefined,
             calendarFieldMetadataId:
-              viewType === ViewType.Calendar
+              viewType === ViewType.CALENDAR
                 ? calendarFieldMetadataId
                 : undefined,
             visibility,
@@ -155,20 +147,23 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         return undefined;
       }
 
-      const newViewId = result.response.data?.createCoreView.id;
+      const newViewId = result.response.data?.createView.id;
 
       if (isUndefinedOrNull(newViewId)) {
         throw new Error('Failed to create view');
       }
 
       const fieldResult = await performViewFieldAPICreate({
-        inputs: sourceView.viewFields.map(
-          ({ __typename, id: _id, ...viewField }) => ({
-            ...viewField,
-            id: v4(),
-            viewId: newViewId,
-          }),
-        ),
+        inputs: sourceView.viewFields.map((viewField) => ({
+          id: v4(),
+          fieldMetadataId: viewField.fieldMetadataId,
+          position: viewField.position,
+          isVisible: viewField.isVisible,
+          size: viewField.size,
+          aggregateOperation: viewField.aggregateOperation,
+          viewFieldGroupId: viewField.viewFieldGroupId,
+          viewId: newViewId,
+        })),
       });
 
       if (fieldResult.status === 'failed') {
@@ -246,8 +241,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
       }
 
-      await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
-
       return newViewId;
     },
     [
@@ -256,7 +249,6 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       anyFieldFilterValue,
       objectMetadataItem,
       performViewFieldAPICreate,
-      refreshCoreViewsByObjectMetadataId,
       store,
       currentRecordFilterGroups,
       currentRecordFilters,

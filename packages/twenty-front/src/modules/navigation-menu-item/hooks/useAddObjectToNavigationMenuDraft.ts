@@ -1,3 +1,4 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -13,7 +14,6 @@ export const useAddObjectToNavigationMenuDraft = () => {
 
   const addObjectToDraft = (
     objectMetadataId: string,
-    defaultViewId: string,
     currentDraft: NavigationMenuItem[],
     targetFolderId?: string | null,
     targetIndex?: number,
@@ -38,7 +38,8 @@ export const useAddObjectToNavigationMenuDraft = () => {
     const newItem: NavigationMenuItem = {
       __typename: 'NavigationMenuItem',
       id: newItemId,
-      viewId: defaultViewId,
+      type: NavigationMenuItemType.OBJECT,
+      viewId: undefined,
       targetObjectMetadataId: objectMetadataId,
       position,
       userWorkspaceId: undefined,

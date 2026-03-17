@@ -1,16 +1,13 @@
-import type {
-  FlatWorkspaceItem,
-  NavigationMenuItemClickParams,
-} from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
+import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 
 export type WorkspaceSectionListDndKitProps = {
-  filteredItems: FlatWorkspaceItem[];
-  getEditModeProps: (item: FlatWorkspaceItem) => EditModeProps;
-  folderChildrenById: Map<string, ProcessedNavigationMenuItem[]>;
+  filteredItems: NavigationMenuItem[];
+  getEditModeProps: (item: NavigationMenuItem) => EditModeProps;
+  folderChildrenById: Map<string, NavigationMenuItem[]>;
   selectedNavigationMenuItemId: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (

@@ -31,7 +31,7 @@ export const SidePanelNewSidebarItemViewObjectPickerSubPage = () => {
     views
       .filter(
         (view) =>
-          view.key !== ViewKey.Index && view.type !== ViewType.FieldsWidget,
+          view.key !== ViewKey.INDEX && view.type !== ViewType.FIELDS_WIDGET,
       )
       .map((view) => view.objectMetadataId),
   );

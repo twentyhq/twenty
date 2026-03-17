@@ -244,7 +244,6 @@ describe('useFieldMetadataItem', () => {
     await act(async () => {
       const res = await result.current.deleteMetadataField({
         idToDelete: fieldMetadataItem.id,
-        objectMetadataId,
       });
       jestExpectSuccessfulMetadataRequestResult(res);
 
@@ -264,7 +263,6 @@ describe('useFieldMetadataItem', () => {
     await act(async () => {
       const res = await result.current.deleteMetadataField({
         idToDelete: fieldRelationMetadataItem.id,
-        objectMetadataId,
       });
       jestExpectSuccessfulMetadataRequestResult(res);
 

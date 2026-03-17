@@ -1,21 +1,18 @@
 import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
 import React, { lazy, Suspense, useContext } from 'react';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import {
-  type FlatWorkspaceItem,
-  type NavigationMenuItemClickParams,
-} from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
+import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
 import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/components/WorkspaceSectionListEditModeFallback';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -24,8 +21,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -41,7 +37,7 @@ const StyledWorkspaceSectionContentGapOffset = styled.div`
 
 type NavigationDrawerSectionForWorkspaceItemsProps = {
   sectionTitle: string;
-  items: FlatWorkspaceItem[];
+  items: NavigationMenuItem[];
   rightIcon?: React.ReactNode;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
@@ -64,11 +60,10 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
-  const coreViews = useAtomStateValue(coreViewsState);
-  const views = coreViews.map(convertCoreViewToView);
+  const views = useAtomStateValue(viewsSelector);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { addToNavigationFallbackDestination } = useContext(
     NavigationDropTargetContext,
   );
@@ -77,32 +72,34 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   const isAddToNavigationDropTargetVisible =
     addToNavigationFallbackDestination?.droppableId ===
     NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
-  const folderChildrenById = items.reduce<
-    Map<string, ProcessedNavigationMenuItem[]>
-  >((acc, item) => {
-    const folderId = item.folderId;
-    if (isDefined(folderId)) {
-      const children = acc.get(folderId) ?? [];
-      children.push(item as ProcessedNavigationMenuItem);
-      acc.set(folderId, children);
-    }
-    return acc;
-  }, new Map());
+  const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
+    (acc, item) => {
+      const folderId = item.folderId;
+      if (isDefined(folderId)) {
+        const children = acc.get(folderId) ?? [];
+        children.push(item);
+        acc.set(folderId, children);
+      }
+      return acc;
+    },
+    new Map(),
+  );
 
   const filteredItems = flatItems.filter((item) => {
-    const type = item.itemType;
+    const itemType = item.type;
     if (
-      type === NavigationMenuItemType.FOLDER ||
-      type === NavigationMenuItemType.LINK
+      itemType === NavigationMenuItemType.FOLDER ||
+      itemType === NavigationMenuItemType.LINK
     ) {
       return true;
     }
     if (
-      type === NavigationMenuItemType.VIEW ||
-      type === NavigationMenuItemType.RECORD
+      itemType === NavigationMenuItemType.OBJECT ||
+      itemType === NavigationMenuItemType.VIEW ||
+      itemType === NavigationMenuItemType.RECORD
     ) {
       const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
-        item as ProcessedNavigationMenuItem,
+        item,
         objectMetadataItems,
         views,
       );
@@ -117,17 +114,19 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
     return false;
   });
 
-  const getEditModeProps = (item: FlatWorkspaceItem): EditModeProps => {
+  const getEditModeProps = (item: NavigationMenuItem): EditModeProps => {
     const itemId = item.id;
     return {
       isSelectedInEditMode: selectedNavigationMenuItemId === itemId,
       onEditModeClick: onNavigationMenuItemClick
         ? () => {
-            const type = item.itemType;
+            const itemType = item.type;
             const objectMetadataItem =
-              type === 'view' || type === 'record'
+              itemType === 'OBJECT' ||
+              itemType === 'VIEW' ||
+              itemType === 'RECORD'
                 ? getObjectMetadataForNavigationMenuItem(
-                    item as ProcessedNavigationMenuItem,
+                    item,
                     objectMetadataItems,
                     views,
                   )

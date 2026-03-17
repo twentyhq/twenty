@@ -5,11 +5,13 @@ export const AUTHORIZE_APP = gql`
     $clientId: String!
     $codeChallenge: String
     $redirectUrl: String!
+    $state: String
   ) {
     authorizeApp(
       clientId: $clientId
       codeChallenge: $codeChallenge
       redirectUrl: $redirectUrl
+      state: $state
     ) {
       redirectUrl
     }

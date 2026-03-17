@@ -4,12 +4,12 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
-import { deleteOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/delete-one-core-view-filter.util';
-import { destroyOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-core-view-filter.util';
-import { findCoreViewFilters } from 'test/integration/metadata/suites/view-filter/utils/find-core-view-filters.util';
-import { updateOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/update-one-core-view-filter.util';
-import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { deleteOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/delete-one-view-filter.util';
+import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
+import { findViewFilters } from 'test/integration/metadata/suites/view-filter/utils/find-view-filters.util';
+import { updateOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/update-one-view-filter.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 const TEST_NOT_EXISTING_VIEW_FILTER_ID = '20202020-52c5-4152-8c09-76a845fb8ece';
@@ -81,25 +81,25 @@ describe('View Filter Resolver', () => {
   });
 
   afterEach(async () => {
-    await destroyOneCoreView({
+    await destroyOneView({
       viewId: testViewId,
       expectToFail: false,
     });
   });
 
-  describe('getCoreViewFilters', () => {
+  describe('getViewFilters', () => {
     it('should return empty array when no view filters exist', async () => {
-      const { data, errors } = await findCoreViewFilters({
+      const { data, errors } = await findViewFilters({
         viewId: testViewId,
         expectToFail: false,
       });
 
       expect(errors).toBeUndefined();
-      expect(data.getCoreViewFilters).toEqual([]);
+      expect(data.getViewFilters).toEqual([]);
     });
 
     it('should return view filters for a specific view', async () => {
-      await createOneCoreViewFilter({
+      await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
@@ -109,14 +109,14 @@ describe('View Filter Resolver', () => {
         expectToFail: false,
       });
 
-      const { data, errors } = await findCoreViewFilters({
+      const { data, errors } = await findViewFilters({
         viewId: testViewId,
         expectToFail: false,
       });
 
       expect(errors).toBeUndefined();
-      expect(data.getCoreViewFilters).toHaveLength(1);
-      expect(data.getCoreViewFilters[0]).toMatchObject({
+      expect(data.getViewFilters).toHaveLength(1);
+      expect(data.getViewFilters[0]).toMatchObject({
         fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.CONTAINS,
         value: 'test',
@@ -125,9 +125,9 @@ describe('View Filter Resolver', () => {
     });
   });
 
-  describe('createCoreViewFilter', () => {
+  describe('createViewFilter', () => {
     it('should create a new view filter with string value', async () => {
-      const { data, errors } = await createOneCoreViewFilter({
+      const { data, errors } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
@@ -138,7 +138,7 @@ describe('View Filter Resolver', () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data.createCoreViewFilter).toMatchObject({
+      expect(data.createViewFilter).toMatchObject({
         fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.IS,
         value: 'test value',
@@ -147,7 +147,7 @@ describe('View Filter Resolver', () => {
     });
 
     it('should create a view filter with numeric value', async () => {
-      const { data, errors } = await createOneCoreViewFilter({
+      const { data, errors } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
@@ -158,7 +158,7 @@ describe('View Filter Resolver', () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data.createCoreViewFilter).toMatchObject({
+      expect(data.createViewFilter).toMatchObject({
         fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: 100,
@@ -167,7 +167,7 @@ describe('View Filter Resolver', () => {
     });
 
     it('should create a view filter with boolean value', async () => {
-      const { data, errors } = await createOneCoreViewFilter({
+      const { data, errors } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
@@ -178,7 +178,7 @@ describe('View Filter Resolver', () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data.createCoreViewFilter).toMatchObject({
+      expect(data.createViewFilter).toMatchObject({
         fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.IS,
         value: true,
@@ -187,9 +187,9 @@ describe('View Filter Resolver', () => {
     });
   });
 
-  describe('updateCoreViewFilter', () => {
+  describe('updateViewFilter', () => {
     it('should update an existing view filter', async () => {
-      const { data: createData } = await createOneCoreViewFilter({
+      const { data: createData } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
@@ -199,9 +199,9 @@ describe('View Filter Resolver', () => {
         expectToFail: false,
       });
 
-      const viewFilterId = createData.createCoreViewFilter.id;
+      const viewFilterId = createData.createViewFilter.id;
 
-      const { data, errors } = await updateOneCoreViewFilter({
+      const { data, errors } = await updateOneViewFilter({
         input: {
           id: viewFilterId,
           update: {
@@ -213,7 +213,7 @@ describe('View Filter Resolver', () => {
       });
 
       expect(errors).toBeUndefined();
-      expect(data.updateCoreViewFilter).toMatchObject({
+      expect(data.updateViewFilter).toMatchObject({
         id: viewFilterId,
         operand: ViewFilterOperand.DOES_NOT_CONTAIN,
         value: 'updated',
@@ -221,7 +221,7 @@ describe('View Filter Resolver', () => {
     });
 
     it('should throw an error when updating non-existent view filter', async () => {
-      const { errors } = await updateOneCoreViewFilter({
+      const { errors } = await updateOneViewFilter({
         input: {
           id: TEST_NOT_EXISTING_VIEW_FILTER_ID,
           update: {},
@@ -233,9 +233,9 @@ describe('View Filter Resolver', () => {
     });
   });
 
-  describe('deleteCoreViewFilter', () => {
+  describe('deleteViewFilter', () => {
     it('should delete an existing view filter', async () => {
-      const { data: createData } = await createOneCoreViewFilter({
+      const { data: createData } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
@@ -245,22 +245,22 @@ describe('View Filter Resolver', () => {
         expectToFail: false,
       });
 
-      const viewFilterId = createData.createCoreViewFilter.id;
+      const viewFilterId = createData.createViewFilter.id;
 
-      const { data, errors } = await deleteOneCoreViewFilter({
+      const { data, errors } = await deleteOneViewFilter({
         input: { id: viewFilterId },
         expectToFail: false,
       });
 
       expect(errors).toBeUndefined();
-      expect(data.deleteCoreViewFilter).toMatchObject({
+      expect(data.deleteViewFilter).toMatchObject({
         id: viewFilterId,
       });
-      expect(data.deleteCoreViewFilter.deletedAt).toBeDefined();
+      expect(data.deleteViewFilter.deletedAt).toBeDefined();
     });
 
     it('should throw an error when deleting non-existent view filter', async () => {
-      const { errors } = await deleteOneCoreViewFilter({
+      const { errors } = await deleteOneViewFilter({
         input: { id: TEST_NOT_EXISTING_VIEW_FILTER_ID },
         expectToFail: true,
       });
@@ -269,9 +269,9 @@ describe('View Filter Resolver', () => {
     });
   });
 
-  describe('destroyCoreViewFilter', () => {
+  describe('destroyViewFilter', () => {
     it('should destroy an existing view filter', async () => {
-      const { data: createData } = await createOneCoreViewFilter({
+      const { data: createData } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
           viewId: testViewId,
@@ -281,27 +281,27 @@ describe('View Filter Resolver', () => {
         expectToFail: false,
       });
 
-      const viewFilterId = createData.createCoreViewFilter.id;
+      const viewFilterId = createData.createViewFilter.id;
 
-      await deleteOneCoreViewFilter({
+      await deleteOneViewFilter({
         input: {
           id: viewFilterId,
         },
         expectToFail: false,
       });
-      const { data, errors } = await destroyOneCoreViewFilter({
+      const { data, errors } = await destroyOneViewFilter({
         input: { id: viewFilterId },
         expectToFail: false,
       });
 
       expect(errors).toBeUndefined();
-      expect(data.destroyCoreViewFilter).toMatchObject({
+      expect(data.destroyViewFilter).toMatchObject({
         id: viewFilterId,
       });
     });
 
     it('should throw an error when destroying non-existent view filter', async () => {
-      const { errors } = await destroyOneCoreViewFilter({
+      const { errors } = await destroyOneViewFilter({
         input: { id: TEST_NOT_EXISTING_VIEW_FILTER_ID },
         expectToFail: true,
       });

@@ -1,11 +1,9 @@
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/utils/getObjectMetadataForNavigationMenuItem';
-import type { ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
 import type { WorkspaceSectionItemContentProps } from '@/object-metadata/components/WorkspaceSectionItemContentProps';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 type NavigationDrawerSectionForWorkspaceItemObjectContentProps =
   WorkspaceSectionItemContentProps;
@@ -16,11 +14,10 @@ export const NavigationDrawerSectionForWorkspaceItemObjectContent = ({
   isDragging,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemObjectContentProps) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
-  const coreViews = useAtomStateValue(coreViewsState);
-  const views = coreViews.map(convertCoreViewToView);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
-    item as ProcessedNavigationMenuItem,
+    item,
     objectMetadataItems,
     views,
   );
@@ -30,7 +27,7 @@ export const NavigationDrawerSectionForWorkspaceItemObjectContent = ({
   return (
     <NavigationDrawerItemForObjectMetadataItem
       objectMetadataItem={objectMetadataItem}
-      navigationMenuItem={item as ProcessedNavigationMenuItem}
+      navigationMenuItem={item}
       isSelectedInEditMode={editModeProps.isSelectedInEditMode}
       onEditModeClick={editModeProps.onEditModeClick}
       isDragging={isDragging}

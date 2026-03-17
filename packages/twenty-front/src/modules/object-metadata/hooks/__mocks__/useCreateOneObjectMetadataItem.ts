@@ -1,11 +1,11 @@
 import {
   CreateOneObjectMetadataItemDocument,
-  FindManyCoreViewsDocument,
+  FindManyViewsDocument,
 } from '~/generated-metadata/graphql';
 
 export const query = CreateOneObjectMetadataItemDocument;
 
-export const findManyCoreViewsQuery = FindManyCoreViewsDocument;
+export const findManyViewsQuery = FindManyViewsDocument;
 
 export const variables = {
   input: {
@@ -27,6 +27,7 @@ export const responseData = {
   labelPlural: 'View Filters',
   description: '',
   icon: '',
+  color: null,
   isCustom: false,
   isActive: true,
   isSearchable: false,

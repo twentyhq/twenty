@@ -1,11 +1,14 @@
 import { Droppable } from '@hello-pangea/dnd';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationSections } from '@/navigation-menu-item/constants/NavigationSections.constants';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/hooks/useIsDropDisabledForSection';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconFolderOpen, IconHeartOff } from 'twenty-ui/display';
 
 import { LightIconButton } from 'twenty-ui/input';
@@ -18,17 +21,18 @@ import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigati
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/constants/NavigationMenuItemDefaultColorFolder';
 import { NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID } from '@/navigation-menu-item/constants/NavigationMenuItemFolderDeleteModalId';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItem';
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useDeleteNavigationMenuItemFolder';
 import { useRenameNavigationMenuItemFolder } from '@/navigation-menu-item/hooks/useRenameNavigationMenuItemFolder';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/states/openNavigationMenuItemFolderIdsState';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/utils/getEffectiveNavigationMenuItemColor';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/utils/getNavigationMenuItemComputedLink';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemLabel';
+import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/utils/getNavigationMenuItemObjectNameSingular';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/utils/isLocationMatchingNavigationMenuItem';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -45,14 +49,15 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { ViewKey } from '@/views/types/ViewKey';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 
 type CurrentWorkspaceMemberNavigationMenuItemsProps = {
   folder: {
     id: string;
     folderName: string;
-    navigationMenuItems: ProcessedNavigationMenuItem[];
+    navigationMenuItems: NavigationMenuItem[];
   };
   isGroup: boolean;
   isWorkspaceFolder?: boolean;
@@ -64,7 +69,8 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   isWorkspaceFolder = false,
 }: CurrentWorkspaceMemberNavigationMenuItemsProps) => {
   const { t } = useLingui();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
@@ -105,13 +111,26 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
     }
 
     if (!isOpen) {
-      const firstNonLinkItem = folder.navigationMenuItems.find(
-        (item) =>
-          item.itemType !== NavigationMenuItemType.LINK &&
-          isNonEmptyString(item.link),
-      );
-      if (isDefined(firstNonLinkItem?.link)) {
-        navigate(firstNonLinkItem.link);
+      const firstNonLinkItem = folder.navigationMenuItems.find((item) => {
+        if (item.type === NavigationMenuItemType.LINK) {
+          return false;
+        }
+        const computedLink = getNavigationMenuItemComputedLink(
+          item,
+          objectMetadataItems,
+          views,
+        );
+        return isNonEmptyString(computedLink);
+      });
+      if (isDefined(firstNonLinkItem)) {
+        const link = getNavigationMenuItemComputedLink(
+          firstNonLinkItem,
+          objectMetadataItems,
+          views,
+        );
+        if (isNonEmptyString(link)) {
+          navigate(link);
+        }
       }
     }
   };
@@ -131,8 +150,19 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
   const { closeDropdown } = useCloseDropdown();
 
   const selectedNavigationMenuItemIndex = folder.navigationMenuItems.findIndex(
-    (item) =>
-      isLocationMatchingNavigationMenuItem(currentPath, currentViewPath, item),
+    (item) => {
+      const computedLink = getNavigationMenuItemComputedLink(
+        item,
+        objectMetadataItems,
+        views,
+      );
+      return isLocationMatchingNavigationMenuItem(
+        currentPath,
+        currentViewPath,
+        item.type,
+        computedLink,
+      );
+    },
   );
 
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
@@ -261,53 +291,84 @@ export const CurrentWorkspaceMemberNavigationMenuItems = ({
                 // oxlint-disable-next-line react/jsx-props-no-spreading
                 {...provided.droppableProps}
               >
-                {folder.navigationMenuItems.map((navigationMenuItem, index) => (
-                  <DraggableItem
-                    key={navigationMenuItem.id}
-                    draggableId={navigationMenuItem.id}
-                    index={index}
-                    isInsideScrollableContainer
-                    itemComponent={
-                      <NavigationDrawerSubItem
-                        secondaryLabel={getNavigationMenuItemSecondaryLabel({
-                          objectMetadataItems,
-                          navigationMenuItemObjectNameSingular:
-                            navigationMenuItem.objectNameSingular,
-                        })}
-                        label={navigationMenuItem.labelIdentifier}
-                        Icon={() => (
-                          <NavigationMenuItemIcon
-                            navigationMenuItem={navigationMenuItem}
-                          />
-                        )}
-                        to={isDragging ? undefined : navigationMenuItem.link}
-                        active={index === selectedNavigationMenuItemIndex}
-                        subItemState={getNavigationSubItemLeftAdornment({
-                          index,
-                          arrayLength: navigationMenuItemFolderContentLength,
-                          selectedIndex: selectedNavigationMenuItemIndex,
-                        })}
-                        rightOptions={
-                          isWorkspaceFolder ? undefined : (
-                            <LightIconButton
-                              Icon={IconHeartOff}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                deleteNavigationMenuItem(navigationMenuItem.id);
-                              }}
-                              accent="tertiary"
+                {folder.navigationMenuItems.map((navigationMenuItem, index) => {
+                  const label = getNavigationMenuItemLabel(
+                    navigationMenuItem,
+                    objectMetadataItems,
+                    views,
+                  );
+                  const computedLink = getNavigationMenuItemComputedLink(
+                    navigationMenuItem,
+                    objectMetadataItems,
+                    views,
+                  );
+                  const objectNameSingular =
+                    getNavigationMenuItemObjectNameSingular(
+                      navigationMenuItem,
+                      objectMetadataItems,
+                      views,
+                    );
+                  const view = isDefined(navigationMenuItem.viewId)
+                    ? views.find(
+                        (view) => view.id === navigationMenuItem.viewId,
+                      )
+                    : undefined;
+                  const isIndexView = view?.key === ViewKey.INDEX;
+
+                  return (
+                    <DraggableItem
+                      key={navigationMenuItem.id}
+                      draggableId={navigationMenuItem.id}
+                      index={index}
+                      isInsideScrollableContainer
+                      itemComponent={
+                        <NavigationDrawerSubItem
+                          secondaryLabel={
+                            isIndexView
+                              ? undefined
+                              : getNavigationMenuItemSecondaryLabel({
+                                  objectMetadataItems,
+                                  navigationMenuItemObjectNameSingular:
+                                    objectNameSingular ?? '',
+                                })
+                          }
+                          label={label}
+                          Icon={() => (
+                            <NavigationMenuItemIcon
+                              navigationMenuItem={navigationMenuItem}
                             />
-                          )
-                        }
-                        isDragging={isDragging}
-                        triggerEvent="CLICK"
-                        iconColor={getEffectiveNavigationMenuItemColor(
-                          navigationMenuItem,
-                        )}
-                      />
-                    }
-                  />
-                ))}
+                          )}
+                          to={isDragging ? undefined : computedLink}
+                          active={index === selectedNavigationMenuItemIndex}
+                          subItemState={getNavigationSubItemLeftAdornment({
+                            index,
+                            arrayLength: navigationMenuItemFolderContentLength,
+                            selectedIndex: selectedNavigationMenuItemIndex,
+                          })}
+                          rightOptions={
+                            isWorkspaceFolder ? undefined : (
+                              <LightIconButton
+                                Icon={IconHeartOff}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteNavigationMenuItem(
+                                    navigationMenuItem.id,
+                                  );
+                                }}
+                                accent="tertiary"
+                              />
+                            )
+                          }
+                          isDragging={isDragging}
+                          triggerEvent="CLICK"
+                          iconColor={getEffectiveNavigationMenuItemColor(
+                            navigationMenuItem,
+                          )}
+                        />
+                      }
+                    />
+                  );
+                })}
                 {provided.placeholder}
               </div>
             )}

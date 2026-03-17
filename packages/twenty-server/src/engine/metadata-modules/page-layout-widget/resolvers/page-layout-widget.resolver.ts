@@ -8,6 +8,7 @@ import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -115,5 +116,12 @@ export class PageLayoutWidgetResolver {
   @ResolveField(() => WidgetConfiguration, { nullable: true })
   configuration(@Parent() widget: PageLayoutWidgetDTO) {
     return widget.configuration;
+  }
+
+  @ResolveField(() => Boolean)
+  isOverridden(@Parent() widget: PageLayoutWidgetDTO): boolean {
+    return (
+      isDefined(widget.overrides) && Object.keys(widget.overrides).length > 0
+    );
   }
 }

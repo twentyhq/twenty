@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddFolderToNavigationMenuDraft';
 import { useAddLinkToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddLinkToNavigationMenuDraft';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddObjectToNavigationMenuDraft';
@@ -24,8 +24,7 @@ import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/util
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 
 export const useHandleAddToNavigationDrop = () => {
@@ -42,7 +41,7 @@ export const useHandleAddToNavigationDrop = () => {
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const coreViews = useAtomStateValue(coreViewsState);
+  const views = useAtomStateValue(viewsSelector);
   const { getIcon } = useIcons();
   const setIsNavigationMenuInEditMode = useSetAtomState(
     isNavigationMenuInEditModeState,
@@ -128,7 +127,6 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.OBJECT: {
-          const views = coreViews.map(convertCoreViewToView);
           const objectMetadataIdsInWorkspace = getObjectMetadataIdsInDraft(
             currentDraft,
             views,
@@ -141,7 +139,6 @@ export const useHandleAddToNavigationDrop = () => {
           );
           const newItemId = addObjectToDraft(
             payload.objectMetadataId,
-            payload.defaultViewId,
             currentDraft,
             folderId,
             index,
@@ -159,7 +156,6 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.VIEW: {
-          const views = coreViews.map(convertCoreViewToView);
           const view = views.find((v) => v.id === payload.viewId);
           const viewObjectMetadataItem = view
             ? objectMetadataItems.find(
@@ -214,7 +210,7 @@ export const useHandleAddToNavigationDrop = () => {
       addObjectToDraft,
       addRecordToDraft,
       addViewToDraft,
-      coreViews,
+      views,
       getIcon,
       navigationMenuItemsDraft,
       objectMetadataItems,

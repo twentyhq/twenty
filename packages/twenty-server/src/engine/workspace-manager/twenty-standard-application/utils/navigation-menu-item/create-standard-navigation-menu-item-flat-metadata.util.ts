@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import {
@@ -51,8 +52,12 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     );
   }
 
+  const isObjectType =
+    navigationMenuItemDefinition.type === NavigationMenuItemType.OBJECT;
+
   return {
     id: navigationMenuItemId,
+    type: navigationMenuItemDefinition.type,
     universalIdentifier: navigationMenuItemDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
@@ -60,10 +65,12 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     workspaceId,
     userWorkspaceId: null,
     targetRecordId: null,
-    targetObjectMetadataId: null,
-    targetObjectMetadataUniversalIdentifier: null,
-    viewId: flatView.id,
-    viewUniversalIdentifier: flatView.universalIdentifier,
+    targetObjectMetadataId: isObjectType ? flatView.objectMetadataId : null,
+    targetObjectMetadataUniversalIdentifier: isObjectType
+      ? flatView.objectMetadataUniversalIdentifier
+      : null,
+    viewId: isObjectType ? null : flatView.id,
+    viewUniversalIdentifier: isObjectType ? null : flatView.universalIdentifier,
     folderId: null,
     folderUniversalIdentifier: null,
     name: null,

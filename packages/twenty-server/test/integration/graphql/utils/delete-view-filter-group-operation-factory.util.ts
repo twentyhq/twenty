@@ -6,8 +6,8 @@ export const deleteViewFilterGroupOperationFactory = ({
   viewFilterGroupId: string;
 }) => ({
   query: gql`
-    mutation DeleteCoreViewFilterGroup($id: String!) {
-      deleteCoreViewFilterGroup(id: $id)
+    mutation DeleteViewFilterGroup($id: String!) {
+      deleteViewFilterGroup(id: $id)
     }
   `,
   variables: {

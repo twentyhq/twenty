@@ -6,21 +6,24 @@ import {
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemLabel';
+import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/utils/getNavigationMenuItemObjectNameSingular';
 import { getNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/utils/getNavigationMenuItemSecondaryLabel';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
 
 type WorkspaceNavigationMenuItemFolderDragCloneProps = {
   draggableProvided: DraggableProvided;
   draggableSnapshot: DraggableStateSnapshot;
   rubric: DraggableRubric;
-  navigationMenuItems: ProcessedNavigationMenuItem[];
+  navigationMenuItems: NavigationMenuItem[];
   navigationMenuItemFolderContentLength: number;
   selectedNavigationMenuItemIndex: number;
 };
@@ -34,12 +37,28 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
   selectedNavigationMenuItemIndex,
 }: WorkspaceNavigationMenuItemFolderDragCloneProps) => {
   const { theme } = useContext(ThemeContext);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const navigationMenuItem = navigationMenuItems[rubric.source.index];
 
   if (!isDefined(navigationMenuItem)) {
     return null;
   }
+
+  const label = getNavigationMenuItemLabel(
+    navigationMenuItem,
+    objectMetadataItems,
+    views,
+  );
+  const objectNameSingular = getNavigationMenuItemObjectNameSingular(
+    navigationMenuItem,
+    objectMetadataItems,
+    views,
+  );
+  const view = isDefined(navigationMenuItem.viewId)
+    ? views.find((view) => view.id === navigationMenuItem.viewId)
+    : undefined;
+  const isIndexView = view?.key === ViewKey.INDEX;
 
   return (
     <div
@@ -57,15 +76,14 @@ export const WorkspaceNavigationMenuItemFolderDragClone = ({
     >
       <NavigationDrawerSubItem
         secondaryLabel={
-          navigationMenuItem.viewKey === ViewKey.Index
+          isIndexView
             ? undefined
             : getNavigationMenuItemSecondaryLabel({
                 objectMetadataItems,
-                navigationMenuItemObjectNameSingular:
-                  navigationMenuItem.objectNameSingular,
+                navigationMenuItemObjectNameSingular: objectNameSingular ?? '',
               })
         }
-        label={navigationMenuItem.labelIdentifier}
+        label={label}
         Icon={() => (
           <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
         )}

@@ -3,9 +3,9 @@ import {
   VIEW_FIELD_GROUP_GQL_FIELDS,
   VIEW_GQL_FIELDS,
 } from 'test/integration/constants/view-gql-fields.constants';
-import { findCoreViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/find-core-view-field-groups.util';
+import { findViewFieldGroups } from 'test/integration/metadata/suites/view-field-group/utils/find-view-field-groups.util';
 import { upsertFieldsWidget } from 'test/integration/metadata/suites/view-field-group/utils/upsert-fields-widget.util';
-import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
+import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { v4 as uuidv4 } from 'uuid';
 
 type FieldsWidgetTestSetup = {
@@ -60,13 +60,13 @@ const fetchFieldsWidgetTestSetup = async (): Promise<FieldsWidgetTestSetup> => {
   const labelIdentifierFieldMetadataId =
     views[0]?.labelIdentifierFieldMetadataId ?? null;
 
-  const { data } = await findCoreViewFields({
+  const { data } = await findViewFields({
     viewId,
     gqlFields: 'id fieldMetadataId position isVisible viewFieldGroupId',
     expectToFail: false,
   });
 
-  const viewFields = data.getCoreViewFields;
+  const viewFields = data.getViewFields;
 
   return { widgetId, viewId, labelIdentifierFieldMetadataId, viewFields };
 };
@@ -109,13 +109,13 @@ describe('upsertFieldsWidget', () => {
       expect(data.upsertFieldsWidget.id).toBeDefined();
       expect(data.upsertFieldsWidget.name).toBeDefined();
 
-      const { data: groupsData } = await findCoreViewFieldGroups({
+      const { data: groupsData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
         gqlFields: 'id name',
         expectToFail: false,
       });
 
-      const createdGroup = groupsData.getCoreViewFieldGroups.find(
+      const createdGroup = groupsData.getViewFieldGroups.find(
         (g: { id: string }) => g.id === newGroupId,
       );
 
@@ -198,13 +198,13 @@ describe('upsertFieldsWidget', () => {
       expect(deletedGroup.length).toBe(0);
 
       // Verify the kept group is still active
-      const { data: keptGroupData } = await findCoreViewFieldGroups({
+      const { data: keptGroupData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
         gqlFields: 'id',
         expectToFail: false,
       });
 
-      const keptGroup = keptGroupData.getCoreViewFieldGroups.find(
+      const keptGroup = keptGroupData.getViewFieldGroups.find(
         (g: { id: string }) => g.id === groupToKeepId,
       );
 
@@ -243,13 +243,13 @@ describe('upsertFieldsWidget', () => {
       });
 
       // Verify the view field was updated
-      const { data: fieldsData } = await findCoreViewFields({
+      const { data: fieldsData } = await findViewFields({
         viewId: testSetup.viewId,
         gqlFields: 'id isVisible position viewFieldGroupId',
         expectToFail: false,
       });
 
-      const updatedField = fieldsData.getCoreViewFields.find(
+      const updatedField = fieldsData.getViewFields.find(
         (f: { id: string }) => f.id === targetField.id,
       );
 
@@ -310,13 +310,13 @@ describe('upsertFieldsWidget', () => {
       });
 
       // Verify group exists
-      const { data: groupBeforeData } = await findCoreViewFieldGroups({
+      const { data: groupBeforeData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
         gqlFields: 'id',
         expectToFail: false,
       });
 
-      const groupBefore = groupBeforeData.getCoreViewFieldGroups.find(
+      const groupBefore = groupBeforeData.getViewFieldGroups.find(
         (g: { id: string }) => g.id === groupId,
       );
 
@@ -338,22 +338,22 @@ describe('upsertFieldsWidget', () => {
       });
 
       // Verify all groups are soft-deleted
-      const { data: activeGroupsData } = await findCoreViewFieldGroups({
+      const { data: activeGroupsData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
         gqlFields: 'id',
         expectToFail: false,
       });
 
-      expect(activeGroupsData.getCoreViewFieldGroups.length).toBe(0);
+      expect(activeGroupsData.getViewFieldGroups.length).toBe(0);
 
       // Verify the field's viewFieldGroupId is null
-      const { data: updatedFieldData } = await findCoreViewFields({
+      const { data: updatedFieldData } = await findViewFields({
         viewId: testSetup.viewId,
         gqlFields: 'id viewFieldGroupId',
         expectToFail: false,
       });
 
-      const updatedField = updatedFieldData.getCoreViewFields.find(
+      const updatedField = updatedFieldData.getViewFields.find(
         (f: { id: string }) => f.id === targetField.id,
       );
 
@@ -409,13 +409,13 @@ describe('upsertFieldsWidget', () => {
         },
       });
 
-      const { data: updatedFieldData } = await findCoreViewFields({
+      const { data: updatedFieldData } = await findViewFields({
         viewId: testSetup.viewId,
         gqlFields: 'id isVisible position viewFieldGroupId',
         expectToFail: false,
       });
 
-      const updatedField = updatedFieldData.getCoreViewFields.find(
+      const updatedField = updatedFieldData.getViewFields.find(
         (f: { id: string }) => f.id === targetField.id,
       );
 

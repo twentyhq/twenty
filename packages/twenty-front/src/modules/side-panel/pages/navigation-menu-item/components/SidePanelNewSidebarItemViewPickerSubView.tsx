@@ -1,5 +1,5 @@
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/components/ObjectIconWithViewOverlay';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/hooks/useAddViewToNavigationMenuDraft';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/hooks/useNavigationMenuObjectMetadataFromDraft';
@@ -52,8 +52,8 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     .filter(
       (view) =>
         view.objectMetadataId === selectedObjectMetadataIdForView &&
-        view.key !== ViewKey.Index &&
-        view.type !== ViewType.FieldsWidget &&
+        view.key !== ViewKey.INDEX &&
+        view.type !== ViewType.FIELDS_WIDGET &&
         view.visibility === ViewVisibility.WORKSPACE,
     )
     .sort((a, b) => a.position - b.position);

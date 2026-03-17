@@ -1,6 +1,6 @@
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 
 export const useViewOrDefaultView = ({
   objectMetadataItemId,
@@ -8,16 +8,13 @@ export const useViewOrDefaultView = ({
   objectMetadataItemId: string;
 }) => {
   const indexViewId = useAtomFamilySelectorValue(
-    coreIndexViewIdFromObjectMetadataItemFamilySelector,
+    indexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId },
   );
 
-  const indexView = useAtomFamilySelectorValue(
-    coreViewFromViewIdFamilySelector,
-    {
-      viewId: indexViewId ?? '',
-    },
-  );
+  const indexView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
+    viewId: indexViewId ?? '',
+  });
 
   return { view: indexView };
 };

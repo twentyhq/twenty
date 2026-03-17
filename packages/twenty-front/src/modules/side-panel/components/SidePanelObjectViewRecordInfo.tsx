@@ -3,11 +3,10 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/components/NavigationMenuItemIcon';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemLabel';
 import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
-import { ViewKey } from '@/views/types/ViewKey';
 
 export const SidePanelObjectViewRecordInfo = () => {
   const { t } = useLingui();
@@ -16,34 +15,35 @@ export const SidePanelObjectViewRecordInfo = () => {
   const { selectedItemObjectMetadata } =
     useSelectedNavigationMenuItemEditItemObjectMetadata();
 
-  const processedItem =
-    selectedItem && selectedItem.itemType !== NavigationMenuItemType.FOLDER
+  const navItem =
+    selectedItem && selectedItem.type !== NavigationMenuItemType.FOLDER
       ? selectedItem
       : undefined;
 
-  if (!processedItem || !selectedItemLabel) {
+  if (!navItem || !selectedItemLabel) {
     return null;
   }
 
-  const isViewOrRecord = [
+  const isObjectViewOrRecord = [
+    NavigationMenuItemType.OBJECT,
     NavigationMenuItemType.VIEW,
     NavigationMenuItemType.RECORD,
-  ].includes(processedItem.itemType);
+  ].includes(navItem.type);
 
-  if (!isViewOrRecord) {
+  if (!isObjectViewOrRecord) {
     return null;
   }
 
   const label =
-    processedItem.itemType === NavigationMenuItemType.RECORD
+    navItem.type === NavigationMenuItemType.RECORD
       ? selectedItemObjectMetadata?.labelSingular
-      : processedItem.viewKey === ViewKey.Index
+      : navItem.type === NavigationMenuItemType.OBJECT
         ? t`Object`
         : t`View`;
 
   return (
     <SidePanelPageInfoLayout
-      icon={<NavigationMenuItemIcon navigationMenuItem={processedItem} />}
+      icon={<NavigationMenuItemIcon navigationMenuItem={navItem} />}
       title={<OverflowingTextWithTooltip text={selectedItemLabel} />}
       label={label}
     />

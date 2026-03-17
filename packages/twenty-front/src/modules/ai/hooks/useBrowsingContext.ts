@@ -10,12 +10,12 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useStore } from 'jotai';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 
 export const useGetBrowsingContext = () => {
   const store = useStore();
@@ -35,7 +35,7 @@ export const useGetBrowsingContext = () => {
       }),
     );
 
-    const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+    const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
     const objectMetadataItem = objectMetadataItems.find(
       (item) => item.id === objectMetadataItemId,
@@ -102,7 +102,7 @@ export const useGetBrowsingContext = () => {
       );
 
       const currentView = store.get(
-        coreViewFromViewIdFamilySelector.selectorFamily({
+        viewFromViewIdFamilySelector.selectorFamily({
           viewId: currentViewId ?? '',
         }),
       );

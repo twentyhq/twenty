@@ -1,4 +1,3 @@
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
@@ -35,7 +34,6 @@ type SettingsRoleProps = {
 };
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
-  const { refreshObjectMetadataItems } = useRefreshObjectMetadataItems();
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
@@ -126,7 +124,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     try {
       await saveDraftRoleToDB();
       await loadCurrentUser();
-      await refreshObjectMetadataItems();
     } finally {
       setIsSaving(false);
     }

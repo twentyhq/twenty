@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
-import { useParams } from 'react-router-dom';
 
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
@@ -26,17 +26,25 @@ type ViewBarProps = {
   viewBarId: string;
   className?: string;
   optionsDropdownButton: ReactNode;
+  isReadOnly?: boolean;
 };
 
 export const ViewBar = ({
   viewBarId,
   className,
   optionsDropdownButton,
+  isReadOnly = false,
 }: ViewBarProps) => {
-  const { objectNamePlural } = useParams();
+  const { objectNamePlural } = useRecordIndexContextOrThrow();
 
   if (!objectNamePlural) {
     return;
+  }
+
+  if (isReadOnly) {
+    return (
+      <TopBar className={className} leftComponent={<ViewPickerDropdown />} />
+    );
   }
 
   return (

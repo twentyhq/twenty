@@ -6,14 +6,12 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type ViewGroup } from '@/views/types/ViewGroup';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type CoreView } from '~/generated-metadata/graphql';
+import { type View as GqlView } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
@@ -29,8 +27,6 @@ export const useHandleRecordGroupField = () => {
 
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
 
   const store = useStore();
 
@@ -63,12 +59,11 @@ export const useHandleRecordGroupField = () => {
       });
 
       if (updatedViewResult.status === 'successful') {
-        const updatedCoreView = updatedViewResult.response.data
-          ?.updateCoreView as CoreView;
+        const updatedView = updatedViewResult.response.data
+          ?.updateView as GqlView;
 
-        if (isDefined(updatedCoreView)) {
-          const updatedViewConverted = convertCoreViewToView(updatedCoreView);
-          await loadRecordIndexStates(updatedViewConverted, objectMetadataItem);
+        if (isDefined(updatedView)) {
+          await loadRecordIndexStates(updatedView, objectMetadataItem);
         }
       }
 
@@ -87,7 +82,6 @@ export const useHandleRecordGroupField = () => {
         .map(
           (option, index) =>
             ({
-              __typename: 'ViewGroup',
               id: v4(),
               fieldValue: option.value,
               isVisible: true,
@@ -100,7 +94,6 @@ export const useHandleRecordGroupField = () => {
         fieldMetadataItem.isNullable === true
       ) {
         viewGroupsToCreate.push({
-          __typename: 'ViewGroup',
           id: v4(),
           fieldValue: '',
           isVisible: true,
@@ -121,8 +114,6 @@ export const useHandleRecordGroupField = () => {
         viewGroups: newViewGroupsList,
         objectMetadataItem,
       });
-
-      await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
     },
     [
       currentViewIdCallbackState,
@@ -130,7 +121,6 @@ export const useHandleRecordGroupField = () => {
       performViewAPIUpdate,
       setRecordGroupsFromViewGroups,
       objectMetadataItem,
-      refreshCoreViewsByObjectMetadataId,
       loadRecordIndexStates,
       store,
     ],

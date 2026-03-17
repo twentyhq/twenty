@@ -22,6 +22,7 @@ export const getFlatObjectMetadataMock = (
     fieldIds: [],
     description: 'default flat object metadata description',
     icon: 'icon',
+    color: null,
     id: faker.string.uuid(),
     imageIdentifierFieldMetadataId,
     isActive: true,

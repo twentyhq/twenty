@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
@@ -28,7 +28,7 @@ export const useSetRecordGroups = () => {
       recordIndexId: string;
       objectMetadataItemId: string;
     }) => {
-      const objectMetadataItems = store.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
       const objectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,

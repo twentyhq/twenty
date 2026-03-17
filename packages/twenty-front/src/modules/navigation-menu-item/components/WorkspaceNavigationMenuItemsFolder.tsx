@@ -36,8 +36,8 @@ import { SortableDropTargetRefContext } from '@/navigation-menu-item/contexts/So
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
-import { type ProcessedNavigationMenuItem } from '@/navigation-menu-item/utils/sortNavigationMenuItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
@@ -76,7 +76,7 @@ type WorkspaceNavigationMenuItemsFolderProps = {
   folderName: string;
   folderIconKey?: string | null;
   folderColor?: string | null;
-  navigationMenuItems: ProcessedNavigationMenuItem[];
+  navigationMenuItems: NavigationMenuItem[];
   isGroup: boolean;
   isSelectedInEditMode?: boolean;
   onEditModeClick?: () => void;

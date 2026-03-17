@@ -6,7 +6,7 @@ import { categorizeRelationFields } from '@/object-record/record-field-list/util
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import groupBy from 'lodash.groupby';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UseFieldListFieldMetadataItemsProps = {
@@ -65,7 +65,12 @@ export const useFieldListFieldMetadataItems = ({
       )
       .filter(
         (fieldMetadataItem) =>
-          fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT,
+          !(
+            fieldMetadataItem.type === FieldMetadataType.RICH_TEXT &&
+            fieldMetadataItem.name === 'bodyV2' &&
+            (objectNameSingular === CoreObjectNameSingular.Note ||
+              objectNameSingular === CoreObjectNameSingular.Task)
+          ),
       ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.RELATION ||
