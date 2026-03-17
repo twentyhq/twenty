@@ -31,6 +31,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { enrichFieldMetadataEventWithRelations } from 'src/engine/workspace-event-emitter/utils/enrich-field-metadata-event-with-relations.util';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
@@ -130,19 +131,26 @@ export class WorkspaceEventEmitterService {
       ? await this.fetchObjectRecordStreamContext(workspaceId)
       : undefined;
 
+    const enrichedMetadataEventBatch =
+      isMetadata
+        ? await this.enrichFieldMetadataEventsWithRelations(
+            eventBatch as MetadataEventBatch,
+          )
+        : undefined;
+
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
         streamIdsToRemove.push(streamChannelId);
         continue;
       }
 
-      if (isMetadata) {
+      if (isMetadata && isDefined(enrichedMetadataEventBatch)) {
         await this.processMetadataStreamEvents(
           streamChannelId,
           streamData,
-          eventBatch as MetadataEventBatch,
+          enrichedMetadataEventBatch,
         );
-      } else {
+      } else if (!isMetadata) {
         if (Object.keys(streamData.queries).length === 0) {
           continue;
         }
@@ -206,6 +214,44 @@ export class WorkspaceEventEmitterService {
       eventStreamChannelId: streamChannelId,
       payload,
     });
+  }
+
+  private async enrichFieldMetadataEventsWithRelations(
+    metadataEventBatch: MetadataEventBatch,
+  ): Promise<MetadataEventBatch> {
+    if (metadataEventBatch.metadataName !== 'fieldMetadata') {
+      return metadataEventBatch;
+    }
+
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: metadataEventBatch.workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+        },
+      );
+
+    const enrichedEvents = metadataEventBatch.events.map((event) => {
+      if (!('after' in event.properties) || !isDefined(event.properties.after)) {
+        return event;
+      }
+
+      const enrichedAfter = enrichFieldMetadataEventWithRelations({
+        record: event.properties.after as Record<string, unknown>,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+
+      return {
+        ...event,
+        properties: {
+          ...event.properties,
+          after: enrichedAfter,
+        },
+      } as typeof event;
+    });
+
+    return { ...metadataEventBatch, events: enrichedEvents };
   }
 
   private async processObjectRecordStreamEvents(
