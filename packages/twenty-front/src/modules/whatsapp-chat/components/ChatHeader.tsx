@@ -333,7 +333,7 @@ export const ChatHeader = ({
           {onToggleDetails && (
             <StyledIconButton
               onClick={onToggleDetails}
-              title="Lead assistant — SA, profile, MOP & more"
+              title="Lead Assistant"
             >
               <IconUser size={18} />
             </StyledIconButton>

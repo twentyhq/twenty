@@ -59,30 +59,33 @@ const StyledCloseButton = styled.button`
 `;
 
 const StyledTabs = styled.div`
-  background: #FFFFFF;
+  background: #fafafa;
   border-bottom: 1px solid #D1D5DB;
   display: flex;
   gap: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
 `;
 
 const StyledTab = styled.button<{ isActive: boolean }>`
-  background: none;
+  background: ${({ isActive }) => (isActive ? 'white' : 'transparent')};
   border: none;
-  border-bottom: 2px solid
+  border-bottom: 3px solid
     ${({ isActive }) =>
-      isActive ? '#1A6CFF' : 'transparent'};
+      isActive ? '#075E54' : 'transparent'};
   color: ${({ isActive }) =>
-    isActive ? '#1A6CFF' : '#9CA3AF'};
+    isActive ? '#075E54' : '#6B7280'};
   cursor: pointer;
-  flex: 1;
+  flex: 0 0 auto;
   font-family: inherit;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
+  font-size: 13px;
+  font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
+  padding: 12px 16px;
   transition: all 120ms ease;
+  white-space: nowrap;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${({ isActive }) => (isActive ? '#075E54' : '#374151')};
   }
 `;
 
@@ -588,7 +591,7 @@ const formatDate = (isoString: string | null): string => {
   });
 };
 
-type TabId = 'sa' | 'profile' | 'mop' | 'conversation' | 'assignment' | 'calls' | 'opportunities';
+type TabId = 'sa' | 'videos' | 'profile' | 'calls' | 'keyfacts';
 
 const cleanMopName = (name?: string): string => {
   if (!name) return '';
@@ -837,7 +840,7 @@ export const ConversationDetails = ({
   const { calls, loading: callsLoading } = useCloseCalls(
     conversation.leadPhoneNumber,
   );
-  const { opportunities, loading: opportunitiesLoading } =
+  const { opportunities } =
     useCloseOpportunities(conversation.leadPhoneNumber);
   const { pictureUrl } = useProfilePicture(
     conversation.sessionName,
@@ -911,7 +914,7 @@ export const ConversationDetails = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle>Details</StyledTitle>
+        <StyledTitle>Lead Assistant</StyledTitle>
         <StyledCloseButton onClick={onClose}>
           <IconX size={16} />
         </StyledCloseButton>
@@ -922,7 +925,13 @@ export const ConversationDetails = ({
           isActive={activeTab === 'sa'}
           onClick={() => setActiveTab('sa')}
         >
-          SA{saResults.length > 0 ? ` (${saResults.length})` : ''}
+          Struktur Analyse
+        </StyledTab>
+        <StyledTab
+          isActive={activeTab === 'videos'}
+          onClick={() => setActiveTab('videos')}
+        >
+          Videos
         </StyledTab>
         <StyledTab
           isActive={activeTab === 'profile'}
@@ -931,34 +940,16 @@ export const ConversationDetails = ({
           Profile
         </StyledTab>
         <StyledTab
-          isActive={activeTab === 'mop'}
-          onClick={() => setActiveTab('mop')}
-        >
-          MOP{mopRecords.length > 0 ? ` (${mopRecords.length})` : ''}
-        </StyledTab>
-        <StyledTab
-          isActive={activeTab === 'conversation'}
-          onClick={() => setActiveTab('conversation')}
-        >
-          Conversation
-        </StyledTab>
-        <StyledTab
-          isActive={activeTab === 'assignment'}
-          onClick={() => setActiveTab('assignment')}
-        >
-          Assignment
-        </StyledTab>
-        <StyledTab
           isActive={activeTab === 'calls'}
           onClick={() => setActiveTab('calls')}
         >
           Calls{calls.length > 0 ? ` (${calls.length})` : ''}
         </StyledTab>
         <StyledTab
-          isActive={activeTab === 'opportunities'}
-          onClick={() => setActiveTab('opportunities')}
+          isActive={activeTab === 'keyfacts'}
+          onClick={() => setActiveTab('keyfacts')}
         >
-          Opps{opportunities.length > 0 ? ` (${opportunities.length})` : ''}
+          Key Facts
         </StyledTab>
       </StyledTabs>
 
@@ -990,7 +981,17 @@ export const ConversationDetails = ({
           />
         )}
 
-        {/* ── Profile Tab ──────────────────────────────────── */}
+        {/* ── Videos Tab ─────────────────────────────────── */}
+        {activeTab === 'videos' && (
+          <StyledSection>
+            <StyledSectionTitle>Video Library</StyledSectionTitle>
+            <StyledEmptyState>
+              Video sharing coming soon
+            </StyledEmptyState>
+          </StyledSection>
+        )}
+
+        {/* ── Profile Tab (merged: contact, MOP, assignment, pipeline, opportunities) ── */}
         {activeTab === 'profile' && (
           <>
             <StyledSection>
@@ -1195,14 +1196,12 @@ export const ConversationDetails = ({
                 </StyledBadgeRow>
               </StyledSection>
             )}
-          </>
-        )}
 
-        {/* ── MOP Tab ─────────────────────────────────────── */}
-        {activeTab === 'mop' && (
-          <>
+            <StyledDivider />
+
+            {/* ── MOP Section ── */}
             {!contactEmail && (
-              <StyledEmptyState>No email found for this contact</StyledEmptyState>
+              <StyledEmptyState>No email for MOP lookup</StyledEmptyState>
             )}
 
             {contactEmail && mopSummaryLoading && (
@@ -1327,70 +1326,118 @@ export const ConversationDetails = ({
                 </StyledSection>
               </>
             )}
-          </>
-        )}
 
-        {/* ── Conversation Tab ─────────────────────────────── */}
-        {activeTab === 'conversation' && (
-          <>
+            <StyledDivider />
+
+            {/* ── Assignment Section ── */}
             <StyledSection>
-              <StyledSectionTitle>Stats</StyledSectionTitle>
+              <StyledSectionTitle>Assignment</StyledSectionTitle>
               <StyledField>
-                <StyledFieldLabel>Messages</StyledFieldLabel>
+                <StyledFieldLabel>Owner</StyledFieldLabel>
                 <StyledFieldValue>
-                  {conversation.messageCount ?? 'Unknown'}
+                  {contact?.tobAssignedName || conversation.assignedToName || 'Unassigned'}
                 </StyledFieldValue>
               </StyledField>
               <StyledField>
-                <StyledFieldLabel>Session</StyledFieldLabel>
+                <StyledFieldLabel>Coach</StyledFieldLabel>
                 <StyledFieldValue>
-                  {conversation.sessionName}
+                  {conversation.coachLeadOwnerName || 'None'}
                 </StyledFieldValue>
               </StyledField>
             </StyledSection>
 
             <StyledDivider />
 
+            {/* ── Reassign Section ── */}
             <StyledSection>
-              <StyledSectionTitle>Status</StyledSectionTitle>
-              <StyledBadgeRow>
-                {conversation.isPinned && (
-                  <StyledBadge variant="info">Pinned</StyledBadge>
-                )}
-                {conversation.isArchived && (
-                  <StyledBadge variant="neutral">Archived</StyledBadge>
-                )}
-                {conversation.isUnread && (
-                  <StyledBadge variant="warning">Unread</StyledBadge>
-                )}
-                {!conversation.lastMessageFromAgent && (
-                  <StyledBadge variant="danger">Needs reply</StyledBadge>
-                )}
-                {conversation.lastMessageFromAgent && (
-                  <StyledBadge variant="success">Replied</StyledBadge>
-                )}
-              </StyledBadgeRow>
+              <StyledSectionTitle>Reassign</StyledSectionTitle>
+              <StyledAssignInput
+                type="email"
+                placeholder="Assign to email..."
+                value={assignEmail}
+                onChange={(e) => setAssignEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAssign();
+                  }
+                }}
+              />
+              <StyledAssignButton onClick={handleAssign}>
+                Assign
+              </StyledAssignButton>
+              <StyledAssignInput
+                type="email"
+                placeholder="Coach email..."
+                value={coachEmail}
+                onChange={(e) => setCoachEmail(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAssignCoach();
+                  }
+                }}
+                style={{ marginTop: 8 }}
+              />
+              <StyledAssignButton onClick={handleAssignCoach}>
+                Assign Coach
+              </StyledAssignButton>
             </StyledSection>
 
-            <StyledDivider />
-
-            <StyledSection>
-              <StyledSectionTitle>Last Message</StyledSectionTitle>
-              <StyledField>
-                <StyledFieldLabel>
-                  {conversation.lastMessageFromAgent ? 'You' : 'Contact'}
-                </StyledFieldLabel>
-                <StyledFieldValue>
-                  {conversation.lastMessageBody || '—'}
-                </StyledFieldValue>
-              </StyledField>
-              <StyledField>
-                <StyledFieldLabel>Time</StyledFieldLabel>
-                <StyledFieldValue>
-                  {formatDate(conversation.lastMessageAt)}
-                </StyledFieldValue>
-              </StyledField>
-            </StyledSection>
+            {/* ── Opportunities Section ── */}
+            {opportunities.length > 0 && (
+              <>
+                <StyledDivider />
+                <StyledSection>
+                  <StyledSectionTitle>
+                    Opportunities ({opportunities.length})
+                  </StyledSectionTitle>
+                  {opportunities.map((opp) => (
+                    <StyledCard key={opp.id}>
+                      <StyledCardHeader>
+                        <StyledCardTitle>
+                          {opp.statusLabel || opp.statusType || 'Unknown'}
+                        </StyledCardTitle>
+                        <StyledBadge
+                          variant={
+                            opp.statusType === 'won'
+                              ? 'success'
+                              : opp.statusType === 'lost'
+                                ? 'danger'
+                                : 'info'
+                          }
+                        >
+                          {opp.statusType || 'open'}
+                        </StyledBadge>
+                      </StyledCardHeader>
+                      {(opp.value != null || opp.confidence != null) && (
+                        <StyledCardBody>
+                          {opp.value != null && (
+                            <span>
+                              Value: {opp.value}
+                              {opp.valuePeriod ? `/${opp.valuePeriod}` : ''}
+                            </span>
+                          )}
+                          {opp.confidence != null && (
+                            <span>
+                              {opp.value != null ? ' · ' : ''}
+                              Confidence: {opp.confidence}%
+                            </span>
+                          )}
+                        </StyledCardBody>
+                      )}
+                      <StyledCardMeta>
+                        {opp.userName && <span>{opp.userName}</span>}
+                        {opp.dateCreated && (
+                          <span>
+                            {opp.userName ? ' · ' : ''}
+                            Created {formatDate(opp.dateCreated)}
+                          </span>
+                        )}
+                      </StyledCardMeta>
+                    </StyledCard>
+                  ))}
+                </StyledSection>
+              </>
+            )}
           </>
         )}
 
@@ -1435,158 +1482,14 @@ export const ConversationDetails = ({
           </>
         )}
 
-        {/* ── Opportunities Tab ──────────────────────────────── */}
-        {activeTab === 'opportunities' && (
-          <>
-            <StyledSection>
-              <StyledSectionTitle>Close.io Opportunities</StyledSectionTitle>
-              {opportunitiesLoading && (
-                <StyledLoadingText>Loading opportunities...</StyledLoadingText>
-              )}
-              {!opportunitiesLoading && opportunities.length === 0 && (
-                <StyledEmptyState>No opportunities found</StyledEmptyState>
-              )}
-              {opportunities.map((opp) => (
-                <StyledCard key={opp.id}>
-                  <StyledCardHeader>
-                    <StyledCardTitle>
-                      {opp.statusLabel || opp.statusType || 'Unknown'}
-                    </StyledCardTitle>
-                    <StyledBadge
-                      variant={
-                        opp.statusType === 'won'
-                          ? 'success'
-                          : opp.statusType === 'lost'
-                            ? 'danger'
-                            : 'info'
-                      }
-                    >
-                      {opp.statusType || 'open'}
-                    </StyledBadge>
-                  </StyledCardHeader>
-                  {(opp.value != null || opp.confidence != null) && (
-                    <StyledCardBody>
-                      {opp.value != null && (
-                        <span>
-                          Value: {opp.value}
-                          {opp.valuePeriod ? `/${opp.valuePeriod}` : ''}
-                        </span>
-                      )}
-                      {opp.confidence != null && (
-                        <span>
-                          {opp.value != null ? ' · ' : ''}
-                          Confidence: {opp.confidence}%
-                        </span>
-                      )}
-                    </StyledCardBody>
-                  )}
-                  <StyledCardMeta>
-                    {opp.userName && <span>{opp.userName}</span>}
-                    {opp.dateCreated && (
-                      <span>
-                        {opp.userName ? ' · ' : ''}
-                        Created {formatDate(opp.dateCreated)}
-                      </span>
-                    )}
-                    {opp.dateWon && <span> · Won {formatDate(opp.dateWon)}</span>}
-                    {opp.dateLost && (
-                      <span> · Lost {formatDate(opp.dateLost)}</span>
-                    )}
-                  </StyledCardMeta>
-                  {opp.note && (
-                    <StyledCardBody>{opp.note}</StyledCardBody>
-                  )}
-                  {opp.leadName && (
-                    <StyledCardMeta>Lead: {opp.leadName}</StyledCardMeta>
-                  )}
-                </StyledCard>
-              ))}
-            </StyledSection>
-          </>
-        )}
-
-        {/* ── Assignment Tab ───────────────────────────────── */}
-        {activeTab === 'assignment' && (
-          <>
-            <StyledSection>
-              <StyledSectionTitle>Owner</StyledSectionTitle>
-              {(contact?.tobAssignedName || conversation.assignedToName) && (
-                <StyledField>
-                  <StyledFieldLabel>Currently assigned to</StyledFieldLabel>
-                  <StyledFieldValue>
-                    {contact?.tobAssignedName || conversation.assignedToName}
-                  </StyledFieldValue>
-                </StyledField>
-              )}
-              {(contact?.tobAssignedEmail ||
-                conversation.assignedToEmail) && (
-                <StyledField>
-                  <StyledFieldLabel>Email</StyledFieldLabel>
-                  <StyledFieldValue>
-                    {contact?.tobAssignedEmail || conversation.assignedToEmail}
-                  </StyledFieldValue>
-                </StyledField>
-              )}
-              {!contact?.tobAssignedName && !conversation.assignedToName && (
-                <StyledBadge variant="neutral">Unassigned</StyledBadge>
-              )}
-            </StyledSection>
-
-            <StyledDivider />
-
-            <StyledSection>
-              <StyledSectionTitle>Reassign</StyledSectionTitle>
-              <StyledAssignInput
-                type="email"
-                placeholder="Assign to email..."
-                value={assignEmail}
-                onChange={(e) => setAssignEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAssign();
-                  }
-                }}
-              />
-              <StyledAssignButton onClick={handleAssign}>
-                Assign
-              </StyledAssignButton>
-            </StyledSection>
-
-            <StyledDivider />
-
-            <StyledSection>
-              <StyledSectionTitle>Coach</StyledSectionTitle>
-              {conversation.coachLeadOwnerName && (
-                <StyledField>
-                  <StyledFieldLabel>Currently assigned to</StyledFieldLabel>
-                  <StyledFieldValue>
-                    {conversation.coachLeadOwnerName}
-                  </StyledFieldValue>
-                </StyledField>
-              )}
-              {!conversation.coachLeadOwnerName && (
-                <StyledBadge variant="neutral">No coach assigned</StyledBadge>
-              )}
-            </StyledSection>
-
-            <StyledSection>
-              <StyledSectionTitle>Reassign Coach</StyledSectionTitle>
-              <StyledAssignInput
-                type="email"
-                placeholder="Coach email..."
-                value={coachEmail}
-                onChange={(e) => setCoachEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAssignCoach();
-                  }
-                }}
-              />
-              <StyledAssignButton onClick={handleAssignCoach}>
-                Assign Coach
-              </StyledAssignButton>
-            </StyledSection>
-          </>
+        {/* ── Key Facts Tab ──────────────────────────────── */}
+        {activeTab === 'keyfacts' && (
+          <StyledSection>
+            <StyledSectionTitle>Key Facts</StyledSectionTitle>
+            <StyledEmptyState>
+              AI-extracted key facts coming soon
+            </StyledEmptyState>
+          </StyledSection>
         )}
       </StyledBody>
     </StyledContainer>
