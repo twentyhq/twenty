@@ -53,13 +53,27 @@ const NON_TS_VECTOR_INDIVIDUAL_MIGRATIONS = allActions
 const FIRST_NON_TS_VECTOR_UNIVERSAL_IDENTIFIER =
   allActions[0].flatEntity.universalIdentifier;
 
-const isUniqueViolationError = (error: Error): boolean => {
-  const message =
-    error instanceof WorkspaceMigrationRunnerException
-      ? error.message
-      : String(error);
+const DUPLICATE_KEY_MESSAGE = 'duplicate key value violates unique constraint';
 
-  return message.includes('duplicate key value violates unique constraint');
+const isUniqueViolationError = (error: Error): boolean => {
+  if (error.message.includes(DUPLICATE_KEY_MESSAGE)) {
+    return true;
+  }
+
+  if (error instanceof WorkspaceMigrationRunnerException) {
+    const nestedErrors = [
+      error.errors?.metadata,
+      error.errors?.workspaceSchema,
+      error.errors?.actionTranspilation,
+    ];
+
+    return nestedErrors.some(
+      (nestedError) =>
+        nestedError?.message?.includes(DUPLICATE_KEY_MESSAGE) === true,
+    );
+  }
+
+  return false;
 };
 
 @Command({
