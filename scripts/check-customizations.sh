@@ -190,6 +190,10 @@ check_file_contains \
   "resolveGoToActionLabels" \
   "Legacy command menu items must apply object-aware Go To labels"
 check_file_contains \
+  "packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts" \
+  "deleteSingleRecord" \
+  "Delete single record action must be pinned as a header button"
+check_file_contains \
   "packages/twenty-front/src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx" \
   "PermissionFlagType.LAYOUTS" \
   "Edit navigation sidebar must be gated behind LAYOUTS permission"

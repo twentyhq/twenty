@@ -52,7 +52,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Delete',
     icon: 'IconTrash',
     position: 3,
-    isPinned: false,
+    isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and noneDefined(selectedRecords, "deletedAt")',
@@ -66,7 +66,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Delete',
     icon: 'IconTrash',
     position: 4,
-    isPinned: false,
+    isPinned: true,
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords >= 2 and objectPermissions.canSoftDeleteObjectRecords and not hasAnySoftDeleteFilterOnView and numberOfSelectedRecords < 10000',
