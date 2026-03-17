@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import {
+  type FocusEventHandler,
   type KeyboardEvent,
   useCallback,
   useEffect,
@@ -7,6 +8,9 @@ import {
   useState,
 } from 'react';
 
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import {
   IconPaperclip,
   IconSend,
@@ -152,6 +156,37 @@ export const ChatInput = ({
   const [duration, setDuration] = useState(0);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Disable global single-key hotkeys (g→o, /, @) while typing in chat
+  const CHAT_INPUT_FOCUS_ID = 'whatsapp-chat-input';
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
+  const handleFocus: FocusEventHandler<HTMLTextAreaElement> = useCallback(() => {
+    pushFocusItemToFocusStack({
+      focusId: CHAT_INPUT_FOCUS_ID,
+      component: {
+        type: FocusComponentType.TEXT_AREA,
+        instanceId: CHAT_INPUT_FOCUS_ID,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
+  }, [pushFocusItemToFocusStack]);
+
+  const handleBlur: FocusEventHandler<HTMLTextAreaElement> = useCallback(() => {
+    removeFocusItemFromFocusStackById({ focusId: CHAT_INPUT_FOCUS_ID });
+  }, [removeFocusItemFromFocusStackById]);
+
+  // Clean up focus stack on unmount
+  useEffect(() => {
+    return () => {
+      removeFocusItemFromFocusStackById({ focusId: CHAT_INPUT_FOCUS_ID });
+    };
+  }, [removeFocusItemFromFocusStackById]);
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -357,6 +392,8 @@ export const ChatInput = ({
             adjustHeight();
           }}
           onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           disabled={disabled}
           rows={1}
         />

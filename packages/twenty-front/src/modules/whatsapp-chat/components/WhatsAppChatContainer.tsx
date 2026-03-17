@@ -4,6 +4,7 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { activeSessionNameState } from '@/whatsapp-chat/states/activeSessionNameState';
 import { currentConversationIdState } from '@/whatsapp-chat/states/currentConversationIdState';
 import { ChatHeader } from '@/whatsapp-chat/components/ChatHeader';
 import { ChatThread } from '@/whatsapp-chat/components/ChatThread';
@@ -139,7 +140,12 @@ export const WhatsAppChatContainer = () => {
     ? `${currentMember.name.firstName} ${currentMember.name.lastName ?? ''}`.trim()
     : currentMember?.userEmail ?? '';
 
-  const [activeSession, setActiveSession] = useState<WaSession | null>(null);
+  const [activeSessionName, setActiveSessionName] = useRecoilStateV2(
+    activeSessionNameState,
+  );
+
+  // Derive the full session object from the persisted name
+  const activeSession = sessions.find((s) => s.name === activeSessionName) ?? null;
 
   const [currentConversationId, setCurrentConversationId] = useRecoilStateV2(
     currentConversationIdState,
@@ -157,23 +163,23 @@ export const WhatsAppChatContainer = () => {
   } | null>(null);
 
   const handleSelectSession = useCallback((session: WaSession) => {
-    setActiveSession(session);
+    setActiveSessionName(session.name);
     setCurrentConversationId(null);
     setSelectedConversation(null);
-  }, [setCurrentConversationId]);
+  }, [setActiveSessionName, setCurrentConversationId]);
 
   const handleBackToSessions = useCallback(() => {
-    setActiveSession(null);
+    setActiveSessionName(null);
     setCurrentConversationId(null);
     setSelectedConversation(null);
-  }, [setCurrentConversationId]);
+  }, [setActiveSessionName, setCurrentConversationId]);
 
   // Auto-select if there's only one session
   useEffect(() => {
-    if (!activeSession && !sessionsLoading && sessions.length === 1) {
-      setActiveSession(sessions[0]);
+    if (!activeSessionName && !sessionsLoading && sessions.length === 1) {
+      setActiveSessionName(sessions[0].name);
     }
-  }, [activeSession, sessionsLoading, sessions]);
+  }, [activeSessionName, sessionsLoading, sessions, setActiveSessionName]);
 
   const conversationsRef = useRef<WaConversation[]>([]);
 
