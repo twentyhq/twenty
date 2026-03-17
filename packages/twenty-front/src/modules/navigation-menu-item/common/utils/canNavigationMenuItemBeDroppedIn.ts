@@ -1,9 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  FAVORITE_NAVIGATION_ITEM_DROPPABLE_PREFIX,
-  WORKSPACE_NAVIGATION_ITEM_DROPPABLE_PREFIX,
-} from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 
 type NavigationMenuItemSection = 'workspace' | 'favorite';
 
@@ -20,8 +17,8 @@ export const canNavigationMenuItemBeDroppedIn = ({
 
   const prefix =
     navigationMenuItemSection === 'workspace'
-      ? WORKSPACE_NAVIGATION_ITEM_DROPPABLE_PREFIX
-      : FAVORITE_NAVIGATION_ITEM_DROPPABLE_PREFIX;
+      ? NavigationMenuItemDroppableIds.WORKSPACE_DROPPABLE_PREFIX
+      : NavigationMenuItemDroppableIds.FAVORITE_DROPPABLE_PREFIX;
 
   return droppableId.startsWith(prefix);
 };

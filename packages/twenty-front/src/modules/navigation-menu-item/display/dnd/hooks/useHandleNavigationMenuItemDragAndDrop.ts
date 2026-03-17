@@ -64,26 +64,16 @@ export const useHandleNavigationMenuItemDragAndDrop = () => {
       return;
     }
 
-    let destinationFolderId: string | null;
-    let sourceFolderId: string | null;
-    try {
-      destinationFolderId = validateAndExtractFolderId({
-        droppableId: destination.droppableId,
-        orphanDroppableId:
-          NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS,
-      });
-    } catch {
-      return;
-    }
-    try {
-      sourceFolderId = validateAndExtractFolderId({
-        droppableId: source.droppableId,
-        orphanDroppableId:
-          NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS,
-      });
-    } catch {
-      return;
-    }
+    const destinationFolderId = validateAndExtractFolderId({
+      droppableId: destination.droppableId,
+      orphanDroppableId:
+        NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS,
+    });
+    const sourceFolderId = validateAndExtractFolderId({
+      droppableId: source.droppableId,
+      orphanDroppableId:
+        NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS,
+    });
 
     if (
       destination.droppableId.startsWith(
