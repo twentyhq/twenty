@@ -8,6 +8,7 @@ import { useCloseCalls } from '@/whatsapp-chat/hooks/useCloseCalls';
 import { useCloseOpportunities } from '@/whatsapp-chat/hooks/useCloseOpportunities';
 import { useMopSummary } from '@/whatsapp-chat/hooks/useMopSummary';
 import { useMopDetails } from '@/whatsapp-chat/hooks/useMopDetails';
+import { useStrukturanalyse, type SaResult } from '@/whatsapp-chat/hooks/useStrukturanalyse';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
 import { useProfilePicture } from '@/whatsapp-chat/hooks/useProfilePicture';
 
@@ -380,6 +381,200 @@ const StyledStatLabel = styled.span`
   text-transform: uppercase;
 `;
 
+// ── SA styled components ────────────────────────────────────────
+
+const StyledSaCard = styled.div`
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+`;
+
+const StyledSaImagesRow = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+`;
+
+const StyledSaImageWrapper = styled.div`
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+`;
+
+const StyledSaImage = styled.img`
+  background: #f9fafb;
+  display: block;
+  max-height: 180px;
+  object-fit: contain;
+  width: 100%;
+`;
+
+const StyledSaImageLabel = styled.span`
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  color: white;
+  font-size: 9px;
+  font-weight: 600;
+  left: 4px;
+  padding: 2px 6px;
+  position: absolute;
+  top: 4px;
+`;
+
+const StyledSaStatusBadge = styled.span<{
+  saStatus: 'success' | 'failed' | 'invalid' | 'pending';
+}>`
+  border-radius: 10px;
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  width: fit-content;
+  ${({ saStatus }) => {
+    switch (saStatus) {
+      case 'success':
+        return 'background: #dcfce7; color: #16a34a;';
+      case 'failed':
+        return 'background: #fee2e2; color: #dc2626;';
+      case 'invalid':
+        return 'background: #fef3c7; color: #d97706;';
+      default:
+        return 'background: #f3f4f6; color: #6b7280;';
+    }
+  }}
+`;
+
+const StyledSaButtonsRow = styled.div`
+  display: flex;
+  gap: 8px;
+  width: 100%;
+`;
+
+const StyledSaSendOriginal = styled.button`
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 6px;
+  justify-content: center;
+  padding: 8px 12px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+`;
+
+const StyledSaSendAnalyzed = styled.button`
+  align-items: center;
+  background: #075e54;
+  border: 1px solid #075e54;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 6px;
+  justify-content: center;
+  padding: 8px 12px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #064e46;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+`;
+
+const StyledSaInterpretation = styled.div`
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+`;
+
+const StyledSaInterpretationHeader = styled.div`
+  align-items: center;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+`;
+
+const StyledSaInterpretationTitle = styled.span`
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+`;
+
+const StyledSaCopyButton = styled.button`
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+`;
+
+const StyledSaInterpretationBody = styled.div`
+  color: #4b5563;
+  font-size: 13px;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+`;
+
+const StyledSaTimestamp = styled.span`
+  color: #6b7280;
+  font-family: monospace;
+  font-size: 11px;
+`;
+
+const StyledSaErrorBox = styled.div<{ variant: 'warning' | 'error' }>`
+  align-items: flex-start;
+  border-radius: 6px;
+  display: flex;
+  font-size: 11px;
+  gap: 6px;
+  max-width: 280px;
+  padding: 6px 8px;
+  ${({ variant }) =>
+    variant === 'warning'
+      ? 'background: #fef3c7; border: 1px solid #fde047; color: #92400e;'
+      : 'background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b;'}
+`;
+
 // ── Helpers ─────────────────────────────────────────────────────
 
 const formatDate = (isoString: string | null): string => {
@@ -393,7 +588,7 @@ const formatDate = (isoString: string | null): string => {
   });
 };
 
-type TabId = 'profile' | 'mop' | 'conversation' | 'assignment' | 'calls' | 'opportunities';
+type TabId = 'sa' | 'profile' | 'mop' | 'conversation' | 'assignment' | 'calls' | 'opportunities';
 
 const cleanMopName = (name?: string): string => {
   if (!name) return '';
@@ -414,6 +609,212 @@ const formatCallDuration = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+};
+
+// ── SA Tab Component ────────────────────────────────────────────
+
+const getSaStatus = (
+  result: SaResult,
+): 'success' | 'failed' | 'invalid' | 'pending' => {
+  const s = (result.status || '').toLowerCase();
+  if (s === 'completed' || s === 'success') return 'success';
+  if (s === 'invalid' || s === 'invalid input' || s === 'invalid_input')
+    return 'invalid';
+  if (s === 'failed' || s === 'error') return 'failed';
+  return 'pending';
+};
+
+const getSaStatusLabel = (saStatus: string): string => {
+  switch (saStatus) {
+    case 'success':
+      return 'Success';
+    case 'invalid':
+      return 'Invalid Input';
+    case 'failed':
+      return 'Failed';
+    default:
+      return 'Pending';
+  }
+};
+
+const formatSaDate = (iso: string): string => {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+type SaTabContentProps = {
+  results: SaResult[];
+  loading: boolean;
+  conversation: WaConversation;
+  sendImage: (params: {
+    runId: string;
+    sessionName: string;
+    toJid: string;
+    conversationId: string;
+    caption?: string;
+  }) => Promise<boolean>;
+};
+
+const SaTabContent = ({
+  results,
+  loading,
+  conversation,
+  sendImage,
+}: SaTabContentProps) => {
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [displayCount, setDisplayCount] = useState(5);
+
+  const handleSend = useCallback(
+    async (result: SaResult, type: 'input' | 'output') => {
+      const runId = result.run_id || result.picture_id || '';
+      setSendingId(`${runId}-${type}`);
+      await sendImage({
+        runId,
+        sessionName: conversation.sessionName,
+        toJid: conversation.leadPhoneNumber,
+        conversationId: conversation.id,
+        caption: type === 'output' ? 'Strukturanalyse' : undefined,
+      });
+      setSendingId(null);
+    },
+    [sendImage, conversation],
+  );
+
+  const handleCopy = useCallback((text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  }, []);
+
+  if (loading && results.length === 0) {
+    return (
+      <StyledSection>
+        <StyledLoadingText>Loading structure analyses...</StyledLoadingText>
+      </StyledSection>
+    );
+  }
+
+  if (results.length === 0) {
+    return (
+      <StyledSection>
+        <StyledSectionTitle>Struktur Analyse</StyledSectionTitle>
+        <StyledEmptyState>
+          No structure analyses for this conversation
+        </StyledEmptyState>
+      </StyledSection>
+    );
+  }
+
+  const visible = results.slice(0, displayCount);
+  const remaining = results.length - displayCount;
+
+  return (
+    <>
+      <StyledSection>
+        <StyledSectionTitle>Struktur Analyse</StyledSectionTitle>
+      </StyledSection>
+
+      {visible.map((result) => {
+        const saStatus = getSaStatus(result);
+        const runId = result.run_id || result.picture_id || '';
+        const hasInput = !!result.annotated_image_b64; // input is always shown if we have any image
+        const hasOutput =
+          saStatus === 'success' && !!result.annotated_image_b64;
+
+        return (
+          <StyledSaCard key={runId}>
+            <StyledSaTimestamp>{formatSaDate(result.created_at)}</StyledSaTimestamp>
+
+            <StyledSaStatusBadge saStatus={saStatus}>
+              {getSaStatusLabel(saStatus)}
+            </StyledSaStatusBadge>
+
+            {result.error && (
+              <StyledSaErrorBox
+                variant={saStatus === 'invalid' ? 'warning' : 'error'}
+              >
+                {result.error}
+              </StyledSaErrorBox>
+            )}
+
+            {result.annotated_image_b64 && (
+              <StyledSaImagesRow>
+                <StyledSaImageWrapper>
+                  <StyledSaImageLabel>
+                    {hasOutput ? 'Analyzed' : 'Image'}
+                  </StyledSaImageLabel>
+                  <StyledSaImage
+                    src={`data:image/jpeg;base64,${result.annotated_image_b64}`}
+                    alt="Structure analysis"
+                  />
+                </StyledSaImageWrapper>
+              </StyledSaImagesRow>
+            )}
+
+            <StyledSaButtonsRow>
+              <StyledSaSendOriginal
+                disabled={sendingId === `${runId}-input`}
+                onClick={() => handleSend(result, 'input')}
+              >
+                {sendingId === `${runId}-input` ? 'Sending...' : 'Send Original'}
+              </StyledSaSendOriginal>
+              {hasOutput && (
+                <StyledSaSendAnalyzed
+                  disabled={sendingId === `${runId}-output`}
+                  onClick={() => handleSend(result, 'output')}
+                >
+                  {sendingId === `${runId}-output`
+                    ? 'Sending...'
+                    : 'Send Analyzed'}
+                </StyledSaSendAnalyzed>
+              )}
+            </StyledSaButtonsRow>
+
+            {result.analysis_text && (
+              <StyledSaInterpretation>
+                <StyledSaInterpretationHeader>
+                  <StyledSaInterpretationTitle>
+                    Interpretation
+                  </StyledSaInterpretationTitle>
+                  <StyledSaCopyButton
+                    onClick={() => handleCopy(result.analysis_text!, runId)}
+                    title="Copy to clipboard"
+                  >
+                    {copiedId === runId ? '✓' : '⎘'}
+                  </StyledSaCopyButton>
+                </StyledSaInterpretationHeader>
+                <StyledSaInterpretationBody>
+                  {result.analysis_text}
+                </StyledSaInterpretationBody>
+              </StyledSaInterpretation>
+            )}
+          </StyledSaCard>
+        );
+      })}
+
+      {remaining > 0 && (
+        <StyledShowMore
+          onClick={() => setDisplayCount((prev) => prev + 5)}
+        >
+          Load more ({remaining} remaining)
+        </StyledShowMore>
+      )}
+
+      {remaining <= 0 && results.length > 5 && (
+        <StyledEmptyState style={{ fontStyle: 'italic' }}>
+          All {results.length} analyses loaded
+        </StyledEmptyState>
+      )}
+    </>
+  );
 };
 
 // ── Component ───────────────────────────────────────────────────
@@ -447,7 +848,12 @@ export const ConversationDetails = ({
     useMopSummary(contactEmail);
   const { records: mopRecords, loading: mopRecordsLoading } =
     useMopDetails(contactEmail);
-  const [activeTab, setActiveTab] = useState<TabId>('profile');
+  const {
+    results: saResults,
+    loading: saLoading,
+    sendImage: saSendImage,
+  } = useStrukturanalyse(conversation.id);
+  const [activeTab, setActiveTab] = useState<TabId>('sa');
   const [mopExpanded, setMopExpanded] = useState(false);
   const [coachEmail, setCoachEmail] = useState(
     conversation.coachLeadOwnerEmail ?? '',
@@ -513,6 +919,12 @@ export const ConversationDetails = ({
 
       <StyledTabs>
         <StyledTab
+          isActive={activeTab === 'sa'}
+          onClick={() => setActiveTab('sa')}
+        >
+          SA{saResults.length > 0 ? ` (${saResults.length})` : ''}
+        </StyledTab>
+        <StyledTab
           isActive={activeTab === 'profile'}
           onClick={() => setActiveTab('profile')}
         >
@@ -566,6 +978,16 @@ export const ConversationDetails = ({
 
         {contactLoading && (
           <StyledLoadingText>Loading contact data...</StyledLoadingText>
+        )}
+
+        {/* ── SA Tab ──────────────────────────────────────── */}
+        {activeTab === 'sa' && (
+          <SaTabContent
+            results={saResults}
+            loading={saLoading}
+            conversation={conversation}
+            sendImage={saSendImage}
+          />
         )}
 
         {/* ── Profile Tab ──────────────────────────────────── */}
