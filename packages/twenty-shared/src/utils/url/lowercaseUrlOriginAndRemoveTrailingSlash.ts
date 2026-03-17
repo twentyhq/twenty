@@ -8,10 +8,10 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
     return rawUrl;
   }
 
-  // Only HTTP(S) URLs have a meaningful origin for this transformation.
-  // For other protocols (e.g., file:, data:), return the original URL
-  // unmodified to avoid generating "null/..." URLs or changing opaque URI semantics.
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+  // Skip URLs with opaque origins (e.g., file:, data:, mailto:), which have
+  // url.origin === "null". For these, return the original URL unmodified to
+  // avoid generating "null/..." URLs or changing opaque URI semantics.
+  if (url.origin === 'null') {
     return rawUrl;
   }
 
