@@ -1,14 +1,16 @@
-import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/constants/EngineComponentKeyComponentMap';
 import { Command } from '@/command-menu-item/display/components/Command';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
+import { useMountEngineCommand } from '@/command-menu-item/engine-command/hooks/useMountEngineCommand';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
@@ -129,6 +131,12 @@ type BuildCommandMenuItemFromStandardKeyParams = {
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
   commandMenuContextApi: CommandMenuContextApi;
+  mountEngineCommand: (
+    engineCommandId: string,
+    contextStoreInstanceId: string,
+    engineComponentKey: EngineComponentKey,
+  ) => void;
+  contextStoreInstanceId: string;
 };
 
 const buildCommandItemFromEngineKey = ({
@@ -139,10 +147,14 @@ const buildCommandItemFromEngineKey = ({
   isPinned,
   getIcon,
   commandMenuContextApi,
+  mountEngineCommand,
+  contextStoreInstanceId,
 }: BuildCommandMenuItemFromStandardKeyParams) => {
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
-  const component = ENGINE_COMPONENT_KEY_COMPONENT_MAP[engineComponentKey];
+  const handleClick = () => {
+    mountEngineCommand(item.id, contextStoreInstanceId, engineComponentKey);
+  };
 
   return {
     type,
@@ -159,16 +171,21 @@ const buildCommandItemFromEngineKey = ({
         item.conditionalAvailabilityExpression,
         commandMenuContextApi,
       ),
-    component,
+    component: <Command onClick={handleClick} />,
   };
 };
 
-export const useCommandMenuItemFrontComponentCommands = (
+export const useCommandMenuItemsFromBackend = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
+  const mountEngineCommand = useMountEngineCommand();
+
+  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ContextStoreComponentInstanceContext,
+  );
 
   const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
@@ -236,6 +253,8 @@ export const useCommandMenuItemFrontComponentCommands = (
         isPinned,
         getIcon,
         commandMenuContextApi,
+        mountEngineCommand,
+        contextStoreInstanceId,
       });
     }
 

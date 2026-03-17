@@ -1,6 +1,4 @@
 import {
-  enqueueSnackbar,
-  getFrontComponentCommandErrorDedupeKey,
   openSidePanelPage,
   unmountFrontComponent,
   useFrontComponentId,
@@ -38,25 +36,14 @@ export const CommandOpenSidePanelPage = ({
     const run = async () => {
       onClick?.();
 
-      try {
-        await openSidePanelPage({
-          page,
-          pageTitle,
-          pageIcon,
-          shouldResetSearchState,
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          await enqueueSnackbar({
-            message: 'Command failed',
-            detailedMessage: error.message,
-            variant: 'error',
-            dedupeKey: getFrontComponentCommandErrorDedupeKey(frontComponentId),
-          });
-        }
-      } finally {
-        await unmountFrontComponent();
-      }
+      await openSidePanelPage({
+        page,
+        pageTitle,
+        pageIcon,
+        shouldResetSearchState,
+      });
+
+      await unmountFrontComponent();
     };
 
     run();

@@ -2,9 +2,9 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
@@ -36,8 +36,8 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
   selectedNavigationMenuItemId,
   isContextDragging,
 }: WorkspaceNavigationMenuItemFolderSubItemProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
@@ -54,7 +54,7 @@ export const WorkspaceNavigationMenuItemFolderSubItem = ({
       : null;
 
   const isEditableInEditMode =
-    isNavigationMenuInEditMode &&
+    isLayoutCustomizationModeEnabled &&
     isDefined(onNavigationMenuItemClick) &&
     (navigationMenuItem.type === NavigationMenuItemType.LINK ||
       isDefined(objectMetadataItem));
