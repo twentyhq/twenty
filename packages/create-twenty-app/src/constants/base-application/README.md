@@ -18,10 +18,10 @@ Run `yarn twenty help` to list all available commands. Common commands:
 # Remotes & authentication
 yarn twenty remote add --local   # Connect to local Twenty server
 yarn twenty remote add <url>     # Connect to a remote server (OAuth)
-yarn twenty remote list          # List all configured remotes
+yarn twenty remote list           # List all configured remotes
 yarn twenty remote switch        # Switch default remote
-yarn twenty whoami               # Check auth status
-yarn twenty logout               # Remove credentials
+yarn twenty remote status        # Check auth status
+yarn twenty remote remove <name> # Remove a remote
 
 # Development
 yarn twenty dev           # Start dev mode (watch, build, sync, and auto-generate typed client)

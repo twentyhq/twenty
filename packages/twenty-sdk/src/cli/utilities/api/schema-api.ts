@@ -60,7 +60,7 @@ export class SchemaApi {
         return {
           success: false,
           error:
-            error.response.data.errors[0]?.message ||
+            error.response.data?.errors?.[0]?.message ||
             `Failed to load schema from ${endpoint}`,
         };
       }

@@ -91,7 +91,14 @@ export class ApiClient {
         authValid: response.status === 200 && !response.data.errors,
         serverUp: response.status === 200,
       };
-    } catch {
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          authValid: false,
+          serverUp: true,
+        };
+      }
+
       return {
         authValid: false,
         serverUp: false,
@@ -118,7 +125,7 @@ export class ApiClient {
 
       await this.configService.setConfig({
         accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
+        ...(newRefreshToken ? { refreshToken: newRefreshToken } : {}),
       });
 
       return newAccessToken;

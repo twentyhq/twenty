@@ -20,7 +20,13 @@ const innerAuthLogin = async (
 
   const configService = new ConfigService();
 
-  await configService.setConfig({ apiUrl, apiKey });
+  await configService.setConfig({
+    apiUrl,
+    apiKey,
+    accessToken: undefined,
+    refreshToken: undefined,
+    oauthClientId: undefined,
+  });
 
   const apiService = new ApiService();
   const validateAuth = await apiService.validateAuth();

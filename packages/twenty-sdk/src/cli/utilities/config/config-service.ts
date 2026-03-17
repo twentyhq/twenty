@@ -11,7 +11,6 @@ export type RemoteConfig = {
   accessToken?: string;
   refreshToken?: string;
   oauthClientId?: string;
-  oauthClientSecret?: string;
 };
 
 type PersistedConfig = {
@@ -84,7 +83,6 @@ export class ConfigService {
       refreshToken:
         str(source.refreshToken) ?? str(source.applicationRefreshToken),
       oauthClientId: str(source.oauthClientId),
-      oauthClientSecret: str(source.oauthClientSecret),
     });
 
     const profiles =
@@ -156,7 +154,6 @@ export class ConfigService {
         accessToken: remoteConfig.accessToken,
         refreshToken: remoteConfig.refreshToken,
         oauthClientId: remoteConfig.oauthClientId,
-        oauthClientSecret: remoteConfig.oauthClientSecret,
       };
     } catch {
       return defaultConfig;

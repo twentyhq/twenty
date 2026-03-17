@@ -23,10 +23,10 @@ Run `yarn twenty help` to list all available commands. Common commands:
 ```bash
 # Remotes & Authentication
 yarn twenty remote add --local     # Authenticate with Twenty
-yarn twenty logout    # Remove credentials
-yarn twenty whoami    # Check auth status
-yarn twenty remote switch    # Switch default workspace
-yarn twenty remote list      # List all configured workspaces
+yarn twenty remote status         # Check auth status
+yarn twenty remote switch         # Switch default remote
+yarn twenty remote list           # List all configured remotes
+yarn twenty remote remove <name>  # Remove a remote
 
 # Application
 yarn twenty dev        # Start dev mode (watch, build, sync, and auto-generate typed client)
