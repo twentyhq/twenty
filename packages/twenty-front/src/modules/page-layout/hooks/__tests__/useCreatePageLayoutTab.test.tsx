@@ -1,11 +1,11 @@
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { act, renderHook } from '@testing-library/react';
-import { useSetAtom } from 'jotai';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -32,6 +32,9 @@ describe('useCreatePageLayoutTab', () => {
       () => ({
         createTab: useCreatePageLayoutTab({
           pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
         }),
         pageLayoutDraft: useAtomComponentStateValue(
           pageLayoutDraftComponentState,
@@ -40,11 +43,6 @@ describe('useCreatePageLayoutTab', () => {
         pageLayoutCurrentLayouts: useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
-        ),
-        activeTabId: useSetAtom(
-          activeTabIdComponentState.atomFamily({
-            instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
-          }),
         ),
       }),
       {
@@ -79,6 +77,9 @@ describe('useCreatePageLayoutTab', () => {
       () => ({
         createTab: useCreatePageLayoutTab({
           pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
         }),
         pageLayoutDraft: useAtomComponentStateValue(
           pageLayoutDraftComponentState,
@@ -109,6 +110,9 @@ describe('useCreatePageLayoutTab', () => {
       () => ({
         createTab: useCreatePageLayoutTab({
           pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
         }),
         pageLayoutDraft: useAtomComponentStateValue(
           pageLayoutDraftComponentState,
@@ -153,6 +157,9 @@ describe('useCreatePageLayoutTab', () => {
         );
         const createTab = useCreatePageLayoutTab({
           pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
         });
         return { setPageLayoutDraft, pageLayoutDraft, createTab };
       },
@@ -191,6 +198,9 @@ describe('useCreatePageLayoutTab', () => {
       () => ({
         createTab: useCreatePageLayoutTab({
           pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
         }),
         pageLayoutCurrentLayouts: useAtomComponentStateValue(
           pageLayoutCurrentLayoutsComponentState,
@@ -239,6 +249,9 @@ describe('useCreatePageLayoutTab', () => {
         return {
           createTab: useCreatePageLayoutTab({
             pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+              PAGE_LAYOUT_TEST_INSTANCE_ID,
+            ),
           }),
           activeTabId: activeTabId,
         };
@@ -273,6 +286,9 @@ describe('useCreatePageLayoutTab', () => {
         );
         const createTab = useCreatePageLayoutTab({
           pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
         });
         return { setPageLayoutDraft, pageLayoutDraft, createTab };
       },

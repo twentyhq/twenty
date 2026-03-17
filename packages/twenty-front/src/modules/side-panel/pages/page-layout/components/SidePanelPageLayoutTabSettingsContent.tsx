@@ -5,6 +5,7 @@ import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
 import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -26,10 +27,12 @@ import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type SidePanelPageLayoutTabSettingsContentProps = {
   pageLayoutId: string;
+  recordId: string;
 };
 
 export const SidePanelPageLayoutTabSettingsContent = ({
   pageLayoutId,
+  recordId,
 }: SidePanelPageLayoutTabSettingsContentProps) => {
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -38,6 +41,12 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     pageLayoutId,
   );
 
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId,
+    layoutType: pageLayoutDraft.type,
+    targetRecordIdentifier: { id: recordId, targetObjectNameSingular: '' },
+  });
+
   const [pageLayoutTabSettingsOpenTabId, setPageLayoutTabSettingsOpenTabId] =
     useAtomComponentState(
       pageLayoutTabSettingsOpenTabIdComponentState,
@@ -45,8 +54,14 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     );
 
   const { moveLeft, moveRight } = useMovePageLayoutTab(pageLayoutId);
-  const { deleteTab } = useDeletePageLayoutTab(pageLayoutId);
-  const { duplicateTab } = useDuplicatePageLayoutTab(pageLayoutId);
+  const { deleteTab } = useDeletePageLayoutTab({
+    pageLayoutId,
+    tabListInstanceId,
+  });
+  const { duplicateTab } = useDuplicatePageLayoutTab({
+    pageLayoutId,
+    tabListInstanceId,
+  });
   const { setAsPinnedTab } = useSetAsPinnedTab(pageLayoutId);
 
   if (!isDefined(pageLayoutTabSettingsOpenTabId)) {

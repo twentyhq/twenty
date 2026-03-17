@@ -1,7 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { removeTabLayouts } from '@/page-layout/utils/removeTabLayouts';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -10,7 +9,13 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
+export const useDeletePageLayoutTab = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -27,7 +32,6 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
   );
 
   const store = useStore();
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   const activeTabIdAtom = activeTabIdComponentState.atomFamily({
     instanceId: tabListInstanceId,

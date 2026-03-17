@@ -3,11 +3,17 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/page
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelPageLayoutTabSettings = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { pageLayoutId, recordId } =
+    usePageLayoutIdFromContextStoreTargetedRecord();
 
   if (!isDefined(pageLayoutId)) {
     return null;
   }
 
-  return <SidePanelPageLayoutTabSettingsContent pageLayoutId={pageLayoutId} />;
+  return (
+    <SidePanelPageLayoutTabSettingsContent
+      pageLayoutId={pageLayoutId}
+      recordId={recordId}
+    />
+  );
 };

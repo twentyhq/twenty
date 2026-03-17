@@ -16,8 +16,8 @@ export const useCreatePageLayoutTab = ({
   pageLayoutId: pageLayoutIdFromProps,
   tabListInstanceId,
 }: {
-  pageLayoutId?: string;
-  tabListInstanceId?: string;
+  pageLayoutId: string;
+  tabListInstanceId: string;
 }) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
