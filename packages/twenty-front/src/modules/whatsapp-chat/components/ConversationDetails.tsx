@@ -94,6 +94,7 @@ const StyledBody = styled.div`
   flex: 1;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
+  min-height: 0;
   overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(3)};
 `;
@@ -563,12 +564,17 @@ const StyledSaInterpretationTitle = styled.span`
 `;
 
 const StyledSaCopyButton = styled.button`
+  align-items: center;
   background: none;
   border: none;
   border-radius: 4px;
   color: #6b7280;
   cursor: pointer;
   display: flex;
+  font-size: 18px;
+  justify-content: center;
+  min-height: 28px;
+  min-width: 28px;
   padding: 4px;
   transition: background 0.2s;
 

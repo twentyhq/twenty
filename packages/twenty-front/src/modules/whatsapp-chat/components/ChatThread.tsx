@@ -149,16 +149,32 @@ export const ChatThread = ({
   const prevMessageCountRef = useRef(0);
 
   useEffect(() => {
-    const isNewMessage = messages.length > prevMessageCountRef.current;
-    prevMessageCountRef.current = messages.length;
+    const prevCount = prevMessageCountRef.current;
+    const newCount = messages.length;
+    prevMessageCountRef.current = newCount;
 
-    if (isNewMessage) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (newCount <= prevCount || newCount === 0) return;
+
+    // Initial load or large batch → instant scroll after layout settles
+    // Single new message → smooth scroll
+    const isInitialLoad = prevCount === 0;
+    const behavior = isInitialLoad ? 'instant' : 'smooth';
+
+    // Use requestAnimationFrame + small timeout to ensure images/media
+    // have started rendering and the container height is correct
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior });
+      }, isInitialLoad ? 100 : 0);
+    });
   }, [messages.length]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    // Delay to allow messages to render after conversation switch
+    const timer = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    }, 150);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation.id]);
 
