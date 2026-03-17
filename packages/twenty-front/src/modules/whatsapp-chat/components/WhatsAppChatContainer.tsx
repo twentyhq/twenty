@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useRecoilStateV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilStateV2';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -12,7 +12,12 @@ import { ConversationList } from '@/whatsapp-chat/components/ConversationList';
 import { FlagLeadModal } from '@/whatsapp-chat/components/FlagLeadModal';
 import { ForwardMessageModal } from '@/whatsapp-chat/components/ForwardMessageModal';
 import { SessionPicker } from '@/whatsapp-chat/components/SessionPicker';
-import { StrukturanalyseModal } from '@/whatsapp-chat/components/StrukturanalyseModal';
+
+const LazyStrukturanalyseModal = lazy(() =>
+  import('@/whatsapp-chat/components/StrukturanalyseModal').then((m) => ({
+    default: m.StrukturanalyseModal,
+  })),
+);
 import { useLabels } from '@/whatsapp-chat/hooks/useLabels';
 import { useMessages } from '@/whatsapp-chat/hooks/useMessages';
 import { useSendMessage } from '@/whatsapp-chat/hooks/useSendMessage';
@@ -597,15 +602,17 @@ export const WhatsAppChatContainer = () => {
       )}
 
       {saMessage && selectedConversation && (
-        <StrukturanalyseModal
-          message={saMessage}
-          conversation={selectedConversation}
-          onWsComplete={saWsComplete}
-          onClose={() => {
-            setSaMessage(null);
-            setSaWsComplete(null);
-          }}
-        />
+        <Suspense fallback={null}>
+          <LazyStrukturanalyseModal
+            message={saMessage}
+            conversation={selectedConversation}
+            onWsComplete={saWsComplete}
+            onClose={() => {
+              setSaMessage(null);
+              setSaWsComplete(null);
+            }}
+          />
+        </Suspense>
       )}
     </StyledContainer>
   );
