@@ -167,16 +167,16 @@ describe('interpolateCommandMenuItemLabel', () => {
     });
   });
 
-  describe('invalid expressions', () => {
-    it('should preserve the raw template for invalid syntax', () => {
+  describe('unresolvable property paths', () => {
+    it('should return empty string for a path that cannot be resolved', () => {
       const context = buildContext();
 
       expect(
         interpolateCommandMenuItemLabel({
-          label: 'Label ${!!!invalid...syntax}',
+          label: 'Label ${nonExistent.deep.path}',
           context,
         }),
-      ).toBe('Label ${!!!invalid...syntax}');
+      ).toBe('Label ');
     });
   });
 
@@ -190,6 +190,88 @@ describe('interpolateCommandMenuItemLabel', () => {
           context,
         }),
       ).toBe('Side panel: true');
+    });
+
+    it('should pass through string values as-is without forced lowercasing', () => {
+      const context = buildContext({
+        objectMetadataItem: { labelSingular: 'Person' },
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Create new ${objectMetadataItem.labelSingular}',
+          context,
+        }),
+      ).toBe('Create new Person');
+    });
+  });
+
+  describe('capitalize transform', () => {
+    it('should capitalize the first character of a resolved value', () => {
+      const context = buildContext({
+        objectMetadataItem: { labelSingular: 'person' },
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: '${capitalize(objectMetadataItem.labelSingular)} details',
+          context,
+        }),
+      ).toBe('Person details');
+    });
+
+    it('should capitalize a mixed-case value', () => {
+      const context = buildContext({
+        objectMetadataItem: { labelPlural: 'companyRecords' },
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: '${capitalize(objectMetadataItem.labelPlural)} selected',
+          context,
+        }),
+      ).toBe('CompanyRecords selected');
+    });
+
+    it('should return empty string when the nested property is undefined', () => {
+      const context = buildContext({
+        objectMetadataItem: {},
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: '${capitalize(objectMetadataItem.labelSingular)} details',
+          context,
+        }),
+      ).toBe(' details');
+    });
+  });
+
+  describe('lowercase transform', () => {
+    it('should lowercase the resolved value', () => {
+      const context = buildContext({
+        objectMetadataItem: { labelSingular: 'Person' },
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Create ${lowercase(objectMetadataItem.labelSingular)}',
+          context,
+        }),
+      ).toBe('Create person');
+    });
+
+    it('should lowercase all characters', () => {
+      const context = buildContext({
+        objectMetadataItem: { labelPlural: 'People' },
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Delete ${lowercase(objectMetadataItem.labelPlural)}',
+          context,
+        }),
+      ).toBe('Delete people');
     });
   });
 });

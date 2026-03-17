@@ -1,45 +1,9 @@
-import {
-  isNonEmptyArray,
-  isNonEmptyString,
-  isObject,
-  isString,
-} from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
 import { isDefined } from '../validation/isDefined';
 
-const BLOCKED_PROPERTY_NAMES = new Set([
-  '__proto__',
-  'constructor',
-  'prototype',
-]);
-
-export const safeGetNestedProperty = (
-  objectToEvaluate: unknown,
-  path: string,
-): unknown => {
-  if (!isString(path)) {
-    return undefined;
-  }
-
-  const parts = path.split('.');
-
-  let currentObject: unknown = objectToEvaluate;
-
-  for (const part of parts) {
-    if (!isDefined(currentObject) || !isObject(currentObject)) {
-      return undefined;
-    }
-
-    if (BLOCKED_PROPERTY_NAMES.has(part)) {
-      return undefined;
-    }
-
-    currentObject = (currentObject as Record<string, unknown>)[part];
-  }
-
-  return currentObject;
-};
+import { safeGetNestedProperty } from './safeGetNestedProperty';
 
 type ArrayMethod = 'every' | 'some';
 
