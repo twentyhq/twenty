@@ -2,7 +2,7 @@ import { type CommandMenuContextType } from '@/command-menu-item/contexts/Comman
 import { CommandMenuContextProviderDefault } from '@/command-menu-item/contexts/CommandMenuContextProviderDefault';
 import { CommandMenuContextProviderWorkflowObjects } from '@/command-menu-item/contexts/CommandMenuContextProviderWorkflowObjects';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -23,7 +23,7 @@ export const CommandMenuContextProviderLegacy = ({
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const objectMetadataItem =
     objectMetadataItemOverride ??

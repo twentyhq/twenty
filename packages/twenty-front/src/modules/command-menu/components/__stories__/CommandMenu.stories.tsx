@@ -27,7 +27,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
@@ -102,7 +102,9 @@ const meta: Meta<typeof SidePanelRootPage> = {
         },
       ]);
 
-      const objectMetadataItems = jotaiStore.get(objectMetadataItemsState.atom);
+      const objectMetadataItems = jotaiStore.get(
+        objectMetadataItemsSelector.atom,
+      );
       const companyMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === 'company',
       );

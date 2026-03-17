@@ -69,6 +69,7 @@ export const createStandardObjectFlatMetadata = <
     namePlural,
     labelSingular,
     labelPlural,
+    color: null,
     description,
     icon,
     isCustom: false,

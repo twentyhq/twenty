@@ -344,6 +344,7 @@ export interface ObjectStandardOverrides {
     labelPlural?: Scalars['String']
     description?: Scalars['String']
     icon?: Scalars['String']
+    color?: Scalars['String']
     translations?: Scalars['JSON']
     __typename: 'ObjectStandardOverrides'
 }
@@ -359,6 +360,7 @@ export interface Object {
     icon?: Scalars['String']
     standardOverrides?: ObjectStandardOverrides
     shortcut?: Scalars['String']
+    color?: Scalars['String']
     isCustom: Scalars['Boolean']
     isRemote: Scalars['Boolean']
     isActive: Scalars['Boolean']
@@ -1675,6 +1677,7 @@ export interface NavigationMenuItem {
     targetRecordId?: Scalars['UUID']
     targetObjectMetadataId?: Scalars['UUID']
     viewId?: Scalars['UUID']
+    type: NavigationMenuItemType
     name?: Scalars['String']
     link?: Scalars['String']
     icon?: Scalars['String']
@@ -1687,6 +1690,8 @@ export interface NavigationMenuItem {
     targetRecordIdentifier?: RecordIdentifier
     __typename: 'NavigationMenuItem'
 }
+
+export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD'
 
 export interface LogicFunctionExecutionResult {
     /** Execution result in JSON format */
@@ -1902,6 +1907,7 @@ export interface MinimalObjectMetadata {
     labelSingular: Scalars['String']
     labelPlural: Scalars['String']
     icon?: Scalars['String']
+    color?: Scalars['String']
     isCustom: Scalars['Boolean']
     isActive: Scalars['Boolean']
     isSystem: Scalars['Boolean']
@@ -3248,6 +3254,7 @@ export interface ObjectStandardOverridesGenqlSelection{
     labelPlural?: boolean | number
     description?: boolean | number
     icon?: boolean | number
+    color?: boolean | number
     translations?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -3264,6 +3271,7 @@ export interface ObjectGenqlSelection{
     icon?: boolean | number
     standardOverrides?: ObjectStandardOverridesGenqlSelection
     shortcut?: boolean | number
+    color?: boolean | number
     isCustom?: boolean | number
     isRemote?: boolean | number
     isActive?: boolean | number
@@ -4667,6 +4675,7 @@ export interface NavigationMenuItemGenqlSelection{
     targetRecordId?: boolean | number
     targetObjectMetadataId?: boolean | number
     viewId?: boolean | number
+    type?: boolean | number
     name?: boolean | number
     link?: boolean | number
     icon?: boolean | number
@@ -4902,6 +4911,7 @@ export interface MinimalObjectMetadataGenqlSelection{
     labelSingular?: boolean | number
     labelPlural?: boolean | number
     icon?: boolean | number
+    color?: boolean | number
     isCustom?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
@@ -6008,7 +6018,7 @@ export interface CreateOneObjectInput {
 /** The object to create */
 object: CreateObjectInput}
 
-export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
+export interface CreateObjectInput {nameSingular: Scalars['String'],namePlural: Scalars['String'],labelSingular: Scalars['String'],labelPlural: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
 
 export interface DeleteOneObjectInput {
 /** The id of the record to delete. */
@@ -6018,7 +6028,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null)}
 
 export interface UpdateViewFieldInput {
 /** The id of the view field to update */
@@ -6110,7 +6120,7 @@ export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scal
 
 export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
 
-export interface CreateNavigationMenuItemInput {userWorkspaceId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+export interface CreateNavigationMenuItemInput {userWorkspaceId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateOneNavigationMenuItemInput {
 /** The id of the record to update */
@@ -8694,6 +8704,14 @@ export const enumFeatureFlagKey = {
 export const enumRelationType = {
    ONE_TO_MANY: 'ONE_TO_MANY' as const,
    MANY_TO_ONE: 'MANY_TO_ONE' as const
+}
+
+export const enumNavigationMenuItemType = {
+   VIEW: 'VIEW' as const,
+   FOLDER: 'FOLDER' as const,
+   LINK: 'LINK' as const,
+   OBJECT: 'OBJECT' as const,
+   RECORD: 'RECORD' as const
 }
 
 export const enumLogicFunctionExecutionStatus = {

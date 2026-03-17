@@ -5,7 +5,7 @@ import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/Si
 import { useResetPreviousSidePanelContext } from '@/side-panel/pages/root/hooks/useResetPreviousSidePanelContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -24,7 +24,7 @@ export const SidePanelResetContextToSelectionButton = () => {
     SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
   );
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>

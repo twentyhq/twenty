@@ -70,6 +70,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "color": null,
           "createdAt": Any<String>,
           "description": "A support ticket",
           "duplicateCriteria": null,
@@ -422,6 +423,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "color": null,
           "createdAt": Any<String>,
           "description": "A support ticket",
           "duplicateCriteria": null,

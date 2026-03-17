@@ -1,7 +1,7 @@
 import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useCreateNavigationMenuItem } from '@/navigation-menu-item/hooks/useCreateNavigationMenuItem';
+import { useCreateNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useCreateNavigationMenuItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';

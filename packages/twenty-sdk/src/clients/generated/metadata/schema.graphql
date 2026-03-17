@@ -485,6 +485,7 @@ type ObjectStandardOverrides {
   labelPlural: String
   description: String
   icon: String
+  color: String
   translations: JSON
 }
 
@@ -499,6 +500,7 @@ type Object {
   icon: String
   standardOverrides: ObjectStandardOverrides
   shortcut: String
+  color: String
   isCustom: Boolean!
   isRemote: Boolean!
   isActive: Boolean!
@@ -1939,6 +1941,7 @@ type NavigationMenuItem {
   targetRecordId: UUID
   targetObjectMetadataId: UUID
   viewId: UUID
+  type: NavigationMenuItemType!
   name: String
   link: String
   icon: String
@@ -1949,6 +1952,14 @@ type NavigationMenuItem {
   createdAt: DateTime!
   updatedAt: DateTime!
   targetRecordIdentifier: RecordIdentifier
+}
+
+enum NavigationMenuItemType {
+  VIEW
+  FOLDER
+  LINK
+  OBJECT
+  RECORD
 }
 
 type LogicFunctionExecutionResult {
@@ -2246,6 +2257,7 @@ type MinimalObjectMetadata {
   labelSingular: String!
   labelPlural: String!
   icon: String
+  color: String
   isCustom: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
@@ -3508,6 +3520,7 @@ input CreateObjectInput {
   description: String
   icon: String
   shortcut: String
+  color: String
   skipNameField: Boolean
   isRemote: Boolean
   primaryKeyColumnType: String
@@ -3535,6 +3548,7 @@ input UpdateObjectPayload {
   description: String
   icon: String
   shortcut: String
+  color: String
   isActive: Boolean
   labelIdentifierFieldMetadataId: UUID
   imageIdentifierFieldMetadataId: UUID
@@ -3794,6 +3808,7 @@ input CreateNavigationMenuItemInput {
   targetRecordId: UUID
   targetObjectMetadataId: UUID
   viewId: UUID
+  type: NavigationMenuItemType!
   name: String
   link: String
   icon: String
