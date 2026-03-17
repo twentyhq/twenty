@@ -24,7 +24,7 @@ import { useQuery } from '@apollo/client/react';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  type EngineComponentKey,
+  EngineComponentKey,
   FindManyCommandMenuItemsDocument,
 } from '~/generated-metadata/graphql';
 
@@ -128,6 +128,19 @@ type BuildCommandMenuItemFromStandardKeyParams = {
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
   commandMenuContextApi: CommandMenuContextApi;
+  objectMetadataItems: { nameSingular: string; labelPlural: string; isActive: boolean }[];
+};
+
+// Maps GO_TO engine keys to their target object's nameSingular
+const GO_TO_ENGINE_KEY_OBJECT_MAP: Partial<Record<EngineComponentKey, string>> = {
+  [EngineComponentKey.GO_TO_PEOPLE]: 'person',
+  [EngineComponentKey.GO_TO_COMPANIES]: 'company',
+  [EngineComponentKey.GO_TO_OPPORTUNITIES]: 'opportunity',
+  [EngineComponentKey.GO_TO_TASKS]: 'task',
+  [EngineComponentKey.GO_TO_NOTES]: 'note',
+  [EngineComponentKey.GO_TO_WORKFLOWS]: 'workflow',
+  [EngineComponentKey.GO_TO_DASHBOARDS]: 'dashboard',
+  [EngineComponentKey.GO_TO_RUNS]: 'workflowRun',
 };
 
 const buildCommandItemFromEngineKey = ({
@@ -138,19 +151,57 @@ const buildCommandItemFromEngineKey = ({
   isPinned,
   getIcon,
   commandMenuContextApi,
+  objectMetadataItems,
 }: BuildCommandMenuItemFromStandardKeyParams) => {
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
   const component = ENGINE_COMPONENT_KEY_COMPONENT_MAP[engineComponentKey];
 
+  // OMNIA-CUSTOM: resolve object-specific labels for create and navigation items
+  const isCreateNewRecord =
+    engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD;
+
+  const objectLabel = isCreateNewRecord
+    ? (commandMenuContextApi.objectMetadataItem.labelSingular as
+        | string
+        | undefined)
+    : undefined;
+
+  const createRecordLabel = objectLabel
+    ? `Create ${objectLabel}`
+    : undefined;
+
+  // Resolve "Go to" labels from object metadata (supports renamed objects)
+  const goToTargetNameSingular = GO_TO_ENGINE_KEY_OBJECT_MAP[engineComponentKey];
+  const goToTargetMetadata = goToTargetNameSingular
+    ? objectMetadataItems.find((m) => m.nameSingular === goToTargetNameSingular)
+    : undefined;
+
+  // Filter out navigation items for deactivated objects
+  if (goToTargetMetadata && !goToTargetMetadata.isActive) {
+    return null;
+  }
+
+  const goToLabel = goToTargetMetadata
+    ? `Go to ${goToTargetMetadata.labelPlural}`
+    : undefined;
+  const goToShortLabel = goToTargetMetadata?.labelPlural;
+
+  const resolvedLabel = createRecordLabel ?? goToLabel ?? item.label;
+  const resolvedShortLabel =
+    createRecordLabel ?? goToShortLabel ?? item.shortLabel ?? undefined;
+
   return {
     type,
     key: `command-menu-item-engine-${item.id}`,
     scope,
-    label: item.label,
-    shortLabel: item.shortLabel ?? undefined,
+    label: resolvedLabel,
+    shortLabel: resolvedShortLabel,
     position: item.position,
     isPinned,
+    isPrimaryCTA: isCreateNewRecord || undefined,
+    accent: isCreateNewRecord ? ('blue' as const) : undefined,
+    buttonVariant: isCreateNewRecord ? ('primary' as const) : undefined,
     Icon,
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
@@ -234,6 +285,7 @@ export const useCommandMenuItemFrontComponentCommands = (
         isPinned,
         getIcon,
         commandMenuContextApi,
+        objectMetadataItems,
       });
     }
 

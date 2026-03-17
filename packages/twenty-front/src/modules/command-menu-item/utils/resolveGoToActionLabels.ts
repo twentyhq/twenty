@@ -1,6 +1,7 @@
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type MessageDescriptor } from '@lingui/core';
 
 // Maps "Go to" action keys to the object they navigate to
 const GO_TO_ACTION_OBJECT_MAP: Record<string, CoreObjectNameSingular> = {
@@ -17,31 +18,54 @@ const GO_TO_ACTION_OBJECT_MAP: Record<string, CoreObjectNameSingular> = {
     CoreObjectNameSingular.Dashboard,
 };
 
+// OMNIA-CUSTOM: resolves "Go to" labels from object metadata and filters deactivated objects
 export const resolveGoToActionLabels = <
-  TAction extends { key: string; label: string; shortLabel?: string },
+  TAction extends {
+    key: string;
+    label: string | MessageDescriptor;
+    shortLabel?: string | MessageDescriptor;
+  },
 >(
   actions: TAction[],
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: Pick<
+    ObjectMetadataItem,
+    'nameSingular' | 'labelPlural' | 'isActive'
+  >[],
 ): TAction[] => {
-  return actions.map((action) => {
-    const targetObjectNameSingular = GO_TO_ACTION_OBJECT_MAP[action.key];
+  return actions
+    .filter((action) => {
+      const targetObjectNameSingular = GO_TO_ACTION_OBJECT_MAP[action.key];
 
-    if (!targetObjectNameSingular) {
-      return action;
-    }
+      if (!targetObjectNameSingular) {
+        return true;
+      }
 
-    const targetObjectMetadata = objectMetadataItems.find(
-      (item) => item.nameSingular === targetObjectNameSingular,
-    );
+      const targetObjectMetadata = objectMetadataItems.find(
+        (item) => item.nameSingular === targetObjectNameSingular,
+      );
 
-    if (!targetObjectMetadata) {
-      return action;
-    }
+      // Keep the item if we can't find the target (shouldn't happen), filter if deactivated
+      return !targetObjectMetadata || targetObjectMetadata.isActive;
+    })
+    .map((action) => {
+      const targetObjectNameSingular = GO_TO_ACTION_OBJECT_MAP[action.key];
 
-    return {
-      ...action,
-      label: `Go to ${targetObjectMetadata.labelPlural}`,
-      shortLabel: targetObjectMetadata.labelPlural,
-    };
-  });
+      if (!targetObjectNameSingular) {
+        return action;
+      }
+
+      const targetObjectMetadata = objectMetadataItems.find(
+        (item) => item.nameSingular === targetObjectNameSingular,
+      );
+
+      if (!targetObjectMetadata) {
+        return action;
+      }
+
+      return {
+        ...action,
+        label: `Go to ${targetObjectMetadata.labelPlural}`,
+        shortLabel: targetObjectMetadata.labelPlural,
+      };
+    });
 };

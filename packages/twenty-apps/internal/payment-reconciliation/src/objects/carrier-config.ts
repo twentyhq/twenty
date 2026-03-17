@@ -2,17 +2,17 @@ import { defineObject, FieldType } from 'twenty-sdk';
 
 import {
   CARRIER_CONFIG_OBJECT_ID,
-  CC_NAME_FIELD_ID,
-  CC_CARRIER_CRM_ID_FIELD_ID,
-  CC_PARSER_ID_FIELD_ID,
-  CC_BOB_COLUMN_MAPPING_FIELD_ID,
-  CC_STATUS_MAPPING_CONFIG_FIELD_ID,
-  CC_PMPM_SCHEDULE_FIELD_ID,
-  CC_PAYMENT_LAG_DAYS_FIELD_ID,
-  CC_AUDIT_CONTACT_FIELD_ID,
   CC_AUDIT_CONSTRAINTS_FIELD_ID,
-  CC_NOTES_FIELD_ID,
+  CC_AUDIT_CONTACT_FIELD_ID,
+  CC_BOB_COLUMN_MAPPING_FIELD_ID,
+  CC_CARRIER_CRM_ID_FIELD_ID,
   CC_MATCHING_CONFIG_FIELD_ID,
+  CC_NAME_FIELD_ID,
+  CC_NOTES_FIELD_ID,
+  CC_PARSER_ID_FIELD_ID,
+  CC_PAYMENT_LAG_DAYS_FIELD_ID,
+  CC_PMPM_SCHEDULE_FIELD_ID,
+  CC_STATUS_MAPPING_CONFIG_FIELD_ID,
 } from 'src/constants/universal-identifiers';
 
 export default defineObject({
@@ -109,7 +109,7 @@ export default defineObject({
     },
     {
       universalIdentifier: CC_NOTES_FIELD_ID,
-      type: 'RICH_TEXT_V2' as FieldType,
+      type: FieldType.RICH_TEXT,
       name: 'notes',
       label: 'Notes',
       description: 'Freeform notes about this carrier config',

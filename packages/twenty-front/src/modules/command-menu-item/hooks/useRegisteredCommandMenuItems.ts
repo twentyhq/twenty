@@ -1,6 +1,7 @@
 import { useRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/hooks/useRecordAgnosticCommands';
 import { useRelatedRecordCommands } from '@/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands';
 import { resolveCreateRecordActionLabels } from '@/command-menu-item/utils/resolveCreateRecordActionLabels';
+import { resolveGoToActionLabels } from '@/command-menu-item/utils/resolveGoToActionLabels';
 import { CommandMenuItemViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types/ShouldBeRegisteredFunctionParams';
 import { getCommandMenuItemConfig } from '@/command-menu-item/utils/getCommandMenuItemConfig';
@@ -8,8 +9,10 @@ import { getCommandMenuItemViewType } from '@/command-menu-item/utils/getCommand
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -19,6 +22,8 @@ export const useRegisteredCommandMenuItems = (
   const { objectMetadataItem } = shouldBeRegisteredParams;
 
   const { getIcon } = useIcons();
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -93,5 +98,10 @@ export const useRegisteredCommandMenuItems = (
     })
     .sort((a, b) => a.position - b.position);
 
-  return resolveCreateRecordActionLabels(commandMenuItems, objectMetadataItem);
+  const withCreateLabels = resolveCreateRecordActionLabels(
+    commandMenuItems,
+    objectMetadataItem,
+  );
+
+  return resolveGoToActionLabels(withCreateLabels, objectMetadataItems);
 };

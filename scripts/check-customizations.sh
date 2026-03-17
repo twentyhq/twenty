@@ -169,6 +169,30 @@ check_file_contains \
   "packages/twenty-front/src/modules/command-menu-item/hooks/useRegisteredCommandMenuItems.ts" \
   "resolveCreateRecordActionLabels" \
   "Registered command menu items must apply object-aware create CTA labels"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/server-items/hooks/useCommandMenuItemFrontComponentCommands.tsx" \
+  "EngineComponentKey.CREATE_NEW_RECORD" \
+  "Server-side command menu items must override CREATE_NEW_RECORD label with object-specific Create CTA"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/server-items/hooks/useCommandMenuItemFrontComponentCommands.tsx" \
+  "createRecordLabel" \
+  "Server-side command menu items must apply object-specific label and blue primary styling"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/server-items/hooks/useCommandMenuItemFrontComponentCommands.tsx" \
+  "GO_TO_ENGINE_KEY_OBJECT_MAP" \
+  "Server-side command menu items must resolve Go To labels from object metadata and filter deactivated objects"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/utils/resolveGoToActionLabels.ts" \
+  "isActive" \
+  "Go To label resolver must filter deactivated objects"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/hooks/useRegisteredCommandMenuItems.ts" \
+  "resolveGoToActionLabels" \
+  "Legacy command menu items must apply object-aware Go To labels"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx" \
+  "PermissionFlagType.LAYOUTS" \
+  "Edit navigation sidebar must be gated behind LAYOUTS permission"
 
 echo ""
 echo "--- Critical: Member Workspace Sidebar ---"

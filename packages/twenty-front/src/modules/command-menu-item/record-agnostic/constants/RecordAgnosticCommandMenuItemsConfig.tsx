@@ -12,6 +12,7 @@ import {
   IconSearch,
   IconSparkles,
 } from 'twenty-ui/display';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG: Record<
   string,
@@ -107,6 +108,8 @@ export const RECORD_AGNOSTIC_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconLayout,
     isPinned: false,
     availableOn: [CommandMenuItemViewType.GLOBAL],
+    // OMNIA-CUSTOM: gate behind LAYOUTS permission so members can't see it
+    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
     shouldBeRegistered: () => true,
     component: <EditNavigationSidebarNoSelectionRecordCommand />,
   },

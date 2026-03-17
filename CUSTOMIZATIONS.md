@@ -291,6 +291,9 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `packages/twenty-front/src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx`              | Create-record action defaults to blue primary CTA                                                                               |
 | `packages/twenty-front/src/modules/command-menu-item/hooks/useRegisteredCommandMenuItems.ts`                                | Applies object-aware create CTA labels after command registration                                                               |
 | `packages/twenty-front/src/modules/command-menu-item/utils/resolveCreateRecordActionLabels.ts`                              | **NEW** — Rewrites generic create-record action into `Create Policy`, `Create Lead`, etc. using object metadata                 |
+| `packages/twenty-front/src/modules/command-menu-item/server-items/hooks/useCommandMenuItemFrontComponentCommands.tsx`       | Server-side command menu items: `CREATE_NEW_RECORD` gets object-specific label + blue CTA; `GO_TO_*` uses custom labels + filters deactivated objects |
+| `packages/twenty-front/src/modules/command-menu-item/utils/resolveGoToActionLabels.ts`                                    | **NEW** — Resolves "Go to" labels from object metadata (`labelPlural`) and filters deactivated objects                          |
+| `packages/twenty-front/src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx`   | "Edit navigation sidebar" gated behind `LAYOUTS` permission so members can't see it                                             |
 | `packages/twenty-front/src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItemsDispatcher.tsx`              | Restores admin/member split: only `LAYOUTS` users get editable workspace navigation; members use the fixed Omnia workspace list |
 | `packages/twenty-front/src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx`                        | Re-gates workspace sidebar editing behind `PermissionFlagType.LAYOUTS`                                                          |
 | `packages/twenty-front/src/modules/navigation-menu-item/components/OmniaMemberWorkspaceNavigationMenuItems.tsx`             | **NEW** — Fixed member workspace section showing Leads, Calls, Policies, Notes, Tasks in that order                             |
@@ -478,6 +481,7 @@ After every upstream merge:
 11. **Verify required fields**: Settings → Data Model → Policy → any field → "Required" toggle present with condition options
 12. **Verify uniqueness flags**: Emails `isUnique: false`, Phones `isUnique: true` in `compute-person-standard-flat-field-metadata.util.ts`
 13. **Verify create CTA**: Policies/Leads/etc. index page shows a filled blue `Create Policy` / `Create Lead` header button, not outlined `New record`
+13a. **Verify command menu labels**: Cmd+K menu shows `Go to Leads` (not `Go to People`), deactivated objects don't appear, and `Edit navigation sidebar` is hidden for members
 14. **Verify member workspace sidebar**: Member role cannot edit workspace items; workspace section shows Leads, Calls, Policies, Notes, Tasks; Carriers folder is absent
 15. **Run lint**: `npx nx lint:diff-with-main twenty-front`
 16. **Run migrations**: `npx nx run twenty-server:database:migrate:prod`
