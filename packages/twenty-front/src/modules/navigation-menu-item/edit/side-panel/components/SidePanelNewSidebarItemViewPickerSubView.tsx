@@ -1,6 +1,6 @@
-import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/ObjectIconWithViewOverlay';
+import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/view/useAddViewToNavigationMenuDraft';
+import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/view/hooks/useAddViewToNavigationMenuDraft';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';

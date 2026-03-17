@@ -1,4 +1,4 @@
-import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/NavigationDrawerOpenedSection';
+import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
 
@@ -10,7 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const FavoritesSectionDispatcher = lazy(() =>
   import(
-    '@/navigation-menu-item/display/sections/favorites/FavoritesSectionDispatcher'
+    '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher'
   ).then((module) => ({
     default: module.FavoritesSectionDispatcher,
   })),
@@ -18,7 +18,7 @@ const FavoritesSectionDispatcher = lazy(() =>
 
 const WorkspaceNavigationMenuItemsDispatcher = lazy(() =>
   import(
-    '@/navigation-menu-item/display/sections/workspace/WorkspaceNavigationMenuItemsDispatcher'
+    '@/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItemsDispatcher'
   ).then((module) => ({
     default: module.WorkspaceNavigationMenuItemsDispatcher,
   })),

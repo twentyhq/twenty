@@ -1,9 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconLink, IconWorld } from 'twenty-ui/display';
 
-import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/LinkIconWithLinkOverlay';
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/useUpdateLinkInDraft';
+import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/hooks/useUpdateLinkInDraft';
 import { useWorkspaceSectionItems } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';

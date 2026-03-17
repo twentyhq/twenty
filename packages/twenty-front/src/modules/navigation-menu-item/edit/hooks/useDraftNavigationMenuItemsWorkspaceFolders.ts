@@ -1,4 +1,4 @@
-import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsByFolder';
+import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 
 export const useDraftNavigationMenuItemsWorkspaceFolders = () => {
   const { workspaceNavigationMenuItemsByFolder } =

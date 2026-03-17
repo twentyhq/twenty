@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { getAbsoluteUrl } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { extractDomainFromUrl } from '@/navigation-menu-item/display/link/extractDomainFromUrl';
+import { extractDomainFromUrl } from '@/navigation-menu-item/display/link/utils/extractDomainFromUrl';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import {

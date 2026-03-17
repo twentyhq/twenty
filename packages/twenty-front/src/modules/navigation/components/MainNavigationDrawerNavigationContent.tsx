@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
-import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/edit/NavigationMenuItemFolderContentDispatcher';
-import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsByFolder';
+import { NavigationMenuItemFolderContentDispatcherEffect } from '@/navigation-menu-item/edit/components/NavigationMenuItemFolderContentDispatcher';
+import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

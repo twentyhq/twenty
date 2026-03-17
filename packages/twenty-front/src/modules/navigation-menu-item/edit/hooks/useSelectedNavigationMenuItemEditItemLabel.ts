@@ -1,7 +1,7 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/getNavigationMenuItemLabel';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
 import { useSelectedNavigationMenuItemEditItemObjectMetadata } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItemObjectMetadata';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
