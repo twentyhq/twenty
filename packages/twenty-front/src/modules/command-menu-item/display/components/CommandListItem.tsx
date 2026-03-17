@@ -5,17 +5,20 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
+import { CommandListItemLoader } from './CommandListItemLoader';
 
 export const CommandListItem = ({
   action,
   onClick,
   to,
   disabled = false,
+  progress,
 }: {
   action: CommandMenuItemDisplayProps;
   onClick?: () => void;
   to?: string;
   disabled?: boolean;
+  progress?: number;
 }) => {
   const navigate = useNavigate();
 
@@ -30,6 +33,14 @@ export const CommandListItem = ({
     }
   };
 
+  const loaderComponent = disabled ? (
+    isDefined(progress) ? (
+      <CommandListItemLoader progress={progress} />
+    ) : (
+      <Loader />
+    )
+  ) : undefined;
+
   return (
     <SelectableListItem itemId={action.key} onEnter={handleClick}>
       <CommandMenuItem
@@ -41,7 +52,7 @@ export const CommandListItem = ({
         onClick={disabled ? undefined : onClick}
         hotKeys={action.hotKeys}
         disabled={disabled}
-        RightComponent={disabled ? <Loader /> : undefined}
+        RightComponent={loaderComponent}
       />
     </SelectableListItem>
   );

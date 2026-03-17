@@ -1,7 +1,9 @@
 import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
+import { headlessFrontComponentProgressFamilyState } from '@/front-components/states/headlessFrontComponentProgressFamilyState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useContext } from 'react';
 
 import { CommandMenuItemDisplay } from './CommandMenuItemDisplay';
@@ -25,6 +27,11 @@ export const HeadlessFrontComponentCommandMenuItem = ({
     frontComponentId,
   );
 
+  const headlessFrontComponentProgress = useAtomFamilyStateValue(
+    headlessFrontComponentProgressFamilyState,
+    frontComponentId,
+  );
+
   if (!commandMenuItemConfig) {
     return null;
   }
@@ -38,5 +45,11 @@ export const HeadlessFrontComponentCommandMenuItem = ({
     onClick();
   };
 
-  return <CommandMenuItemDisplay onClick={handleClick} disabled={isMounted} />;
+  return (
+    <CommandMenuItemDisplay
+      onClick={handleClick}
+      disabled={isMounted}
+      progress={headlessFrontComponentProgress}
+    />
+  );
 };

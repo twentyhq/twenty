@@ -5,16 +5,18 @@ import {
 } from 'twenty-sdk/front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
-import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
+import { headlessFrontComponentProgressFamilyState } from '@/front-components/states/headlessFrontComponentProgressFamilyState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -44,6 +46,10 @@ export const useFrontComponentExecutionContext = ({
     enqueueWarningSnackBar,
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const setHeadlessFrontComponentProgress = useSetAtomFamilyState(
+    headlessFrontComponentProgressFamilyState,
+    frontComponentId,
+  );
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -133,6 +139,11 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanelMenu();
     };
 
+  const updateProgress: FrontComponentHostCommunicationApi['updateProgress'] =
+    async (progress) => {
+      setHeadlessFrontComponentProgress(Math.max(0, Math.min(100, progress)));
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -142,6 +153,7 @@ export const useFrontComponentExecutionContext = ({
       enqueueSnackbar,
       unmountFrontComponent,
       closeSidePanel,
+      updateProgress,
     };
 
   return {

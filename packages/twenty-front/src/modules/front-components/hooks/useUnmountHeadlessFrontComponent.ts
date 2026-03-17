@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { headlessFrontComponentProgressFamilyState } from '@/front-components/states/headlessFrontComponentProgressFamilyState';
 import { mountedHeadlessFrontComponentMapsState } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { useStore } from 'jotai';
 
@@ -12,6 +13,12 @@ export const useUnmountHeadlessFrontComponent = () => {
         next.delete(frontComponentId);
         return next;
       });
+      store.set(
+        headlessFrontComponentProgressFamilyState.atomFamily(
+          frontComponentId,
+        ),
+        undefined,
+      );
     },
     [store],
   );

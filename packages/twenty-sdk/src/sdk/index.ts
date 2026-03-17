@@ -127,6 +127,7 @@ export {
   openCommandConfirmationModal,
   openSidePanelPage,
   unmountFrontComponent,
+  updateProgress,
   useFrontComponentExecutionContext,
   useFrontComponentId,
   useRecordId,

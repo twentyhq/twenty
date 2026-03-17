@@ -24,10 +24,12 @@ export const CommandMenuItemDisplay = ({
   onClick,
   to,
   disabled,
+  progress,
 }: {
   onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
+  progress?: number;
 }) => {
   const action = useContext(CommandConfigContext);
   const { displayType } = useContext(CommandMenuContext);
@@ -47,6 +49,7 @@ export const CommandMenuItemDisplay = ({
         onClick={onClick}
         to={to}
         disabled={disabled}
+        progress={progress}
       />
     );
   }
