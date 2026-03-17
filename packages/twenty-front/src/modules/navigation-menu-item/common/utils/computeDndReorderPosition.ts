@@ -7,22 +7,20 @@ import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPosit
 export const computeDndReorderPosition = ({
   sortedList,
   draggableId,
-  sourceIndex: _sourceIndex,
   destinationIndex,
-  isSameList,
 }: {
   sortedList: Array<{ id: string; position: number }>;
   draggableId: string;
-  sourceIndex: number;
   destinationIndex: number;
-  isSameList: boolean;
 }): number => {
+  const sourceIndexInList = sortedList.findIndex(
+    (item) => item.id === draggableId,
+  );
+  const isSameList = sourceIndexInList >= 0;
+
   if (isSameList) {
     const listWithoutDragged = sortedList.filter(
       (item) => item.id !== draggableId,
-    );
-    const sourceIndexInList = sortedList.findIndex(
-      (item) => item.id === draggableId,
     );
     const adjustedIndex =
       sourceIndexInList < destinationIndex &&
