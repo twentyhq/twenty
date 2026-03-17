@@ -11,25 +11,31 @@ import { type SyncStringStorage } from 'jotai/vanilla/utils/atomWithStorage';
 // typically achieves 80-90% reduction on JSON, keeping us well within limits.
 export const createCompressedLocalStorage = (): SyncStringStorage => ({
   getItem: (key: string): string | null => {
-    const compressed = localStorage.getItem(key);
+    const raw = localStorage.getItem(key);
 
-    if (compressed === null) {
+    if (raw === null) {
       return null;
     }
 
-    try {
-      const decompressed = decompressFromUTF16(compressed);
+    // Detect uncompressed JSON from before compression was enabled.
+    // lz-string UTF-16 compressed data never starts with '{' or '[',
+    // so if it looks like JSON, return it directly.
+    const firstChar = raw.charAt(0);
 
-      // If decompression returns null/empty, the value may be uncompressed
-      // (e.g. from before compression was enabled). Try returning raw value.
+    if (firstChar === '{' || firstChar === '[' || firstChar === '"') {
+      return raw;
+    }
+
+    try {
+      const decompressed = decompressFromUTF16(raw);
+
       if (decompressed === null || decompressed === '') {
-        return compressed;
+        return raw;
       }
 
       return decompressed;
     } catch {
-      // Fallback: value might be stored uncompressed from a previous version
-      return compressed;
+      return raw;
     }
   },
   setItem: (key: string, newValue: string): void => {
