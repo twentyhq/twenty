@@ -6,6 +6,7 @@ export interface SaResult {
   run_id: string;
   picture_id?: string;
   status: string;
+  original_image_b64?: string | null;
   annotated_image_b64?: string | null;
   analysis_text?: string | null;
   error?: string | null;

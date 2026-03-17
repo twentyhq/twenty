@@ -431,6 +431,8 @@ const StyledSaImagesRow = styled.div`
 
 const StyledSaImageWrapper = styled.div`
   border-radius: 6px;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   position: relative;
 `;
@@ -818,17 +820,26 @@ const SaTabContent = ({
                   </StyledSaErrorBox>
                 )}
 
-                {result.annotated_image_b64 && (
+                {(result.original_image_b64 || result.annotated_image_b64) && (
                   <StyledSaImagesRow>
-                    <StyledSaImageWrapper>
-                      <StyledSaImageLabel>
-                        {hasOutput ? 'Analyzed' : 'Image'}
-                      </StyledSaImageLabel>
-                      <StyledSaImage
-                        src={`data:image/jpeg;base64,${result.annotated_image_b64}`}
-                        alt="Structure analysis"
-                      />
-                    </StyledSaImageWrapper>
+                    {result.original_image_b64 && (
+                      <StyledSaImageWrapper>
+                        <StyledSaImageLabel>Original</StyledSaImageLabel>
+                        <StyledSaImage
+                          src={`data:image/jpeg;base64,${result.original_image_b64}`}
+                          alt="Original"
+                        />
+                      </StyledSaImageWrapper>
+                    )}
+                    {result.annotated_image_b64 && (
+                      <StyledSaImageWrapper>
+                        <StyledSaImageLabel>Analyzed</StyledSaImageLabel>
+                        <StyledSaImage
+                          src={`data:image/jpeg;base64,${result.annotated_image_b64}`}
+                          alt="Analyzed"
+                        />
+                      </StyledSaImageWrapper>
+                    )}
                   </StyledSaImagesRow>
                 )}
 
