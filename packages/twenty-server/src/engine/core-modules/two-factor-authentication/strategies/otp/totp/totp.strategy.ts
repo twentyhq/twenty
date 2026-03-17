@@ -17,6 +17,7 @@ import {
   TOTP_STRATEGY_CONFIG_SCHEMA,
   type TotpContext,
   TOTPStrategyConfig,
+  TOTP_DEFAULT_CONFIGURATION,
 } from './constants/totp.strategy.constants';
 
 @Injectable()
@@ -44,7 +45,16 @@ export class TotpStrategy implements OTPAuthenticationStrategyInterface {
       }
     }
 
-    // otplib will use its defaults: sha1, 6 digits, 30 second step, etc.
+    const config = {
+      ...TOTP_DEFAULT_CONFIGURATION,
+      ...options,
+    };
+
+    authenticator.options = {
+      window: config.window,
+      step: config.step,
+      digits: config.digits,
+    };
   }
 
   public initiate(

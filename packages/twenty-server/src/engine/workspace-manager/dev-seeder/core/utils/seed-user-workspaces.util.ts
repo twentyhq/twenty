@@ -99,7 +99,7 @@ export const seedUserWorkspaces = async ({
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['id', 'userId', 'workspaceId'])
-    .orIgnore()
+    .orUpdate(['userId', 'workspaceId'], ['id'])
     .values(userWorkspaces)
     .execute();
 };

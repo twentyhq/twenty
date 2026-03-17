@@ -120,18 +120,24 @@ export class TwoFactorAuthenticationService {
           this.generateOtpSecretEncryptionKey(userId, workspaceId),
         );
 
-      const issuer = `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`;
-      const reuseUri = authenticator.keyuri(userEmail, issuer, existingSecret);
+      const issuer = 'Twenty';
+      const accountName = workspaceDisplayName
+        ? `${workspaceDisplayName}:${userEmail}`
+        : userEmail;
+
+      const reuseUri = authenticator.keyuri(accountName, issuer, existingSecret);
 
       return reuseUri;
     }
 
+    const issuer = 'Twenty';
+    const accountName = workspaceDisplayName
+      ? `${workspaceDisplayName}:${userEmail}`
+      : userEmail;
+
     const { uri, context } = new TotpStrategy(
       TOTP_DEFAULT_CONFIGURATION,
-    ).initiate(
-      userEmail,
-      `Twenty${workspaceDisplayName ? ` - ${workspaceDisplayName}` : ''}`,
-    );
+    ).initiate(accountName, issuer);
 
     const encryptedSecret = await this.simpleSecretEncryptionUtil.encryptSecret(
       context.secret,

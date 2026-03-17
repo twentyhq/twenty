@@ -23,6 +23,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
+    "typeRoots": ["../../node_modules/@types", "node_modules/@types"],
     "types": ["jest", "node"],
     "paths": {
       "src/*": ["./src/*"],

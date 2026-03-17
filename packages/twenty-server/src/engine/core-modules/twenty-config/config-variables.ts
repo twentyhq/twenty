@@ -71,6 +71,65 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
+    description: 'Enable or disable automatic database backups',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  DATABASE_BACKUP_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description: 'Cron schedule for database backups',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DATABASE_BACKUP_CRON_SCHEDULE = '0 0 * * *';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description: 'S3 region for database backups',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsAWSRegion()
+  DATABASE_BACKUP_S3_REGION: AwsRegion;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description: 'S3 bucket name for database backups',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DATABASE_BACKUP_S3_NAME: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description: 'S3 endpoint for database backups (e.g. for R2)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DATABASE_BACKUP_S3_ENDPOINT: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    isSensitive: true,
+    description: 'S3 access key ID for database backups',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DATABASE_BACKUP_S3_ACCESS_KEY_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    isSensitive: true,
+    description: 'S3 secret access key for database backups',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DATABASE_BACKUP_S3_SECRET_ACCESS_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
     description:
       'Enable safe mode for outbound requests (prevents private IPs and other security risks). Applies to HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections.',
     type: ConfigVariableType.BOOLEAN,

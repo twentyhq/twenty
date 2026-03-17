@@ -15,6 +15,7 @@ import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/ap
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
+import { DatabaseBackupModule } from 'src/engine/core-modules/database-backup/database-backup.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
@@ -83,6 +84,7 @@ import { FileModule } from './file/file.module';
   imports: [
     EnvironmentModule,
     TwentyConfigModule.forRoot(),
+    DatabaseBackupModule,
     HealthModule,
     AuditModule,
     AuthModule,

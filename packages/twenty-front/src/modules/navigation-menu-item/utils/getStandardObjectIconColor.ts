@@ -6,13 +6,13 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 const STANDARD_OBJECT_ICON_COLOR: Partial<
   Record<CoreObjectNameSingular, ThemeColor>
 > = {
-  [CoreObjectNameSingular.Company]: 'blue',
-  [CoreObjectNameSingular.Person]: 'blue',
-  [CoreObjectNameSingular.Task]: 'turquoise',
-  [CoreObjectNameSingular.TaskTarget]: 'turquoise',
-  [CoreObjectNameSingular.Note]: 'turquoise',
-  [CoreObjectNameSingular.NoteTarget]: 'turquoise',
-  [CoreObjectNameSingular.Opportunity]: 'red',
+  [CoreObjectNameSingular.Company]: DEFAULT_NAV_ITEM_ICON_COLOR,
+  [CoreObjectNameSingular.Person]: DEFAULT_NAV_ITEM_ICON_COLOR,
+  [CoreObjectNameSingular.Task]: DEFAULT_NAV_ITEM_ICON_COLOR,
+  [CoreObjectNameSingular.TaskTarget]: DEFAULT_NAV_ITEM_ICON_COLOR,
+  [CoreObjectNameSingular.Note]: DEFAULT_NAV_ITEM_ICON_COLOR,
+  [CoreObjectNameSingular.NoteTarget]: DEFAULT_NAV_ITEM_ICON_COLOR,
+  [CoreObjectNameSingular.Opportunity]: DEFAULT_NAV_ITEM_ICON_COLOR,
   [CoreObjectNameSingular.Dashboard]: DEFAULT_NAV_ITEM_ICON_COLOR,
   [CoreObjectNameSingular.Workflow]: DEFAULT_NAV_ITEM_ICON_COLOR,
   [CoreObjectNameSingular.WorkflowRun]: DEFAULT_NAV_ITEM_ICON_COLOR,

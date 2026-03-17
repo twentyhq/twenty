@@ -22,7 +22,7 @@ export const createWorkspace = async ({
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, WORKSPACE_FIELDS_TO_SEED)
-    .orIgnore()
+    .orUpdate(WORKSPACE_FIELDS_TO_SEED.filter((field) => field !== 'id'), ['id'])
     .values(createWorkspaceInput)
     .execute();
 };

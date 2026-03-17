@@ -17,6 +17,7 @@ const ORDERED_FIRST_STANDARD_OBJECTS: string[] = [
   CoreObjectNameSingular.Opportunity,
   CoreObjectNameSingular.Task,
   CoreObjectNameSingular.Note,
+  CoreObjectNameSingular.Workflow,
 ];
 
 const ORDERED_LAST_STANDARD_OBJECTS: string[] = [

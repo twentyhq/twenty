@@ -153,7 +153,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                   <>
                     <StyledQRCodeWrapper>
                       <StyledQRCodeSizer>
-                        <QRCode value={qrCode} />
+                        <QRCode value={qrCode} size={137} />
                       </StyledQRCodeSizer>
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>

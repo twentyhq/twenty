@@ -42,11 +42,15 @@ export class S3Driver implements StorageDriver {
   constructor(options: S3DriverOptions) {
     const { bucketName, region, endpoint, ...s3Options } = options;
 
-    if (!bucketName || !region) {
+    if (!bucketName) {
       return;
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    this.s3Client = new S3({
+      ...s3Options,
+      region: region || 'auto',
+      endpoint: endpoint as string,
+    });
     this.bucketName = bucketName;
   }
 

@@ -141,6 +141,12 @@ const SettingsApiWebhooks = lazy(() =>
   })),
 );
 
+const SettingsDatabaseBackup = lazy(() =>
+  import('~/pages/settings/SettingsDatabaseBackup').then((module) => ({
+    default: module.SettingsDatabaseBackup,
+  })),
+);
+
 const SettingsAI = lazy(() =>
   import('~/pages/settings/ai/SettingsAI').then((module) => ({
     default: module.SettingsAI,
@@ -469,6 +475,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApiWebhooks}
           element={<SettingsApiWebhooks />}
+        />
+        <Route
+           path={SettingsPath.DatabaseBackup}
+           element={<SettingsDatabaseBackup />}
         />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
         <Route path={SettingsPath.AIPrompts} element={<SettingsAIPrompts />} />

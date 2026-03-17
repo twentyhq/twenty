@@ -83,7 +83,18 @@ export const seedUsers = async ({ queryRunner, schemaName }: SeedUsersArgs) => {
       'canAccessFullAdminPanel',
       'isEmailVerified',
     ])
-    .orIgnore()
+    .orUpdate(
+      [
+        'firstName',
+        'lastName',
+        'email',
+        'passwordHash',
+        'canImpersonate',
+        'canAccessFullAdminPanel',
+        'isEmailVerified',
+      ],
+      ['id'],
+    )
     .values(allUsers)
     .execute();
 };

@@ -420,7 +420,7 @@ export class DevSeederDataService {
       })
       .insert()
       .into(`${schemaName}.${tableName}`, pgColumns)
-      .orIgnore()
+      .orUpdate(pgColumns, ['id'])
       .values(recordSeeds)
       .execute();
   }

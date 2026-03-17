@@ -20,6 +20,7 @@ import {
   IconColorSwatch,
   type IconComponent,
   IconCurrencyDollar,
+  IconDatabase,
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy2,
@@ -158,6 +159,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconCurrencyDollar,
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
+          label: t`Database Backup`,
+          path: SettingsPath.DatabaseBackup,
+          Icon: IconDatabase,
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`APIs & Webhooks`,

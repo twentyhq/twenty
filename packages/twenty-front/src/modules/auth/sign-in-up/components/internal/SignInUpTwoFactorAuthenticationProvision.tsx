@@ -98,7 +98,19 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
           </Trans>
         </StyledTextContainer>
         <StyledMainContentContainer>
-          {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
+          {!qrCode ? (
+            <Loader />
+          ) : (
+            <div
+              style={{
+                height: '137px',
+                width: '137px',
+                margin: '0 auto',
+              }}
+            >
+              <QRCode value={qrCode} size={137} />
+            </div>
+          )}
           {qrCode && (
             <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
               <IconCopy size={theme.icon.size.sm} />

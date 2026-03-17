@@ -215,7 +215,7 @@
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/mailparser": "^3.4.6",
     "@types/ms": "^0.7.31",
-    "@types/node": "^24.0.0",
+    "@types/node": "^22.0.0",
     "@types/nodemailer": "^7.0.3",
     "@types/openid-client": "^3.7.0",
     "@types/passport-google-oauth20": "^2.0.11",
