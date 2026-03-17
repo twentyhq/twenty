@@ -2,8 +2,8 @@ import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
@@ -69,10 +69,10 @@ export const useHandleWorkspaceNavigationMenuItemDragAndDrop = () => {
     const navigationMenuItemsDraft = store.get(
       navigationMenuItemsDraftState.atom,
     );
-    const isNavigationMenuInEditMode = store.get(
-      isNavigationMenuInEditModeState.atom,
+    const isLayoutCustomizationModeEnabled = store.get(
+      isLayoutCustomizationModeEnabledState.atom,
     );
-    if (!isNavigationMenuInEditMode || !navigationMenuItemsDraft) {
+    if (!isLayoutCustomizationModeEnabled || !navigationMenuItemsDraft) {
       return;
     }
 

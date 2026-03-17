@@ -11,11 +11,13 @@ export const CommandListItem = ({
   onClick,
   to,
   disabled = false,
+  showDisabledLoader = false,
 }: {
   action: CommandMenuItemDisplayProps;
   onClick?: () => void;
   to?: string;
   disabled?: boolean;
+  showDisabledLoader?: boolean;
 }) => {
   const navigate = useNavigate();
 
@@ -41,7 +43,7 @@ export const CommandListItem = ({
         onClick={disabled ? undefined : onClick}
         hotKeys={action.hotKeys}
         disabled={disabled}
-        RightComponent={disabled ? <Loader /> : undefined}
+        RightComponent={disabled && showDisabledLoader ? <Loader /> : undefined}
       />
     </SelectableListItem>
   );

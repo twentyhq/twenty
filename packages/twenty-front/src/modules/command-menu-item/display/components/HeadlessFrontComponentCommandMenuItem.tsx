@@ -38,5 +38,11 @@ export const HeadlessFrontComponentCommandMenuItem = ({
     onClick();
   };
 
-  return <CommandMenuItemDisplay onClick={handleClick} disabled={isMounted} />;
+  return (
+    <CommandMenuItemDisplay
+      onClick={handleClick}
+      disabled={isMounted}
+      showDisabledLoader={isMounted}
+    />
+  );
 };
