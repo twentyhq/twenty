@@ -61,6 +61,11 @@ export class CreateCommandMenuItemInput {
   @Field(() => CommandMenuItemAvailabilityType, { nullable: true })
   availabilityType?: CommandMenuItemAvailabilityType;
 
+  @IsString({ each: true })
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  hotKeys?: string[];
+
   @IsString()
   @IsOptional()
   @Field({ nullable: true })

@@ -16,7 +16,7 @@ export const computeStandardTimelineActivityViews = (
       objectName: 'timelineActivity',
       context: {
         viewName: 'allTimelineActivities',
-        name: 'All Timeline Activities',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

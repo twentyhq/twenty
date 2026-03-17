@@ -15,10 +15,10 @@ describe('Application: install delete and reinstall postcard-app', () => {
     expect(existsSync(appPath)).toBe(true);
 
     const result = await runCliCommand({
-      command: 'auth:status',
-      args: [appPath],
+      command: 'remote',
+      args: ['status'],
       timeout: 5_000,
-      waitForOutput: '✓ Valid',
+      waitForOutput: '(valid)',
     });
 
     expect(result.success).toBe(true);
@@ -26,7 +26,7 @@ describe('Application: install delete and reinstall postcard-app', () => {
 
   it(`should successfully install ${applicationName} application`, async () => {
     await runCliCommand({
-      command: 'app:dev',
+      command: 'dev',
       args: [appPath],
       waitForOutput: '✓ Synced',
     });
@@ -36,7 +36,7 @@ describe('Application: install delete and reinstall postcard-app', () => {
 
   it(`should successfully delete ${applicationName} application`, async () => {
     await runCliCommand({
-      command: 'app:uninstall',
+      command: 'uninstall',
       args: [appPath, '-y'],
       waitForOutput: 'Application uninstalled successfully',
     });
@@ -44,7 +44,7 @@ describe('Application: install delete and reinstall postcard-app', () => {
 
   it(`should successfully re-install ${applicationName} application`, async () => {
     await runCliCommand({
-      command: 'app:dev',
+      command: 'dev',
       args: [appPath],
       waitForOutput: '✓ Synced',
     });

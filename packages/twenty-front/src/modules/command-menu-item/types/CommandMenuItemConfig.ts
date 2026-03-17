@@ -1,8 +1,11 @@
 import { type CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { type CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { type CommandMenuItemViewType } from 'twenty-shared/types';
 import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types/ShouldBeRegisteredFunctionParams';
 import { type MessageDescriptor } from '@lingui/core';
+import {
+  type CommandMenuItemViewType,
+  type Nullable,
+} from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 import { type MenuItemAccent } from 'twenty-ui/navigation';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
@@ -12,7 +15,7 @@ export type CommandMenuItemConfig = {
   scope: CommandMenuItemScope;
   key: string;
   label: MessageDescriptor | string;
-  shortLabel?: MessageDescriptor | string;
+  shortLabel?: Nullable<MessageDescriptor | string>;
   description?: MessageDescriptor | string;
   position: number;
   Icon: IconComponent;
@@ -22,6 +25,7 @@ export type CommandMenuItemConfig = {
   availableOn?: CommandMenuItemViewType[];
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
   component: React.ReactNode;
-  hotKeys?: string[];
+  hotKeys?: Nullable<string[]>;
   requiredPermissionFlag?: PermissionFlagType;
+  isAllowedDuringGlobalLayoutCustomization?: boolean;
 };

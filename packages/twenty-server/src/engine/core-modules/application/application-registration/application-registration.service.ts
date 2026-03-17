@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -327,12 +328,30 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.save(registration);
   }
 
-  async findManyBySourceType(
-    sourceType: ApplicationRegistrationSourceType,
-  ): Promise<ApplicationRegistrationEntity[]> {
-    return this.applicationRegistrationRepository.find({
-      where: { sourceType },
+  async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
+    const existing = await this.findOneByUniversalIdentifier(
+      TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+    );
+
+    if (isDefined(existing)) {
+      return null;
+    }
+
+    const registration = this.applicationRegistrationRepository.create({
+      universalIdentifier:
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+      name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
+      description: TWENTY_CLI_APPLICATION_REGISTRATION.description,
+      oAuthClientId: v4(),
+      oAuthClientSecretHash: null,
+      oAuthRedirectUris: [],
+      oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,
+      ownerWorkspaceId: null,
+      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      createdByUserId: null,
     });
+
+    return this.applicationRegistrationRepository.save(registration);
   }
 
   async findManyListed(): Promise<ApplicationRegistrationEntity[]> {

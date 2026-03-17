@@ -83,6 +83,9 @@ export class CommandMenuItemEntity
   })
   availabilityType: CommandMenuItemAvailabilityType;
 
+  @Column({ type: 'text', array: true, nullable: true })
+  hotKeys: string[] | null;
+
   @Column({ nullable: true, type: 'varchar' })
   conditionalAvailabilityExpression: string | null;
 

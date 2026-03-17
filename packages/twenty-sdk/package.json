@@ -35,7 +35,7 @@
       "require": "./dist/ui/index.cjs"
     },
     "./cli": {
-      "types": "./dist/cli/public-operations/index.d.ts",
+      "types": "./dist/cli/operations/index.d.ts",
       "import": "./dist/operations.mjs",
       "require": "./dist/operations.cjs"
     },
@@ -113,7 +113,7 @@
   "typesVersions": {
     "*": {
       "cli": [
-        "dist/cli/public-operations/index.d.ts"
+        "dist/cli/operations/index.d.ts"
       ],
       "ui": [
         "dist/ui/index.d.ts"

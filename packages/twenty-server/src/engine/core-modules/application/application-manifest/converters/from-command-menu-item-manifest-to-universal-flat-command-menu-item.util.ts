@@ -39,6 +39,7 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     availabilityObjectMetadataUniversalIdentifier:
       commandMenuItemManifest.availabilityObjectUniversalIdentifier ?? null,
     engineComponentKey: null,
+    hotKeys: null,
     workflowVersionId: null,
     createdAt: now,
     updatedAt: now,

@@ -519,15 +519,45 @@ export class AuthService {
       );
     }
 
-    if (
-      !applicationRegistration.oAuthRedirectUris.includes(
-        authorizeAppInput.redirectUrl,
-      )
-    ) {
-      throw new AuthException(
-        `redirectUrl mismatch for '${clientId}'`,
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+    // RFC 8252 §7.3: Native apps using loopback redirect URIs may use any port.
+    // When a registration has no explicit redirect URIs (e.g. the seeded CLI registration),
+    // allow any loopback redirect URI.
+    const hasRegisteredRedirectUris =
+      applicationRegistration.oAuthRedirectUris.length > 0;
+
+    if (hasRegisteredRedirectUris) {
+      if (
+        !applicationRegistration.oAuthRedirectUris.includes(
+          authorizeAppInput.redirectUrl,
+        )
+      ) {
+        throw new AuthException(
+          `redirectUrl mismatch for '${clientId}'`,
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+    } else {
+      let redirectUrl: URL;
+
+      try {
+        redirectUrl = new URL(authorizeAppInput.redirectUrl);
+      } catch {
+        throw new AuthException(
+          `Invalid redirectUrl for '${clientId}'`,
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      const isLoopback =
+        redirectUrl.hostname === 'localhost' ||
+        redirectUrl.hostname === '127.0.0.1';
+
+      if (!isLoopback) {
+        throw new AuthException(
+          `redirectUrl mismatch for '${clientId}'`,
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     // Validate requested scopes are a subset of the registration's allowed scopes

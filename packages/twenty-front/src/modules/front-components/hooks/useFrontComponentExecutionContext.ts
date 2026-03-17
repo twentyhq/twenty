@@ -5,13 +5,13 @@ import {
 } from 'twenty-sdk/front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
-import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -75,7 +75,7 @@ export const useFrontComponentExecutionContext = ({
   const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
     async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
       openConfirmationModal({
-        frontComponentId,
+        caller: { type: 'frontComponent', frontComponentId },
         title,
         subtitle,
         confirmButtonText,

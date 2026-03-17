@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { NavigationDrawerSectionForWorkspaceItemsListReadOnly } from '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItemsListReadOnly';
@@ -55,8 +55,8 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForWorkspaceItemsProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
@@ -151,7 +151,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           label={sectionTitle}
           onClick={() => toggleNavigationSection()}
           rightIcon={rightIcon}
-          alwaysShowRightIcon={isNavigationMenuInEditMode}
+          alwaysShowRightIcon={isLayoutCustomizationModeEnabled}
           isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
@@ -165,7 +165,7 @@ export const NavigationDrawerSectionForWorkspaceItems = ({
           containAnimation
           initial={false}
         >
-          {isNavigationMenuInEditMode ? (
+          {isLayoutCustomizationModeEnabled ? (
             <Suspense
               fallback={
                 <WorkspaceSectionListEditModeFallback

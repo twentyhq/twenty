@@ -236,7 +236,7 @@ const handler = async (event: any) => {
     },
   });
 
-  // TODO: remove `as any` after running `yarn twenty app:dev` to regenerate the typed client
+  // TODO: remove `as any` after running `yarn twenty dev` to regenerate the typed client
   const updateSummary = async (markdown: string) => {
     await client.mutation({
       updateCallRecording: {
