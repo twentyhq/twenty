@@ -1,10 +1,10 @@
 import { NavigationMenuItemDroppableSlot } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
@@ -15,6 +15,8 @@ import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/compon
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
 import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
+
+type WorkspaceSectionListDndKitProps = NavigationMenuItemSectionListDndKitProps;
 
 const StyledList = styled.div`
   display: flex;
@@ -36,9 +38,9 @@ export const WorkspaceSectionListDndKit = ({
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-}: NavigationMenuItemSectionListDndKitProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+}: WorkspaceSectionListDndKitProps) => {
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const workspaceDropDisabled = useIsDropDisabledForSection(true);
   const { isDragging } = useContext(NavigationMenuItemDragContext);
@@ -48,7 +50,7 @@ export const WorkspaceSectionListDndKit = ({
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
-  const isAddMenuItemButtonVisible = isNavigationMenuInEditMode;
+  const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
@@ -60,7 +62,9 @@ export const WorkspaceSectionListDndKit = ({
             group={
               NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
             }
-            disabled={!isNavigationMenuInEditMode || workspaceDropDisabled}
+            disabled={
+              !isLayoutCustomizationModeEnabled || workspaceDropDisabled
+            }
           >
             <NavigationMenuItemDisplay
               item={item}

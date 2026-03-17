@@ -25,23 +25,28 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
   objectMetadataItem: ObjectMetadataItem;
+  instanceId?: string;
 };
 
 export const useCreateNewIndexRecord = ({
   objectMetadataItem,
+  instanceId,
 }: UseCreateNewIndexRecordProps) => {
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
+    instanceId,
   );
 
   const store = useStore();
   const recordIndexRecordIdsByGroupCallbackState =
     useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
+      instanceId,
     );
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
+    instanceId,
   );
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -59,6 +64,7 @@ export const useCreateNewIndexRecord = ({
 
   const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
     objectMetadataItem,
+    instanceId,
   });
 
   const { buildRecordInputFromRLSPredicates } =

@@ -8,11 +8,12 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
@@ -45,6 +46,8 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
+      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
+
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -59,12 +62,17 @@ export const PageLayoutInitializationQueryEffect = ({
         type: layout.type,
         objectMetadataId: layout.objectMetadataId,
         tabs: layout.tabs,
+        defaultTabToFocusOnMobileAndSidePanelId:
+          layout.defaultTabToFocusOnMobileAndSidePanelId,
       });
 
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      setIsPageLayoutInEditMode(isPageLayoutEmpty(layout));
+      if (!isRecordPageLayout) {
+        const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
+        setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
+      }
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,

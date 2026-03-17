@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
@@ -52,8 +52,8 @@ export const WorkspaceSectionContainer = ({
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: WorkspaceSectionContainerProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection('Workspace');
@@ -147,7 +147,7 @@ export const WorkspaceSectionContainer = ({
       isOpen={isNavigationSectionOpen}
       onToggle={() => toggleNavigationSection()}
       rightIcon={rightIcon}
-      alwaysShowRightIcon={isNavigationMenuInEditMode}
+      alwaysShowRightIcon={isLayoutCustomizationModeEnabled}
       forceExpanded={isAddToNavigationDropTargetVisible}
       contentWrapper={(children) => (
         <StyledWorkspaceSectionContentGapOffset>
@@ -155,7 +155,7 @@ export const WorkspaceSectionContainer = ({
         </StyledWorkspaceSectionContentGapOffset>
       )}
     >
-      {isNavigationMenuInEditMode ? (
+      {isLayoutCustomizationModeEnabled ? (
         <Suspense
           fallback={
             <WorkspaceSectionListEditModeFallback

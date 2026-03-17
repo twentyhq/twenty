@@ -1,8 +1,8 @@
 import { IconArrowUpRight } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
@@ -17,14 +17,14 @@ export const NavigationMenuItemLinkDisplay = ({
   isDragging,
   rightOptions,
 }: NavigationMenuItemLinkDisplayProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
 
-  const defaultRightOptions = !isNavigationMenuInEditMode && (
+  const defaultRightOptions = !isLayoutCustomizationModeEnabled && (
     <IconArrowUpRight
       size={themeCssVariables.icon.size.sm}
       stroke={themeCssVariables.icon.stroke.md}
@@ -35,9 +35,15 @@ export const NavigationMenuItemLinkDisplay = ({
   return (
     <NavigationDrawerItem
       label={label}
-      to={isNavigationMenuInEditMode || isDragging ? undefined : computedLink}
+      to={
+        isLayoutCustomizationModeEnabled || isDragging
+          ? undefined
+          : computedLink
+      }
       onClick={
-        isNavigationMenuInEditMode ? editModeProps?.onEditModeClick : undefined
+        isLayoutCustomizationModeEnabled
+          ? editModeProps?.onEditModeClick
+          : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={false}

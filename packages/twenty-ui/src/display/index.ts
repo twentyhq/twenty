@@ -354,6 +354,7 @@ export {
   IconNumber123,
   IconNumber9,
   IconNumbers,
+  IconPaint,
   IconPaperclip,
   IconPassword,
   IconPencil,

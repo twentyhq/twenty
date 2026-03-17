@@ -26,7 +26,7 @@ import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/con
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
@@ -137,8 +137,8 @@ export const NavigationMenuItemFolderDnd = ({
     navigationMenuItems,
   });
 
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
@@ -166,7 +166,7 @@ export const NavigationMenuItemFolderDnd = ({
   const isSelectedInEditMode = editModeProps?.isSelectedInEditMode ?? false;
   const shouldUseEditModeClick =
     isWorkspace &&
-    isNavigationMenuInEditMode &&
+    isLayoutCustomizationModeEnabled &&
     isDefined(editModeProps?.onEditModeClick);
 
   const handleHeaderClick = shouldUseEditModeClick
@@ -258,11 +258,11 @@ export const NavigationMenuItemFolderDnd = ({
   );
 
   const isCompact = isWorkspace
-    ? isNavigationMenuInEditMode || navigationMenuItems.length === 0
+    ? isLayoutCustomizationModeEnabled || navigationMenuItems.length === 0
     : true;
 
   const folderContentLength =
-    isWorkspace && isNavigationMenuInEditMode
+    isWorkspace && isLayoutCustomizationModeEnabled
       ? navigationMenuItems.length + 1
       : navigationMenuItems.length;
 
@@ -327,7 +327,7 @@ export const NavigationMenuItemFolderDnd = ({
                   group={folderContentDroppableId}
                   disabled={
                     isWorkspace
-                      ? !isNavigationMenuInEditMode || dropDisabled
+                      ? !isLayoutCustomizationModeEnabled || dropDisabled
                       : dropDisabled
                   }
                 >
@@ -370,13 +370,13 @@ export const NavigationMenuItemFolderDnd = ({
                 folderId={folderId}
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
-                compact={!(isWorkspace && isNavigationMenuInEditMode)}
+                compact={!(isWorkspace && isLayoutCustomizationModeEnabled)}
                 dropTargetIdOverride={getDndKitDropTargetId(
                   folderContentDroppableId,
                   navigationMenuItems.length,
                 )}
               />
-              {isWorkspace && isNavigationMenuInEditMode && (
+              {isWorkspace && isLayoutCustomizationModeEnabled && (
                 <NavigationDrawerSubItem
                   label={t`Add menu item`}
                   Icon={IconPlus}
@@ -384,8 +384,7 @@ export const NavigationMenuItemFolderDnd = ({
                   triggerEvent="CLICK"
                   variant="tertiary"
                   isSelectedInEditMode={
-                    sidePanelPage ===
-                      SidePanelPages.NavigationMenuAddItem &&
+                    sidePanelPage === SidePanelPages.NavigationMenuAddItem &&
                     addMenuItemInsertionContext?.targetFolderId === folderId
                   }
                   subItemState={getNavigationSubItemLeftAdornment({
