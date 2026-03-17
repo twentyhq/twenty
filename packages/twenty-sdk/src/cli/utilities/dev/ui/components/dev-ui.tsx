@@ -7,6 +7,8 @@ import { InkProvider, useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
 import { type DevUiStateManager } from '@/cli/utilities/dev/ui/dev-ui-state-manager';
 import React, { useReducer, useEffect } from 'react';
 
+const ACTIVE_PIPELINE_STATUSES = new Set(['building', 'syncing']);
+
 const DevUI = ({
   uiStateManager,
 }: {
@@ -21,9 +23,10 @@ const DevUI = ({
   }, [uiStateManager]);
 
   const state = uiStateManager.getSnapshot();
+  const isPaused = !ACTIVE_PIPELINE_STATUSES.has(state.pipeline.status);
 
   return (
-    <>
+    <AnimationProvider paused={isPaused}>
       <Static items={state.events}>
         {(event: OrchestratorStateEvent) => (
           <DevUiEventItem key={event.id} event={event} />
@@ -34,7 +37,7 @@ const DevUI = ({
         <DevUiApplicationPanel state={state} />
         <DevUiEntityLegend />
       </Box>
-    </>
+    </AnimationProvider>
   );
 };
 
@@ -46,9 +49,7 @@ export const renderDevUI = async (
 
   const { unmount } = render(
     <InkProvider value={{ Box, Text, Static }}>
-      <AnimationProvider>
-        <DevUI uiStateManager={uiStateManager} />
-      </AnimationProvider>
+      <DevUI uiStateManager={uiStateManager} />
     </InkProvider>,
   );
 

@@ -20,18 +20,24 @@ const UPLOAD_TICK_RATIO = Math.round(200 / TICK_INTERVAL_MS);
 
 export const AnimationProvider = ({
   children,
+  paused,
 }: {
   children: React.ReactNode;
+  paused: boolean;
 }): React.ReactElement => {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
+    if (paused) {
+      return;
+    }
+
     const timer = setInterval(() => {
       setTick((previous) => previous + 1);
     }, TICK_INTERVAL_MS);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [paused]);
 
   const spinnerFrame = SPINNER_FRAMES[tick % SPINNER_FRAMES.length];
   const uploadFrame =
