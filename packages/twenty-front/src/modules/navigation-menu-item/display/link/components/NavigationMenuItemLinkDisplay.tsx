@@ -25,7 +25,11 @@ export const NavigationMenuItemLinkDisplay = ({
   return (
     <NavigationDrawerItem
       label={label}
-      to={isLayoutCustomizationModeEnabled || isDragging ? undefined : computedLink}
+      to={
+        isLayoutCustomizationModeEnabled || isDragging
+          ? undefined
+          : computedLink
+      }
       onClick={
         isLayoutCustomizationModeEnabled
           ? editModeProps.onEditModeClick

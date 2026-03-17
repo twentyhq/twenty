@@ -1,8 +1,8 @@
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
-import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/utils/filterWorkspaceNavigationMenuItems';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -19,7 +19,7 @@ export const useEnterLayoutCustomizationMode = () => {
     }
 
     const prefetchNavigationMenuItems = store.get(
-      navigationMenuItemsState.atom,
+      navigationMenuItemsSelector.atom,
     );
     const workspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
       prefetchNavigationMenuItems,

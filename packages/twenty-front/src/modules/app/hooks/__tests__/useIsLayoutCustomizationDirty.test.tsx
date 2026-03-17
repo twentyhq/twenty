@@ -2,7 +2,7 @@ import { useIsLayoutCustomizationDirty } from '@/app/hooks/useIsLayoutCustomizat
 import { activeCustomizationPageLayoutIdsState } from '@/app/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/app/states/isLayoutCustomizationModeEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/states/navigationMenuItemsDraftState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
@@ -11,6 +11,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import {
   type NavigationMenuItem,
+  NavigationMenuItemType,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
 
@@ -136,6 +137,7 @@ describe('useIsLayoutCustomizationDirty', () => {
     const mockNavItem: NavigationMenuItem = {
       id: 'nav-1',
       position: 0,
+      type: NavigationMenuItemType.OBJECT,
       viewId: null,
       targetObjectMetadataId: null,
       folderId: null,
