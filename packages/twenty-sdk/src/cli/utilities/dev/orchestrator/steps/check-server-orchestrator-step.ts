@@ -37,9 +37,11 @@ export class CheckServerOrchestratorStep {
           {
             message:
               'Cannot reach Twenty at localhost:3000.\n\n' +
-              '  Start a local server:\n' +
-              '    curl -sL https://twenty.com/docker-compose.dev.yml -o docker-compose.yml\n' +
+              '  Start a local server with Docker:\n' +
+              '    curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml -o docker-compose.yml\n' +
               '    docker compose up -d\n\n' +
+              '  Or from the monorepo:\n' +
+              '    yarn start\n\n' +
               '  Waiting for server...',
             status: 'error',
           },

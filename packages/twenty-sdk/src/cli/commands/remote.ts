@@ -1,6 +1,5 @@
 import { authLogin } from '@/cli/operations/login';
 import { authLoginOAuth } from '@/cli/operations/login-oauth';
-import { authLogout } from '@/cli/operations/logout';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import type { Command } from 'commander';
@@ -9,9 +8,24 @@ import inquirer from 'inquirer';
 const deriveRemoteName = (url: string): string => {
   try {
     const hostname = new URL(url).hostname;
+
     return hostname.replace(/\./g, '-');
   } catch {
     return 'remote';
+  }
+};
+
+const authenticate = async (
+  apiUrl: string,
+  token?: string,
+): Promise<void> => {
+  const result = token
+    ? await authLogin({ apiKey: token, apiUrl })
+    : await runOAuthWithApiKeyFallback(apiUrl);
+
+  if (!result.success) {
+    console.error(chalk.red('✗ Authentication failed.'));
+    process.exit(1);
   }
 };
 
@@ -53,15 +67,15 @@ export const registerRemoteCommands = (program: Command): void => {
     .description('Manage remote Twenty servers');
 
   remote
-    .command('add [url]')
-    .description('Add and authenticate a remote server')
+    .command('add [nameOrUrl]')
+    .description('Add a new remote or re-authenticate an existing one')
     .option('--as <name>', 'Name for this remote')
     .option('--local', 'Connect to local development server')
     .option('--token <token>', 'API key for non-interactive auth')
     .option('--url <url>', 'Server URL (alternative to positional arg)')
     .action(
       async (
-        positionalUrl: string | undefined,
+        nameOrUrl: string | undefined,
         options: {
           as?: string;
           local?: boolean;
@@ -70,12 +84,11 @@ export const registerRemoteCommands = (program: Command): void => {
         },
       ) => {
         const configService = new ConfigService();
+        const existingRemotes = await configService.getRemotes();
 
         if (options.local) {
-          const localUrl = 'http://localhost:3000';
           const remoteName = options.as ?? 'local';
-
-          const apiKey =
+          const token =
             options.token ??
             (
               await inquirer.prompt<{ apiKey: string }>([
@@ -91,86 +104,60 @@ export const registerRemoteCommands = (program: Command): void => {
             ).apiKey;
 
           ConfigService.setActiveRemote(remoteName);
-
-          const result = await authLogin({
-            apiKey,
-            apiUrl: localUrl,
-          });
-
-          if (!result.success) {
-            console.error(chalk.red('✗ Authentication failed.'));
-            process.exit(1);
-          }
-
+          await authenticate('http://localhost:3000', token);
           console.log(
-            chalk.green(`✓ Authenticated! Saved as remote "${remoteName}".`),
+            chalk.green(`✓ Authenticated remote "${remoteName}".`),
           );
 
           return;
         }
 
-        // Non-interactive CI mode
-        if (options.token) {
-          const apiUrl =
-            positionalUrl ?? options.url ?? 'http://localhost:3000';
-          const name = options.as ?? deriveRemoteName(apiUrl);
+        // Re-authenticate an existing remote by name
+        const isExistingRemote =
+          nameOrUrl !== undefined && existingRemotes.includes(nameOrUrl);
 
-          ConfigService.setActiveRemote(name);
+        if (isExistingRemote) {
+          const config =
+            await configService.getConfigForRemote(nameOrUrl);
 
-          const result = await authLogin({
-            apiKey: options.token,
-            apiUrl,
-          });
-
-          if (!result.success) {
-            console.error(chalk.red('✗ Authentication failed.'));
-            process.exit(1);
-          }
-
-          const defaultRemote = await configService.getDefaultRemote();
-
-          if (defaultRemote === 'local') {
-            await configService.setDefaultRemote(name);
-          }
-
+          ConfigService.setActiveRemote(nameOrUrl);
+          await authenticate(config.apiUrl, options.token);
           console.log(
-            chalk.green(`✓ Authenticated! Saved as remote "${name}".`),
+            chalk.green(`✓ Re-authenticated remote "${nameOrUrl}".`),
           );
 
           return;
         }
 
+        // Resolve the URL — from args, flags, or interactive prompt
         const apiUrl =
-          positionalUrl ??
+          nameOrUrl ??
           options.url ??
-          (
-            await inquirer.prompt<{ apiUrl: string }>([
-              {
-                type: 'input',
-                name: 'apiUrl',
-                message: 'Twenty server URL:',
-                validate: (input: string) => {
-                  try {
-                    new URL(input);
-                    return true;
-                  } catch {
-                    return 'Please enter a valid URL';
-                  }
-                },
-              },
-            ])
-          ).apiUrl;
+          (options.token
+            ? 'http://localhost:3000'
+            : (
+                await inquirer.prompt<{ apiUrl: string }>([
+                  {
+                    type: 'input',
+                    name: 'apiUrl',
+                    message: 'Twenty server URL:',
+                    validate: (input: string) => {
+                      try {
+                        new URL(input);
+
+                        return true;
+                      } catch {
+                        return 'Please enter a valid URL';
+                      }
+                    },
+                  },
+                ])
+              ).apiUrl);
 
         const name = options.as ?? deriveRemoteName(apiUrl);
 
         ConfigService.setActiveRemote(name);
-
-        const result = await runOAuthWithApiKeyFallback(apiUrl);
-
-        if (!result.success) {
-          console.error(chalk.red('✗ Authentication failed.'));
-          process.exit(1);
-        }
+        await authenticate(apiUrl, options.token);
 
         const defaultRemote = await configService.getDefaultRemote();
 
@@ -178,46 +165,11 @@ export const registerRemoteCommands = (program: Command): void => {
           await configService.setDefaultRemote(name);
         }
 
-        console.log(chalk.green(`✓ Authenticated! Saved as remote "${name}".`));
+        console.log(
+          chalk.green(`✓ Authenticated remote "${name}".`),
+        );
       },
     );
-
-  remote
-    .command('login [name]')
-    .description('Re-authenticate an existing remote')
-    .action(async (name?: string) => {
-      const configService = new ConfigService();
-      const remoteName = name ?? (await configService.getDefaultRemote());
-      const config = await configService.getConfigForRemote(remoteName);
-
-      ConfigService.setActiveRemote(remoteName);
-
-      const result = await runOAuthWithApiKeyFallback(config.apiUrl);
-
-      if (!result.success) {
-        console.error(chalk.red('✗ Authentication failed.'));
-        process.exit(1);
-      }
-
-      console.log(chalk.green(`✓ Re-authenticated remote "${remoteName}".`));
-    });
-
-  remote
-    .command('logout [name]')
-    .description('Clear credentials for a remote')
-    .action(async (name?: string) => {
-      const configService = new ConfigService();
-      const remoteName = name ?? (await configService.getDefaultRemote());
-
-      const result = await authLogout({ remote: remoteName });
-
-      if (!result.success) {
-        console.error(chalk.red('Logout failed:'), result.error.message);
-        process.exit(1);
-      }
-
-      console.log(chalk.green(`✓ Logged out from remote "${remoteName}"`));
-    });
 
   remote
     .command('list')

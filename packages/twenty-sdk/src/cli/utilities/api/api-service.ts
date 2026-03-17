@@ -14,6 +14,7 @@ export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
   private readonly tokenOverride?: string;
+  private readonly serverUrlOverride?: string;
 
   constructor(options?: {
     disableInterceptors?: boolean;
@@ -23,12 +24,13 @@ export class ApiService {
     const { disableInterceptors = false, serverUrl, token } = options || {};
     this.configService = new ConfigService();
     this.tokenOverride = token;
+    this.serverUrlOverride = serverUrl;
     this.client = axios.create();
 
     this.client.interceptors.request.use(async (config) => {
       const twentyConfig = await this.configService.getConfig();
 
-      config.baseURL = serverUrl ?? twentyConfig.apiUrl;
+      config.baseURL = this.serverUrlOverride ?? twentyConfig.apiUrl;
 
       if (!config.headers.Authorization) {
         const authToken = await this.resolveAuthToken();
@@ -612,9 +614,10 @@ export class ApiService {
     functionName?: string;
   }) {
     const twentyConfig = await this.configService.getConfig();
+    const baseUrl = this.serverUrlOverride ?? twentyConfig.apiUrl;
 
     const wsClient = createClient({
-      url: twentyConfig.apiUrl + '/metadata',
+      url: baseUrl + '/metadata',
       headers: async () => {
         const authToken = await this.resolveAuthToken();
 

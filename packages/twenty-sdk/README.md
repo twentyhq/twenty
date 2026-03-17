@@ -43,33 +43,30 @@ Usage: twenty [options] [command]
 CLI for Twenty application development
 
 Options:
-  --remote <name>   Use a specific remote configuration (default: "default")
-  -V, --version        output the version number
-  -h, --help           display help for command
+  -V, --version       output the version number
+  -r, --remote <name> Use a specific remote (overrides the default set by remote switch)
+  -h, --help          display help for command
 
 Commands:
-  remote add       Add a remote server connection
-  remote list      List all configured remotes
-  remote switch    Switch the default remote
-  logout           Remove authentication credentials
-  whoami           Check authentication status
-  dev              Watch and sync local application changes
-  build            Build, sync, and generate API client
-  publish          Build and publish to npm
-  deploy           Build and deploy to a Twenty server
-  typecheck        Run TypeScript type checking on the application
-  uninstall        Uninstall application from Twenty
-  add              Add a new entity to your application
-  logs             Watch application function logs
-  exec             Execute a logic function with a JSON payload
-  help [command]       display help for command
+  dev [appPath]       Watch and sync local application changes
+  build [appPath]     Build, sync, and generate API client into .twenty/output/
+  deploy [appPath]    Build and deploy to a Twenty server
+  publish [appPath]   Build and publish to npm
+  typecheck [appPath] Run TypeScript type checking on the application
+  uninstall [appPath] Uninstall application from Twenty
+  remote              Manage remote Twenty servers
+  whoami              Show active remote and authentication status
+  add [entityType]    Add a new entity to your application
+  exec [appPath]      Execute a logic function with a JSON payload
+  logs [appPath]      Watch application function logs
+  help [command]      display help for command
 ```
 
 In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
 
 ## Global Options
 
-- `--remote <name>` (or `-r <name>`): Use a specific remote configuration. Defaults to `default`. See Configuration for details.
+- `--remote <name>` (or `-r <name>`): Use a specific remote configuration. Defaults to `local`. See Configuration for details.
 
 ## Commands
 
@@ -77,26 +74,23 @@ In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` i
 
 Manage remote server connections and authentication.
 
-- `twenty remote add` — Add a remote server connection.
+- `twenty remote add [nameOrUrl]` — Add a new remote or re-authenticate an existing one.
 
   - Options:
-    - `--api-key <key>`: API key for authentication.
-    - `--api-url <url>`: Twenty API URL (defaults to your current remote's value or `http://localhost:3000`).
-    - `--local`: Shorthand for `--api-url http://localhost:3000`.
-  - Behavior: Prompts for any missing values, persists them to the active remote, and validates the credentials.
+    - `--token <token>`: API key for non-interactive auth.
+    - `--url <url>`: Server URL (alternative to positional arg).
+    - `--as <name>`: Name for this remote (otherwise derived from URL hostname).
+    - `--local`: Connect to local development server (`http://localhost:3000`).
+  - Behavior: If `nameOrUrl` matches an existing remote name, re-authenticates it. Otherwise, creates a new remote and authenticates via OAuth (with API key fallback).
 
-- `twenty logout` — Remove authentication credentials for the active remote.
+- `twenty remote remove <name>` — Remove a remote and its credentials.
 
-- `twenty whoami` — Print the current authentication status (API URL, masked API key, validity).
+- `twenty remote list` — List all configured remotes with their auth status and URLs.
 
-- `twenty remote list` — List all configured remotes.
+- `twenty remote switch [name]` — Set the default remote.
+  - If omitted, shows an interactive selection.
 
-  - Behavior: Displays all available remotes with their authentication status and API URLs. Shows which remote is the current default.
-
-- `twenty remote switch [remote]` — Switch the default remote.
-  - Arguments:
-    - `remote` (optional): Name of the remote to switch to. If omitted, shows an interactive selection.
-  - Behavior: Sets the specified remote as the default, so subsequent commands use it without needing `--remote`.
+- `twenty whoami` — Print the current remote name, server URL, and auth status.
 
 Examples:
 
@@ -104,29 +98,29 @@ Examples:
 # Add a remote interactively (recommended)
 twenty remote add
 
-# Provide values in flags
-twenty remote add --api-key $TWENTY_API_KEY --api-url https://api.twenty.com
+# Provide values in flags (non-interactive, for CI)
+twenty remote add https://api.twenty.com --token $TWENTY_API_KEY
 
 # Add a local development remote
 twenty remote add --local
 
-# Add a remote for a specific named configuration
-twenty remote add --remote my-custom-remote
+# Name a remote explicitly
+twenty remote add https://api.twenty.com --as production
+
+# Re-authenticate an existing remote by name
+twenty remote add production
 
 # Check status
 twenty whoami
 
-# Logout current remote
-twenty logout
-
 # List all configured remotes
 twenty remote list
 
-# Switch default remote interactively
-twenty remote switch
-
-# Switch to a specific remote
+# Switch default remote
 twenty remote switch production
+
+# Remove a remote
+twenty remote remove production
 ```
 
 ### App
@@ -273,15 +267,17 @@ Example configuration file:
 
 ```json
 {
-  "defaultRemote": "prod",
+  "defaultRemote": "production",
   "remotes": {
-    "default": {
+    "local": {
       "apiUrl": "http://localhost:3000",
       "apiKey": "<your-api-key>"
     },
-    "prod": {
+    "production": {
       "apiUrl": "https://api.twenty.com",
-      "apiKey": "<your-api-key>"
+      "accessToken": "<oauth-token>",
+      "refreshToken": "<refresh-token>",
+      "oauthClientId": "<client-id>"
     }
   }
 }
@@ -289,10 +285,10 @@ Example configuration file:
 
 Notes:
 
-- If a remote is missing, `apiUrl` defaults to `http://localhost:3000` until set.
-- `twenty remote add` writes the `apiUrl` and `apiKey` for the active remote.
-- `twenty remote add --remote custom-remote` writes the `apiUrl` and `apiKey` for a custom `custom-remote` remote.
-- `twenty remote switch` sets the `defaultRemote` field, which is used when `--remote` is not specified.
+- If a remote is missing, `apiUrl` defaults to `http://localhost:3000`.
+- `twenty remote add` writes credentials for the active remote (OAuth tokens or API key).
+- `twenty remote add --as my-remote` saves under a custom name.
+- `twenty remote switch` sets the `defaultRemote` field, used when `-r` is not specified.
 - `twenty remote list` shows all configured remotes and their authentication status.
 
 ## Troubleshooting
