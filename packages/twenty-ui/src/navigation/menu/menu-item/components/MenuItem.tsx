@@ -13,6 +13,7 @@ import { styled } from '@linaria/react';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
 import { ThemeContext } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
+import { type Nullable } from 'twenty-shared/types';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,
@@ -52,7 +53,7 @@ export type MenuItemProps = {
   hasSubMenu?: boolean;
   focused?: boolean;
   selected?: boolean;
-  hotKeys?: string[];
+  hotKeys?: Nullable<string[]>;
   isSubMenuOpened?: boolean;
 };
 

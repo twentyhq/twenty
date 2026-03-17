@@ -29,12 +29,13 @@ beforeAll(async () => {
   fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
 
   const configFile = {
-    profiles: {
-      default: {
+    remotes: {
+      local: {
         apiUrl: process.env.TWENTY_API_URL,
         apiKey: process.env.TWENTY_API_KEY,
       },
     },
+    defaultRemote: 'local',
   };
 
   fs.writeFileSync(

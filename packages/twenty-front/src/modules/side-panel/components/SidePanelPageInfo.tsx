@@ -6,8 +6,8 @@ import {
 } from 'twenty-ui/display';
 
 import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
+import { useWorkspaceSectionItems } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';

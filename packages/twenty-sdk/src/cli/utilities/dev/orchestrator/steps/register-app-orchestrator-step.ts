@@ -88,7 +88,6 @@ export class RegisterAppOrchestratorStep {
 
     await this.configService.setConfig({
       oauthClientId: createResult.data.applicationRegistration.oAuthClientId,
-      oauthClientSecret: createResult.data.clientSecret,
     });
 
     this.state.applyStepEvents([

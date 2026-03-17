@@ -3,8 +3,8 @@ import { SidePanelAskAIPage } from '@/side-panel/pages/ask-ai/components/SidePan
 import { SidePanelCalendarEventPage } from '@/side-panel/pages/calendar-event/components/SidePanelCalendarEventPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelMessageThreadPage } from '@/side-panel/pages/message-thread/components/SidePanelMessageThreadPage';
-import { SidePanelNavigationMenuItemEditPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage';
-import { SidePanelNewSidebarItemPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemPage';
+import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
+import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelPageLayoutChartSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutChartSettings';
 import { SidePanelPageLayoutFieldsSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings';
 import { SidePanelPageLayoutIframeSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings';

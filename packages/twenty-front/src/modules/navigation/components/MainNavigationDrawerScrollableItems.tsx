@@ -1,4 +1,4 @@
-import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
+import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
 
@@ -8,17 +8,17 @@ import { lazy, Suspense } from 'react';
 
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
+const FavoritesSectionDispatcher = lazy(() =>
   import(
-    '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher'
+    '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher'
   ).then((module) => ({
-    default: module.CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher,
+    default: module.FavoritesSectionDispatcher,
   })),
 );
 
 const WorkspaceNavigationMenuItemsDispatcher = lazy(() =>
   import(
-    '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsDispatcher'
+    '@/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItemsDispatcher'
   ).then((module) => ({
     default: module.WorkspaceNavigationMenuItemsDispatcher,
   })),
@@ -35,7 +35,7 @@ export const MainNavigationDrawerScrollableItems = () => {
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
-        <CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher />
+        <FavoritesSectionDispatcher />
         <WorkspaceNavigationMenuItemsDispatcher />
       </Suspense>
       <RemoteNavigationDrawerSection />

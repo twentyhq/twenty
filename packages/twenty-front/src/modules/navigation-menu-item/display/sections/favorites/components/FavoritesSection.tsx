@@ -1,0 +1,77 @@
+import { useLingui } from '@lingui/react/macro';
+import { IconFolderPlus } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { FavoritesOrphanItems } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesOrphanItems';
+import { NavigationMenuItemFolders } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolders';
+import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
+import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
+import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/common/states/isNavigationMenuItemFolderCreatingState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+
+export const FavoritesSection = () => {
+  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
+
+  const [
+    isNavigationMenuItemFolderCreating,
+    setIsNavigationMenuItemFolderCreating,
+  ] = useAtomState(isNavigationMenuItemFolderCreatingState);
+
+  const { t } = useLingui();
+
+  const { toggleNavigationSection, openNavigationSection } =
+    useNavigationSection('Favorites');
+  const isNavigationSectionOpen = useAtomFamilyStateValue(
+    isNavigationSectionOpenFamilyState,
+    'Favorites',
+  );
+
+  const toggleNewFolder = () => {
+    openNavigationSection();
+    setIsNavigationMenuItemFolderCreating((current) => !current);
+  };
+
+  if (
+    navigationMenuItemsSorted.length === 0 &&
+    !isNavigationMenuItemFolderCreating &&
+    userNavigationMenuItemsByFolder.length === 0
+  ) {
+    return null;
+  }
+
+  return (
+    <NavigationDrawerSection>
+      <NavigationDrawerAnimatedCollapseWrapper>
+        <NavigationDrawerSectionTitle
+          label={t`Favorites`}
+          onClick={toggleNavigationSection}
+          rightIcon={
+            <LightIconButton
+              Icon={IconFolderPlus}
+              onClick={toggleNewFolder}
+              accent="tertiary"
+            />
+          }
+          isOpen={isNavigationSectionOpen}
+        />
+      </NavigationDrawerAnimatedCollapseWrapper>
+      <AnimatedExpandableContainer
+        isExpanded={isNavigationSectionOpen}
+        dimension="height"
+        mode="fit-content"
+        containAnimation
+        initial={false}
+      >
+        <NavigationMenuItemFolders />
+        <FavoritesOrphanItems />
+      </AnimatedExpandableContainer>
+    </NavigationDrawerSection>
+  );
+};

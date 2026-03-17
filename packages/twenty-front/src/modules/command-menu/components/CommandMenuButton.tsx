@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 import { isString } from '@sniptt/guards';
 import { type MouseEvent } from 'react';
+import { type Nullable } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   type IconComponent,
@@ -19,7 +21,7 @@ export type CommandMenuButtonProps = {
   command: {
     key: string;
     label: string | MessageDescriptor;
-    shortLabel?: string | MessageDescriptor;
+    shortLabel?: Nullable<string | MessageDescriptor>;
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
@@ -40,10 +42,9 @@ export const CommandMenuButton = ({
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuButtonLabel(command.label);
 
-  const resolvedShortLabel =
-    command.shortLabel === undefined
-      ? undefined
-      : getCommandMenuButtonLabel(command.shortLabel);
+  const resolvedShortLabel = isDefined(command.shortLabel)
+    ? getCommandMenuButtonLabel(command.shortLabel)
+    : undefined;
 
   const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
 

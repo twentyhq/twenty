@@ -18,7 +18,7 @@ export const computeStandardCalendarChannelEventAssociationViews = (
       objectName: 'calendarChannelEventAssociation',
       context: {
         viewName: 'allCalendarChannelEventAssociations',
-        name: 'All Calendar Channel Event Associations',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
