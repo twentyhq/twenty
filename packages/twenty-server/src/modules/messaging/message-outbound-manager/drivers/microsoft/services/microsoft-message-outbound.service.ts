@@ -17,7 +17,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
   ) {}
 
-  public async sendMessage(
+  async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<void> {
@@ -34,7 +34,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     await microsoftClient.api(`/me/messages/${messageId}/send`).post({});
   }
 
-  public async createDraft(
+  async createDraft(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<void> {
