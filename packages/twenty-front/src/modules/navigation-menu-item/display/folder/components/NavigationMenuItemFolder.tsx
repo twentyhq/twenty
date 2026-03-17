@@ -357,6 +357,10 @@ export const NavigationMenuItemFolder = ({
         folderId={folderId}
         index={0}
         sectionId={NavigationSections.FAVORITES}
+        dropTargetIdOverride={getDndKitDropTargetId(
+          `folder-header-${folderId}`,
+          0,
+        )}
       >
         {headerItem}
       </NavigationItemDropTarget>

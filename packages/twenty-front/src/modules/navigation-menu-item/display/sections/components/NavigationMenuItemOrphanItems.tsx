@@ -9,9 +9,12 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/co
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
+import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
@@ -53,7 +56,7 @@ export const NavigationMenuItemOrphanItems = ({
     : NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
   const orphanNavigationMenuItems = navigationMenuItemsSorted.filter(
-    (item) => !item.folderId,
+    (item) => !item.folderId && !isNavigationMenuItemFolder(item),
   );
 
   return orphanNavigationMenuItems.length > 0 ? (
@@ -75,6 +78,10 @@ export const NavigationMenuItemOrphanItems = ({
           views,
         );
 
+        const dropTargetOverride = isFavoritesSection
+          ? getDndKitDropTargetId(orphanDroppableId, index)
+          : undefined;
+
         return (
           <NavigationMenuItemSortableItem
             key={navigationMenuItem.id}
@@ -82,45 +89,52 @@ export const NavigationMenuItemOrphanItems = ({
             index={index}
             group={orphanDroppableId}
           >
-            <StyledOrphanNavigationMenuItemsContainer>
-              <NavigationDrawerItem
-                secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
-                  objectMetadataItems,
-                  navigationMenuItemObjectNameSingular:
-                    objectNameSingular ?? '',
-                })}
-                label={label}
-                Icon={() => (
-                  <NavigationMenuItemIcon
-                    navigationMenuItem={navigationMenuItem}
-                  />
-                )}
-                iconColor={getEffectiveNavigationMenuItemColor(
-                  navigationMenuItem,
-                )}
-                active={isLocationMatchingNavigationMenuItem(
-                  currentPath,
-                  currentViewPath,
-                  navigationMenuItem.type,
-                  computedLink,
-                )}
-                to={isDragging ? undefined : computedLink}
-                rightOptions={
-                  isFavoritesSection ? (
-                    <LightIconButton
-                      Icon={IconHeartOff}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        deleteNavigationMenuItem(navigationMenuItem.id);
-                      }}
-                      accent="tertiary"
+            <NavigationItemDropTarget
+              folderId={null}
+              index={index}
+              sectionId={section}
+              dropTargetIdOverride={dropTargetOverride}
+            >
+              <StyledOrphanNavigationMenuItemsContainer>
+                <NavigationDrawerItem
+                  secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
+                    objectMetadataItems,
+                    navigationMenuItemObjectNameSingular:
+                      objectNameSingular ?? '',
+                  })}
+                  label={label}
+                  Icon={() => (
+                    <NavigationMenuItemIcon
+                      navigationMenuItem={navigationMenuItem}
                     />
-                  ) : undefined
-                }
-                isDragging={isDragging}
-                triggerEvent="CLICK"
-              />
-            </StyledOrphanNavigationMenuItemsContainer>
+                  )}
+                  iconColor={getEffectiveNavigationMenuItemColor(
+                    navigationMenuItem,
+                  )}
+                  active={isLocationMatchingNavigationMenuItem(
+                    currentPath,
+                    currentViewPath,
+                    navigationMenuItem.type,
+                    computedLink,
+                  )}
+                  to={isDragging ? undefined : computedLink}
+                  rightOptions={
+                    isFavoritesSection ? (
+                      <LightIconButton
+                        Icon={IconHeartOff}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          deleteNavigationMenuItem(navigationMenuItem.id);
+                        }}
+                        accent="tertiary"
+                      />
+                    ) : undefined
+                  }
+                  isDragging={isDragging}
+                  triggerEvent="CLICK"
+                />
+              </StyledOrphanNavigationMenuItemsContainer>
+            </NavigationItemDropTarget>
           </NavigationMenuItemSortableItem>
         );
       })}
