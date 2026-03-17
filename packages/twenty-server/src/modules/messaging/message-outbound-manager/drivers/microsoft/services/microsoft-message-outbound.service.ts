@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { z } from 'zod';
-
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
@@ -78,20 +76,15 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     microsoftClient: MicrosoftGraphClient,
     internetMessageId: string,
   ): Promise<string | undefined> {
+    const encodedId = encodeURIComponent(internetMessageId);
+
     const response = await microsoftClient
-      .api('/me/messages')
-      .filter(
-        `internetMessageId eq '${this.escapeODataString(internetMessageId)}'`,
+      .api(
+        `/me/messages?$filter=internetMessageId eq '${encodedId}'&$select=id&$top=1`,
       )
-      .select('id')
-      .top(1)
       .get();
 
     return response?.value?.[0]?.id;
-  }
-
-  private escapeODataString(value: string): string {
-    return value.replace(/'/g, "''");
   }
 
   private composeMicrosoftMessage(
