@@ -125,11 +125,15 @@ export const useMetadataStore = () => {
   }, [store]);
 
   const addToDraft = useCallback(
-    <K extends MetadataEntityKey>(
-      key: K,
-      items: MetadataEntityTypeMap[K][],
-      collectionHash?: string,
-    ) => {
+    <K extends MetadataEntityKey>({
+      key,
+      items,
+      collectionHash,
+    }: {
+      key: K;
+      items: MetadataEntityTypeMap[K][];
+      collectionHash?: string;
+    }) => {
       if (items.length === 0) {
         return;
       }
@@ -221,11 +225,15 @@ export const useMetadataStore = () => {
   );
 
   const removeFromDraft = useCallback(
-    <K extends MetadataEntityKey>(
-      key: K,
-      itemIds: string[],
-      collectionHash?: string,
-    ) => {
+    <K extends MetadataEntityKey>({
+      key,
+      itemIds,
+      collectionHash,
+    }: {
+      key: K;
+      itemIds: string[];
+      collectionHash?: string;
+    }) => {
       if (itemIds.length === 0) {
         return;
       }

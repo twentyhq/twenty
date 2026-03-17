@@ -32,7 +32,7 @@ export const useDeleteOneObjectMetadataItem = () => {
         },
       });
 
-      removeFromDraft('objectMetadataItems', [idToDelete]);
+      removeFromDraft({ key: 'objectMetadataItems', itemIds: [idToDelete] });
       applyChanges();
 
       return {

@@ -51,9 +51,10 @@ export const useCreateOneObjectMetadataItem = () => {
           ...objectData
         } = createdObject;
 
-        addToDraft('objectMetadataItems', [
-          objectData as FlatObjectMetadataItem,
-        ]);
+        addToDraft({
+          key: 'objectMetadataItems',
+          items: [objectData as FlatObjectMetadataItem],
+        });
 
         const flatFields = fieldsList.map((field) => {
           const { __typename: _fieldTypename, ...fieldData } = field;
@@ -64,7 +65,7 @@ export const useCreateOneObjectMetadataItem = () => {
           } as FlatFieldMetadataItem;
         });
 
-        addToDraft('fieldMetadataItems', flatFields);
+        addToDraft({ key: 'fieldMetadataItems', items: flatFields });
 
         applyChanges();
 
@@ -92,13 +93,13 @@ export const useCreateOneObjectMetadataItem = () => {
           flatViewFieldGroups,
         } = splitViewWithRelated(fetchedViews);
 
-        addToDraft('views', flatViews);
-        addToDraft('viewFields', flatViewFields);
-        addToDraft('viewFilters', flatViewFilters);
-        addToDraft('viewSorts', flatViewSorts);
-        addToDraft('viewGroups', flatViewGroups);
-        addToDraft('viewFilterGroups', flatViewFilterGroups);
-        addToDraft('viewFieldGroups', flatViewFieldGroups);
+        addToDraft({ key: 'views', items: flatViews });
+        addToDraft({ key: 'viewFields', items: flatViewFields });
+        addToDraft({ key: 'viewFilters', items: flatViewFilters });
+        addToDraft({ key: 'viewSorts', items: flatViewSorts });
+        addToDraft({ key: 'viewGroups', items: flatViewGroups });
+        addToDraft({ key: 'viewFilterGroups', items: flatViewFilterGroups });
+        addToDraft({ key: 'viewFieldGroups', items: flatViewFieldGroups });
 
         replaceDraft(
           'navigationMenuItems',

@@ -44,12 +44,15 @@ export const useCreateOneFieldMetadataItem = () => {
       if (isDefined(createdField)) {
         const { __typename, object, ...fieldData } = createdField;
 
-        addToDraft('fieldMetadataItems', [
-          {
-            ...fieldData,
-            objectMetadataId: object?.id ?? input.objectMetadataId,
-          } as FlatFieldMetadataItem,
-        ]);
+        addToDraft({
+          key: 'fieldMetadataItems',
+          items: [
+            {
+              ...fieldData,
+              objectMetadataId: object?.id ?? input.objectMetadataId,
+            } as FlatFieldMetadataItem,
+          ],
+        });
         applyChanges();
       }
 

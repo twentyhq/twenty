@@ -22,33 +22,33 @@ export const MetadataStoreSSEEffect = () => {
 
       switch (eventDetail.operation.type) {
         case 'create': {
-          addToDraft(
-            entityKey,
-            [
+          addToDraft({
+            key: entityKey,
+            items: [
               eventDetail.operation
                 .createdRecord as unknown as AnyMetadataEntity,
             ],
             collectionHash,
-          );
+          });
           break;
         }
         case 'update': {
-          addToDraft(
-            entityKey,
-            [
+          addToDraft({
+            key: entityKey,
+            items: [
               eventDetail.operation
                 .updatedRecord as unknown as AnyMetadataEntity,
             ],
             collectionHash,
-          );
+          });
           break;
         }
         case 'delete': {
-          removeFromDraft(
-            entityKey,
-            [eventDetail.operation.deletedRecordId],
+          removeFromDraft({
+            key: entityKey,
+            itemIds: [eventDetail.operation.deletedRecordId],
             collectionHash,
-          );
+          });
           break;
         }
       }

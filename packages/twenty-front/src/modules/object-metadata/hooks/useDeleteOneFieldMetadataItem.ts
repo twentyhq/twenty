@@ -65,7 +65,7 @@ export const useDeleteOneFieldMetadataItem = () => {
         },
       });
 
-      removeFromDraft('fieldMetadataItems', [idToDelete]);
+      removeFromDraft({ key: 'fieldMetadataItems', itemIds: [idToDelete] });
       applyChanges();
 
       // TODO: see if we can remove this line altogether
