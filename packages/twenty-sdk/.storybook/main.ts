@@ -40,16 +40,18 @@ const config: StorybookConfig = {
         alias: {
           ...viteConfig.resolve?.alias,
           '@': path.resolve(dirname, '../src'),
-          // Force React 19 from twenty-sdk (root workspace uses React 18)
-          react: path.resolve(dirname, '../node_modules/react'),
-          'react-dom': path.resolve(dirname, '../node_modules/react-dom'),
+          // twenty-sdk has React 19 locally (for Ink 6 CLI), but
+          // twenty-ui's dist uses React 18 internals. Force React 18
+          // from the workspace root for storybook builds.
+          react: path.resolve(dirname, '../../../node_modules/react'),
+          'react-dom': path.resolve(dirname, '../../../node_modules/react-dom'),
           'react/jsx-runtime': path.resolve(
             dirname,
-            '../node_modules/react/jsx-runtime',
+            '../../../node_modules/react/jsx-runtime',
           ),
           'react/jsx-dev-runtime': path.resolve(
             dirname,
-            '../node_modules/react/jsx-dev-runtime',
+            '../../../node_modules/react/jsx-dev-runtime',
           ),
         },
       },
