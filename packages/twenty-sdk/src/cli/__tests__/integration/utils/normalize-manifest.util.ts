@@ -1,8 +1,9 @@
 import { type Manifest } from 'twenty-shared/application';
 
-const sortByUniversalIdentifier = <T extends { universalIdentifier: string }>(
-  items: T[],
-): T[] => [...items].sort((a, b) => a.universalIdentifier.localeCompare(b.universalIdentifier));
+const sortById = <T extends { universalIdentifier: string }>(items: T[]): T[] =>
+  [...items].sort((a, b) =>
+    a.universalIdentifier.localeCompare(b.universalIdentifier),
+  );
 
 export const normalizeManifestForComparison = <T extends Manifest>(
   manifest: T,
@@ -20,15 +21,26 @@ export const normalizeManifestForComparison = <T extends Manifest>(
       ? '[checksum]'
       : null,
   },
-  fields: manifest.fields ? sortByUniversalIdentifier(manifest.fields) : [],
-  logicFunctions: manifest.logicFunctions?.map((fn) => ({
-    ...fn,
-    builtHandlerChecksum: fn.builtHandlerChecksum ? '[checksum]' : null,
-  })),
-  frontComponents: manifest.frontComponents?.map((component) => ({
-    ...component,
-    builtComponentChecksum: component.builtComponentChecksum
-      ? '[checksum]'
-      : '',
-  })),
+  objects: sortById(manifest.objects),
+  fields: sortById(manifest.fields),
+  roles: sortById(manifest.roles),
+  skills: sortById(manifest.skills),
+  agents: sortById(manifest.agents),
+  views: sortById(manifest.views),
+  navigationMenuItems: sortById(manifest.navigationMenuItems),
+  pageLayouts: sortById(manifest.pageLayouts),
+  logicFunctions: sortById(
+    manifest.logicFunctions?.map((fn) => ({
+      ...fn,
+      builtHandlerChecksum: fn.builtHandlerChecksum ? '[checksum]' : null,
+    })),
+  ),
+  frontComponents: sortById(
+    manifest.frontComponents?.map((component) => ({
+      ...component,
+      builtComponentChecksum: component.builtComponentChecksum
+        ? '[checksum]'
+        : '',
+    })),
+  ),
 });
