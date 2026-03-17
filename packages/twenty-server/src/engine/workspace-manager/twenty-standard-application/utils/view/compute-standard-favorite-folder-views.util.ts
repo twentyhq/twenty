@@ -15,7 +15,7 @@ export const computeStandardFavoriteFolderViews = (
       objectName: 'favoriteFolder',
       context: {
         viewName: 'allFavoriteFolders',
-        name: 'All Favorite Folders',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

@@ -50,6 +50,7 @@ export const HeadlessFrontComponentCommandMenuItem = ({
       onClick={handleClick}
       disabled={isMounted}
       progress={headlessFrontComponentProgress}
+      showDisabledLoader={isMounted}
     />
   );
 };

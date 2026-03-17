@@ -13,15 +13,16 @@ export const CommandListItem = ({
   to,
   disabled = false,
   progress,
+  showDisabledLoader = false,
 }: {
   action: CommandMenuItemDisplayProps;
   onClick?: () => void;
   to?: string;
   disabled?: boolean;
   progress?: number;
+  showDisabledLoader?: boolean;
 }) => {
   const navigate = useNavigate();
-
   const handleClick = () => {
     if (disabled) {
       return;
@@ -33,13 +34,14 @@ export const CommandListItem = ({
     }
   };
 
-  const loaderComponent = disabled ? (
-    isDefined(progress) ? (
-      <CommandListItemLoader progress={progress} />
-    ) : (
-      <Loader />
-    )
-  ) : undefined;
+  const loaderComponent =
+    disabled && showDisabledLoader ? (
+      isDefined(progress) ? (
+        <CommandListItemLoader progress={progress} />
+      ) : (
+        <Loader />
+      )
+    ) : undefined;
 
   return (
     <SelectableListItem itemId={action.key} onEnter={handleClick}>

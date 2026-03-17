@@ -16,11 +16,13 @@ export const defineManifestTests = (appPath: string): void => {
 
     it('should have correct manifest content', async () => {
       const manifestPath = join(appPath, '.twenty/output/manifest.json');
-      const manifest: Manifest = normalizeManifestForComparison(
-        await readJson(manifestPath),
+      const manifest = normalizeManifestForComparison(
+        await readJson<Manifest>(manifestPath),
       );
 
-      expect(manifest).toEqual(EXPECTED_MANIFEST);
+      expect(manifest).toEqual(
+        normalizeManifestForComparison(EXPECTED_MANIFEST),
+      );
     });
   });
 };

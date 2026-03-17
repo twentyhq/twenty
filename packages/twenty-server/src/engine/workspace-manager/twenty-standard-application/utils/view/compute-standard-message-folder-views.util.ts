@@ -15,7 +15,7 @@ export const computeStandardMessageFolderViews = (
       objectName: 'messageFolder',
       context: {
         viewName: 'allMessageFolders',
-        name: 'All Message Folders',
+        name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

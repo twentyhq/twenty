@@ -1068,6 +1068,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    hotKeys: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     workflowVersionId: {
       toCompare: false,
       toStringify: false,

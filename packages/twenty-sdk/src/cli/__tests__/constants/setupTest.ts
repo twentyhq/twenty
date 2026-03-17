@@ -11,12 +11,13 @@ beforeAll(async () => {
   await ensureDir(path.dirname(testConfigPath));
 
   const configFile = {
-    profiles: {
-      default: {
+    remotes: {
+      local: {
         apiUrl: process.env.TWENTY_API_URL,
         apiKey: process.env.TWENTY_API_KEY,
       },
     },
+    defaultRemote: 'local',
   };
 
   await writeFile(testConfigPath, JSON.stringify(configFile, null, 2));

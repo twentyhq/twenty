@@ -4,9 +4,10 @@ import { IconArrowUpRight, type IconComponent } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
-import { isDefined } from 'twenty-shared/utils';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { type Nullable } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type CommandMenuItemProps = {
   label: string;
@@ -15,7 +16,7 @@ export type CommandMenuItemProps = {
   id: string;
   onClick?: () => void;
   Icon?: IconComponent;
-  hotKeys?: string[];
+  hotKeys?: Nullable<string[]>;
   LeftComponent?: ReactNode;
   RightComponent?: ReactNode;
   contextualTextPosition?: 'left' | 'right';
