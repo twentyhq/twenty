@@ -35,6 +35,23 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;
 
-    response.status(status).json(exception.response);
+    // Log unhandled exceptions so they are visible in server logs
+    if (!(exception instanceof HttpException)) {
+      /* oxlint-disable no-console */
+      console.error(
+        '[UnhandledExceptionFilter]',
+        exception?.message ?? exception,
+        exception?.stack,
+      );
+    }
+
+    response.status(status).json(
+      exception instanceof HttpException
+        ? exception.getResponse()
+        : {
+            statusCode: status,
+            message: exception?.message ?? 'Internal server error',
+          },
+    );
   }
 }

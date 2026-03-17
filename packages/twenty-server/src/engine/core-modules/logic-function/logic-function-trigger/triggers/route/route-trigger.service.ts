@@ -146,11 +146,23 @@ export class RouteTriggerService {
       forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
     });
 
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: logicFunction.id,
-      workspaceId: logicFunction.workspaceId,
-      payload: event,
-    });
+    let result;
+
+    try {
+      result = await this.logicFunctionExecutorService.execute({
+        logicFunctionId: logicFunction.id,
+        workspaceId: logicFunction.workspaceId,
+        payload: event,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : String(error);
+
+      throw new RouteTriggerException(
+        `Logic function execution failed: ${message}`,
+        RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,
+      );
+    }
 
     if (!isDefined(result)) {
       return result;
