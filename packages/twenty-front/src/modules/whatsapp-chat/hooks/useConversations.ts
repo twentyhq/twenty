@@ -28,6 +28,11 @@ export const useConversations = ({
   const abortRef = useRef<AbortController | null>(null);
   const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const cursorRef = useRef<string | undefined>(undefined);
+
+  // Keep ref in sync with state
+  cursorRef.current = cursor;
+
   const fetchConversations = useCallback(
     async (loadMore = false) => {
       abortRef.current?.abort();
@@ -51,8 +56,8 @@ export const useConversations = ({
           params.set('search', search);
         }
 
-        if (loadMore && cursor) {
-          params.set('cursor', cursor);
+        if (loadMore && cursorRef.current) {
+          params.set('cursor', cursorRef.current);
         }
 
         params.set('limit', String(limit));
@@ -83,7 +88,7 @@ export const useConversations = ({
         setLoading(false);
       }
     },
-    [bridgeFetch, session, search, limit, cursor],
+    [bridgeFetch, session, search, limit],
   );
 
   useEffect(() => {

@@ -75,6 +75,8 @@ export const ConversationSearch = ({
         placeholder="Search conversations..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => e.stopPropagation()}
+        onKeyUp={(e) => e.stopPropagation()}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
