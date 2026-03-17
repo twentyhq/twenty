@@ -14,14 +14,9 @@ export const useDeleteNavigationMenuItem = () => {
     removeFromDraft({ key: 'navigationMenuItems', itemIds: [id] });
     applyChanges();
 
-    try {
-      await deleteNavigationMenuItemMutation({
-        variables: { id },
-      });
-    } catch (error) {
-      // TODO: revert optimistic removal by re-fetching
-      throw error;
-    }
+    await deleteNavigationMenuItemMutation({
+      variables: { id },
+    });
   };
 
   return { deleteNavigationMenuItem };

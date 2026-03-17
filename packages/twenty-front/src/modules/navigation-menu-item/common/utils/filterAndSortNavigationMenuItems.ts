@@ -11,48 +11,41 @@ export const filterAndSortNavigationMenuItems = (
 ): NavigationMenuItem[] => {
   return navigationMenuItems
     .filter((item) => {
-      let keep = false;
-
       if (item.type === NavigationMenuItemType.FOLDER) {
-        keep = true;
-      } else if (item.type === NavigationMenuItemType.LINK) {
-        keep = true;
-      } else if (item.type === NavigationMenuItemType.OBJECT) {
-        keep =
+        return true;
+      }
+      if (item.type === NavigationMenuItemType.LINK) {
+        return true;
+      }
+      if (item.type === NavigationMenuItemType.OBJECT) {
+        return (
           isDefined(item.targetObjectMetadataId) &&
           objectMetadataItems.some(
             (meta) => meta.id === item.targetObjectMetadataId,
-          );
-      } else if (item.type === NavigationMenuItemType.VIEW) {
-        if (!isDefined(item.viewId)) {
-          keep = false;
-        } else {
-          const view = views.find((view) => view.id === item.viewId);
-          keep =
-            isDefined(view) &&
-            objectMetadataItems.some(
-              (meta) => meta.id === view.objectMetadataId,
-            );
-        }
-      } else if (item.type === NavigationMenuItemType.RECORD) {
-        const hasTargetRecordId = isDefined(item.targetRecordId);
-        const hasTargetObjectMetadataId = isDefined(
-          item.targetObjectMetadataId,
+          )
         );
-        const hasTargetRecordIdentifier = isDefined(
-          item.targetRecordIdentifier,
-        );
-        const objectMetadataExists = objectMetadataItems.some(
-          (meta) => meta.id === item.targetObjectMetadataId,
-        );
-        keep =
-          hasTargetRecordId &&
-          hasTargetObjectMetadataId &&
-          hasTargetRecordIdentifier &&
-          objectMetadataExists;
       }
-
-      return keep;
+      if (item.type === NavigationMenuItemType.VIEW) {
+        if (!isDefined(item.viewId)) {
+          return false;
+        }
+        const view = views.find((view) => view.id === item.viewId);
+        return (
+          isDefined(view) &&
+          objectMetadataItems.some((meta) => meta.id === view.objectMetadataId)
+        );
+      }
+      if (item.type === NavigationMenuItemType.RECORD) {
+        return (
+          isDefined(item.targetRecordId) &&
+          isDefined(item.targetObjectMetadataId) &&
+          isDefined(item.targetRecordIdentifier) &&
+          objectMetadataItems.some(
+            (meta) => meta.id === item.targetObjectMetadataId,
+          )
+        );
+      }
+      return false;
     })
     .sort((a, b) => a.position - b.position);
 };
