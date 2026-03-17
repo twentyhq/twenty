@@ -10,9 +10,9 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
 
   // Only HTTP(S) URLs have a meaningful origin for this transformation.
   // For other protocols (e.g., file:, data:), return the original URL
-  // with any trailing slash removed to avoid generating "null/..." URLs.
+  // unmodified to avoid generating "null/..." URLs or changing opaque URI semantics.
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    return rawUrl.replace(/\/$/, '');
+    return rawUrl;
   }
 
   const lowercaseOrigin = url.origin.toLowerCase();

@@ -80,6 +80,21 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       input: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
       expected: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
     },
+    {
+      title: 'should return non-HTTP(S) URLs unmodified',
+      input: 'data:text/html,<h1>Hello</h1>',
+      expected: 'data:text/html,<h1>Hello</h1>',
+    },
+    {
+      title: 'should preserve encoding in query-only URL without path',
+      input: 'https://example.com?x=%2F',
+      expected: 'https://example.com?x=%2F',
+    },
+    {
+      title: 'should preserve encoding in hash-only URL without path',
+      input: 'https://example.com#frag%20ment',
+      expected: 'https://example.com#frag%20ment',
+    },
   ])('$title', ({ input, expected }) => {
     expect(lowercaseUrlOriginAndRemoveTrailingSlash(input)).toBe(expected);
   });
