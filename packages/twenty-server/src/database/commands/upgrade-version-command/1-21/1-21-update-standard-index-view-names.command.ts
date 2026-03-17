@@ -16,7 +16,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 @Command({
-  name: 'upgrade:1-20:update-standard-index-view-names',
+  name: 'upgrade:1-21:update-standard-index-view-names',
   description:
     'Update standard index view names to use translatable template placeholders',
 })
@@ -82,9 +82,7 @@ export class UpdateStandardIndexViewNamesCommand extends ActiveOrSuspendedWorksp
 
       await queryRunner.commitTransaction();
 
-      if (updateCount > 0) {
-        await this.invalidateCaches(workspaceId);
-      }
+      await this.invalidateCaches(workspaceId);
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
