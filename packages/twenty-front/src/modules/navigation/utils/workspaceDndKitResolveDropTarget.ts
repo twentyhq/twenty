@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { isWorkspaceDroppableId } from '@/navigation-menu-item/utils/isWorkspaceDroppableId';
+import { isWorkspaceDroppableId } from '@/navigation-menu-item/common/utils/isWorkspaceDroppableId';
 
 import type { DroppableData } from '@/navigation/types/workspaceDndKitDroppableData';
 import type { SortableTargetDestination } from '@/navigation/types/workspaceDndKitSortableTargetDestination';

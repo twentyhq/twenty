@@ -6,9 +6,9 @@ import {
 } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
-import { NavigationDragSourceContext } from '@/navigation-menu-item/contexts/NavigationDragSourceContext';
-import { NavigationDropTargetContext } from '@/navigation-menu-item/contexts/NavigationDropTargetContext';
-import { NavigationMenuItemDragContext } from '@/navigation-menu-item/contexts/NavigationMenuItemDragContext';
+import { NavigationDragSourceContext } from '@/navigation-menu-item/common/contexts/NavigationDragSourceContext';
+import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
+import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import type { DraggableData } from '@/navigation/types/workspaceDndKitDraggableData';
 
 import { useWorkspaceDndKit } from '@/navigation/hooks/useWorkspaceDndKit';

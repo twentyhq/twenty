@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/react';
 import { type ReactNode } from 'react';
 
-import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/constants/AddToNavSourceDroppableId';
+import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
 
 import type { AddToNavDroppableProvided } from '@/command-menu/components/CommandMenuAddToNavDroppableTypes';
 
