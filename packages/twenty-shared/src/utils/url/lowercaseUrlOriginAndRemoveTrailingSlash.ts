@@ -1,6 +1,5 @@
 import { getURLSafely } from '@/utils/getURLSafely';
 import { isDefined } from '@/utils/validation';
-import { safeDecodeURIComponent } from './safeDecodeURIComponent';
 
 export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   const url = getURLSafely(rawUrl);
@@ -10,10 +9,22 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   }
 
   const lowercaseOrigin = url.origin.toLowerCase();
-  const path =
-    safeDecodeURIComponent(url.pathname) +
-    safeDecodeURIComponent(url.search) +
-    url.hash;
+  
+  const protocolIndex = rawUrl.indexOf('://');
+  if (protocolIndex === -1) {
+    return rawUrl;
+  }
+  
+  let endOfHost = rawUrl.length;
+  const pathStartIndex = rawUrl.indexOf('/', protocolIndex + 3);
+  const queryStartIndex = rawUrl.indexOf('?', protocolIndex + 3);
+  const hashStartIndex = rawUrl.indexOf('#', protocolIndex + 3);
+  
+  if (pathStartIndex !== -1) endOfHost = Math.min(endOfHost, pathStartIndex);
+  if (queryStartIndex !== -1) endOfHost = Math.min(endOfHost, queryStartIndex);
+  if (hashStartIndex !== -1) endOfHost = Math.min(endOfHost, hashStartIndex);
 
-  return (lowercaseOrigin + path).replace(/\/$/, '');
+  const rawPath = rawUrl.substring(endOfHost);
+
+  return (lowercaseOrigin + rawPath).replace(/\/$/, '');
 };
