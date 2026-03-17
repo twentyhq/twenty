@@ -1,18 +1,10 @@
 #!/bin/sh
 set -e
 
-MARKER="/data/postgres/.twenty-initialized"
-
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL..."
 until su-exec postgres pg_isready -h localhost; do sleep 0.5; done
 echo "PostgreSQL is ready."
-
-# Fast path: if already initialized with same image, skip everything
-if [ -f "$MARKER" ]; then
-  echo "Database already initialized, skipping setup."
-  exit 0
-fi
 
 # Create role if it doesn't exist
 su-exec postgres psql -h localhost -tc \
@@ -33,14 +25,13 @@ has_schema=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
 if [ "$has_schema" = "f" ]; then
   echo "Database appears to be empty, running initial setup..."
   NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
-  yarn database:migrate:prod
 fi
+
+# Always run migrations (idempotent — skips already-applied ones)
+yarn database:migrate:prod
 
 yarn command:prod cache:flush
 yarn command:prod upgrade
 yarn command:prod cache:flush
-
-# Mark as initialized so subsequent starts are instant
-touch "$MARKER"
 
 echo "Database initialization complete."
