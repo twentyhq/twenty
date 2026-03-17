@@ -24,7 +24,12 @@ export { upsertPropertiesOfItemIntoArrayOfObjectsComparingId } from './array/ups
 export { assertUnreachable } from './assertUnreachable';
 export { base64UrlEncode } from './base64UrlEncode';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export {
+  safeGetNestedProperty,
+  conditionalAvailabilityParser,
+} from './conditional-availability/conditionalAvailabilityParser';
 export { evaluateConditionalAvailabilityExpression } from './conditional-availability/evaluateConditionalAvailabilityExpression';
+export { interpolateCommandMenuItemLabel } from './conditional-availability/interpolateCommandMenuItemLabel';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
 export { isPlainDateBefore } from './date/isPlainDateBefore';
 export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';
