@@ -6,6 +6,7 @@ import { isDefined } from '../validation/isDefined';
 import { safeGetNestedProperty } from './safeGetNestedProperty';
 
 const TEMPLATE_VARIABLE_REGEX = /\$\{([^{}]+)\}/g;
+const HAS_TEMPLATE_VARIABLE_REGEX = /\$\{[^{}]+\}/;
 const TRANSFORM_FUNCTION_CALL_REGEX = /^(\w+)\((.+)\)$/;
 
 const LABEL_TRANSFORM_FUNCTIONS: Record<string, (value: string) => string> = {
@@ -60,11 +61,9 @@ export const interpolateCommandMenuItemLabel = ({
     return null;
   }
 
-  if (!TEMPLATE_VARIABLE_REGEX.test(label)) {
+  if (!HAS_TEMPLATE_VARIABLE_REGEX.test(label)) {
     return label;
   }
-
-  TEMPLATE_VARIABLE_REGEX.lastIndex = 0;
 
   return label.replace(TEMPLATE_VARIABLE_REGEX, (match, expression: string) => {
     try {

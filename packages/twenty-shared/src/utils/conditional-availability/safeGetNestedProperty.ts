@@ -25,7 +25,10 @@ export const safeGetNestedProperty = (
       return undefined;
     }
 
-    if (BLOCKED_PROPERTY_NAMES.has(part)) {
+    if (
+      BLOCKED_PROPERTY_NAMES.has(part) ||
+      !Object.prototype.hasOwnProperty.call(currentObject, part)
+    ) {
       return undefined;
     }
 

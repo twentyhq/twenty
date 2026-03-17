@@ -33,6 +33,29 @@ const buildContext = (
 });
 
 describe('interpolateCommandMenuItemLabel', () => {
+  describe('sequential invocations (global regex lastIndex)', () => {
+    it('should interpolate correctly when called multiple times in sequence', () => {
+      const context = buildContext({
+        numberOfSelectedRecords: 2,
+        objectMetadataItem: { labelPlural: 'people' },
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'First: ${numberOfSelectedRecords}',
+          context,
+        }),
+      ).toBe('First: 2');
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Second: ${objectMetadataItem.labelPlural}',
+          context,
+        }),
+      ).toBe('Second: people');
+    });
+  });
+
   describe('plain strings without template variables', () => {
     it('should return the label unchanged when no template variables are present', () => {
       const context = buildContext();
@@ -61,9 +84,7 @@ describe('interpolateCommandMenuItemLabel', () => {
     it('should return an empty string for an empty label', () => {
       const context = buildContext();
 
-      expect(
-        interpolateCommandMenuItemLabel({ label: '', context }),
-      ).toBe('');
+      expect(interpolateCommandMenuItemLabel({ label: '', context })).toBe('');
     });
   });
 
@@ -177,6 +198,24 @@ describe('interpolateCommandMenuItemLabel', () => {
           context,
         }),
       ).toBe('Label ');
+    });
+
+    it('should not resolve inherited Object.prototype members', () => {
+      const context = buildContext();
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Val: ${toString}',
+          context,
+        }),
+      ).toBe('Val: ');
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Val: ${objectMetadataItem.hasOwnProperty}',
+          context,
+        }),
+      ).toBe('Val: ');
     });
   });
 
