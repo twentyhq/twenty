@@ -1,5 +1,6 @@
 import { authLogin } from '@/cli/operations/login';
 import { authLoginOAuth } from '@/cli/operations/login-oauth';
+import { authLogout } from '@/cli/operations/logout';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
@@ -199,6 +200,23 @@ export const registerRemoteCommands = (program: Command): void => {
       }
 
       console.log(chalk.green(`✓ Re-authenticated remote "${remoteName}".`));
+    });
+
+  remote
+    .command('logout [name]')
+    .description('Clear credentials for a remote')
+    .action(async (name?: string) => {
+      const configService = new ConfigService();
+      const remoteName = name ?? (await configService.getDefaultRemote());
+
+      const result = await authLogout({ remote: remoteName });
+
+      if (!result.success) {
+        console.error(chalk.red('Logout failed:'), result.error.message);
+        process.exit(1);
+      }
+
+      console.log(chalk.green(`✓ Logged out from remote "${remoteName}"`));
     });
 
   remote

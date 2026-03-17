@@ -7,7 +7,6 @@ import { AppPublishCommand } from './publish';
 import { AppTypecheckCommand } from './typecheck';
 import { AppUninstallCommand } from './uninstall';
 import { DeployCommand } from './deploy';
-import { LogoutCommand } from './logout';
 import { WhoamiCommand } from './whoami';
 import { LogicFunctionExecuteCommand } from './exec';
 import { LogicFunctionLogsCommand } from './logs';
@@ -22,7 +21,6 @@ export const registerCommands = (program: Command): void => {
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
   const deployCommand = new DeployCommand();
-  const logoutCommand = new LogoutCommand();
   const whoamiCommand = new WhoamiCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
@@ -96,13 +94,6 @@ export const registerCommands = (program: Command): void => {
     });
 
   registerRemoteCommands(program);
-
-  program
-    .command('logout [remoteName]')
-    .description('Clear credentials for a remote')
-    .action(async (remoteName?: string) => {
-      await logoutCommand.execute({ remote: remoteName });
-    });
 
   program
     .command('whoami')
