@@ -62,6 +62,10 @@ export type ViewManifest = SyncableEntityOptions & {
   isCompact?: boolean;
   visibility?: ViewVisibility;
   openRecordIn?: ViewOpenRecordIn;
+  mainGroupByFieldMetadataUniversalIdentifier?: string;
+  kanbanAggregateOperation?: AggregateOperations;
+  kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
+  shouldHideEmptyGroups?: boolean;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];
   filterGroups?: ViewFilterGroupManifest[];

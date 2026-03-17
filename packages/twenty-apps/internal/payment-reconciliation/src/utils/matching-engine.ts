@@ -358,6 +358,8 @@ export const matchRow = (
     }
 
     // Tier 5: Single policy number match
+    // When exactly one CRM policy has this carrier policy number, it's a
+    // definitive identifier match — the Ambetter U-number is unique per member.
     if (
       isTierEnabled('POLICY_NUMBER_SINGLE', config) &&
       policyNumberMatches.length === 1
@@ -367,9 +369,9 @@ export const matchRow = (
       return {
         crmPolicyId: match.id,
         crmPolicyNumber: match.policyNumber,
-        confidence: 75,
+        confidence: 90,
         method: 'POLICY_NUMBER_SINGLE',
-        status: classifyConfidence(75, config),
+        status: classifyConfidence(90, config),
         notes: `Single CRM policy matched by policy number "${row.carrierPolicyNumber}"`,
       };
     }
@@ -448,12 +450,19 @@ export const matchRow = (
       );
 
       if (nameScore >= 0.85) {
+        // Dynamic confidence based on name quality:
+        // NPN confirms same agent, date confirms same enrollment window.
+        // Name similarity is the remaining signal — high similarity means
+        // this is almost certainly the same person.
+        const confidence =
+          nameScore >= 0.98 ? 92 : nameScore >= 0.93 ? 88 : 65;
+
         return {
           crmPolicyId: p.id,
           crmPolicyNumber: p.policyNumber,
-          confidence: 65,
+          confidence,
           method: 'NPN_DATE_NAME',
-          status: classifyConfidence(65, config),
+          status: classifyConfidence(confidence, config),
           notes: `NPN-based match: broker NPN ${row.brokerNpn}, name similarity ${nameScore.toFixed(2)}, effective date within ${tolerance} days`,
         };
       }

@@ -26,6 +26,7 @@ type NbrNode = {
   brokerName: string | null;
   brokerNpn: string | null;
   policyEffectiveDate: string | null;
+  brokerEffectiveDate: string | null;
   trueEffectiveDate: string | null;
   memberFirstName: string | null;
   memberLastName: string | null;
@@ -396,6 +397,7 @@ const runMatching = async (sourceFileId: string) => {
       brokerName: true,
       brokerNpn: true,
       policyEffectiveDate: true,
+      brokerEffectiveDate: true,
       trueEffectiveDate: true,
       memberFirstName: true,
       memberLastName: true,
@@ -556,12 +558,38 @@ const runMatching = async (sourceFileId: string) => {
     const policyLabel = row.carrierPolicyNumber ?? 'unknown';
     const crmLabel = decision.crmPolicyNumber ?? 'none';
 
+    // For unmatched BOB rows, classify by Jackie's broker-effective-date rule:
+    // - Canceled or paid > 1 day before broker effective → flag for audit research
+    // - Active and paid current → genuine gap, needs CRM record
+    let enrichedNotes = decision.notes;
+
+    if (decision.method === 'UNMATCHED' && row.brokerEffectiveDate) {
+      const brokerEff = new Date(row.brokerEffectiveDate);
+      const paidThru = row.paidThroughDate
+        ? new Date(row.paidThroughDate)
+        : null;
+      const oneDayBeforeBrokerEff = new Date(brokerEff);
+
+      oneDayBeforeBrokerEff.setDate(oneDayBeforeBrokerEff.getDate() - 1);
+
+      if (row.eligibleForCommission === false) {
+        enrichedNotes += '. CANCELED — flag for audit research';
+      } else if (
+        paidThru &&
+        paidThru.getTime() < oneDayBeforeBrokerEff.getTime()
+      ) {
+        enrichedNotes += `. PAID BEFORE BROKER EFFECTIVE (paid thru ${row.paidThroughDate}, broker eff ${row.brokerEffectiveDate}) — flag for audit research`;
+      } else {
+        enrichedNotes += `. ACTIVE policy not in CRM (broker eff ${row.brokerEffectiveDate}) — needs CRM record`;
+      }
+    }
+
     allResults.push({
       name: `${policyLabel} → ${crmLabel}`,
       confidence: decision.confidence,
       matchMethod: decision.method,
       matchStatus: decision.status,
-      matchNotes: decision.notes,
+      matchNotes: enrichedNotes,
       crmPolicyId: decision.crmPolicyId,
       crmPolicyNumber: decision.crmPolicyNumber,
       normalizedBookRowId: row.id,
@@ -676,11 +704,24 @@ const runMatching = async (sourceFileId: string) => {
       // If this policy already has a phase 1 result, enrich it
       const existingResult = resultByCrmPolicyId.get(policy.id);
 
+      // High-confidence discoveries (name match >= 0.98) are auto-approved
+      // to reduce manual review burden — the DOB exact match + near-perfect
+      // name match makes false positives extremely unlikely.
+      const discoveryConfidence = Math.round(bestScore * 100);
+      const isHighConfidenceDiscovery = bestScore >= 0.98;
+      const discoveryMatchStatus = isHighConfidenceDiscovery
+        ? 'AUTO_MATCHED'
+        : 'NEEDS_REVIEW';
+      const discoveryWriteBack = isHighConfidenceDiscovery
+        ? 'APPROVED'
+        : 'PENDING';
+
       if (existingResult) {
         existingResult.suggestedPolicyNumber = suggestedPn;
         existingResult.hasDiscrepancy = true;
-        existingResult.writeBackStatus =
-          existingResult.writeBackStatus ?? 'PENDING';
+        existingResult.writeBackStatus = isHighConfidenceDiscovery
+          ? 'APPROVED'
+          : existingResult.writeBackStatus ?? 'PENDING';
         existingResult.matchNotes = existingResult.matchNotes
           ? `${existingResult.matchNotes}. ${discoveryNote}`
           : discoveryNote;
@@ -691,9 +732,9 @@ const runMatching = async (sourceFileId: string) => {
         // No phase 1 result — create a standalone discovery result
         allResults.push({
           name: `DISCOVER: ${currentPn} → ${suggestedPn}`,
-          confidence: Math.round(bestScore * 100),
+          confidence: discoveryConfidence,
           matchMethod: 'POLICY_NUMBER_DISCOVERY',
-          matchStatus: 'NEEDS_REVIEW',
+          matchStatus: discoveryMatchStatus,
           matchNotes: discoveryNote,
           crmPolicyId: policy.id,
           crmPolicyNumber: policy.policyNumber,
@@ -705,12 +746,16 @@ const runMatching = async (sourceFileId: string) => {
           currentCrmExpireDate: policy.expirationDate,
           hasDiscrepancy: true,
           discrepancyDetails: `Policy# update: "${currentPn}" → "${suggestedPn}"`,
-          writeBackStatus: 'PENDING',
+          writeBackStatus: discoveryWriteBack,
           cancelPreviousPolicyId: null,
           suggestedPolicyNumber: suggestedPn,
         });
 
-        needsReview++;
+        if (isHighConfidenceDiscovery) {
+          autoMatched++;
+        } else {
+          needsReview++;
+        }
       }
     }
   }
@@ -723,6 +768,9 @@ const runMatching = async (sourceFileId: string) => {
   // Runs after discovery so we can exclude policies that got a discovery match
   let missingFromBob = 0;
 
+  // Statuses where a policy is too early in the pipeline to appear on a BOB
+  const PRE_CARRIER_STATUSES = new Set(['SUBMITTED', 'PENDING', 'INCOMPLETE']);
+
   const unmatchedCrmPolicies = policies.filter(
     (p) =>
       !matchedCrmPolicyIds.has(p.id) &&
@@ -730,18 +778,30 @@ const runMatching = async (sourceFileId: string) => {
       p.status &&
       ACTIVE_CRM_STATUSES.has(p.status) &&
       // Skip policies with future effective dates — they won't appear in BOB yet
-      !(p.effectiveDate && new Date(p.effectiveDate) > today),
+      !(p.effectiveDate && new Date(p.effectiveDate) > today) &&
+      // Skip SUBMITTED/PENDING/INCOMPLETE policies that don't have a valid
+      // carrier policy number — they haven't been processed by the carrier
+      // yet, so they are EXPECTED to be absent from the BOB.
+      !(
+        PRE_CARRIER_STATUSES.has(p.status) &&
+        !isValidAmbetterPolicyNumber(p.policyNumber)
+      ),
   );
 
   for (const policy of unmatchedCrmPolicies) {
     missingFromBob++;
+
+    const hasCarrierPn = isValidAmbetterPolicyNumber(policy.policyNumber);
+    const severity = hasCarrierPn
+      ? 'Has carrier policy# — should be on BOB'
+      : 'No carrier policy# — may need policy# discovery';
 
     allResults.push({
       name: `MISSING: ${policy.policyNumber ?? 'unknown'}`,
       confidence: 0,
       matchMethod: 'MISSING_FROM_BOB',
       matchStatus: 'NEEDS_REVIEW',
-      matchNotes: `CRM policy ${policy.policyNumber} (${policy.status}) not found in carrier BOB`,
+      matchNotes: `CRM policy ${policy.policyNumber} (${policy.status}) not found in carrier BOB. ${severity}`,
       crmPolicyId: policy.id,
       crmPolicyNumber: policy.policyNumber,
       normalizedBookRowId: null,
@@ -751,7 +811,7 @@ const runMatching = async (sourceFileId: string) => {
       derivedExpireDate: null,
       currentCrmExpireDate: policy.expirationDate,
       hasDiscrepancy: true,
-      discrepancyDetails: `CRM policy (${policy.status}) not found in carrier BOB`,
+      discrepancyDetails: `CRM policy (${policy.status}) not found in carrier BOB. ${severity}`,
       writeBackStatus: null,
       cancelPreviousPolicyId: null,
       suggestedPolicyNumber: null,
