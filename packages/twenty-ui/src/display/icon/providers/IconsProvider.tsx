@@ -1,5 +1,5 @@
 import { useSetAtom } from 'jotai';
-import { useEffect } from 'react';
+import { type JSX, useEffect } from 'react';
 
 import { iconsState } from '@ui/display/icon/states/iconsState';
 
