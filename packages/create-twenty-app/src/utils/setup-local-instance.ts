@@ -64,7 +64,7 @@ const getActiveWorkspaceId = (): string | null => {
 const generateApiKeyToken = (workspaceId: string): string | null => {
   try {
     const output = execSync(
-      `docker exec ${SERVER_CONTAINER} yarn command:prod workspace:generate-api-key -w ${workspaceId}`,
+      `docker exec -e NODE_ENV=development ${SERVER_CONTAINER} yarn command:prod workspace:generate-api-key -w ${workspaceId}`,
       { encoding: 'utf-8' },
     );
 
@@ -72,9 +72,16 @@ const generateApiKeyToken = (workspaceId: string): string | null => {
     const tokenLine = output
       .trim()
       .split('\n')
-      .find((line) => line.startsWith(TOKEN_PREFIX));
+      .find((line) => line.includes(TOKEN_PREFIX));
 
-    return tokenLine ? tokenLine.slice(TOKEN_PREFIX.length).trim() : null;
+    if (!tokenLine) {
+      return null;
+    }
+
+    const tokenStartIndex =
+      tokenLine.indexOf(TOKEN_PREFIX) + TOKEN_PREFIX.length;
+
+    return tokenLine.slice(tokenStartIndex).trim();
   } catch {
     return null;
   }
@@ -148,7 +155,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   if (!isDefined(workspaceCreated)) {
     console.log(
       chalk.yellow(
-        '⚠️  Skipping API key generation. Run `yarn twenty auth:login` manually after creating your workspace.',
+        '⚠️  Skipping API key generation. Run `yarn twenty remote add --local` manually after creating your workspace.',
       ),
     );
 

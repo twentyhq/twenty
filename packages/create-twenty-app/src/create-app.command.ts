@@ -27,6 +27,7 @@ type CreateAppOptions = {
   name?: string;
   displayName?: string;
   description?: string;
+  skipLocalInstance?: boolean;
 };
 
 export class CreateAppCommand {
@@ -57,24 +58,26 @@ export class CreateAppCommand {
 
       await tryGitInit(appDirectory);
 
-      const { needsLocalInstance } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'needsLocalInstance',
-          message:
-            'Do you need a local instance of Twenty? Recommended if you not have one already.',
-          default: true,
-        },
-      ]);
-
       let localResult: LocalInstanceResult = { running: false };
 
-      if (needsLocalInstance) {
-        localResult = await setupLocalInstance();
-      }
+      if (!options.skipLocalInstance) {
+        const { needsLocalInstance } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'needsLocalInstance',
+            message:
+              'Do you need a local instance of Twenty? Recommended if you not have one already.',
+            default: true,
+          },
+        ]);
 
-      if (isDefined(localResult.apiKey)) {
-        this.runAuthLogin(appDirectory, localResult.apiKey);
+        if (needsLocalInstance) {
+          localResult = await setupLocalInstance();
+        }
+
+        if (isDefined(localResult.apiKey)) {
+          this.runAuthLogin(appDirectory, localResult.apiKey);
+        }
       }
 
       this.logSuccess(appDirectory, localResult);
