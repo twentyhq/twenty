@@ -192,6 +192,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         buildOptions,
         additionalCacheDataMaps,
         universalIdentifier: flatEntityToUpdateUniversalIdentifier,
+        remainingFlatEntityMapsToValidate: createdFlatEntityMaps,
       });
 
       if (validationResult.status === 'fail') {

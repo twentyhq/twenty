@@ -278,6 +278,7 @@ export class FlatNavigationMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
     },
+    remainingFlatEntityMapsToValidate,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
   >): FailedFlatEntityValidation<'navigationMenuItem', 'update'> {
@@ -356,13 +357,23 @@ export class FlatNavigationMenuItemValidatorService {
       validationResult.errors.push(...circularDependencyErrors);
     }
 
-    const referencedParentNavigationMenuItem =
+    const referencedParentInOptimistic =
       findFlatEntityByUniversalIdentifier({
         universalIdentifier: newFolderUniversalIdentifier,
         flatEntityMaps: optimisticFlatNavigationMenuItemMaps,
       });
 
-    if (!isDefined(referencedParentNavigationMenuItem)) {
+    const referencedParentInRemaining = remainingFlatEntityMapsToValidate
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: newFolderUniversalIdentifier,
+          flatEntityMaps: remainingFlatEntityMapsToValidate,
+        })
+      : undefined;
+
+    if (
+      !isDefined(referencedParentInOptimistic) &&
+      !isDefined(referencedParentInRemaining)
+    ) {
       validationResult.errors.push({
         code: NavigationMenuItemExceptionCode.NAVIGATION_MENU_ITEM_NOT_FOUND,
         message: t`Parent navigation menu item not found`,

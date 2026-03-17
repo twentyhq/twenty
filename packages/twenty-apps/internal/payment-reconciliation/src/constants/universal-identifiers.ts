@@ -306,6 +306,10 @@ export const STATUS_CHANGE_LOG_VIEW_ID =
 export const RECONCILIATION_RUN_VIEW_ID =
   '025f0e9f-c01e-48c3-9eb8-6670729cf44a';
 
+// Navigation menu folder
+export const PAY_RECON_FOLDER_NAV_ID =
+  '40c03b18-7a2e-4d5f-9c1b-8e6f3a4d2b10';
+
 // Navigation menu items
 export const SOURCE_FILES_NAV_ID =
   'a4e08c68-8c36-4df8-9d52-4f6f9614102a';
