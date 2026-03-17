@@ -40,6 +40,16 @@ const config: StorybookConfig = {
         alias: {
           ...viteConfig.resolve?.alias,
           '@': path.resolve(dirname, '../src'),
+          react: path.resolve(dirname, '../node_modules/react'),
+          'react-dom': path.resolve(dirname, '../node_modules/react-dom'),
+          'react/jsx-runtime': path.resolve(
+            dirname,
+            '../node_modules/react/jsx-runtime',
+          ),
+          'react/jsx-dev-runtime': path.resolve(
+            dirname,
+            '../node_modules/react/jsx-dev-runtime',
+          ),
         },
       },
       plugins: [
