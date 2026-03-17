@@ -23,7 +23,7 @@ Pick **When a Record is Created** and choose **Messages**.
 
 Every time an email lands in Twenty, this fires.
 
-![Workflow overview showing trigger, Find Sender, AI Triage, Should Reply branch, and Send Threaded Reply steps](/images/user-guide/workflows/auto-reply/workflow-overview.png)
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}}/>
 
 ### Step 3: Look up who sent it
 
@@ -40,7 +40,7 @@ The sender's address isn't on the message itself — it's on the related Message
 
 This gives you the sender's email in `handle` and their name in `displayName`.
 
-![Find Sender config filtering Message Participants by message and role](/images/user-guide/workflows/auto-reply/find-sender.png)
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}}/>
 
 ### Step 4: AI triage and draft reply
 
@@ -69,7 +69,7 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 The AI Agent outputs its response in a `response` field that the next steps can reference.
 
-![AI Agent prompt with email subject, body, and sender variables](/images/user-guide/workflows/auto-reply/ai-triage.png)
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}}/>
 
 ### Step 5: Branch on the AI decision
 
@@ -83,7 +83,7 @@ Add an **If/Else** action to check whether the AI decided to reply or skip.
 
 Spam, newsletters, and auto-generated messages get dropped. Everything else moves to the next step.
 
-![If/Else branch checking AI response does not contain SKIP](/images/user-guide/workflows/auto-reply/should-reply.png)
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}}/>
 
 ### Step 6: Send a threaded reply
 
@@ -98,7 +98,7 @@ Add a **Send Email** action on the "if true" branch. Click **Advanced options**,
 
 The In-Reply-To field is what makes this a reply instead of a new conversation. The recipient sees it threaded under the original email in Gmail, Outlook, or any other client.
 
-![Send Email config with In-Reply-To, subject with Re: prefix, and AI-drafted body](/images/user-guide/workflows/auto-reply/send-email.png)
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}}/>
 
 <Tip>
 **In-Reply-To** expects a `message.headerMessageId` from the trigger — it's the email's unique fingerprint, not a recipient address. If you leave it empty, the email still sends, just as a standalone message.
