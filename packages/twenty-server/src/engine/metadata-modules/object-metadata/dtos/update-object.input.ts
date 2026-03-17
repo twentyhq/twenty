@@ -52,6 +52,11 @@ export class UpdateObjectPayload {
   @Field({ nullable: true })
   shortcut?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  color?: string;
+
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })

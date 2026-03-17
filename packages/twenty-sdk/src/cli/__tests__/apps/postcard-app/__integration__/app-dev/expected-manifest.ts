@@ -3,6 +3,7 @@ import type { Manifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
+  NavigationMenuItemType,
   RelationOnDeleteAction,
   RelationType,
   ViewType,
@@ -1569,19 +1570,22 @@ export const EXPECTED_MANIFEST: Manifest = {
   ],
   navigationMenuItems: [
     {
+      type: NavigationMenuItemType.OBJECT,
       position: 2,
       universalIdentifier: 'c1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
-      viewUniversalIdentifier: 'b1a2b3c4-0003-4a7b-8c9d-0e1f2a3b4c5d',
+      targetObjectUniversalIdentifier: 'e1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5e',
     },
     {
+      type: NavigationMenuItemType.OBJECT,
       position: 0,
       universalIdentifier: 'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
-      viewUniversalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      targetObjectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     },
     {
+      type: NavigationMenuItemType.OBJECT,
       position: 1,
       universalIdentifier: 'c1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
-      viewUniversalIdentifier: 'b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+      targetObjectUniversalIdentifier: 'd1a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
     },
   ],
   logicFunctions: [
