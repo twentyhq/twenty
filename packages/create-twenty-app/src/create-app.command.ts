@@ -187,8 +187,12 @@ export class CreateAppCommand {
     console.log(chalk.blue('Next steps:'));
     console.log(chalk.gray(`  cd ${dirName}`));
     console.log(
-      chalk.gray('  yarn twenty auth:login  # Authenticate with Twenty'),
+      chalk.gray(
+        '  yarn twenty remote add --local  # Authenticate with Twenty',
+      ),
     );
-    console.log(chalk.gray('  yarn twenty app:dev     # Start dev mode'));
+    console.log(
+      chalk.gray('  yarn twenty dev                # Start dev mode'),
+    );
   }
 }

@@ -43,115 +43,119 @@ Usage: twenty [options] [command]
 CLI for Twenty application development
 
 Options:
-  --workspace <name>   Use a specific workspace configuration (default: "default")
-  -V, --version        output the version number
-  -h, --help           display help for command
+  -V, --version       output the version number
+  -r, --remote <name> Use a specific remote (overrides the default set by remote switch)
+  -h, --help          display help for command
 
 Commands:
-  auth:login           Authenticate with Twenty
-  auth:logout          Remove authentication credentials
-  auth:status          Check authentication status
-  auth:switch          Switch the default workspace
-  auth:list            List all configured workspaces
-  app:dev              Watch and sync local application changes
-  app:build            Build, sync, and generate API client
-  app:publish          Build and publish to npm or a Twenty server
-  app:typecheck        Run TypeScript type checking on the application
-  app:uninstall        Uninstall application from Twenty
-  entity:add           Add a new entity to your application
-  function:logs        Watch application function logs
-  function:execute     Execute a logic function with a JSON payload
-  help [command]       display help for command
+  dev [appPath]       Watch and sync local application changes
+  build [appPath]     Build, sync, and generate API client into .twenty/output/
+  deploy [appPath]    Build and deploy to a Twenty server
+  publish [appPath]   Build and publish to npm
+  typecheck [appPath] Run TypeScript type checking on the application
+  uninstall [appPath] Uninstall application from Twenty
+  remote              Manage remote Twenty servers
+  add [entityType]    Add a new entity to your application
+  exec [appPath]      Execute a logic function with a JSON payload
+  logs [appPath]      Watch application function logs
+  help [command]      display help for command
 ```
 
-In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty app:dev`, etc.
+In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
 
 ## Global Options
 
-- `--workspace <name>`: Use a specific workspace configuration profile. Defaults to `default`. See Configuration for details.
+- `--remote <name>` (or `-r <name>`): Use a specific remote configuration. Defaults to `local`. See Configuration for details.
 
 ## Commands
 
-### Auth
+### Remote
 
-Authenticate the CLI against your Twenty workspace.
+Manage remote server connections and authentication.
 
-- `twenty auth:login` — Authenticate with Twenty.
+- `twenty remote add [nameOrUrl]` — Add a new remote or re-authenticate an existing one.
 
   - Options:
-    - `--api-key <key>`: API key for authentication.
-    - `--api-url <url>`: Twenty API URL (defaults to your current profile's value or `http://localhost:3000`).
-  - Behavior: Prompts for any missing values, persists them to the active workspace profile, and validates the credentials.
+    - `--token <token>`: API key for non-interactive auth.
+    - `--url <url>`: Server URL (alternative to positional arg).
+    - `--as <name>`: Name for this remote (otherwise derived from URL hostname).
+    - `--local`: Connect to local development server (`http://localhost:3000`).
+  - Behavior: If `nameOrUrl` matches an existing remote name, re-authenticates it. Otherwise, creates a new remote and authenticates via OAuth (with API key fallback).
 
-- `twenty auth:logout` — Remove authentication credentials for the active workspace profile.
+- `twenty remote remove <name>` — Remove a remote and its credentials.
 
-- `twenty auth:status` — Print the current authentication status (API URL, masked API key, validity).
+- `twenty remote list` — List all configured remotes with their auth status and URLs.
 
-- `twenty auth:list` — List all configured workspaces.
+- `twenty remote switch [name]` — Set the default remote.
 
-  - Behavior: Displays all available workspaces with their authentication status and API URLs. Shows which workspace is the current default.
+  - If omitted, shows an interactive selection.
 
-- `twenty auth:switch [workspace]` — Switch the default workspace for authentication.
-  - Arguments:
-    - `workspace` (optional): Name of the workspace to switch to. If omitted, shows an interactive selection.
-  - Behavior: Sets the specified workspace as the default, so subsequent commands use it without needing `--workspace`.
+- `twenty remote status` — Print the current remote name, server URL, and auth status.
 
 Examples:
 
 ```bash
-# Login interactively (recommended)
-twenty auth:login
+# Add a remote interactively (recommended)
+twenty remote add
 
-# Provide values in flags
-twenty auth:login --api-key $TWENTY_API_KEY --api-url https://api.twenty.com
+# Provide values in flags (non-interactive, for CI)
+twenty remote add https://api.twenty.com --token $TWENTY_API_KEY
 
-# Login interactively for a specific workspace profile
-twenty auth:login --workspace my-custom-workspace
+# Add a local development remote
+twenty remote add --local
+
+# Name a remote explicitly
+twenty remote add https://api.twenty.com --as production
+
+# Re-authenticate an existing remote by name
+twenty remote add production
 
 # Check status
-twenty auth:status
+twenty remote status
 
-# Logout current profile
-twenty auth:logout
+# List all configured remotes
+twenty remote list
 
-# List all configured workspaces
-twenty auth:list
+# Switch default remote
+twenty remote switch production
 
-# Switch default workspace interactively
-twenty auth:switch
-
-# Switch to a specific workspace
-twenty auth:switch production
+# Remove a remote
+twenty remote remove production
 ```
 
 ### App
 
 Application development commands.
 
-- `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
+- `twenty dev [appPath]` — Start development mode: watch and sync local application changes.
 
-  - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
+  - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your remote, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
 
-- `twenty app:build [appPath]` — Build the application, sync to the server, generate the typed API client, then rebuild with the real client.
+- `twenty build [appPath]` — Build the application, sync to the server, generate the typed API client, then rebuild with the real client.
 
   - Options:
     - `--tarball`: Also pack the output into a `.tgz` tarball.
 
-- `twenty app:publish [appPath]` — Build and publish the application.
+- `twenty publish [appPath]` — Build and publish the application to npm.
 
-  - Default (no flags): builds and runs `npm publish` on the output directory.
+  - Behavior: Builds the application and runs `npm publish` on the output directory.
   - Options:
-    - `--server <url>`: Publish to a Twenty server instead of npm (builds tarball, uploads, and installs).
-    - `--token <token>`: Auth token for the server.
     - `--tag <tag>`: npm dist-tag (e.g. `beta`, `next`).
 
-- `twenty app:typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
+- `twenty deploy [appPath]` — Build and deploy the application to a Twenty server.
 
-- `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
+  - Behavior: Builds the tarball, uploads it to the server, and installs the application.
+  - Options:
+    - `--server <url>`: Target Twenty server URL.
+    - `--token <token>`: Auth token for the server.
+
+- `twenty typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
+
+- `twenty uninstall [appPath]` — Uninstall the application from the current remote.
 
 ### Entity
 
-- `twenty entity:add [entityType]` — Add a new entity to your application.
+- `twenty add [entityType]` — Add a new entity to your application.
   - Arguments:
     - `entityType`: one of `object`, `field`, `function`, `front-component`, `role`, `view`, `navigation-menu-item`, or `skill`. If omitted, an interactive prompt is shown.
   - Options:
@@ -168,13 +172,13 @@ Application development commands.
 
 ### Function
 
-- `twenty function:logs [appPath]` — Stream application function logs.
+- `twenty logs [appPath]` — Stream application function logs.
 
   - Options:
     - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
     - `-n, --functionName <name>`: Only show logs for a specific function name.
 
-- `twenty function:execute [appPath]` — Execute a logic function with a JSON payload.
+- `twenty exec [appPath]` — Execute a logic function with a JSON payload.
   - Options:
     - `--preInstall`: Execute the pre-install logic function defined in the application manifest (required if `--postInstall`, `-n`, and `-u` not provided).
     - `--postInstall`: Execute the post-install logic function defined in the application manifest (required if `--preInstall`, `-n`, and `-u` not provided).
@@ -186,70 +190,70 @@ Examples:
 
 ```bash
 # Start dev mode (watch, build, and sync)
-twenty app:dev
+twenty dev
 
-# Start dev mode with a custom workspace profile
-twenty app:dev --workspace my-custom-workspace
+# Start dev mode with a custom remote
+twenty dev --remote my-custom-remote
 
 # Type check the application
-twenty app:typecheck
+twenty typecheck
 
 # Add a new entity interactively
-twenty entity:add
+twenty add
 
 # Add a new function
-twenty entity:add function
+twenty add function
 
 # Add a new front component
-twenty entity:add front-component
+twenty add front-component
 
 # Add a new view
-twenty entity:add view
+twenty add view
 
 # Add a new navigation menu item
-twenty entity:add navigation-menu-item
+twenty add navigation-menu-item
 
 # Add a new skill
-twenty entity:add skill
+twenty add skill
 
 # Build the app (output in .twenty/output/)
-twenty app:build
+twenty build
 
 # Build and create a tarball
-twenty app:build --tarball
+twenty build --tarball
 
 # Publish to npm
-twenty app:publish
+twenty publish
 
 # Publish with a dist-tag
-twenty app:publish --tag beta
+twenty publish --tag beta
 
-# Publish directly to a Twenty server (builds, uploads, and installs)
-twenty app:publish --server https://app.twenty.com
+# Deploy directly to a Twenty server (builds, uploads, and installs)
+twenty deploy --server https://app.twenty.com
 
-# Uninstall the app from the workspace
-twenty app:uninstall
+# Uninstall the app from the remote
+twenty uninstall
 
 # Watch all function logs
-twenty function:logs
+twenty logs
 
 # Watch logs for a specific function by name
-twenty function:logs -n my-function
+twenty logs -n my-function
 
 # Execute a function by name (with empty payload)
-twenty function:execute -n my-function
+twenty exec -n my-function
 
 # Execute a function with a JSON payload
-twenty function:execute -n my-function -p '{"name": "test"}'
+twenty exec -n my-function -p '{"name": "test"}'
 
 # Execute a function by universal identifier
-twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
+twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
 
 # Execute the pre-install function
-twenty function:execute --preInstall
+twenty exec --preInstall
 
 # Execute the post-install function
-twenty function:execute --postInstall
+twenty exec --postInstall
 ```
 
 ## Configuration
@@ -257,21 +261,23 @@ twenty function:execute --postInstall
 The CLI stores configuration per user in a JSON file:
 
 - Location: `~/.twenty/config.json`
-- Structure: Profiles keyed by workspace name. The active profile is selected with `--workspace <name>` or by the `defaultWorkspace` setting.
+- Structure: Remotes keyed by name. The active remote is selected with `--remote <name>` or by the `defaultRemote` setting.
 
 Example configuration file:
 
 ```json
 {
-  "defaultWorkspace": "prod",
-  "profiles": {
-    "default": {
+  "defaultRemote": "production",
+  "remotes": {
+    "local": {
       "apiUrl": "http://localhost:3000",
       "apiKey": "<your-api-key>"
     },
-    "prod": {
+    "production": {
       "apiUrl": "https://api.twenty.com",
-      "apiKey": "<your-api-key>"
+      "accessToken": "<oauth-token>",
+      "refreshToken": "<refresh-token>",
+      "oauthClientId": "<client-id>"
     }
   }
 }
@@ -279,17 +285,17 @@ Example configuration file:
 
 Notes:
 
-- If a profile is missing, `apiUrl` defaults to `http://localhost:3000` until set.
-- `twenty auth:login` writes the `apiUrl` and `apiKey` for the active workspace profile.
-- `twenty auth:login --workspace custom-workspace` writes the `apiUrl` and `apiKey` for a custom `custom-workspace` profile.
-- `twenty auth:switch` sets the `defaultWorkspace` field, which is used when `--workspace` is not specified.
-- `twenty auth:list` shows all configured workspaces and their authentication status.
+- If a remote is missing, `apiUrl` defaults to `http://localhost:3000`.
+- `twenty remote add` writes credentials for the active remote (OAuth tokens or API key).
+- `twenty remote add --as my-remote` saves under a custom name.
+- `twenty remote switch` sets the `defaultRemote` field, used when `-r` is not specified.
+- `twenty remote list` shows all configured remotes and their authentication status.
 
 ## Troubleshooting
 
-- Auth errors: run `twenty auth:login` again and ensure the API key has the required permissions.
-- Typings out of date: restart `twenty app:dev` to refresh the client and types.
-- Not seeing changes in dev: make sure dev mode is running (`twenty app:dev`).
+- Auth errors: run `twenty remote add` again (or add a new remote) and ensure the API key has the required permissions.
+- Typings out of date: restart `twenty dev` to refresh the client and types.
+- Not seeing changes in dev: make sure dev mode is running (`twenty dev`).
 
 ## Contributing
 
@@ -327,7 +333,7 @@ After building, you can run the CLI directly:
 
 ```bash
 npx nx run twenty-sdk:start -- <command>
-# Example: npx nx run twenty-sdk:start -- auth:status
+# Example: npx nx run twenty-sdk:start -- remote status
 ```
 
 Or run the built CLI directly:

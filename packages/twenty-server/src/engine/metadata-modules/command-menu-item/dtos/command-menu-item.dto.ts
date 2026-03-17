@@ -68,6 +68,11 @@ export class CommandMenuItemDTO {
   @Field(() => CommandMenuItemAvailabilityType)
   availabilityType: CommandMenuItemAvailabilityType;
 
+  @IsString({ each: true })
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  hotKeys?: string[];
+
   @IsString()
   @IsOptional()
   @Field({ nullable: true })

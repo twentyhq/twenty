@@ -1,4 +1,4 @@
-import { appBuild } from '@/cli/public-operations/app-build';
+import { appBuild } from '@/cli/operations/build';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
