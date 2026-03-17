@@ -152,7 +152,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     },
   ]);
 
-  if (!isDefined(workspaceCreated)) {
+  if (!workspaceCreated) {
     console.log(
       chalk.yellow(
         '⚠️  Skipping API key generation. Run `yarn twenty remote add --local` manually after creating your workspace.',
