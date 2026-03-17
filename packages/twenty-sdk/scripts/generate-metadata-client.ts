@@ -23,7 +23,8 @@ const main = async () => {
   );
 
   const serverUrl = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
-  const token = process.env.TWENTY_API_KEY;
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzczNzQ1MDgzLCJleHAiOjQ5MjczNDUwODIsImp0aSI6ImI2ZWY3NGJmLTQzYTAtNDkwNC04MTY2LTAyM2JkYjZjZjQ1YSJ9.tTM-F0mrEU-dEiWPbWB-PyNmUrFcOstrhQ9hIfiVZ94';
   const clientWrapperTemplateSource = await readFile(TEMPLATE_PATH, 'utf-8');
 
   const clientService = new ClientService({
