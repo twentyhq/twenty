@@ -7,7 +7,7 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { type OrganizeActionsProps } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { type AddMenuItemInsertionContext } from '@/navigation-menu-item/common/types/AddMenuItemInsertionContext';
@@ -60,7 +60,7 @@ export const useNavigationMenuItemEditOrganizeActions =
       addMenuItemInsertionContextState,
     );
     const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-    const items = useWorkspaceSectionItems();
+    const items = useNavigationMenuItemSectionItems();
     const { moveUp, moveDown, remove } = useNavigationMenuItemMoveRemove();
 
     const selectedItem = selectedNavigationMenuItemInEditMode

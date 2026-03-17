@@ -1,13 +1,15 @@
 let preloadScheduled = false;
 
 const preload = () => {
-  void import('@/navigation/components/WorkspaceDndKitProvider');
+  void import(
+    '@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider'
+  );
   void import(
     '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
   );
 };
 
-export const preloadWorkspaceDndKit = (): void => {
+export const preloadNavigationMenuItemDndKit = (): void => {
   if (preloadScheduled) {
     return;
   }

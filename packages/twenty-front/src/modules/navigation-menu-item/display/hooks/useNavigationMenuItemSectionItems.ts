@@ -21,7 +21,7 @@ export type NavigationMenuItemClickParams = {
   objectMetadataItem?: ObjectMetadataItem | null;
 };
 
-export const useWorkspaceSectionItems = (): NavigationMenuItem[] => {
+export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =

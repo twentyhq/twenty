@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
-import type { DroppableData } from '@/navigation/types/workspaceDndKitDroppableData';
+import type { DroppableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDroppableData';
 
 const StyledSlotWrapper = styled.div<{ $empty: boolean }>`
   min-height: 0;
@@ -16,7 +16,7 @@ const SLOT_COLLISION_PRIORITY = 1;
 
 export const FOLDER_HEADER_SLOT_COLLISION_PRIORITY = 2;
 
-type WorkspaceDndKitDroppableSlotProps = {
+type NavigationMenuItemDroppableSlotProps = {
   droppableId: string;
   index: number;
   children?: ReactNode;
@@ -24,13 +24,13 @@ type WorkspaceDndKitDroppableSlotProps = {
   collisionPriority?: number;
 };
 
-export const WorkspaceDndKitDroppableSlot = ({
+export const NavigationMenuItemDroppableSlot = ({
   droppableId,
   index,
   children,
   disabled = false,
   collisionPriority = SLOT_COLLISION_PRIORITY,
-}: WorkspaceDndKitDroppableSlotProps) => {
+}: NavigationMenuItemDroppableSlotProps) => {
   const id = getDndKitDropTargetId(droppableId, index);
   const data: DroppableData = { droppableId, index };
   const { ref } = useDroppable({

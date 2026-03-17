@@ -1,15 +1,17 @@
 import { lazy, Suspense } from 'react';
 
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemFolderReadOnly } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderReadOnly';
-import type { WorkspaceSectionItemContentProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionItemContentProps';
+import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 
-const LazyWorkspaceNavigationMenuItemsFolder = lazy(() =>
+const LazyNavigationMenuItemFolder = lazy(() =>
   import(
-    '@/navigation-menu-item/display/folder/components/WorkspaceNavigationMenuItemsFolder'
-  ).then((m) => ({ default: m.WorkspaceNavigationMenuItemsFolder })),
+    '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder'
+  ).then((m) => ({ default: m.NavigationMenuItemFolder })),
 );
 
-type NavigationMenuItemFolderDisplayProps = WorkspaceSectionItemContentProps;
+type NavigationMenuItemFolderDisplayProps =
+  NavigationMenuItemSectionContentProps;
 
 export const NavigationMenuItemFolderDisplay = ({
   item,
@@ -53,12 +55,13 @@ export const NavigationMenuItemFolderDisplay = ({
         />
       }
     >
-      <LazyWorkspaceNavigationMenuItemsFolder
+      <LazyNavigationMenuItemFolder
         folderId={folderId}
         folderName={folderName}
         folderIconKey={folderIconKey}
         folderColor={folderColor}
         navigationMenuItems={navigationMenuItems}
+        section={NavigationSections.WORKSPACE}
         isGroup={isGroup}
         isSelectedInEditMode={editModeProps.isSelectedInEditMode}
         onEditModeClick={editModeProps.onEditModeClick}

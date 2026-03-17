@@ -1,5 +1,5 @@
-import { WorkspaceDndKitDroppableSlot } from '@/navigation-menu-item/display/dnd/components/WorkspaceDndKitDroppableSlot';
-import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/display/dnd/components/WorkspaceDndKitSortableItem';
+import { NavigationMenuItemDroppableSlot } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
+import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
@@ -12,9 +12,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
-import { WorkspaceOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/WorkspaceOrphanDropTarget';
+import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
-import type { WorkspaceSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionListDndKitProps';
+import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
 
 const StyledList = styled.div`
   display: flex;
@@ -29,14 +29,14 @@ const StyledListItemRow = styled.div`
   gap: 0;
 `;
 
-export const WorkspaceSectionListDndKit = ({
+export const NavigationMenuItemSectionListDndKit = ({
   filteredItems,
   getEditModeProps,
   folderChildrenById,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
-}: WorkspaceSectionListDndKitProps) => {
+}: NavigationMenuItemSectionListDndKitProps) => {
   const isNavigationMenuInEditMode = useAtomStateValue(
     isNavigationMenuInEditModeState,
   );
@@ -53,8 +53,8 @@ export const WorkspaceSectionListDndKit = ({
     <StyledList>
       {filteredItems.map((item, index) => (
         <StyledListItemRow key={item.id}>
-          <WorkspaceOrphanDropTarget index={index} compact />
-          <WorkspaceDndKitSortableItem
+          <NavigationMenuItemOrphanDropTarget index={index} compact />
+          <NavigationMenuItemSortableItem
             id={item.id}
             index={index}
             group={
@@ -72,38 +72,38 @@ export const WorkspaceSectionListDndKit = ({
               onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
             />
-          </WorkspaceDndKitSortableItem>
+          </NavigationMenuItemSortableItem>
         </StyledListItemRow>
       ))}
-      <WorkspaceDndKitDroppableSlot
+      <NavigationMenuItemDroppableSlot
         droppableId={
           NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
         }
         index={filteredItems.length}
         disabled={workspaceDropDisabled}
       >
-        <WorkspaceOrphanDropTarget
+        <NavigationMenuItemOrphanDropTarget
           index={filteredItems.length}
           compact={!isAddMenuItemButtonVisible}
         >
           {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
-        </WorkspaceOrphanDropTarget>
-      </WorkspaceDndKitDroppableSlot>
+        </NavigationMenuItemOrphanDropTarget>
+      </NavigationMenuItemDroppableSlot>
       {addToNavigationFallbackDestination?.droppableId ===
         NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS &&
         addToNavigationFallbackDestination.index > filteredItems.length && (
-          <WorkspaceDndKitDroppableSlot
+          <NavigationMenuItemDroppableSlot
             droppableId={
               NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS
             }
             index={addToNavigationFallbackDestination.index}
             disabled={workspaceDropDisabled}
           >
-            <WorkspaceOrphanDropTarget
+            <NavigationMenuItemOrphanDropTarget
               index={addToNavigationFallbackDestination.index}
               compact
             />
-          </WorkspaceDndKitDroppableSlot>
+          </NavigationMenuItemDroppableSlot>
         )}
     </StyledList>
   );

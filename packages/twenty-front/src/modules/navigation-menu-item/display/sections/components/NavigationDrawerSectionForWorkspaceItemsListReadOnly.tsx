@@ -3,7 +3,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import type { WorkspaceSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionListDndKitProps';
+import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 
 const StyledList = styled.div`
@@ -14,7 +14,7 @@ const StyledList = styled.div`
 `;
 
 type NavigationDrawerSectionForWorkspaceItemsListReadOnlyProps = Pick<
-  WorkspaceSectionListDndKitProps,
+  NavigationMenuItemSectionListDndKitProps,
   'filteredItems' | 'folderChildrenById' | 'onActiveObjectMetadataItemClick'
 >;
 

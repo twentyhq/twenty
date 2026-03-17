@@ -7,10 +7,11 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { WorkspaceNavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/WorkspaceNavigationMenuItemFolderSubItem';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
-import { useWorkspaceFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useWorkspaceFolderOpenState';
+import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 
@@ -51,7 +52,7 @@ export const NavigationMenuItemFolderReadOnly = ({
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
   const isMobile = useIsMobile();
   const { isOpen, handleToggle, selectedNavigationMenuItemIndex } =
-    useWorkspaceFolderOpenState({ folderId, navigationMenuItems });
+    useNavigationMenuItemFolderOpenState({ folderId, navigationMenuItems });
 
   const [skipInitialExpandAnimation] = useState(() => isOpen);
 
@@ -98,17 +99,16 @@ export const NavigationMenuItemFolderReadOnly = ({
           >
             <StyledFolderContent>
               {navigationMenuItems.map((navigationMenuItem, index) => (
-                <WorkspaceNavigationMenuItemFolderSubItem
+                <NavigationMenuItemFolderSubItem
                   key={navigationMenuItem.id}
+                  section={NavigationSections.WORKSPACE}
                   navigationMenuItem={navigationMenuItem}
                   index={index}
                   arrayLength={navigationMenuItems.length}
                   selectedNavigationMenuItemIndex={
                     selectedNavigationMenuItemIndex
                   }
-                  onNavigationMenuItemClick={undefined}
-                  selectedNavigationMenuItemId={null}
-                  isContextDragging={false}
+                  isDragging={false}
                 />
               ))}
             </StyledFolderContent>

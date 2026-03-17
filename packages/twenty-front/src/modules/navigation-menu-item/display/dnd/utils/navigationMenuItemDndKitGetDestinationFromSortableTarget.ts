@@ -5,8 +5,8 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/co
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 
-import type { DropDestination } from '@/navigation/types/workspaceDndKitDropDestination';
-import type { SortableTargetDestination } from '@/navigation/types/workspaceDndKitSortableTargetDestination';
+import type { DropDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDropDestination';
+import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
 
 type GetNavItemById = (
   id: string | undefined,

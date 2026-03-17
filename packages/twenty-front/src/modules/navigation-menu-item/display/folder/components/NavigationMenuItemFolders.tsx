@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { IconFolder } from 'twenty-ui/display';
 
-import { FavoritesFolderItem } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/common/states/isNavigationMenuItemFolderCreatingState';
+import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { useCreateNavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/hooks/useCreateNavigationMenuItemFolder';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
-import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/common/states/isNavigationMenuItemFolderCreatingState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const NavigationMenuItemFolders = () => {
   const [newFolderName, setNewFolderName] = useState('');
@@ -70,9 +71,12 @@ export const NavigationMenuItemFolders = () => {
         </NavigationDrawerAnimatedCollapseWrapper>
       )}
       {userNavigationMenuItemsByFolder.map((folder) => (
-        <FavoritesFolderItem
+        <NavigationMenuItemFolder
           key={folder.id}
-          folder={folder}
+          folderId={folder.id}
+          folderName={folder.folderName}
+          navigationMenuItems={folder.navigationMenuItems}
+          section={NavigationSections.FAVORITES}
           isGroup={userNavigationMenuItemsByFolder.length > 1}
         />
       ))}

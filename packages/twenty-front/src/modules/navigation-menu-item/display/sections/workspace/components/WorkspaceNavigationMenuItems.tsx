@@ -18,8 +18,8 @@ import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edi
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import {
   type NavigationMenuItemClickParams,
-  useWorkspaceSectionItems,
-} from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
+  useNavigationMenuItemSectionItems,
+} from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
@@ -27,7 +27,7 @@ import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-ite
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
-import { preloadWorkspaceDndKit } from '@/navigation/preloadWorkspaceDndKit';
+import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
 import { NavigationDrawerSectionForWorkspaceItems } from '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItems';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -46,7 +46,7 @@ const StyledRightIconsContainer = styled.div`
 `;
 
 export const WorkspaceNavigationMenuItems = () => {
-  const items = useWorkspaceSectionItems();
+  const items = useNavigationMenuItemSectionItems();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
@@ -199,7 +199,7 @@ export const WorkspaceNavigationMenuItems = () => {
               onClick={handleAddMenuItem}
             />
           ) : (
-            <div onMouseEnter={preloadWorkspaceDndKit}>
+            <div onMouseEnter={preloadNavigationMenuItemDndKit}>
               <LightIconButton
                 Icon={IconTool}
                 accent="tertiary"

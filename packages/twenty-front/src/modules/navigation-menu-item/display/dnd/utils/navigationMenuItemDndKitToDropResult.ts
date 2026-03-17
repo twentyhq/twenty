@@ -1,5 +1,5 @@
-import type { DropDestination } from '@/navigation/types/workspaceDndKitDropDestination';
-import type { DraggableData } from '@/navigation/types/workspaceDndKitDraggableData';
+import type { DropDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDropDestination';
+import type { DraggableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDraggableData';
 
 export const toDropResult = (
   draggableId: string,

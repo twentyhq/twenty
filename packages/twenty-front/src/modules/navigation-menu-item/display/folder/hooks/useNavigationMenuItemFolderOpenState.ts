@@ -15,15 +15,15 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
-type UseWorkspaceFolderOpenStateParams = {
+type UseNavigationMenuItemFolderOpenStateParams = {
   folderId: string;
   navigationMenuItems: NavigationMenuItem[];
 };
 
-export const useWorkspaceFolderOpenState = ({
+export const useNavigationMenuItemFolderOpenState = ({
   folderId,
   navigationMenuItems,
-}: UseWorkspaceFolderOpenStateParams) => {
+}: UseNavigationMenuItemFolderOpenStateParams) => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;

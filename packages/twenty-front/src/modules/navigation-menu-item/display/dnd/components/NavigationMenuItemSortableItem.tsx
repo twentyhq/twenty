@@ -14,7 +14,7 @@ const StyledSortableRoot = styled.div`
   position: relative;
 `;
 
-type WorkspaceDndKitSortableItemProps = {
+type NavigationMenuItemSortableItemProps = {
   children: ReactNode;
   disabled?: boolean;
   group: string;
@@ -22,13 +22,13 @@ type WorkspaceDndKitSortableItemProps = {
   index: number;
 };
 
-export const WorkspaceDndKitSortableItem = ({
+export const NavigationMenuItemSortableItem = ({
   id,
   index,
   group,
   disabled = false,
   children,
-}: WorkspaceDndKitSortableItemProps) => {
+}: NavigationMenuItemSortableItemProps) => {
   const { handleRef, ref, targetRef } = useSortable({
     id,
     index,

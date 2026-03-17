@@ -6,14 +6,14 @@ import {
 } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
+import type { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/common/contexts/NavigationDragSourceContext';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
-import type { DraggableData } from '@/navigation/types/workspaceDndKitDraggableData';
+import type { DraggableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDraggableData';
+import { useNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/hooks/useNavigationMenuItemDndKit';
 
-import { useWorkspaceDndKit } from '@/navigation/hooks/useWorkspaceDndKit';
-
-const WORKSPACE_DND_SENSORS = [
+const NAVIGATION_MENU_ITEM_DND_SENSORS = [
   PointerSensor.configure({
     activationConstraints: [
       new PointerActivationConstraints.Distance({ value: 8 }),
@@ -22,21 +22,23 @@ const WORKSPACE_DND_SENSORS = [
   KeyboardSensor,
 ];
 
-type WorkspaceDndKitProviderProps = {
+type NavigationMenuItemDndKitProviderProps = {
+  section: NavigationSections;
   children: ReactNode;
 };
 
-export const WorkspaceDndKitProvider = ({
+export const NavigationMenuItemDndKitProvider = ({
+  section,
   children,
-}: WorkspaceDndKitProviderProps) => {
-  const { contextValues, handlers } = useWorkspaceDndKit();
+}: NavigationMenuItemDndKitProviderProps) => {
+  const { contextValues, handlers } = useNavigationMenuItemDndKit(section);
 
   return (
     <NavigationDragSourceContext.Provider value={contextValues.dragSource}>
       <NavigationMenuItemDragContext.Provider value={contextValues.drag}>
         <NavigationDropTargetContext.Provider value={contextValues.dropTarget}>
           <DragDropProvider<DraggableData>
-            sensors={WORKSPACE_DND_SENSORS}
+            sensors={NAVIGATION_MENU_ITEM_DND_SENSORS}
             onDragStart={handlers.onDragStart}
             onDragOver={handlers.onDragOver}
             onDragEnd={handlers.onDragEnd}

@@ -2,9 +2,9 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationMenuItemFolderDisplay } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDisplay';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
-import type { WorkspaceSectionItemContentProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionItemContentProps';
+import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 
-type NavigationMenuItemDisplayProps = WorkspaceSectionItemContentProps;
+type NavigationMenuItemDisplayProps = NavigationMenuItemSectionContentProps;
 
 export const NavigationMenuItemDisplay = ({
   item,

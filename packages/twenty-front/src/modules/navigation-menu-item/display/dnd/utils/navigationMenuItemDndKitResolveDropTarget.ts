@@ -3,9 +3,9 @@ import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isWorkspaceDroppableId } from '@/navigation-menu-item/common/utils/isWorkspaceDroppableId';
 
-import type { DroppableData } from '@/navigation/types/workspaceDndKitDroppableData';
-import type { SortableTargetDestination } from '@/navigation/types/workspaceDndKitSortableTargetDestination';
-import { getDestinationFromSortableTarget } from '@/navigation/utils/workspaceDndKitGetDestinationFromSortableTarget';
+import type { DroppableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDroppableData';
+import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
+import { getDestinationFromSortableTarget } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitGetDestinationFromSortableTarget';
 
 type GetNavItemById = (
   id: string | undefined,

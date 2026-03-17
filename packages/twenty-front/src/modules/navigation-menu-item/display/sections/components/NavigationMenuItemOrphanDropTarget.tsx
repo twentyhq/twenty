@@ -5,17 +5,17 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 
-type WorkspaceOrphanDropTargetProps = {
+type NavigationMenuItemOrphanDropTargetProps = {
   index: number;
   compact?: boolean;
   children?: ReactNode;
 };
 
-export const WorkspaceOrphanDropTarget = ({
+export const NavigationMenuItemOrphanDropTarget = ({
   index,
   compact = false,
   children,
-}: WorkspaceOrphanDropTargetProps) => (
+}: NavigationMenuItemOrphanDropTargetProps) => (
   <NavigationItemDropTarget
     folderId={null}
     index={index}

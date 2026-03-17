@@ -2,13 +2,13 @@ import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/component
 import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
-import type { WorkspaceSectionItemContentProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionItemContentProps';
+import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconArrowUpRight } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type NavigationMenuItemLinkDisplayProps = WorkspaceSectionItemContentProps;
+type NavigationMenuItemLinkDisplayProps = NavigationMenuItemSectionContentProps;
 
 export const NavigationMenuItemLinkDisplay = ({
   item,

@@ -5,22 +5,23 @@ import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/display/dnd/components/WorkspaceDndKitSortableItem';
-import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
-import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
-import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
+import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
+import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
+import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
-import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 const StyledEmptyContainer = styled.div`
   width: 100%;
@@ -30,7 +31,13 @@ const StyledOrphanNavigationMenuItemsContainer = styled.div`
   margin-bottom: ${themeCssVariables.betweenSiblingsGap};
 `;
 
-export const FavoritesOrphanItems = () => {
+type NavigationMenuItemOrphanItemsProps = {
+  section: NavigationSections;
+};
+
+export const NavigationMenuItemOrphanItems = ({
+  section,
+}: NavigationMenuItemOrphanItemsProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
@@ -38,6 +45,12 @@ export const FavoritesOrphanItems = () => {
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
   const { isDragging } = useContext(NavigationMenuItemDragContext);
+
+  const isFavoritesSection = section === NavigationSections.FAVORITES;
+
+  const orphanDroppableId = isFavoritesSection
+    ? NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS
+    : NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
   const orphanNavigationMenuItems = navigationMenuItemsSorted.filter(
     (item) => !item.folderId,
@@ -63,11 +76,11 @@ export const FavoritesOrphanItems = () => {
         );
 
         return (
-          <WorkspaceDndKitSortableItem
+          <NavigationMenuItemSortableItem
             key={navigationMenuItem.id}
             id={navigationMenuItem.id}
             index={index}
-            group={NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS}
+            group={orphanDroppableId}
           >
             <StyledOrphanNavigationMenuItemsContainer>
               <NavigationDrawerItem
@@ -93,20 +106,22 @@ export const FavoritesOrphanItems = () => {
                 )}
                 to={isDragging ? undefined : computedLink}
                 rightOptions={
-                  <LightIconButton
-                    Icon={IconHeartOff}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteNavigationMenuItem(navigationMenuItem.id);
-                    }}
-                    accent="tertiary"
-                  />
+                  isFavoritesSection ? (
+                    <LightIconButton
+                      Icon={IconHeartOff}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        deleteNavigationMenuItem(navigationMenuItem.id);
+                      }}
+                      accent="tertiary"
+                    />
+                  ) : undefined
                 }
                 isDragging={isDragging}
                 triggerEvent="CLICK"
               />
             </StyledOrphanNavigationMenuItemsContainer>
-          </WorkspaceDndKitSortableItem>
+          </NavigationMenuItemSortableItem>
         );
       })}
     </>
