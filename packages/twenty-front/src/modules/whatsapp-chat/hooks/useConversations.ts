@@ -27,6 +27,7 @@ export const useConversations = ({
 
   const abortRef = useRef<AbortController | null>(null);
   const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryCountRef = useRef(0);
 
   const cursorRef = useRef<string | undefined>(undefined);
 
@@ -84,6 +85,19 @@ export const useConversations = ({
             ? err.message
             : 'Failed to fetch conversations';
         setError(message);
+
+        // Auto-retry on failure with exponential backoff (max 3 retries)
+        if (!loadMore) {
+          const attempt = retryCountRef.current;
+          if (attempt < 3) {
+            retryCountRef.current = attempt + 1;
+            const delay = Math.min(2000 * 2 ** attempt, 10000);
+            retryTimeoutRef.current = setTimeout(() => {
+              retryTimeoutRef.current = null;
+              fetchConversations(false);
+            }, delay);
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -97,6 +111,7 @@ export const useConversations = ({
       retryTimeoutRef.current = null;
     }
 
+    retryCountRef.current = 0;
     fetchConversations(false);
 
     return () => {
