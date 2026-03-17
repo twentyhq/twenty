@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { type EngineComponentKey } from '~/generated-metadata/graphql';
 
-export type MountedEngineCommandContext = {
+export type MountedEngineCommandState = {
   engineComponentKey: EngineComponentKey;
   contextStoreInstanceId: string;
   objectMetadataItem: Nullable<ObjectMetadataItem>;

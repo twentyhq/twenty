@@ -1,8 +1,8 @@
-import { type MountedEngineCommandContext } from '@/command-menu-item/engine-command/types/MountedEngineCommandContext';
+import { type MountedEngineCommandState } from '@/command-menu-item/engine-command/types/MountedEngineCommandContext';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const mountedEngineCommandsState = createAtomState<
-  Map<string, MountedEngineCommandContext>
+  Map<string, MountedEngineCommandState>
 >({
   key: 'mountedEngineCommandsState',
   defaultValue: new Map(),
