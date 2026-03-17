@@ -963,6 +963,44 @@ export interface PageLayout {
 
 export type PageLayoutType = 'RECORD_INDEX' | 'RECORD_PAGE' | 'DASHBOARD'
 
+export interface FileWithSignedUrl {
+    id: Scalars['UUID']
+    path: Scalars['String']
+    size: Scalars['Float']
+    createdAt: Scalars['DateTime']
+    url: Scalars['String']
+    __typename: 'FileWithSignedUrl'
+}
+
+export interface RecordIdentifier {
+    id: Scalars['UUID']
+    labelIdentifier: Scalars['String']
+    imageIdentifier?: Scalars['String']
+    __typename: 'RecordIdentifier'
+}
+
+export interface NavigationMenuItem {
+    id: Scalars['UUID']
+    userWorkspaceId?: Scalars['UUID']
+    targetRecordId?: Scalars['UUID']
+    targetObjectMetadataId?: Scalars['UUID']
+    viewId?: Scalars['UUID']
+    type: NavigationMenuItemType
+    name?: Scalars['String']
+    link?: Scalars['String']
+    icon?: Scalars['String']
+    color?: Scalars['String']
+    folderId?: Scalars['UUID']
+    position: Scalars['Float']
+    applicationId?: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    targetRecordIdentifier?: RecordIdentifier
+    __typename: 'NavigationMenuItem'
+}
+
+export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD'
+
 export interface ObjectRecordEventProperties {
     updatedFields?: Scalars['String'][]
     before?: Scalars['JSON']
@@ -1201,15 +1239,6 @@ export interface ApprovedAccessDomain {
     isValidated: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     __typename: 'ApprovedAccessDomain'
-}
-
-export interface FileWithSignedUrl {
-    id: Scalars['UUID']
-    path: Scalars['String']
-    size: Scalars['Float']
-    createdAt: Scalars['DateTime']
-    url: Scalars['String']
-    __typename: 'FileWithSignedUrl'
 }
 
 export interface WorkspaceInvitation {
@@ -1657,35 +1686,6 @@ export interface WorkspaceInviteHashValid {
     isValid: Scalars['Boolean']
     __typename: 'WorkspaceInviteHashValid'
 }
-
-export interface RecordIdentifier {
-    id: Scalars['UUID']
-    labelIdentifier: Scalars['String']
-    imageIdentifier?: Scalars['String']
-    __typename: 'RecordIdentifier'
-}
-
-export interface NavigationMenuItem {
-    id: Scalars['UUID']
-    userWorkspaceId?: Scalars['UUID']
-    targetRecordId?: Scalars['UUID']
-    targetObjectMetadataId?: Scalars['UUID']
-    viewId?: Scalars['UUID']
-    type: NavigationMenuItemType
-    name?: Scalars['String']
-    link?: Scalars['String']
-    icon?: Scalars['String']
-    color?: Scalars['String']
-    folderId?: Scalars['UUID']
-    position: Scalars['Float']
-    applicationId?: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    targetRecordIdentifier?: RecordIdentifier
-    __typename: 'NavigationMenuItem'
-}
-
-export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD'
 
 export interface LogicFunctionExecutionResult {
     /** Execution result in JSON format */
@@ -2565,6 +2565,8 @@ export interface EventLogQueryResult {
 }
 
 export interface Query {
+    navigationMenuItems: NavigationMenuItem[]
+    navigationMenuItem?: NavigationMenuItem
     getPageLayoutWidgets: PageLayoutWidget[]
     getPageLayoutWidget: PageLayoutWidget
     getPageLayoutTabs: PageLayoutTab[]
@@ -2600,13 +2602,11 @@ export interface Query {
     enterprisePortalSession?: Scalars['String']
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
-    navigationMenuItems: NavigationMenuItem[]
-    navigationMenuItem?: NavigationMenuItem
-    apiKeys: ApiKey[]
-    apiKey?: ApiKey
     getRoles: Role[]
     findWorkspaceInvitations: WorkspaceInvitation[]
     getApprovedAccessDomains: ApprovedAccessDomain[]
+    apiKeys: ApiKey[]
+    apiKey?: ApiKey
     getToolIndex: ToolIndexEntry[]
     getToolInputSchema?: Scalars['JSON']
     field: Field
@@ -2683,6 +2683,15 @@ export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT'
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
     removeQueryFromEventStream: Scalars['Boolean']
+    createNavigationMenuItem: NavigationMenuItem
+    updateNavigationMenuItem: NavigationMenuItem
+    deleteNavigationMenuItem: NavigationMenuItem
+    uploadAIChatFile: FileWithSignedUrl
+    uploadWorkflowFile: FileWithSignedUrl
+    uploadWorkspaceLogo: FileWithSignedUrl
+    uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
+    uploadFilesFieldFile: FileWithSignedUrl
+    uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
     createObjectEvent: Analytics
     trackAnalytics: Analytics
     createPageLayoutWidget: PageLayoutWidget
@@ -2730,12 +2739,6 @@ export interface Mutation {
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
-    uploadAIChatFile: FileWithSignedUrl
-    uploadWorkflowFile: FileWithSignedUrl
-    uploadWorkspaceLogo: FileWithSignedUrl
-    uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
-    uploadFilesFieldFile: FileWithSignedUrl
-    uploadFilesFieldFileByUniversalIdentifier: FileWithSignedUrl
     checkoutSession: BillingSession
     switchSubscriptionInterval: BillingUpdate
     switchBillingPlan: BillingUpdate
@@ -2746,13 +2749,6 @@ export interface Mutation {
     cancelSwitchMeteredPrice: BillingUpdate
     refreshEnterpriseValidityToken: Scalars['Boolean']
     setEnterpriseKey: EnterpriseLicenseInfoDTO
-    createNavigationMenuItem: NavigationMenuItem
-    updateNavigationMenuItem: NavigationMenuItem
-    deleteNavigationMenuItem: NavigationMenuItem
-    createApiKey: ApiKey
-    updateApiKey?: ApiKey
-    revokeApiKey?: ApiKey
-    assignRoleToApiKey: Scalars['Boolean']
     updateWorkspaceMemberRole: WorkspaceMember
     createOneRole: Role
     updateOneRole: Role
@@ -2771,6 +2767,10 @@ export interface Mutation {
     createApprovedAccessDomain: ApprovedAccessDomain
     deleteApprovedAccessDomain: Scalars['Boolean']
     validateApprovedAccessDomain: ApprovedAccessDomain
+    createApiKey: ApiKey
+    updateApiKey?: ApiKey
+    revokeApiKey?: ApiKey
+    assignRoleToApiKey: Scalars['Boolean']
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
@@ -3898,6 +3898,45 @@ export interface PageLayoutGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface FileWithSignedUrlGenqlSelection{
+    id?: boolean | number
+    path?: boolean | number
+    size?: boolean | number
+    createdAt?: boolean | number
+    url?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface RecordIdentifierGenqlSelection{
+    id?: boolean | number
+    labelIdentifier?: boolean | number
+    imageIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface NavigationMenuItemGenqlSelection{
+    id?: boolean | number
+    userWorkspaceId?: boolean | number
+    targetRecordId?: boolean | number
+    targetObjectMetadataId?: boolean | number
+    viewId?: boolean | number
+    type?: boolean | number
+    name?: boolean | number
+    link?: boolean | number
+    icon?: boolean | number
+    color?: boolean | number
+    folderId?: boolean | number
+    position?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    targetRecordIdentifier?: RecordIdentifierGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ObjectRecordEventPropertiesGenqlSelection{
     updatedFields?: boolean | number
     before?: boolean | number
@@ -4139,16 +4178,6 @@ export interface ApprovedAccessDomainGenqlSelection{
     domain?: boolean | number
     isValidated?: boolean | number
     createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface FileWithSignedUrlGenqlSelection{
-    id?: boolean | number
-    path?: boolean | number
-    size?: boolean | number
-    createdAt?: boolean | number
-    url?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4644,35 +4673,6 @@ export interface CheckUserExistGenqlSelection{
 
 export interface WorkspaceInviteHashValidGenqlSelection{
     isValid?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface RecordIdentifierGenqlSelection{
-    id?: boolean | number
-    labelIdentifier?: boolean | number
-    imageIdentifier?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface NavigationMenuItemGenqlSelection{
-    id?: boolean | number
-    userWorkspaceId?: boolean | number
-    targetRecordId?: boolean | number
-    targetObjectMetadataId?: boolean | number
-    viewId?: boolean | number
-    type?: boolean | number
-    name?: boolean | number
-    link?: boolean | number
-    icon?: boolean | number
-    color?: boolean | number
-    folderId?: boolean | number
-    position?: boolean | number
-    applicationId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    targetRecordIdentifier?: RecordIdentifierGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5607,6 +5607,8 @@ export interface EventLogQueryResultGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    navigationMenuItems?: NavigationMenuItemGenqlSelection
+    navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     getPageLayoutWidgets?: (PageLayoutWidgetGenqlSelection & { __args: {pageLayoutTabId: Scalars['String']} })
     getPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     getPageLayoutTabs?: (PageLayoutTabGenqlSelection & { __args: {pageLayoutId: Scalars['String']} })
@@ -5654,13 +5656,11 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
-    navigationMenuItems?: NavigationMenuItemGenqlSelection
-    navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    apiKeys?: ApiKeyGenqlSelection
-    apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
     getRoles?: RoleGenqlSelection
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
+    apiKeys?: ApiKeyGenqlSelection
+    apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
     getToolIndex?: ToolIndexEntryGenqlSelection
     getToolInputSchema?: { __args: {toolName: Scalars['String']} }
     field?: (FieldGenqlSelection & { __args: {
@@ -5768,6 +5768,15 @@ export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
+    createNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: CreateNavigationMenuItemInput} })
+    updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
+    deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    uploadAIChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    uploadWorkflowFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    uploadFilesFieldFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataId: Scalars['String']} })
+    uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
     createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
     trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
@@ -5815,12 +5824,6 @@ export interface MutationGenqlSelection{
     createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
-    uploadAIChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadWorkflowFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadFilesFieldFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataId: Scalars['String']} })
-    uploadFilesFieldFileByUniversalIdentifier?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload'], fieldMetadataUniversalIdentifier: Scalars['String']} })
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
     switchBillingPlan?: BillingUpdateGenqlSelection
@@ -5831,13 +5834,6 @@ export interface MutationGenqlSelection{
     cancelSwitchMeteredPrice?: BillingUpdateGenqlSelection
     refreshEnterpriseValidityToken?: boolean | number
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
-    createNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: CreateNavigationMenuItemInput} })
-    updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
-    deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
-    updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
-    revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
-    assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {workspaceMemberId: Scalars['UUID'], roleId: Scalars['UUID']} })
     createOneRole?: (RoleGenqlSelection & { __args: {createRoleInput: CreateRoleInput} })
     updateOneRole?: (RoleGenqlSelection & { __args: {updateRoleInput: UpdateRoleInput} })
@@ -5856,6 +5852,10 @@ export interface MutationGenqlSelection{
     createApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: CreateApprovedAccessDomainInput} })
     deleteApprovedAccessDomain?: { __args: {input: DeleteApprovedAccessDomainInput} }
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
+    createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
+    updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
+    revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
+    assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
@@ -5964,6 +5964,16 @@ export interface MutationGenqlSelection{
 export interface AddQuerySubscriptionInput {eventStreamId: Scalars['String'],queryId: Scalars['String'],operationSignature: Scalars['JSON']}
 
 export interface RemoveQueryFromEventStreamInput {eventStreamId: Scalars['String'],queryId: Scalars['String']}
+
+export interface CreateNavigationMenuItemInput {id?: (Scalars['UUID'] | null),userWorkspaceId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+
+export interface UpdateOneNavigationMenuItemInput {
+/** The id of the record to update */
+id: Scalars['UUID'],
+/** The record to update */
+update: UpdateNavigationMenuItemInput}
+
+export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null)}
 
 export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
 
@@ -6107,22 +6117,6 @@ export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scal
 
 export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
 
-export interface CreateNavigationMenuItemInput {userWorkspaceId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
-
-export interface UpdateOneNavigationMenuItemInput {
-/** The id of the record to update */
-id: Scalars['UUID'],
-/** The record to update */
-update: UpdateNavigationMenuItemInput}
-
-export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null)}
-
-export interface CreateApiKeyInput {name: Scalars['String'],expiresAt: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
-
-export interface UpdateApiKeyInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),expiresAt?: (Scalars['String'] | null),revokedAt?: (Scalars['String'] | null)}
-
-export interface RevokeApiKeyInput {id: Scalars['UUID']}
-
 export interface CreateRoleInput {id?: (Scalars['String'] | null),label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),canAccessAllTools?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null)}
 
 export interface UpdateRoleInput {update: UpdateRolePayload,
@@ -6152,6 +6146,12 @@ export interface CreateApprovedAccessDomainInput {domain: Scalars['String'],emai
 export interface DeleteApprovedAccessDomainInput {id: Scalars['UUID']}
 
 export interface ValidateApprovedAccessDomainInput {validationToken: Scalars['String'],approvedAccessDomainId: Scalars['UUID']}
+
+export interface CreateApiKeyInput {name: Scalars['String'],expiresAt: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
+
+export interface UpdateApiKeyInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),expiresAt?: (Scalars['String'] | null),revokedAt?: (Scalars['String'] | null)}
+
+export interface RevokeApiKeyInput {id: Scalars['UUID']}
 
 export interface CreateOneFieldMetadataInput {
 /** The record to create */
@@ -6824,6 +6824,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
+    export const isFileWithSignedUrl = (obj?: { __typename?: any } | null): obj is FileWithSignedUrl => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
+      return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const RecordIdentifier_possibleTypes: string[] = ['RecordIdentifier']
+    export const isRecordIdentifier = (obj?: { __typename?: any } | null): obj is RecordIdentifier => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordIdentifier"')
+      return RecordIdentifier_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const NavigationMenuItem_possibleTypes: string[] = ['NavigationMenuItem']
+    export const isNavigationMenuItem = (obj?: { __typename?: any } | null): obj is NavigationMenuItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isNavigationMenuItem"')
+      return NavigationMenuItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ObjectRecordEventProperties_possibleTypes: string[] = ['ObjectRecordEventProperties']
     export const isObjectRecordEventProperties = (obj?: { __typename?: any } | null): obj is ObjectRecordEventProperties => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventProperties"')
@@ -7036,14 +7060,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
       return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
-    export const isFileWithSignedUrl = (obj?: { __typename?: any } | null): obj is FileWithSignedUrl => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
-      return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7532,22 +7548,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isWorkspaceInviteHashValid = (obj?: { __typename?: any } | null): obj is WorkspaceInviteHashValid => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInviteHashValid"')
       return WorkspaceInviteHashValid_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const RecordIdentifier_possibleTypes: string[] = ['RecordIdentifier']
-    export const isRecordIdentifier = (obj?: { __typename?: any } | null): obj is RecordIdentifier => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordIdentifier"')
-      return RecordIdentifier_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const NavigationMenuItem_possibleTypes: string[] = ['NavigationMenuItem']
-    export const isNavigationMenuItem = (obj?: { __typename?: any } | null): obj is NavigationMenuItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isNavigationMenuItem"')
-      return NavigationMenuItem_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8593,6 +8593,14 @@ export const enumPageLayoutType = {
    DASHBOARD: 'DASHBOARD' as const
 }
 
+export const enumNavigationMenuItemType = {
+   VIEW: 'VIEW' as const,
+   FOLDER: 'FOLDER' as const,
+   LINK: 'LINK' as const,
+   OBJECT: 'OBJECT' as const,
+   RECORD: 'RECORD' as const
+}
+
 export const enumMetadataEventAction = {
    CREATED: 'CREATED' as const,
    UPDATED: 'UPDATED' as const,
@@ -8683,14 +8691,6 @@ export const enumFeatureFlagKey = {
 export const enumRelationType = {
    ONE_TO_MANY: 'ONE_TO_MANY' as const,
    MANY_TO_ONE: 'MANY_TO_ONE' as const
-}
-
-export const enumNavigationMenuItemType = {
-   VIEW: 'VIEW' as const,
-   FOLDER: 'FOLDER' as const,
-   LINK: 'LINK' as const,
-   OBJECT: 'OBJECT' as const,
-   RECORD: 'RECORD' as const
 }
 
 export const enumLogicFunctionExecutionStatus = {
