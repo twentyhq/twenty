@@ -146,35 +146,16 @@ export const ChatThread = ({
 }: ChatThreadProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const prevMessageCountRef = useRef(0);
 
+  // Scroll to bottom instantly whenever messages change (initial load or new message)
   useEffect(() => {
-    const prevCount = prevMessageCountRef.current;
-    const newCount = messages.length;
-    prevMessageCountRef.current = newCount;
-
-    if (newCount <= prevCount || newCount === 0) return;
-
-    // Initial load or large batch → instant scroll after layout settles
-    // Single new message → smooth scroll
-    const isInitialLoad = prevCount === 0;
-    const behavior = isInitialLoad ? 'instant' : 'smooth';
-
-    // Use requestAnimationFrame + small timeout to ensure images/media
-    // have started rendering and the container height is correct
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior });
-      }, isInitialLoad ? 100 : 0);
-    });
+    if (messages.length === 0) return;
+    messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
   }, [messages.length]);
 
+  // Also scroll on conversation switch
   useEffect(() => {
-    // Delay to allow messages to render after conversation switch
-    const timer = setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
-    }, 150);
-    return () => clearTimeout(timer);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation.id]);
 
