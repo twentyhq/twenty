@@ -1,12 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-
+import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
+import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import type { DropDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDropDestination';
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
+import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 
 type GetNavItemById = (
   id: string | undefined,
@@ -15,6 +15,7 @@ type GetNavItemById = (
 export const getDestinationFromSortableTarget = (
   target: { id: unknown; group?: unknown; index?: unknown },
   getNavItemById: GetNavItemById,
+  navigationMenuItemSection: NavigationMenuItemSection,
 ): SortableTargetDestination | null => {
   const group = target.group;
   const rawIndex = target.index;
@@ -32,15 +33,16 @@ export const getDestinationFromSortableTarget = (
   const isTargetFolder =
     isDefined(targetItem) && isNavigationMenuItemFolder(targetItem);
   const dropTargetId = getDndKitDropTargetId(destDroppableId, index);
+
+  const { folderHeaderPrefix } =
+    NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[navigationMenuItemSection];
+
   const effectiveDropTargetId = isTargetFolder
-    ? getDndKitDropTargetId(
-        `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${target.id}`,
-        0,
-      )
+    ? getDndKitDropTargetId(`${folderHeaderPrefix}${target.id}`, 0)
     : dropTargetId;
   const destination: DropDestination = {
     droppableId: isTargetFolder
-      ? `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}${target.id}`
+      ? `${folderHeaderPrefix}${target.id}`
       : destDroppableId,
     index: isTargetFolder ? 0 : index,
   };

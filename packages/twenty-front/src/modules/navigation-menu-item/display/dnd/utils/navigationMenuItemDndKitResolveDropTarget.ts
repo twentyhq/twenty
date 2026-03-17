@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-
+import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import type { DroppableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDroppableData';
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
+import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { getDestinationFromSortableTarget } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitGetDestinationFromSortableTarget';
 
 type GetNavItemById = (
@@ -25,6 +25,7 @@ export const resolveDropTarget = (
     data?: unknown;
   } | null,
   getNavItemById: GetNavItemById,
+  navigationMenuItemSection: NavigationMenuItemSection,
 ): SortableTargetDestination | null => {
   if (target === null || target === undefined) {
     return null;
@@ -33,13 +34,14 @@ export const resolveDropTarget = (
     return getDestinationFromSortableTarget(
       { id: target.id, group: target.group, index: target.index },
       getNavItemById,
+      navigationMenuItemSection,
     );
   }
   if (isDroppableData(target.data)) {
     const { droppableId, index } = target.data;
     if (
       canNavigationMenuItemBeDroppedIn({
-        navigationMenuItemSection: 'workspace',
+        navigationMenuItemSection,
         droppableId,
       })
     ) {

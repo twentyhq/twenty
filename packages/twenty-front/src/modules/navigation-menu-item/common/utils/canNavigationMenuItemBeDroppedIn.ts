@@ -1,8 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
-
-type NavigationMenuItemSection = 'workspace' | 'favorite';
+import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 
 export const canNavigationMenuItemBeDroppedIn = ({
   navigationMenuItemSection,
