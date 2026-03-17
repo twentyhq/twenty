@@ -51,6 +51,7 @@ export const renderDevUI = async (
     <InkProvider value={{ Box, Text, Static }}>
       <DevUI uiStateManager={uiStateManager} />
     </InkProvider>,
+    { incrementalRendering: true },
   );
 
   return { unmount };
