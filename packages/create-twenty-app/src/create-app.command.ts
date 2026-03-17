@@ -210,14 +210,14 @@ export class CreateAppCommand {
   private runAuthLogin(appDirectory: string, apiKey: string): void {
     try {
       execSync(
-        `yarn twenty auth:login --api-key "${apiKey}" --api-url http://localhost:3000`,
+        `yarn twenty remote add --local --token "${apiKey}" --as local`,
         { cwd: appDirectory, stdio: 'inherit' },
       );
       console.log(chalk.green('✅ Authenticated with local Twenty instance.'));
     } catch {
       console.log(
         chalk.yellow(
-          '⚠️  Auto auth:login failed. Run `yarn twenty auth:login` manually.',
+          '⚠️  Auto-authentication failed. Run `yarn twenty remote add --local` manually.',
         ),
       );
     }

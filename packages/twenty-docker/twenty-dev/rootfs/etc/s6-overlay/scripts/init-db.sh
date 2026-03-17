@@ -1,10 +1,18 @@
 #!/bin/sh
 set -e
 
+MARKER="/data/postgres/.twenty-initialized"
+
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL..."
 until su-exec postgres pg_isready -h localhost; do sleep 0.5; done
 echo "PostgreSQL is ready."
+
+# Fast path: if already initialized with same image, skip everything
+if [ -f "$MARKER" ]; then
+  echo "Database already initialized, skipping setup."
+  exit 0
+fi
 
 # Create role if it doesn't exist
 su-exec postgres psql -h localhost -tc \
@@ -31,5 +39,8 @@ fi
 yarn command:prod cache:flush
 yarn command:prod upgrade
 yarn command:prod cache:flush
+
+# Mark as initialized so subsequent starts are instant
+touch "$MARKER"
 
 echo "Database initialization complete."

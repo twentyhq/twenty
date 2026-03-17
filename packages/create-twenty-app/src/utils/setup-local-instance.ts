@@ -1,17 +1,15 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import { execSync } from 'node:child_process';
+import { execSync, spawnSync } from 'node:child_process';
 import { isDefined } from 'twenty-shared/utils';
 
-const INSTALL_SCRIPT_URL =
-  'https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh';
-
-const SERVER_CONTAINER = 'twenty-server-1';
-const DB_CONTAINER = 'twenty-db-1';
+const CONTAINER_NAME = 'twenty-dev';
+const IMAGE = 'twentycrm/twenty-dev:latest';
+const HEALTH_URL = 'http://localhost:2020/healthz';
 
 const isDockerAvailable = (): boolean => {
   try {
-    execSync('docker compose version', { stdio: 'ignore' });
+    execSync('docker --version', { stdio: 'ignore' });
 
     return true;
   } catch {
@@ -34,7 +32,7 @@ const isTwentyServerRunning = async (): Promise<boolean> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-    const response = await fetch('http://localhost:3000/healthz', {
+    const response = await fetch(HEALTH_URL, {
       signal: controller.signal,
     });
 
@@ -48,10 +46,40 @@ const isTwentyServerRunning = async (): Promise<boolean> => {
   }
 };
 
+const isContainerRunning = (): boolean => {
+  try {
+    const result = execSync(
+      `docker inspect -f '{{.State.Running}}' ${CONTAINER_NAME}`,
+      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
+    ).trim();
+
+    return result === 'true';
+  } catch {
+    return false;
+  }
+};
+
+const waitForHealthy = async (
+  timeoutSeconds: number = 120,
+): Promise<boolean> => {
+  const startTime = Date.now();
+  const timeoutMs = timeoutSeconds * 1000;
+
+  while (Date.now() - startTime < timeoutMs) {
+    if (await isTwentyServerRunning()) {
+      return true;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  return false;
+};
+
 const getActiveWorkspaceId = (): string | null => {
   try {
     const result = execSync(
-      `docker exec ${DB_CONTAINER} psql -U postgres -d default -t -c "SELECT id FROM core.workspace WHERE \\"activationStatus\\" = 'ACTIVE' LIMIT 1"`,
+      `docker exec ${CONTAINER_NAME} su-exec postgres psql -h localhost -U twenty -d default -t -c "SELECT id FROM core.workspace WHERE \\"activationStatus\\" = 'ACTIVE' LIMIT 1"`,
       { encoding: 'utf-8' },
     ).trim();
 
@@ -64,7 +92,7 @@ const getActiveWorkspaceId = (): string | null => {
 const generateApiKeyToken = (workspaceId: string): string | null => {
   try {
     const output = execSync(
-      `docker exec -e NODE_ENV=development ${SERVER_CONTAINER} yarn command:prod workspace:generate-api-key -w ${workspaceId}`,
+      `docker exec ${CONTAINER_NAME} node /app/scripts/generate-api-key.js ${workspaceId}`,
       { encoding: 'utf-8' },
     );
 
@@ -98,13 +126,13 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
 
   if (await isTwentyServerRunning()) {
     console.log(
-      chalk.green('✅ Twenty server is already running on localhost:3000.'),
+      chalk.green('✅ Twenty server is already running on localhost:2020.'),
     );
   } else {
     if (!isDockerAvailable()) {
       console.log(
         chalk.yellow(
-          '⚠️  Docker Compose is not installed. Please install Docker first.',
+          '⚠️  Docker is not installed. Please install Docker first.',
         ),
       );
       console.log(chalk.gray('   See https://docs.docker.com/get-docker/'));
@@ -122,24 +150,78 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
       return { running: false };
     }
 
-    try {
-      execSync(`bash <(curl -sL ${INSTALL_SCRIPT_URL})`, {
-        stdio: 'inherit',
-        shell: '/bin/bash',
-      });
-    } catch {
+    // Start or restart the container
+    if (isContainerRunning()) {
       console.log(
-        chalk.yellow('⚠️  Local instance setup did not complete successfully.'),
+        chalk.gray('Container exists but server not healthy, restarting...'),
+      );
+      execSync(`docker restart ${CONTAINER_NAME}`, { stdio: 'ignore' });
+    } else {
+      // Remove stopped container if it exists
+      spawnSync('docker', ['rm', '-f', CONTAINER_NAME], { stdio: 'ignore' });
+
+      console.log(chalk.gray(`Pulling ${IMAGE}...`));
+
+      try {
+        execSync(`docker pull ${IMAGE}`, { stdio: 'inherit' });
+      } catch {
+        console.log(
+          chalk.gray(
+            'Pull failed (image may not be published yet), trying local image...',
+          ),
+        );
+      }
+
+      console.log(chalk.gray('Starting Twenty container...'));
+
+      try {
+        execSync(
+          [
+            'docker run -d',
+            `--name ${CONTAINER_NAME}`,
+            '-p 2020:3000',
+            '-v twenty-dev-data:/data/postgres',
+            '-v twenty-dev-storage:/app/.local-storage',
+            IMAGE,
+          ].join(' '),
+          { stdio: 'inherit' },
+        );
+      } catch {
+        console.log(
+          chalk.yellow(
+            '⚠️  Failed to start Twenty container. Check Docker logs.',
+          ),
+        );
+
+        return { running: false };
+      }
+    }
+
+    console.log(
+      chalk.gray(
+        'Waiting for Twenty to be ready (first start takes ~90s for migrations)...',
+      ),
+    );
+
+    const healthy = await waitForHealthy(180);
+
+    if (!healthy) {
+      console.log(
+        chalk.yellow(
+          '⚠️  Twenty server did not become healthy in time. Check: docker logs twenty-dev-server',
+        ),
       );
 
       return { running: false };
     }
+
+    console.log(chalk.green('✅ Twenty server is running on localhost:2020.'));
   }
 
   console.log('');
   console.log(
     chalk.blue(
-      '👉 Please create your workspace in the browser before continuing.',
+      '👉 Please create your workspace at http://localhost:2020 before continuing.',
     ),
   );
 
@@ -169,7 +251,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   if (!isDefined(workspaceId)) {
     console.log(
       chalk.yellow(
-        '⚠️  No active workspace found. Make sure you completed the signup flow, then run `yarn twenty auth:login` manually.',
+        '⚠️  No active workspace found. Make sure you completed the signup flow, then run `yarn twenty remote add --local` manually.',
       ),
     );
 
@@ -181,7 +263,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   if (!isDefined(apiKey)) {
     console.log(
       chalk.yellow(
-        '⚠️  Could not generate API key. Run `yarn twenty auth:login` manually.',
+        '⚠️  Could not generate API key. Run `yarn twenty remote add --local` manually.',
       ),
     );
 

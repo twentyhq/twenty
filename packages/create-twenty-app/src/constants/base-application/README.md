@@ -2,7 +2,7 @@ This is a [Twenty](https://twenty.com) application project bootstrapped with [`c
 
 ## Getting Started
 
-Start development mode — it auto-connects to your local Twenty server at localhost:3000:
+Start development mode — it auto-connects to your local Twenty server at localhost:2020:
 
 ```bash
 yarn twenty dev
@@ -39,7 +39,7 @@ yarn twenty uninstall     # Uninstall app from server
 If your project includes the example integration test (`src/__tests__/app-install.integration-test.ts`), you can run it with:
 
 ```bash
-# Make sure a Twenty server is running at http://localhost:3000
+# Make sure a Twenty server is running at http://localhost:2020
 yarn test
 ```
 

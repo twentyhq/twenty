@@ -102,7 +102,7 @@ export const registerRemoteCommands = (program: Command): void => {
             ).apiKey;
 
           ConfigService.setActiveRemote(remoteName);
-          await authenticate('http://localhost:3000', token);
+          await authenticate('http://localhost:2020', token);
           console.log(chalk.green(`✓ Authenticated remote "${remoteName}".`));
 
           return;
@@ -127,7 +127,7 @@ export const registerRemoteCommands = (program: Command): void => {
           nameOrUrl ??
           options.url ??
           (options.token
-            ? 'http://localhost:3000'
+            ? 'http://localhost:2020'
             : (
                 await inquirer.prompt<{ apiUrl: string }>([
                   {
