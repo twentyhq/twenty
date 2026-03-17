@@ -537,7 +537,17 @@ export class AuthService {
         );
       }
     } else {
-      const redirectUrl = new URL(authorizeAppInput.redirectUrl);
+      let redirectUrl: URL;
+
+      try {
+        redirectUrl = new URL(authorizeAppInput.redirectUrl);
+      } catch {
+        throw new AuthException(
+          `Invalid redirectUrl for '${clientId}'`,
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
       const isLoopback =
         redirectUrl.hostname === 'localhost' ||
         redirectUrl.hostname === '127.0.0.1';

@@ -1,15 +1,21 @@
-import { exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 
 export const openBrowser = (url: string): Promise<boolean> => {
-  const command =
+  try {
+    new URL(url);
+  } catch {
+    return Promise.resolve(false);
+  }
+
+  const [command, args]: [string, string[]] =
     process.platform === 'darwin'
-      ? `open "${url}"`
+      ? ['open', [url]]
       : process.platform === 'win32'
-        ? `start "" "${url}"`
-        : `xdg-open "${url}"`;
+        ? ['cmd', ['/c', 'start', '', url]]
+        : ['xdg-open', [url]];
 
   return new Promise((resolve) => {
-    exec(command, (error) => {
+    execFile(command, args, (error) => {
       resolve(!error);
     });
   });
