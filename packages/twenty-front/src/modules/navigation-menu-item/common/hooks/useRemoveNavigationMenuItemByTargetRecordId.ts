@@ -3,10 +3,8 @@ import { useCallback } from 'react';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import {
-  FindManyNavigationMenuItemsDocument,
-  type NavigationMenuItem,
-} from '~/generated-metadata/graphql';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { FIND_MANY_NAVIGATION_MENU_ITEMS } from '@/navigation-menu-item/common/graphql/queries/findManyNavigationMenuItems';
 import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
@@ -34,8 +32,8 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
       updateDraft('navigationMenuItems', updatedNavigationMenuItems);
       applyChanges();
 
-      cache.updateQuery(
-        { query: FindManyNavigationMenuItemsDocument },
+      cache.updateQuery<{ navigationMenuItems: NavigationMenuItem[] }>(
+        { query: FIND_MANY_NAVIGATION_MENU_ITEMS },
         (data) => {
           if (!isDefined(data?.navigationMenuItems)) {
             return data;

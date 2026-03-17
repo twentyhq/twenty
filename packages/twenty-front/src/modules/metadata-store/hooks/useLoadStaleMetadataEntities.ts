@@ -16,10 +16,11 @@ import {
   FindAllRecordPageLayoutsDocument,
   FindFieldsWidgetViewsDocument,
   FindManyLogicFunctionsDocument,
-  FindManyNavigationMenuItemsDocument,
+  type NavigationMenuItem,
   type ObjectMetadataItemsQuery,
   ViewType,
 } from '~/generated-metadata/graphql';
+import { FIND_MANY_NAVIGATION_MENU_ITEMS } from '@/navigation-menu-item/common/graphql/queries/findManyNavigationMenuItems';
 
 const OBJECTS_GROUP_KEYS: MetadataEntityKey[] = [
   'objectMetadataItems',
@@ -179,8 +180,8 @@ export const useLoadStaleMetadataEntities = () => {
       if (staleEntityKeys.includes('navigationMenuItems')) {
         fetchPromises.push(
           client
-            .query({
-              query: FindManyNavigationMenuItemsDocument,
+            .query<{ navigationMenuItems: NavigationMenuItem[] }>({
+              query: FIND_MANY_NAVIGATION_MENU_ITEMS,
               fetchPolicy: 'network-only',
             })
             .then((result) => {
