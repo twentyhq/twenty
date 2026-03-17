@@ -1004,16 +1004,10 @@ export interface ObjectRecordEventWithQueryIds {
     __typename: 'ObjectRecordEventWithQueryIds'
 }
 
-export interface MetadataEventWithQueryIds {
-    queryIds: Scalars['String'][]
-    metadataEvent: MetadataEvent
-    __typename: 'MetadataEventWithQueryIds'
-}
-
 export interface EventSubscription {
     eventStreamId: Scalars['String']
     objectRecordEventsWithQueryIds: ObjectRecordEventWithQueryIds[]
-    metadataEventsWithQueryIds: MetadataEventWithQueryIds[]
+    metadataEvents: MetadataEvent[]
     __typename: 'EventSubscription'
 }
 
@@ -3941,17 +3935,10 @@ export interface ObjectRecordEventWithQueryIdsGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface MetadataEventWithQueryIdsGenqlSelection{
-    queryIds?: boolean | number
-    metadataEvent?: MetadataEventGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface EventSubscriptionGenqlSelection{
     eventStreamId?: boolean | number
     objectRecordEventsWithQueryIds?: ObjectRecordEventWithQueryIdsGenqlSelection
-    metadataEventsWithQueryIds?: MetadataEventWithQueryIdsGenqlSelection
+    metadataEvents?: MetadataEventGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6865,14 +6852,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isObjectRecordEventWithQueryIds = (obj?: { __typename?: any } | null): obj is ObjectRecordEventWithQueryIds => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordEventWithQueryIds"')
       return ObjectRecordEventWithQueryIds_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MetadataEventWithQueryIds_possibleTypes: string[] = ['MetadataEventWithQueryIds']
-    export const isMetadataEventWithQueryIds = (obj?: { __typename?: any } | null): obj is MetadataEventWithQueryIds => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMetadataEventWithQueryIds"')
-      return MetadataEventWithQueryIds_possibleTypes.includes(obj.__typename)
     }
     
 

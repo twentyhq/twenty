@@ -12,15 +12,6 @@ export class ObjectRecordEventWithQueryIdsDTO {
   objectRecordEvent: ObjectRecordEventDTO;
 }
 
-@ObjectType('MetadataEventWithQueryIds')
-export class MetadataEventWithQueryIdsDTO {
-  @Field(() => [String])
-  queryIds: string[];
-
-  @Field(() => MetadataEventDTO)
-  metadataEvent: MetadataEventDTO;
-}
-
 @ObjectType('EventSubscription')
 export class EventSubscriptionDTO {
   @Field(() => String)
@@ -29,6 +20,6 @@ export class EventSubscriptionDTO {
   @Field(() => [ObjectRecordEventWithQueryIdsDTO])
   objectRecordEventsWithQueryIds: ObjectRecordEventWithQueryIdsDTO[];
 
-  @Field(() => [MetadataEventWithQueryIdsDTO])
-  metadataEventsWithQueryIds: MetadataEventWithQueryIdsDTO[];
+  @Field(() => [MetadataEventDTO])
+  metadataEvents: MetadataEventDTO[];
 }

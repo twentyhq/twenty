@@ -22,7 +22,7 @@ export const useDeleteOneFieldMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { deleteDraftItems, applyChanges } = useMetadataStore();
+  const { removeFromDraft, applyChanges } = useMetadataStore();
 
   const setRecordIndexGroupAggregateOperation = useSetAtomComponentState(
     recordIndexGroupAggregateOperationComponentState,
@@ -65,7 +65,7 @@ export const useDeleteOneFieldMetadataItem = () => {
         },
       });
 
-      deleteDraftItems('fieldMetadataItems', [idToDelete]);
+      removeFromDraft('fieldMetadataItems', [idToDelete]);
       applyChanges();
 
       // TODO: see if we can remove this line altogether

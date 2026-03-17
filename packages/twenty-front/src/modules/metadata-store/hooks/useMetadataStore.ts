@@ -124,7 +124,7 @@ export const useMetadataStore = () => {
     return { hasPersistedAnyMetadataEntity };
   }, [store]);
 
-  const createDraftItems = useCallback(
+  const addToDraft = useCallback(
     <K extends MetadataEntityKey>(
       key: K,
       items: MetadataEntityTypeMap[K][],
@@ -168,7 +168,7 @@ export const useMetadataStore = () => {
     [store],
   );
 
-  const updateDraftItems = useCallback(
+  const updateInDraft = useCallback(
     <K extends MetadataEntityKey>(
       key: K,
       items: MetadataEntityTypeMap[K][],
@@ -220,7 +220,7 @@ export const useMetadataStore = () => {
     [store],
   );
 
-  const deleteDraftItems = useCallback(
+  const removeFromDraft = useCallback(
     <K extends MetadataEntityKey>(
       key: K,
       itemIds: string[],
@@ -263,9 +263,9 @@ export const useMetadataStore = () => {
   return {
     replaceDraft,
     applyChanges,
-    createDraftItems,
-    updateDraftItems,
-    deleteDraftItems,
+    addToDraft,
+    updateInDraft,
+    removeFromDraft,
     resetMetadataStore: reset,
   };
 };

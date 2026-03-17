@@ -26,7 +26,7 @@ export const useCreateOneObjectMetadataItem = () => {
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { createDraftItems, replaceDraft, applyChanges } = useMetadataStore();
+  const { addToDraft, replaceDraft, applyChanges } = useMetadataStore();
 
   const createOneObjectMetadataItem = async (
     input: CreateObjectInput,
@@ -48,7 +48,7 @@ export const useCreateOneObjectMetadataItem = () => {
         const { __typename: _objectTypename, fieldsList, ...objectData } =
           createdObject;
 
-        createDraftItems(
+        addToDraft(
           'objectMetadataItems',
           [objectData as FlatObjectMetadataItem],
         );
@@ -62,7 +62,7 @@ export const useCreateOneObjectMetadataItem = () => {
           } as FlatFieldMetadataItem;
         });
 
-        createDraftItems('fieldMetadataItems', flatFields);
+        addToDraft('fieldMetadataItems', flatFields);
 
         applyChanges();
 
@@ -90,13 +90,13 @@ export const useCreateOneObjectMetadataItem = () => {
           flatViewFieldGroups,
         } = splitViewWithRelated(fetchedViews);
 
-        createDraftItems('views', flatViews);
-        createDraftItems('viewFields', flatViewFields);
-        createDraftItems('viewFilters', flatViewFilters);
-        createDraftItems('viewSorts', flatViewSorts);
-        createDraftItems('viewGroups', flatViewGroups);
-        createDraftItems('viewFilterGroups', flatViewFilterGroups);
-        createDraftItems('viewFieldGroups', flatViewFieldGroups);
+        addToDraft('views', flatViews);
+        addToDraft('viewFields', flatViewFields);
+        addToDraft('viewFilters', flatViewFilters);
+        addToDraft('viewSorts', flatViewSorts);
+        addToDraft('viewGroups', flatViewGroups);
+        addToDraft('viewFilterGroups', flatViewFilterGroups);
+        addToDraft('viewFieldGroups', flatViewFieldGroups);
 
         replaceDraft('navigationMenuItems',
           navItemsResult.data?.navigationMenuItems ?? [],

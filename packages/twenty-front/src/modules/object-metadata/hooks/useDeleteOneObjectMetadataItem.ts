@@ -16,7 +16,7 @@ export const useDeleteOneObjectMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { deleteDraftItems, applyChanges } = useMetadataStore();
+  const { removeFromDraft, applyChanges } = useMetadataStore();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: string,
@@ -32,7 +32,7 @@ export const useDeleteOneObjectMetadataItem = () => {
         },
       });
 
-      deleteDraftItems('objectMetadataItems', [idToDelete]);
+      removeFromDraft('objectMetadataItems', [idToDelete]);
       applyChanges();
 
       return {

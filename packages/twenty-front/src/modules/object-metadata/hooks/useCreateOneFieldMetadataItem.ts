@@ -21,7 +21,7 @@ export const useCreateOneFieldMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { createDraftItems, applyChanges } = useMetadataStore();
+  const { addToDraft, applyChanges } = useMetadataStore();
 
   const createOneFieldMetadataItem = async (
     input: CreateFieldInput,
@@ -44,7 +44,7 @@ export const useCreateOneFieldMetadataItem = () => {
       if (isDefined(createdField)) {
         const { __typename, object, ...fieldData } = createdField;
 
-        createDraftItems('fieldMetadataItems', [{
+        addToDraft('fieldMetadataItems', [{
           ...fieldData,
           objectMetadataId: object?.id ?? input.objectMetadataId,
         } as FlatFieldMetadataItem]);

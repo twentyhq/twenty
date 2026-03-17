@@ -25,7 +25,7 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateDraftItems, applyChanges } = useMetadataStore();
+  const { updateInDraft, applyChanges } = useMetadataStore();
 
   const setLastFieldMetadataItemUpdate = useSetAtomState(
     lastFieldMetadataItemUpdateState,
@@ -67,7 +67,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       if (isDefined(updatedField)) {
         const { __typename, object, ...fieldData } = updatedField;
 
-        updateDraftItems('fieldMetadataItems', [{
+        updateInDraft('fieldMetadataItems', [{
           ...fieldData,
           objectMetadataId: object?.id ?? objectMetadataId,
         } as FlatFieldMetadataItem]);

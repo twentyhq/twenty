@@ -194,19 +194,16 @@ export class WorkspaceEventEmitterService {
       return;
     }
 
-    const metadataEventsWithQueryIds = metadataEventBatch.events.map(
+    const metadataEvents = metadataEventBatch.events.map(
       (metadataEvent) => ({
-        queryIds: [] as string[],
-        metadataEvent: {
-          ...metadataEvent,
-          updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
-        },
+        ...metadataEvent,
+        updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
       }),
     );
 
     const payload: EventStreamPayload = {
       objectRecordEventsWithQueryIds: [],
-      metadataEventsWithQueryIds,
+      metadataEvents,
     };
 
     await this.subscriptionService.publishToEventStream({
@@ -361,7 +358,7 @@ export class WorkspaceEventEmitterService {
 
       const payload: EventStreamPayload = {
         objectRecordEventsWithQueryIds: matchedEvents,
-        metadataEventsWithQueryIds: [],
+        metadataEvents: [],
       };
 
       await this.subscriptionService.publishToEventStream({

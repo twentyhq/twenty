@@ -1596,7 +1596,7 @@ export enum EventLogTable {
 export type EventSubscription = {
   __typename?: 'EventSubscription';
   eventStreamId: Scalars['String'];
-  metadataEventsWithQueryIds: Array<MetadataEventWithQueryIds>;
+  metadataEvents: Array<MetadataEvent>;
   objectRecordEventsWithQueryIds: Array<ObjectRecordEventWithQueryIds>;
 };
 
@@ -2303,12 +2303,6 @@ export enum MetadataEventAction {
   DELETED = 'DELETED',
   UPDATED = 'UPDATED'
 }
-
-export type MetadataEventWithQueryIds = {
-  __typename?: 'MetadataEventWithQueryIds';
-  metadataEvent: MetadataEvent;
-  queryIds: Array<Scalars['String']>;
-};
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';

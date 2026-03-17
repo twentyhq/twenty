@@ -20,19 +20,16 @@ export const ON_EVENT_SUBSCRIPTION = gql`
         }
         queryIds
       }
-      metadataEventsWithQueryIds {
-        metadataEvent {
-          type
-          metadataName
-          recordId
-          properties {
-            updatedFields
-            before
-            after
-            diff
-          }
+      metadataEvents {
+        type
+        metadataName
+        recordId
+        properties {
+          updatedFields
+          before
+          after
+          diff
         }
-        queryIds
       }
     }
   }

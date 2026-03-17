@@ -22,7 +22,7 @@ export const useUpdateOneObjectMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateDraftItems, applyChanges } = useMetadataStore();
+  const { updateInDraft, applyChanges } = useMetadataStore();
 
   const updateOneObjectMetadataItem = async ({
     idToUpdate,
@@ -48,7 +48,7 @@ export const useUpdateOneObjectMetadataItem = () => {
       if (isDefined(updatedObject)) {
         const { __typename, ...objectData } = updatedObject;
 
-        updateDraftItems(
+        updateInDraft(
           'objectMetadataItems',
           [objectData as FlatObjectMetadataItem],
         );

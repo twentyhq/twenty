@@ -2639,17 +2639,6 @@ export default {
                 1
             ]
         },
-        "MetadataEventWithQueryIds": {
-            "queryIds": [
-                1
-            ],
-            "metadataEvent": [
-                114
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "EventSubscription": {
             "eventStreamId": [
                 1
@@ -2657,8 +2646,8 @@ export default {
             "objectRecordEventsWithQueryIds": [
                 118
             ],
-            "metadataEventsWithQueryIds": [
-                119
+            "metadataEvents": [
+                114
             ],
             "__typename": [
                 1

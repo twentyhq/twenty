@@ -1282,15 +1282,10 @@ type ObjectRecordEventWithQueryIds {
   objectRecordEvent: ObjectRecordEvent!
 }
 
-type MetadataEventWithQueryIds {
-  queryIds: [String!]!
-  metadataEvent: MetadataEvent!
-}
-
 type EventSubscription {
   eventStreamId: String!
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
-  metadataEventsWithQueryIds: [MetadataEventWithQueryIds!]!
+  metadataEvents: [MetadataEvent!]!
 }
 
 type OnDbEvent {
