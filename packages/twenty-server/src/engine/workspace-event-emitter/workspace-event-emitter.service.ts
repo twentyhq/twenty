@@ -31,6 +31,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/workspace-event-emitter/utils/enrich-field-metadata-event-with-relations.util';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
@@ -62,6 +63,7 @@ export class WorkspaceEventEmitterService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
+    private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
   ) {}
 
   async publish(
@@ -134,6 +136,8 @@ export class WorkspaceEventEmitterService {
     const enrichedMetadataEventBatch = isMetadata
       ? await this.enrichFieldMetadataEventsWithRelations(
           eventBatch as MetadataEventBatch,
+        ).then((batch) =>
+          this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(batch),
         )
       : undefined;
 
@@ -247,6 +251,59 @@ export class WorkspaceEventEmitterService {
         },
       } as typeof event;
     });
+
+    return { ...metadataEventBatch, events: enrichedEvents };
+  }
+
+  private async enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
+    metadataEventBatch: MetadataEventBatch,
+  ): Promise<MetadataEventBatch> {
+    if (metadataEventBatch.metadataName !== 'navigationMenuItem') {
+      return metadataEventBatch;
+    }
+
+    const enrichedEvents = await Promise.all(
+      metadataEventBatch.events.map(async (event) => {
+        if (
+          !('after' in event.properties) ||
+          !isDefined(event.properties.after)
+        ) {
+          return event;
+        }
+
+        const after = event.properties.after as Record<string, unknown>;
+        const targetRecordId = after.targetRecordId as string | undefined;
+        const targetObjectMetadataId = after.targetObjectMetadataId as
+          | string
+          | undefined;
+
+        if (!isDefined(targetRecordId) || !isDefined(targetObjectMetadataId)) {
+          return event;
+        }
+
+        const targetRecordIdentifier =
+          await this.navigationMenuItemRecordIdentifierService.resolveRecordIdentifier(
+            {
+              targetRecordId,
+              targetObjectMetadataId,
+              workspaceId: metadataEventBatch.workspaceId,
+            },
+          );
+
+        const enrichedAfter: Record<string, unknown> = {
+          ...after,
+          targetRecordIdentifier,
+        };
+
+        return {
+          ...event,
+          properties: {
+            ...event.properties,
+            after: enrichedAfter,
+          },
+        } as typeof event;
+      }),
+    );
 
     return { ...metadataEventBatch, events: enrichedEvents };
   }

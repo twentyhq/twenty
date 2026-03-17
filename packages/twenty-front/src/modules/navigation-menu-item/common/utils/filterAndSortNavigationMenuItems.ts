@@ -11,41 +11,48 @@ export const filterAndSortNavigationMenuItems = (
 ): NavigationMenuItem[] => {
   return navigationMenuItems
     .filter((item) => {
+      let keep = false;
+
       if (item.type === NavigationMenuItemType.FOLDER) {
-        return true;
-      }
-      if (item.type === NavigationMenuItemType.LINK) {
-        return true;
-      }
-      if (item.type === NavigationMenuItemType.OBJECT) {
-        return (
+        keep = true;
+      } else if (item.type === NavigationMenuItemType.LINK) {
+        keep = true;
+      } else if (item.type === NavigationMenuItemType.OBJECT) {
+        keep =
           isDefined(item.targetObjectMetadataId) &&
           objectMetadataItems.some(
             (meta) => meta.id === item.targetObjectMetadataId,
-          )
-        );
-      }
-      if (item.type === NavigationMenuItemType.VIEW) {
+          );
+      } else if (item.type === NavigationMenuItemType.VIEW) {
         if (!isDefined(item.viewId)) {
-          return false;
+          keep = false;
+        } else {
+          const view = views.find((view) => view.id === item.viewId);
+          keep =
+            isDefined(view) &&
+            objectMetadataItems.some(
+              (meta) => meta.id === view.objectMetadataId,
+            );
         }
-        const view = views.find((view) => view.id === item.viewId);
-        return (
-          isDefined(view) &&
-          objectMetadataItems.some((meta) => meta.id === view.objectMetadataId)
+      } else if (item.type === NavigationMenuItemType.RECORD) {
+        const hasTargetRecordId = isDefined(item.targetRecordId);
+        const hasTargetObjectMetadataId = isDefined(
+          item.targetObjectMetadataId,
         );
-      }
-      if (item.type === NavigationMenuItemType.RECORD) {
-        return (
-          isDefined(item.targetRecordId) &&
-          isDefined(item.targetObjectMetadataId) &&
-          isDefined(item.targetRecordIdentifier) &&
-          objectMetadataItems.some(
-            (meta) => meta.id === item.targetObjectMetadataId,
-          )
+        const hasTargetRecordIdentifier = isDefined(
+          item.targetRecordIdentifier,
         );
+        const objectMetadataExists = objectMetadataItems.some(
+          (meta) => meta.id === item.targetObjectMetadataId,
+        );
+        keep =
+          hasTargetRecordId &&
+          hasTargetObjectMetadataId &&
+          hasTargetRecordIdentifier &&
+          objectMetadataExists;
       }
-      return false;
+
+      return keep;
     })
     .sort((a, b) => a.position - b.position);
 };
