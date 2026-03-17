@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext } from 'react';
-import { IconCheck, useIcons } from 'twenty-ui/display';
+import { IconCheck, IconPaint } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -31,13 +31,10 @@ const StyledTitle = styled.span`
 const LayoutCustomizationBarContent = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const { getIcon } = useIcons();
 
   const { save, isSaving } = useSaveLayoutCustomization();
   const { cancel } = useCancelLayoutCustomization();
   const { isDirty } = useIsLayoutCustomizationDirty();
-
-  const IconPaint = getIcon('IconPaint');
 
   return (
     <motion.div
