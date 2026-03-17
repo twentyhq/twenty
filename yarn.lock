@@ -24631,6 +24631,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@npm:^18.2.15":
+  version: 18.3.0
+  resolution: "@types/react-dom@npm:18.3.0"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10c0/6c90d2ed72c5a0e440d2c75d99287e4b5df3e7b011838cdc03ae5cd518ab52164d86990e73246b9d812eaf02ec351d74e3b4f5bd325bf341e13bf980392fd53b
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^19":
   version: 19.1.1
   resolution: "@types/react-dom@npm:19.1.1"
@@ -24683,6 +24692,16 @@ __metadata:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.2.2"
   checksum: 10c0/a761d2f58de03d0714806cc65d32bb3d73fb33a08dd030d255b47a295e5fff2a775cf1c20b786824d8deb6454eaccce9bc6998d9899c14fc04bbd1b0b0b72897
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.39":
+  version: 18.3.3
+  resolution: "@types/react@npm:18.3.3"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/fe455f805c5da13b89964c3d68060cebd43e73ec15001a68b34634604a78140e6fc202f3f61679b9d809dde6d7a7c2cb3ed51e0fd1462557911db09879b55114
   languageName: node
   linkType: hard
 
@@ -50590,6 +50609,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:18.3.1, react-dom@npm:^18.2.0":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+    scheduler: "npm:^0.23.2"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version: 19.2.3
   resolution: "react-dom@npm:19.2.3"
@@ -51204,19 +51235,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
-  version: 19.2.3
-  resolution: "react@npm:19.2.3"
-  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
-  languageName: node
-  linkType: hard
-
-"react@npm:^18":
+"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
+  languageName: node
+  linkType: hard
+
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
+  version: 19.2.3
+  resolution: "react@npm:19.2.3"
+  checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
   languageName: node
   linkType: hard
 
@@ -52908,6 +52939,15 @@ __metadata:
   version: 0.25.0-rc-603e6108-20241029
   resolution: "scheduler@npm:0.25.0-rc-603e6108-20241029"
   checksum: 10c0/aa95c1ea0cba0c6c7031cfbbd131fc2de2b8a7e7e167c56c3072fbff1d500ae1c2bb92d5a54057b9bfef810be2b718df3020a19fca6bd6d3fbcd74c961e65ebf
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.23.2":
+  version: 0.23.2
+  resolution: "scheduler@npm:0.23.2"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
   languageName: node
   linkType: hard
 
@@ -56724,7 +56764,7 @@ __metadata:
     "@types/passport-microsoft": "npm:^2.1.0"
     "@types/pluralize": "npm:^0.0.33"
     "@types/psl": "npm:^1.1.3"
-    "@types/react": "npm:^19.0.0"
+    "@types/react": "npm:^18.2.39"
     "@types/tar": "npm:^7.0.87"
     "@types/unzipper": "npm:^0"
     "@yarnpkg/types": "npm:^4.0.0"
@@ -56812,8 +56852,8 @@ __metadata:
     pluralize: "npm:8.0.0"
     postal-mime: "npm:^2.6.1"
     psl: "npm:^1.9.0"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
+    react: "npm:18.3.1"
+    react-dom: "npm:18.3.1"
     redis: "npm:^4.7.0"
     reflect-metadata: "npm:0.2.2"
     rimraf: "npm:^5.0.5"
@@ -56879,8 +56919,8 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@tabler/icons-react": "npm:^3.31.0"
     "@types/babel__preset-env": "npm:^7"
-    "@types/react": "npm:^19.0.0"
-    "@types/react-dom": "npm:^19.0.0"
+    "@types/react": "npm:^18.2.39"
+    "@types/react-dom": "npm:^18.2.15"
     "@wyw-in-js/babel-preset": "npm:^0.6.0"
     babel-plugin-inline-import: "npm:^3.0.0"
     babel-plugin-inline-react-svg: "npm:^2.0.2"
@@ -56890,8 +56930,8 @@ __metadata:
     glob: "npm:^11.1.0"
     hex-rgb: "npm:^5.0.0"
     jotai: "npm:^2.17.1"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
     react-responsive: "npm:^9.0.2"
     react-router-dom: "npm:^6.4.4"
     react-tooltip: "npm:^5.13.1"
@@ -57030,9 +57070,9 @@ __metadata:
     "@types/passport-jwt": "npm:^3.0.8"
     "@types/passport-microsoft": "npm:^2.1.0"
     "@types/pluralize": "npm:^0.0.33"
-    "@types/react": "npm:^19.0.0"
+    "@types/react": "npm:^18.2.39"
     "@types/react-datepicker": "npm:^6.2.0"
-    "@types/react-dom": "npm:^19.0.0"
+    "@types/react-dom": "npm:^18.2.15"
     "@types/supertest": "npm:^2.0.11"
     "@types/uuid": "npm:^9.0.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
@@ -57092,8 +57132,8 @@ __metadata:
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     raw-loader: "npm:^4.0.2"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
     react-responsive: "npm:^9.0.2"
     react-router-dom: "npm:^6.30.3"
     react-tooltip: "npm:^5.13.1"

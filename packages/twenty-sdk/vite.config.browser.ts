@@ -34,6 +34,17 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         '@/': path.resolve(__dirname, 'src') + '/',
+        // Force React 19 from twenty-sdk (root workspace uses React 18)
+        react: path.resolve(__dirname, 'node_modules/react'),
+        'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+        'react/jsx-runtime': path.resolve(
+          __dirname,
+          'node_modules/react/jsx-runtime',
+        ),
+        'react/jsx-dev-runtime': path.resolve(
+          __dirname,
+          'node_modules/react/jsx-dev-runtime',
+        ),
       },
     },
     plugins: [

@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { type JSX } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from '@ui/theme-constants';
 

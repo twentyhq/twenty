@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type AnimationDuration } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
-import { type JSX, useContext } from 'react';
+import { useContext } from 'react';
 
 type AnimatedRotateProps = Omit<
   HTMLMotionProps<'div'>,
