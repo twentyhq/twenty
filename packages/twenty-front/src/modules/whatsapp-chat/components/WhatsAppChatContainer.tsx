@@ -9,10 +9,18 @@ import { ChatHeader } from '@/whatsapp-chat/components/ChatHeader';
 import { ChatThread } from '@/whatsapp-chat/components/ChatThread';
 import { ConversationDetails } from '@/whatsapp-chat/components/ConversationDetails';
 import { ConversationList } from '@/whatsapp-chat/components/ConversationList';
-import { FlagLeadModal } from '@/whatsapp-chat/components/FlagLeadModal';
-import { ForwardMessageModal } from '@/whatsapp-chat/components/ForwardMessageModal';
 import { SessionPicker } from '@/whatsapp-chat/components/SessionPicker';
 
+const LazyFlagLeadModal = lazy(() =>
+  import('@/whatsapp-chat/components/FlagLeadModal').then((m) => ({
+    default: m.FlagLeadModal,
+  })),
+);
+const LazyForwardMessageModal = lazy(() =>
+  import('@/whatsapp-chat/components/ForwardMessageModal').then((m) => ({
+    default: m.ForwardMessageModal,
+  })),
+);
 const LazyStrukturanalyseModal = lazy(() =>
   import('@/whatsapp-chat/components/StrukturanalyseModal').then((m) => ({
     default: m.StrukturanalyseModal,
@@ -582,23 +590,27 @@ export const WhatsAppChatContainer = () => {
       )}
 
       {forwardingMessage && selectedConversation && (
-        <ForwardMessageModal
-          message={forwardingMessage}
-          sourceConversation={selectedConversation}
-          conversations={conversationsRef.current}
-          currentUserName={currentUserName}
-          onClose={() => setForwardingMessage(null)}
-          onSend={handleForwardSend}
-        />
+        <Suspense fallback={null}>
+          <LazyForwardMessageModal
+            message={forwardingMessage}
+            sourceConversation={selectedConversation}
+            conversations={conversationsRef.current}
+            currentUserName={currentUserName}
+            onClose={() => setForwardingMessage(null)}
+            onSend={handleForwardSend}
+          />
+        </Suspense>
       )}
 
       {showFlagLead && selectedConversation && (
-        <FlagLeadModal
-          conversation={selectedConversation}
-          currentUserName={currentUserName}
-          onClose={() => setShowFlagLead(false)}
-          onFlagged={() => setShowFlagLead(false)}
-        />
+        <Suspense fallback={null}>
+          <LazyFlagLeadModal
+            conversation={selectedConversation}
+            currentUserName={currentUserName}
+            onClose={() => setShowFlagLead(false)}
+            onFlagged={() => setShowFlagLead(false)}
+          />
+        </Suspense>
       )}
 
       {saMessage && selectedConversation && (
