@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { isWorkspaceDroppableId } from '@/navigation-menu-item/common/utils/isWorkspaceDroppableId';
+import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 
 import type { DroppableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDroppableData';
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
@@ -37,7 +37,12 @@ export const resolveDropTarget = (
   }
   if (isDroppableData(target.data)) {
     const { droppableId, index } = target.data;
-    if (isWorkspaceDroppableId(droppableId)) {
+    if (
+      canNavigationMenuItemBeDroppedIn({
+        navigationMenuItemSection: 'workspace',
+        droppableId,
+      })
+    ) {
       return {
         destination: { droppableId, index },
         effectiveDropTargetId: String(target.id),

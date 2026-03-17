@@ -6,6 +6,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
@@ -80,8 +81,8 @@ export const NavigationMenuItemFolderFavoritesEditWrapper = ({
     navigationMenuItemCount,
   } = useFavoritesFolderEdit({ folderId, folderName, navigationMenuItems });
 
-  const folderHeaderDroppableId = `folder-header-${folderId}`;
-  const folderContentDroppableId = `folder-${folderId}`;
+  const folderHeaderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_HEADER_PREFIX}${folderId}`;
+  const folderContentDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${folderId}`;
   const folderHeaderSlotId = getDndKitDropTargetId(folderHeaderDroppableId, 0);
 
   const isForbiddenDropTarget =
@@ -136,7 +137,7 @@ export const NavigationMenuItemFolderFavoritesEditWrapper = ({
       isDragging: dragging,
       folderId: currentFolderId,
     }: SubItemsRenderParams) => {
-      const group = `folder-${currentFolderId}`;
+      const group = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${currentFolderId}`;
       return (
         <StyledFolderDroppableContent>
           {items.map((navigationMenuItem, index) => (

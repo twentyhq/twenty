@@ -46,7 +46,7 @@ const StyledEmptyContainer = styled.div`
 `;
 
 const ORPHAN_DROPPABLE_ID =
-  NavigationMenuItemDroppableIds.ORPHAN_NAVIGATION_MENU_ITEMS;
+  NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
 export const FavoritesSection = () => {
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
