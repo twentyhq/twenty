@@ -63,6 +63,7 @@ const resolveFavoritesDropTarget = (
     data?: unknown;
   } | null,
   getNavItemById: (id: string | undefined) => NavigationMenuItem | undefined,
+  sourceIsFolder = false,
 ): {
   destination: DropDestination;
   effectiveDropTargetId: string;
@@ -85,11 +86,15 @@ const resolveFavoritesDropTarget = (
     const isTargetFolder =
       isDefined(targetItem) && isNavigationMenuItemFolder(targetItem);
 
-    const destination: DropDestination = isTargetFolder
+    // When dragging a folder, treat target folders as regular items
+    // (reorder next to them) instead of dropping INTO them
+    const shouldDropIntoFolder = isTargetFolder && !sourceIsFolder;
+
+    const destination: DropDestination = shouldDropIntoFolder
       ? { droppableId: `folder-header-${target.id}`, index: 0 }
       : { droppableId: group, index };
 
-    const effectiveDropTargetId = isTargetFolder
+    const effectiveDropTargetId = shouldDropIntoFolder
       ? getDndKitDropTargetId(`folder-header-${target.id}`, 0)
       : getDndKitDropTargetId(group, index);
 
@@ -226,7 +231,16 @@ export const useNavigationMenuItemDndKit = (
       const target = operation.target;
       const isAddToNavDrag =
         sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID;
-      const resolved = resolveFavoritesDropTarget(target, getNavItemById);
+      const sourceItem = getNavItemById(
+        source?.id != null ? String(source.id) : undefined,
+      );
+      const sourceIsFolder =
+        isDefined(sourceItem) && isNavigationMenuItemFolder(sourceItem);
+      const resolved = resolveFavoritesDropTarget(
+        target,
+        getNavItemById,
+        sourceIsFolder,
+      );
 
       if (
         resolved !== null &&
@@ -386,13 +400,23 @@ export const useNavigationMenuItemDndKit = (
     const sourceId = data?.sourceDroppableId ?? null;
     const fallback = addToNavigationFallbackDestination;
 
+    const sourceItem = getNavItemById(
+      source?.id != null ? String(source.id) : undefined,
+    );
+    const sourceIsFolder =
+      isDefined(sourceItem) && isNavigationMenuItemFolder(sourceItem);
+
     setIsDragging(false);
     setSourceDroppableId(null);
     setActiveDropTargetId(null);
     setForbiddenDropTargetId(null);
     setAddToNavigationFallbackDestination(null);
 
-    const resolved = resolveFavoritesDropTarget(target, getNavItemById);
+    const resolved = resolveFavoritesDropTarget(
+      target,
+      getNavItemById,
+      sourceIsFolder,
+    );
     let destination: DropDestination | null = resolved?.destination ?? null;
 
     if (destination == null && isDefined(fallback)) {

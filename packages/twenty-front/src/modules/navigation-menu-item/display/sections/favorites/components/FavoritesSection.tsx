@@ -170,13 +170,23 @@ export const FavoritesSection = () => {
                 index={index}
                 group={ORPHAN_DROPPABLE_ID}
               >
-                <NavigationMenuItemFolder
-                  folderId={item.id}
-                  folderName={folderData?.folderName ?? item.name ?? 'Folder'}
-                  navigationMenuItems={folderData?.navigationMenuItems ?? []}
-                  section={NavigationSections.FAVORITES}
-                  isGroup={hasFolders}
-                />
+                <NavigationItemDropTarget
+                  folderId={null}
+                  index={index}
+                  sectionId={NavigationSections.FAVORITES}
+                  dropTargetIdOverride={getDndKitDropTargetId(
+                    ORPHAN_DROPPABLE_ID,
+                    index,
+                  )}
+                >
+                  <NavigationMenuItemFolder
+                    folderId={item.id}
+                    folderName={folderData?.folderName ?? item.name ?? 'Folder'}
+                    navigationMenuItems={folderData?.navigationMenuItems ?? []}
+                    section={NavigationSections.FAVORITES}
+                    isGroup={hasFolders}
+                  />
+                </NavigationItemDropTarget>
               </NavigationMenuItemSortableItem>
             );
           }
