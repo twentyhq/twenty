@@ -3,8 +3,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useMutation } from '@apollo/client/react';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-import { CREATE_NAVIGATION_MENU_ITEM } from '@/navigation-menu-item/common/graphql/mutations/createNavigationMenuItem';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
 import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useUpdateNavigationMenuItem';
@@ -22,11 +21,12 @@ import { useStore } from 'jotai';
 export const useSaveNavigationMenuItemsDraft = () => {
   const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
-  const [createNavigationMenuItemMutation] = useMutation<{
-    createNavigationMenuItem: NavigationMenuItem;
-  }>(CREATE_NAVIGATION_MENU_ITEM, {
-    refetchQueries: ['FindManyNavigationMenuItems'],
-  });
+  const [createNavigationMenuItemMutation] = useMutation(
+    CreateNavigationMenuItemDocument,
+    {
+      refetchQueries: ['FindManyNavigationMenuItems'],
+    },
+  );
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const store = useStore();

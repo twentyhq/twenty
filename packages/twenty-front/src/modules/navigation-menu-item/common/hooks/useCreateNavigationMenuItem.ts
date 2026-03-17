@@ -1,7 +1,7 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
-import { CREATE_NAVIGATION_MENU_ITEM } from '@/navigation-menu-item/common/graphql/mutations/createNavigationMenuItem';
+import { CreateNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -14,7 +14,7 @@ export const useCreateNavigationMenuItem = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const [createNavigationMenuItemMutation] = useMutation(
-    CREATE_NAVIGATION_MENU_ITEM,
+    CreateNavigationMenuItemDocument,
     {
       refetchQueries: ['FindManyNavigationMenuItems'],
     },
