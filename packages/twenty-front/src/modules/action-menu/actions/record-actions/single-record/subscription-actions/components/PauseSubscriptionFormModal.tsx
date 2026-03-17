@@ -182,11 +182,11 @@ export const PauseSubscriptionFormModal = ({
   return (
     <StyledPauseFormModal
       modalId={modalId}
-      isClosable={true}
-      onClose={handleCancel}
       size="medium"
       padding="large"
       ignoreContainer
+      dataGloballyPreventClickOutside
+      shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <Modal.Header>
         <H1Title
