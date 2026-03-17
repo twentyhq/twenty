@@ -37,6 +37,9 @@ const getCompositeDefaultValues = (
   return undefined;
 };
 
+const hasEnumOptions = (options: unknown): boolean =>
+  Array.isArray(options) && options.length > 0;
+
 const RELATION_FIELD_TYPES = new Set([
   FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,
@@ -47,12 +50,15 @@ const resolveColumnType = (
   schemaName: string,
   tableName: string,
   columnName: string,
+  hasEnumValues: boolean,
 ): string => {
   const baseType = fieldMetadataTypeToColumnType(fieldType);
 
-  return baseType === 'enum'
-    ? `${escapeIdentifier(schemaName)}.${escapeIdentifier(computePostgresEnumName({ tableName, columnName }))}`
-    : baseType;
+  if (baseType !== 'enum' || !hasEnumValues) {
+    return baseType === 'enum' ? 'text' : baseType;
+  }
+
+  return `${escapeIdentifier(schemaName)}.${escapeIdentifier(computePostgresEnumName({ tableName, columnName }))}`;
 };
 
 export const buildColumnDefinitionsForField = (
@@ -103,6 +109,7 @@ export const buildColumnDefinitionsForField = (
             schemaName,
             tableName,
             columnName,
+            hasEnumOptions(property.options),
           ),
           isNullable:
             fieldMetadata.isNullable !== false || !property.isRequired,
@@ -145,6 +152,7 @@ export const buildColumnDefinitionsForField = (
         schemaName,
         tableName,
         columnName,
+        hasEnumOptions(fieldMetadata.options),
       ),
       isNullable: fieldMetadata.isNullable !== false,
       isPrimary: fieldMetadata.name === 'id',

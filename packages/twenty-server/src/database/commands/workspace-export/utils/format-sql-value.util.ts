@@ -27,17 +27,24 @@ export const formatSqlValue = (
   if (Array.isArray(value)) {
     if (value.length === 0) return "'{}'";
 
-    if (typeof value[0] === 'object') {
+    if (isDefined(value[0]) && typeof value[0] === 'object') {
       return escapeLiteral(JSON.stringify(value));
     }
 
-    const elements = value.map((element) =>
-      typeof element === 'string'
-        ? `"${element.replace(/"/g, '\\"')}"`
-        : String(element),
-    );
+    const formattedElements = value.map((element) => {
+      if (!isDefined(element)) return 'NULL';
 
-    return `'{${elements.join(',')}}'`;
+      const stringElement = String(element);
+      const escapedElement = stringElement
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"');
+
+      return `"${escapedElement}"`;
+    });
+
+    const arrayLiteral = `{${formattedElements.join(',')}}`;
+
+    return `'${arrayLiteral.replace(/'/g, "''")}'`;
   }
 
   if (typeof value === 'object') {

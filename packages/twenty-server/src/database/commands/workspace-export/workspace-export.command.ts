@@ -64,6 +64,7 @@ export class WorkspaceExportCommand extends CommandRunner {
       this.logger.log(`Export complete: ${filePath}`);
     } catch (error) {
       this.logger.error('Export failed', error);
+      throw error;
     }
   }
 }

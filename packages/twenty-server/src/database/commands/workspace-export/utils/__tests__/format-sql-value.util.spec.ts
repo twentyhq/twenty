@@ -62,6 +62,14 @@ describe('formatSqlValue', () => {
     expect(formatSqlValue(['a', 'b', 'c'])).toBe('\'{"a","b","c"}\'');
   });
 
+  it('should escape single quotes in array elements', () => {
+    expect(formatSqlValue(["O'Reilly"])).toBe("'{\"O''Reilly\"}'");
+  });
+
+  it('should format arrays with null elements as PostgreSQL array literals', () => {
+    expect(formatSqlValue([null, 'foo', 'bar'])).toBe("'{NULL,\"foo\",\"bar\"}'");
+  });
+
   it('should JSON-serialize arrays of objects', () => {
     const value = [{ id: 1 }, { id: 2 }];
 

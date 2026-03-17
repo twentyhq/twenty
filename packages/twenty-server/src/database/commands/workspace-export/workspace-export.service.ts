@@ -227,7 +227,7 @@ export class WorkspaceExportService {
 
     for (let offset = 0; offset < totalCount; offset += BATCH_SIZE) {
       const rows: Record<string, unknown>[] = await queryRunner.query(
-        `SELECT * FROM "${schemaName}"."${tableName}"${whereClause} LIMIT ${BATCH_SIZE} OFFSET ${offset}`,
+        `SELECT * FROM "${schemaName}"."${tableName}"${whereClause} ORDER BY "id" LIMIT ${BATCH_SIZE} OFFSET ${offset}`,
         queryParameters,
       );
 
