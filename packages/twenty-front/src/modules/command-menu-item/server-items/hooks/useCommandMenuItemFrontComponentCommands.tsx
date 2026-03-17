@@ -14,6 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
+  interpolateCommandMenuItemLabel,
   isDefined,
 } from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
@@ -71,7 +72,15 @@ const buildCommandMenuItemFromFrontComponent = ({
   mountContext,
   commandMenuContextApi,
 }: BuildCommandMenuItemFromFrontComponentParams) => {
-  const displayLabel = item.label;
+  const displayLabel = interpolateCommandMenuItemLabel({
+    label: item.label,
+    context: commandMenuContextApi,
+  });
+
+  const displayShortLabel = interpolateCommandMenuItemLabel({
+    label: item.shortLabel,
+    context: commandMenuContextApi,
+  });
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
@@ -83,7 +92,7 @@ const buildCommandMenuItemFromFrontComponent = ({
     } else {
       openFrontComponentInSidePanel({
         frontComponentId: item.frontComponentId,
-        pageTitle: displayLabel,
+        pageTitle: displayLabel ?? '',
         pageIcon: Icon,
         recordContext: isDefined(mountContext)
           ? {
@@ -100,7 +109,7 @@ const buildCommandMenuItemFromFrontComponent = ({
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
-    shortLabel: item.shortLabel ?? undefined,
+    shortLabel: displayShortLabel,
     position: item.position,
     isPinned,
     Icon,
@@ -147,8 +156,14 @@ const buildCommandItemFromEngineKey = ({
     type,
     key: `command-menu-item-engine-${item.id}`,
     scope,
-    label: item.label,
-    shortLabel: item.shortLabel ?? undefined,
+    label: interpolateCommandMenuItemLabel({
+      label: item.label,
+      context: commandMenuContextApi,
+    }),
+    shortLabel: interpolateCommandMenuItemLabel({
+      label: item.shortLabel,
+      context: commandMenuContextApi,
+    }),
     position: item.position,
     isPinned,
     Icon,

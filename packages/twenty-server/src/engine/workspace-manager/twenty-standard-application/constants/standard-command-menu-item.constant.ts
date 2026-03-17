@@ -6,7 +6,7 @@ import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-ite
 export const STANDARD_COMMAND_MENU_ITEMS = {
   navigateToNextRecord: {
     universalIdentifier: '3db2457d-8e96-4b8e-94c9-ed95d3f95738',
-    label: 'Navigate to next record',
+    label: 'Navigate to next ${objectMetadataItem.labelSingular}',
     shortLabel: null,
     icon: 'IconChevronDown',
     position: 0,
@@ -20,7 +20,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   navigateToPreviousRecord: {
     universalIdentifier: 'ec10f871-415b-420b-8150-7e09f6f04833',
-    label: 'Navigate to previous record',
+    label: 'Navigate to previous ${objectMetadataItem.labelSingular}',
     shortLabel: null,
     icon: 'IconChevronUp',
     position: 1,
@@ -34,8 +34,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   createNewRecord: {
     universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
-    label: 'Create new record',
-    shortLabel: 'New record',
+    label: 'Create new ${objectMetadataItem.labelSingular}',
+    shortLabel: 'New ${objectMetadataItem.labelSingular}',
     icon: 'IconPlus',
     position: 2,
     isPinned: true,
@@ -62,7 +62,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   deleteMultipleRecords: {
     universalIdentifier: 'cde86f1f-2c13-42b1-812b-f2b2b468cb83',
-    label: 'Delete records',
+    label: 'Delete ${objectMetadataItem.labelPlural}',
     shortLabel: 'Delete',
     icon: 'IconTrash',
     position: 4,
@@ -76,7 +76,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   restoreSingleRecord: {
     universalIdentifier: '8b3a1cae-3e4d-43c1-a71f-48592b2e47ff',
-    label: 'Restore record',
+    label: 'Restore ${objectMetadataItem.labelSingular}',
     shortLabel: 'Restore',
     icon: 'IconRefresh',
     position: 5,
@@ -90,7 +90,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   restoreMultipleRecords: {
     universalIdentifier: '8b740c9d-d99a-45a8-812f-809caaf420ac',
-    label: 'Restore records',
+    label: 'Restore ${objectMetadataItem.labelPlural}',
     shortLabel: 'Restore',
     icon: 'IconRefresh',
     position: 6,
@@ -104,7 +104,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   destroySingleRecord: {
     universalIdentifier: '44a78417-c394-4bc8-961f-98b503030ddb',
-    label: 'Permanently destroy record',
+    label: 'Permanently destroy ${objectMetadataItem.labelSingular}',
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
     position: 7,
@@ -118,7 +118,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   destroyMultipleRecords: {
     universalIdentifier: 'c630b3fb-7920-40d1-9906-77d0aa797608',
-    label: 'Permanently destroy records',
+    label: 'Permanently destroy ${objectMetadataItem.labelPlural}',
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
     position: 8,
@@ -200,7 +200,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   updateMultipleRecords: {
     universalIdentifier: '2e080651-f098-4a78-bea9-7a70002dc57c',
-    label: 'Update records',
+    label: 'Update ${objectMetadataItem.labelPlural}',
     shortLabel: 'Update',
     icon: 'IconEdit',
     position: 14,
@@ -214,7 +214,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   mergeMultipleRecords: {
     universalIdentifier: '6c14eb04-8e7e-4d47-93c0-8ec4834e2e60',
-    label: 'Merge records',
+    label: 'Merge ${objectMetadataItem.labelPlural}',
     shortLabel: 'Merge',
     icon: 'IconArrowMerge',
     position: 15,
@@ -228,7 +228,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   exportMultipleRecords: {
     universalIdentifier: 'f71f68e5-7b6e-4c03-8161-c48434d7777c',
-    label: 'Export records',
+    label: 'Export ${objectMetadataItem.labelPlural}',
     shortLabel: 'Export',
     icon: 'IconFileExport',
     position: 16,
@@ -241,7 +241,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   importRecords: {
     universalIdentifier: 'a2dc9de7-4798-422e-bb55-bfad7b9bdbe8',
-    label: 'Import records',
+    label: 'Import ${objectMetadataItem.labelPlural}',
     shortLabel: 'Import',
     icon: 'IconFileImport',
     position: 17,
@@ -267,8 +267,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeDeletedRecords: {
     universalIdentifier: 'd63c21c3-9785-4750-be87-5f36269b8e0d',
-    label: 'See deleted records',
-    shortLabel: 'Deleted records',
+    label: 'See deleted ${objectMetadataItem.labelPlural}',
+    shortLabel: 'Deleted ${objectMetadataItem.labelPlural}',
     icon: 'IconRotate2',
     position: 19,
     isPinned: false,
@@ -293,7 +293,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   hideDeletedRecords: {
     universalIdentifier: '1420db7f-0fba-49e2-b23e-4b7caa0fafa0',
-    label: 'Hide deleted records',
+    label: 'Hide deleted ${objectMetadataItem.labelPlural}',
     shortLabel: 'Hide deleted',
     icon: 'IconEyeOff',
     position: 21,
@@ -780,7 +780,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   searchRecords: {
     universalIdentifier: 'fa24e25e-68f8-4548-82ff-c7b5168b7c7d',
-    label: 'Search records',
+    label: 'Search ${objectMetadataItem.labelPlural}',
     shortLabel: 'Search',
     icon: 'IconSearch',
     position: 60,
@@ -793,7 +793,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   searchRecordsFallback: {
     universalIdentifier: 'c659890c-7266-46c9-bfe1-75cefff8b6d0',
-    label: 'Search records',
+    label: 'Search ${objectMetadataItem.labelPlural}',
     shortLabel: 'Search',
     icon: 'IconSearch',
     position: 61,

@@ -25,7 +25,7 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     universalIdentifier: commandMenuItemManifest.universalIdentifier,
     applicationUniversalIdentifier,
     label: commandMenuItemManifest.label,
-    shortLabel: null,
+    shortLabel: commandMenuItemManifest.shortLabel ?? null,
     position: 0,
     icon: commandMenuItemManifest.icon ?? null,
     isPinned: commandMenuItemManifest.isPinned ?? false,
