@@ -22,9 +22,7 @@ export const SaveRecordPageLayoutSingleRecordCommand = () => {
 
   const { savePageLayout } = useSavePageLayout(pageLayoutId);
 
-  const { saveFieldsWidgetGroups } = useSaveFieldsWidgetGroups({
-    pageLayoutId,
-  });
+  const { saveFieldsWidgetGroups } = useSaveFieldsWidgetGroups();
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -35,7 +33,7 @@ export const SaveRecordPageLayoutSingleRecordCommand = () => {
     const result = await savePageLayout();
 
     if (result.status === 'successful') {
-      await saveFieldsWidgetGroups();
+      await saveFieldsWidgetGroups(pageLayoutId);
 
       closeSidePanelMenu();
       setIsPageLayoutInEditMode(false);
