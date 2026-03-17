@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
@@ -18,8 +18,8 @@ export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const navigationMenuItemsDraft = useAtomStateValue(
     navigationMenuItemsDraftState,
@@ -33,7 +33,7 @@ export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
     filterWorkspaceNavigationMenuItems(navigationMenuItems);
 
   const workspaceNavigationMenuItems =
-    isNavigationMenuInEditMode && isDefined(navigationMenuItemsDraft)
+    isLayoutCustomizationModeEnabled && isDefined(navigationMenuItemsDraft)
       ? navigationMenuItemsDraft
       : workspaceNavigationMenuItemsFromState;
 
