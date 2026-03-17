@@ -40,6 +40,8 @@ const config: StorybookConfig = {
         alias: {
           ...viteConfig.resolve?.alias,
           '@': path.resolve(dirname, '../src'),
+          // TODO: Remove these aliases once twenty-ui is migrated to React 19
+          // Forces a single React instance to avoid ReactCurrentDispatcher conflicts
           react: path.resolve(dirname, '../node_modules/react'),
           'react-dom': path.resolve(dirname, '../node_modules/react-dom'),
           'react/jsx-runtime': path.resolve(
