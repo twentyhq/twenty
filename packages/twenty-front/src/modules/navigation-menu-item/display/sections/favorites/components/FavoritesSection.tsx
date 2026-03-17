@@ -160,108 +160,126 @@ export const FavoritesSection = () => {
         </NavigationDrawerAnimatedCollapseWrapper>
       )}
       {topLevelItems.length > 0 ? (
-        topLevelItems.map((item, index) => {
-          if (isNavigationMenuItemFolder(item)) {
-            const folderData = folderChildrenMap.get(item.id);
-            return (
-              <NavigationMenuItemSortableItem
-                key={item.id}
-                id={item.id}
-                index={index}
-                group={ORPHAN_DROPPABLE_ID}
-              >
-                <NavigationItemDropTarget
-                  folderId={null}
-                  index={index}
-                  sectionId={NavigationSections.FAVORITES}
-                  dropTargetIdOverride={getDndKitDropTargetId(
-                    ORPHAN_DROPPABLE_ID,
-                    index,
-                  )}
-                >
-                  <NavigationMenuItemFolder
-                    folderId={item.id}
-                    folderName={folderData?.folderName ?? item.name ?? 'Folder'}
-                    navigationMenuItems={folderData?.navigationMenuItems ?? []}
-                    section={NavigationSections.FAVORITES}
-                    isGroup={hasFolders}
-                  />
-                </NavigationItemDropTarget>
-              </NavigationMenuItemSortableItem>
-            );
-          }
-
-          const label = getNavigationMenuItemLabel(
-            item,
-            objectMetadataItems,
-            views,
-          );
-          const computedLink = getNavigationMenuItemComputedLink(
-            item,
-            objectMetadataItems,
-            views,
-          );
-          const objectNameSingular = getNavigationMenuItemObjectNameSingular(
-            item,
-            objectMetadataItems,
-            views,
-          );
-
-          return (
-            <NavigationMenuItemSortableItem
-              key={item.id}
-              id={item.id}
-              index={index}
-              group={ORPHAN_DROPPABLE_ID}
-            >
+        <>
+          {topLevelItems.map((item, index) => {
+            const dropIndicator = (
               <NavigationItemDropTarget
                 folderId={null}
                 index={index}
                 sectionId={NavigationSections.FAVORITES}
+                compact
                 dropTargetIdOverride={getDndKitDropTargetId(
                   ORPHAN_DROPPABLE_ID,
                   index,
                 )}
-              >
-                <StyledOrphanItemContainer>
-                  <NavigationDrawerItem
-                    secondaryLabel={getObjectNavigationMenuItemSecondaryLabel({
-                      objectMetadataItems,
-                      navigationMenuItemObjectNameSingular:
-                        objectNameSingular ?? '',
-                    })}
-                    label={label}
-                    Icon={() => (
-                      <NavigationMenuItemIcon navigationMenuItem={item} />
-                    )}
-                    iconColor={getEffectiveNavigationMenuItemColor(item)}
-                    active={isLocationMatchingNavigationMenuItem(
-                      currentPath,
-                      currentViewPath,
-                      item.type,
-                      computedLink,
-                    )}
-                    to={isDragging ? undefined : computedLink}
-                    rightOptions={
-                      <LightIconButton
-                        Icon={IconHeartOff}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          deleteNavigationMenuItem(item.id);
-                        }}
-                        accent="tertiary"
-                      />
-                    }
-                    isDragging={isDragging}
-                    triggerEvent="CLICK"
-                  />
-                </StyledOrphanItemContainer>
-              </NavigationItemDropTarget>
-            </NavigationMenuItemSortableItem>
-          );
-        })
+              />
+            );
+
+            if (isNavigationMenuItemFolder(item)) {
+              const folderData = folderChildrenMap.get(item.id);
+              return (
+                <div key={item.id}>
+                  {dropIndicator}
+                  <NavigationMenuItemSortableItem
+                    id={item.id}
+                    index={index}
+                    group={ORPHAN_DROPPABLE_ID}
+                  >
+                    <NavigationMenuItemFolder
+                      folderId={item.id}
+                      folderName={
+                        folderData?.folderName ?? item.name ?? 'Folder'
+                      }
+                      navigationMenuItems={
+                        folderData?.navigationMenuItems ?? []
+                      }
+                      section={NavigationSections.FAVORITES}
+                      isGroup={hasFolders}
+                    />
+                  </NavigationMenuItemSortableItem>
+                </div>
+              );
+            }
+
+            const label = getNavigationMenuItemLabel(
+              item,
+              objectMetadataItems,
+              views,
+            );
+            const computedLink = getNavigationMenuItemComputedLink(
+              item,
+              objectMetadataItems,
+              views,
+            );
+            const objectNameSingular =
+              getNavigationMenuItemObjectNameSingular(
+                item,
+                objectMetadataItems,
+                views,
+              );
+
+            return (
+              <div key={item.id}>
+                {dropIndicator}
+                <NavigationMenuItemSortableItem
+                  id={item.id}
+                  index={index}
+                  group={ORPHAN_DROPPABLE_ID}
+                >
+                  <StyledOrphanItemContainer>
+                    <NavigationDrawerItem
+                      secondaryLabel={getObjectNavigationMenuItemSecondaryLabel(
+                        {
+                          objectMetadataItems,
+                          navigationMenuItemObjectNameSingular:
+                            objectNameSingular ?? '',
+                        },
+                      )}
+                      label={label}
+                      Icon={() => (
+                        <NavigationMenuItemIcon navigationMenuItem={item} />
+                      )}
+                      iconColor={getEffectiveNavigationMenuItemColor(item)}
+                      active={isLocationMatchingNavigationMenuItem(
+                        currentPath,
+                        currentViewPath,
+                        item.type,
+                        computedLink,
+                      )}
+                      to={isDragging ? undefined : computedLink}
+                      rightOptions={
+                        <LightIconButton
+                          Icon={IconHeartOff}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            deleteNavigationMenuItem(item.id);
+                          }}
+                          accent="tertiary"
+                        />
+                      }
+                      isDragging={isDragging}
+                      triggerEvent="CLICK"
+                    />
+                  </StyledOrphanItemContainer>
+                </NavigationMenuItemSortableItem>
+              </div>
+            );
+          })}
+          <NavigationItemDropTarget
+            folderId={null}
+            index={topLevelItems.length}
+            sectionId={NavigationSections.FAVORITES}
+            compact
+            dropTargetIdOverride={getDndKitDropTargetId(
+              ORPHAN_DROPPABLE_ID,
+              topLevelItems.length,
+            )}
+          />
+        </>
       ) : (
-        <StyledEmptyContainer style={{ height: isDragging ? '24px' : '1px' }} />
+        <StyledEmptyContainer
+          style={{ height: isDragging ? '24px' : '1px' }}
+        />
       )}
     </NavigationMenuItemSection>
   );
