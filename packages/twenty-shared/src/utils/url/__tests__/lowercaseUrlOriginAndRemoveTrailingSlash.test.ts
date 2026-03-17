@@ -95,6 +95,16 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       input: 'https://example.com#frag%20ment',
       expected: 'https://example.com#frag%20ment',
     },
+    {
+      title: 'should preserve backslash-separated paths',
+      input: 'https://example.com\\foo\\bar',
+      expected: 'https://example.com\\foo\\bar',
+    },
+    {
+      title: 'should return blob: URLs unmodified',
+      input: 'blob:https://example.com/abc-123',
+      expected: 'blob:https://example.com/abc-123',
+    },
   ])('$title', ({ input, expected }) => {
     expect(lowercaseUrlOriginAndRemoveTrailingSlash(input)).toBe(expected);
   });

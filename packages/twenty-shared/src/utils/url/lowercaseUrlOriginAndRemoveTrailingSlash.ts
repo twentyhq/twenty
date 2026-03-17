@@ -15,8 +15,8 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
     return rawUrl;
   }
 
-  // Only process HTTP(S) URLs. For other schemes (e.g., blob:, file:, data:),
-  // return the original URL to avoid stripping the scheme or rewriting it.
+  // Only process HTTP(S) URLs. Other non-opaque schemes (e.g., blob:, ftp:)
+  // could have a valid origin but different URL structure, so return unmodified.
   if (url.protocol !== 'http:' && url.protocol !== 'https:') {
     return rawUrl;
   }
@@ -29,7 +29,14 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   }
 
   let endOfHost = rawUrl.length;
-  const pathStartIndex = rawUrl.indexOf('/', protocolIndex + 3);
+  const forwardSlashIndex = rawUrl.indexOf('/', protocolIndex + 3);
+  const backslashIndex = rawUrl.indexOf('\\', protocolIndex + 3);
+  const pathStartIndex =
+    forwardSlashIndex === -1
+      ? backslashIndex
+      : backslashIndex === -1
+        ? forwardSlashIndex
+        : Math.min(forwardSlashIndex, backslashIndex);
   const queryStartIndex = rawUrl.indexOf('?', protocolIndex + 3);
   const hashStartIndex = rawUrl.indexOf('#', protocolIndex + 3);
 
