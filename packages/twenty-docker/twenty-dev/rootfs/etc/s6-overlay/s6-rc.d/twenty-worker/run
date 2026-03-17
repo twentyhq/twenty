@@ -1,3 +1,3 @@
 #!/bin/sh
 cd /app/packages/twenty-server
-exec node dist/src/queue-worker/queue-worker
+exec yarn worker:prod
