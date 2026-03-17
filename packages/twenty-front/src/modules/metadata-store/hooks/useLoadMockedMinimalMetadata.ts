@@ -49,7 +49,11 @@ export const useLoadMockedMinimalMetadata = () => {
       flatViewFilterGroups,
       MOCKED_COLLECTION_HASH,
     );
-    replaceDraft('viewFieldGroups', flatViewFieldGroups, MOCKED_COLLECTION_HASH);
+    replaceDraft(
+      'viewFieldGroups',
+      flatViewFieldGroups,
+      MOCKED_COLLECTION_HASH,
+    );
 
     replaceDraft(
       'navigationMenuItems',

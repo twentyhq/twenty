@@ -45,13 +45,15 @@ export const useCreateOneObjectMetadataItem = () => {
       const createdObject = createdObjectMetadata.data?.createOneObject;
 
       if (isDefined(createdObject)) {
-        const { __typename: _objectTypename, fieldsList, ...objectData } =
-          createdObject;
+        const {
+          __typename: _objectTypename,
+          fieldsList,
+          ...objectData
+        } = createdObject;
 
-        addToDraft(
-          'objectMetadataItems',
-          [objectData as FlatObjectMetadataItem],
-        );
+        addToDraft('objectMetadataItems', [
+          objectData as FlatObjectMetadataItem,
+        ]);
 
         const flatFields = fieldsList.map((field) => {
           const { __typename: _fieldTypename, ...fieldData } = field;
@@ -98,7 +100,8 @@ export const useCreateOneObjectMetadataItem = () => {
         addToDraft('viewFilterGroups', flatViewFilterGroups);
         addToDraft('viewFieldGroups', flatViewFieldGroups);
 
-        replaceDraft('navigationMenuItems',
+        replaceDraft(
+          'navigationMenuItems',
           navItemsResult.data?.navigationMenuItems ?? [],
         );
 

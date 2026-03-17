@@ -131,12 +131,11 @@ export class WorkspaceEventEmitterService {
       ? await this.fetchObjectRecordStreamContext(workspaceId)
       : undefined;
 
-    const enrichedMetadataEventBatch =
-      isMetadata
-        ? await this.enrichFieldMetadataEventsWithRelations(
-            eventBatch as MetadataEventBatch,
-          )
-        : undefined;
+    const enrichedMetadataEventBatch = isMetadata
+      ? await this.enrichFieldMetadataEventsWithRelations(
+          eventBatch as MetadataEventBatch,
+        )
+      : undefined;
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -194,12 +193,10 @@ export class WorkspaceEventEmitterService {
       return;
     }
 
-    const metadataEvents = metadataEventBatch.events.map(
-      (metadataEvent) => ({
-        ...metadataEvent,
-        updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
-      }),
-    );
+    const metadataEvents = metadataEventBatch.events.map((metadataEvent) => ({
+      ...metadataEvent,
+      updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
+    }));
 
     const payload: EventStreamPayload = {
       objectRecordEventsWithQueryIds: [],
@@ -229,7 +226,10 @@ export class WorkspaceEventEmitterService {
       );
 
     const enrichedEvents = metadataEventBatch.events.map((event) => {
-      if (!('after' in event.properties) || !isDefined(event.properties.after)) {
+      if (
+        !('after' in event.properties) ||
+        !isDefined(event.properties.after)
+      ) {
         return event;
       }
 

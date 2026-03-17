@@ -48,10 +48,9 @@ export const useUpdateOneObjectMetadataItem = () => {
       if (isDefined(updatedObject)) {
         const { __typename, ...objectData } = updatedObject;
 
-        updateInDraft(
-          'objectMetadataItems',
-          [objectData as FlatObjectMetadataItem],
-        );
+        updateInDraft('objectMetadataItems', [
+          objectData as FlatObjectMetadataItem,
+        ]);
         applyChanges();
       }
 

@@ -98,8 +98,7 @@ export const useTriggerEventStreamCreation = () => {
           const objectRecordEventsWithQueryIds =
             eventSubscription?.objectRecordEventsWithQueryIds ?? [];
 
-          const metadataEvents =
-            eventSubscription?.metadataEvents ?? [];
+          const metadataEvents = eventSubscription?.metadataEvents ?? [];
 
           const objectRecordEvents = objectRecordEventsWithQueryIds.map(
             (item) => item.objectRecordEvent,
@@ -113,9 +112,7 @@ export const useTriggerEventStreamCreation = () => {
             objectRecordEventsWithQueryIds,
           );
 
-          dispatchMetadataEventsFromSseToBrowserEvents(
-            metadataEvents,
-          );
+          dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
         },
         error: (error) => {
           captureException(error);
@@ -173,9 +170,7 @@ export const useTriggerEventStreamCreation = () => {
                 const metadataEvents =
                   result?.data?.onEventSubscription?.metadataEvents ?? [];
 
-                dispatchMetadataEventsFromSseToBrowserEvents(
-                  metadataEvents,
-                );
+                dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
               }
             }
           } catch (error) {

@@ -240,7 +240,10 @@ export const useMetadataStore = () => {
         (existing) => !idsToDelete.has(existing.id),
       );
 
-      if (newItems.length === baseItems.length && collectionHash === undefined) {
+      if (
+        newItems.length === baseItems.length &&
+        collectionHash === undefined
+      ) {
         return;
       }
 

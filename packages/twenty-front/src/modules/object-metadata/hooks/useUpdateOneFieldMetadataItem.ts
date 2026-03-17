@@ -67,10 +67,12 @@ export const useUpdateOneFieldMetadataItem = () => {
       if (isDefined(updatedField)) {
         const { __typename, object, ...fieldData } = updatedField;
 
-        updateInDraft('fieldMetadataItems', [{
-          ...fieldData,
-          objectMetadataId: object?.id ?? objectMetadataId,
-        } as FlatFieldMetadataItem]);
+        updateInDraft('fieldMetadataItems', [
+          {
+            ...fieldData,
+            objectMetadataId: object?.id ?? objectMetadataId,
+          } as FlatFieldMetadataItem,
+        ]);
         applyChanges();
       }
 
