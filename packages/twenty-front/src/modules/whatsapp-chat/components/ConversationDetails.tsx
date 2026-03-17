@@ -20,8 +20,8 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-width: 320px;
-  width: 320px;
+  min-width: 440px;
+  width: 440px;
 `;
 
 const StyledHeader = styled.div`
@@ -928,16 +928,16 @@ export const ConversationDetails = ({
           Struktur Analyse
         </StyledTab>
         <StyledTab
-          isActive={activeTab === 'videos'}
-          onClick={() => setActiveTab('videos')}
-        >
-          Videos
-        </StyledTab>
-        <StyledTab
           isActive={activeTab === 'profile'}
           onClick={() => setActiveTab('profile')}
         >
           Profile
+        </StyledTab>
+        <StyledTab
+          isActive={activeTab === 'videos'}
+          onClick={() => setActiveTab('videos')}
+        >
+          Videos
         </StyledTab>
         <StyledTab
           isActive={activeTab === 'calls'}
