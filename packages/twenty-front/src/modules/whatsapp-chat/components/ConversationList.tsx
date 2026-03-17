@@ -212,8 +212,9 @@ export const ConversationList = ({
       result = result.filter(
         (c) => !c.isClient && !CLIENT_PROGRAMS.has(c.justusProgram ?? ''),
       );
-    } else {
+    } else if (activeSessionName !== 'john_doe') {
       // 'all' still filters out chats with no CRM contact match
+      // (except for john_doe session which is used for testing)
       result = result.filter(
         (c) => c.contactEmail || c.justusProgram || c.isClient,
       );
