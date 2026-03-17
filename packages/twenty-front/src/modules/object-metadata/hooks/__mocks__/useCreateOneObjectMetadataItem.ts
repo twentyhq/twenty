@@ -1,11 +1,15 @@
 import {
   CreateOneObjectMetadataItemDocument,
+  FindManyNavigationMenuItemsDocument,
   FindManyViewsDocument,
 } from '~/generated-metadata/graphql';
 
 export const query = CreateOneObjectMetadataItemDocument;
 
 export const findManyViewsQuery = FindManyViewsDocument;
+
+export const findManyNavigationMenuItemsQuery =
+  FindManyNavigationMenuItemsDocument;
 
 export const variables = {
   input: {
