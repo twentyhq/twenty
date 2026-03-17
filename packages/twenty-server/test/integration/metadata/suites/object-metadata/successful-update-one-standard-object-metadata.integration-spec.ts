@@ -34,6 +34,12 @@ const successfulUpdateTestsUseCase: UpdateOneStandardObjectMetadataTestingContex
       },
     },
     {
+      title: 'when updating color',
+      context: {
+        color: 'red',
+      },
+    },
+    {
       title: 'when setting isActive to false',
       context: {
         isActive: false,
@@ -67,6 +73,7 @@ describe('Standard object metadata update should succeed', () => {
         namePlural
         labelSingular
         labelPlural
+        color
         description
         icon
         isActive
@@ -89,6 +96,7 @@ describe('Standard object metadata update should succeed', () => {
         updatePayload: {
           labelSingular: originalCompanyMetadata.labelSingular,
           labelPlural: originalCompanyMetadata.labelPlural,
+          color: originalCompanyMetadata.color,
           description: originalCompanyMetadata.description,
           icon: originalCompanyMetadata.icon,
           isActive: originalCompanyMetadata.isActive,
@@ -121,6 +129,7 @@ describe('Standard object metadata update should succeed', () => {
           namePlural
           labelSingular
           labelPlural
+          color
           description
           icon
           isActive
@@ -128,6 +137,7 @@ describe('Standard object metadata update should succeed', () => {
           standardOverrides {
             labelSingular
             labelPlural
+            color
             description
             icon
           }
