@@ -1,0 +1,35 @@
+#!/bin/sh
+set -e
+
+# Wait for PostgreSQL to be ready
+echo "Waiting for PostgreSQL..."
+until su-exec postgres pg_isready -h localhost; do sleep 0.5; done
+echo "PostgreSQL is ready."
+
+# Create role if it doesn't exist
+su-exec postgres psql -h localhost -tc \
+  "SELECT 1 FROM pg_roles WHERE rolname='twenty'" | grep -q 1 \
+  || su-exec postgres psql -h localhost -c "CREATE ROLE twenty WITH LOGIN PASSWORD 'twenty' SUPERUSER"
+
+# Create database if it doesn't exist
+su-exec postgres psql -h localhost -tc \
+  "SELECT 1 FROM pg_database WHERE datname='default'" | grep -q 1 \
+  || su-exec postgres createdb -h localhost -O twenty default
+
+# Run Twenty database setup and migrations
+cd /app/packages/twenty-server
+
+has_schema=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
+  "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')")
+
+if [ "$has_schema" = "f" ]; then
+  echo "Database appears to be empty, running initial setup..."
+  NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+  yarn database:migrate:prod
+fi
+
+yarn command:prod cache:flush
+yarn command:prod upgrade
+yarn command:prod cache:flush
+
+echo "Database initialization complete."
