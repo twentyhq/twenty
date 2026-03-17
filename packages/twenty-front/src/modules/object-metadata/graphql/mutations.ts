@@ -111,6 +111,48 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       object {
         id
       }
+      relation {
+        type
+        sourceObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        targetObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        sourceFieldMetadata {
+          id
+          name
+        }
+        targetFieldMetadata {
+          id
+          name
+        }
+      }
+      morphRelations {
+        type
+        sourceObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        targetObjectMetadata {
+          id
+          nameSingular
+          namePlural
+        }
+        sourceFieldMetadata {
+          id
+          name
+        }
+        targetFieldMetadata {
+          id
+          name
+        }
+      }
     }
   }
 `;
