@@ -29,31 +29,35 @@ export const enrichFieldMetadataEventWithRelations = ({
     return record;
   }
 
-  if (
-    isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
-  ) {
-    const relation = resolveRelationFromFlatFieldMetadata({
-      sourceFlatFieldMetadata: flatFieldMetadata,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    });
+  try {
+    if (
+      isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
+    ) {
+      const relation = resolveRelationFromFlatFieldMetadata({
+        sourceFlatFieldMetadata: flatFieldMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
 
-    return isDefined(relation) ? { ...record, relation } : record;
-  }
+      return isDefined(relation) ? { ...record, relation } : record;
+    }
 
-  if (
-    isFlatFieldMetadataOfType(
-      flatFieldMetadata,
-      FieldMetadataType.MORPH_RELATION,
-    )
-  ) {
-    const morphRelations = resolveMorphRelationsFromFlatFieldMetadata({
-      morphFlatFieldMetadata: flatFieldMetadata,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    });
+    if (
+      isFlatFieldMetadataOfType(
+        flatFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
+      )
+    ) {
+      const morphRelations = resolveMorphRelationsFromFlatFieldMetadata({
+        morphFlatFieldMetadata: flatFieldMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
 
-    return { ...record, morphRelations };
+      return { ...record, morphRelations };
+    }
+  } catch {
+    return record;
   }
 
   return record;

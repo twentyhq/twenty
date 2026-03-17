@@ -24,6 +24,7 @@ export const ON_EVENT_SUBSCRIPTION = gql`
         type
         metadataName
         recordId
+        updatedCollectionHash
         properties {
           updatedFields
           before
