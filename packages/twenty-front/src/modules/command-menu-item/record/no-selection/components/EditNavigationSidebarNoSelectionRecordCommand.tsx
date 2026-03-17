@@ -1,5 +1,5 @@
 import { Command } from '@/command-menu-item/display/components/Command';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const EditNavigationSidebarNoSelectionRecordCommand = () => {

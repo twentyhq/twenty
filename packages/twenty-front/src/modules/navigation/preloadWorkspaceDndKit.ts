@@ -3,7 +3,7 @@ let preloadScheduled = false;
 const preload = () => {
   void import('@/navigation/components/WorkspaceDndKitProvider');
   void import(
-    '@/object-metadata/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
+    '@/navigation-menu-item/display/sections/components/NavigationDrawerSectionForWorkspaceItemsListDndKit'
   );
 };
 

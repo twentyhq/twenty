@@ -1,10 +1,10 @@
-import { SidePanelEditFolderPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage';
-import { SidePanelNewSidebarItemObjectSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSubPage';
-import { SidePanelNewSidebarItemObjectSystemPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSystemPickerSubPage';
-import { SidePanelNewSidebarItemRecordSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage';
-import { SidePanelNewSidebarItemViewObjectPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubPage';
-import { SidePanelNewSidebarItemViewPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubPage';
-import { SidePanelNewSidebarItemViewSystemPickerSubPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemPickerSubPage';
+import { SidePanelEditFolderPickerSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage';
+import { SidePanelNewSidebarItemObjectSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemObjectSubPage';
+import { SidePanelNewSidebarItemObjectSystemPickerSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemObjectSystemPickerSubPage';
+import { SidePanelNewSidebarItemRecordSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage';
+import { SidePanelNewSidebarItemViewObjectPickerSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubPage';
+import { SidePanelNewSidebarItemViewPickerSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubPage';
+import { SidePanelNewSidebarItemViewSystemPickerSubPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemPickerSubPage';
 import { SidePanelChartFilterSubPage } from '@/side-panel/pages/page-layout/components/SidePanelChartFilterSubPage';
 import { SidePanelFieldsLayoutSubPage } from '@/side-panel/pages/page-layout/components/SidePanelFieldsLayoutSubPage';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';

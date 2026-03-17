@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/constants/NavigationMenuItemDroppableIds';
-import { getDndKitDropTargetId } from '@/navigation-menu-item/utils/getDndKitDropTargetId';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/utils/isNavigationMenuItemFolder';
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
+import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 
 import type { DropDestination } from '@/navigation/types/workspaceDndKitDropDestination';
 import type { SortableTargetDestination } from '@/navigation/types/workspaceDndKitSortableTargetDestination';
