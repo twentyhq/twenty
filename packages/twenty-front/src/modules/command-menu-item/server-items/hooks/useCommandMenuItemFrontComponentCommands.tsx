@@ -7,7 +7,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -100,10 +100,11 @@ const buildCommandMenuItemFromFrontComponent = ({
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
-    shortLabel: item.shortLabel ?? undefined,
+    shortLabel: item.shortLabel,
     position: item.position,
     isPinned,
     Icon,
+    hotKeys: item.hotKeys,
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
@@ -148,10 +149,11 @@ const buildCommandItemFromEngineKey = ({
     key: `command-menu-item-engine-${item.id}`,
     scope,
     label: item.label,
-    shortLabel: item.shortLabel ?? undefined,
+    shortLabel: item.shortLabel,
     position: item.position,
     isPinned,
     Icon,
+    hotKeys: item.hotKeys,
     shouldBeRegistered: () =>
       evaluateConditionalAvailabilityExpression(
         item.conditionalAvailabilityExpression,
@@ -180,7 +182,7 @@ export const useCommandMenuItemFrontComponentCommands = (
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const currentObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === contextStoreCurrentObjectMetadataItemId,

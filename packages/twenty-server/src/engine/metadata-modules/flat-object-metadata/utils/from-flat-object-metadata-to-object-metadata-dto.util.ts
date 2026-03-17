@@ -7,6 +7,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
   const {
     createdAt,
     updatedAt,
+    color,
     description,
     icon,
     standardOverrides,
@@ -50,6 +51,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     labelIdentifierFieldMetadataId,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
+    color: color ?? undefined,
     description: description ?? undefined,
     icon: icon ?? undefined,
     standardOverrides: standardOverrides ?? undefined,

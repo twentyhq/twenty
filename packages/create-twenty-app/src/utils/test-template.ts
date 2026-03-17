@@ -45,7 +45,6 @@ export default defineConfig({
     include: ['src/**/*.integration-test.ts'],
     setupFiles: ['src/__tests__/setup-test.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:3000',
       TWENTY_API_KEY:
         '${SEED_API_KEY}',
     },
@@ -120,12 +119,13 @@ beforeAll(async () => {
   fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
 
   const configFile = {
-    profiles: {
-      default: {
+    remotes: {
+      local: {
         apiUrl: process.env.TWENTY_API_URL,
         apiKey: process.env.TWENTY_API_KEY,
       },
     },
+    defaultRemote: 'local',
   };
 
   fs.writeFileSync(

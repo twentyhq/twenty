@@ -1,7 +1,4 @@
-import {
-  APP_ERROR_CODES,
-  type CommandResult,
-} from '@/cli/public-operations/types';
+import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { type BuiltFileInfo } from '@/cli/utilities/build/common/build-application';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
@@ -12,7 +9,7 @@ import { type Manifest } from 'twenty-shared/application';
 
 export type AppSyncOptions = {
   appPath: string;
-  workspace?: string;
+  remote?: string;
 };
 
 const ensureApplicationRegistrationExists = async (

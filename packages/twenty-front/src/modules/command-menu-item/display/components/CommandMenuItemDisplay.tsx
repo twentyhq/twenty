@@ -5,6 +5,7 @@ import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfig
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { type MessageDescriptor } from '@lingui/core';
 import { useContext } from 'react';
+import { type Nullable } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { type MenuItemAccent } from 'twenty-ui/navigation';
@@ -12,12 +13,12 @@ import { type MenuItemAccent } from 'twenty-ui/navigation';
 export type CommandMenuItemDisplayProps = {
   key: string;
   label: MessageDescriptor | string;
-  shortLabel?: MessageDescriptor | string;
+  shortLabel?: Nullable<MessageDescriptor | string>;
   description?: MessageDescriptor | string;
   Icon: IconComponent;
   isPrimaryCTA?: boolean;
   accent?: MenuItemAccent;
-  hotKeys?: string[];
+  hotKeys?: Nullable<string[]>;
 };
 
 export const CommandMenuItemDisplay = ({

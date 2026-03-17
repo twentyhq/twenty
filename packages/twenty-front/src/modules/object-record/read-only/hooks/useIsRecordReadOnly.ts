@@ -1,6 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/states/isNavigationMenuInEditModeState';
+import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';

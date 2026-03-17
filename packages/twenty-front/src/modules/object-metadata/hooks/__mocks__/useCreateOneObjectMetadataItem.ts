@@ -27,6 +27,7 @@ export const responseData = {
   labelPlural: 'View Filters',
   description: '',
   icon: '',
+  color: null,
   isCustom: false,
   isActive: true,
   isSearchable: false,

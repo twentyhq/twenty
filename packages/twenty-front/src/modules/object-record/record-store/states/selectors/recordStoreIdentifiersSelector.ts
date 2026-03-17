@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
@@ -16,7 +16,7 @@ export const recordStoreIdentifiersFamilySelector = createAtomFamilySelector<
   get:
     ({ recordIds, allowRequestsToTwentyIcons }) =>
     ({ get }) => {
-      const objectMetadataItems = get(objectMetadataItemsState);
+      const objectMetadataItems = get(objectMetadataItemsSelector);
 
       return recordIds
         .map((recordId) => {

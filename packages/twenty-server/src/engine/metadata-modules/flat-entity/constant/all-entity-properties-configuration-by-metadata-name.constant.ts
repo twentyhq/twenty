@@ -149,6 +149,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    color: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     description: {
       toCompare: true,
       toStringify: false,
@@ -1063,6 +1068,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    hotKeys: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     workflowVersionId: {
       toCompare: false,
       toStringify: false,
@@ -1070,6 +1080,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   navigationMenuItem: {
+    type: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     position: {
       toCompare: true,
       toStringify: false,

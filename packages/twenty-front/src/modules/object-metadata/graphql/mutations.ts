@@ -10,6 +10,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelPlural
       description
       icon
+      color
       isCustom
       isActive
       isSearchable
@@ -90,6 +91,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelPlural
       description
       icon
+      color
       isCustom
       isActive
       isSearchable
@@ -112,6 +114,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       labelPlural
       description
       icon
+      color
       isCustom
       isActive
       isSearchable
