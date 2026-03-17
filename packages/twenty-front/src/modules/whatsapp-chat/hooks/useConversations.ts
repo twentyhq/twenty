@@ -26,6 +26,7 @@ export const useConversations = ({
   const [hasMore, setHasMore] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
+  const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchConversations = useCallback(
     async (loadMore = false) => {
@@ -86,10 +87,19 @@ export const useConversations = ({
   );
 
   useEffect(() => {
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+      retryTimeoutRef.current = null;
+    }
+
     fetchConversations(false);
 
     return () => {
       abortRef.current?.abort();
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, search]);

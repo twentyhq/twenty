@@ -147,7 +147,7 @@ export const ConversationList = ({
   // Always filter by the active session (passed from parent)
   const activeSessionName = sessions.length === 1 ? sessions[0].name : undefined;
 
-  const { conversations, loading, hasMore, loadMore } = useConversations({
+  const { conversations, loading, error, hasMore, loadMore, refresh } = useConversations({
     session: activeSessionName,
     search: search || undefined,
   });
@@ -355,7 +355,27 @@ export const ConversationList = ({
           <StyledLoading>Loading conversations...</StyledLoading>
         )}
 
-        {!loading && filteredConversations.length === 0 && (
+        {!loading && error && conversations.length === 0 && (
+          <StyledEmptyState>
+            <div>Failed to load conversations</div>
+            <button
+              onClick={refresh}
+              style={{
+                marginTop: 8,
+                padding: '6px 16px',
+                border: '1px solid #D1D5DB',
+                borderRadius: 6,
+                background: 'white',
+                cursor: 'pointer',
+                fontSize: 13,
+              }}
+            >
+              Retry
+            </button>
+          </StyledEmptyState>
+        )}
+
+        {!loading && !error && filteredConversations.length === 0 && (
           <StyledEmptyState>
             {search
               ? 'No conversations match your search'
