@@ -13,6 +13,7 @@ server:
     SENTRY_DSN: https://3364f6ba21801fb70491652bd784a367@o4510840638930944.ingest.us.sentry.io/4510840660819968
     SENTRY_FRONT_DSN: https://660cb58838f1dbf2ee91c1290136056e@o4510840638930944.ingest.us.sentry.io/4510840650989568
     NODE_OPTIONS: "--max-old-space-size=1536"
+    LOGIC_FUNCTION_TYPE: LOCAL
   extraEnvSecrets:
     CONVOSO_API_TOKEN:
       secretName: convoso-credentials
