@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, lazy, Suspense } from 'react';
 
 import { IconX } from 'twenty-ui/display';
 import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
@@ -11,6 +11,9 @@ import { useMopDetails } from '@/whatsapp-chat/hooks/useMopDetails';
 import { useStrukturanalyse, type SaResult } from '@/whatsapp-chat/hooks/useStrukturanalyse';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
 import { useProfilePicture } from '@/whatsapp-chat/hooks/useProfilePicture';
+import { formatPhoneNumber } from '@/whatsapp-chat/utils/formatPhoneNumber';
+
+const ReactMarkdown = lazy(() => import('react-markdown'));
 
 // ── Styled components ───────────────────────────────────────────
 
@@ -141,6 +144,7 @@ const StyledContactSubtext = styled.div`
 const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -357,6 +361,42 @@ const StyledShowMore = styled.button`
   }
 `;
 
+const StyledProfileCard = styled.div`
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 0;
+  overflow: hidden;
+`;
+
+const StyledProfileCardRow = styled.div`
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+
+  & + & {
+    border-top: 1px solid #F3F4F6;
+  }
+`;
+
+const StyledProfileCardLabel = styled.span`
+  color: #9CA3AF;
+  flex-shrink: 0;
+  font-size: 12px;
+  line-height: 1.6;
+`;
+
+const StyledProfileCardValue = styled.span`
+  color: #111827;
+  font-size: 13px;
+  text-align: right;
+  word-break: break-word;
+`;
+
 const StyledStatGrid = styled.div`
   display: grid;
   gap: 8px;
@@ -387,12 +427,20 @@ const StyledStatLabel = styled.span`
 
 // ── SA styled components ────────────────────────────────────────
 
+const StyledSaIntro = styled.p`
+  color: #6B7280;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+`;
+
 const StyledSaCard = styled.div`
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   overflow: hidden;
 `;
 
@@ -590,7 +638,33 @@ const StyledSaInterpretationBody = styled.div`
   max-height: 200px;
   overflow-y: auto;
   padding: 12px;
-  white-space: pre-wrap;
+
+  h1, h2, h3, h4 {
+    color: #111827;
+    margin: 8px 0 4px;
+    &:first-child { margin-top: 0; }
+  }
+  h1 { font-size: 16px; }
+  h2 { font-size: 15px; }
+  h3 { font-size: 14px; }
+  h4 { font-size: 13px; }
+  p { margin: 0 0 6px; }
+  ul, ol { margin: 4px 0 8px; padding-left: 20px; }
+  li { margin-bottom: 2px; }
+  strong { color: #111827; }
+  code {
+    background: #f3f4f6;
+    border-radius: 3px;
+    font-size: 12px;
+    padding: 1px 4px;
+  }
+  blockquote {
+    border-left: 3px solid #d1d5db;
+    color: #6b7280;
+    font-style: italic;
+    margin: 4px 0;
+    padding-left: 10px;
+  }
 `;
 
 const StyledSaTimestamp = styled.span`
@@ -770,6 +844,11 @@ const SaTabContent = ({
     return (
       <StyledSection>
         <StyledSectionTitle>Struktur Analyse</StyledSectionTitle>
+        <StyledSaIntro>
+          Body posture analysis images. When leads send body photos for posture
+          assessment, our AI analyzes them and generates annotated results. You
+          can view and re-send both original and analyzed images.
+        </StyledSaIntro>
         <StyledEmptyState>
           No structure analyses for this conversation
         </StyledEmptyState>
@@ -784,6 +863,11 @@ const SaTabContent = ({
     <>
       <StyledSection>
         <StyledSectionTitle>Struktur Analyse</StyledSectionTitle>
+        <StyledSaIntro>
+          Body posture analysis images. When leads send body photos for posture
+          assessment, our AI analyzes them and generates annotated results. You
+          can view and re-send both original and analyzed images.
+        </StyledSaIntro>
       </StyledSection>
 
       {visible.map((rawResult) => {
@@ -886,7 +970,9 @@ const SaTabContent = ({
                       </StyledSaCopyButton>
                     </StyledSaInterpretationHeader>
                     <StyledSaInterpretationBody>
-                      {result.analysis_text}
+                      <Suspense fallback={<span>{result.analysis_text}</span>}>
+                        <ReactMarkdown>{result.analysis_text}</ReactMarkdown>
+                      </Suspense>
                     </StyledSaInterpretationBody>
                   </StyledSaInterpretation>
                 )}
@@ -1057,7 +1143,7 @@ export const ConversationDetails = ({
         <StyledContactName>{displayName}</StyledContactName>
         {conversation.leadPhoneNumber !== displayName && (
           <StyledContactSubtext>
-            {conversation.leadPhoneNumber}
+            {formatPhoneNumber(conversation.leadPhoneNumber)}
           </StyledContactSubtext>
         )}
 
@@ -1091,79 +1177,83 @@ export const ConversationDetails = ({
           <>
             <StyledSection>
               <StyledSectionTitle>Contact Info</StyledSectionTitle>
-              <StyledField>
-                <StyledFieldLabel>Phone</StyledFieldLabel>
-                <StyledFieldValue>
-                  {conversation.leadPhoneNumber}
-                </StyledFieldValue>
-              </StyledField>
-              {conversation.whatsappName && (
-                <StyledField>
-                  <StyledFieldLabel>WhatsApp Name</StyledFieldLabel>
-                  <StyledFieldValue>
-                    {conversation.whatsappName}
-                  </StyledFieldValue>
-                </StyledField>
-              )}
-              {contact?.email && (
-                <StyledField>
-                  <StyledFieldLabel>Email</StyledFieldLabel>
-                  <StyledFieldValue>{contact.email}</StyledFieldValue>
-                </StyledField>
-              )}
-              {contact?.country && (
-                <StyledField>
-                  <StyledFieldLabel>Country</StyledFieldLabel>
-                  <StyledFieldValue>{contact.country}</StyledFieldValue>
-                </StyledField>
-              )}
-              {contact?.source && (
-                <StyledField>
-                  <StyledFieldLabel>Source</StyledFieldLabel>
-                  <StyledFieldValue>{contact.source}</StyledFieldValue>
-                </StyledField>
-              )}
+              <StyledProfileCard>
+                <StyledProfileCardRow>
+                  <StyledProfileCardLabel>Phone</StyledProfileCardLabel>
+                  <StyledProfileCardValue>
+                    {formatPhoneNumber(conversation.leadPhoneNumber)}
+                  </StyledProfileCardValue>
+                </StyledProfileCardRow>
+                {conversation.whatsappName && (
+                  <StyledProfileCardRow>
+                    <StyledProfileCardLabel>WhatsApp</StyledProfileCardLabel>
+                    <StyledProfileCardValue>
+                      {conversation.whatsappName}
+                    </StyledProfileCardValue>
+                  </StyledProfileCardRow>
+                )}
+                {contact?.email && (
+                  <StyledProfileCardRow>
+                    <StyledProfileCardLabel>Email</StyledProfileCardLabel>
+                    <StyledProfileCardValue>{contact.email}</StyledProfileCardValue>
+                  </StyledProfileCardRow>
+                )}
+                {contact?.country && (
+                  <StyledProfileCardRow>
+                    <StyledProfileCardLabel>Country</StyledProfileCardLabel>
+                    <StyledProfileCardValue>{contact.country}</StyledProfileCardValue>
+                  </StyledProfileCardRow>
+                )}
+                {contact?.source && (
+                  <StyledProfileCardRow>
+                    <StyledProfileCardLabel>Source</StyledProfileCardLabel>
+                    <StyledProfileCardValue>{contact.source}</StyledProfileCardValue>
+                  </StyledProfileCardRow>
+                )}
+              </StyledProfileCard>
             </StyledSection>
-
-            <StyledDivider />
 
             {contact && (
               <>
                 <StyledSection>
                   <StyledSectionTitle>Client Status</StyledSectionTitle>
-                  <StyledBadgeRow>
-                    {contact.isClient && (
-                      <StyledBadge variant="success">Bexio Client</StyledBadge>
-                    )}
-                    {contact.isActiveMainProgramClient && (
-                      <StyledBadge variant="success">Active LZR</StyledBadge>
-                    )}
-                    {contact.isMainProgramClient &&
-                      !contact.isActiveMainProgramClient && (
-                        <StyledBadge variant="neutral">
-                          Main Program
-                        </StyledBadge>
+                  <StyledProfileCard>
+                    <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <StyledBadgeRow>
+                        {contact.isClient && (
+                          <StyledBadge variant="success">Bexio Client</StyledBadge>
+                        )}
+                        {contact.isActiveMainProgramClient && (
+                          <StyledBadge variant="success">Active LZR</StyledBadge>
+                        )}
+                        {contact.isMainProgramClient &&
+                          !contact.isActiveMainProgramClient && (
+                            <StyledBadge variant="neutral">
+                              Main Program
+                            </StyledBadge>
+                          )}
+                        {contact.isTrainingCertClient && (
+                          <StyledBadge variant="neutral">Training Cert</StyledBadge>
+                        )}
+                        {contact.isFinishingLzr30Days && (
+                          <StyledBadge variant="warning">
+                            Finishing in 30d
+                          </StyledBadge>
+                        )}
+                        {!contact.isClient && !contact.isMainProgramClient && (
+                          <StyledBadge variant="neutral">Lead</StyledBadge>
+                        )}
+                      </StyledBadgeRow>
+                      {contact.bexioClientId && (
+                        <StyledProfileCardRow style={{ padding: 0 }}>
+                          <StyledProfileCardLabel>Bexio ID</StyledProfileCardLabel>
+                          <StyledProfileCardValue>
+                            {contact.bexioClientId}
+                          </StyledProfileCardValue>
+                        </StyledProfileCardRow>
                       )}
-                    {contact.isTrainingCertClient && (
-                      <StyledBadge variant="neutral">Training Cert</StyledBadge>
-                    )}
-                    {contact.isFinishingLzr30Days && (
-                      <StyledBadge variant="warning">
-                        Finishing in 30d
-                      </StyledBadge>
-                    )}
-                    {!contact.isClient && !contact.isMainProgramClient && (
-                      <StyledBadge variant="neutral">Lead</StyledBadge>
-                    )}
-                  </StyledBadgeRow>
-                  {contact.bexioClientId && (
-                    <StyledField>
-                      <StyledFieldLabel>Bexio ID</StyledFieldLabel>
-                      <StyledFieldValue>
-                        {contact.bexioClientId}
-                      </StyledFieldValue>
-                    </StyledField>
-                  )}
+                    </div>
+                  </StyledProfileCard>
                 </StyledSection>
 
                 <StyledSection>
@@ -1210,70 +1300,74 @@ export const ConversationDetails = ({
                 {(contact.justusProgram || contact.closeLeadStatus) && (
                   <StyledSection>
                     <StyledSectionTitle>Close.io</StyledSectionTitle>
-                    {contact.justusProgram && (
-                      <StyledField>
-                        <StyledFieldLabel>Program</StyledFieldLabel>
-                        <StyledFieldValue>
-                          {contact.justusProgram}
-                          {contact.justusDuration
-                            ? ` (${contact.justusDuration})`
-                            : ''}
-                        </StyledFieldValue>
-                      </StyledField>
-                    )}
-                    {contact.closeLeadStatus && (
-                      <StyledField>
-                        <StyledFieldLabel>Lead Status</StyledFieldLabel>
-                        <StyledFieldValue>
-                          {contact.closeLeadStatus}
-                        </StyledFieldValue>
-                      </StyledField>
-                    )}
-                    {contact.closeLeadUrl && (
-                      <StyledField>
-                        <StyledFieldLabel>Close Link</StyledFieldLabel>
-                        <StyledFieldValue>
-                          <a
-                            href={contact.closeLeadUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: 'inherit', textDecoration: 'underline' }}
-                          >
-                            Open in Close
-                          </a>
-                        </StyledFieldValue>
-                      </StyledField>
-                    )}
+                    <StyledProfileCard>
+                      {contact.justusProgram && (
+                        <StyledProfileCardRow>
+                          <StyledProfileCardLabel>Program</StyledProfileCardLabel>
+                          <StyledProfileCardValue>
+                            {contact.justusProgram}
+                            {contact.justusDuration
+                              ? ` (${contact.justusDuration})`
+                              : ''}
+                          </StyledProfileCardValue>
+                        </StyledProfileCardRow>
+                      )}
+                      {contact.closeLeadStatus && (
+                        <StyledProfileCardRow>
+                          <StyledProfileCardLabel>Lead Status</StyledProfileCardLabel>
+                          <StyledProfileCardValue>
+                            {contact.closeLeadStatus}
+                          </StyledProfileCardValue>
+                        </StyledProfileCardRow>
+                      )}
+                      {contact.closeLeadUrl && (
+                        <StyledProfileCardRow>
+                          <StyledProfileCardLabel>Close Link</StyledProfileCardLabel>
+                          <StyledProfileCardValue>
+                            <a
+                              href={contact.closeLeadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: '#1A6CFF', textDecoration: 'none' }}
+                            >
+                              Open in Close &rarr;
+                            </a>
+                          </StyledProfileCardValue>
+                        </StyledProfileCardRow>
+                      )}
+                    </StyledProfileCard>
                   </StyledSection>
                 )}
 
                 {(contact.lzrStartDate || contact.lzrEndDate) && (
                   <StyledSection>
                     <StyledSectionTitle>LZR Program</StyledSectionTitle>
-                    {contact.lzrStartDate && (
-                      <StyledField>
-                        <StyledFieldLabel>Start Date</StyledFieldLabel>
-                        <StyledFieldValue>
-                          {formatDate(contact.lzrStartDate)}
-                        </StyledFieldValue>
-                      </StyledField>
-                    )}
-                    {contact.lzrEndDate && (
-                      <StyledField>
-                        <StyledFieldLabel>End Date</StyledFieldLabel>
-                        <StyledFieldValue>
-                          {formatDate(contact.lzrEndDate)}
-                        </StyledFieldValue>
-                      </StyledField>
-                    )}
-                    {contact.lzrMonthDuration && (
-                      <StyledField>
-                        <StyledFieldLabel>Duration</StyledFieldLabel>
-                        <StyledFieldValue>
-                          {contact.lzrMonthDuration} months
-                        </StyledFieldValue>
-                      </StyledField>
-                    )}
+                    <StyledProfileCard>
+                      {contact.lzrStartDate && (
+                        <StyledProfileCardRow>
+                          <StyledProfileCardLabel>Start Date</StyledProfileCardLabel>
+                          <StyledProfileCardValue>
+                            {formatDate(contact.lzrStartDate)}
+                          </StyledProfileCardValue>
+                        </StyledProfileCardRow>
+                      )}
+                      {contact.lzrEndDate && (
+                        <StyledProfileCardRow>
+                          <StyledProfileCardLabel>End Date</StyledProfileCardLabel>
+                          <StyledProfileCardValue>
+                            {formatDate(contact.lzrEndDate)}
+                          </StyledProfileCardValue>
+                        </StyledProfileCardRow>
+                      )}
+                      {contact.lzrMonthDuration && (
+                        <StyledProfileCardRow>
+                          <StyledProfileCardLabel>Duration</StyledProfileCardLabel>
+                          <StyledProfileCardValue>
+                            {contact.lzrMonthDuration} months
+                          </StyledProfileCardValue>
+                        </StyledProfileCardRow>
+                      )}
+                    </StyledProfileCard>
                   </StyledSection>
                 )}
               </>
@@ -1427,18 +1521,20 @@ export const ConversationDetails = ({
             {/* ── Assignment Section ── */}
             <StyledSection>
               <StyledSectionTitle>Assignment</StyledSectionTitle>
-              <StyledField>
-                <StyledFieldLabel>Owner</StyledFieldLabel>
-                <StyledFieldValue>
-                  {contact?.tobAssignedName || conversation.assignedToName || 'Unassigned'}
-                </StyledFieldValue>
-              </StyledField>
-              <StyledField>
-                <StyledFieldLabel>Coach</StyledFieldLabel>
-                <StyledFieldValue>
-                  {conversation.coachLeadOwnerName || 'None'}
-                </StyledFieldValue>
-              </StyledField>
+              <StyledProfileCard>
+                <StyledProfileCardRow>
+                  <StyledProfileCardLabel>Owner</StyledProfileCardLabel>
+                  <StyledProfileCardValue>
+                    {contact?.tobAssignedName || conversation.assignedToName || 'Unassigned'}
+                  </StyledProfileCardValue>
+                </StyledProfileCardRow>
+                <StyledProfileCardRow>
+                  <StyledProfileCardLabel>Coach</StyledProfileCardLabel>
+                  <StyledProfileCardValue>
+                    {conversation.coachLeadOwnerName || 'None'}
+                  </StyledProfileCardValue>
+                </StyledProfileCardRow>
+              </StyledProfileCard>
             </StyledSection>
 
             <StyledDivider />
