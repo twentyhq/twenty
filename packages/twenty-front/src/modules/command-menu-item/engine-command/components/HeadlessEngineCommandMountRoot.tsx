@@ -16,7 +16,7 @@ export const HeadlessEngineCommandMountRoot = () => {
         ([engineCommandId, mountContext]) => (
           <CommandMenuItemErrorBoundary
             key={engineCommandId}
-            resetKeys={[engineCommandId]}
+            engineCommandId={engineCommandId}
             shouldReportToSentry
             onError={() => unmountEngineCommand(engineCommandId)}
           >

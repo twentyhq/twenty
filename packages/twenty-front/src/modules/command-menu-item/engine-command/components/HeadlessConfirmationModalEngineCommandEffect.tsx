@@ -24,7 +24,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   confirmButtonAccent = 'danger',
   execute,
 }: HeadlessConfirmationModalEngineCommandEffectProps) => {
-  const { getIsInitialized, setIsInitialized } =
+  const { isInitializedRef, setIsInitialized } =
     useIsHeadlessEngineCommandEffectInitialized();
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
     EngineCommandComponentInstanceContext,
@@ -33,21 +33,21 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
 
   useEffect(() => {
-    if (getIsInitialized()) {
+    if (isInitializedRef.current) {
       return;
     }
 
     setIsInitialized(true);
 
     openConfirmationModal({
-      callerId: engineCommandId,
+      caller: { type: 'engineCommand', engineCommandId },
       title,
       subtitle,
       confirmButtonText,
       confirmButtonAccent,
     });
   }, [
-    getIsInitialized,
+    isInitializedRef,
     setIsInitialized,
     engineCommandId,
     openConfirmationModal,
@@ -62,7 +62,12 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       const customEvent =
         event as CustomEvent<CommandMenuConfirmationModalResultBrowserEventDetail>;
 
-      if (customEvent.detail.callerId !== engineCommandId) {
+      const caller = customEvent.detail.caller;
+
+      if (
+        caller.type !== 'engineCommand' ||
+        caller.engineCommandId !== engineCommandId
+      ) {
         return;
       }
 

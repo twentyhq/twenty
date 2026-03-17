@@ -26,7 +26,7 @@ export const HeadlessFrontComponentMountRoot = () => {
         ([frontComponentId, mountContext]) => (
           <CommandMenuItemErrorBoundary
             key={frontComponentId}
-            resetKeys={[frontComponentId]}
+            engineCommandId={frontComponentId}
             onError={() => unmountHeadlessFrontComponent(frontComponentId)}
           >
             <Suspense fallback={null}>
