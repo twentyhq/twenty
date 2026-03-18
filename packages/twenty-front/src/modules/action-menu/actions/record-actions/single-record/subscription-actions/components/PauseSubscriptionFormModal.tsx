@@ -1,4 +1,14 @@
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import {
+  StyledSubscriptionModal,
+  StyledPreviewRow,
+  StyledPreviewLabel,
+  StyledActivatedBy,
+  StyledModalFooter,
+  StyledFormSection,
+  formatDate,
+  buildTargetFieldName,
+} from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/shared-subscription-modal-styles';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -10,7 +20,6 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
@@ -23,52 +32,7 @@ type PauseSubscriptionFormModalProps = {
   objectNameSingular: string;
 };
 
-const StyledPauseFormModal = styled(Modal)`
-  height: auto;
-`;
-
-const StyledPreviewRow = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: space-between;
-`;
-
-const StyledPreviewLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledActivatedBy = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
-const StyledFooter = styled(Modal.Footer)`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-end;
-`;
-
-const StyledFormSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-`;
-
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
-const formatDate = (date: Date | null): string => {
-  if (!isDefined(date)) {
-    return 'Not set';
-  }
-
-  return date.toLocaleString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-};
 
 export const PauseSubscriptionFormModal = ({
   modalId,
@@ -124,15 +88,8 @@ export const PauseSubscriptionFormModal = ({
     ? `${currentMember.name.firstName} ${currentMember.name.lastName}`.trim()
     : 'Unknown';
 
-  const handleCancel = () => {
-    closeModal(modalId);
-  };
-
   const handleSubmit = async () => {
-    if (!isFormValid || isSubmitting) {
-      return;
-    }
-
+    if (!isFormValid || isSubmitting) return;
     setIsSubmitting(true);
 
     try {
@@ -149,47 +106,34 @@ export const PauseSubscriptionFormModal = ({
         },
       });
 
-      // Create audit note linked to this subscription
       try {
         const noteTitle = `Pause: ${pauseDays} days — ${reason}`;
-
-        const createdNote = await createNote({
-          title: noteTitle,
-        });
+        const createdNote = await createNote({ title: noteTitle });
 
         if (isDefined(createdNote)) {
-          const targetFieldName =
-            'target' +
-            objectNameSingular.charAt(0).toUpperCase() +
-            objectNameSingular.slice(1) +
-            'Id';
-
           await createNoteTarget({
             noteId: createdNote.id,
-            [targetFieldName]: recordId,
+            [buildTargetFieldName(objectNameSingular)]: recordId,
           });
         }
       } catch {
-        // Note creation is non-critical — subscription was already updated
+        // non-critical
       }
 
       enqueueSuccessSnackBar({
         message: `Subscription paused for ${pauseDays} days`,
       });
-
       closeModal(modalId);
       closeActionMenu();
     } catch {
-      enqueueErrorSnackBar({
-        message: 'Failed to pause subscription',
-      });
+      enqueueErrorSnackBar({ message: 'Failed to pause subscription' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <StyledPauseFormModal
+    <StyledSubscriptionModal
       modalId={modalId}
       size="medium"
       padding="large"
@@ -198,10 +142,7 @@ export const PauseSubscriptionFormModal = ({
       shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <Modal.Header>
-        <H1Title
-          title="Pause Subscription"
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <H1Title title="Pause Subscription" fontColor={H1TitleFontColor.Primary} />
       </Modal.Header>
       <Modal.Content>
         <StyledFormSection>
@@ -253,8 +194,8 @@ export const PauseSubscriptionFormModal = ({
           <StyledActivatedBy>Activated by: {memberName}</StyledActivatedBy>
         </StyledFormSection>
       </Modal.Content>
-      <StyledFooter>
-        <Button title="Cancel" variant="secondary" onClick={handleCancel} />
+      <StyledModalFooter>
+        <Button title="Cancel" variant="secondary" onClick={() => closeModal(modalId)} />
         <Button
           title="Confirm Pause"
           variant="primary"
@@ -262,7 +203,7 @@ export const PauseSubscriptionFormModal = ({
           disabled={!isFormValid || isSubmitting}
           onClick={handleSubmit}
         />
-      </StyledFooter>
-    </StyledPauseFormModal>
+      </StyledModalFooter>
+    </StyledSubscriptionModal>
   );
 };
