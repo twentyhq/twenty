@@ -35,7 +35,6 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
     PermissionsModule,
     AiAgentModule,
     TwentyStandardApplicationModule,
-    ApplicationRegistrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
     RoleModule,

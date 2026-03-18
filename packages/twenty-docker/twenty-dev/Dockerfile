@@ -1,3 +1,5 @@
+ARG APP_VERSION
+
 # === Stage 1: Common dependencies ===
 FROM node:22-alpine AS common-deps
 
@@ -81,6 +83,9 @@ RUN mkdir -p /data/postgres /data/redis /app/.local-storage \
  && chown -R postgres:postgres /data/postgres \
  && chown 1000:1000 /data/redis /app/.local-storage
 
+ARG REACT_APP_SERVER_BASE_URL
+ARG APP_VERSION
+
 # Tell s6-overlay to preserve container environment variables
 ENV S6_KEEP_ENV=1
 
@@ -90,10 +95,14 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     REDIS_URL=redis://localhost:6379 \
     STORAGE_TYPE=local \
     APP_SECRET=change-me-in-production \
-    APP_VERSION=0.42.0 \
+    REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL \
+    APP_VERSION=$APP_VERSION \
+    NODE_ENV=development \
     NODE_PORT=3000 \
     DISABLE_DB_MIGRATIONS=true \
-    DISABLE_CRON_JOBS_REGISTRATION=true
+    DISABLE_CRON_JOBS_REGISTRATION=true \
+    IS_BILLING_ENABLED=false \
+    SIGN_IN_PREFILLED=true
 
 EXPOSE 3000
 VOLUME ["/data/postgres", "/app/.local-storage"]

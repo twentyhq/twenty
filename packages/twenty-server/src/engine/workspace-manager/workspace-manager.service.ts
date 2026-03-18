@@ -33,7 +33,6 @@ export class WorkspaceManagerService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly applicationService: ApplicationService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
   public async init({
@@ -72,8 +71,6 @@ export class WorkspaceManagerService {
         workspaceId,
       },
     );
-
-    await this.applicationRegistrationService.createCliRegistrationIfNotExists();
 
     const dataSourceMetadataCreationEnd = performance.now();
 

@@ -1,6 +1,5 @@
 import chalk from 'chalk';
 import { execSync, spawnSync } from 'node:child_process';
-import { platform } from 'node:os';
 
 const CONTAINER_NAME = 'twenty-dev';
 const IMAGE = 'twentycrm/twenty-dev:latest';
@@ -93,9 +92,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
 
   if (!isDockerAvailable()) {
     console.log(
-      chalk.yellow(
-        'Docker is not installed. Please install Docker first.',
-      ),
+      chalk.yellow('Docker is not installed. Please install Docker first.'),
     );
     console.log(chalk.gray('   See https://docs.docker.com/get-docker/'));
 
@@ -104,9 +101,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
 
   if (!isDockerRunning()) {
     console.log(
-      chalk.yellow(
-        'Docker is not running. Please start Docker and try again.',
-      ),
+      chalk.yellow('Docker is not running. Please start Docker and try again.'),
     );
 
     return { running: false };
@@ -150,9 +145,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
       );
     } catch {
       console.log(
-        chalk.yellow(
-          'Failed to start Twenty container. Check Docker logs.',
-        ),
+        chalk.yellow('Failed to start Twenty container. Check Docker logs.'),
       );
 
       return { running: false };
@@ -177,26 +170,14 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     return { running: false };
   }
 
-  console.log(chalk.green('Twenty server is running on localhost:2020.'));
-
-  // Open the browser so the user can create their workspace
-  const openCommand =
-    platform() === 'darwin'
-      ? 'open'
-      : platform() === 'win32'
-        ? 'start'
-        : 'xdg-open';
-
-  try {
-    execSync(`${openCommand} http://localhost:2020`, { stdio: 'ignore' });
-    console.log(chalk.gray('Opening http://localhost:2020 in your browser...'));
-  } catch {
-    console.log(
-      chalk.gray(
-        'Open http://localhost:2020 in your browser to create your workspace.',
-      ),
-    );
-  }
+  console.log(
+    chalk.green('Twenty server is running on http://localhost:2020.'),
+  );
+  console.log(
+    chalk.gray(
+      'Pre-seeded workspace ready — login with tim@apple.dev / tim@apple.dev',
+    ),
+  );
 
   return { running: true };
 };
