@@ -213,9 +213,6 @@ export class ClientConfig {
   @Field(() => Captcha)
   captcha: Captcha;
 
-  @Field(() => String, { nullable: true })
-  chromeExtensionId: string | undefined;
-
   @Field(() => ApiConfig)
   api: ApiConfig;
 

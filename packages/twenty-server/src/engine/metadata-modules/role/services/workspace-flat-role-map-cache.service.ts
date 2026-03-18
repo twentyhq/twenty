@@ -77,7 +77,7 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       }),
       this.objectPermissionRepository.find({
         where: { workspaceId },
-        select: ['id', 'roleId'],
+        select: ['id', 'universalIdentifier', 'roleId'],
         withDeleted: true,
       }),
       this.permissionFlagRepository.find({

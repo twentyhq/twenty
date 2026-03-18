@@ -101,7 +101,7 @@ describe('ConfigValueConverterService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         AUTH_PASSWORD_ENABLED: {
           type: ConfigVariableType.BOOLEAN,
-          group: ConfigVariablesGroup.OTHER,
+          group: ConfigVariablesGroup.ADVANCED_SETTINGS,
           description: 'Enable or disable password authentication for users',
         },
       });
@@ -281,7 +281,7 @@ describe('ConfigValueConverterService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         AUTH_PASSWORD_ENABLED: {
           type: ConfigVariableType.BOOLEAN,
-          group: ConfigVariablesGroup.OTHER,
+          group: ConfigVariablesGroup.ADVANCED_SETTINGS,
           description: 'Enable or disable password authentication for users',
         },
       });
@@ -434,7 +434,7 @@ describe('ConfigValueConverterService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         CUSTOM_OBJECT: {
           type: 'unknown-type' as ConfigVariableType,
-          group: ConfigVariablesGroup.OTHER,
+          group: ConfigVariablesGroup.ADVANCED_SETTINGS,
           description: 'Custom object',
         },
       });
@@ -478,7 +478,7 @@ describe('ConfigValueConverterService', () => {
       jest.spyOn(TypedReflect, 'getMetadata').mockReturnValueOnce({
         AUTH_PASSWORD_ENABLED: {
           type: ConfigVariableType.BOOLEAN,
-          group: ConfigVariablesGroup.OTHER,
+          group: ConfigVariablesGroup.ADVANCED_SETTINGS,
           description: 'Enable or disable password authentication for users',
         },
       });

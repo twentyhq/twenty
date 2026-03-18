@@ -1641,6 +1641,7 @@ enum FeatureFlagKey {
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
+  IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
 }
 
 type SSOIdentityProvider {
@@ -2240,6 +2241,7 @@ enum AllMetadataName {
   commandMenuItem
   navigationMenuItem
   permissionFlag
+  objectPermission
   frontComponent
   webhook
 }
@@ -2403,7 +2405,6 @@ type ClientConfig {
   isAttachmentPreviewEnabled: Boolean!
   sentry: Sentry!
   captcha: Captcha!
-  chromeExtensionId: String
   api: ApiConfig!
   canManageFeatureFlags: Boolean!
   publicFeatureFlags: [PublicFeatureFlag!]!
@@ -2459,9 +2460,7 @@ enum ConfigVariablesGroup {
   MICROSOFT_AUTH
   EMAIL_SETTINGS
   LOGGING
-  METERING
-  EXCEPTION_HANDLER
-  OTHER
+  ADVANCED_SETTINGS
   BILLING_CONFIG
   CAPTCHA_CONFIG
   CLOUDFLARE_CONFIG
@@ -2472,7 +2471,6 @@ enum ConfigVariablesGroup {
   SUPPORT_CHAT_CONFIG
   ANALYTICS_CONFIG
   TOKENS_DURATION
-  TWO_FACTOR_AUTHENTICATION
   AWS_SES_SETTINGS
 }
 
@@ -3445,12 +3443,14 @@ input CreatePageLayoutTabInput {
   title: String!
   position: Float
   pageLayoutId: UUID!
+  layoutMode: PageLayoutTabLayoutMode = GRID
 }
 
 input UpdatePageLayoutTabInput {
   title: String
   position: Float
   icon: String
+  layoutMode: PageLayoutTabLayoutMode
 }
 
 input CreatePageLayoutInput {
@@ -3477,6 +3477,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
   title: String!
   position: Float!
   icon: String
+  layoutMode: PageLayoutTabLayoutMode = GRID
   widgets: [UpdatePageLayoutWidgetWithIdInput!]!
 }
 

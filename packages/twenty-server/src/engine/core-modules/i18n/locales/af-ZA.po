@@ -2990,6 +2990,10 @@ msgstr "Voorwerp etiket is te kort"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object metadata not found"
 msgstr "Voorwerp metadata nie gevind nie"
 
@@ -3012,10 +3016,43 @@ msgstr "Voorwerp metadata nie gevind nie."
 msgid "Object not found."
 msgstr "Objek nie gevind nie."
 
+#. js-lingui-id: 4ib9PY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission already exists"
+msgstr ""
+
+#. js-lingui-id: iCx6+2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission for this role and object already exists"
+msgstr ""
+
+#. js-lingui-id: Wrwici
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission not found"
+msgstr ""
+
 #. js-lingui-id: Qy6mMO
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Objektoestemming nie gevind nie."
+
+#. js-lingui-id: 8KDEDj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission to delete not found"
+msgstr ""
+
+#. js-lingui-id: nA3bja
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission to update not found"
+msgstr ""
+
+#. js-lingui-id: wVLH1M
+#. placeholder {0}: flatObjectPermissionToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission with universal identifier {0} already exists"
+msgstr ""
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -3069,11 +3106,6 @@ msgstr "Oktober"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util.ts
 msgid "On delete action is only supported for many to one relations"
 msgstr ""
-
-#. js-lingui-id: eWQQpx
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
-msgstr "Een of meer objekte waarvoor jy toestemmings probeer stel, kon nie gevind word nie. Hulle mag verwyder gewees het."
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -3581,6 +3613,9 @@ msgstr "Rol kan nie aan hierdie entiteit toegeken word nie."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Role is not editable"
 msgstr ""
 
@@ -3612,6 +3647,10 @@ msgstr "Rol moet ten minste een teiken hê."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Role not found"
 msgstr ""
 
@@ -4080,12 +4119,11 @@ msgstr "Die rol waarna jy soek, kon nie gevind word nie. Dit mag verwyder gewees
 
 #. js-lingui-id: woRk0z
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "The role you are trying to modify could not be found."
 msgstr ""
 
 #. js-lingui-id: HRcugS
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "Die rol wat jy probeer wysig kon nie gevind word nie. Dit mag verwyder gewees het of jy mag nie toegang tot dit hê nie."
@@ -4228,6 +4266,12 @@ msgstr "Hierdie naam is gereserveer. Gebruik 'n ander naam, anders sal die stels
 msgid "This object cannot be modified."
 msgstr "Hierdie objek kan nie gewysig word nie."
 
+#. js-lingui-id: X2Xp8v
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "This object permission is already set for the role"
+msgstr ""
+
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
@@ -4300,7 +4344,9 @@ msgstr "Hierdie rol kan nie gewysig word nie."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Hierdie rol kan nie gewysig word nie aangesien dit 'n stelselrol is. Slegs persoonlike rolle kan gewysig word."

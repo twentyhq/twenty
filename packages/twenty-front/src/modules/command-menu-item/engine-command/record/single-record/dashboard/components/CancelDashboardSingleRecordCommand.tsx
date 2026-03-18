@@ -2,8 +2,10 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useResetDraftPageLayoutToPersistedPageLayout } from '@/page-layout/hooks/useResetDraftPageLayoutToPersistedPageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const CancelDashboardSingleRecordCommand = () => {
   const { selectedRecords } = useMountedEngineCommandContext();
@@ -15,13 +17,25 @@ export const CancelDashboardSingleRecordCommand = () => {
 
   const pageLayoutId = selectedRecord.pageLayoutId;
 
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId: pageLayoutId ?? '',
+    layoutType: PageLayoutType.DASHBOARD,
+    targetRecordIdentifier: {
+      id: selectedRecord.id,
+      targetObjectNameSingular: '',
+    },
+  });
+
   const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
   const { resetDraftPageLayoutToPersistedPageLayout } =
-    useResetDraftPageLayoutToPersistedPageLayout(pageLayoutId);
+    useResetDraftPageLayoutToPersistedPageLayout({
+      pageLayoutId,
+      tabListInstanceId,
+    });
 
   const handleExecute = () => {
     closeSidePanelMenu();

@@ -1,4 +1,4 @@
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
@@ -30,7 +30,7 @@ export const ChartAggregateOperationSelectableListItem = ({
   label: string;
   currentFieldMetadataId: string;
 }) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { pageLayoutId } = usePageLayoutIdFromContextStore();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);

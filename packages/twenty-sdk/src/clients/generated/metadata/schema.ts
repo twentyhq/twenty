@@ -1338,7 +1338,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED'
 
 export interface SSOIdentityProvider {
     id: Scalars['UUID']
@@ -1892,7 +1892,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'frontComponent' | 'webhook'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'frontComponent' | 'webhook'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -2047,7 +2047,6 @@ export interface ClientConfig {
     isAttachmentPreviewEnabled: Scalars['Boolean']
     sentry: Sentry
     captcha: Captcha
-    chromeExtensionId?: Scalars['String']
     api: ApiConfig
     canManageFeatureFlags: Scalars['Boolean']
     publicFeatureFlags: PublicFeatureFlag[]
@@ -2088,7 +2087,7 @@ export interface ConfigVariablesGroupData {
     __typename: 'ConfigVariablesGroupData'
 }
 
-export type ConfigVariablesGroup = 'SERVER_CONFIG' | 'RATE_LIMITING' | 'STORAGE_CONFIG' | 'GOOGLE_AUTH' | 'MICROSOFT_AUTH' | 'EMAIL_SETTINGS' | 'LOGGING' | 'METERING' | 'EXCEPTION_HANDLER' | 'OTHER' | 'BILLING_CONFIG' | 'CAPTCHA_CONFIG' | 'CLOUDFLARE_CONFIG' | 'LLM' | 'LOGIC_FUNCTION_CONFIG' | 'CODE_INTERPRETER_CONFIG' | 'SSL' | 'SUPPORT_CHAT_CONFIG' | 'ANALYTICS_CONFIG' | 'TOKENS_DURATION' | 'TWO_FACTOR_AUTHENTICATION' | 'AWS_SES_SETTINGS'
+export type ConfigVariablesGroup = 'SERVER_CONFIG' | 'RATE_LIMITING' | 'STORAGE_CONFIG' | 'GOOGLE_AUTH' | 'MICROSOFT_AUTH' | 'EMAIL_SETTINGS' | 'LOGGING' | 'ADVANCED_SETTINGS' | 'BILLING_CONFIG' | 'CAPTCHA_CONFIG' | 'CLOUDFLARE_CONFIG' | 'LLM' | 'LOGIC_FUNCTION_CONFIG' | 'CODE_INTERPRETER_CONFIG' | 'SSL' | 'SUPPORT_CHAT_CONFIG' | 'ANALYTICS_CONFIG' | 'TOKENS_DURATION' | 'AWS_SES_SETTINGS'
 
 export interface ConfigVariables {
     groups: ConfigVariablesGroupData[]
@@ -5052,7 +5051,6 @@ export interface ClientConfigGenqlSelection{
     isAttachmentPreviewEnabled?: boolean | number
     sentry?: SentryGenqlSelection
     captcha?: CaptchaGenqlSelection
-    chromeExtensionId?: boolean | number
     api?: ApiConfigGenqlSelection
     canManageFeatureFlags?: boolean | number
     publicFeatureFlags?: PublicFeatureFlagGenqlSelection
@@ -5981,9 +5979,9 @@ export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float
 
 export interface UpdatePageLayoutWidgetInput {title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
 
-export interface CreatePageLayoutTabInput {title: Scalars['String'],position?: (Scalars['Float'] | null),pageLayoutId: Scalars['UUID']}
+export interface CreatePageLayoutTabInput {title: Scalars['String'],position?: (Scalars['Float'] | null),pageLayoutId: Scalars['UUID'],layoutMode?: (PageLayoutTabLayoutMode | null)}
 
-export interface UpdatePageLayoutTabInput {title?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),icon?: (Scalars['String'] | null)}
+export interface UpdatePageLayoutTabInput {title?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null)}
 
 export interface CreatePageLayoutInput {name: Scalars['String'],type?: (PageLayoutType | null),objectMetadataId?: (Scalars['UUID'] | null)}
 
@@ -5991,7 +5989,7 @@ export interface UpdatePageLayoutInput {name?: (Scalars['String'] | null),type?:
 
 export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: PageLayoutType,objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[]}
 
-export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title: Scalars['String'],position: Scalars['Float'],icon?: (Scalars['String'] | null),widgets: UpdatePageLayoutWidgetWithIdInput[]}
+export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title: Scalars['String'],position: Scalars['Float'],icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null),widgets: UpdatePageLayoutWidgetWithIdInput[]}
 
 export interface UpdatePageLayoutWidgetWithIdInput {id: Scalars['UUID'],pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
 
@@ -8685,7 +8683,8 @@ export const enumFeatureFlagKey = {
    IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' as const,
    IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' as const,
    IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const,
-   IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const
+   IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const,
+   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as const
 }
 
 export const enumRelationType = {
@@ -8789,6 +8788,7 @@ export const enumAllMetadataName = {
    commandMenuItem: 'commandMenuItem' as const,
    navigationMenuItem: 'navigationMenuItem' as const,
    permissionFlag: 'permissionFlag' as const,
+   objectPermission: 'objectPermission' as const,
    frontComponent: 'frontComponent' as const,
    webhook: 'webhook' as const
 }
@@ -8845,9 +8845,7 @@ export const enumConfigVariablesGroup = {
    MICROSOFT_AUTH: 'MICROSOFT_AUTH' as const,
    EMAIL_SETTINGS: 'EMAIL_SETTINGS' as const,
    LOGGING: 'LOGGING' as const,
-   METERING: 'METERING' as const,
-   EXCEPTION_HANDLER: 'EXCEPTION_HANDLER' as const,
-   OTHER: 'OTHER' as const,
+   ADVANCED_SETTINGS: 'ADVANCED_SETTINGS' as const,
    BILLING_CONFIG: 'BILLING_CONFIG' as const,
    CAPTCHA_CONFIG: 'CAPTCHA_CONFIG' as const,
    CLOUDFLARE_CONFIG: 'CLOUDFLARE_CONFIG' as const,
@@ -8858,7 +8856,6 @@ export const enumConfigVariablesGroup = {
    SUPPORT_CHAT_CONFIG: 'SUPPORT_CHAT_CONFIG' as const,
    ANALYTICS_CONFIG: 'ANALYTICS_CONFIG' as const,
    TOKENS_DURATION: 'TOKENS_DURATION' as const,
-   TWO_FACTOR_AUTHENTICATION: 'TWO_FACTOR_AUTHENTICATION' as const,
    AWS_SES_SETTINGS: 'AWS_SES_SETTINGS' as const
 }
 

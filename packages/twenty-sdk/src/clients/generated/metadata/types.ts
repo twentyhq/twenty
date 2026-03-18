@@ -4666,9 +4666,6 @@ export default {
             "captcha": [
                 253
             ],
-            "chromeExtensionId": [
-                1
-            ],
             "api": [
                 255
             ],
@@ -8824,6 +8821,9 @@ export default {
             "pageLayoutId": [
                 3
             ],
+            "layoutMode": [
+                79
+            ],
             "__typename": [
                 1
             ]
@@ -8837,6 +8837,9 @@ export default {
             ],
             "icon": [
                 1
+            ],
+            "layoutMode": [
+                79
             ],
             "__typename": [
                 1
@@ -8899,6 +8902,9 @@ export default {
             ],
             "icon": [
                 1
+            ],
+            "layoutMode": [
+                79
             ],
             "widgets": [
                 360
