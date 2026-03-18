@@ -67,7 +67,7 @@ describe('formatSqlValue', () => {
   });
 
   it('should format arrays with null elements as PostgreSQL array literals', () => {
-    expect(formatSqlValue([null, 'foo', 'bar'])).toBe("'{NULL,\"foo\",\"bar\"}'");
+    expect(formatSqlValue([null, 'foo', 'bar'])).toBe('\'{NULL,"foo","bar"}\'');
   });
 
   it('should JSON-serialize arrays of objects', () => {

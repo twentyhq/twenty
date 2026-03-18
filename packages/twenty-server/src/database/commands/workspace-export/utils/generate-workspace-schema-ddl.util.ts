@@ -33,8 +33,7 @@ export const generateWorkspaceSchemaDdl = (
     const fieldMetadatas = fieldsByObjectId.get(objectMetadata.id) ?? [];
 
     const flatFieldMetadatas = fieldMetadatas as unknown as FlatFieldMetadata[];
-    const flatObjectMetadata =
-      objectMetadata as unknown as FlatObjectMetadata;
+    const flatObjectMetadata = objectMetadata as unknown as FlatObjectMetadata;
 
     const enumOperations = collectEnumOperationsForObject({
       tableName,
@@ -51,13 +50,12 @@ export const generateWorkspaceSchemaDdl = (
       );
     }
 
-    const columnDefinitions = flatFieldMetadatas.flatMap(
-      (flatFieldMetadata) =>
-        generateColumnDefinitions({
-          flatFieldMetadata,
-          flatObjectMetadata,
-          workspaceId,
-        }),
+    const columnDefinitions = flatFieldMetadatas.flatMap((flatFieldMetadata) =>
+      generateColumnDefinitions({
+        flatFieldMetadata,
+        flatObjectMetadata,
+        workspaceId,
+      }),
     );
 
     if (columnDefinitions.length === 0) continue;
