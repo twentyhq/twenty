@@ -1,58 +1,40 @@
-import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
-import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
-import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
+import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useContext } from 'react';
 
-import { CommandMenuItemDisplay } from './CommandMenuItemDisplay';
+import { HeadlessCommandMenuItem } from './HeadlessCommandMenuItem';
 
 export const HeadlessFrontComponentCommandMenuItem = ({
   frontComponentId,
   commandMenuItemId,
-  onClick,
+  recordId,
+  objectNameSingular,
 }: {
   frontComponentId: string;
   commandMenuItemId: string;
-  onClick: () => void;
+  recordId?: string;
+  objectNameSingular?: string;
 }) => {
-  const commandMenuItemConfig = useContext(CommandConfigContext);
-
-  const { closeCommandMenu } = useCloseCommandMenu({
-    closeSidePanelOnShowPageOptionsExecution: false,
-    closeSidePanelOnCommandMenuListExecution: false,
-  });
+  const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
   const isMounted = useAtomFamilySelectorValue(
     isHeadlessFrontComponentMountedFamilySelector,
     frontComponentId,
   );
 
-  const commandMenuItemProgress = useAtomFamilyStateValue(
-    commandMenuItemProgressFamilyState,
-    commandMenuItemId,
-  );
-
-  if (!commandMenuItemConfig) {
-    return null;
-  }
-
   const handleClick = () => {
-    if (isMounted) {
-      return;
-    }
-
-    closeCommandMenu();
-    onClick();
+    mountHeadlessFrontComponent(frontComponentId, {
+      commandMenuItemId,
+      recordId,
+      objectNameSingular,
+    });
   };
 
   return (
-    <CommandMenuItemDisplay
+    <HeadlessCommandMenuItem
+      isMounted={isMounted}
+      commandMenuItemId={commandMenuItemId}
       onClick={handleClick}
-      disabled={isMounted}
-      progress={commandMenuItemProgress}
-      showDisabledLoader={isMounted}
     />
   );
 };
