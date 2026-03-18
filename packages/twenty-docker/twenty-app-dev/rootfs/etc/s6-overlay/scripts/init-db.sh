@@ -42,7 +42,15 @@ yarn command:prod cache:flush
 yarn command:prod upgrade
 yarn command:prod cache:flush
 
-echo "Seeding app dev data"
-yarn command:prod workspace:seed:dev --light || true
+# Only seed on first boot — check if the dev workspace already exists
+has_workspace=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
+  "SELECT EXISTS (SELECT 1 FROM core.workspace WHERE id = '20202020-1c25-4d02-bf25-6aeccf7ea419')")
+
+if [ "$has_workspace" = "f" ]; then
+  echo "Seeding app dev data..."
+  yarn command:prod workspace:seed:dev --light || true
+else
+  echo "Dev workspace already seeded, skipping."
+fi
 
 echo "Database initialization complete."
