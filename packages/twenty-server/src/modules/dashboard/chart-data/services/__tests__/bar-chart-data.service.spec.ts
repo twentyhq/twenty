@@ -174,12 +174,6 @@ describe('BarChartDataService', () => {
       expect(result.data[2].amount).toBe(60);
     });
 
-
-
-
-
-
-
     it('should handle null values when omitNullValues is true', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([
         { groupByDimensionValues: [null], aggregateValue: 5 },
@@ -344,8 +338,6 @@ describe('BarChartDataService', () => {
       expect(result.data[2]['Open']).toBe(60);
       expect(result.data[2]['Closed']).toBe(60);
     });
-
-
 
     it('should order keys correctly despite unordered raw results', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([

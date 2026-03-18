@@ -174,8 +174,6 @@ describe('LineChartDataService', () => {
       ]);
     });
 
-
-
     it('should handle null y values by keeping running total', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([
         { groupByDimensionValues: ['a'], aggregateValue: 10 },
@@ -346,7 +344,6 @@ describe('LineChartDataService', () => {
       expect(seriesB?.data[0].y).toBe(100);
       expect(seriesB?.data[1].y).toBe(300);
     });
-
 
     it('should handle empty results', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([]);

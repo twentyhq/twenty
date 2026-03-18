@@ -162,6 +162,8 @@ describe('computeBarPositions', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].x).toBe(0);
-    expect(result[0].width).toBe(chartWidth - defaultMargins.left - defaultMargins.right);
+    expect(result[0].width).toBe(
+      chartWidth - defaultMargins.left - defaultMargins.right,
+    );
   });
 });

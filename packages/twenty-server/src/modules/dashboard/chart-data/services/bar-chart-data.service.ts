@@ -491,8 +491,6 @@ export class BarChartDataService {
       }
     }
 
-
-
     const finalData = configuration.isCumulative
       ? this.applyCumulativeTwoDimensional(finalLimitedData, limitedKeys)
       : finalLimitedData;

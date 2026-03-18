@@ -77,10 +77,13 @@ export const getStackedBarDimensions = ({
   if (isVertical && isNegative) {
     const currentStack = negativeStackPixel;
     const newStack = negativeStackPixel - valuePixelDelta;
-    
-    const clampedCurrentStack = Math.max(0, Math.min(valueAxisLength, currentStack));
+
+    const clampedCurrentStack = Math.max(
+      0,
+      Math.min(valueAxisLength, currentStack),
+    );
     const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-    
+
     const height = clampedCurrentStack - clampedNewStack;
 
     return {
@@ -96,10 +99,13 @@ export const getStackedBarDimensions = ({
   if (isVertical) {
     const currentStack = positiveStackPixel;
     const newStack = positiveStackPixel + valuePixelDelta;
-    
-    const clampedCurrentStack = Math.max(0, Math.min(valueAxisLength, currentStack));
+
+    const clampedCurrentStack = Math.max(
+      0,
+      Math.min(valueAxisLength, currentStack),
+    );
     const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-    
+
     const height = clampedNewStack - clampedCurrentStack;
 
     return {
@@ -115,10 +121,13 @@ export const getStackedBarDimensions = ({
   if (isNegative) {
     const currentStack = negativeStackPixel;
     const newStack = negativeStackPixel - valuePixelDelta;
-    
-    const clampedCurrentStack = Math.max(0, Math.min(valueAxisLength, currentStack));
+
+    const clampedCurrentStack = Math.max(
+      0,
+      Math.min(valueAxisLength, currentStack),
+    );
     const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-    
+
     const width = clampedCurrentStack - clampedNewStack;
 
     return {
@@ -133,10 +142,13 @@ export const getStackedBarDimensions = ({
 
   const currentStack = positiveStackPixel;
   const newStack = positiveStackPixel + valuePixelDelta;
-  
-  const clampedCurrentStack = Math.max(0, Math.min(valueAxisLength, currentStack));
+
+  const clampedCurrentStack = Math.max(
+    0,
+    Math.min(valueAxisLength, currentStack),
+  );
   const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-  
+
   const width = clampedNewStack - clampedCurrentStack;
 
   return {
