@@ -4,7 +4,8 @@ import { platform } from 'node:os';
 
 const CONTAINER_NAME = 'twenty-app-dev';
 const IMAGE = 'twentycrm/twenty-app-dev:latest';
-const HEALTH_URL = 'http://localhost:2020/healthz';
+
+const TWENTY_PORTS = [2020, 3000];
 
 const isDockerAvailable = (): boolean => {
   try {
@@ -26,12 +27,12 @@ const isDockerRunning = (): boolean => {
   }
 };
 
-const isTwentyServerRunning = async (): Promise<boolean> => {
+const checkHealthz = async (port: number): Promise<boolean> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-    const response = await fetch(HEALTH_URL, {
+    const response = await fetch(`http://localhost:${port}/healthz`, {
       signal: controller.signal,
     });
 
@@ -43,6 +44,16 @@ const isTwentyServerRunning = async (): Promise<boolean> => {
   } catch {
     return false;
   }
+};
+
+const detectRunningServer = async (): Promise<number | null> => {
+  for (const port of TWENTY_PORTS) {
+    if (await checkHealthz(port)) {
+      return port;
+    }
+  }
+
+  return null;
 };
 
 const isContainerRunning = (): boolean => {
@@ -66,7 +77,6 @@ const streamDockerLogs = (): ChildProcess => {
   );
 
   const formatLogLine = (line: string): string | null => {
-    // Extract meaningful progress messages from the noisy container logs
     if (line.includes('Waiting for PostgreSQL')) return 'Starting PostgreSQL...';
     if (line.includes('PostgreSQL is ready')) return 'PostgreSQL ready.';
     if (line.includes('Ready to accept connections tcp'))
@@ -104,14 +114,18 @@ const streamDockerLogs = (): ChildProcess => {
   return logProcess;
 };
 
-const waitForHealthy = async (
-  timeoutSeconds: number = 120,
-): Promise<boolean> => {
+const waitForHealthy = async ({
+  port,
+  timeoutSeconds = 120,
+}: {
+  port: number;
+  timeoutSeconds?: number;
+}): Promise<boolean> => {
   const startTime = Date.now();
   const timeoutMs = timeoutSeconds * 1000;
 
   while (Date.now() - startTime < timeoutMs) {
-    if (await isTwentyServerRunning()) {
+    if (await checkHealthz(port)) {
       return true;
     }
 
@@ -123,20 +137,27 @@ const waitForHealthy = async (
 
 export type LocalInstanceResult = {
   running: boolean;
+  serverUrl?: string;
 };
 
 export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   console.log('');
   console.log(chalk.blue('Setting up local Twenty instance...'));
 
-  if (await isTwentyServerRunning()) {
+  // Detect an already-running Twenty server on known ports
+  const existingPort = await detectRunningServer();
+
+  if (existingPort) {
+    const serverUrl = `http://localhost:${existingPort}`;
+
     console.log(
-      chalk.green('Twenty server is already running on localhost:2020.'),
+      chalk.green(`Twenty server detected on ${serverUrl}.`),
     );
 
-    return { running: true };
+    return { running: true, serverUrl };
   }
 
+  // No server found — start the Docker container
   if (!isDockerAvailable()) {
     console.log(
       chalk.yellow('Docker is not installed. Please install Docker first.'),
@@ -154,14 +175,12 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     return { running: false };
   }
 
-  // Start or restart the container
   if (isContainerRunning()) {
     console.log(
       chalk.gray('Container exists but server not healthy, restarting...'),
     );
     execSync(`docker restart ${CONTAINER_NAME}`, { stdio: 'ignore' });
   } else {
-    // Remove stopped container if it exists
     spawnSync('docker', ['rm', '-f', CONTAINER_NAME], { stdio: 'ignore' });
 
     console.log(chalk.gray(`Pulling ${IMAGE}...`));
@@ -202,7 +221,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   console.log(chalk.gray('Waiting for Twenty to be ready...'));
 
   const logProcess = streamDockerLogs();
-  const healthy = await waitForHealthy(180);
+  const healthy = await waitForHealthy({ port: 2020, timeoutSeconds: 180 });
 
   logProcess.kill();
 
@@ -216,14 +235,15 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     return { running: false };
   }
 
+  const serverUrl = 'http://localhost:2020';
+
   console.log(
-    chalk.green('Twenty server is running on http://localhost:2020.'),
+    chalk.green(`Twenty server is running on ${serverUrl}.`),
   );
   console.log(
     chalk.gray('Workspace ready — login with tim@apple.dev / tim@apple.dev'),
   );
 
-  // Open the browser so the user can log in
   const openCommand =
     platform() === 'darwin'
       ? 'open'
@@ -232,10 +252,10 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
         : 'xdg-open';
 
   try {
-    execSync(`${openCommand} http://localhost:2020`, { stdio: 'ignore' });
+    execSync(`${openCommand} ${serverUrl}`, { stdio: 'ignore' });
   } catch {
     // Ignore if browser can't be opened
   }
 
-  return { running: true };
+  return { running: true, serverUrl };
 };

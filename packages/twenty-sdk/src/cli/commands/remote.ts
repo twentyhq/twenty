@@ -6,6 +6,33 @@ import chalk from 'chalk';
 import type { Command } from 'commander';
 import inquirer from 'inquirer';
 
+const LOCAL_PORTS = [2020, 3000];
+
+const detectLocalServer = async (): Promise<string | null> => {
+  for (const port of LOCAL_PORTS) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+      const response = await fetch(`http://localhost:${port}/healthz`, {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      const body = await response.json();
+
+      if (body.status === 'ok') {
+        return `http://localhost:${port}`;
+      }
+    } catch {
+      // Port not responding, try next
+    }
+  }
+
+  return null;
+};
+
 const deriveRemoteName = (url: string): string => {
   try {
     const hostname = new URL(url).hostname;
@@ -86,9 +113,21 @@ export const registerRemoteCommands = (program: Command): void => {
 
         if (options.local) {
           const remoteName = options.as ?? 'local';
+          const localUrl = await detectLocalServer();
 
+          if (!localUrl) {
+            console.error(
+              chalk.red(
+                'No local Twenty server found on ports 2020 or 3000.\n' +
+                  'Start one with: yarn twenty server start',
+              ),
+            );
+            process.exit(1);
+          }
+
+          console.log(chalk.gray(`Found server at ${localUrl}`));
           ConfigService.setActiveRemote(remoteName);
-          await authenticate('http://localhost:2020', options.token);
+          await authenticate(localUrl, options.token);
           console.log(chalk.green(`✓ Authenticated remote "${remoteName}".`));
 
           return;
@@ -113,7 +152,7 @@ export const registerRemoteCommands = (program: Command): void => {
           nameOrUrl ??
           options.url ??
           (options.token
-            ? 'http://localhost:2020'
+            ? ((await detectLocalServer()) ?? 'http://localhost:2020')
             : (
                 await inquirer.prompt<{ apiUrl: string }>([
                   {

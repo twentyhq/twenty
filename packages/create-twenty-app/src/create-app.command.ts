@@ -64,22 +64,11 @@ export class CreateAppCommand {
       let localResult: LocalInstanceResult = { running: false };
 
       if (!options.skipLocalInstance) {
-        const { needsLocalInstance } = await inquirer.prompt([
-          {
-            type: 'confirm',
-            name: 'needsLocalInstance',
-            message:
-              'Do you need a local instance of Twenty? Recommended if you not have one already.',
-            default: true,
-          },
-        ]);
+        // Auto-detect a running server first
+        localResult = await setupLocalInstance();
 
-        if (needsLocalInstance) {
-          localResult = await setupLocalInstance();
-        }
-
-        if (localResult.running) {
-          await this.connectToLocal(appDirectory);
+        if (localResult.running && localResult.serverUrl) {
+          await this.connectToLocal(appDirectory, localResult.serverUrl);
         }
       }
 
@@ -210,9 +199,12 @@ export class CreateAppCommand {
     console.log('');
   }
 
-  private async connectToLocal(appDirectory: string): Promise<void> {
+  private async connectToLocal(
+    appDirectory: string,
+    serverUrl: string,
+  ): Promise<void> {
     try {
-      execSync('yarn twenty remote add --local', {
+      execSync(`yarn twenty remote add ${serverUrl} --as local`, {
         cwd: appDirectory,
         stdio: 'inherit',
       });
