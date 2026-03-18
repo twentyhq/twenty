@@ -26,7 +26,8 @@ const OPPORTUNITY_TRANSITION_CONFIG: StateTransitionConfig = {
   rules: [
     {
       // Must have a linked Client Account to reach Quote Requested or beyond
-      toStages: ['QUOTE_REQUESTED', 'PROPOSAL_SUBMITTED', 'CLOSED_WON'],
+      // DB values: QUOTING = "Quote requested", PROPOSAL_SUBMITTED, CLOSEDWON = "Closed - Won"
+      toStages: ['QUOTING', 'PROPOSAL_SUBMITTED', 'CLOSEDWON'],
       fields: [
         {
           name: 'companyId',
