@@ -6,8 +6,8 @@ import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDupli
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const expectedQueryTemplate = `
-  query FindDuplicatePerson($ids: [UUID!]!) {
-    personDuplicates(ids: $ids) {
+  query FindDuplicatePerson($ids: [UUID!], $data: [PersonCreateInput!]) {
+    personDuplicates(ids: $ids, data: $data) {
       edges {
         node {
       ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
@@ -51,5 +51,28 @@ describe('useFindDuplicateRecordsQuery', () => {
     );
 
     expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
+  });
+
+  it('should expose a create-input variable for unsaved duplicate checks', () => {
+    const objectNameSingular = 'company';
+
+    const { result } = renderHook(
+      () =>
+        useFindDuplicateRecordsQuery({
+          objectNameSingular,
+        }),
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    const printedReceivedQuery = print(result.current.findDuplicateRecordsQuery);
+
+    expect(printedReceivedQuery).toContain(
+      'query FindDuplicateCompany($ids: [UUID!], $data: [CompanyCreateInput!])',
+    );
+    expect(printedReceivedQuery).toContain(
+      'companyDuplicates(ids: $ids, data: $data)',
+    );
   });
 });

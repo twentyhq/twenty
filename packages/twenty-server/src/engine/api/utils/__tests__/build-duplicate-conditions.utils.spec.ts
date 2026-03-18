@@ -3,6 +3,8 @@ import {
   mockPersonFlatObjectMetadata,
   mockPersonFlatObjectMetadataMaps,
 } from 'src/engine/api/graphql/graphql-query-runner/__mocks__/mockPersonObjectMetadata';
+import { settings } from 'src/engine/constants/settings';
+import { mockCompanyObjectMetadataInfo } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { mockPersonRecords } from 'src/engine/api/graphql/graphql-query-runner/__mocks__/mockPersonRecords';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 
@@ -80,6 +82,65 @@ describe('buildDuplicateConditions', () => {
         {
           jobTitle: {
             eq: 'Test job',
+          },
+        },
+      ],
+    });
+  });
+
+  it('should exclude short company names while still using other matching duplicate criteria', () => {
+    const duplicateConditons = buildDuplicateConditions(
+      {
+        ...mockCompanyObjectMetadataInfo.flatObjectMetadata,
+        duplicateCriteria: [['name'], ['domainNamePrimaryLinkUrl']],
+      },
+      mockCompanyObjectMetadataInfo.flatObjectMetadataMaps,
+      mockCompanyObjectMetadataInfo.flatFieldMetadataMaps,
+      [
+        {
+          name: 'A'.repeat(settings.minLengthOfStringForDuplicateCheck - 1),
+          domainName: {
+            primaryLinkUrl: 'acme.com',
+          },
+        },
+      ],
+    );
+
+    expect(duplicateConditons).toEqual({
+      or: [
+        {
+          domainName: {
+            primaryLinkUrl: {
+              eq: 'acme.com',
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('should build company duplicate conditions from a string domainName payload', () => {
+    const duplicateConditons = buildDuplicateConditions(
+      {
+        ...mockCompanyObjectMetadataInfo.flatObjectMetadata,
+        duplicateCriteria: [['domainNamePrimaryLinkUrl']],
+      },
+      mockCompanyObjectMetadataInfo.flatObjectMetadataMaps,
+      mockCompanyObjectMetadataInfo.flatFieldMetadataMaps,
+      [
+        {
+          domainName: 'acme.com',
+        },
+      ],
+    );
+
+    expect(duplicateConditons).toEqual({
+      or: [
+        {
+          domainName: {
+            primaryLinkUrl: {
+              eq: 'acme.com',
+            },
           },
         },
       ],

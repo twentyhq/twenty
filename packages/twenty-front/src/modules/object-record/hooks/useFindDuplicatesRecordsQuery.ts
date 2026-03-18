@@ -25,10 +25,12 @@ export const useFindDuplicateRecordsQuery = ({
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(
       objectMetadataItem.nameSingular,
-    )}($ids: [UUID!]!) {
+    )}($ids: [UUID!], $data: [${capitalize(
+      objectMetadataItem.nameSingular,
+    )}CreateInput!]) {
       ${getFindDuplicateRecordsQueryResponseField(
         objectMetadataItem.nameSingular,
-      )}(ids: $ids) {
+      )}(ids: $ids, data: $data) {
         edges {
           node ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,

@@ -90,14 +90,18 @@ export function formatCompositeField(
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formattedCompositeField: Record<string, any> = {};
+  const normalizedValue =
+    fieldMetadata.type === FieldMetadataType.LINKS && typeof value === 'string'
+      ? { primaryLinkUrl: value }
+      : value;
 
   for (const property of compositeType.properties) {
     const subFieldKey = property.name;
     const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-    if (value && value[subFieldKey] !== undefined) {
+    if (normalizedValue && normalizedValue[subFieldKey] !== undefined) {
       formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
-        value[subFieldKey],
+        normalizedValue[subFieldKey],
         property as unknown as FlatFieldMetadata,
       );
     }
