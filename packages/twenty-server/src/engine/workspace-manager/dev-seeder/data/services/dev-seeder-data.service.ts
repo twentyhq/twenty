@@ -120,6 +120,15 @@ import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
+const LIGHT_MAX_RECORDS = 5;
+
+const LIGHT_EXCLUDED_TABLES = new Set([
+  '_pet',
+  '_surveyResult',
+  '_employmentHistory',
+  '_petCareAgreement',
+]);
+
 type RecordSeedConfig = {
   tableName: string;
   pgColumns: string[];
@@ -300,10 +309,12 @@ export class DevSeederDataService {
     schemaName,
     workspaceId,
     featureFlags,
+    light = false,
   }: {
     schemaName: string;
     workspaceId: string;
     featureFlags?: Record<FeatureFlagKey, boolean>;
+    light?: boolean;
   }) {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
@@ -328,6 +339,7 @@ export class DevSeederDataService {
           attachmentSeeds,
           featureFlags,
           objectMetadataItems,
+          light,
         });
 
         await this.timelineActivitySeederService.seedTimelineActivities({
@@ -359,6 +371,7 @@ export class DevSeederDataService {
     attachmentSeeds,
     featureFlags,
     objectMetadataItems,
+    light = false,
   }: {
     entityManager: WorkspaceEntityManager;
     schemaName: string;
@@ -366,6 +379,7 @@ export class DevSeederDataService {
     attachmentSeeds: RecordSeedConfig['recordSeeds'];
     featureFlags?: Record<FeatureFlagKey, boolean>;
     objectMetadataItems: FlatObjectMetadata[];
+    light?: boolean;
   }) {
     const batches = getRecordSeedsBatches(
       workspaceId,
@@ -378,6 +392,10 @@ export class DevSeederDataService {
     for (const batch of batches) {
       await Promise.all(
         batch.map(async (recordSeedsConfig) => {
+          if (light && LIGHT_EXCLUDED_TABLES.has(recordSeedsConfig.tableName)) {
+            return;
+          }
+
           const objectMetadata = objectMetadataItems.find(
             (item) =>
               computeTableName(item.nameSingular, item.isCustom) ===
@@ -389,12 +407,16 @@ export class DevSeederDataService {
             return;
           }
 
+          const seeds = light
+            ? recordSeedsConfig.recordSeeds.slice(0, LIGHT_MAX_RECORDS)
+            : recordSeedsConfig.recordSeeds;
+
           await this.seedRecords({
             entityManager,
             schemaName,
             tableName: recordSeedsConfig.tableName,
             pgColumns: recordSeedsConfig.pgColumns,
-            recordSeeds: recordSeedsConfig.recordSeeds,
+            recordSeeds: seeds,
           });
         }),
       );

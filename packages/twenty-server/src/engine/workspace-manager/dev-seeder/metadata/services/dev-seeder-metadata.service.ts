@@ -178,12 +178,21 @@ export class DevSeederMetadataService {
     },
   };
 
+  private static readonly LIGHT_EXCLUDED_OBJECTS = new Set([
+    'pet',
+    'surveyResult',
+    'employmentHistory',
+    'petCareAgreement',
+  ]);
+
   public async seed({
     dataSourceMetadata,
     workspaceId,
+    light = false,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
+    light?: boolean;
   }) {
     const config = this.workspaceConfigs[workspaceId];
 
@@ -194,6 +203,15 @@ export class DevSeederMetadataService {
     }
 
     for (const obj of config.objects) {
+      if (
+        light &&
+        DevSeederMetadataService.LIGHT_EXCLUDED_OBJECTS.has(
+          obj.seed.nameSingular,
+        )
+      ) {
+        continue;
+      }
+
       await this.seedCustomObject({
         dataSourceId: dataSourceMetadata.id,
         workspaceId,
@@ -266,7 +284,13 @@ export class DevSeederMetadataService {
     });
   }
 
-  public async seedRelations({ workspaceId }: { workspaceId: string }) {
+  public async seedRelations({
+    workspaceId,
+    light = false,
+  }: {
+    workspaceId: string;
+    light?: boolean;
+  }) {
     const config = this.workspaceConfigs[workspaceId];
 
     if (!config) {
@@ -275,10 +299,15 @@ export class DevSeederMetadataService {
       );
     }
 
+    const isExcluded = (objectName: string) =>
+      light && DevSeederMetadataService.LIGHT_EXCLUDED_OBJECTS.has(objectName);
+
     // 1. Seed morph relations (creates inverses on target objects)
     let maps = await this.getFreshFlatMaps(workspaceId);
 
     for (const relation of config.morphRelations ?? []) {
+      if (isExcluded(relation.objectName)) continue;
+
       await this.seedMorphRelations({
         workspaceId,
         relation,
@@ -287,18 +316,23 @@ export class DevSeederMetadataService {
     }
 
     // 2. Seed junction fields (creates relations + inverses on junction objects)
-    // Use same maps for all - matches original working behavior
     maps = await this.getFreshFlatMaps(workspaceId);
 
     for (const field of config.junctionFields ?? []) {
+      if (isExcluded(field.targetObjectName)) continue;
+
       await this.seedJunctionField({ workspaceId, field, flatMaps: maps });
     }
 
     // 3. Configure junction settings (after all fields exist)
-    if (config.junctionConfigs && config.junctionConfigs.length > 0) {
+    const junctionConfigs = (config.junctionConfigs ?? []).filter(
+      (jc) => !isExcluded(jc.junctionTargetFieldRef.split('.')[0]),
+    );
+
+    if (junctionConfigs.length > 0) {
       maps = await this.getFreshFlatMaps(workspaceId);
 
-      for (const junctionConfig of config.junctionConfigs) {
+      for (const junctionConfig of junctionConfigs) {
         await this.applyJunctionConfig({
           workspaceId,
           junctionConfig,

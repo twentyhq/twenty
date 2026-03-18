@@ -11,6 +11,7 @@ import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/servic
 
 type DataSeedWorkspaceOptions = {
   appleOnly?: boolean;
+  light?: boolean;
 };
 
 @Command({
@@ -33,6 +34,15 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     return true;
   }
 
+  @Option({
+    flags: '--light',
+    description:
+      'Light seed: skip demo custom objects (Pet, Survey, etc.) and limit records to 5 per object',
+  })
+  parseLight(): boolean {
+    return true;
+  }
+
   async run(
     _passedParams: string[],
     options: DataSeedWorkspaceOptions,
@@ -43,7 +53,9 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
     try {
       for (const workspaceId of workspaceIds) {
-        await this.devSeederService.seedDev(workspaceId);
+        await this.devSeederService.seedDev(workspaceId, {
+          light: options.light,
+        });
       }
     } catch (error) {
       this.logger.error(error);
