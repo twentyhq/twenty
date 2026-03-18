@@ -147,8 +147,7 @@ export class AdminPanelService {
       groupedData.entries(),
     )
       .filter(
-        ([name]) =>
-          !CONFIG_VARIABLES_GROUP_METADATA[name].isHiddenInAdminPanel,
+        ([name]) => !CONFIG_VARIABLES_GROUP_METADATA[name].isHiddenInAdminPanel,
       )
       .sort((a, b) => {
         const positionA = CONFIG_VARIABLES_GROUP_METADATA[a[0]].position;
