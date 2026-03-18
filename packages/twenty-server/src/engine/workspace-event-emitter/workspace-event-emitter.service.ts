@@ -143,9 +143,7 @@ export class WorkspaceEventEmitterService {
               batch,
             ),
           )
-          .then((batch) =>
-            this.resolveObjectMetadataStandardOverrides(batch),
-          )
+          .then((batch) => this.resolveObjectMetadataStandardOverrides(batch))
       : undefined;
 
     for (const [streamChannelId, streamData] of streamsData) {
