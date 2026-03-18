@@ -1,6 +1,7 @@
 import { Command } from '@/command-menu-item/display/components/Command';
 import { EngineCommandMenuItem } from '@/command-menu-item/display/components/EngineCommandMenuItem';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
+import { WorkflowCommandMenuItem } from '@/command-menu-item/display/components/WorkflowCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -8,11 +9,16 @@ import { contextStoreIsPageInEditModeComponentState } from '@/context-store/stat
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import {
+  type CommandMenuContextApi,
+  CoreObjectNameSingular,
+} from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
   interpolateCommandMenuItemLabel,
@@ -174,6 +180,44 @@ const buildCommandItemFromEngineKey = ({
   };
 };
 
+type BuildCommandMenuItemFromWorkflowVersionParams = {
+  item: CommandMenuItemFieldsFragment;
+  workflowVersion: Pick<WorkflowVersion, 'id' | 'workflowId' | 'trigger'>;
+  scope: CommandMenuItemScope;
+  isPinned: boolean;
+  getIcon: ReturnType<typeof useIcons>['getIcon'];
+};
+
+const buildCommandMenuItemFromWorkflowVersion = ({
+  item,
+  workflowVersion,
+  scope,
+  isPinned,
+  getIcon,
+}: BuildCommandMenuItemFromWorkflowVersionParams) => {
+  const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
+
+  return {
+    type: CommandMenuItemType.WorkflowRun,
+    key: `command-menu-item-workflow-${item.id}`,
+    scope,
+    label: item.label,
+    shortLabel: item.shortLabel,
+    position: item.position,
+    isPinned,
+    Icon,
+    hotKeys: item.hotKeys,
+    shouldBeRegistered: () => true,
+    component: (
+      <WorkflowCommandMenuItem
+        workflowVersion={workflowVersion}
+        availabilityType={item.availabilityType}
+        availabilityObjectMetadataId={item.availabilityObjectMetadataId}
+      />
+    ),
+  };
+};
+
 export const useCommandMenuItemsFromBackend = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
@@ -216,6 +260,29 @@ export const useCommandMenuItemsFromBackend = (
 
   const allItems = data?.commandMenuItems ?? [];
 
+  const workflowVersionIds = allItems
+    .map((item) => item.workflowVersionId)
+    .filter(isDefined);
+
+  const { records: workflowVersions } = useFindManyRecords<
+    Pick<WorkflowVersion, 'id' | 'workflowId' | 'trigger' | '__typename'>
+  >({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    filter:
+      workflowVersionIds.length > 0
+        ? { id: { in: workflowVersionIds } }
+        : undefined,
+    recordGqlFields: { id: true, workflowId: true, trigger: true },
+    skip: workflowVersionIds.length === 0,
+  });
+
+  const workflowVersionById = new Map(
+    workflowVersions.map((workflowVersion) => [
+      workflowVersion.id,
+      workflowVersion,
+    ]),
+  );
+
   const objectMatches = (item: CommandMenuItemFieldsFragment) =>
     !isDefined(item.availabilityObjectMetadataId) ||
     item.availabilityObjectMetadataId ===
@@ -257,6 +324,22 @@ export const useCommandMenuItemsFromBackend = (
         commandMenuContextApi,
         recordId,
         objectNameSingular,
+      });
+    }
+
+    if (isDefined(item.workflowVersionId)) {
+      const workflowVersion = workflowVersionById.get(item.workflowVersionId);
+
+      if (!isDefined(workflowVersion)) {
+        return null;
+      }
+
+      return buildCommandMenuItemFromWorkflowVersion({
+        item,
+        workflowVersion,
+        scope,
+        isPinned,
+        getIcon,
       });
     }
 
