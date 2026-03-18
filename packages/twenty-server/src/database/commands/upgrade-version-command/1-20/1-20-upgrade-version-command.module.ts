@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
+import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -31,12 +32,14 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     BackfillCommandMenuItemsCommand,
+    BackfillNavigationMenuItemTypeCommand,
     BackfillPageLayoutsCommand,
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
   ],
   exports: [
     BackfillCommandMenuItemsCommand,
+    BackfillNavigationMenuItemTypeCommand,
     BackfillPageLayoutsCommand,
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
