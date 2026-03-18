@@ -1075,6 +1075,7 @@ export type CreateNavigationMenuItemInput = {
   color?: InputMaybe<Scalars['String']>;
   folderId?: InputMaybe<Scalars['UUID']>;
   icon?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
   link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Float']>;
@@ -1597,7 +1598,7 @@ export enum EventLogTable {
 export type EventSubscription = {
   __typename?: 'EventSubscription';
   eventStreamId: Scalars['String'];
-  metadataEventsWithQueryIds: Array<MetadataEventWithQueryIds>;
+  metadataEvents: Array<MetadataEvent>;
   objectRecordEventsWithQueryIds: Array<ObjectRecordEventWithQueryIds>;
 };
 
@@ -2305,12 +2306,6 @@ export enum MetadataEventAction {
   DELETED = 'DELETED',
   UPDATED = 'UPDATED'
 }
-
-export type MetadataEventWithQueryIds = {
-  __typename?: 'MetadataEventWithQueryIds';
-  metadataEvent: MetadataEvent;
-  queryIds: Array<Scalars['String']>;
-};
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
