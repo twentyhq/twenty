@@ -140,6 +140,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1200: VersionCommands = [
+      this.backfillNavigationMenuItemTypeCommand,
       this.migrateRichTextToTextCommand,
       this.backfillCommandMenuItemsCommand,
       this.backfillPageLayoutsCommand,
