@@ -11,9 +11,16 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import styled from '@emotion/styled';
+import { Suspense, lazy } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+
+const SubscriptionSummaryHeader = lazy(() =>
+  import(
+    '@/object-record/record-show/components/SubscriptionSummaryHeader'
+  ).then((m) => ({ default: m.SubscriptionSummaryHeader })),
+);
 
 const StyledShowPageBannerContainer = styled.div`
   z-index: 1;
@@ -77,6 +84,18 @@ export const PageLayoutRecordPageRenderer = ({
 
       <StyledShowPageRightContainer>
         <StyledContentContainer isInRightDrawer={isInRightDrawer}>
+          {isInRightDrawer &&
+            targetRecordIdentifier.targetObjectNameSingular ===
+              'tobSubscription' && (
+              <Suspense fallback={null}>
+                <SubscriptionSummaryHeader
+                  recordId={targetRecordIdentifier.id}
+                  objectNameSingular={
+                    targetRecordIdentifier.targetObjectNameSingular
+                  }
+                />
+              </Suspense>
+            )}
           <LayoutRenderingProvider
             value={{
               targetRecordIdentifier: {
