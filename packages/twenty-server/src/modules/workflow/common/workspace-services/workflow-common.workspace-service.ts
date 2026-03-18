@@ -43,9 +43,7 @@ export type ObjectMetadataInfo = {
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
-  private readonly logger = new Logger(
-    WorkflowCommonWorkspaceService.name,
-  );
+  private readonly logger = new Logger(WorkflowCommonWorkspaceService.name);
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,

@@ -1338,7 +1338,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED'
 
 export interface SSOIdentityProvider {
     id: Scalars['UUID']
@@ -1892,7 +1892,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'frontComponent' | 'webhook'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'frontComponent' | 'webhook'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -2576,6 +2576,10 @@ export interface Query {
     findManyLogicFunctions: LogicFunction[]
     getAvailablePackages: Scalars['JSON']
     getLogicFunctionSourceCode?: Scalars['String']
+    commandMenuItems: CommandMenuItem[]
+    commandMenuItem?: CommandMenuItem
+    frontComponents: FrontComponent[]
+    frontComponent?: FrontComponent
     objectRecordCounts: ObjectRecordCount[]
     object: Object
     objects: ObjectConnection
@@ -2589,10 +2593,6 @@ export interface Query {
     getViewFieldGroup?: ViewFieldGroup
     index: Index
     indexMetadatas: IndexConnection
-    commandMenuItems: CommandMenuItem[]
-    commandMenuItem?: CommandMenuItem
-    frontComponents: FrontComponent[]
-    frontComponent?: FrontComponent
     findManyAgents: Agent[]
     findOneAgent: Agent
     billingPortalSession: BillingSession
@@ -2707,6 +2707,12 @@ export interface Mutation {
     createOneLogicFunction: LogicFunction
     executeOneLogicFunction: LogicFunctionExecutionResult
     updateOneLogicFunction: Scalars['Boolean']
+    createCommandMenuItem: CommandMenuItem
+    updateCommandMenuItem: CommandMenuItem
+    deleteCommandMenuItem: CommandMenuItem
+    createFrontComponent: FrontComponent
+    updateFrontComponent: FrontComponent
+    deleteFrontComponent: FrontComponent
     createOneObject: Object
     deleteOneObject: Object
     updateOneObject: Object
@@ -2729,12 +2735,6 @@ export interface Mutation {
     deleteViewFieldGroup: ViewFieldGroup
     destroyViewFieldGroup: ViewFieldGroup
     upsertFieldsWidget: View
-    createCommandMenuItem: CommandMenuItem
-    updateCommandMenuItem: CommandMenuItem
-    deleteCommandMenuItem: CommandMenuItem
-    createFrontComponent: FrontComponent
-    updateFrontComponent: FrontComponent
-    deleteFrontComponent: FrontComponent
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
@@ -5617,6 +5617,10 @@ export interface QueryGenqlSelection{
     findManyLogicFunctions?: LogicFunctionGenqlSelection
     getAvailablePackages?: { __args: {input: LogicFunctionIdInput} }
     getLogicFunctionSourceCode?: { __args: {input: LogicFunctionIdInput} }
+    commandMenuItems?: CommandMenuItemGenqlSelection
+    commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    frontComponents?: FrontComponentGenqlSelection
+    frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     objectRecordCounts?: ObjectRecordCountGenqlSelection
     object?: (ObjectGenqlSelection & { __args: {
     /** The id of the record to find. */
@@ -5642,10 +5646,6 @@ export interface QueryGenqlSelection{
     paging: CursorPaging, 
     /** Specify to filter the records returned. */
     filter: IndexFilter} })
-    commandMenuItems?: CommandMenuItemGenqlSelection
-    commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    frontComponents?: FrontComponentGenqlSelection
-    frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
@@ -5791,6 +5791,12 @@ export interface MutationGenqlSelection{
     createOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: CreateLogicFunctionFromSourceInput} })
     executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
     updateOneLogicFunction?: { __args: {input: UpdateLogicFunctionFromSourceInput} }
+    createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
+    updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
+    deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: CreateFrontComponentInput} })
+    updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
+    deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
     deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
     updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
@@ -5813,12 +5819,6 @@ export interface MutationGenqlSelection{
     deleteViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DeleteViewFieldGroupInput} })
     destroyViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DestroyViewFieldGroupInput} })
     upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
-    createCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: CreateCommandMenuItemInput} })
-    updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
-    deleteCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: CreateFrontComponentInput} })
-    updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
-    deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
@@ -6009,6 +6009,20 @@ update: UpdateLogicFunctionFromSourceInputUpdates}
 
 export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),toolInputSchema?: (Scalars['JSON'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),isTool?: (Scalars['Boolean'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 
+export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null)}
+
+export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null)}
+
+export interface CreateFrontComponentInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),sourceComponentPath: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],builtComponentChecksum: Scalars['String']}
+
+export interface UpdateFrontComponentInput {
+/** The id of the front component to update */
+id: Scalars['UUID'],
+/** The front component fields to update */
+update: UpdateFrontComponentInputUpdates}
+
+export interface UpdateFrontComponentInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
+
 export interface CreateOneObjectInput {
 /** The object to create */
 object: CreateObjectInput}
@@ -6096,20 +6110,6 @@ export interface UpsertFieldsWidgetGroupInput {id: Scalars['UUID'],name: Scalars
 export interface UpsertFieldsWidgetFieldInput {
 /** The id of the view field */
 viewFieldId: Scalars['UUID'],isVisible: Scalars['Boolean'],position: Scalars['Float']}
-
-export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null)}
-
-export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null)}
-
-export interface CreateFrontComponentInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),sourceComponentPath: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],builtComponentChecksum: Scalars['String']}
-
-export interface UpdateFrontComponentInput {
-/** The id of the front component to update */
-id: Scalars['UUID'],
-/** The front component fields to update */
-update: UpdateFrontComponentInputUpdates}
-
-export interface UpdateFrontComponentInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
 
 export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
 
@@ -8683,8 +8683,7 @@ export const enumFeatureFlagKey = {
    IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' as const,
    IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' as const,
    IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const,
-   IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const,
-   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as const
+   IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const
 }
 
 export const enumRelationType = {
@@ -8788,7 +8787,6 @@ export const enumAllMetadataName = {
    commandMenuItem: 'commandMenuItem' as const,
    navigationMenuItem: 'navigationMenuItem' as const,
    permissionFlag: 'permissionFlag' as const,
-   objectPermission: 'objectPermission' as const,
    frontComponent: 'frontComponent' as const,
    webhook: 'webhook' as const
 }

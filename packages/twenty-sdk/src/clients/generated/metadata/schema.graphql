@@ -1641,7 +1641,6 @@ enum FeatureFlagKey {
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
-  IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
 }
 
 type SSOIdentityProvider {
@@ -2241,7 +2240,6 @@ enum AllMetadataName {
   commandMenuItem
   navigationMenuItem
   permissionFlag
-  objectPermission
   frontComponent
   webhook
 }
@@ -2936,6 +2934,10 @@ type Query {
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
   getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
+  commandMenuItems: [CommandMenuItem!]!
+  commandMenuItem(id: UUID!): CommandMenuItem
+  frontComponents: [FrontComponent!]!
+  frontComponent(id: UUID!): FrontComponent
   objectRecordCounts: [ObjectRecordCount!]!
   object(
     """The id of the record to find."""
@@ -2967,10 +2969,6 @@ type Query {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): IndexConnection!
-  commandMenuItems: [CommandMenuItem!]!
-  commandMenuItem(id: UUID!): CommandMenuItem
-  frontComponents: [FrontComponent!]!
-  frontComponent(id: UUID!): FrontComponent
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   billingPortalSession(returnUrlPath: String): BillingSession!
@@ -3195,6 +3193,12 @@ type Mutation {
   createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
   updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
+  createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
+  updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
+  deleteCommandMenuItem(id: UUID!): CommandMenuItem!
+  createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
+  updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
+  deleteFrontComponent(id: UUID!): FrontComponent!
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
@@ -3217,12 +3221,6 @@ type Mutation {
   deleteViewFieldGroup(input: DeleteViewFieldGroupInput!): ViewFieldGroup!
   destroyViewFieldGroup(input: DestroyViewFieldGroupInput!): ViewFieldGroup!
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
-  createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
-  updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
-  deleteCommandMenuItem(id: UUID!): CommandMenuItem!
-  createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
-  updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
-  deleteFrontComponent(id: UUID!): FrontComponent!
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3537,6 +3535,57 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   httpRouteTriggerSettings: JSON
 }
 
+input CreateCommandMenuItemInput {
+  workflowVersionId: UUID
+  frontComponentId: UUID
+  engineComponentKey: EngineComponentKey
+  label: String!
+  icon: String
+  shortLabel: String
+  position: Float
+  isPinned: Boolean
+  availabilityType: CommandMenuItemAvailabilityType
+  hotKeys: [String!]
+  conditionalAvailabilityExpression: String
+  availabilityObjectMetadataId: UUID
+}
+
+input UpdateCommandMenuItemInput {
+  id: UUID!
+  label: String
+  icon: String
+  shortLabel: String
+  position: Float
+  isPinned: Boolean
+  availabilityType: CommandMenuItemAvailabilityType
+  availabilityObjectMetadataId: UUID
+  engineComponentKey: EngineComponentKey
+  hotKeys: [String!]
+}
+
+input CreateFrontComponentInput {
+  id: UUID
+  name: String!
+  description: String
+  sourceComponentPath: String!
+  builtComponentPath: String!
+  componentName: String!
+  builtComponentChecksum: String!
+}
+
+input UpdateFrontComponentInput {
+  """The id of the front component to update"""
+  id: UUID!
+
+  """The front component fields to update"""
+  update: UpdateFrontComponentInputUpdates!
+}
+
+input UpdateFrontComponentInputUpdates {
+  name: String
+  description: String
+}
+
 input CreateOneObjectInput {
   """The object to create"""
   object: CreateObjectInput!
@@ -3750,57 +3799,6 @@ input UpsertFieldsWidgetFieldInput {
   viewFieldId: UUID!
   isVisible: Boolean!
   position: Float!
-}
-
-input CreateCommandMenuItemInput {
-  workflowVersionId: UUID
-  frontComponentId: UUID
-  engineComponentKey: EngineComponentKey
-  label: String!
-  icon: String
-  shortLabel: String
-  position: Float
-  isPinned: Boolean
-  availabilityType: CommandMenuItemAvailabilityType
-  hotKeys: [String!]
-  conditionalAvailabilityExpression: String
-  availabilityObjectMetadataId: UUID
-}
-
-input UpdateCommandMenuItemInput {
-  id: UUID!
-  label: String
-  icon: String
-  shortLabel: String
-  position: Float
-  isPinned: Boolean
-  availabilityType: CommandMenuItemAvailabilityType
-  availabilityObjectMetadataId: UUID
-  engineComponentKey: EngineComponentKey
-  hotKeys: [String!]
-}
-
-input CreateFrontComponentInput {
-  id: UUID
-  name: String!
-  description: String
-  sourceComponentPath: String!
-  builtComponentPath: String!
-  componentName: String!
-  builtComponentChecksum: String!
-}
-
-input UpdateFrontComponentInput {
-  """The id of the front component to update"""
-  id: UUID!
-
-  """The front component fields to update"""
-  update: UpdateFrontComponentInputUpdates!
-}
-
-input UpdateFrontComponentInputUpdates {
-  name: String
-  description: String
 }
 
 input CreateAgentInput {

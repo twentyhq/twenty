@@ -698,10 +698,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         flatFieldMetadataMaps,
       );
 
-      await prefillWorkflowCommandMenuItems(
-        queryRunner.manager,
-        workspaceId,
-      );
+      await prefillWorkflowCommandMenuItems(queryRunner.manager, workspaceId);
 
       await prefillOpportunities(queryRunner.manager, schemaName);
 
