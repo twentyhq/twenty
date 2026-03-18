@@ -43,7 +43,11 @@ export class DevSeederService {
     private readonly coreDataSource: DataSource,
   ) {}
 
-  public async seedDev(workspaceId: SeededWorkspacesIds): Promise<void> {
+  public async seedDev(
+    workspaceId: SeededWorkspacesIds,
+    options?: { light?: boolean },
+  ): Promise<void> {
+    const light = options?.light ?? false;
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
@@ -89,16 +93,19 @@ export class DevSeederService {
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
       workspaceId,
+      light,
     });
 
     await this.devSeederMetadataService.seedRelations({
       workspaceId,
+      light,
     });
 
     await this.devSeederPermissionsService.initPermissions({
       workspaceId,
       twentyStandardFlatApplication,
       workspaceCustomFlatApplication,
+      light,
     });
 
     await seedPageLayouts(
@@ -148,6 +155,7 @@ export class DevSeederService {
       schemaName: dataSourceMetadata.schema,
       workspaceId,
       featureFlags: featureFlagsMap,
+      light,
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);

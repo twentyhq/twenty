@@ -2,6 +2,7 @@ import { authLogin } from '@/cli/operations/login';
 import { authLoginOAuth } from '@/cli/operations/login-oauth';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import inquirer from 'inquirer';
@@ -86,23 +87,21 @@ export const registerRemoteCommands = (program: Command): void => {
 
         if (options.local) {
           const remoteName = options.as ?? 'local';
-          const token =
-            options.token ??
-            (
-              await inquirer.prompt<{ apiKey: string }>([
-                {
-                  type: 'password',
-                  name: 'apiKey',
-                  message: 'API Key for local server:',
-                  mask: '*',
-                  validate: (input: string) =>
-                    input.length > 0 || 'API key is required',
-                },
-              ])
-            ).apiKey;
+          const localUrl = await detectLocalServer();
 
+          if (!localUrl) {
+            console.error(
+              chalk.red(
+                'No local Twenty server found on ports 2020 or 3000.\n' +
+                  'Start one with: yarn twenty server start',
+              ),
+            );
+            process.exit(1);
+          }
+
+          console.log(chalk.gray(`Found server at ${localUrl}`));
           ConfigService.setActiveRemote(remoteName);
-          await authenticate('http://localhost:3000', token);
+          await authenticate(localUrl, options.token);
           console.log(chalk.green(`✓ Authenticated remote "${remoteName}".`));
 
           return;
@@ -127,7 +126,7 @@ export const registerRemoteCommands = (program: Command): void => {
           nameOrUrl ??
           options.url ??
           (options.token
-            ? 'http://localhost:3000'
+            ? ((await detectLocalServer()) ?? 'http://localhost:2020')
             : (
                 await inquirer.prompt<{ apiUrl: string }>([
                   {
