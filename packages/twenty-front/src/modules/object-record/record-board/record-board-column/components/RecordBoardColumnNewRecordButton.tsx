@@ -45,7 +45,8 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { companyDuplicateWarningModal, createNewIndexRecord } =
+    useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
 
@@ -58,16 +59,19 @@ export const RecordBoardColumnNewRecordButton = () => {
   }
 
   return (
-    <StyledNewButton
-      onClick={async () => {
-        await createNewIndexRecord({
-          position: 'last',
-          [selectFieldMetadataItem.name]: columnDefinition.value,
-        });
-      }}
-    >
-      <IconPlus size={theme.icon.size.md} />
-      {t`New`}
-    </StyledNewButton>
+    <>
+      <StyledNewButton
+        onClick={async () => {
+          await createNewIndexRecord({
+            position: 'last',
+            [selectFieldMetadataItem.name]: columnDefinition.value,
+          });
+        }}
+      >
+        <IconPlus size={theme.icon.size.md} />
+        {t`New`}
+      </StyledNewButton>
+      {companyDuplicateWarningModal}
+    </>
   );
 };

@@ -16,7 +16,8 @@ import { IconPlus } from 'twenty-ui/display';
 export const RecordTableNoRecordGroupAddNew = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { companyDuplicateWarningModal, createNewIndexRecord } =
+    useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
@@ -42,6 +43,10 @@ export const RecordTableNoRecordGroupAddNew = () => {
       position: 'last',
     });
 
+    if (!isDefined(createdRecord)) {
+      return;
+    }
+
     upsertRecordsInStore({ partialRecords: [createdRecord] });
 
     if (isDefined(totalNumberOfRecordsToVirtualize)) {
@@ -66,10 +71,13 @@ export const RecordTableNoRecordGroupAddNew = () => {
   }
 
   return (
-    <RecordTableActionRow
-      onClick={handleButtonClick}
-      LeftIcon={IconPlus}
-      text={t`Add New`}
-    />
+    <>
+      <RecordTableActionRow
+        onClick={handleButtonClick}
+        LeftIcon={IconPlus}
+        text={t`Add New`}
+      />
+      {companyDuplicateWarningModal}
+    </>
   );
 };

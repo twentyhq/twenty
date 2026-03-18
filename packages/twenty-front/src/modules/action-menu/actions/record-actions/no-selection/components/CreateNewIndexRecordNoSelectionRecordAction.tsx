@@ -5,14 +5,18 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 export const CreateNewIndexRecordNoSelectionRecordAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { companyDuplicateWarningModal, createNewIndexRecord } =
+    useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
   return (
-    <Action
-      onClick={() => createNewIndexRecord({ position: 'first' })}
-      closeSidePanelOnCommandMenuListActionExecution={false}
-    />
+    <>
+      <Action
+        onClick={() => createNewIndexRecord({ position: 'first' })}
+        closeSidePanelOnCommandMenuListActionExecution={false}
+      />
+      {companyDuplicateWarningModal}
+    </>
   );
 };

@@ -96,7 +96,8 @@ export const RecordBoardColumnHeader = () => {
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { companyDuplicateWarningModal, createNewIndexRecord } =
+    useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
 
@@ -122,77 +123,80 @@ export const RecordBoardColumnHeader = () => {
   };
 
   return (
-    <StyledColumn>
-      <StyledHeader
-        onMouseEnter={() => setIsHeaderHovered(true)}
-        onMouseLeave={() => setIsHeaderHovered(false)}
-      >
-        <StyledHeaderContainer>
-          <StyledLeftContainer>
-            <StyledDropdownContainer>
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownPlacement="bottom-start"
-                dropdownOffset={{
-                  x: 0,
-                  y: 10,
-                }}
-                clickableComponent={
-                  <StyledTag
-                    variant={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? 'solid'
-                        : 'outline'
-                    }
-                    color={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? columnDefinition.color
-                        : 'transparent'
-                    }
-                    text={columnDefinition.title}
-                    weight={
-                      columnDefinition.type === RecordGroupDefinitionType.Value
-                        ? 'regular'
-                        : 'medium'
-                    }
-                  />
-                }
-                dropdownComponents={<RecordBoardColumnDropdownMenu />}
-              />
-            </StyledDropdownContainer>
-
-            <RecordBoardColumnHeaderAggregateDropdown
-              aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
-              dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-              objectMetadataItem={objectMetadataItem}
-              aggregateLabel={recordIndexAggregateDisplayLabel}
-            />
-          </StyledLeftContainer>
-          <StyledRightContainer>
-            {isHeaderHovered && (
-              <StyledHeaderActions>
-                <LightIconButton
-                  accent="tertiary"
-                  Icon={IconDotsVertical}
-                  onClick={() => {
-                    toggleDropdown({
-                      dropdownComponentInstanceIdFromProps: dropdownId,
-                    });
+    <>
+      <StyledColumn>
+        <StyledHeader
+          onMouseEnter={() => setIsHeaderHovered(true)}
+          onMouseLeave={() => setIsHeaderHovered(false)}
+        >
+          <StyledHeaderContainer>
+            <StyledLeftContainer>
+              <StyledDropdownContainer>
+                <Dropdown
+                  dropdownId={dropdownId}
+                  dropdownPlacement="bottom-start"
+                  dropdownOffset={{
+                    x: 0,
+                    y: 10,
                   }}
-                />
-                {hasObjectUpdatePermissions &&
-                  !hasAnySoftDeleteFilterOnView && (
-                    <LightIconButton
-                      accent="tertiary"
-                      Icon={IconPlus}
-                      onClick={handleCreateNewRecordClick}
+                  clickableComponent={
+                    <StyledTag
+                      variant={
+                        columnDefinition.type === RecordGroupDefinitionType.Value
+                          ? 'solid'
+                          : 'outline'
+                      }
+                      color={
+                        columnDefinition.type === RecordGroupDefinitionType.Value
+                          ? columnDefinition.color
+                          : 'transparent'
+                      }
+                      text={columnDefinition.title}
+                      weight={
+                        columnDefinition.type === RecordGroupDefinitionType.Value
+                          ? 'regular'
+                          : 'medium'
+                      }
                     />
-                  )}
-              </StyledHeaderActions>
-            )}
-          </StyledRightContainer>
-        </StyledHeaderContainer>
-      </StyledHeader>
-    </StyledColumn>
+                  }
+                  dropdownComponents={<RecordBoardColumnDropdownMenu />}
+                />
+              </StyledDropdownContainer>
+
+              <RecordBoardColumnHeaderAggregateDropdown
+                aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
+                dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+                objectMetadataItem={objectMetadataItem}
+                aggregateLabel={recordIndexAggregateDisplayLabel}
+              />
+            </StyledLeftContainer>
+            <StyledRightContainer>
+              {isHeaderHovered && (
+                <StyledHeaderActions>
+                  <LightIconButton
+                    accent="tertiary"
+                    Icon={IconDotsVertical}
+                    onClick={() => {
+                      toggleDropdown({
+                        dropdownComponentInstanceIdFromProps: dropdownId,
+                      });
+                    }}
+                  />
+                  {hasObjectUpdatePermissions &&
+                    !hasAnySoftDeleteFilterOnView && (
+                      <LightIconButton
+                        accent="tertiary"
+                        Icon={IconPlus}
+                        onClick={handleCreateNewRecordClick}
+                      />
+                    )}
+                </StyledHeaderActions>
+              )}
+            </StyledRightContainer>
+          </StyledHeaderContainer>
+        </StyledHeader>
+      </StyledColumn>
+      {companyDuplicateWarningModal}
+    </>
   );
 };

@@ -18,7 +18,8 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
 
   const isMobile = useIsMobile();
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { companyDuplicateWarningModal, createNewIndexRecord } =
+    useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
@@ -39,11 +40,11 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  return (
-    !isMobile &&
+  return !isMobile &&
     !isReadOnly &&
     hasObjectUpdatePermissions &&
-    !hasAnySoftDeleteFilterOnView && (
+    !hasAnySoftDeleteFilterOnView ? (
+    <>
       <StyledHeaderIcon>
         <LightIconButton
           Icon={IconPlus}
@@ -52,6 +53,7 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
           onClick={handlePlusButtonClick}
         />
       </StyledHeaderIcon>
-    )
-  );
+      {companyDuplicateWarningModal}
+    </>
+  ) : null;
 };
