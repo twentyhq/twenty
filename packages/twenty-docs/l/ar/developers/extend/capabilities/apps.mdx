@@ -21,19 +21,51 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 ## المتطلبات الأساسية
 
 * Node.js 24+ وYarn 4
-* مساحة عمل Twenty ومفتاح واجهة برمجة التطبيقات (أنشئ واحدًا على https://app.twenty.com/settings/api-webhooks)
+* Docker (لخادم تطوير Twenty المحلي)
 
 ## البدء
 
-أنشئ تطبيقًا جديدًا باستخدام المُهيئ الرسمي، ثم قم بالمصادقة وابدأ التطوير:
+أنشئ تطبيقًا جديدًا باستخدام المولّد الرسمي. يمكنه بدء مثيل محلي من Twenty تلقائيًا لك:
 
 ```bash filename="Terminal"
-# إنشاء تطبيق جديد (يتضمن جميع الأمثلة افتراضيًا)
+# إنشاء تطبيق جديد — ستعرض واجهة سطر الأوامر خيار بدء خادم Twenty محلي
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # ابدأ وضع التطوير: يُزامن التغييرات المحلية تلقائيًا مع مساحة العمل الخاصة بك
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### إدارة الخادم المحلي
+
+يتضمن SDK أوامر لإدارة خادم تطوير Twenty محلي (صورة Docker متكاملة تتضمن PostgreSQL وRedis والخادم والعامل):
+
+```bash filename="Terminal"
+# ابدأ الخادم المحلي (يسحب الصورة إذا لزم الأمر)
+yarn twenty server start
+
+# تحقّق من حالة الخادم
+yarn twenty server status
+
+# بثّ سجلات الخادم
+yarn twenty server logs
+
+# أوقف الخادم
+yarn twenty server stop
+
+# أعد ضبط جميع البيانات وابدأ من جديد
+yarn twenty server reset
+```
+
+The local server comes pre-seeded with a workspace and user (`tim@apple.dev` / `tim@apple.dev`), so you can start developing immediately without any manual setup.
+
+### المصادقة
+
+Connect your app to the local server using OAuth:
+
+```bash filename="Terminal"
+# Authenticate via OAuth (opens browser)
+yarn twenty remote add --local
 ```
 
 يدعم المُنشئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
