@@ -14,7 +14,7 @@ export type CommandMenuItemConfig = {
   type: CommandMenuItemType;
   scope: CommandMenuItemScope;
   key: string;
-  label: MessageDescriptor | string;
+  label: Nullable<MessageDescriptor | string>;
   shortLabel?: Nullable<MessageDescriptor | string>;
   description?: MessageDescriptor | string;
   position: number;

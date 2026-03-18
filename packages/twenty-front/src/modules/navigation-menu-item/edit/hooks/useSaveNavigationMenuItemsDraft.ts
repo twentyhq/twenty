@@ -54,6 +54,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
       if (!isDefined(objectMetadataItem)) {
         continue;
       }
+
       if (objectMetadataItem.color === draftItem.color) {
         continue;
       }

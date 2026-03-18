@@ -26,6 +26,7 @@ import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
+import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -136,9 +137,13 @@ export class WorkspaceEventEmitterService {
     const enrichedMetadataEventBatch = isMetadata
       ? await this.enrichFieldMetadataEventsWithRelations(
           eventBatch as MetadataEventBatch,
-        ).then((batch) =>
-          this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(batch),
         )
+          .then((batch) =>
+            this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
+              batch,
+            ),
+          )
+          .then((batch) => this.resolveObjectMetadataStandardOverrides(batch))
       : undefined;
 
     for (const [streamChannelId, streamData] of streamsData) {
@@ -306,6 +311,65 @@ export class WorkspaceEventEmitterService {
     );
 
     return { ...metadataEventBatch, events: enrichedEvents };
+  }
+
+  private resolveObjectMetadataStandardOverrides(
+    metadataEventBatch: MetadataEventBatch,
+  ): MetadataEventBatch {
+    if (metadataEventBatch.metadataName !== 'objectMetadata') {
+      return metadataEventBatch;
+    }
+
+    const enrichedEvents = metadataEventBatch.events.map((event) => {
+      const enrichedProperties = { ...event.properties };
+
+      if (
+        'before' in enrichedProperties &&
+        isDefined(enrichedProperties.before)
+      ) {
+        enrichedProperties.before =
+          this.applyStandardOverridesToObjectMetadataRecord(
+            enrichedProperties.before as Record<string, unknown>,
+          ) as typeof enrichedProperties.before;
+      }
+
+      if (
+        'after' in enrichedProperties &&
+        isDefined(enrichedProperties.after)
+      ) {
+        enrichedProperties.after =
+          this.applyStandardOverridesToObjectMetadataRecord(
+            enrichedProperties.after as Record<string, unknown>,
+          ) as typeof enrichedProperties.after;
+      }
+
+      return { ...event, properties: enrichedProperties } as typeof event;
+    });
+
+    return { ...metadataEventBatch, events: enrichedEvents };
+  }
+
+  private applyStandardOverridesToObjectMetadataRecord(
+    record: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const standardOverrides = record.standardOverrides as
+      | Record<string, unknown>
+      | null
+      | undefined;
+
+    if (!isDefined(standardOverrides)) {
+      return record;
+    }
+
+    const resolved = { ...record };
+
+    for (const key of OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES) {
+      if (isDefined(standardOverrides[key])) {
+        resolved[key] = standardOverrides[key];
+      }
+    }
+
+    return resolved;
   }
 
   private async processObjectRecordStreamEvents(
