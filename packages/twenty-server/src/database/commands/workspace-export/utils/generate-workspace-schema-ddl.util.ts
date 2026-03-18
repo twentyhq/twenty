@@ -1,4 +1,6 @@
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -6,11 +8,15 @@ import {
   escapeIdentifier,
   escapeLiteral,
 } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-
-import { buildColumnDefinitionsForField } from 'src/database/commands/workspace-export/utils/build-column-definitions-for-field.util';
-import { buildEnumDefinitionsForField } from 'src/database/commands/workspace-export/utils/build-enum-definitions-for-field.util';
+import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
+import {
+  type CreateEnumOperationSpec,
+  EnumOperation,
+  collectEnumOperationsForObject,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
 
 export const generateWorkspaceSchemaDdl = (
+  workspaceId: string,
   schemaName: string,
   objectMetadatas: ObjectMetadataEntity[],
   fieldsByObjectId: Map<string, FieldMetadataEntity[]>,
@@ -26,24 +32,32 @@ export const generateWorkspaceSchemaDdl = (
     );
     const fieldMetadatas = fieldsByObjectId.get(objectMetadata.id) ?? [];
 
-    for (const fieldMetadata of fieldMetadatas) {
-      for (const enumDefinition of buildEnumDefinitionsForField(
-        fieldMetadata,
-        schemaName,
-        tableName,
-      )) {
-        const escapedEnumValues = enumDefinition.values
-          .map(escapeLiteral)
-          .join(', ');
+    const flatFieldMetadatas = fieldMetadatas as unknown as FlatFieldMetadata[];
+    const flatObjectMetadata =
+      objectMetadata as unknown as FlatObjectMetadata;
 
-        statements.push(
-          `CREATE TYPE ${enumDefinition.qualifiedName} AS ENUM (${escapedEnumValues});`,
-        );
-      }
+    const enumOperations = collectEnumOperationsForObject({
+      tableName,
+      operation: EnumOperation.CREATE,
+      flatFieldMetadatas,
+    });
+
+    for (const enumOperation of enumOperations) {
+      const createOp = enumOperation as CreateEnumOperationSpec;
+      const escapedValues = createOp.values.map(escapeLiteral).join(', ');
+
+      statements.push(
+        `CREATE TYPE ${escapeIdentifier(schemaName)}.${escapeIdentifier(createOp.enumName)} AS ENUM (${escapedValues});`,
+      );
     }
 
-    const columnDefinitions = fieldMetadatas.flatMap((fieldMetadata) =>
-      buildColumnDefinitionsForField(fieldMetadata, schemaName, tableName),
+    const columnDefinitions = flatFieldMetadatas.flatMap(
+      (flatFieldMetadata) =>
+        generateColumnDefinitions({
+          flatFieldMetadata,
+          flatObjectMetadata,
+          workspaceId,
+        }),
     );
 
     if (columnDefinitions.length === 0) continue;

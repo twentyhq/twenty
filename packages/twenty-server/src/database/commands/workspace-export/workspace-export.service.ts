@@ -118,6 +118,7 @@ export class WorkspaceExportService {
       );
 
       this.writeWorkspaceSchemaDdl(
+        workspaceId,
         schemaName,
         objectMetadatas,
         fieldsByObjectId,
@@ -125,6 +126,7 @@ export class WorkspaceExportService {
       );
 
       await this.writeWorkspaceDataRows(
+        workspaceId,
         schemaName,
         objectMetadatas,
         fieldsByObjectId,
@@ -260,6 +262,7 @@ export class WorkspaceExportService {
   }
 
   private writeWorkspaceSchemaDdl(
+    workspaceId: string,
     schemaName: string,
     objectMetadatas: ObjectMetadataEntity[],
     fieldsByObjectId: Map<string, FieldMetadataEntity[]>,
@@ -268,6 +271,7 @@ export class WorkspaceExportService {
     this.logger.log('Generating workspace schema DDL from metadata...');
 
     const ddlStatements = generateWorkspaceSchemaDdl(
+      workspaceId,
       schemaName,
       objectMetadatas,
       fieldsByObjectId,
@@ -283,6 +287,7 @@ export class WorkspaceExportService {
   }
 
   private async writeWorkspaceDataRows(
+    workspaceId: string,
     schemaName: string,
     objectMetadatas: ObjectMetadataEntity[],
     fieldsByObjectId: Map<string, FieldMetadataEntity[]>,
@@ -306,9 +311,9 @@ export class WorkspaceExportService {
         fieldsByObjectId.get(objectMetadata.id) ?? [];
 
       const { jsonColumns, generatedColumns } = buildWorkspaceTableColumnSets(
+        workspaceId,
+        objectMetadata,
         objectFieldMetadatas,
-        schemaName,
-        tableName,
       );
 
       try {
