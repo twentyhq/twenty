@@ -56,9 +56,10 @@ type BuildCommandMenuItemFromFrontComponentParams = {
   }) => void;
   mountHeadlessFrontComponent: (
     frontComponentId: string,
-    context?: HeadlessFrontComponentMountContext,
+    context: HeadlessFrontComponentMountContext,
   ) => void;
-  mountContext?: HeadlessFrontComponentMountContext;
+  recordId?: string;
+  objectNameSingular?: string;
   commandMenuContextApi: CommandMenuContextApi;
 };
 
@@ -70,7 +71,8 @@ const buildCommandMenuItemFromFrontComponent = ({
   getIcon,
   openFrontComponentInSidePanel,
   mountHeadlessFrontComponent,
-  mountContext,
+  recordId,
+  objectNameSingular,
   commandMenuContextApi,
 }: BuildCommandMenuItemFromFrontComponentParams) => {
   const displayLabel = item.label;
@@ -81,18 +83,20 @@ const buildCommandMenuItemFromFrontComponent = ({
 
   const handleClick = () => {
     if (isHeadless) {
-      mountHeadlessFrontComponent(item.frontComponentId, mountContext);
+      mountHeadlessFrontComponent(item.frontComponentId, {
+        commandMenuItemId: item.id,
+        recordId,
+        objectNameSingular,
+      });
     } else {
       openFrontComponentInSidePanel({
         frontComponentId: item.frontComponentId,
         pageTitle: displayLabel,
         pageIcon: Icon,
-        recordContext: isDefined(mountContext)
-          ? {
-              recordId: mountContext.recordId,
-              objectNameSingular: mountContext.objectNameSingular,
-            }
-          : undefined,
+        recordContext:
+          isDefined(recordId) && isDefined(objectNameSingular)
+            ? { recordId, objectNameSingular }
+            : undefined,
       });
     }
   };
@@ -115,6 +119,7 @@ const buildCommandMenuItemFromFrontComponent = ({
     component: isHeadless ? (
       <HeadlessFrontComponentCommandMenuItem
         frontComponentId={item.frontComponentId}
+        commandMenuItemId={item.id}
         onClick={handleClick}
       />
     ) : (
@@ -214,13 +219,10 @@ export const useCommandMenuItemsFromBackend = (
     selectedRecordIds.length >= 1 ||
     contextStoreTargetedRecordsRule.mode === 'exclusion';
 
-  const mountContext: HeadlessFrontComponentMountContext | undefined =
-    selectedRecordIds.length === 1 && isDefined(currentObjectMetadataItem)
-      ? {
-          recordId: selectedRecordIds[0],
-          objectNameSingular: currentObjectMetadataItem.nameSingular,
-        }
-      : undefined;
+  const recordId =
+    selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
+
+  const objectNameSingular = currentObjectMetadataItem?.nameSingular;
 
   const { data } = useQuery(FindManyCommandMenuItemsDocument);
 
@@ -268,7 +270,8 @@ export const useCommandMenuItemsFromBackend = (
         openFrontComponentInSidePanel,
         mountHeadlessFrontComponent,
         commandMenuContextApi,
-        mountContext,
+        recordId,
+        objectNameSingular,
       });
     }
 

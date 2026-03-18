@@ -1,7 +1,7 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const headlessFrontComponentProgressFamilyState =
+export const commandMenuItemProgressFamilyState =
   createAtomFamilyState<number | undefined, string>({
-    key: 'headlessFrontComponentProgressFamilyState',
+    key: 'commandMenuItemProgressFamilyState',
     defaultValue: undefined,
   });

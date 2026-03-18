@@ -18,6 +18,7 @@ export const HeadlessFrontComponentMountRoot = () => {
   const mountedHeadlessFrontComponentMaps = useAtomStateValue(
     mountedHeadlessFrontComponentMapsState,
   );
+
   const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
 
   return (
@@ -33,8 +34,8 @@ export const HeadlessFrontComponentMountRoot = () => {
               <LayoutRenderingProvider
                 value={{
                   targetRecordIdentifier:
-                    isDefined(mountContext) &&
-                    isDefined(mountContext.objectNameSingular)
+                    isDefined(mountContext.objectNameSingular) &&
+                    isDefined(mountContext.recordId)
                       ? {
                           id: mountContext.recordId,
                           targetObjectNameSingular:
@@ -45,7 +46,10 @@ export const HeadlessFrontComponentMountRoot = () => {
                   isInSidePanel: false,
                 }}
               >
-                <FrontComponentRenderer frontComponentId={frontComponentId} />
+                <FrontComponentRenderer
+                  frontComponentId={frontComponentId}
+                  commandMenuItemId={mountContext.commandMenuItemId}
+                />
               </LayoutRenderingProvider>
             </Suspense>
           </CommandMenuItemErrorBoundary>

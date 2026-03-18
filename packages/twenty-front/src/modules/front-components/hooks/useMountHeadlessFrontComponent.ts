@@ -11,11 +11,11 @@ export const useMountHeadlessFrontComponent = () => {
   const mountHeadlessFrontComponent = useCallback(
     (
       frontComponentId: string,
-      context?: HeadlessFrontComponentMountContext,
+      context: HeadlessFrontComponentMountContext,
     ) => {
       store.set(mountedHeadlessFrontComponentMapsState.atom, (previousMap) => {
         const next = new Map(previousMap);
-        next.set(frontComponentId, context ?? undefined);
+        next.set(frontComponentId, context);
         return next;
       });
     },

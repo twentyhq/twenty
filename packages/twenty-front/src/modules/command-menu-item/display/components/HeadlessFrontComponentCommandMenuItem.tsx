@@ -1,7 +1,7 @@
 import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
+import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
-import { headlessFrontComponentProgressFamilyState } from '@/front-components/states/headlessFrontComponentProgressFamilyState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useContext } from 'react';
@@ -10,9 +10,11 @@ import { CommandMenuItemDisplay } from './CommandMenuItemDisplay';
 
 export const HeadlessFrontComponentCommandMenuItem = ({
   frontComponentId,
+  commandMenuItemId,
   onClick,
 }: {
   frontComponentId: string;
+  commandMenuItemId: string;
   onClick: () => void;
 }) => {
   const commandMenuItemConfig = useContext(CommandConfigContext);
@@ -27,9 +29,9 @@ export const HeadlessFrontComponentCommandMenuItem = ({
     frontComponentId,
   );
 
-  const headlessFrontComponentProgress = useAtomFamilyStateValue(
-    headlessFrontComponentProgressFamilyState,
-    frontComponentId,
+  const commandMenuItemProgress = useAtomFamilyStateValue(
+    commandMenuItemProgressFamilyState,
+    commandMenuItemId,
   );
 
   if (!commandMenuItemConfig) {
@@ -49,7 +51,7 @@ export const HeadlessFrontComponentCommandMenuItem = ({
     <CommandMenuItemDisplay
       onClick={handleClick}
       disabled={isMounted}
-      progress={headlessFrontComponentProgress}
+      progress={commandMenuItemProgress}
       showDisabledLoader={isMounted}
     />
   );
