@@ -146,18 +146,33 @@ export const useMessages = ({
       }
 
       // Dedup outgoing agent messages: if a recent optimistic message
-      // has the same body, merge instead of adding a duplicate.
+      // matches by content, merge instead of adding a duplicate.
+      // For media messages (voice/image), WAHA returns body=null so we
+      // also match by mimetype when both messages have media.
       if (message.fromAgent) {
         const msgTime = new Date(message.messageTimestamp).getTime();
-        const optimisticMatch = prev.find(
-          (m) =>
-            m.fromAgent &&
-            m.tempId &&
-            m.body === message.body &&
-            Math.abs(
-              new Date(m.messageTimestamp).getTime() - msgTime,
-            ) < 60_000,
-        );
+        const optimisticMatch = prev.find((m) => {
+          if (!m.fromAgent || !m.tempId) return false;
+          const timeDiff = Math.abs(
+            new Date(m.messageTimestamp).getTime() - msgTime,
+          );
+          if (timeDiff >= 60_000) return false;
+
+          // Text match
+          if (m.body && message.body && m.body === message.body) return true;
+
+          // Media match: both have media with compatible mimetype
+          if (m.hasMedia && message.hasMedia) {
+            const mBase = (m.mediaMimetype ?? '').split(';')[0];
+            const msgBase = (message.mediaMimetype ?? '').split(';')[0];
+            if (mBase && msgBase && mBase === msgBase) return true;
+            // If incoming has no mimetype but is media, still match
+            // the only recent optimistic media message
+            if (m.hasMedia) return true;
+          }
+
+          return false;
+        });
 
         if (optimisticMatch) {
           return prev.map((m) =>

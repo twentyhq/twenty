@@ -10,7 +10,6 @@ import { useMopSummary } from '@/whatsapp-chat/hooks/useMopSummary';
 import { useMopDetails } from '@/whatsapp-chat/hooks/useMopDetails';
 import { useStrukturanalyse, type SaResult } from '@/whatsapp-chat/hooks/useStrukturanalyse';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
-import { useProfilePicture } from '@/whatsapp-chat/hooks/useProfilePicture';
 import { formatPhoneNumber } from '@/whatsapp-chat/utils/formatPhoneNumber';
 
 const ReactMarkdown = lazy(() => import('react-markdown'));
@@ -100,30 +99,6 @@ const StyledBody = styled.div`
   min-height: 0;
   overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledAvatar = styled.div<{ isClient?: boolean }>`
-  align-items: center;
-  align-self: center;
-  background: ${({ isClient }) =>
-    isClient ? '#1A6CFF' : '#E5E7EB'};
-  border-radius: 50%;
-  color: ${({ isClient }) =>
-    isClient ? '#FFFFFF' : '#374151'};
-  display: flex;
-  font-size: 24px;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: 72px;
-  justify-content: center;
-  width: 72px;
-`;
-
-const StyledProfilePicture = styled.img`
-  align-self: center;
-  border-radius: 50%;
-  height: 72px;
-  object-fit: cover;
-  width: 72px;
 `;
 
 const StyledContactName = styled.div`
@@ -1026,10 +1001,6 @@ export const ConversationDetails = ({
   );
   const { opportunities } =
     useCloseOpportunities(conversation.leadPhoneNumber);
-  const { pictureUrl } = useProfilePicture(
-    conversation.sessionName,
-    conversation.leadPhoneNumber,
-  );
   const contactEmail = contact?.email || conversation.contactEmail || null;
   const { summary: mopSummary, loading: mopSummaryLoading } =
     useMopSummary(contactEmail);
@@ -1055,14 +1026,6 @@ export const ConversationDetails = ({
     conversation.leadFullName ||
     conversation.whatsappName ||
     conversation.leadPhoneNumber;
-
-  const initials = displayName
-    .trim()
-    .split(/\s+/)
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
 
   const isClient = contact?.isClient || conversation.isClient;
 
@@ -1139,12 +1102,7 @@ export const ConversationDetails = ({
       </StyledTabs>
 
       <StyledBody>
-        {/* Avatar + Name always visible */}
-        {pictureUrl ? (
-          <StyledProfilePicture src={pictureUrl} alt={displayName} />
-        ) : (
-          <StyledAvatar isClient={isClient}>{initials || '?'}</StyledAvatar>
-        )}
+        {/* Name always visible */}
         <StyledContactName>{displayName}</StyledContactName>
         {conversation.leadPhoneNumber !== displayName && (
           <StyledContactSubtext>
