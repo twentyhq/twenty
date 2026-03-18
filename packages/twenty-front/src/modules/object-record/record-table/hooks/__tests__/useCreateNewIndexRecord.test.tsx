@@ -104,6 +104,7 @@ jest.mock('@/object-record/components/CompanyDuplicateWarningModal', () => ({
     isOpen,
     onCancel,
     onContinueAnyway,
+    onNavigateToDuplicate,
     onRetry,
   }) =>
     isOpen ? (
@@ -116,6 +117,7 @@ jest.mock('@/object-record/components/CompanyDuplicateWarningModal', () => ({
           </div>
         ))}
         {errorMessage ? <div>{errorMessage}</div> : null}
+        <button onClick={onNavigateToDuplicate}>Open duplicate</button>
         <button onClick={onContinueAnyway}>Continue anyway</button>
         <button onClick={onRetry}>Retry</button>
         <button onClick={onCancel}>Cancel</button>
@@ -194,5 +196,33 @@ describe('useCreateNewIndexRecord', () => {
         name: 'Acme Corp',
       });
     });
+  });
+
+  it('cancels the pending create when navigating to a duplicate company', async () => {
+    mockCheckDuplicateCompanies.mockResolvedValue([
+      {
+        domainName: 'acme.com',
+        id: 'duplicate-company-id',
+        name: 'Acme Corp',
+      },
+    ]);
+
+    const user = userEvent.setup();
+
+    render(<Harness />);
+
+    const createPromise = user.click(screen.getByRole('button', { name: 'Create' }));
+
+    await screen.findByRole('button', { name: 'Open duplicate' });
+    await user.click(screen.getByRole('button', { name: 'Open duplicate' }));
+
+    await createPromise;
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText('Potential duplicate companies'),
+      ).not.toBeInTheDocument();
+    });
+    expect(mockCreateOneRecord).not.toHaveBeenCalled();
   });
 });

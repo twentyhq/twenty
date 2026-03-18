@@ -17,6 +17,7 @@ export type LinkChipProps = Omit<
 > & {
   to: string;
   onClick?: (event: MouseEvent<HTMLElement>) => void;
+  onBeforeNavigation?: () => void;
   onMouseDown?: (event: MouseEvent<HTMLElement>) => void;
   triggerEvent?: TriggerEventType;
   target?: '_blank' | '_self';
@@ -40,6 +41,7 @@ export const LinkChip = ({
   accent = ChipAccent.TextPrimary,
   className,
   maxWidth,
+  onBeforeNavigation,
   onClick,
   triggerEvent,
   target,
@@ -48,6 +50,7 @@ export const LinkChip = ({
   const { onClick: onClickHandler, onMouseDown: onMouseDownHandler } =
     useMouseDownNavigation({
       to: to,
+      onBeforeNavigation,
       onClick: onClick,
       triggerEvent,
     });

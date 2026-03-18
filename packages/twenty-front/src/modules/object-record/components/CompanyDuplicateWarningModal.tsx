@@ -11,6 +11,7 @@ type CompanyDuplicateWarningModalProps = {
   isOpen: boolean;
   onCancel: () => void;
   onContinueAnyway: () => void;
+  onNavigateToDuplicate?: () => void;
   onRetry: () => void;
 };
 
@@ -22,6 +23,7 @@ export const CompanyDuplicateWarningModal = ({
   isOpen,
   onCancel,
   onContinueAnyway,
+  onNavigateToDuplicate,
   onRetry,
 }: CompanyDuplicateWarningModalProps) => {
   const { closeModal, openModal } = useModal();
@@ -60,8 +62,8 @@ export const CompanyDuplicateWarningModal = ({
             {duplicates.map((duplicate) => (
               <div key={duplicate.id}>
                 <RecordChip
-                  forceDisableClick
                   objectNameSingular="company"
+                  onBeforeNavigation={onNavigateToDuplicate}
                   record={duplicate}
                 />
                 <div>{getCompanyDomainName(duplicate as any) ?? ''}</div>

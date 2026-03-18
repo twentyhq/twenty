@@ -31,6 +31,7 @@ export type RecordChipProps = {
   isLabelHidden?: boolean;
   isIconHidden?: boolean;
   triggerEvent?: TriggerEventType;
+  onBeforeNavigation?: () => void;
   onClick?: (event: MouseEvent) => void;
 };
 
@@ -46,6 +47,7 @@ export const RecordChip = ({
   isLabelHidden = false,
   isIconHidden = false,
   triggerEvent = 'MOUSE_DOWN',
+  onBeforeNavigation,
   onClick,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
@@ -125,6 +127,7 @@ export const RecordChip = ({
         variant ??
         (!forceDisableClick ? ChipVariant.Highlighted : ChipVariant.Transparent)
       }
+      onBeforeNavigation={onBeforeNavigation}
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}

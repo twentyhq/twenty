@@ -339,6 +339,7 @@ export const useCreateNewIndexRecord = ({
         isOpen={isDefined(pendingDuplicateWarningState)}
         onCancel={handleCancelDuplicateWarning}
         onContinueAnyway={handleContinueAnyway}
+        onNavigateToDuplicate={handleCancelDuplicateWarning}
         onRetry={handleRetryDuplicateCheck}
       />
     ),

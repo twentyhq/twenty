@@ -11,8 +11,10 @@ jest.mock('@/ui/layout/modal/hooks/useModal', () => ({
 }));
 
 jest.mock('@/object-record/components/RecordChip', () => ({
-  RecordChip: ({ record }: { record: { name: string } }) => (
-    <div>{record.name}</div>
+  RecordChip: ({ onBeforeNavigation, record }) => (
+    <button onClick={onBeforeNavigation} type="button">
+      {record.name}
+    </button>
   ),
 }));
 
@@ -89,5 +91,31 @@ describe('CompanyDuplicateWarningModal', () => {
 
     expect(onRetry).toHaveBeenCalledTimes(1);
     expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls the duplicate navigation callback when a duplicate chip is clicked', async () => {
+    const onNavigateToDuplicate = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <CompanyDuplicateWarningModal
+        duplicates={[
+          {
+            domainName: 'acme.com',
+            id: 'duplicate-company-id',
+            name: 'Acme Corp',
+          } as any,
+        ]}
+        isOpen={true}
+        onCancel={jest.fn()}
+        onContinueAnyway={jest.fn()}
+        onNavigateToDuplicate={onNavigateToDuplicate}
+        onRetry={jest.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Acme Corp' }));
+
+    expect(onNavigateToDuplicate).toHaveBeenCalledTimes(1);
   });
 });
