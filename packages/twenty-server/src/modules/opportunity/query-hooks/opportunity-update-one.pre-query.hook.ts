@@ -17,7 +17,7 @@ import { StateTransitionValidatorService } from 'src/engine/core-modules/state-t
 import { type StateTransitionConfig } from 'src/engine/core-modules/state-transition/types/state-transition-config.type';
 
 // Add columns here when new rules require additional fields to be fetched
-const OPPORTUNITY_VALIDATION_COLUMNS = ['"stage"', '"companyId"'];
+export const OPPORTUNITY_VALIDATION_COLUMNS = ['"stage"', '"companyId"'];
 
 // To add a rule: append to this array. No other changes needed.
 export const OPPORTUNITY_TRANSITION_CONFIG: StateTransitionConfig = {
