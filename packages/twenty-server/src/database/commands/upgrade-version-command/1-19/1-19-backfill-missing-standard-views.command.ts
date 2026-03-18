@@ -171,12 +171,11 @@ export class BackfillMissingStandardViewsCommand extends ActiveOrSuspendedWorksp
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      this.logger.error(
-        `Failed to backfill missing standard views:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+      this.logger.warn(
+        `Failed to backfill missing standard views for workspace ${workspaceId}, skipping:\n${JSON.stringify(validateAndBuildResult)}`,
       );
-      throw new Error(
-        `Failed to backfill missing standard views for workspace ${workspaceId}`,
-      );
+
+      return;
     }
 
     this.logger.log(

@@ -1,5 +1,6 @@
 export {
   AggregateOperations,
+  NavigationMenuItemType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
 } from 'twenty-shared/types';

@@ -19,7 +19,7 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/sta
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
-import { isWorkspaceDroppableId } from '@/navigation-menu-item/common/utils/isWorkspaceDroppableId';
+import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -54,7 +54,10 @@ export const useHandleAddToNavigationDrop = () => {
       if (
         source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID ||
         !destination ||
-        !isWorkspaceDroppableId(destination.droppableId)
+        !canNavigationMenuItemBeDroppedIn({
+          navigationMenuItemSection: 'workspace',
+          droppableId: destination.droppableId,
+        })
       ) {
         return;
       }

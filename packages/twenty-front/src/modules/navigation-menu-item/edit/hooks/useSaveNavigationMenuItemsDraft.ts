@@ -23,9 +23,6 @@ export const useSaveNavigationMenuItemsDraft = () => {
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
   const [createNavigationMenuItemMutation] = useMutation(
     CreateNavigationMenuItemDocument,
-    {
-      refetchQueries: ['FindManyNavigationMenuItems'],
-    },
   );
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 

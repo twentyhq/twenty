@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -12,8 +11,8 @@ import { NavigationMenuItemResolver } from 'src/engine/metadata-modules/navigati
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
 import { NavigationMenuItemDeletionService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-deletion.service';
+import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -25,8 +24,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FlatNavigationMenuItemModule,
     PermissionsModule,
     FileModule,
-    UserRoleModule,
-    ApiKeyModule,
   ],
   providers: [
     NavigationMenuItemService,
@@ -35,9 +32,13 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     NavigationMenuItemDeletionListener,
     NavigationMenuItemDeletionJob,
     NavigationMenuItemResolver,
+    NavigationMenuItemRecordIdentifierService,
     NavigationMenuItemGraphqlApiExceptionInterceptor,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
   ],
-  exports: [NavigationMenuItemService],
+  exports: [
+    NavigationMenuItemService,
+    NavigationMenuItemRecordIdentifierService,
+  ],
 })
 export class NavigationMenuItemModule {}
