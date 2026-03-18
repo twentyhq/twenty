@@ -1,73 +1,47 @@
-import { Action } from '@/action-menu/actions/components/Action';
+import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { ChangePaymentPlanFormModal } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/ChangePaymentPlanFormModal';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLingui } from '@lingui/react/macro';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
+import { useContext } from 'react';
 
 export const ChangePaymentPlanAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
   const { objectMetadataItem } = useRecordIndexIdFromCurrentContextStore();
-  const { t } = useLingui();
 
-  const { record } = useFindOneRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    objectRecordId: recordId,
-  });
+  const { openModal } = useModal();
 
-  const { updateOneRecord } = useUpdateOneRecord();
-  const { enqueueDialog } = useDialogManager();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const actionConfig = useContext(ActionConfigContext);
+  const { actionMenuType } = useContext(ActionMenuContext);
+  const modalId = `${actionConfig?.key}-payment-modal-${actionMenuType}`;
+
+  const isModalOpened = useRecoilComponentValueV2(
+    isModalOpenedComponentState,
+    modalId,
+  );
 
   const handleClick = () => {
-    if (!record) {
-      return;
-    }
-
-    const currentPaymentStatus = (record.paymentStatus as string) || t`Not set`;
-    const newPaymentStatus =
-      currentPaymentStatus === 'INSTALLMENTS' ? 'PAID' : 'INSTALLMENTS';
-    const newPaymentLabel =
-      newPaymentStatus === 'INSTALLMENTS' ? t`Installments` : t`Paid (Upfront)`;
-
-    enqueueDialog({
-      title: t`Change Payment Plan`,
-      message: t`Current payment status: ${currentPaymentStatus}\n\nSwitch to: ${newPaymentLabel}`,
-      buttons: [
-        {
-          title: t`Cancel`,
-          variant: 'secondary',
-        },
-        {
-          title: t`Switch to ${newPaymentLabel}`,
-          variant: 'primary',
-          accent: 'blue',
-          role: 'confirm',
-          onClick: async () => {
-            try {
-              await updateOneRecord({
-                objectNameSingular: objectMetadataItem.nameSingular,
-                idToUpdate: recordId,
-                updateOneRecordInput: {
-                  paymentStatus: newPaymentStatus,
-                },
-              });
-
-              enqueueSuccessSnackBar({
-                message: t`Payment plan changed to ${newPaymentLabel}`,
-              });
-            } catch {
-              enqueueErrorSnackBar({
-                message: t`Failed to change payment plan`,
-              });
-            }
-          },
-        },
-      ],
-    });
+    openModal(modalId);
   };
 
-  return <Action onClick={handleClick} />;
+  if (!actionConfig) {
+    return null;
+  }
+
+  return (
+    <>
+      <ActionDisplay onClick={handleClick} />
+      {isModalOpened && (
+        <ChangePaymentPlanFormModal
+          modalId={modalId}
+          recordId={recordId}
+          objectNameSingular={objectMetadataItem.nameSingular}
+        />
+      )}
+    </>
+  );
 };
