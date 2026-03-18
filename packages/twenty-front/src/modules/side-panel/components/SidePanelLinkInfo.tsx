@@ -4,7 +4,7 @@ import { IconLink, IconWorld } from 'twenty-ui/display';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/hooks/useUpdateLinkInDraft';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
@@ -24,7 +24,7 @@ export const SidePanelLinkInfo = () => {
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
-  const items = useWorkspaceSectionItems();
+  const items = useNavigationMenuItemSectionItems();
   const { updateLinkInDraft } = useUpdateLinkInDraft();
 
   const defaultLabel = t`Link label`;

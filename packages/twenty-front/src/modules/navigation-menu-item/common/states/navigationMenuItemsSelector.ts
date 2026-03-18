@@ -8,7 +8,8 @@ export const navigationMenuItemsSelector = createAtomSelector<
   key: 'navigationMenuItemsSelector',
   get: ({ get }) => {
     const entry = get(metadataStoreState, 'navigationMenuItems');
+    const items = entry.current as unknown as NavigationMenuItem[];
 
-    return entry.current as unknown as NavigationMenuItem[];
+    return items;
   },
 });

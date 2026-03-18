@@ -16,6 +16,11 @@ export class CreateNavigationMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
   userWorkspaceId?: string;
 
   @IsUUID()

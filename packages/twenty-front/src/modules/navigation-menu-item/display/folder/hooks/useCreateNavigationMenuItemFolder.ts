@@ -11,9 +11,6 @@ export const useCreateNavigationMenuItemFolder = () => {
 
   const [createNavigationMenuItemMutation] = useMutation(
     CreateNavigationMenuItemDocument,
-    {
-      refetchQueries: ['FindManyNavigationMenuItems'],
-    },
   );
 
   const createNewNavigationMenuItemFolder = async (
@@ -23,20 +20,16 @@ export const useCreateNavigationMenuItemFolder = () => {
       return;
     }
 
-    const folderNavigationMenuItems = navigationMenuItems.filter(
+    const topLevelItems = navigationMenuItems.filter(
       (item) =>
-        isDefined(item.name) &&
-        !item.folderId &&
-        !item.targetRecordId &&
-        !item.targetObjectMetadataId &&
-        !item.viewId &&
+        !isDefined(item.folderId) &&
         item.userWorkspaceId === currentWorkspaceMemberId,
     );
 
-    const maxPosition = Math.max(
-      ...folderNavigationMenuItems.map((item) => item.position),
-      0,
-    );
+    const minPosition =
+      topLevelItems.length > 0
+        ? Math.min(...topLevelItems.map((item) => item.position))
+        : 1;
 
     await createNavigationMenuItemMutation({
       variables: {
@@ -47,7 +40,7 @@ export const useCreateNavigationMenuItemFolder = () => {
           targetObjectMetadataId: null,
           userWorkspaceId: currentWorkspaceMemberId,
           folderId: null,
-          position: maxPosition + 1,
+          position: minPosition - 1,
         },
       },
     });
