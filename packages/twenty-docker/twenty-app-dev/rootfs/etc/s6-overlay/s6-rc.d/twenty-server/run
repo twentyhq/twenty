@@ -1,6 +1,3 @@
 #!/bin/sh
-if [ -f /tmp/generated-app-secret ]; then
-  export APP_SECRET=$(cat /tmp/generated-app-secret)
-fi
 cd /app/packages/twenty-server
 exec yarn start:prod

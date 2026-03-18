@@ -119,7 +119,6 @@ import {
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { LIGHT_MAX_RECORDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/light-seed.constants';
 
 type RecordSeedConfig = {
   tableName: string;
@@ -401,16 +400,12 @@ export class DevSeederDataService {
             return;
           }
 
-          const seeds = light
-            ? recordSeedsConfig.recordSeeds.slice(0, LIGHT_MAX_RECORDS)
-            : recordSeedsConfig.recordSeeds;
-
           await this.seedRecords({
             entityManager,
             schemaName,
             tableName: recordSeedsConfig.tableName,
             pgColumns: recordSeedsConfig.pgColumns,
-            recordSeeds: seeds,
+            recordSeeds: recordSeedsConfig.recordSeeds,
           });
         }),
       );

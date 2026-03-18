@@ -66,7 +66,7 @@ export const registerServerCommands = (program: Command): void => {
     .description('Start a local Twenty server')
     .option('-p, --port <port>', 'HTTP port', String(DEFAULT_PORT))
     .action(async (options: { port: string }) => {
-      const port = validatePort(options.port);
+      let port = validatePort(options.port);
 
       if (await checkServerHealth(port)) {
         console.log(
@@ -83,8 +83,19 @@ export const registerServerCommands = (program: Command): void => {
       }
 
       if (containerExists()) {
+        const existingPort = getContainerPort();
+
+        if (existingPort !== port) {
+          console.log(
+            chalk.yellow(
+              `Existing container uses port ${existingPort}. Run 'yarn twenty server reset' first to change ports.`,
+            ),
+          );
+        }
+
         console.log(chalk.gray('Starting existing container...'));
         execSync(`docker start ${CONTAINER_NAME}`, { stdio: 'ignore' });
+        port = existingPort;
       } else {
         try {
           execSync('docker info', { stdio: 'ignore' });
