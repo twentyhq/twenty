@@ -33,8 +33,8 @@ import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/comp
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS } from '@/page-layout/constants/StandardPageLayoutTabTitleTranslations';
 import { useIsCurrentObjectCustom } from '@/page-layout/hooks/useIsCurrentObjectCustom';
-import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
@@ -114,7 +114,7 @@ export const PageLayoutTabList = ({
   const shouldTranslateTabTitles = !isCustom;
 
   const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
-    'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as FeatureFlagKey,
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
   );
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({

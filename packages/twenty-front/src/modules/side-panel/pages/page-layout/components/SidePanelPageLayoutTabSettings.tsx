@@ -1,10 +1,9 @@
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelPageLayoutTabSettings = () => {
-  const { pageLayoutId, recordId } =
-    usePageLayoutIdFromContextStoreTargetedRecord();
+  const { pageLayoutId, recordId } = usePageLayoutIdFromContextStore();
 
   if (!isDefined(pageLayoutId)) {
     return null;
