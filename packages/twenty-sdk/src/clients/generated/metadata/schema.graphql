@@ -1236,47 +1236,6 @@ enum PageLayoutType {
   DASHBOARD
 }
 
-type FileWithSignedUrl {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
-  url: String!
-}
-
-type RecordIdentifier {
-  id: UUID!
-  labelIdentifier: String!
-  imageIdentifier: String
-}
-
-type NavigationMenuItem {
-  id: UUID!
-  userWorkspaceId: UUID
-  targetRecordId: UUID
-  targetObjectMetadataId: UUID
-  viewId: UUID
-  type: NavigationMenuItemType!
-  name: String
-  link: String
-  icon: String
-  color: String
-  folderId: UUID
-  position: Float!
-  applicationId: UUID
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  targetRecordIdentifier: RecordIdentifier
-}
-
-enum NavigationMenuItemType {
-  VIEW
-  FOLDER
-  LINK
-  OBJECT
-  RECORD
-}
-
 type ObjectRecordEventProperties {
   updatedFields: [String!]
   before: JSON
@@ -1323,10 +1282,15 @@ type ObjectRecordEventWithQueryIds {
   objectRecordEvent: ObjectRecordEvent!
 }
 
+type MetadataEventWithQueryIds {
+  queryIds: [String!]!
+  metadataEvent: MetadataEvent!
+}
+
 type EventSubscription {
   eventStreamId: String!
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
-  metadataEvents: [MetadataEvent!]!
+  metadataEventsWithQueryIds: [MetadataEventWithQueryIds!]!
 }
 
 type OnDbEvent {
@@ -1523,6 +1487,14 @@ type ApprovedAccessDomain {
   createdAt: DateTime!
 }
 
+type FileWithSignedUrl {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+  url: String!
+}
+
 type WorkspaceInvitation {
   id: UUID!
   email: String!
@@ -1641,6 +1613,7 @@ enum FeatureFlagKey {
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
+  IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
 }
 
 type SSOIdentityProvider {
@@ -1955,6 +1928,39 @@ type CheckUserExist {
 
 type WorkspaceInviteHashValid {
   isValid: Boolean!
+}
+
+type RecordIdentifier {
+  id: UUID!
+  labelIdentifier: String!
+  imageIdentifier: String
+}
+
+type NavigationMenuItem {
+  id: UUID!
+  userWorkspaceId: UUID
+  targetRecordId: UUID
+  targetObjectMetadataId: UUID
+  viewId: UUID
+  type: NavigationMenuItemType!
+  name: String
+  link: String
+  icon: String
+  color: String
+  folderId: UUID
+  position: Float!
+  applicationId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  targetRecordIdentifier: RecordIdentifier
+}
+
+enum NavigationMenuItemType {
+  VIEW
+  FOLDER
+  LINK
+  OBJECT
+  RECORD
 }
 
 type LogicFunctionExecutionResult {
@@ -2925,8 +2931,6 @@ type EventLogQueryResult {
 }
 
 type Query {
-  navigationMenuItems: [NavigationMenuItem!]!
-  navigationMenuItem(id: UUID!): NavigationMenuItem
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
@@ -2980,11 +2984,13 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
+  navigationMenuItems: [NavigationMenuItem!]!
+  navigationMenuItem(id: UUID!): NavigationMenuItem
+  apiKeys: [ApiKey!]!
+  apiKey(input: GetApiKeyInput!): ApiKey
   getRoles: [Role!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
-  apiKeys: [ApiKey!]!
-  apiKey(input: GetApiKeyInput!): ApiKey
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
   field(
@@ -3171,15 +3177,6 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
-  createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
-  updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
-  deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
-  uploadAIChatFile(file: Upload!): FileWithSignedUrl!
-  uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
-  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
-  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
-  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
-  uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   createObjectEvent(event: String!, recordId: UUID!, objectMetadataId: UUID!, properties: JSON): Analytics!
   trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
@@ -3227,6 +3224,12 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
+  uploadAIChatFile(file: Upload!): FileWithSignedUrl!
+  uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
+  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
+  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
+  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
+  uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
@@ -3237,6 +3240,13 @@ type Mutation {
   cancelSwitchMeteredPrice: BillingUpdate!
   refreshEnterpriseValidityToken: Boolean!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
+  createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
+  updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
+  deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
+  createApiKey(input: CreateApiKeyInput!): ApiKey!
+  updateApiKey(input: UpdateApiKeyInput!): ApiKey
+  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
+  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3255,10 +3265,6 @@ type Mutation {
   createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
   deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
-  createApiKey(input: CreateApiKeyInput!): ApiKey!
-  updateApiKey(input: UpdateApiKeyInput!): ApiKey
-  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
-  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
@@ -3373,41 +3379,6 @@ input RemoveQueryFromEventStreamInput {
   queryId: String!
 }
 
-input CreateNavigationMenuItemInput {
-  id: UUID
-  userWorkspaceId: UUID
-  targetRecordId: UUID
-  targetObjectMetadataId: UUID
-  viewId: UUID
-  type: NavigationMenuItemType!
-  name: String
-  link: String
-  icon: String
-  color: String
-  folderId: UUID
-  position: Float
-}
-
-input UpdateOneNavigationMenuItemInput {
-  """The id of the record to update"""
-  id: UUID!
-
-  """The record to update"""
-  update: UpdateNavigationMenuItemInput!
-}
-
-input UpdateNavigationMenuItemInput {
-  folderId: UUID
-  position: Float
-  name: String
-  link: String
-  icon: String
-  color: String
-}
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
-
 enum AnalyticsType {
   PAGEVIEW
   TRACK
@@ -3444,12 +3415,14 @@ input CreatePageLayoutTabInput {
   title: String!
   position: Float
   pageLayoutId: UUID!
+  layoutMode: PageLayoutTabLayoutMode = GRID
 }
 
 input UpdatePageLayoutTabInput {
   title: String
   position: Float
   icon: String
+  layoutMode: PageLayoutTabLayoutMode
 }
 
 input CreatePageLayoutInput {
@@ -3476,6 +3449,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
   title: String!
   position: Float!
   icon: String
+  layoutMode: PageLayoutTabLayoutMode = GRID
   widgets: [UpdatePageLayoutWidgetWithIdInput!]!
 }
 
@@ -3828,6 +3802,58 @@ input UpdateAgentInput {
   evaluationInputs: [String!]
 }
 
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input CreateNavigationMenuItemInput {
+  userWorkspaceId: UUID
+  targetRecordId: UUID
+  targetObjectMetadataId: UUID
+  viewId: UUID
+  type: NavigationMenuItemType!
+  name: String
+  link: String
+  icon: String
+  color: String
+  folderId: UUID
+  position: Float
+}
+
+input UpdateOneNavigationMenuItemInput {
+  """The id of the record to update"""
+  id: UUID!
+
+  """The record to update"""
+  update: UpdateNavigationMenuItemInput!
+}
+
+input UpdateNavigationMenuItemInput {
+  folderId: UUID
+  position: Float
+  name: String
+  link: String
+  icon: String
+  color: String
+}
+
+input CreateApiKeyInput {
+  name: String!
+  expiresAt: String!
+  revokedAt: String
+  roleId: UUID!
+}
+
+input UpdateApiKeyInput {
+  id: UUID!
+  name: String
+  expiresAt: String
+  revokedAt: String
+}
+
+input RevokeApiKeyInput {
+  id: UUID!
+}
+
 input CreateRoleInput {
   id: String
   label: String!
@@ -3935,24 +3961,6 @@ input DeleteApprovedAccessDomainInput {
 input ValidateApprovedAccessDomainInput {
   validationToken: String!
   approvedAccessDomainId: UUID!
-}
-
-input CreateApiKeyInput {
-  name: String!
-  expiresAt: String!
-  revokedAt: String
-  roleId: UUID!
-}
-
-input UpdateApiKeyInput {
-  id: UUID!
-  name: String
-  expiresAt: String
-  revokedAt: String
-}
-
-input RevokeApiKeyInput {
-  id: UUID!
 }
 
 input CreateOneFieldMetadataInput {
