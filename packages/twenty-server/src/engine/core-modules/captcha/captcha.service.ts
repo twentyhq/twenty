@@ -6,9 +6,7 @@ import { type CaptchaValidateResult } from 'src/engine/core-modules/captcha/inte
 
 @Injectable()
 export class CaptchaService implements CaptchaDriver {
-  constructor(
-    private readonly captchaDriverFactory: CaptchaDriverFactory,
-  ) {}
+  constructor(private readonly captchaDriverFactory: CaptchaDriverFactory) {}
 
   async validate(token: string): Promise<CaptchaValidateResult> {
     const driver = this.captchaDriverFactory.getCurrentDriver();
