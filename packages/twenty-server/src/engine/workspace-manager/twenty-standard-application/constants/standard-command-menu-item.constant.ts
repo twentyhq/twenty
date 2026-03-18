@@ -6,7 +6,7 @@ import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-ite
 export const STANDARD_COMMAND_MENU_ITEMS = {
   navigateToNextRecord: {
     universalIdentifier: '3db2457d-8e96-4b8e-94c9-ed95d3f95738',
-    label: 'Navigate to next record',
+    label: 'Navigate to next ${capitalize(objectMetadataItem.labelSingular)}',
     shortLabel: null,
     icon: 'IconChevronDown',
     position: 0,
@@ -21,7 +21,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   navigateToPreviousRecord: {
     universalIdentifier: 'ec10f871-415b-420b-8150-7e09f6f04833',
-    label: 'Navigate to previous record',
+    label:
+      'Navigate to previous ${capitalize(objectMetadataItem.labelSingular)}',
     shortLabel: null,
     icon: 'IconChevronUp',
     position: 1,
@@ -36,8 +37,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   createNewRecord: {
     universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
-    label: 'Create new record',
-    shortLabel: 'New record',
+    label: 'Create new ${capitalize(objectMetadataItem.labelSingular)}',
+    shortLabel: 'New ${capitalize(objectMetadataItem.labelSingular)}',
     icon: 'IconPlus',
     position: 2,
     isPinned: true,
@@ -66,7 +67,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   deleteMultipleRecords: {
     universalIdentifier: 'cde86f1f-2c13-42b1-812b-f2b2b468cb83',
-    label: 'Delete records',
+    label: 'Delete ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Delete',
     icon: 'IconTrash',
     position: 4,
@@ -81,7 +82,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   restoreSingleRecord: {
     universalIdentifier: '8b3a1cae-3e4d-43c1-a71f-48592b2e47ff',
-    label: 'Restore record',
+    label: 'Restore ${capitalize(objectMetadataItem.labelSingular)}',
     shortLabel: 'Restore',
     icon: 'IconRefresh',
     position: 5,
@@ -96,7 +97,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   restoreMultipleRecords: {
     universalIdentifier: '8b740c9d-d99a-45a8-812f-809caaf420ac',
-    label: 'Restore records',
+    label: 'Restore ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Restore',
     icon: 'IconRefresh',
     position: 6,
@@ -111,7 +112,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   destroySingleRecord: {
     universalIdentifier: '44a78417-c394-4bc8-961f-98b503030ddb',
-    label: 'Permanently destroy record',
+    label:
+      'Permanently destroy ${capitalize(objectMetadataItem.labelSingular)}',
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
     position: 7,
@@ -126,7 +128,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   destroyMultipleRecords: {
     universalIdentifier: 'c630b3fb-7920-40d1-9906-77d0aa797608',
-    label: 'Permanently destroy records',
+    label: 'Permanently destroy ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
     position: 8,
@@ -141,7 +143,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   addToFavorites: {
     universalIdentifier: '38bf80c3-bd55-4753-80ba-38aa66429a03',
-    label: 'Add to favorites',
+    label: 'Add to Favorites',
     shortLabel: null,
     icon: 'IconHeart',
     position: 9,
@@ -156,7 +158,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   removeFromFavorites: {
     universalIdentifier: '3ea42507-44fa-4895-a36d-cbfef7355a50',
-    label: 'Remove from favorites',
+    label: 'Remove from Favorites',
     shortLabel: null,
     icon: 'IconHeartOff',
     position: 10,
@@ -214,7 +216,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   updateMultipleRecords: {
     universalIdentifier: '2e080651-f098-4a78-bea9-7a70002dc57c',
-    label: 'Update records',
+    label: 'Update ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Update',
     icon: 'IconEdit',
     position: 14,
@@ -229,7 +231,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   mergeMultipleRecords: {
     universalIdentifier: '6c14eb04-8e7e-4d47-93c0-8ec4834e2e60',
-    label: 'Merge records',
+    label: 'Merge ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Merge',
     icon: 'IconArrowMerge',
     position: 15,
@@ -244,7 +246,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   exportMultipleRecords: {
     universalIdentifier: 'f71f68e5-7b6e-4c03-8161-c48434d7777c',
-    label: 'Export records',
+    label: 'Export ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Export',
     icon: 'IconFileExport',
     position: 16,
@@ -258,7 +260,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   importRecords: {
     universalIdentifier: 'a2dc9de7-4798-422e-bb55-bfad7b9bdbe8',
-    label: 'Import records',
+    label: 'Import ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Import',
     icon: 'IconFileImport',
     position: 17,
@@ -272,7 +274,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   exportView: {
     universalIdentifier: '80680f2a-c426-48b3-a839-c63a6183dc4b',
-    label: 'Export view',
+    label: 'Export View',
     shortLabel: 'Export',
     icon: 'IconFileExport',
     position: 18,
@@ -286,8 +288,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeDeletedRecords: {
     universalIdentifier: 'd63c21c3-9785-4750-be87-5f36269b8e0d',
-    label: 'See deleted records',
-    shortLabel: 'Deleted records',
+    label: 'See deleted ${capitalize(objectMetadataItem.labelPlural)}',
+    shortLabel: 'Deleted ${capitalize(objectMetadataItem.labelPlural)}',
     icon: 'IconRotate2',
     position: 19,
     isPinned: false,
@@ -314,7 +316,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   hideDeletedRecords: {
     universalIdentifier: '1420db7f-0fba-49e2-b23e-4b7caa0fafa0',
-    label: 'Hide deleted records',
+    label: 'Hide deleted ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Hide deleted',
     icon: 'IconEyeOff',
     position: 21,
@@ -584,8 +586,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeActiveVersionWorkflow: {
     universalIdentifier: '31790508-75ff-4e4c-a768-83bd1b0718e0',
-    label: 'See active version',
-    shortLabel: 'See active version',
+    label: 'See Active Version',
+    shortLabel: 'See Active Version',
     icon: 'IconVersions',
     position: 46,
     isPinned: false,
@@ -600,8 +602,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeRunsWorkflow: {
     universalIdentifier: 'e57efc2d-00a2-493a-b76c-f2dabd23a5eb',
-    label: 'See runs',
-    shortLabel: 'See runs',
+    label: 'See Runs',
+    shortLabel: 'See Runs',
     icon: 'IconHistoryToggle',
     position: 47,
     isPinned: true,
@@ -616,8 +618,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeVersionsWorkflow: {
     universalIdentifier: '92781d24-b875-4282-8cdb-d127f04a5c7d',
-    label: 'See versions history',
-    shortLabel: 'See versions',
+    label: 'See Versions History',
+    shortLabel: 'See Versions',
     icon: 'IconVersions',
     position: 48,
     isPinned: false,
@@ -632,8 +634,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   addNodeWorkflow: {
     universalIdentifier: '818117fa-6cad-4ebc-83c1-40f4afc28d94',
-    label: 'Add a node',
-    shortLabel: 'Add a node',
+    label: 'Add a Node',
+    shortLabel: 'Add a Node',
     icon: 'IconPlus',
     position: 49,
     isPinned: true,
@@ -648,7 +650,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   tidyUpWorkflow: {
     universalIdentifier: '1f3a3cab-161a-4775-af47-11be4d0bf411',
-    label: 'Tidy up workflow',
+    label: 'Tidy up Workflow',
     shortLabel: 'Tidy up',
     icon: 'IconReorder',
     position: 50,
@@ -680,8 +682,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToRuns: {
     universalIdentifier: '1ba959da-ff49-4c1f-a517-2b78ee200508',
-    label: 'Go to runs',
-    shortLabel: 'See runs',
+    label: 'Go to Runs',
+    shortLabel: 'See Runs',
     icon: 'IconHistoryToggle',
     position: 52,
     isPinned: false,
@@ -695,8 +697,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeVersionWorkflowRun: {
     universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
-    label: 'See version',
-    shortLabel: 'See version',
+    label: 'See Version',
+    shortLabel: 'See Version',
     icon: 'IconVersions',
     position: 53,
     isPinned: true,
@@ -710,8 +712,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeWorkflowWorkflowRun: {
     universalIdentifier: '9d9cc62d-3543-45c3-93f3-23d2d8979f2b',
-    label: 'See workflow',
-    shortLabel: 'See workflow',
+    label: 'See Workflow',
+    shortLabel: 'See Workflow',
     icon: 'IconSettingsAutomation',
     position: 54,
     isPinned: true,
@@ -741,8 +743,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeRunsWorkflowVersion: {
     universalIdentifier: '44e305c7-4f0a-45ec-803f-6471b56455cb',
-    label: 'See runs',
-    shortLabel: 'See runs',
+    label: 'See Runs',
+    shortLabel: 'See Runs',
     icon: 'IconHistoryToggle',
     position: 56,
     isPinned: true,
@@ -757,8 +759,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeWorkflowWorkflowVersion: {
     universalIdentifier: 'b43052db-023e-4083-9b63-2c2dfbfd1320',
-    label: 'See workflow',
-    shortLabel: 'See workflow',
+    label: 'See Workflow',
+    shortLabel: 'See Workflow',
     icon: 'IconSettingsAutomation',
     position: 57,
     isPinned: true,
@@ -773,8 +775,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   useAsDraftWorkflowVersion: {
     universalIdentifier: '483c0c1d-ea4d-4a4d-8a59-2dcf9f8e38f6',
-    label: 'Use as draft',
-    shortLabel: 'Use as draft',
+    label: 'Use as Draft',
+    shortLabel: 'Use as Draft',
     icon: 'IconPencil',
     position: 58,
     isPinned: true,
@@ -789,8 +791,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeVersionsWorkflowVersion: {
     universalIdentifier: '1d4abeb7-2750-4af7-9a92-fbadd2a9e4ba',
-    label: 'See versions history',
-    shortLabel: 'See versions',
+    label: 'See Versions History',
+    shortLabel: 'See Versions',
     icon: 'IconVersions',
     position: 59,
     isPinned: false,
@@ -805,7 +807,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   searchRecords: {
     universalIdentifier: 'fa24e25e-68f8-4548-82ff-c7b5168b7c7d',
-    label: 'Search records',
+    label: 'Search ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Search',
     icon: 'IconSearch',
     position: 60,
@@ -819,7 +821,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   searchRecordsFallback: {
     universalIdentifier: 'c659890c-7266-46c9-bfe1-75cefff8b6d0',
-    label: 'Search records',
+    label: 'Search ${capitalize(objectMetadataItem.labelPlural)}',
     shortLabel: 'Search',
     icon: 'IconSearch',
     position: 61,
