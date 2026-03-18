@@ -5,12 +5,15 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { CrudOperationType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,6 +25,7 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
 
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { updateInDraft, applyChanges } = useMetadataStore();
 
   const setLastFieldMetadataItemUpdate = useSetAtomState(
     lastFieldMetadataItemUpdateState,
@@ -57,6 +61,20 @@ export const useUpdateOneFieldMetadataItem = () => {
           updatePayload: updatePayload,
         },
       });
+
+      const updatedField = response.data?.updateOneField;
+
+      if (isDefined(updatedField)) {
+        const { __typename, object, ...fieldData } = updatedField;
+
+        updateInDraft('fieldMetadataItems', [
+          {
+            ...fieldData,
+            objectMetadataId: object?.id ?? objectMetadataId,
+          } as FlatFieldMetadataItem,
+        ]);
+        applyChanges();
+      }
 
       setLastFieldMetadataItemUpdate({
         fieldMetadataItemId: fieldMetadataIdToUpdate,

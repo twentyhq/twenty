@@ -2070,6 +2070,18 @@ msgstr "Invalid page layout widget data."
 msgid "Invalid parameters provided."
 msgstr "Invalid parameters provided."
 
+#. js-lingui-id: KhF8C3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Invalid permission flag value"
+msgstr "Invalid permission flag value"
+
+#. js-lingui-id: mMHHVP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Invalid permission setting"
+msgstr "Invalid permission setting"
+
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
@@ -3274,6 +3286,39 @@ msgstr "Password reset token has already been generated. Please wait for {timeTo
 msgid "Password too weak"
 msgstr "Password too weak"
 
+#. js-lingui-id: fxC+On
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag already exists"
+msgstr "Permission flag already exists"
+
+#. js-lingui-id: qG245w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag for this role and setting already exists"
+msgstr "Permission flag for this role and setting already exists"
+
+#. js-lingui-id: 2mZr45
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag not found"
+msgstr "Permission flag not found"
+
+#. js-lingui-id: dqLRwc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag to delete not found"
+msgstr "Permission flag to delete not found"
+
+#. js-lingui-id: SMgh5j
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag to update not found"
+msgstr "Permission flag to update not found"
+
+#. js-lingui-id: VuCvJL
+#. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag with universal identifier {0} already exists"
+msgstr "Permission flag with universal identifier {0} already exists"
+
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Permission not found."
@@ -3527,6 +3572,13 @@ msgstr "Role \"{roleLabel}\" cannot be assigned to users"
 msgid "Role cannot be assigned to this entity."
 msgstr "Role cannot be assigned to this entity."
 
+#. js-lingui-id: k2/sGI
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Role is not editable"
+msgstr "Role is not editable"
+
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
@@ -3549,6 +3601,12 @@ msgstr "Role must have at least one target."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Role not found"
 msgstr "Role not found"
 
@@ -4015,8 +4073,12 @@ msgstr "The request is too complex to process. Please try reducing the amount of
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 
-#. js-lingui-id: HRcugS
+#. js-lingui-id: woRk0z
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+msgid "The role you are trying to modify could not be found."
+msgstr "The role you are trying to modify could not be found."
+
+#. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -4176,6 +4238,12 @@ msgstr "This operation is not allowed. Please try a different approach or contac
 msgid "This operation is not supported."
 msgstr "This operation is not supported."
 
+#. js-lingui-id: 3q5jw3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "This permission is already set for the role"
+msgstr "This permission is already set for the role"
+
 #. js-lingui-id: Y5C3uK
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -4224,7 +4292,9 @@ msgstr "This role cannot be edited."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."

@@ -6,7 +6,7 @@ import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItem
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateChartSettingInput } from '@/side-panel/pages/page-layout/hooks/useUpdateChartSettingInput';
 import { useUpdateChartSettingTextInput } from '@/side-panel/pages/page-layout/hooks/useUpdateChartSettingTextInput';
 import { useUpdateChartSettingToggle } from '@/side-panel/pages/page-layout/hooks/useUpdateChartSettingToggle';
@@ -35,7 +35,7 @@ export const ChartSettingItem = ({
   objectMetadataId,
   configuration,
 }: ChartSettingItemProps) => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { pageLayoutId } = usePageLayoutIdFromContextStore();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
   const { openDropdown } = useOpenDropdown();
   const { setSelectedItemId } = useSelectableList(

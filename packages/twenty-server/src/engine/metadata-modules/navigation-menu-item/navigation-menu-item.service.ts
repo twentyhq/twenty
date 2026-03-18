@@ -2,15 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
-import { getRecordImageIdentifier } from 'src/engine/core-modules/record-crud/utils/get-record-image-identifier.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -27,12 +20,8 @@ import {
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
-import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
+import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -43,10 +32,7 @@ export class NavigationMenuItemService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly navigationMenuItemAccessService: NavigationMenuItemAccessService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly fileService: FileService,
-    private readonly userRoleService: UserRoleService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
   ) {}
 
   async findAll({
@@ -379,41 +365,6 @@ export class NavigationMenuItemService {
     );
   }
 
-  private async getRoleId(
-    authContext: WorkspaceAuthContext,
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    if (isApiKeyAuthContext(authContext)) {
-      return this.apiKeyRoleService.getRoleIdForApiKeyId(
-        authContext.apiKey.id,
-        workspaceId,
-      );
-    }
-
-    if (
-      isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultRoleId)
-    ) {
-      return authContext.application.defaultRoleId;
-    }
-
-    if (isUserAuthContext(authContext)) {
-      try {
-        return await this.userRoleService.getRoleIdForUserWorkspace({
-          userWorkspaceId: authContext.userWorkspaceId,
-          workspaceId,
-        });
-      } catch (error: unknown) {
-        if (error instanceof PermissionsException) {
-          return undefined;
-        }
-        throw error;
-      }
-    }
-
-    return undefined;
-  }
-
   async findTargetRecord({
     targetRecordId,
     targetObjectMetadataId,
@@ -425,104 +376,15 @@ export class NavigationMenuItemService {
     workspaceId: string;
     authContext: WorkspaceAuthContext;
   }): Promise<RecordIdentifierDTO | null> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    try {
+      return await this.navigationMenuItemRecordIdentifierService.resolveRecordIdentifier(
         {
+          targetRecordId,
+          targetObjectMetadataId,
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          authContext,
         },
       );
-
-    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: targetObjectMetadataId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(objectMetadata)) {
-      return null;
-    }
-
-    try {
-      const roleId = await this.getRoleId(authContext, workspaceId);
-
-      if (!isDefined(roleId)) {
-        return null;
-      }
-
-      const rolePermissionConfig: RolePermissionConfig = {
-        unionOf: [roleId],
-      };
-
-      const minimalSelectColumns = getMinimalSelectForRecordIdentifier({
-        flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-      });
-
-      const record =
-        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          async () => {
-            const repository =
-              await this.globalWorkspaceOrmManager.getRepository(
-                workspaceId,
-                objectMetadata.nameSingular,
-                rolePermissionConfig,
-              );
-
-            const alias = objectMetadata.nameSingular;
-            const queryBuilder = repository.createQueryBuilder(alias);
-
-            queryBuilder.select([]);
-
-            for (const column of minimalSelectColumns) {
-              queryBuilder.addSelect(`"${alias}"."${column}"`, column);
-            }
-
-            const rawResult = await queryBuilder
-              .where(`${alias}.id = :id`, { id: targetRecordId })
-              .getRawOne();
-
-            if (!isDefined(rawResult)) {
-              return null;
-            }
-
-            const formattedRecord = formatResult<Record<string, unknown>>(
-              rawResult,
-              objectMetadata,
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-            );
-
-            return formattedRecord;
-          },
-          authContext,
-        );
-
-      if (!isDefined(record)) {
-        return null;
-      }
-
-      const labelIdentifier = getRecordDisplayName(
-        record,
-        objectMetadata,
-        flatFieldMetadataMaps,
-      );
-
-      const imageIdentifier = getRecordImageIdentifier({
-        record,
-        flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-        signUrl: (url: string) =>
-          this.fileService.signFileUrl({
-            url,
-            workspaceId,
-          }),
-      });
-
-      return {
-        id: record.id as string,
-        labelIdentifier,
-        imageIdentifier,
-      };
     } catch (error: unknown) {
       if (error instanceof PermissionsException) {
         return null;

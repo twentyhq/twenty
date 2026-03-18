@@ -25,6 +25,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
@@ -36,6 +37,7 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { WorkspaceFlatPermissionFlagMapCacheService } from 'src/engine/metadata-modules/flat-permission-flag/services/workspace-flat-permission-flag-map-cache.service';
 import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-modules/flat-view-sort/services/workspace-flat-view-sort-map-cache.service';
 
 @Module({
@@ -56,6 +58,7 @@ import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-module
       PageLayoutEntity,
       PageLayoutTabEntity,
       PageLayoutWidgetEntity,
+      PermissionFlagEntity,
       RowLevelPermissionPredicateEntity,
       RowLevelPermissionPredicateGroupEntity,
       ApplicationEntity,
@@ -74,6 +77,7 @@ import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-module
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
+    WorkspaceFlatPermissionFlagMapCacheService,
     WorkspaceFlatViewSortMapCacheService,
     WorkspaceFlatPageLayoutMapCacheService,
     WorkspaceFlatPageLayoutTabMapCacheService,
@@ -92,6 +96,7 @@ import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-module
     WorkspaceFlatIndexMapCacheService,
     WorkspaceFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
+    WorkspaceFlatPermissionFlagMapCacheService,
     WorkspaceFlatViewSortMapCacheService,
     WorkspaceFlatPageLayoutMapCacheService,
     WorkspaceFlatPageLayoutTabMapCacheService,

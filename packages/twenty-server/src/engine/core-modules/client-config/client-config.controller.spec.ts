@@ -84,7 +84,6 @@ describe('ClientConfigController', () => {
           provider: undefined,
           siteKey: undefined,
         },
-        chromeExtensionId: undefined,
         api: {
           mutationMaximumAffectedRecords: 100,
         },

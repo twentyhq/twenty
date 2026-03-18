@@ -1,5 +1,5 @@
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
@@ -26,7 +26,7 @@ const StyledContainer = styled.div`
 `;
 
 export const SidePanelPageLayoutIframeSettings = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 

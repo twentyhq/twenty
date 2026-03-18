@@ -9,11 +9,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useBuildRecordInputFromFilters = ({
   objectMetadataItem,
+  instanceId,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  instanceId?: string;
 }) => {
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
+    instanceId,
   );
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

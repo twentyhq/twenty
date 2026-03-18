@@ -6,7 +6,6 @@ import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLa
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -21,16 +20,19 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const useCreatePageLayoutStandaloneRichTextWidget = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const useCreatePageLayoutStandaloneRichTextWidget = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
 
   const store = useStore();
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,

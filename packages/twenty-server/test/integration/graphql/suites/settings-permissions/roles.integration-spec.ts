@@ -7,7 +7,10 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { fieldTextMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -588,12 +591,19 @@ describe('roles permissions', () => {
           .expect((res) => {
             expect(res.body.data).toBeNull();
             expect(res.body.errors).toBeDefined();
-            expect(res.body.errors[0].message).toBe(
-              PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
-            );
             expect(res.body.errors[0].extensions.code).toBe(
-              ErrorCode.FORBIDDEN,
+              ErrorCode.METADATA_VALIDATION_FAILED,
             );
+            const permissionFlagErrors =
+              res.body.errors[0].extensions.errors?.permissionFlag ?? [];
+            const hasRoleNotEditable = permissionFlagErrors.some(
+              (failure: { errors?: Array<{ code?: string }> }) =>
+                failure.errors?.some(
+                  (err) =>
+                    err.code === PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+                ),
+            );
+            expect(hasRoleNotEditable).toBe(true);
           });
       });
 

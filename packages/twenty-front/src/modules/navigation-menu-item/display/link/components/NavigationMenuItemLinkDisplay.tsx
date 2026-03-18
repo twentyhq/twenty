@@ -1,19 +1,21 @@
+import { IconArrowUpRight } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
-import type { WorkspaceSectionItemContentProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionItemContentProps';
+import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconArrowUpRight } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type NavigationMenuItemLinkDisplayProps = WorkspaceSectionItemContentProps;
+type NavigationMenuItemLinkDisplayProps = NavigationMenuItemSectionContentProps;
 
 export const NavigationMenuItemLinkDisplay = ({
   item,
   editModeProps,
   isDragging,
+  rightOptions,
 }: NavigationMenuItemLinkDisplayProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -21,6 +23,14 @@ export const NavigationMenuItemLinkDisplay = ({
 
   const label = getLinkNavigationMenuItemLabel(item);
   const computedLink = getLinkNavigationMenuItemComputedLink(item);
+
+  const defaultRightOptions = !isLayoutCustomizationModeEnabled && (
+    <IconArrowUpRight
+      size={themeCssVariables.icon.size.sm}
+      stroke={themeCssVariables.icon.stroke.md}
+      color={themeCssVariables.font.color.light}
+    />
+  );
 
   return (
     <NavigationDrawerItem
@@ -32,23 +42,15 @@ export const NavigationMenuItemLinkDisplay = ({
       }
       onClick={
         isLayoutCustomizationModeEnabled
-          ? editModeProps.onEditModeClick
+          ? editModeProps?.onEditModeClick
           : undefined
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={false}
-      isSelectedInEditMode={editModeProps.isSelectedInEditMode}
+      isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent="CLICK"
-      rightOptions={
-        !isLayoutCustomizationModeEnabled && (
-          <IconArrowUpRight
-            size={themeCssVariables.icon.size.sm}
-            stroke={themeCssVariables.icon.stroke.md}
-            color={themeCssVariables.font.color.light}
-          />
-        )
-      }
+      rightOptions={rightOptions ?? defaultRightOptions}
     />
   );
 };

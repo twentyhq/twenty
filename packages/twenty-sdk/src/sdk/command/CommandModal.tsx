@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import {
-  enqueueSnackbar,
-  getFrontComponentCommandErrorDedupeKey,
   openCommandConfirmationModal,
   unmountFrontComponent,
   useFrontComponentId,
@@ -36,30 +34,20 @@ export const CommandModal = ({
     setHasExecuted(true);
 
     const run = async () => {
-      try {
-        const commandConfirmationModalResult =
-          await openCommandConfirmationModal({
-            title,
-            subtitle,
-            confirmButtonText,
-            confirmButtonAccent,
-          });
+      const commandConfirmationModalResult = await openCommandConfirmationModal(
+        {
+          title,
+          subtitle,
+          confirmButtonText,
+          confirmButtonAccent,
+        },
+      );
 
-        if (commandConfirmationModalResult === 'confirm') {
-          await execute();
-        }
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-
-        await enqueueSnackbar({
-          message: 'Command failed',
-          detailedMessage: message,
-          variant: 'error',
-          dedupeKey: getFrontComponentCommandErrorDedupeKey(frontComponentId),
-        });
-      } finally {
-        await unmountFrontComponent();
+      if (commandConfirmationModalResult === 'confirm') {
+        await execute();
       }
+
+      await unmountFrontComponent();
     };
 
     run();

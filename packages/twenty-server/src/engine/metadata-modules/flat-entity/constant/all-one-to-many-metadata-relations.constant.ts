@@ -145,7 +145,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator: 'roleTargetUniversalIdentifiers',
     },
     objectPermissions: null,
-    permissionFlags: null,
+    permissionFlags: {
+      metadataName: 'permissionFlag',
+      flatEntityForeignKeyAggregator: 'permissionFlagIds',
+      universalFlatEntityForeignKeyAggregator:
+        'permissionFlagUniversalIdentifiers',
+    },
     fieldPermissions: null,
     rowLevelPermissionPredicates: {
       metadataName: 'rowLevelPermissionPredicate',
@@ -161,6 +166,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
     },
   },
   roleTarget: {},
+  permissionFlag: {},
   pageLayout: {
     tabs: {
       metadataName: 'pageLayoutTab',

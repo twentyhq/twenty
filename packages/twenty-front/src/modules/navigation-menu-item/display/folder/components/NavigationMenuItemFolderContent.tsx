@@ -2,9 +2,10 @@ import { IconHeartOff } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationMenuItemBackButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemBackButton';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import { WorkspaceDndKitSortableItem } from '@/navigation-menu-item/display/dnd/components/WorkspaceDndKitSortableItem';
+import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
@@ -30,7 +31,7 @@ export const NavigationMenuItemFolderContent = ({
   const views = useAtomStateValue(viewsSelector);
   const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
 
-  const folderDroppableId = `folder-${folderId}`;
+  const folderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${folderId}`;
 
   return (
     <>
@@ -53,7 +54,7 @@ export const NavigationMenuItemFolderContent = ({
         );
 
         return (
-          <WorkspaceDndKitSortableItem
+          <NavigationMenuItemSortableItem
             key={navigationMenuItem.id}
             id={navigationMenuItem.id}
             index={index}
@@ -83,7 +84,7 @@ export const NavigationMenuItemFolderContent = ({
               triggerEvent="CLICK"
               to={computedLink}
             />
-          </WorkspaceDndKitSortableItem>
+          </NavigationMenuItemSortableItem>
         );
       })}
     </>
