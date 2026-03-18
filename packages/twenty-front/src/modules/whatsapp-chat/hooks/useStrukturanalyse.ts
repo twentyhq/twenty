@@ -23,8 +23,8 @@ interface TriggerParams {
   messageId: string;
   sessionName: string;
   conversationId: string;
-  email: string;
-  heightCm: number;
+  email?: string;
+  heightCm?: number;
 }
 
 interface SendParams {
@@ -81,8 +81,8 @@ export const useStrukturanalyse = (conversationId: string | null) => {
               message_id: params.messageId,
               session_name: params.sessionName,
               conversation_id: params.conversationId,
-              email: params.email,
-              height_cm: params.heightCm,
+              ...(params.email ? { email: params.email } : {}),
+              ...(params.heightCm ? { height_cm: params.heightCm } : {}),
             }),
           },
         );

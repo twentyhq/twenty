@@ -63,34 +63,6 @@ const StyledBody = styled.div`
   padding: 20px;
 `;
 
-const StyledFieldGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
-
-const StyledLabel = styled.label`
-  color: #374151;
-  font-size: 13px;
-  font-weight: 500;
-`;
-
-const StyledInput = styled.input`
-  background: #F9FAFB;
-  border: 1px solid #D1D5DB;
-  border-radius: 8px;
-  color: #111827;
-  font-family: inherit;
-  font-size: 14px;
-  outline: none;
-  padding: 10px 12px;
-
-  &:focus {
-    border-color: #1A6CFF;
-    box-shadow: 0 0 0 2px rgba(26, 108, 255, 0.15);
-  }
-`;
-
 const StyledFooter = styled.div`
   border-top: 1px solid #E5E7EB;
   display: flex;
@@ -219,9 +191,15 @@ const StyledPreviewInfo = styled.div`
   gap: 4px;
 `;
 
+const StyledConfirmText = styled.p`
+  color: #374151;
+  font-size: 14px;
+  margin: 0;
+`;
+
 // ── Types ────────────────────────────────────────────────────────
 
-type ModalStep = 'input' | 'running' | 'result';
+type ModalStep = 'confirm' | 'running' | 'result';
 
 type StrukturanalyseModalProps = {
   message: WaMessage;
@@ -239,25 +217,13 @@ export const StrukturanalyseModal = ({
   onClose,
   onWsComplete,
 }: StrukturanalyseModalProps) => {
-  const [step, setStep] = useState<ModalStep>('input');
-  const [email, setEmail] = useState(conversation.contactEmail ?? '');
-  const [heightCm, setHeightCm] = useState('');
+  const [step, setStep] = useState<ModalStep>('confirm');
   const [pictureId, setPictureId] = useState<string | null>(null);
   const [result, setResult] = useState<SaResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
 
   const { triggerAnalysis, getFullResult, sendImage } = useStrukturanalyse(conversation.id);
-
-  // Try to load height from localStorage
-  useEffect(() => {
-    const savedHeight = localStorage.getItem(
-      `sa_height_${conversation.leadPhoneNumber}`,
-    );
-    if (savedHeight) {
-      setHeightCm(savedHeight);
-    }
-  }, [conversation.leadPhoneNumber]);
 
   // React to WebSocket completion event
   useEffect(() => {
@@ -271,34 +237,22 @@ export const StrukturanalyseModal = ({
     }
 
     if (onWsComplete.status === 'completed') {
-      // Fetch the full result with image + text
       getFullResult(pictureId).then((full) => {
         if (full) {
           setResult(full);
           setStep('result');
         } else {
           setError('Could not fetch analysis results.');
-          setStep('input');
+          setStep('confirm');
         }
       });
     } else {
       setError(`Analysis failed (status: ${onWsComplete.status})`);
-      setStep('input');
+      setStep('confirm');
     }
   }, [onWsComplete, step, pictureId, getFullResult]);
 
   const handleRun = useCallback(async () => {
-    if (!email.trim() || !heightCm.trim()) return;
-
-    const h = parseFloat(heightCm);
-    if (isNaN(h) || h < 100 || h > 250) {
-      setError('Height must be between 100 and 250 cm');
-      return;
-    }
-
-    // Save height for this contact
-    localStorage.setItem(`sa_height_${conversation.leadPhoneNumber}`, heightCm);
-
     setError(null);
     setStep('running');
 
@@ -306,20 +260,17 @@ export const StrukturanalyseModal = ({
       messageId: message.id,
       sessionName: conversation.sessionName,
       conversationId: conversation.id,
-      email: email.trim(),
-      heightCm: h,
+      email: conversation.contactEmail || undefined,
     });
 
     if (!triggerResp) {
       setError('Analysis request failed. Please try again.');
-      setStep('input');
+      setStep('confirm');
       return;
     }
 
-    // Store the picture_id — the modal stays in "running" state
-    // until the WebSocket `strukturanalyse.complete` event arrives
     setPictureId(triggerResp.picture_id);
-  }, [email, heightCm, message, conversation, triggerAnalysis]);
+  }, [message, conversation, triggerAnalysis]);
 
   const handleSendToLead = useCallback(async () => {
     if (!result) return;
@@ -338,7 +289,6 @@ export const StrukturanalyseModal = ({
     }
   }, [result, conversation, sendImage, onClose]);
 
-  // Build a preview URL for the source image
   const imagePreviewUrl = message.mediaUrl ?? '';
 
   return (
@@ -349,7 +299,7 @@ export const StrukturanalyseModal = ({
           <StyledCloseButton onClick={onClose}>×</StyledCloseButton>
         </StyledHeader>
 
-        {step === 'input' && (
+        {step === 'confirm' && (
           <>
             <StyledBody>
               {imagePreviewUrl && (
@@ -362,39 +312,16 @@ export const StrukturanalyseModal = ({
                 </StyledPreviewRow>
               )}
 
-              <StyledFieldGroup>
-                <StyledLabel>Customer Email</StyledLabel>
-                <StyledInput
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="customer@example.com"
-                />
-              </StyledFieldGroup>
-
-              <StyledFieldGroup>
-                <StyledLabel>Height (cm)</StyledLabel>
-                <StyledInput
-                  type="number"
-                  value={heightCm}
-                  onChange={(e) => setHeightCm(e.target.value)}
-                  placeholder="175"
-                  min="100"
-                  max="250"
-                  step="0.5"
-                />
-              </StyledFieldGroup>
+              <StyledConfirmText>
+                Run Strukturanalyse on this image?
+              </StyledConfirmText>
 
               {error && <StyledError>{error}</StyledError>}
             </StyledBody>
 
             <StyledFooter>
               <StyledButton onClick={onClose}>Cancel</StyledButton>
-              <StyledButton
-                variant="primary"
-                onClick={handleRun}
-                disabled={!email.trim() || !heightCm.trim()}
-              >
+              <StyledButton variant="primary" onClick={handleRun}>
                 Run Analysis
               </StyledButton>
             </StyledFooter>
