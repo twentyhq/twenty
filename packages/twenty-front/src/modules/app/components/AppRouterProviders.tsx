@@ -49,42 +49,42 @@ export const AppRouterProviders = () => {
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
-              <MinimalMetadataGater>
-                <AuthProvider>
-                  <ApolloCoreProvider>
-                    <SSEProvider>
-                      <PreComputedChipGeneratorsProvider>
-                        <UserThemeProviderEffect />
-                        <SnackBarProvider>
-                          <ErrorMessageEffect />
-                          <AgentChatProvider>
-                            <DialogComponentInstanceContext.Provider
-                              value={{ instanceId: 'dialog-manager' }}
-                            >
-                              <DialogManager>
-                                <StrictMode>
-                                  <PromiseRejectionEffect />
-                                  <GotoHotkeysEffectsProvider />
-                                  <PageTitle title={pageTitle} />
-                                  <PageFavicon />
-                                  <Outlet />
-                                  <GlobalFilePreviewModal />
-                                  <CommandMenuConfirmationModalManager />
-                                  <HeadlessFrontComponentMountRoot />
-                                  <HeadlessEngineCommandMountRoot />
-                                </StrictMode>
-                              </DialogManager>
-                            </DialogComponentInstanceContext.Provider>
-                          </AgentChatProvider>
-                        </SnackBarProvider>
-                        <MainContextStoreProvider />
-                        <SupportChatEffect />
-                        <PageChangeEffect />
-                      </PreComputedChipGeneratorsProvider>
-                    </SSEProvider>
-                  </ApolloCoreProvider>
-                </AuthProvider>
-              </MinimalMetadataGater>
+            <MinimalMetadataGater>
+              <AuthProvider>
+                <ApolloCoreProvider>
+                  <SSEProvider>
+                    <PreComputedChipGeneratorsProvider>
+                      <UserThemeProviderEffect />
+                      <SnackBarProvider>
+                        <ErrorMessageEffect />
+                        <AgentChatProvider>
+                          <DialogComponentInstanceContext.Provider
+                            value={{ instanceId: 'dialog-manager' }}
+                          >
+                            <DialogManager>
+                              <StrictMode>
+                                <PromiseRejectionEffect />
+                                <GotoHotkeysEffectsProvider />
+                                <PageTitle title={pageTitle} />
+                                <PageFavicon />
+                                <Outlet />
+                                <GlobalFilePreviewModal />
+                                <CommandMenuConfirmationModalManager />
+                                <HeadlessFrontComponentMountRoot />
+                                <HeadlessEngineCommandMountRoot />
+                              </StrictMode>
+                            </DialogManager>
+                          </DialogComponentInstanceContext.Provider>
+                        </AgentChatProvider>
+                      </SnackBarProvider>
+                      <MainContextStoreProvider />
+                      <SupportChatEffect />
+                      <PageChangeEffect />
+                    </PreComputedChipGeneratorsProvider>
+                  </SSEProvider>
+                </ApolloCoreProvider>
+              </AuthProvider>
+            </MinimalMetadataGater>
           </CaptchaProvider>
         </ClientConfigProvider>
       </BaseThemeProvider>
