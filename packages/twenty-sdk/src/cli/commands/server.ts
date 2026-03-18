@@ -125,9 +125,7 @@ export const registerServerCommands = (program: Command): void => {
         );
 
         if (runResult.status !== 0) {
-          console.error(
-            chalk.red('Failed to start Twenty container.'),
-          );
+          console.error(chalk.red('Failed to start Twenty container.'));
           process.exit(runResult.status ?? 1);
         }
       }
