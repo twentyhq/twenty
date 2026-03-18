@@ -26,12 +26,14 @@ import {
   FindDuplicatesQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
+import { settings } from 'src/engine/constants/settings';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getCompositeFieldMetadataMap } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -85,7 +87,11 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
 
       objectRecords = fetchedRecords;
     } else if (args.data && !isEmpty(args.data)) {
-      objectRecords = args.data;
+      objectRecords = this.normalizeRecordsForDuplicateLookup(
+        args.data,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      );
     }
 
     const findDuplicatesOutput: CommonFindDuplicatesOutputItem[] =
@@ -259,5 +265,134 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
+  }
+
+  private normalizeRecordsForDuplicateLookup(
+    records: Partial<ObjectRecord>[],
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): Partial<ObjectRecord>[] {
+    return records.map((record) =>
+      this.normalizeRecordForDuplicateLookup(
+        record,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      ),
+    );
+  }
+
+  private normalizeRecordForDuplicateLookup(
+    record: Partial<ObjectRecord>,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): Partial<ObjectRecord> {
+    const duplicateFields = new Set(
+      (flatObjectMetadata.duplicateCriteria ?? []).flat(),
+    );
+    const compositeFieldMetadataMap = Array.isArray(flatObjectMetadata.fieldIds)
+      ? getCompositeFieldMetadataMap(flatObjectMetadata, flatFieldMetadataMaps)
+      : new Map();
+    const normalizedRecord = { ...record };
+
+    for (const duplicateField of duplicateFields) {
+      delete normalizedRecord[duplicateField];
+
+      const normalizedValue = this.normalizeDuplicateFieldValue(
+        record,
+        duplicateField,
+        compositeFieldMetadataMap,
+      );
+
+      if (isDefined(normalizedValue)) {
+        normalizedRecord[duplicateField] = normalizedValue;
+      }
+    }
+
+    return normalizedRecord;
+  }
+
+  private normalizeDuplicateFieldValue(
+    record: Partial<ObjectRecord>,
+    duplicateField: string,
+    compositeFieldMetadataMap: Map<
+      string,
+      {
+        parentField: string;
+        name: string;
+      }
+    >,
+  ): string | undefined {
+    const directValue = record[duplicateField];
+
+    if (typeof directValue === 'string') {
+      const trimmedValue = directValue.trim();
+
+      return trimmedValue.length >= settings.minLengthOfStringForDuplicateCheck
+        ? trimmedValue
+        : undefined;
+    }
+
+    if (isDefined(directValue)) {
+      return directValue as string;
+    }
+
+    const compositeFieldMetadata = compositeFieldMetadataMap.get(duplicateField);
+
+    if (!compositeFieldMetadata) {
+      return this.extractNestedDuplicateFieldValue(record, duplicateField);
+    }
+
+    const parentValue = record[compositeFieldMetadata.parentField];
+
+    if (typeof parentValue !== 'object' || parentValue === null) {
+      return undefined;
+    }
+
+    const nestedValue = parentValue[compositeFieldMetadata.name];
+
+    if (typeof nestedValue !== 'string') {
+      return undefined;
+    }
+
+    const trimmedValue = nestedValue.trim();
+
+    return trimmedValue.length > 0 ? trimmedValue : undefined;
+  }
+
+  private extractNestedDuplicateFieldValue(
+    record: Partial<ObjectRecord>,
+    duplicateField: string,
+  ): string | undefined {
+    for (const [parentField, parentValue] of Object.entries(record)) {
+      if (
+        typeof parentValue !== 'object' ||
+        parentValue === null ||
+        !duplicateField.startsWith(parentField)
+      ) {
+        continue;
+      }
+
+      const nestedFieldName = duplicateField.slice(parentField.length);
+
+      if (nestedFieldName.length === 0) {
+        continue;
+      }
+
+      const normalizedNestedFieldName =
+        nestedFieldName.charAt(0).toLowerCase() + nestedFieldName.slice(1);
+      const nestedValue = parentValue[normalizedNestedFieldName];
+
+      if (typeof nestedValue !== 'string') {
+        continue;
+      }
+
+      const trimmedValue = nestedValue.trim();
+
+      return trimmedValue.length >= settings.minLengthOfStringForDuplicateCheck
+        ? trimmedValue
+        : undefined;
+    }
+
+    return undefined;
   }
 }
