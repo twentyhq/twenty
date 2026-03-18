@@ -1,4 +1,13 @@
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import {
+  StyledSubscriptionModal,
+  StyledPreviewRow,
+  StyledPreviewLabel,
+  StyledActivatedBy,
+  StyledModalFooter,
+  StyledFormSection,
+  buildTargetFieldName,
+} from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/shared-subscription-modal-styles';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -28,27 +37,6 @@ const OPTIONS = [
   { value: 'IN_DISPUTE', label: 'In Dispute' },
 ];
 
-const Wrap = styled(Modal)`
-  height: auto;
-`;
-
-const Row = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  justify-content: space-between;
-`;
-
-const Label = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const Form = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-`;
-
 const Grid = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -57,22 +45,14 @@ const Grid = styled.div`
 
 const Card = styled.div<{ selected: boolean }>`
   border: 1px solid
-    ${({ theme, selected }) =>
-      selected ? theme.color.blue : theme.border.color.medium};
+    ${({ theme, selected }) => (selected ? theme.color.blue : theme.border.color.medium)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
   font-size: ${({ theme }) => theme.font.size.sm};
   padding: ${({ theme }) => `${theme.spacing(3)} ${theme.spacing(4)}`};
-
   &:hover {
     border-color: ${({ theme }) => theme.border.color.strong};
   }
-`;
-
-const Footer = styled(Modal.Footer)`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-end;
 `;
 
 export const ChangePaymentPlanFormModal = ({
@@ -96,10 +76,7 @@ export const ChangePaymentPlanFormModal = ({
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const currentMember = useRecoilValueV2(currentWorkspaceMemberState);
 
-  const { record } = useFindOneRecord({
-    objectNameSingular,
-    objectRecordId: recordId,
-  });
+  const { record } = useFindOneRecord({ objectNameSingular, objectRecordId: recordId });
 
   const current = isDefined(record) ? (record.paymentStatus as string) : null;
   const currentLabel = OPTIONS.find((o) => o.value === current)?.label ?? 'Not set';
@@ -124,14 +101,11 @@ export const ChangePaymentPlanFormModal = ({
       try {
         const title = `Payment: ${currentLabel} → ${selectedLabel} — ${reason}`;
         const note = await createNote({ title });
-
         if (isDefined(note)) {
-          const field =
-            'target' +
-            objectNameSingular.charAt(0).toUpperCase() +
-            objectNameSingular.slice(1) +
-            'Id';
-          await createNoteTarget({ noteId: note.id, [field]: recordId });
+          await createNoteTarget({
+            noteId: note.id,
+            [buildTargetFieldName(objectNameSingular)]: recordId,
+          });
         }
       } catch {
         // non-critical
@@ -148,7 +122,7 @@ export const ChangePaymentPlanFormModal = ({
   };
 
   return (
-    <Wrap
+    <StyledSubscriptionModal
       modalId={modalId}
       size="medium"
       padding="large"
@@ -160,17 +134,17 @@ export const ChangePaymentPlanFormModal = ({
         <H1Title title="Change Payment Plan" fontColor={H1TitleFontColor.Primary} />
       </Modal.Header>
       <Modal.Content>
-        <Form>
+        <StyledFormSection>
           <div>
-            <Row>
-              <Label>Current:</Label>
+            <StyledPreviewRow>
+              <StyledPreviewLabel>Current:</StyledPreviewLabel>
               <span>{currentLabel}</span>
-            </Row>
+            </StyledPreviewRow>
             {isDefined(selected) && (
-              <Row>
-                <Label>New:</Label>
+              <StyledPreviewRow>
+                <StyledPreviewLabel>New:</StyledPreviewLabel>
                 <span>{selectedLabel}</span>
-              </Row>
+              </StyledPreviewRow>
             )}
           </div>
 
@@ -181,8 +155,7 @@ export const ChangePaymentPlanFormModal = ({
                 selected={selected === opt.value}
                 onClick={() => setSelected(opt.value)}
               >
-                {opt.label}
-                {current === opt.value ? ' (current)' : ''}
+                {opt.label}{current === opt.value ? ' (current)' : ''}
               </Card>
             ))}
           </Grid>
@@ -195,10 +168,10 @@ export const ChangePaymentPlanFormModal = ({
             fullWidth
           />
 
-          <Label>Activated by: {memberName}</Label>
-        </Form>
+          <StyledActivatedBy>Activated by: {memberName}</StyledActivatedBy>
+        </StyledFormSection>
       </Modal.Content>
-      <Footer>
+      <StyledModalFooter>
         <Button title="Cancel" variant="secondary" onClick={() => closeModal(modalId)} />
         <Button
           title="Confirm Change"
@@ -207,7 +180,7 @@ export const ChangePaymentPlanFormModal = ({
           disabled={!isValid || isSubmitting}
           onClick={handleSubmit}
         />
-      </Footer>
-    </Wrap>
+      </StyledModalFooter>
+    </StyledSubscriptionModal>
   );
 };

@@ -1,4 +1,14 @@
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import {
+  StyledSubscriptionModal,
+  StyledPreviewRow,
+  StyledPreviewLabel,
+  StyledActivatedBy,
+  StyledModalFooter,
+  StyledFormSection,
+  formatDate,
+  buildTargetFieldName,
+} from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/shared-subscription-modal-styles';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -10,7 +20,6 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
-import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
@@ -21,51 +30,6 @@ type ExtendSubscriptionFormModalProps = {
   modalId: string;
   recordId: string;
   objectNameSingular: string;
-};
-
-const StyledExtendFormModal = styled(Modal)`
-  height: auto;
-`;
-
-const StyledPreviewRow = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: space-between;
-`;
-
-const StyledPreviewLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledActivatedBy = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
-const StyledFooter = styled(Modal.Footer)`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-end;
-`;
-
-const StyledFormSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-`;
-
-const formatDate = (date: Date | null): string => {
-  if (!isDefined(date)) {
-    return 'Not set';
-  }
-
-  return date.toLocaleString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
 };
 
 export const ExtendSubscriptionFormModal = ({
@@ -107,13 +71,11 @@ export const ExtendSubscriptionFormModal = ({
 
   const newEndDate = (() => {
     const baseDate = isDefined(currentEndDate) ? currentEndDate : new Date();
-
     if (extensionMonths > 0) {
       const result = new Date(baseDate);
       result.setMonth(result.getMonth() + extensionMonths);
       return result;
     }
-
     return null;
   })();
 
@@ -121,15 +83,8 @@ export const ExtendSubscriptionFormModal = ({
     ? `${currentMember.name.firstName} ${currentMember.name.lastName}`.trim()
     : 'Unknown';
 
-  const handleCancel = () => {
-    closeModal(modalId);
-  };
-
   const handleSubmit = async () => {
-    if (!isFormValid || isSubmitting || !isDefined(newEndDate)) {
-      return;
-    }
-
+    if (!isFormValid || isSubmitting || !isDefined(newEndDate)) return;
     setIsSubmitting(true);
 
     try {
@@ -143,50 +98,35 @@ export const ExtendSubscriptionFormModal = ({
         },
       });
 
-      // Create audit note linked to this subscription
       try {
-        const offerPart = offerReference.trim()
-          ? offerReference.trim()
-          : 'No offer';
+        const offerPart = offerReference.trim() || 'No offer';
         const noteTitle = `Extend: ${extensionMonths} months — ${offerPart}`;
-
-        const createdNote = await createNote({
-          title: noteTitle,
-        });
+        const createdNote = await createNote({ title: noteTitle });
 
         if (isDefined(createdNote)) {
-          const targetFieldName =
-            'target' +
-            objectNameSingular.charAt(0).toUpperCase() +
-            objectNameSingular.slice(1) +
-            'Id';
-
           await createNoteTarget({
             noteId: createdNote.id,
-            [targetFieldName]: recordId,
+            [buildTargetFieldName(objectNameSingular)]: recordId,
           });
         }
       } catch {
-        // Note creation is non-critical — subscription was already updated
+        // non-critical
       }
 
       enqueueSuccessSnackBar({
         message: `Subscription extended by ${extensionMonths} months`,
       });
-
       closeModal(modalId);
       closeActionMenu();
     } catch {
-      enqueueErrorSnackBar({
-        message: 'Failed to extend subscription',
-      });
+      enqueueErrorSnackBar({ message: 'Failed to extend subscription' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <StyledExtendFormModal
+    <StyledSubscriptionModal
       modalId={modalId}
       size="medium"
       padding="large"
@@ -195,10 +135,7 @@ export const ExtendSubscriptionFormModal = ({
       shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <Modal.Header>
-        <H1Title
-          title="Extend / Renew Subscription"
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <H1Title title="Extend / Renew Subscription" fontColor={H1TitleFontColor.Primary} />
       </Modal.Header>
       <Modal.Content>
         <StyledFormSection>
@@ -252,8 +189,8 @@ export const ExtendSubscriptionFormModal = ({
           <StyledActivatedBy>Activated by: {memberName}</StyledActivatedBy>
         </StyledFormSection>
       </Modal.Content>
-      <StyledFooter>
-        <Button title="Cancel" variant="secondary" onClick={handleCancel} />
+      <StyledModalFooter>
+        <Button title="Cancel" variant="secondary" onClick={() => closeModal(modalId)} />
         <Button
           title="Confirm Extension"
           variant="primary"
@@ -261,7 +198,7 @@ export const ExtendSubscriptionFormModal = ({
           disabled={!isFormValid || isSubmitting}
           onClick={handleSubmit}
         />
-      </StyledFooter>
-    </StyledExtendFormModal>
+      </StyledModalFooter>
+    </StyledSubscriptionModal>
   );
 };
