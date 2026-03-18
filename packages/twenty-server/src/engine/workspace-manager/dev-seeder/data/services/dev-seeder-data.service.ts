@@ -119,15 +119,9 @@ import {
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-
-import { LIGHT_EXCLUDED_OBJECT_NAMES } from 'src/engine/workspace-manager/dev-seeder/constants/light-excluded-objects.constant';
+import { LIGHT_EXCLUDED_OBJECTS } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 
 const LIGHT_MAX_RECORDS = 5;
-
-// Custom object tables are prefixed with underscore
-const LIGHT_EXCLUDED_TABLES = new Set(
-  LIGHT_EXCLUDED_OBJECT_NAMES.map((name) => `_${name}`),
-);
 
 type RecordSeedConfig = {
   tableName: string;
@@ -389,12 +383,19 @@ export class DevSeederDataService {
       featureFlags,
     );
 
+    const lightExcludedTables = LIGHT_EXCLUDED_OBJECTS.map(
+      (object) => `_${object}`,
+    );
+
     // Process batches sequentially (respecting dependencies)
     // but entities within each batch in parallel
     for (const batch of batches) {
       await Promise.all(
         batch.map(async (recordSeedsConfig) => {
-          if (light && LIGHT_EXCLUDED_TABLES.has(recordSeedsConfig.tableName)) {
+          if (
+            light &&
+            lightExcludedTables.includes(recordSeedsConfig.tableName)
+          ) {
             return;
           }
 

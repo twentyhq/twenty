@@ -12,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { LIGHT_EXCLUDED_OBJECT_NAMES } from 'src/engine/workspace-manager/dev-seeder/constants/light-excluded-objects.constant';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -52,11 +51,26 @@ type JunctionConfigSeed = {
   label?: string;
 };
 
+type WorkspaceSeedConfig = {
+  objects: { seed: ObjectMetadataSeed; fields?: FieldMetadataSeed[] }[];
+  fields: { objectName: string; seeds: FieldMetadataSeed[] }[];
+  morphRelations?: { objectName: string; seeds: MorphRelationSeed[] }[];
+  junctionFields?: JunctionFieldSeed[];
+  junctionConfigs?: JunctionConfigSeed[];
+};
+
 type FlatMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   objectIdByName: Record<string, string>;
 };
+
+export const LIGHT_EXCLUDED_OBJECTS = [
+  'pet',
+  'surveyResult',
+  'employmentHistory',
+  'petCareAgreement',
+];
 
 @Injectable()
 export class DevSeederMetadataService {
@@ -66,18 +80,7 @@ export class DevSeederMetadataService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  private readonly workspaceConfigs: Record<
-    string,
-    {
-      objects: { seed: ObjectMetadataSeed; fields?: FieldMetadataSeed[] }[];
-      fields: { objectName: string; seeds: FieldMetadataSeed[] }[];
-      morphRelations?: { objectName: string; seeds: MorphRelationSeed[] }[];
-      // Junction fields create relations to junction objects (inverses auto-created)
-      junctionFields?: JunctionFieldSeed[];
-      // Configure junction settings on fields after all relations exist
-      junctionConfigs?: JunctionConfigSeed[];
-    }
-  > = {
+  private readonly workspaceConfigs: Record<string, WorkspaceSeedConfig> = {
     [SEED_APPLE_WORKSPACE_ID]: {
       objects: [
         { seed: ROCKET_CUSTOM_OBJECT_SEED },
@@ -179,9 +182,37 @@ export class DevSeederMetadataService {
     },
   };
 
-  private static readonly LIGHT_EXCLUDED_OBJECTS = new Set(
-    LIGHT_EXCLUDED_OBJECT_NAMES,
-  );
+  private getLightConfig(config: WorkspaceSeedConfig): WorkspaceSeedConfig {
+    const excluded = LIGHT_EXCLUDED_OBJECTS;
+
+    return {
+      objects: config.objects.filter(
+        (obj) => !excluded.includes(obj.seed.nameSingular),
+      ),
+      fields: config.fields,
+      morphRelations: (config.morphRelations ?? []).filter(
+        (r) => !excluded.includes(r.objectName),
+      ),
+      junctionFields: (config.junctionFields ?? []).filter(
+        (f) => !excluded.includes(f.targetObjectName),
+      ),
+      junctionConfigs: (config.junctionConfigs ?? []).filter(
+        (jc) => !excluded.includes(jc.junctionTargetFieldRef.split('.')[0]),
+      ),
+    };
+  }
+
+  private getConfig(workspaceId: string, light: boolean): WorkspaceSeedConfig {
+    const config = this.workspaceConfigs[workspaceId];
+
+    if (!config) {
+      throw new Error(
+        `Workspace configuration not found for workspaceId: ${workspaceId}`,
+      );
+    }
+
+    return light ? this.getLightConfig(config) : config;
+  }
 
   public async seed({
     dataSourceMetadata,
@@ -192,24 +223,9 @@ export class DevSeederMetadataService {
     workspaceId: string;
     light?: boolean;
   }) {
-    const config = this.workspaceConfigs[workspaceId];
-
-    if (!config) {
-      throw new Error(
-        `Workspace configuration not found for workspaceId: ${workspaceId}`,
-      );
-    }
+    const config = this.getConfig(workspaceId, light);
 
     for (const obj of config.objects) {
-      if (
-        light &&
-        DevSeederMetadataService.LIGHT_EXCLUDED_OBJECTS.has(
-          obj.seed.nameSingular,
-        )
-      ) {
-        continue;
-      }
-
       await this.seedCustomObject({
         dataSourceId: dataSourceMetadata.id,
         workspaceId,
@@ -289,23 +305,12 @@ export class DevSeederMetadataService {
     workspaceId: string;
     light?: boolean;
   }) {
-    const config = this.workspaceConfigs[workspaceId];
-
-    if (!config) {
-      throw new Error(
-        `Workspace configuration not found for workspaceId: ${workspaceId}`,
-      );
-    }
-
-    const isExcluded = (objectName: string) =>
-      light && DevSeederMetadataService.LIGHT_EXCLUDED_OBJECTS.has(objectName);
+    const config = this.getConfig(workspaceId, light);
 
     // 1. Seed morph relations (creates inverses on target objects)
     let maps = await this.getFreshFlatMaps(workspaceId);
 
     for (const relation of config.morphRelations ?? []) {
-      if (isExcluded(relation.objectName)) continue;
-
       await this.seedMorphRelations({
         workspaceId,
         relation,
@@ -317,20 +322,14 @@ export class DevSeederMetadataService {
     maps = await this.getFreshFlatMaps(workspaceId);
 
     for (const field of config.junctionFields ?? []) {
-      if (isExcluded(field.targetObjectName)) continue;
-
       await this.seedJunctionField({ workspaceId, field, flatMaps: maps });
     }
 
     // 3. Configure junction settings (after all fields exist)
-    const junctionConfigs = (config.junctionConfigs ?? []).filter(
-      (jc) => !isExcluded(jc.junctionTargetFieldRef.split('.')[0]),
-    );
-
-    if (junctionConfigs.length > 0) {
+    if (config.junctionConfigs && config.junctionConfigs.length > 0) {
       maps = await this.getFreshFlatMaps(workspaceId);
 
-      for (const junctionConfig of junctionConfigs) {
+      for (const junctionConfig of config.junctionConfigs) {
         await this.applyJunctionConfig({
           workspaceId,
           junctionConfig,
