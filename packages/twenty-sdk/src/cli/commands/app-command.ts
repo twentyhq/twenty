@@ -11,6 +11,7 @@ import { LogicFunctionExecuteCommand } from './exec';
 import { LogicFunctionLogsCommand } from './logs';
 import { EntityAddCommand } from './add';
 import { registerRemoteCommands } from './remote';
+import { registerServerCommands } from './server';
 import { SyncableEntity } from 'twenty-shared/application';
 
 export const registerCommands = (program: Command): void => {
@@ -92,6 +93,7 @@ export const registerCommands = (program: Command): void => {
     });
 
   registerRemoteCommands(program);
+  registerServerCommands(program);
 
   program
     .command('add [entityType]')

@@ -300,10 +300,12 @@ export class DevSeederDataService {
     schemaName,
     workspaceId,
     featureFlags,
+    light = false,
   }: {
     schemaName: string;
     workspaceId: string;
     featureFlags?: Record<FeatureFlagKey, boolean>;
+    light?: boolean;
   }) {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
@@ -328,19 +330,22 @@ export class DevSeederDataService {
           attachmentSeeds,
           featureFlags,
           objectMetadataItems,
+          light,
         });
 
-        await this.timelineActivitySeederService.seedTimelineActivities({
-          entityManager,
-          schemaName,
-          workspaceId,
-        });
+        if (!light) {
+          await this.timelineActivitySeederService.seedTimelineActivities({
+            entityManager,
+            schemaName,
+            workspaceId,
+          });
 
-        await this.seedAttachmentFiles(
-          workspaceId,
-          entityManager,
-          attachmentFileMeta,
-        );
+          await this.seedAttachmentFiles(
+            workspaceId,
+            entityManager,
+            attachmentFileMeta,
+          );
+        }
 
         await prefillWorkflows(
           entityManager,
@@ -359,6 +364,7 @@ export class DevSeederDataService {
     attachmentSeeds,
     featureFlags,
     objectMetadataItems,
+    light = false,
   }: {
     entityManager: WorkspaceEntityManager;
     schemaName: string;
@@ -366,6 +372,7 @@ export class DevSeederDataService {
     attachmentSeeds: RecordSeedConfig['recordSeeds'];
     featureFlags?: Record<FeatureFlagKey, boolean>;
     objectMetadataItems: FlatObjectMetadata[];
+    light?: boolean;
   }) {
     const batches = getRecordSeedsBatches(
       workspaceId,
@@ -378,6 +385,10 @@ export class DevSeederDataService {
     for (const batch of batches) {
       await Promise.all(
         batch.map(async (recordSeedsConfig) => {
+          if (light && recordSeedsConfig.tableName.startsWith('_')) {
+            return;
+          }
+
           const objectMetadata = objectMetadataItems.find(
             (item) =>
               computeTableName(item.nameSingular, item.isCustom) ===

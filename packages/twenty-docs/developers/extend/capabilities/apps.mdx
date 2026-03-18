@@ -20,19 +20,51 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 ## Prerequisites
 
 - Node.js 24+ and Yarn 4
-- A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+- Docker (for the local Twenty dev server)
 
 ## Getting Started
 
-Create a new app using the official scaffolder, then authenticate and start developing:
+Create a new app using the official scaffolder. It can automatically start a local Twenty instance for you:
 
 ```bash filename="Terminal"
-# Scaffold a new app (includes all examples by default)
+# Scaffold a new app — the CLI will offer to start a local Twenty server
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### Local Server Management
+
+The SDK includes commands to manage a local Twenty dev server (all-in-one Docker image with PostgreSQL, Redis, server, and worker):
+
+```bash filename="Terminal"
+# Start the local server (pulls the image if needed)
+yarn twenty server start
+
+# Check server status
+yarn twenty server status
+
+# Stream server logs
+yarn twenty server logs
+
+# Stop the server
+yarn twenty server stop
+
+# Reset all data and start fresh
+yarn twenty server reset
+```
+
+The local server comes pre-seeded with a workspace and user (`tim@apple.dev` / `tim@apple.dev`), so you can start developing immediately without any manual setup.
+
+### Authentication
+
+Connect your app to the local server using OAuth:
+
+```bash filename="Terminal"
+# Authenticate via OAuth (opens browser)
+yarn twenty remote add --local
 ```
 
 The scaffolder supports two modes for controlling which example files are included:
