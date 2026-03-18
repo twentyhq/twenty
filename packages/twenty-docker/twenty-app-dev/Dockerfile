@@ -32,7 +32,9 @@ RUN npx nx run twenty-server:build
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-server
 
 # === Stage 3: Build frontend from source ===
+# Depends on twenty-server-build to force sequential execution (both builds are memory-heavy)
 FROM common-deps AS twenty-front-build
+COPY --from=twenty-server-build /dev/null /dev/null
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui

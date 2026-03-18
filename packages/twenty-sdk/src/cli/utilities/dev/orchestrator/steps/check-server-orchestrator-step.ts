@@ -37,10 +37,10 @@ export class CheckServerOrchestratorStep {
           {
             message:
               'Cannot reach Twenty server.\n\n' +
-              '  Start a local server with Docker:\n' +
-              '    docker run -d -p 2020:3000 --name twenty-app-dev -v twenty-app-dev-data:/data/postgres twentycrm/twenty-app-dev\n\n' +
-              '  Or from the monorepo:\n' +
-              '    yarn start\n\n' +
+              '  Start a local server:\n' +
+              '    yarn twenty server start\n\n' +
+              '  Check server status:\n' +
+              '    yarn twenty server status\n\n' +
               '  Waiting for server...',
             status: 'error',
           },

@@ -24,7 +24,7 @@ See Twenty application documentation https://docs.twenty.com/developers/extend/c
 
 ## Prerequisites
 
-- Node.js 22+ (recommended) and Yarn 4
+- Node.js 24+ (recommended) and Yarn 4
 - Docker (for the local Twenty dev server) or a remote Twenty workspace
 
 ## Installation
