@@ -65,9 +65,7 @@ export const AsButton: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getCommandMenuItemLabel(
-          addToFavoritesCommandMenuItem?.shortLabel,
-        ),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.shortLabel),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
