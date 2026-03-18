@@ -155,9 +155,15 @@ export const ExtendSubscriptionFormModal = ({
         });
 
         if (isDefined(createdNote)) {
+          const targetFieldName =
+            'target' +
+            objectNameSingular.charAt(0).toUpperCase() +
+            objectNameSingular.slice(1) +
+            'Id';
+
           await createNoteTarget({
             noteId: createdNote.id,
-            [objectNameSingular + 'Id']: recordId,
+            [targetFieldName]: recordId,
           });
         }
       } catch {
