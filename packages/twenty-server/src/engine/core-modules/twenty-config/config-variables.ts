@@ -475,7 +475,6 @@ export class ConfigVariables {
     description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
     options: Object.values(LogicFunctionDriverType),
-    isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
@@ -596,7 +595,6 @@ export class ConfigVariables {
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
     type: ConfigVariableType.STRING,
     options: Object.values(CodeInterpreterDriverType),
-    isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
@@ -742,7 +740,6 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -1414,7 +1411,6 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,
-    isEnvOnly: true,
   })
   @IsOptional()
   IS_MULTIWORKSPACE_ENABLED = false;
@@ -1503,7 +1499,6 @@ export class ConfigVariables {
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,
     options: Object.values(CaptchaDriverType),
-    isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()

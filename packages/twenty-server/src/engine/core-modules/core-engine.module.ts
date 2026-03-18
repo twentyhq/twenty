@@ -22,9 +22,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
-import { captchaModuleFactory } from 'src/engine/core-modules/captcha/captcha.module-factory';
 import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
-import { codeInterpreterModuleFactory } from 'src/engine/core-modules/code-interpreter/code-interpreter-module.factory';
 import { CodeInterpreterModule } from 'src/engine/core-modules/code-interpreter/code-interpreter.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
@@ -51,7 +49,6 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
-import { logicFunctionModuleFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/factories/logic-function-module.factory';
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
@@ -72,8 +69,6 @@ import { MetadataEventEmitterModule } from 'src/engine/metadata-event-emitter/me
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
-import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsModule } from './event-logs/event-logs.module';
@@ -142,24 +137,15 @@ import { FileModule } from './file/file.module';
       inject: [TwentyConfigService, HttpAdapterHost],
     }),
     EmailModule.forRoot(),
-    CaptchaModule.forRoot({
-      useFactory: captchaModuleFactory,
-      inject: [TwentyConfigService],
-    }),
+    CaptchaModule.forRoot(),
     EventEmitterModule.forRoot({
       wildcard: true,
     }),
     CacheStorageModule,
     AiModelsModule,
     AiBillingModule,
-    LogicFunctionModule.forRootAsync({
-      useFactory: logicFunctionModuleFactory,
-      inject: [TwentyConfigService, LogicFunctionResourceService],
-    }),
-    CodeInterpreterModule.forRootAsync({
-      useFactory: codeInterpreterModuleFactory,
-      inject: [TwentyConfigService],
-    }),
+    LogicFunctionModule.forRoot(),
+    CodeInterpreterModule.forRoot(),
     SearchModule,
     ApiKeyModule,
     PageLayoutModule,
