@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,6 +43,10 @@ export type ObjectMetadataInfo = {
 
 @Injectable()
 export class WorkflowCommonWorkspaceService {
+  private readonly logger = new Logger(
+    WorkflowCommonWorkspaceService.name,
+  );
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -298,10 +302,24 @@ export class WorkflowCommonWorkspaceService {
           status: WorkflowVersionStatus.DEACTIVATED,
         });
 
-        await this.cleanupCommandMenuItemForVersion(
-          workflowVersion.id,
-          workspaceId,
-        );
+        try {
+          await this.cleanupCommandMenuItemForVersion(
+            workflowVersion.id,
+            workspaceId,
+          );
+        } catch (error) {
+          try {
+            await workflowVersionRepository.update(workflowVersion.id, {
+              status: WorkflowVersionStatus.ACTIVE,
+            });
+          } catch (rollbackError) {
+            this.logger.warn(
+              `Failed to rollback version status to ACTIVE for version ${workflowVersion.id} after command menu item cleanup failure: ${rollbackError}`,
+            );
+          }
+
+          throw error;
+        }
       }
     }
   }

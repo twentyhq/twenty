@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -36,9 +36,12 @@ import {
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
+  private readonly logger = new Logger(WorkflowTriggerWorkspaceService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -183,12 +186,14 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
     workspaceId: string,
   ) {
+    const previousPublishedVersionId = workflow.lastPublishedVersionId;
+
     if (
-      workflow.lastPublishedVersionId &&
-      workflowVersion.id !== workflow.lastPublishedVersionId
+      previousPublishedVersionId &&
+      workflowVersion.id !== previousPublishedVersionId
     ) {
       await this.performDeactivationSteps(
-        workflow.lastPublishedVersionId,
+        previousPublishedVersionId,
         workflowVersionRepository,
         workspaceId,
       );
@@ -207,7 +212,85 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     );
 
-    await this.enableTrigger(workflow, workflowVersion, workspaceId);
+    try {
+      await this.enableTrigger(workflow, workflowVersion, workspaceId);
+    } catch (error) {
+      await this.rollbackActivation({
+        workflowVersion,
+        workflow,
+        previousPublishedVersionId,
+        workflowRepository,
+        workflowVersionRepository,
+        workspaceId,
+      });
+
+      throw error;
+    }
+  }
+
+  private async rollbackActivation({
+    workflowVersion,
+    workflow,
+    previousPublishedVersionId,
+    workflowRepository,
+    workflowVersionRepository,
+    workspaceId,
+  }: {
+    workflowVersion: WorkflowVersionWorkspaceEntity;
+    workflow: WorkflowWorkspaceEntity;
+    previousPublishedVersionId: string | null;
+    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>;
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workspaceId: string;
+  }) {
+    try {
+      await workflowVersionRepository.update(
+        { id: workflowVersion.id },
+        { status: workflowVersion.status },
+      );
+    } catch (rollbackError) {
+      this.logger.warn(
+        `Failed to rollback version status for version ${workflowVersion.id}: ${rollbackError}`,
+      );
+    }
+
+    if (previousPublishedVersionId === workflowVersion.id) {
+      return;
+    }
+
+    try {
+      await workflowRepository.update(
+        { id: workflow.id },
+        { lastPublishedVersionId: previousPublishedVersionId },
+      );
+    } catch (rollbackError) {
+      this.logger.warn(
+        `Failed to rollback lastPublishedVersionId for workflow ${workflow.id}: ${rollbackError}`,
+      );
+    }
+
+    if (!isDefined(previousPublishedVersionId)) {
+      return;
+    }
+
+    try {
+      await workflowVersionRepository.update(
+        { id: previousPublishedVersionId },
+        { status: WorkflowVersionStatus.ACTIVE },
+      );
+
+      const previousVersion = await workflowVersionRepository.findOne({
+        where: { id: previousPublishedVersionId },
+      });
+
+      if (isDefined(previousVersion)) {
+        await this.enableTrigger(workflow, previousVersion, workspaceId);
+      }
+    } catch (rollbackError) {
+      this.logger.warn(
+        `Failed to re-activate previous version ${previousPublishedVersionId} for workflow ${workflow.id}: ${rollbackError}`,
+      );
+    }
   }
 
   private async performDeactivationSteps(
@@ -234,7 +317,22 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     );
 
-    await this.disableTrigger(workflowVersion, workspaceId);
+    try {
+      await this.disableTrigger(workflowVersion, workspaceId);
+    } catch (error) {
+      try {
+        await workflowVersionRepository.update(
+          { id: workflowVersion.id },
+          { status: WorkflowVersionStatus.ACTIVE },
+        );
+      } catch (rollbackError) {
+        this.logger.warn(
+          `Failed to rollback version status to ACTIVE for version ${workflowVersion.id} after disableTrigger failure: ${rollbackError}`,
+        );
+      }
+
+      throw error;
+    }
   }
 
   private async setActiveVersionStatus(
