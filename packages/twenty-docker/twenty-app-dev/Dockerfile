@@ -101,7 +101,7 @@ RUN mkdir -p /data/postgres /data/redis /app/.local-storage \
  && chown 1000:1000 /data/redis /app/.local-storage
 
 ARG REACT_APP_SERVER_BASE_URL
-ARG APP_VERSION
+ARG APP_VERSION=0.0.0
 
 # Tell s6-overlay to preserve container environment variables
 ENV S6_KEEP_ENV=1

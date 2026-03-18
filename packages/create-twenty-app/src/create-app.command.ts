@@ -204,15 +204,18 @@ export class CreateAppCommand {
     serverUrl: string,
   ): Promise<void> {
     try {
-      execSync(`yarn twenty remote add ${serverUrl} --as local`, {
-        cwd: appDirectory,
-        stdio: 'inherit',
-      });
+      execSync(
+        `npx nx run twenty-sdk:start -- remote add ${serverUrl} --as local`,
+        {
+          cwd: appDirectory,
+          stdio: 'inherit',
+        },
+      );
       console.log(chalk.green('Authenticated with local Twenty instance.'));
     } catch {
       console.log(
         chalk.yellow(
-          'Authentication skipped. Run `yarn twenty remote add --local` manually.',
+          'Authentication skipped. Run `npx nx run twenty-sdk:start -- remote add --local` manually.',
         ),
       );
     }

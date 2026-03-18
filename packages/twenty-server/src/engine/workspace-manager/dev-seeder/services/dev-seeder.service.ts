@@ -105,6 +105,7 @@ export class DevSeederService {
       workspaceId,
       twentyStandardFlatApplication,
       workspaceCustomFlatApplication,
+      light,
     });
 
     await seedPageLayouts(

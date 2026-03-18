@@ -12,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { LIGHT_EXCLUDED_OBJECTS } from 'src/engine/workspace-manager/dev-seeder/core/constants/light-seed.constants';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -177,26 +176,9 @@ export class DevSeederMetadataService {
   };
 
   private getLightConfig(config: WorkspaceSeedConfig): WorkspaceSeedConfig {
-    const excluded = LIGHT_EXCLUDED_OBJECTS;
-
     return {
-      objects: config.objects.filter(
-        (obj) => !excluded.includes(obj.seed.nameSingular),
-      ),
-      fields: config.fields,
-      morphRelations: (config.morphRelations ?? []).filter(
-        (r) => !excluded.includes(r.objectName),
-      ),
-      junctionFields: (config.junctionFields ?? []).filter(
-        (f) =>
-          !excluded.includes(f.targetObjectName) &&
-          !excluded.includes(f.sourceObjectName),
-      ),
-      junctionConfigs: (config.junctionConfigs ?? []).filter(
-        (jc) =>
-          !excluded.includes(jc.junctionTargetFieldRef.split('.')[0]) &&
-          !excluded.includes(jc.objectName),
-      ),
+      objects: [],
+      fields: [],
     };
   }
 
