@@ -90,7 +90,7 @@ export class WorkspaceEventEmitterResolver {
       return {
         eventStreamId: variables.eventStreamId,
         objectRecordEventsWithQueryIds: payload.objectRecordEventsWithQueryIds,
-        metadataEventsWithQueryIds: payload.metadataEventsWithQueryIds,
+        metadataEvents: payload.metadataEvents,
       };
     },
   })
@@ -143,7 +143,7 @@ export class WorkspaceEventEmitterResolver {
     return wrapAsyncIteratorWithLifecycle(iterator, {
       initialValue: {
         objectRecordEventsWithQueryIds: [],
-        metadataEventsWithQueryIds: [],
+        metadataEvents: [],
       },
       onHeartbeat: () =>
         this.eventStreamService.refreshEventStreamTTL({

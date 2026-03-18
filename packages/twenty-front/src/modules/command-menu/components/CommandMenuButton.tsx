@@ -2,6 +2,8 @@ import { styled } from '@linaria/react';
 import { i18n, type MessageDescriptor } from '@lingui/core';
 import { isString } from '@sniptt/guards';
 import { type MouseEvent } from 'react';
+import { type Nullable } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   type IconComponent,
@@ -19,12 +21,13 @@ export type CommandMenuButtonProps = {
   command: {
     key: string;
     label: string | MessageDescriptor;
-    shortLabel?: string | MessageDescriptor;
+    shortLabel?: Nullable<string | MessageDescriptor>;
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
+  disabled?: boolean;
 };
 
 const getCommandMenuButtonLabel = (
@@ -37,13 +40,13 @@ export const CommandMenuButton = ({
   command,
   onClick,
   to,
+  disabled = false,
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuButtonLabel(command.label);
 
-  const resolvedShortLabel =
-    command.shortLabel === undefined
-      ? undefined
-      : getCommandMenuButtonLabel(command.shortLabel);
+  const resolvedShortLabel = isDefined(command.shortLabel)
+    ? getCommandMenuButtonLabel(command.shortLabel)
+    : undefined;
 
   const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
 
@@ -57,6 +60,7 @@ export const CommandMenuButton = ({
           accent={buttonAccent}
           to={to}
           onClick={onClick}
+          disabled={disabled}
           title={resolvedShortLabel}
           ariaLabel={resolvedLabel}
         />
@@ -69,6 +73,7 @@ export const CommandMenuButton = ({
             accent={buttonAccent}
             to={to}
             onClick={onClick}
+            disabled={disabled}
             ariaLabel={resolvedLabel}
           />
           <StyledWrapper>

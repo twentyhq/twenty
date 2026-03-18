@@ -946,23 +946,23 @@ msgid "Add Item"
 msgstr "Öğe ekle"
 
 #. js-lingui-id: cI2ZVO
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Add item to folder"
 msgstr ""
 
 #. js-lingui-id: gaZXkv
-#: src/modules/object-metadata/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder.tsx
+#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Add menu item"
 msgstr ""
 
 #. js-lingui-id: JbORSt
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item after"
 msgstr ""
 
 #. js-lingui-id: DKlI/M
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item before"
 msgstr ""
 
@@ -1423,7 +1423,7 @@ msgid "All Objects"
 msgstr "Tüm Nesneler"
 
 #. js-lingui-id: RoFE84
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 msgid "All objects are already in the sidebar"
 msgstr ""
 
@@ -1438,7 +1438,7 @@ msgid "All set!"
 msgstr "Her şey hazır!"
 
 #. js-lingui-id: CHvT6e
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSystemPickerSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemObjectSystemPickerSubPage.tsx
 msgid "All system objects are already in the sidebar"
 msgstr ""
 
@@ -1539,7 +1539,7 @@ msgid "alphabetical"
 msgstr ""
 
 #. js-lingui-id: eO7HSp
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectMenuItem.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectMenuItem.tsx
 msgid "Already in navbar"
 msgstr ""
 
@@ -1897,21 +1897,25 @@ msgstr ""
 
 #. js-lingui-id: OJOR8q
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
 msgstr "Bu kayıtları yok etmek istediğinizden emin misiniz? Artık kurtarılamayacaklar."
 
 #. js-lingui-id: UK5TO6
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
 msgstr "Bu kaydı yok etmek istediğinizden emin misiniz? Artık kurtarılamayacak."
 
 #. js-lingui-id: mcHVC1
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Are you sure you want to restore these records?"
 msgstr "Bu kayıtları geri yüklemek istediğinizden emin misiniz?"
 
 #. js-lingui-id: lmgkf0
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "Bu kaydı geri yüklemek istediğinizden emin misiniz?"
 
@@ -1952,6 +1956,7 @@ msgstr "Artan"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Ask AI"
 msgstr "AI Sor"
@@ -2559,13 +2564,11 @@ msgstr "Tarayamaz mısınız? Kopyalayın."
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel"
 msgstr "İptal"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Sürümü İptal Et"
@@ -2966,7 +2969,7 @@ msgid "Collapse folder"
 msgstr "Klasörü daralt"
 
 #. js-lingui-id: jZlrte
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
 msgid "Color"
 msgstr ""
 
@@ -3896,9 +3899,9 @@ msgid "Customization"
 msgstr "Özelleştirme"
 
 #. js-lingui-id: srRMnJ
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectViewBase.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditLinkItemView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditObjectViewBase.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
 msgid "Customize"
 msgstr ""
 
@@ -3969,6 +3972,7 @@ msgstr "Karanlık"
 
 #. js-lingui-id: ogQzcZ
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "Gösterge paneli başarıyla çoğaltıldı"
 
@@ -3982,7 +3986,7 @@ msgstr "Gösterge Panelleri"
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Data"
 msgstr "Veri"
 
@@ -4304,7 +4308,7 @@ msgstr "sil"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
-#: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
@@ -4391,7 +4395,7 @@ msgid "Delete field"
 msgstr "Alanı sil"
 
 #. js-lingui-id: 97QUV6
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Delete Folder"
 msgstr "Klasörü Sil"
 
@@ -4592,6 +4596,7 @@ msgstr "{objectLabelPlural} Yok Et"
 
 #. js-lingui-id: kG5yO6
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Destroy Records"
 msgstr "Kayıtları Yok Et"
 
@@ -4931,9 +4936,9 @@ msgid "Edit Fields"
 msgstr "Alanları Düzenle"
 
 #. js-lingui-id: uPHscS
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu.ts
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit folder"
 msgstr ""
 
@@ -4954,9 +4959,9 @@ msgid "Edit Layout"
 msgstr ""
 
 #. js-lingui-id: /PoNoq
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu.ts
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit link"
 msgstr ""
 
@@ -6119,11 +6124,13 @@ msgstr ""
 
 #. js-lingui-id: NUmmdc
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Failed to duplicate dashboard"
 msgstr "Gösterge paneli çoğaltılamadı"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
 msgstr ""
 
@@ -6187,9 +6194,9 @@ msgstr "Resim kaldırılamadı"
 msgid "Failed to retry jobs. Please try again later."
 msgstr "İşleri yeniden deneme başarısız oldu. Lütfen daha sonra tekrar deneyiniz."
 
-#. js-lingui-id: fuRtgB
-#: src/modules/navigation-menu-item/components/NavigationMenuEditModeBar.tsx
-msgid "Failed to save navigation layout"
+#. js-lingui-id: farFvy
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Failed to save layout customization"
 msgstr ""
 
 #. js-lingui-id: y3HIOa
@@ -6307,7 +6314,7 @@ msgid "Fast Model"
 msgstr ""
 
 #. js-lingui-id: X9kySA
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders.tsx
+#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Favoriler"
 
@@ -6579,8 +6586,8 @@ msgid "Flow"
 msgstr "Akış"
 
 #. js-lingui-id: kNqMMd
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelFolderInfo.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Folder"
 msgstr ""
 
@@ -6590,8 +6597,8 @@ msgid "Folder name"
 msgstr ""
 
 #. js-lingui-id: HSh8u/
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Folders"
 msgstr "Klasörler"
 
@@ -8021,7 +8028,7 @@ msgid "Layout"
 msgstr "Düzen"
 
 #. js-lingui-id: W4nIBb
-#: src/modules/navigation-menu-item/components/NavigationMenuEditModeBar.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
 msgid "Layout customization"
 msgstr ""
 
@@ -8136,8 +8143,8 @@ msgid "Line Chart"
 msgstr "Çizgi Grafiği"
 
 #. js-lingui-id: yzF66j
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Link"
 msgstr ""
 
@@ -8153,12 +8160,12 @@ msgid "Link copied to clipboard"
 msgstr "Link panoya kopyalandı"
 
 #. js-lingui-id: vH3ZQY
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditLinkItemView.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
-#: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu.ts
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
+#: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Link label"
 msgstr ""
 
@@ -8797,7 +8804,7 @@ msgid "Most installed version"
 msgstr ""
 
 #. js-lingui-id: 3Ib6FN
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move down"
 msgstr ""
 
@@ -8821,12 +8828,12 @@ msgid "Move to a folder"
 msgstr ""
 
 #. js-lingui-id: JCPOml
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move to folder"
 msgstr ""
 
 #. js-lingui-id: QyioBP
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move up"
 msgstr ""
 
@@ -9072,9 +9079,9 @@ msgid "New Field"
 msgstr "Yeni Alan"
 
 #. js-lingui-id: 96G6Re
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelFolderInfo.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu.ts
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "New folder"
 msgstr ""
 
@@ -9114,11 +9121,11 @@ msgid "New record"
 msgstr "Yeni kayıt"
 
 #. js-lingui-id: x6Ckh1
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/side-panel/hooks/useSidePanelMenu.ts
-#: src/modules/object-metadata/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/hooks/useOpenAddItemToFolderPage.ts
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
+#: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
+#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "New sidebar item"
 msgstr ""
 
@@ -9305,7 +9312,7 @@ msgid "No currency"
 msgstr "Para birimi yok"
 
 #. js-lingui-id: DKVJFE
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "No custom views available"
 msgstr ""
 
@@ -9417,12 +9424,12 @@ msgid "No Files"
 msgstr "Dosya Yok"
 
 #. js-lingui-id: pYblOw
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folder"
 msgstr "Klasör yok"
 
 #. js-lingui-id: 6XMhqL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folders available"
 msgstr ""
 
@@ -9509,7 +9516,7 @@ msgid "No object found"
 msgstr ""
 
 #. js-lingui-id: YFHO2u
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
 msgstr ""
 
@@ -9586,14 +9593,14 @@ msgid "No Results"
 msgstr "Sonuç Yok"
 
 #. js-lingui-id: AxPAXW
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/side-panel/components/SidePanelList.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No results found"
 msgstr "Sonuç bulunamadı"
 
@@ -9618,12 +9625,12 @@ msgid "No Select field"
 msgstr "Seçim alanı yok"
 
 #. js-lingui-id: RQ6tfU
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
 msgstr ""
 
 #. js-lingui-id: Yf4rVG
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 msgid "No system objects with views found"
 msgstr ""
 
@@ -9831,9 +9838,9 @@ msgstr "nesne"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
 #: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Object"
 msgstr "Nesne"
 
@@ -9893,9 +9900,9 @@ msgstr ""
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Objects"
 msgstr "Nesneler"
 
@@ -10075,7 +10082,7 @@ msgid "Open side panel"
 msgstr ""
 
 #. js-lingui-id: OV5wZZ
-#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Açık"
 
@@ -10147,7 +10154,7 @@ msgid "Organization plan"
 msgstr ""
 
 #. js-lingui-id: nV6twc
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Organize"
 msgstr ""
 
@@ -10157,9 +10164,9 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 msgid "Other"
 msgstr "Diğer"
@@ -10233,7 +10240,7 @@ msgid "Overview"
 msgstr "Genel Bakış"
 
 #. js-lingui-id: LtI9AS
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOwnerSection.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
 msgid "Owner"
 msgstr ""
 
@@ -10426,6 +10433,8 @@ msgstr "Kaydı kalıcı olarak yok et"
 #. js-lingui-id: 35dBYb
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Permanently Destroy Record"
 msgstr "Kaydı Kalıcı Olarak Yok Et"
 
@@ -10436,6 +10445,7 @@ msgstr "Kayıtları kalıcı olarak yok et"
 
 #. js-lingui-id: YyP8vD
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Permanently Destroy Records"
 msgstr "Kayıtları Kalıcı Olarak Yok Et"
 
@@ -10957,7 +10967,7 @@ msgstr "kayıt"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Record"
 msgstr "Kayıt"
 
@@ -11133,14 +11143,16 @@ msgstr "Uzaktan"
 msgid "Remove"
 msgstr "Kaldır"
 
-#. js-lingui-id: 0Urj9q
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu item?"
+#. js-lingui-id: XABoh4
+#. placeholder {0}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {0} navigation menu items?"
 msgstr ""
 
-#. js-lingui-id: Ef5jwi
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu items?"
+#. js-lingui-id: p/lN7X
+#. placeholder {1}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {1} navigation menu item?"
 msgstr ""
 
 #. js-lingui-id: 1O32oy
@@ -11170,7 +11182,7 @@ msgid "Remove from favorites"
 msgstr "Favorilerden çıkar"
 
 #. js-lingui-id: 9VZ6f0
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Remove from sidebar"
 msgstr ""
 
@@ -11217,7 +11229,7 @@ msgstr "Değişkeni kaldır"
 
 #. js-lingui-id: 2wxgft
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
-#: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Rename"
 msgstr "Yeniden adlandır"
@@ -11358,6 +11370,8 @@ msgstr "Kaydı Geri Yükle"
 #. js-lingui-id: NzMNOA
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Restore Record"
 msgstr "Kaydı Geri Yükle"
 
@@ -11369,6 +11383,8 @@ msgstr "Kayıtları Geri Yükle"
 #. js-lingui-id: Xqj0Cb
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Restore Records"
 msgstr "Kayıtları Geri Yükle"
 
@@ -11384,7 +11400,7 @@ msgstr "Sonuç"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/side-panel/pages/search/hooks/useSidePanelSearchRecords.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Results"
 msgstr "Sonuçlar"
 
@@ -11582,7 +11598,6 @@ msgstr "Cumartesi"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save"
 msgstr "Kaydet"
@@ -11596,11 +11611,6 @@ msgstr "Yeni görünüm olarak kaydet"
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Gösterge Panelini Kaydet"
-
-#. js-lingui-id: BZVCCj
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
-msgid "Save Page Layout"
-msgstr ""
 
 #. js-lingui-id: veLq3R
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -11646,6 +11656,8 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Search"
@@ -11684,7 +11696,7 @@ msgid "Search a field..."
 msgstr "Bir alan ara..."
 
 #. js-lingui-id: ITQFzL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Search a folder..."
 msgstr ""
 
@@ -11705,8 +11717,8 @@ msgid "Search a skill..."
 msgstr ""
 
 #. js-lingui-id: hVJ1MP
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 msgid "Search a system object..."
 msgstr ""
 
@@ -11721,7 +11733,7 @@ msgid "Search a type"
 msgstr "Bir tür arayın"
 
 #. js-lingui-id: +MhOVB
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Search a view..."
 msgstr ""
 
@@ -11758,8 +11770,8 @@ msgstr "Bir nesne ara"
 
 #. js-lingui-id: BoNHR0
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Search an object..."
 msgstr ""
 
@@ -11783,7 +11795,7 @@ msgid "Search colors"
 msgstr "Renkleri ara"
 
 #. js-lingui-id: AR3FV/
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
 msgid "Search colors..."
 msgstr ""
 
@@ -11852,7 +11864,7 @@ msgid "Search records"
 msgstr "Kayıtları ara"
 
 #. js-lingui-id: rRklUH
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Search records..."
 msgstr ""
 
@@ -12078,7 +12090,7 @@ msgid "Select a field to display in this widget"
 msgstr "Bu widget'ta görüntülenecek bir alan seçin"
 
 #. js-lingui-id: dtAvBz
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Select a navigation item to edit"
 msgstr ""
 
@@ -12640,6 +12652,11 @@ msgstr "Bazı"
 msgid "Some folders"
 msgstr "Bazı klasörler"
 
+#. js-lingui-id: hqUWge
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Some layout changes could not be saved"
+msgstr ""
+
 #. js-lingui-id: nwtY4N
 #: src/pages/auth/Authorize.tsx
 msgid "Something went wrong"
@@ -13098,10 +13115,10 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "System objects"
 msgstr ""
 
@@ -13480,13 +13497,14 @@ msgstr "Bu işlem geri alınamaz. Bu, üyeliğinizi bu çalışma alanından kal
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "Bu işlem geri alınamaz. Bu, iki faktörlü kimlik doğrulama yöntemini kalıcı olarak sıfırlayacaktır. <0/> Onaylamak için lütfen e-postanızı yazın."
 
-#. js-lingui-id: lAHIY2
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
+#. js-lingui-id: XxxrMw
+#. placeholder {2}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "This action will delete this folder and all {2} navigation menu items inside. Do you want to continue?"
 msgstr ""
 
 #. js-lingui-id: gSO0+U
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr ""
 
@@ -14013,7 +14031,7 @@ msgid "Type anything..."
 msgstr "Bir şeyler yazın..."
 
 #. js-lingui-id: UhqKcC
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr ""
 
@@ -14602,10 +14620,10 @@ msgid "view"
 msgstr "görünüm"
 
 #. js-lingui-id: jpctdh
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "View"
 msgstr "Görünüm"
 
@@ -14704,6 +14722,7 @@ msgstr ""
 #. js-lingui-id: ecVcAx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "Önceki AI Sohbetlerini Görüntüle"
@@ -14739,7 +14758,7 @@ msgid "View workspace activity logs"
 msgstr ""
 
 #. js-lingui-id: 1I6UoR
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Views"
 msgstr ""
 
@@ -15033,6 +15052,7 @@ msgstr ""
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Workflow duplicated successfully"
 msgstr ""
 
@@ -15096,7 +15116,7 @@ msgstr "İş Akışları"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Workspace"
 msgstr "İş Alanı"
 

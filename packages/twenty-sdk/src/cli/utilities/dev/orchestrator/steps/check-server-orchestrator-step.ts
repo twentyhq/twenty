@@ -34,7 +34,17 @@ export class CheckServerOrchestratorStep {
         step.output = { isReady: false, errorLogged: true };
         step.status = 'error';
         this.state.applyStepEvents([
-          { message: 'Cannot reach server', status: 'error' },
+          {
+            message:
+              'Cannot reach Twenty at localhost:3000.\n\n' +
+              '  Start a local server with Docker:\n' +
+              '    curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml -o docker-compose.yml\n' +
+              '    docker compose up -d\n\n' +
+              '  Or from the monorepo:\n' +
+              '    yarn start\n\n' +
+              '  Waiting for server...',
+            status: 'error',
+          },
         ]);
         this.state.updatePipeline({ status: 'error' });
       }
@@ -47,7 +57,11 @@ export class CheckServerOrchestratorStep {
         step.output = { isReady: false, errorLogged: true };
         step.status = 'error';
         this.state.applyStepEvents([
-          { message: 'Authentication failed', status: 'error' },
+          {
+            message:
+              'Authentication failed. Run `twenty remote add --local` to authenticate.',
+            status: 'error',
+          },
         ]);
         this.state.updatePipeline({ status: 'error' });
       }
