@@ -1,6 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 
@@ -8,6 +7,9 @@ const mockCreateOneRecord = jest.fn();
 const mockCheckDuplicateCompanies = jest.fn();
 const mockGetStoreValue = jest.fn();
 const mockSetStoreValue = jest.fn();
+const mockNavigateApp = jest.fn();
+const mockCloseCommandMenu = jest.fn();
+const mockEnqueueErrorSnackBar = jest.fn();
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'new-company-id'),
@@ -15,7 +17,7 @@ jest.mock('uuid', () => ({
 
 jest.mock('@/command-menu/hooks/useCommandMenu', () => ({
   useCommandMenu: () => ({
-    closeCommandMenu: jest.fn(),
+    closeCommandMenu: mockCloseCommandMenu,
   }),
 }));
 
@@ -94,7 +96,13 @@ jest.mock('jotai', () => {
 });
 
 jest.mock('~/hooks/useNavigateApp', () => ({
-  useNavigateApp: () => jest.fn(),
+  useNavigateApp: () => mockNavigateApp,
+}));
+
+jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
+  useSnackBar: () => ({
+    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
+  }),
 }));
 
 jest.mock('@/object-record/components/CompanyDuplicateWarningModal', () => ({
@@ -196,6 +204,23 @@ describe('useCreateNewIndexRecord', () => {
         name: 'Acme Corp',
       });
     });
+
+    expect(mockCloseCommandMenu).toHaveBeenCalledTimes(1);
+    expect(mockNavigateApp).toHaveBeenCalledWith(
+      '/object/:objectNameSingular/:objectRecordId',
+      {
+        objectNameSingular: 'company',
+        objectRecordId: 'new-company-id',
+      },
+      undefined,
+      {
+        state: {
+          isNewRecord: true,
+          labelIdentifierFieldName: undefined,
+          objectRecordId: 'new-company-id',
+        },
+      },
+    );
   });
 
   it('cancels the pending create when navigating to a duplicate company', async () => {
@@ -224,5 +249,82 @@ describe('useCreateNewIndexRecord', () => {
       ).not.toBeInTheDocument();
     });
     expect(mockCreateOneRecord).not.toHaveBeenCalled();
+  });
+
+  it('shows a snackbar action when continue anyway hits an existing company domain constraint', async () => {
+    mockCheckDuplicateCompanies.mockResolvedValue([
+      {
+        domainName: 'acme.com',
+        id: 'duplicate-company-id',
+        name: 'Acme Corp',
+      },
+    ]);
+
+    mockCreateOneRecord.mockRejectedValue(
+      {
+        graphQLErrors: [
+          {
+            extensions: {
+              conflictingObjectNameSingular: 'company',
+              conflictingRecordId: 'existing-company-id',
+            },
+            message: 'Company domain already exists',
+          },
+        ],
+      } as any,
+    );
+
+    const user = userEvent.setup();
+
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Continue anyway' }),
+    );
+
+    await waitFor(() => {
+      expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+        apolloError: expect.objectContaining({
+          graphQLErrors: expect.arrayContaining([
+            expect.objectContaining({
+              extensions: expect.objectContaining({
+                conflictingObjectNameSingular: 'company',
+                conflictingRecordId: 'existing-company-id',
+              }),
+            }),
+          ]),
+        }),
+      });
+    });
+  });
+
+  it('allows a new create attempt after canceling the duplicate warning', async () => {
+    mockCheckDuplicateCompanies
+      .mockResolvedValueOnce([
+        {
+          domainName: 'acme.com',
+          id: 'duplicate-company-id',
+          name: 'Acme Corp',
+        },
+      ])
+      .mockResolvedValueOnce([]);
+
+    const user = userEvent.setup();
+
+    render(<Harness />);
+
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+    await user.click(await screen.findByRole('button', { name: 'Cancel' }));
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+
+    await waitFor(() => {
+      expect(mockCheckDuplicateCompanies).toHaveBeenCalledTimes(2);
+      expect(mockCreateOneRecord).toHaveBeenCalledWith({
+        domainName: 'acme.com',
+        id: 'new-company-id',
+        name: 'Acme Corp',
+      });
+    });
   });
 });

@@ -17,6 +17,7 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -27,6 +28,7 @@ import { AppPath } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-record-from-apollo-error.util';
 
 type UseCreateNewIndexRecordProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -100,6 +102,7 @@ export const useCreateNewIndexRecord = ({
     });
 
   const { checkDuplicateCompanies } = useCheckDuplicateCompanies();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const performCreateNewIndexRecord = useCallback(
     async (mergedRecordInput: Partial<ObjectRecord>) => {
@@ -224,10 +227,27 @@ export const useCreateNewIndexRecord = ({
 
     setPendingDuplicateWarningState(null);
 
-    const createdRecord = await performCreateNewIndexRecord(pendingRecordInput);
+    try {
+      const createdRecord = await performCreateNewIndexRecord(pendingRecordInput);
 
-    resolve(createdRecord);
-  }, [pendingDuplicateWarningState, performCreateNewIndexRecord]);
+      resolve(createdRecord);
+    } catch (error) {
+      if (getConflictingRecordFromApolloError(error as any)) {
+        enqueueErrorSnackBar({
+          apolloError: error as any,
+        });
+        resolve(undefined);
+
+        return;
+      }
+
+      throw error;
+    }
+  }, [
+    enqueueErrorSnackBar,
+    pendingDuplicateWarningState,
+    performCreateNewIndexRecord,
+  ]);
 
   const handleRetryDuplicateCheck = useCallback(async () => {
     if (!pendingDuplicateWarningState) {

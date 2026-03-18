@@ -45,23 +45,73 @@ const query = `query FindOnePerson($objectRecordId: UUID!) {
 }`
 
 test.skip(
-  'should open existing company in side panel when clicking duplicate chip from side-panel create',
+  'AC-001: create company with duplicate warning then continue anyway persists and opens the new record',
   async ({ page }) => {
-    await page.goto('/');
+    await page.getByRole('link', { name: 'Companies' }).click();
+    await page.getByRole('button', { name: 'Create new company' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).fill('Acme Corp');
+    await page.getByRole('textbox', { name: 'Domain' }).fill('acme.com');
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'Potential duplicate companies' }),
+    ).toBeVisible();
+
+    await page.getByRole('button', { name: 'Continue anyway' }).click();
+
+    await expect(page).toHaveURL(/\/companies\/.+/);
+    await expect(
+      page.getByRole('heading', { name: 'Acme Corp' }),
+    ).toBeVisible();
   },
 );
 
 test.skip(
-  'should navigate to existing company show page when clicking duplicate chip from full-page create',
+  'AC-002: continue anyway handles unique domain conflicts with a snackbar action to view the existing record',
   async ({ page }) => {
-    await page.goto('/');
+    await page.getByRole('link', { name: 'Companies' }).click();
+    await page.getByRole('button', { name: 'Create new company' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).fill('Acme Corp');
+    await page.getByRole('textbox', { name: 'Domain' }).fill('acme.com');
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'Potential duplicate companies' }),
+    ).toBeVisible();
+
+    await page.getByRole('button', { name: 'Continue anyway' }).click();
+
+    await expect(page.getByText(/domain/i)).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'View existing record' }),
+    ).toBeVisible();
   },
 );
 
 test.skip(
-  'should preserve unsaved input when returning from duplicate navigation',
+  'AC-003: cancel from duplicate warning returns to the form with the entered values preserved',
   async ({ page }) => {
-    await page.goto('/');
+    await page.getByRole('link', { name: 'Companies' }).click();
+    await page.getByRole('button', { name: 'Create new company' }).click();
+
+    await page.getByRole('textbox', { name: 'Name' }).fill('Acme Corp');
+    await page.getByRole('textbox', { name: 'Domain' }).fill('acme.com');
+    await page.getByRole('button', { name: 'Save' }).click();
+
+    await expect(
+      page.getByRole('heading', { name: 'Potential duplicate companies' }),
+    ).toBeVisible();
+
+    await page.getByRole('button', { name: 'Cancel' }).click();
+
+    await expect(page.getByRole('textbox', { name: 'Name' })).toHaveValue(
+      'Acme Corp',
+    );
+    await expect(page.getByRole('textbox', { name: 'Domain' })).toHaveValue(
+      'acme.com',
+    );
   },
 );
 
