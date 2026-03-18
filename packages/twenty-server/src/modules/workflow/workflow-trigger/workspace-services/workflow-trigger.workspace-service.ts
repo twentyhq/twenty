@@ -321,6 +321,52 @@ export class WorkflowTriggerWorkspaceService {
     );
   }
 
+  private async resolveManualTriggerAvailability(
+    trigger: WorkflowManualTrigger,
+    workspaceId: string,
+  ): Promise<{
+    availabilityType: CommandMenuItemAvailabilityType;
+    availabilityObjectMetadataId: string | undefined;
+  }> {
+    const availability = trigger.settings.availability;
+
+    let availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
+    let availabilityObjectMetadataId: string | undefined;
+
+    if (availability) {
+      switch (availability.type) {
+        case 'GLOBAL':
+          availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
+          break;
+        case 'SINGLE_RECORD':
+        case 'BULK_RECORDS': {
+          availabilityType =
+            CommandMenuItemAvailabilityType.RECORD_SELECTION;
+
+          const { objectIdByNameSingular } =
+            await this.workflowCommonWorkspaceService.getFlatEntityMaps(
+              workspaceId,
+            );
+
+          const objectId =
+            objectIdByNameSingular[availability.objectNameSingular];
+
+          if (!objectId) {
+            throw new WorkflowTriggerException(
+              `Object metadata not found for object: ${availability.objectNameSingular}`,
+              WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+            );
+          }
+
+          availabilityObjectMetadataId = objectId;
+          break;
+        }
+      }
+    }
+
+    return { availabilityType, availabilityObjectMetadataId };
+  }
+
   private async enableTrigger(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
@@ -342,54 +388,44 @@ export class WorkflowTriggerWorkspaceService {
 
         const trigger = workflowVersion.trigger as WorkflowManualTrigger;
 
-        const availability = trigger.settings.availability;
+        const { availabilityType, availabilityObjectMetadataId } =
+          await this.resolveManualTriggerAvailability(trigger, workspaceId);
 
-        let availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
-        let availabilityObjectMetadataId: string | undefined;
+        const label = isNonEmptyString(workflow.name)
+          ? workflow.name
+          : 'Manual Trigger';
 
-        if (availability) {
-          switch (availability.type) {
-            case 'GLOBAL':
-              availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
-              break;
-            case 'SINGLE_RECORD':
-            case 'BULK_RECORDS': {
-              availabilityType =
-                CommandMenuItemAvailabilityType.RECORD_SELECTION;
+        const existingCommandMenuItem =
+          await this.commandMenuItemService.findByWorkflowVersionId(
+            workflowVersion.id,
+            workspaceId,
+          );
 
-              const { objectIdByNameSingular } =
-                await this.workflowCommonWorkspaceService.getFlatEntityMaps(
-                  workspaceId,
-                );
-
-              const objectId =
-                objectIdByNameSingular[availability.objectNameSingular];
-
-              if (!objectId) {
-                throw new WorkflowTriggerException(
-                  `Object metadata not found for object: ${availability.objectNameSingular}`,
-                  WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-                );
-              }
-
-              availabilityObjectMetadataId = objectId;
-              break;
-            }
-          }
+        if (existingCommandMenuItem) {
+          await this.commandMenuItemService.update(
+            {
+              id: existingCommandMenuItem.id,
+              label,
+              icon: trigger.settings.icon,
+              isPinned: trigger.settings.isPinned,
+              availabilityType,
+              availabilityObjectMetadataId,
+            },
+            workspaceId,
+          );
+        } else {
+          await this.commandMenuItemService.create(
+            {
+              workflowVersionId: workflowVersion.id,
+              label,
+              icon: trigger.settings.icon,
+              isPinned: trigger.settings.isPinned,
+              availabilityType,
+              availabilityObjectMetadataId,
+            },
+            workspaceId,
+          );
         }
-
-        await this.commandMenuItemService.create(
-          {
-            workflowVersionId: workflowVersion.id,
-            label: isNonEmptyString(workflow.name)
-              ? workflow.name
-              : 'Manual Trigger',
-            icon: trigger.settings.icon,
-            availabilityType,
-            availabilityObjectMetadataId,
-          },
-          workspaceId,
-        );
 
         return;
       }
