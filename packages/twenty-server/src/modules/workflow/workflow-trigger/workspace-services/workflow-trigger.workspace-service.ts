@@ -405,6 +405,7 @@ export class WorkflowTriggerWorkspaceService {
             {
               id: existingCommandMenuItem.id,
               label,
+              shortLabel: label,
               icon: trigger.settings.icon,
               isPinned: trigger.settings.isPinned,
               availabilityType,
@@ -417,6 +418,7 @@ export class WorkflowTriggerWorkspaceService {
             {
               workflowVersionId: workflowVersion.id,
               label,
+              shortLabel: label,
               icon: trigger.settings.icon,
               isPinned: trigger.settings.isPinned,
               availabilityType,

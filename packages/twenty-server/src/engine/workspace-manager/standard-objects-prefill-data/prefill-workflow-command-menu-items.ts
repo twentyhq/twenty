@@ -56,7 +56,7 @@ export const prefillWorkflowCommandMenuItems = async (
         engineComponentKey: null,
         label: 'Quick Lead',
         icon: 'IconUserPlus',
-        shortLabel: null,
+        shortLabel: 'Quick Lead',
         position: 100,
         isPinned: false,
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
