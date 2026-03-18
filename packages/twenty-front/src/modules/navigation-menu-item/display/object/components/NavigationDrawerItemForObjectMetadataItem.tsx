@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { useObjectNavItemColor } from '@/navigation-menu-item/common/hooks/useObjectNavItemColor';
@@ -28,6 +30,7 @@ export type NavigationDrawerItemForObjectMetadataItemProps = {
   onEditModeClick?: () => void;
   onActiveItemClickWhenNotInEditMode?: () => void;
   isDragging?: boolean;
+  rightOptions?: ReactNode;
 };
 
 export const NavigationDrawerItemForObjectMetadataItem = ({
@@ -37,6 +40,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   onEditModeClick,
   onActiveItemClickWhenNotInEditMode: _onActiveItemClickWhenNotInEditMode,
   isDragging = false,
+  rightOptions,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -171,6 +175,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent={isLayoutCustomizationModeEnabled ? 'CLICK' : undefined}
+      rightOptions={rightOptions}
     />
   );
 };

@@ -3,7 +3,7 @@ import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/split
 import { useCallback } from 'react';
 
 export const useLoadMockedObjectMetadataItems = () => {
-  const { updateDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useMetadataStore();
 
   const loadMockedObjectMetadataItems = useCallback(async () => {
     const { generatedMockObjectMetadataItems } = await import(
@@ -13,11 +13,11 @@ export const useLoadMockedObjectMetadataItems = () => {
     const { flatObjects, flatFields, flatIndexes } =
       splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
 
-    updateDraft('objectMetadataItems', flatObjects);
-    updateDraft('fieldMetadataItems', flatFields);
-    updateDraft('indexMetadataItems', flatIndexes);
+    replaceDraft('objectMetadataItems', flatObjects);
+    replaceDraft('fieldMetadataItems', flatFields);
+    replaceDraft('indexMetadataItems', flatIndexes);
     applyChanges();
-  }, [updateDraft, applyChanges]);
+  }, [replaceDraft, applyChanges]);
 
   return {
     loadMockedObjectMetadataItems,

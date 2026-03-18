@@ -1,11 +1,14 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { patchMetadataStoreFromSSEEvent } from '@/metadata-store/utils/patchMetadataStoreFromSSEEvent';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
+import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
-import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
+type AnyMetadataEntity = MetadataEntityTypeMap[MetadataEntityKey];
+
 export const MetadataStoreSSEEffect = () => {
-  const store = useStore();
+  const { addToDraft, removeFromDraft, applyChanges } = useMetadataStore();
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {
@@ -15,12 +18,42 @@ export const MetadataStoreSSEEffect = () => {
         return;
       }
 
-      patchMetadataStoreFromSSEEvent({
-        store,
-        entityKey,
-        operation: eventDetail.operation,
-        updatedCollectionHash: eventDetail.updatedCollectionHash,
-      });
+      const collectionHash = eventDetail.updatedCollectionHash;
+
+      switch (eventDetail.operation.type) {
+        case 'create': {
+          addToDraft({
+            key: entityKey,
+            items: [
+              eventDetail.operation
+                .createdRecord as unknown as AnyMetadataEntity,
+            ],
+            collectionHash,
+          });
+          break;
+        }
+        case 'update': {
+          addToDraft({
+            key: entityKey,
+            items: [
+              eventDetail.operation
+                .updatedRecord as unknown as AnyMetadataEntity,
+            ],
+            collectionHash,
+          });
+          break;
+        }
+        case 'delete': {
+          removeFromDraft({
+            key: entityKey,
+            itemIds: [eventDetail.operation.deletedRecordId],
+            collectionHash,
+          });
+          break;
+        }
+      }
+
+      applyChanges();
     },
   });
 

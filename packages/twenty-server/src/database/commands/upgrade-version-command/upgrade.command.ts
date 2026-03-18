@@ -29,9 +29,10 @@ import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/command
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
 import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
 import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
+import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-missing-standard-views.command';
+import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-navigation-menu-item-type.command';
 import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
-import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-missing-standard-views.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
@@ -83,6 +84,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
     protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
     protected readonly backfillMissingStandardViewsCommand: BackfillMissingStandardViewsCommand,
+    protected readonly backfillNavigationMenuItemTypeCommand: BackfillNavigationMenuItemTypeCommand,
     protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
     protected readonly seedServerIdCommand: SeedServerIdCommand,
 
@@ -133,10 +135,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.addMissingSystemFieldsToStandardObjectsCommand,
       this.backfillMessageChannelMessageAssociationMessageFolderCommand,
       this.backfillMissingStandardViewsCommand,
+      this.backfillNavigationMenuItemTypeCommand,
       this.seedServerIdCommand,
     ];
 
     const commands_1200: VersionCommands = [
+      this.backfillNavigationMenuItemTypeCommand,
       this.migrateRichTextToTextCommand,
       this.backfillCommandMenuItemsCommand,
       this.backfillPageLayoutsCommand,

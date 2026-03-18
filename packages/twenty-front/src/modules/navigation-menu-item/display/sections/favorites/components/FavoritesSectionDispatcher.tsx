@@ -1,6 +1,7 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationMenuItemDndKitProvider } from '@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider';
 import { FavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSection';
-import { FavoritesDndKitProvider } from '@/navigation/components/FavoritesDndKitProvider';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
@@ -11,9 +12,9 @@ export const FavoritesSectionDispatcher = () => {
 
   return (
     <AnimatedEaseInOut isOpen={!isLayoutCustomizationModeEnabled} initial>
-      <FavoritesDndKitProvider>
+      <NavigationMenuItemDndKitProvider section={NavigationSections.FAVORITES}>
         <FavoritesSection />
-      </FavoritesDndKitProvider>
+      </NavigationMenuItemDndKitProvider>
     </AnimatedEaseInOut>
   );
 };
