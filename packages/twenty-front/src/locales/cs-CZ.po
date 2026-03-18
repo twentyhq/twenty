@@ -10459,6 +10459,11 @@ msgstr "Trvale zničit workflow"
 msgid "Permanently destroy workflows"
 msgstr "Trvale zničit workflody"
 
+#. js-lingui-id: yWmZKk
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "permission flag"
+msgstr ""
+
 #. js-lingui-id: 9cDpsw
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx

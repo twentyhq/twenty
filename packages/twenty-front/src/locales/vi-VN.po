@@ -10459,6 +10459,11 @@ msgstr "Hủy bỏ vĩnh viễn quy trình"
 msgid "Permanently destroy workflows"
 msgstr "Hủy bỏ vĩnh viễn các quy trình"
 
+#. js-lingui-id: yWmZKk
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "permission flag"
+msgstr ""
+
 #. js-lingui-id: 9cDpsw
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
