@@ -8,7 +8,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -35,7 +35,7 @@ export const useActivityTargetsForTargetableObjects = ({
   limit: number;
 }) => {
   const objectMetadataItems = useAtomStateValue<ObjectMetadataItem[]>(
-    objectMetadataItemsState,
+    objectMetadataItemsSelector,
   );
   const isNoteTargetMigrated = useIsFeatureEnabled(
     FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,

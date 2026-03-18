@@ -109,7 +109,7 @@ describe('useRecordData', () => {
             pageSize: 30,
             callback,
             delayMs: 0,
-            viewType: ViewType.Kanban,
+            viewType: ViewType.KANBAN,
           }),
         {
           wrapper: Wrapper,

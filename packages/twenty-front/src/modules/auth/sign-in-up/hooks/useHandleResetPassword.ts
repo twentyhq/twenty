@@ -3,14 +3,15 @@ import { useCallback } from 'react';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useLingui } from '@lingui/react/macro';
-import { useEmailPasswordResetLinkMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { EmailPasswordResetLinkDocument } from '~/generated-metadata/graphql';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useHandleResetPassword = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const [emailPasswordResetLink] = useEmailPasswordResetLinkMutation();
+  const [emailPasswordResetLink] = useMutation(EmailPasswordResetLinkDocument);
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const currentUser = useAtomStateValue(currentUserState);
 
@@ -41,9 +42,11 @@ export const useHandleResetPassword = () => {
             enqueueErrorSnackBar({});
           }
         } catch (error) {
-          enqueueErrorSnackBar({
-            ...(error instanceof ApolloError ? { apolloError: error } : {}),
-          });
+          enqueueErrorSnackBar(
+            CombinedGraphQLErrors.is(error)
+              ? { apolloError: error }
+              : { message: error instanceof Error ? error.message : undefined },
+          );
         }
       };
     },

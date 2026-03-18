@@ -6,5 +6,5 @@ export type {
   FullNameMetadata as FullNameField,
   LinksMetadata as LinksField,
   PhonesMetadata as PhonesField,
-  RichTextV2Metadata as RichTextField,
+  RichTextMetadata as RichTextField,
 } from 'twenty-shared/types';

@@ -3,15 +3,16 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
   type GetEmailingDomainsQuery,
-  useDeleteEmailingDomainMutation,
-  useGetEmailingDomainsQuery,
+  DeleteEmailingDomainDocument,
+  GetEmailingDomainsDocument,
 } from '~/generated-metadata/graphql';
 
 type SettingsEmailingDomainRowDropdownMenuProps = {
@@ -27,9 +28,13 @@ export const SettingsEmailingDomainRowDropdownMenu = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const { refetch: refetchEmailingDomains } = useGetEmailingDomainsQuery();
+  const { refetch: refetchEmailingDomains } = useQuery(
+    GetEmailingDomainsDocument,
+  );
 
-  const [deleteEmailingDomainMutation] = useDeleteEmailingDomainMutation();
+  const [deleteEmailingDomainMutation] = useMutation(
+    DeleteEmailingDomainDocument,
+  );
 
   const handleDeleteEmailingDomain = async () => {
     try {
@@ -46,7 +51,7 @@ export const SettingsEmailingDomainRowDropdownMenu = ({
       await refetchEmailingDomains();
     } catch (error) {
       enqueueErrorSnackBar({
-        ...(error instanceof ApolloError ? { apolloError: error } : {}),
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };

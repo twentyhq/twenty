@@ -6,7 +6,8 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ApolloError, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 import {
@@ -85,8 +86,8 @@ export const SSEQuerySubscribeEffect = () => {
         });
       }
     } catch (error) {
-      if (error instanceof ApolloError) {
-        const subCode = error.graphQLErrors[0]?.extensions?.subCode;
+      if (CombinedGraphQLErrors.is(error)) {
+        const subCode = error.errors[0]?.extensions?.subCode;
 
         switch (subCode) {
           case 'EVENT_STREAM_DOES_NOT_EXIST':

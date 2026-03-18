@@ -4,12 +4,16 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilter } from '~/generated-metadata/graphql';
+import {
+  convertViewFilterValueToString,
+  getFilterTypeFromFieldType,
+  isDefined,
+} from 'twenty-shared/utils';
+import { type ViewFilter as GqlViewFilter } from '~/generated-metadata/graphql';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
-  viewFilters: ViewFilter[] | CoreViewFilter[],
+  viewFilters: ViewFilter[] | GqlViewFilter[],
   availableFieldMetadataItems: FieldMetadataItem[],
 ): RecordFilter[] => {
   return viewFilters
@@ -34,14 +38,16 @@ export const mapViewFiltersToFilters = (
 
       const operand = viewFilter.operand;
 
+      const stringValue = convertViewFilterValueToString(viewFilter.value);
+
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
-        value: viewFilter.value,
+        value: stringValue,
         displayValue:
-          'displayValue' in viewFilter
+          'displayValue' in viewFilter && isDefined(viewFilter.displayValue)
             ? viewFilter.displayValue
-            : viewFilter.value,
+            : stringValue,
         operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId ?? undefined,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,

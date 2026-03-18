@@ -5,7 +5,7 @@ import { defineFrontComponentsTests } from './tests/front-components.tests';
 import { defineLogicFunctionsTests } from './tests/logic-functions.tests';
 import { defineManifestTests } from './tests/manifest.tests';
 
-describe('minimal-app app:dev', () => {
+describe('minimal-app dev', () => {
   beforeAll(async () => {
     const result = await runAppDevInProcess({ appPath: MINIMAL_APP_PATH });
 
@@ -17,7 +17,7 @@ describe('minimal-app app:dev', () => {
       );
 
       throw new Error(
-        `app:dev did not produce manifest.json within timeout.\n${diagnostics}`,
+        `dev did not produce manifest.json within timeout.\n${diagnostics}`,
       );
     }
   }, 60000);

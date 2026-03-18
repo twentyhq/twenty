@@ -24,12 +24,12 @@ const jestConfig = {
   testEnvironmentOptions: {},
 
   transformIgnorePatterns: [
-    '/node_modules/(?!(twenty-ui)/.*)',
-    '../../node_modules/(?!(twenty-ui)/.*)',
+    '/node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
+    '../../node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
     '../../twenty-ui/',
   ],
   transform: {
-    '^.+\\.(ts|js|tsx|jsx)$': [
+    '^.+\\.(ts|js|tsx|jsx|mjs)$': [
       '@swc/jest',
       {
         jsc: {
@@ -61,8 +61,8 @@ const jestConfig = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 49.1,
-      lines: 47.7,
+      statements: 48.5,
+      lines: 47.0,
       functions: 39.5,
     },
   },

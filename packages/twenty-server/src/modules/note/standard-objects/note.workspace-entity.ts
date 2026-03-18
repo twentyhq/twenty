@@ -1,7 +1,7 @@
 import {
   type ActorMetadata,
   FieldMetadataType,
-  type RichTextV2Metadata,
+  type RichTextMetadata,
 } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -17,13 +17,13 @@ const BODY_V2_FIELD_NAME = 'bodyV2';
 
 export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   { name: TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT_V2 },
+  { name: BODY_V2_FIELD_NAME, type: FieldMetadataType.RICH_TEXT },
 ];
 
 export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
   title: string;
-  bodyV2: RichTextV2Metadata | null;
+  bodyV2: RichTextMetadata | null;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;

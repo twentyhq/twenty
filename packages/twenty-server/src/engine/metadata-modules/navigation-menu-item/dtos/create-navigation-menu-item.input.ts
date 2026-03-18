@@ -1,11 +1,23 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 
 @InputType()
 export class CreateNavigationMenuItemInput {
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
+
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
@@ -25,6 +37,10 @@ export class CreateNavigationMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   viewId?: string | null;
+
+  @IsEnum(NavigationMenuItemType)
+  @Field(() => NavigationMenuItemType)
+  type: NavigationMenuItemType;
 
   @IsOptional()
   @IsString()

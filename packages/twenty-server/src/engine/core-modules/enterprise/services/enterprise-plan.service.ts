@@ -477,12 +477,15 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
-  private getPublicKey(): string {
+  // In development, try both keys so production keys work when testing locally
+  private getPublicKeysToTry(): string[] {
     const nodeEnv = this.twentyConfigService.get('NODE_ENV');
 
-    return nodeEnv === NodeEnvironment.DEVELOPMENT
-      ? ENTERPRISE_JWT_DEV_PUBLIC_KEY
-      : ENTERPRISE_JWT_PUBLIC_KEY;
+    if (nodeEnv === NodeEnvironment.DEVELOPMENT) {
+      return [ENTERPRISE_JWT_PUBLIC_KEY, ENTERPRISE_JWT_DEV_PUBLIC_KEY];
+    }
+
+    return [ENTERPRISE_JWT_PUBLIC_KEY];
   }
 
   private verifyJwt<T extends Record<string, unknown>>(
@@ -504,27 +507,31 @@ export class EnterprisePlanService implements OnModuleInit {
         'base64',
       );
 
-      const isValid = crypto.verify(
-        'sha256',
-        Buffer.from(signingInput),
-        {
-          key: this.getPublicKey(),
-          padding: crypto.constants.RSA_PKCS1_PADDING,
-        },
-        signatureBuffer,
-      );
+      const publicKeys = this.getPublicKeysToTry();
 
-      if (!isValid) {
-        return null;
+      for (const publicKey of publicKeys) {
+        const isValid = crypto.verify(
+          'sha256',
+          Buffer.from(signingInput),
+          {
+            key: publicKey,
+            padding: crypto.constants.RSA_PKCS1_PADDING,
+          },
+          signatureBuffer,
+        );
+
+        if (isValid) {
+          const payloadStr = Buffer.from(
+            encodedPayload.replace(/-/g, '+').replace(/_/g, '/') +
+              '='.repeat((4 - (encodedPayload.length % 4)) % 4),
+            'base64',
+          ).toString('utf-8');
+
+          return JSON.parse(payloadStr) as T;
+        }
       }
 
-      const payloadStr = Buffer.from(
-        encodedPayload.replace(/-/g, '+').replace(/_/g, '/') +
-          '='.repeat((4 - (encodedPayload.length % 4)) % 4),
-        'base64',
-      ).toString('utf-8');
-
-      return JSON.parse(payloadStr) as T;
+      return null;
     } catch {
       return null;
     }

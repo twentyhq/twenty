@@ -9,9 +9,9 @@
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "app:dev": "twenty app:dev",
-    "function:execute": "twenty function:execute",
-    "app:uninstall": "twenty app:uninstall",
+    "dev": "twenty dev",
+    "exec": "twenty exec",
+    "uninstall": "twenty uninstall",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },

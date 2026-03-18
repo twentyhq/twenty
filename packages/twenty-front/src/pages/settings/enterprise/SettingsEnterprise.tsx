@@ -19,7 +19,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { ApolloError, useLazyQuery, useMutation } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -95,11 +96,20 @@ export const SettingsEnterprise = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [enterpriseKey, setEnterpriseKey] = useState('');
   const [isActivating, setIsActivating] = useState(false);
-  const [setEnterpriseKeyMutation] = useMutation(SET_ENTERPRISE_KEY);
-  const [refreshValidityTokenMutation] = useMutation(
-    REFRESH_ENTERPRISE_VALIDITY_TOKEN,
-  );
-  const [fetchPortalSession] = useLazyQuery(ENTERPRISE_PORTAL_SESSION);
+  const [setEnterpriseKeyMutation] = useMutation<{
+    setEnterpriseKey: {
+      isValid: boolean;
+      licensee: string | null;
+      expiresAt: string | null;
+      subscriptionId: string | null;
+    };
+  }>(SET_ENTERPRISE_KEY);
+  const [refreshValidityTokenMutation] = useMutation<{
+    refreshEnterpriseValidityToken: boolean;
+  }>(REFRESH_ENTERPRISE_VALIDITY_TOKEN);
+  const [fetchPortalSession] = useLazyQuery<{
+    enterprisePortalSession: string | null;
+  }>(ENTERPRISE_PORTAL_SESSION);
   const [isRefreshingToken, setIsRefreshingToken] = useState(false);
   const { openModal } = useModal();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
@@ -112,10 +122,9 @@ export const SettingsEnterprise = ({
 
   const hasOrphanedValidityToken = hasValidityToken && !hasSignedEnterpriseKey;
 
-  const [fetchSubscriptionStatus] = useLazyQuery(
-    ENTERPRISE_SUBSCRIPTION_STATUS,
-    { fetchPolicy: 'network-only' },
-  );
+  const [fetchSubscriptionStatus] = useLazyQuery<{
+    enterpriseSubscriptionStatus: SubscriptionStatus | null;
+  }>(ENTERPRISE_SUBSCRIPTION_STATUS, { fetchPolicy: 'network-only' });
 
   const [subscriptionStatus, setSubscriptionStatus] =
     useState<SubscriptionStatus | null>(null);
@@ -193,14 +202,13 @@ export const SettingsEnterprise = ({
         });
       }
     } catch (error) {
-      const subCode =
-        error instanceof ApolloError
-          ? error.graphQLErrors?.[0]?.extensions?.subCode
-          : undefined;
-
-      if (subCode === 'CONFIG_VARIABLES_IN_DB_DISABLED') {
+      if (
+        CombinedGraphQLErrors.is(error) &&
+        error.errors?.[0]?.extensions?.subCode ===
+          'CONFIG_VARIABLES_IN_DB_DISABLED'
+      ) {
         enqueueErrorSnackBar({
-          apolloError: error as ApolloError,
+          apolloError: error,
           options: { duration: 10000 },
         });
       } else {

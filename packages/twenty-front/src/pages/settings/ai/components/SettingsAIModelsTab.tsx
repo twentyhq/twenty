@@ -24,7 +24,8 @@ import {
 } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
@@ -37,7 +38,7 @@ export const SettingsAIModelsTab = () => {
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
-  const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const [searchQuery, setSearchQuery] = useState('');
   const aiModels = useAtomStateValue(aiModelsState);
 

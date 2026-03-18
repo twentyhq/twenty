@@ -19,7 +19,6 @@ export type ClientConfig = {
   calendarBookingPageId?: string;
   canManageFeatureFlags: boolean;
   captcha: Captcha;
-  chromeExtensionId?: string;
   defaultSubdomain?: string;
   frontDomain: string;
   isAttachmentPreviewEnabled: boolean;

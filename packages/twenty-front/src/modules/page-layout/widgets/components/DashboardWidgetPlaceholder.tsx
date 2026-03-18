@@ -1,11 +1,12 @@
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -23,8 +24,9 @@ export const DashboardWidgetPlaceholder = () => {
     PageLayoutComponentInstanceContext,
   );
 
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const { setIsPageLayoutInEditMode } =
@@ -33,6 +35,10 @@ export const DashboardWidgetPlaceholder = () => {
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const handleClick = () => {
+    if (isLayoutCustomizationModeEnabled) {
+      return;
+    }
+
     if (!isPageLayoutInEditMode) {
       setIsPageLayoutInEditMode(true);
     }

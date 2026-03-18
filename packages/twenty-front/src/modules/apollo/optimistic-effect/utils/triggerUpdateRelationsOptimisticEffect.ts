@@ -27,7 +27,7 @@ import {
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type TriggerUpdateRelationsOptimisticEffectArgs = {
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   sourceObjectMetadataItem: ObjectMetadataItem;
   currentSourceRecord: RecordGqlNode | null;
   updatedSourceRecord: RecordGqlNode | null;
@@ -106,7 +106,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   currentSourceRecord: RecordGqlNode | null;
   objectMetadataItems: ObjectMetadataItem[];
   sourceObjectMetadataItem: ObjectMetadataItem;
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   isDeletion: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
@@ -262,7 +262,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   currentSourceRecord: RecordGqlNode | null;
   objectMetadataItems: ObjectMetadataItem[];
   sourceObjectMetadataItem: ObjectMetadataItem;
-  cache: ApolloCache<unknown>;
+  cache: ApolloCache;
   isDeletion: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<

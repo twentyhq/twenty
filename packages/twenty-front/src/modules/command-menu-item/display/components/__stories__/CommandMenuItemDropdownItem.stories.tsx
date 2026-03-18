@@ -53,7 +53,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label ?? ''),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
@@ -68,7 +68,7 @@ export const WithLink: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const dropdownItem = await canvas.findByText(
-      getCommandMenuItemLabel(goToPeopleCommandMenuItem?.label ?? ''),
+      getCommandMenuItemLabel(goToPeopleCommandMenuItem?.label),
     );
     expect(dropdownItem).toBeVisible();
   },

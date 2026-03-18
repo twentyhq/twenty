@@ -5,8 +5,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { findCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-core-view-groups.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { findViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-view-groups.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
 import {
@@ -72,8 +72,8 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
     });
 
     const {
-      data: { createCoreView: view },
-    } = await createOneCoreView({
+      data: { createView: view },
+    } = await createOneView({
       input: {
         id: faker.string.uuid(),
         icon: 'IconTable',
@@ -117,8 +117,8 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
         await createObjectWithSelectFieldAndView(initialOptions);
 
       const {
-        data: { getCoreViewGroups: initialViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: initialViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -154,8 +154,8 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue viewId',
         expectToFail: false,
@@ -188,8 +188,8 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -226,8 +226,8 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -262,8 +262,8 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,
@@ -301,8 +301,8 @@ describe('update-one-field-metadata-view-groups-side-effect-v2', () => {
       });
 
       const {
-        data: { getCoreViewGroups: updatedViewGroups },
-      } = await findCoreViewGroups({
+        data: { getViewGroups: updatedViewGroups },
+      } = await findViewGroups({
         viewId,
         gqlFields: 'id fieldValue',
         expectToFail: false,

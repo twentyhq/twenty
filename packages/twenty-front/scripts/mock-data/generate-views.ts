@@ -1,9 +1,9 @@
 /* oxlint-disable no-console, lingui/no-unlocalized-strings */
 import { graphqlRequest, writeGeneratedFile } from './utils.js';
 
-const FIND_ALL_CORE_VIEWS_QUERY = `
-  query FindAllCoreViews {
-    getCoreViews {
+const FIND_ALL_VIEWS_QUERY = `
+  query FindAllViews {
+    getViews {
       id
       name
       objectMetadataId
@@ -101,19 +101,19 @@ export const generateViews = async (token: string) => {
 
   const data = (await graphqlRequest(
     '/metadata',
-    FIND_ALL_CORE_VIEWS_QUERY,
+    FIND_ALL_VIEWS_QUERY,
     token,
   )) as {
-    getCoreViews: Record<string, unknown>[];
+    getViews: Record<string, unknown>[];
   };
 
-  console.log(`  Got ${data.getCoreViews.length} views.`);
+  console.log(`  Got ${data.getViews.length} views.`);
 
   writeGeneratedFile(
     'metadata/views/mock-views-data.ts',
-    'mockedCoreViews',
-    'CoreViewWithRelations[]',
-    "import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';",
-    data.getCoreViews,
+    'mockedViews',
+    'ViewWithRelations[]',
+    "import { type ViewWithRelations } from '@/views/types/ViewWithRelations';",
+    data.getViews,
   );
 };

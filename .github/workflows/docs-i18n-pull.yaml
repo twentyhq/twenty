@@ -40,7 +40,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+          repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
@@ -111,7 +112,7 @@ jobs:
         run: yarn docs:generate-paths
 
       - name: Commit artifacts to pull request branch
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         run: |
           git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json packages/twenty-shared/src/constants/DocumentationPaths.ts
           if git diff --staged --quiet --exit-code; then
@@ -149,4 +150,3 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

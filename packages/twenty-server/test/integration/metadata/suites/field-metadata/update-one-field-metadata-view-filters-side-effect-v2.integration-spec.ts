@@ -5,8 +5,8 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { findViewFilterWithRestApi } from 'test/integration/rest/utils/view-rest-api.util';
 import {
   eachTestingContextFilter,
@@ -111,8 +111,8 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
     });
 
     const {
-      data: { createCoreView: createdView },
-    } = await createOneCoreView({
+      data: { createView: createdView },
+    } = await createOneView({
       input: {
         id: faker.string.uuid(),
         icon: '123Icon',
@@ -234,8 +234,8 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
           await createObjectSelectFieldAndView(fieldMetadata);
 
         const {
-          data: { createCoreViewFilter: createdViewFilter },
-        } = await createOneCoreViewFilter({
+          data: { createViewFilter: createdViewFilter },
+        } = await createOneViewFilter({
           input: {
             viewId: createdView.id,
             fieldMetadataId: createOneField.id,
@@ -331,7 +331,7 @@ describe('update-one-field-metadata-view-filters-side-effect-v2', () => {
 
         const viewFilterId = '20202020-e3b5-4fa7-85aa-9b1950fc7bf5';
 
-        await createOneCoreViewFilter({
+        await createOneViewFilter({
           input: {
             id: viewFilterId,
             viewId: createdView.id,

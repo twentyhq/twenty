@@ -1,6 +1,6 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AppPath } from 'twenty-shared/types';
 
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
@@ -95,7 +95,7 @@ export const VerifyEmailEffect = () => {
         await verifyLoginToken(loginToken.token);
       } catch (error) {
         enqueueErrorSnackBar({
-          ...(error instanceof ApolloError
+          ...(CombinedGraphQLErrors.is(error)
             ? { apolloError: error }
             : { message: t`Email verification failed` }),
           options: {
@@ -103,9 +103,8 @@ export const VerifyEmailEffect = () => {
           },
         });
         if (
-          error instanceof ApolloError &&
-          error.graphQLErrors[0].extensions?.subCode ===
-            'EMAIL_ALREADY_VERIFIED'
+          CombinedGraphQLErrors.is(error) &&
+          error.errors[0].extensions?.subCode === 'EMAIL_ALREADY_VERIFIED'
         ) {
           navigate(AppPath.SignInUp);
         }

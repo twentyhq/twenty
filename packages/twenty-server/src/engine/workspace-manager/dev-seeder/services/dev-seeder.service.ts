@@ -5,6 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -17,7 +18,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { SeededWorkspacesIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { seedCoreSchema } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-core-schema.util';
-import { seedFrontComponentsAndCommandMenuItems } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-front-components-and-command-menu-items.util';
 import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
 import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
@@ -37,6 +37,7 @@ export class DevSeederService {
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -53,6 +54,8 @@ export class DevSeederService {
       seedBilling: isBillingEnabled,
       appVersion,
     });
+
+    await this.applicationRegistrationService.createCliRegistrationIfNotExists();
 
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
@@ -146,23 +149,6 @@ export class DevSeederService {
       workspaceId,
       featureFlags: featureFlagsMap,
     });
-
-    await seedFrontComponentsAndCommandMenuItems({
-      dataSource: this.coreDataSource,
-      schemaName: 'core',
-      workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
-    });
-
-    const relatedCommandMenuItemAndFrontComponentCacheKeysToInvalidate = [
-      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.commandMenuItem),
-      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.frontComponent),
-    ].map(getMetadataFlatEntityMapsKey);
-
-    await this.workspaceCacheService.invalidateAndRecompute(
-      workspaceId,
-      relatedCommandMenuItemAndFrontComponentCacheKeysToInvalidate,
-    );
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
   }

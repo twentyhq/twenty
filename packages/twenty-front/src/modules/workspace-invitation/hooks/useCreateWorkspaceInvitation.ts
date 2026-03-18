@@ -1,12 +1,13 @@
+import { useMutation } from '@apollo/client/react';
 import {
   type SendInvitationsMutationVariables,
-  useSendInvitationsMutation,
+  SendInvitationsDocument,
 } from '~/generated-metadata/graphql';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useCreateWorkspaceInvitation = () => {
-  const [sendInvitationsMutation] = useSendInvitationsMutation();
+  const [sendInvitationsMutation] = useMutation(SendInvitationsDocument);
 
   const setWorkspaceInvitations = useSetAtomState(workspaceInvitationsState);
 

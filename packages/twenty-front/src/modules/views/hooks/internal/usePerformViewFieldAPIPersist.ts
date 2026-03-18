@@ -3,46 +3,43 @@ import { useCallback } from 'react';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
-  type CreateManyCoreViewFieldsMutationVariables,
-  type DeleteCoreViewFieldMutationVariables,
-  type DestroyCoreViewFieldMutationVariables,
-  type UpdateCoreViewFieldMutationVariables,
-  useCreateManyCoreViewFieldsMutation,
-  useDeleteCoreViewFieldMutation,
-  useDestroyCoreViewFieldMutation,
-  useUpdateCoreViewFieldMutation,
+  type CreateManyViewFieldsMutationVariables,
+  type DeleteViewFieldMutationVariables,
+  type DestroyViewFieldMutationVariables,
+  type UpdateViewFieldMutationVariables,
+  CreateManyViewFieldsDocument,
+  DeleteViewFieldDocument,
+  DestroyViewFieldDocument,
+  UpdateViewFieldDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewFieldAPIPersist = () => {
-  const { triggerViewFieldOptimisticEffect } =
-    useTriggerViewFieldOptimisticEffect();
-
-  const [createManyCoreViewFieldsMutation] =
-    useCreateManyCoreViewFieldsMutation();
-  const [updateCoreViewFieldMutation] = useUpdateCoreViewFieldMutation();
-  const [deleteCoreViewFieldMutation] = useDeleteCoreViewFieldMutation();
-  const [destroyCoreViewFieldMutation] = useDestroyCoreViewFieldMutation();
+  const [createManyViewFieldsMutation] = useMutation(
+    CreateManyViewFieldsDocument,
+  );
+  const [updateViewFieldMutation] = useMutation(UpdateViewFieldDocument);
+  const [deleteViewFieldMutation] = useMutation(DeleteViewFieldDocument);
+  const [destroyViewFieldMutation] = useMutation(DestroyViewFieldDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const performViewFieldAPICreate = useCallback(
     async (
-      createCoreViewFieldInputs: CreateManyCoreViewFieldsMutationVariables,
+      createViewFieldInputs: CreateManyViewFieldsMutationVariables,
     ): Promise<
       MetadataRequestResult<Awaited<
-        ReturnType<typeof createManyCoreViewFieldsMutation>
+        ReturnType<typeof createManyViewFieldsMutation>
       > | null>
     > => {
       if (
-        !Array.isArray(createCoreViewFieldInputs.inputs) ||
-        createCoreViewFieldInputs.inputs.length === 0
+        !Array.isArray(createViewFieldInputs.inputs) ||
+        createViewFieldInputs.inputs.length === 0
       ) {
         return {
           status: 'successful',
@@ -51,18 +48,8 @@ export const usePerformViewFieldAPIPersist = () => {
       }
 
       try {
-        const result = await createManyCoreViewFieldsMutation({
-          variables: createCoreViewFieldInputs,
-          update: (_cache, { data }) => {
-            const createdViewFields = data?.createManyCoreViewFields;
-            if (!isDefined(createdViewFields)) {
-              return;
-            }
-
-            triggerViewFieldOptimisticEffect({
-              createdViewFields,
-            });
-          },
+        const result = await createManyViewFieldsMutation({
+          variables: createViewFieldInputs,
         });
 
         return {
@@ -70,7 +57,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: result,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.CREATE,
@@ -85,23 +72,18 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFieldOptimisticEffect,
-      createManyCoreViewFieldsMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [createManyViewFieldsMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFieldAPIUpdate = useCallback(
     async (
-      createCoreViewFieldInputs: UpdateCoreViewFieldMutationVariables[],
+      createViewFieldInputs: UpdateViewFieldMutationVariables[],
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof updateCoreViewFieldMutation>>[]
+        Awaited<ReturnType<typeof updateViewFieldMutation>>[]
       >
     > => {
-      if (createCoreViewFieldInputs.length === 0) {
+      if (createViewFieldInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
@@ -110,19 +92,9 @@ export const usePerformViewFieldAPIPersist = () => {
 
       try {
         const results = await Promise.all(
-          createCoreViewFieldInputs.map((variables) =>
-            updateCoreViewFieldMutation({
+          createViewFieldInputs.map((variables) =>
+            updateViewFieldMutation({
               variables,
-              update: (_cache, { data }) => {
-                const updatedViewField = data?.updateCoreViewField;
-                if (!isDefined(updatedViewField)) {
-                  return;
-                }
-
-                triggerViewFieldOptimisticEffect({
-                  updatedViewFields: [updatedViewField],
-                });
-              },
             }),
           ),
         );
@@ -132,7 +104,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.UPDATE,
@@ -147,23 +119,18 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFieldOptimisticEffect,
-      updateCoreViewFieldMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [updateViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFieldAPIDelete = useCallback(
     async (
-      deleteCoreViewFieldInputs: DeleteCoreViewFieldMutationVariables[],
+      deleteViewFieldInputs: DeleteViewFieldMutationVariables[],
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof deleteCoreViewFieldMutation>>[]
+        Awaited<ReturnType<typeof deleteViewFieldMutation>>[]
       >
     > => {
-      if (deleteCoreViewFieldInputs.length === 0) {
+      if (deleteViewFieldInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
@@ -172,19 +139,9 @@ export const usePerformViewFieldAPIPersist = () => {
 
       try {
         const results = await Promise.all(
-          deleteCoreViewFieldInputs.map((variables) =>
-            deleteCoreViewFieldMutation({
+          deleteViewFieldInputs.map((variables) =>
+            deleteViewFieldMutation({
               variables,
-              update: (_cache, { data }) => {
-                const deletedViewField = data?.deleteCoreViewField;
-                if (!isDefined(deletedViewField)) {
-                  return;
-                }
-
-                triggerViewFieldOptimisticEffect({
-                  deletedViewFields: [deletedViewField],
-                });
-              },
             }),
           ),
         );
@@ -194,7 +151,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DELETE,
@@ -209,23 +166,18 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [
-      triggerViewFieldOptimisticEffect,
-      deleteCoreViewFieldMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [deleteViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const performViewFieldAPIDestroy = useCallback(
     async (
-      destroyCoreViewFieldInputs: DestroyCoreViewFieldMutationVariables[],
+      destroyViewFieldInputs: DestroyViewFieldMutationVariables[],
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof destroyCoreViewFieldMutation>>[]
+        Awaited<ReturnType<typeof destroyViewFieldMutation>>[]
       >
     > => {
-      if (destroyCoreViewFieldInputs.length === 0) {
+      if (destroyViewFieldInputs.length === 0) {
         return {
           status: 'successful',
           response: [],
@@ -234,8 +186,8 @@ export const usePerformViewFieldAPIPersist = () => {
 
       try {
         const results = await Promise.all(
-          destroyCoreViewFieldInputs.map((variables) =>
-            destroyCoreViewFieldMutation({
+          destroyViewFieldInputs.map((variables) =>
+            destroyViewFieldMutation({
               variables,
             }),
           ),
@@ -246,7 +198,7 @@ export const usePerformViewFieldAPIPersist = () => {
           response: results,
         };
       } catch (error) {
-        if (error instanceof ApolloError) {
+        if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {
             primaryMetadataName: 'viewField',
             operationType: CrudOperationType.DESTROY,
@@ -261,7 +213,7 @@ export const usePerformViewFieldAPIPersist = () => {
         };
       }
     },
-    [destroyCoreViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
+    [destroyViewFieldMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {

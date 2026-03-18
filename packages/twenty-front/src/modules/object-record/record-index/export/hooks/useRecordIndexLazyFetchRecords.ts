@@ -51,7 +51,7 @@ export const useRecordIndexLazyFetchRecords = ({
   pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   callback,
-  viewType = ViewType.Table,
+  viewType = ViewType.TABLE,
 }: UseRecordDataOptions) => {
   const { hiddenBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -89,6 +89,7 @@ export const useRecordIndexLazyFetchRecords = ({
 
   const findManyRecordsParams = useFindManyRecordIndexTableParams(
     objectMetadataItem.nameSingular,
+    recordIndexId,
   );
 
   const queryFilter = computeContextStoreFilters({
@@ -102,6 +103,7 @@ export const useRecordIndexLazyFetchRecords = ({
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
+    recordIndexId,
   );
 
   const finalColumns: Pick<
@@ -129,7 +131,7 @@ export const useRecordIndexLazyFetchRecords = ({
         };
       })
       .filter(isDefined),
-    ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
+    ...(hiddenKanbanFieldColumn && viewType === ViewType.KANBAN
       ? [hiddenKanbanFieldColumn]
       : []),
   ];

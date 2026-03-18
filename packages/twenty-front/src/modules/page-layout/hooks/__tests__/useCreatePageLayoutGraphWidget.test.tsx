@@ -2,6 +2,7 @@ import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePag
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -48,9 +49,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutGraphWidget(
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
+        const createWidget = useCreatePageLayoutGraphWidget({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
         return {
           setActiveTabId,
           setPageLayoutDraft,
@@ -128,9 +132,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
           pageLayoutCurrentLayoutsComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
         );
-        const createWidget = useCreatePageLayoutGraphWidget(
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
+        const createWidget = useCreatePageLayoutGraphWidget({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
         return {
           setPageLayoutDraft,
           setActiveTabId,
@@ -235,9 +242,12 @@ describe('useCreatePageLayoutGraphWidget', () => {
   it('should throw an error when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
-        const createWidget = useCreatePageLayoutGraphWidget(
-          PAGE_LAYOUT_TEST_INSTANCE_ID,
-        );
+        const createWidget = useCreatePageLayoutGraphWidget({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        });
         return { createWidget };
       },
       {

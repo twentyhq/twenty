@@ -3,7 +3,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/deleteWorkflowVersionStep';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   type DeleteWorkflowVersionStepInput,
   type DeleteWorkflowVersionStepMutation,

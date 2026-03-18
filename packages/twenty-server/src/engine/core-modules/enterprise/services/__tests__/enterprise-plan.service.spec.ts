@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
@@ -352,6 +353,20 @@ describe('EnterprisePlanService', () => {
       const invalidKey = createFakeJwt(MOCK_KEY_PAYLOAD);
 
       expect(service.isValidEnterpriseKeyFormat(invalidKey)).toBe(false);
+    });
+
+    it('should accept production key when NODE_ENV is development', () => {
+      configGetMock.mockImplementation((key: string) => {
+        if (key === 'NODE_ENV') return NodeEnvironment.DEVELOPMENT;
+        if (key === 'ENTERPRISE_API_URL') return MOCK_API_URL;
+
+        return undefined;
+      });
+      mockCryptoVerify.mockReturnValueOnce(false).mockReturnValueOnce(true);
+      const productionKey = createFakeJwt(MOCK_KEY_PAYLOAD);
+
+      expect(service.isValidEnterpriseKeyFormat(productionKey)).toBe(true);
+      expect(mockCryptoVerify).toHaveBeenCalledTimes(2);
     });
   });
 

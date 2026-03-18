@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -17,7 +16,6 @@ import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreVie
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } from '@/views/hooks/useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -38,11 +36,6 @@ const StyledContainer = styled.div`
 export const UpdateViewButtonGroup = () => {
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
   const { canPersistChanges } = useCanPersistViewChanges();
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
-
-  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const { setViewPickerMode } = useViewPickerMode();
 
@@ -83,7 +76,6 @@ export const UpdateViewButtonGroup = () => {
   const handleUpdateViewClick = async () => {
     if (!canPersistChanges) return;
     await saveCurrentViewFilterAndSorts();
-    await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
   };
 
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();

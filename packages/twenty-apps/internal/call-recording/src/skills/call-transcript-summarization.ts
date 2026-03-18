@@ -16,7 +16,7 @@ Use this skill when a user asks you to summarize, analyze, or extract insights f
 
 ## How to Access the Data
 1. Use \`find_one_callRecording\` to fetch the call recording by its ID.
-2. Read the \`transcript\` field (RICH_TEXT_V2, markdown format) which contains the full conversation.
+2. Read the \`transcript\` field (RICH_TEXT, markdown format) which contains the full conversation.
 3. The transcript uses the format: **Speaker Name:** spoken text
 
 ## What to Produce

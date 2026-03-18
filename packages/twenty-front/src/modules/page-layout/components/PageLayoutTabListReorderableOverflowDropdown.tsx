@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import {
   Draggable,
   type DraggableProvided,
@@ -6,17 +5,18 @@ import {
   type DraggableStateSnapshot,
   Droppable,
 } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
 import { PageLayoutTabMenuItemSelectAvatar } from '@/page-layout/components/PageLayoutTabMenuItemSelectAvatar';
 import { PageLayoutTabRenderClone } from '@/page-layout/components/PageLayoutTabRenderClone';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -26,10 +26,14 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import {
+  FeatureFlagKey,
+  type PageLayoutType,
+} from '~/generated-metadata/graphql';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   cursor: grab;
@@ -73,13 +77,18 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     PageLayoutComponentInstanceContext,
   );
 
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-    pageLayoutId,
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
   );
 
   const shouldShowEditButton =
-    isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
+    isPageLayoutInEditMode &&
+    shouldEnableTabEditingFeatures(
+      pageLayoutType,
+      isRecordPageGlobalEditionEnabled,
+    );
 
   const isPageLayoutTabDragging = useAtomComponentStateValue(
     isPageLayoutTabDraggingComponentState,

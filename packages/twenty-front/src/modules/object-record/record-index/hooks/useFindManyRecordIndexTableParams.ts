@@ -17,6 +17,7 @@ import {
 
 export const useFindManyRecordIndexTableParams = (
   objectNameSingular: string,
+  instanceId?: string,
 ) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -31,14 +32,17 @@ export const useFindManyRecordIndexTableParams = (
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
+    instanceId,
   );
 
   const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
+    instanceId,
   );
 
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
+    instanceId,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
@@ -52,6 +56,7 @@ export const useFindManyRecordIndexTableParams = (
 
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
+    instanceId,
   );
 
   const { recordGqlOperationFilter: anyFieldFilter } =

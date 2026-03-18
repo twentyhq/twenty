@@ -6,6 +6,7 @@ export const FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES = [
   'shortLabel',
   'position',
   'isPinned',
+  'hotKeys',
   'availabilityType',
   'availabilityObjectMetadataId',
   'engineComponentKey',

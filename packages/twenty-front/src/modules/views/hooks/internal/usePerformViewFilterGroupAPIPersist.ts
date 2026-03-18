@@ -1,23 +1,23 @@
 import { useCallback } from 'react';
 
-import { CREATE_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/createCoreViewFilterGroup';
-import { DESTROY_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destroyCoreViewFilterGroup';
-import { UPDATE_CORE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateCoreViewFilterGroup';
+import { CREATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/createViewFilterGroup';
+import { DESTROY_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/destroyViewFilterGroup';
+import { UPDATE_VIEW_FILTER_GROUP } from '@/views/graphql/mutations/updateViewFilterGroup';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilterGroup } from '~/generated-metadata/graphql';
+import { type ViewFilterGroup as GqlViewFilterGroup } from '~/generated-metadata/graphql';
 
 export const usePerformViewFilterGroupAPIPersist = () => {
   const apolloClient = useApolloClient();
 
-  const createCoreViewFilterGroupRecord = useCallback(
+  const createViewFilterGroupRecord = useCallback(
     async (viewFilterGroup: ViewFilterGroup, view: Pick<GraphQLView, 'id'>) => {
       const result = await apolloClient.mutate<{
-        createCoreViewFilterGroup: ViewFilterGroup;
+        createViewFilterGroup: ViewFilterGroup;
       }>({
-        mutation: CREATE_CORE_VIEW_FILTER_GROUP,
+        mutation: CREATE_VIEW_FILTER_GROUP,
         variables: {
           input: {
             id: viewFilterGroup.id,
@@ -26,15 +26,15 @@ export const usePerformViewFilterGroupAPIPersist = () => {
             logicalOperator: viewFilterGroup.logicalOperator,
             positionInViewFilterGroup:
               viewFilterGroup.positionInViewFilterGroup,
-          } satisfies Partial<CoreViewFilterGroup>,
+          } satisfies Partial<GqlViewFilterGroup>,
         },
       });
 
       if (!result.data) {
-        throw new Error('Failed to create core view filter group');
+        throw new Error('Failed to create view filter group');
       }
 
-      return { newRecordId: result.data.createCoreViewFilterGroup.id };
+      return { newRecordId: result.data.createViewFilterGroup.id };
     },
     [apolloClient],
   );
@@ -56,7 +56,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
             viewFilterGroupToCreate.parentViewFilterGroupId)
           : undefined;
 
-        const { newRecordId } = await createCoreViewFilterGroupRecord(
+        const { newRecordId } = await createViewFilterGroupRecord(
           {
             ...viewFilterGroupToCreate,
             parentViewFilterGroupId: newParentViewFilterGroupId,
@@ -70,14 +70,14 @@ export const usePerformViewFilterGroupAPIPersist = () => {
       const newRecordIds = viewFilterGroupsToCreate.map((viewFilterGroup) => {
         const newId = oldToNewId.get(viewFilterGroup.id);
         if (!newId) {
-          throw new Error('Failed to create core view filter group');
+          throw new Error('Failed to create view filter group');
         }
         return newId;
       });
 
       return newRecordIds;
     },
-    [createCoreViewFilterGroupRecord],
+    [createViewFilterGroupRecord],
   );
 
   const performViewFilterGroupAPIUpdate = useCallback(
@@ -85,8 +85,8 @@ export const usePerformViewFilterGroupAPIPersist = () => {
       if (!viewFilterGroupsToUpdate.length) return;
       return Promise.all(
         viewFilterGroupsToUpdate.map((viewFilterGroup) =>
-          apolloClient.mutate<{ updateCoreViewFilterGroup: ViewFilterGroup }>({
-            mutation: UPDATE_CORE_VIEW_FILTER_GROUP,
+          apolloClient.mutate<{ updateViewFilterGroup: ViewFilterGroup }>({
+            mutation: UPDATE_VIEW_FILTER_GROUP,
             variables: {
               id: viewFilterGroup.id,
               input: {
@@ -95,7 +95,7 @@ export const usePerformViewFilterGroupAPIPersist = () => {
                 logicalOperator: viewFilterGroup.logicalOperator,
                 positionInViewFilterGroup:
                   viewFilterGroup.positionInViewFilterGroup,
-              } satisfies Partial<CoreViewFilterGroup>,
+              } satisfies Partial<GqlViewFilterGroup>,
             },
           }),
         ),
@@ -109,8 +109,8 @@ export const usePerformViewFilterGroupAPIPersist = () => {
       if (!viewFilterGroupIdsToDelete.length) return;
       return Promise.all(
         viewFilterGroupIdsToDelete.map((viewFilterGroupId) =>
-          apolloClient.mutate<{ destroyCoreViewFilterGroup: ViewFilterGroup }>({
-            mutation: DESTROY_CORE_VIEW_FILTER_GROUP,
+          apolloClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
+            mutation: DESTROY_VIEW_FILTER_GROUP,
             variables: {
               id: viewFilterGroupId,
             },

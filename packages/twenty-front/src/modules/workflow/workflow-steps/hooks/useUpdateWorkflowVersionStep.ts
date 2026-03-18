@@ -10,7 +10,7 @@ import {
   type WorkflowVersion,
   type WorkflowStep,
 } from '@/workflow/types/Workflow';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowVersionStepInput,

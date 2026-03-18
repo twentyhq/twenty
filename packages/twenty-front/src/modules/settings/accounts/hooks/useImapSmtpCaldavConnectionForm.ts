@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -8,9 +8,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { useMutation } from '@apollo/client/react';
 import {
   type ConnectionParameters,
-  useSaveImapSmtpCaldavAccountMutation,
+  SaveImapSmtpCaldavAccountDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -20,12 +21,9 @@ import {
   connectionImapSmtpCalDav,
   isProtocolConfigured,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type ConnectedImapSmtpCaldavAccount,
-  useConnectedImapSmtpCaldavAccount,
-} from './useConnectedImapSmtpCaldavAccount';
+import { useConnectedImapSmtpCaldavAccount } from './useConnectedImapSmtpCaldavAccount';
 
 type UseConnectionFormProps = {
   isEditing?: boolean;
@@ -67,23 +65,22 @@ export const useImapSmtpCaldavConnectionForm = ({
   const { connectedAccount, loading: accountLoading } =
     useConnectedImapSmtpCaldavAccount(
       isEditing ? connectedAccountId : undefined,
-      useCallback(
-        (account: ConnectedImapSmtpCaldavAccount | null) => {
-          if (isDefined(account)) {
-            reset({
-              handle: account.handle || '',
-              IMAP: account.connectionParameters?.IMAP || undefined,
-              SMTP: account.connectionParameters?.SMTP || undefined,
-              CALDAV: account.connectionParameters?.CALDAV || undefined,
-            });
-          }
-        },
-        [reset],
-      ),
     );
 
-  const [saveConnection, { loading: saveLoading }] =
-    useSaveImapSmtpCaldavAccountMutation();
+  useEffect(() => {
+    if (isDefined(connectedAccount)) {
+      reset({
+        handle: connectedAccount.handle || '',
+        IMAP: connectedAccount.connectionParameters?.IMAP || undefined,
+        SMTP: connectedAccount.connectionParameters?.SMTP || undefined,
+        CALDAV: connectedAccount.connectionParameters?.CALDAV || undefined,
+      });
+    }
+  }, [connectedAccount, reset]);
+
+  const [saveConnection, { loading: saveLoading }] = useMutation(
+    SaveImapSmtpCaldavAccountDocument,
+  );
 
   const watchedValues = watch();
 
@@ -158,7 +155,7 @@ export const useImapSmtpCaldavConnectionForm = ({
         });
       } catch (error) {
         enqueueErrorSnackBar({
-          apolloError: error instanceof ApolloError ? error : undefined,
+          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
         });
       }
     },

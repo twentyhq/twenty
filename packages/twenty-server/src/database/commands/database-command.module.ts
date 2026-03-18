@@ -5,11 +5,13 @@ import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
+import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
+import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -38,6 +40,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
   imports: [
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
+    WorkspaceExportModule,
     // Cron command dependencies
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
@@ -64,6 +67,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     TwentyConfigModule,
     MarketplaceModule,
     ApplicationUpgradeModule,
+    StaleRegistrationCleanupModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

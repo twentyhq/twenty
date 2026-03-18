@@ -15,7 +15,7 @@ import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInS
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
@@ -25,23 +25,28 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
   objectMetadataItem: ObjectMetadataItem;
+  instanceId?: string;
 };
 
 export const useCreateNewIndexRecord = ({
   objectMetadataItem,
+  instanceId,
 }: UseCreateNewIndexRecordProps) => {
   const recordGroupDefinitions = useAtomComponentSelectorValue(
     recordGroupDefinitionsComponentSelector,
+    instanceId,
   );
 
   const store = useStore();
   const recordIndexRecordIdsByGroupCallbackState =
     useAtomComponentFamilyStateCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
+      instanceId,
     );
 
   const recordIndexGroupFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupFieldMetadataItemComponentState,
+    instanceId,
   );
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -59,6 +64,7 @@ export const useCreateNewIndexRecord = ({
 
   const { buildRecordInputFromFilters } = useBuildRecordInputFromFilters({
     objectMetadataItem,
+    instanceId,
   });
 
   const { buildRecordInputFromRLSPredicates } =
@@ -88,7 +94,7 @@ export const useCreateNewIndexRecord = ({
       });
 
       if (
-        recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
+        recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL &&
         canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
       ) {
         openRecordInSidePanel({

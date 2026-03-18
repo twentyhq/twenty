@@ -10,7 +10,6 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
-import { pickMorphGroupSurvivor } from 'src/engine/dataloaders/utils/pick-morph-group-survivor.util';
 import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
@@ -21,15 +20,18 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { fromMorphOrRelationFlatFieldMetadataToRelationDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-or-relation-flat-field-metadata-to-relation-dto.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
+import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
+import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
+import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
+import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
+import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -84,6 +86,31 @@ export type ViewFieldsByViewFieldGroupIdLoaderPayload = {
   viewFieldGroupId: string;
 };
 
+export type ViewFieldsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewFiltersByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewSortsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewGroupsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
+export type ViewFilterGroupsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -102,6 +129,12 @@ export class DataloaderService {
       this.createViewFieldGroupsByViewIdLoader();
     const viewFieldsByViewFieldGroupIdLoader =
       this.createViewFieldsByViewFieldGroupIdLoader();
+    const viewFieldsByViewIdLoader = this.createViewFieldsByViewIdLoader();
+    const viewFiltersByViewIdLoader = this.createViewFiltersByViewIdLoader();
+    const viewSortsByViewIdLoader = this.createViewSortsByViewIdLoader();
+    const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
+    const viewFilterGroupsByViewIdLoader =
+      this.createViewFilterGroupsByViewIdLoader();
 
     return {
       relationLoader,
@@ -112,13 +145,17 @@ export class DataloaderService {
       objectMetadataLoader,
       viewFieldGroupsByViewIdLoader,
       viewFieldsByViewFieldGroupIdLoader,
+      viewFieldsByViewIdLoader,
+      viewFiltersByViewIdLoader,
+      viewSortsByViewIdLoader,
+      viewGroupsByViewIdLoader,
+      viewFilterGroupsByViewIdLoader,
     };
   }
 
   private createRelationLoader() {
     return new DataLoader<RelationLoaderPayload, RelationDTO | null>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
-        const relationDtos: Array<RelationDTO | null> = [];
         const workspaceId = dataLoaderParams[0].workspaceId;
         const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -128,7 +165,7 @@ export class DataloaderService {
             },
           );
 
-        for (const { fieldMetadataId } of dataLoaderParams) {
+        return dataLoaderParams.map(({ fieldMetadataId }) => {
           const sourceFlatFieldMetadata =
             findFlatEntityByIdInFlatEntityMapsOrThrow({
               flatEntityId: fieldMetadataId,
@@ -141,85 +178,15 @@ export class DataloaderService {
               FieldMetadataType.RELATION,
             )
           ) {
-            relationDtos.push(null);
-            continue;
+            return null;
           }
 
-          const sourceFlatObjectMetadata =
-            findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityId: sourceFlatFieldMetadata.objectMetadataId,
-              flatEntityMaps: flatObjectMetadataMaps,
-            });
-
-          const targetFlatFieldMetadata =
-            findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityId:
-                sourceFlatFieldMetadata.relationTargetFieldMetadataId,
-              flatEntityMaps: flatFieldMetadataMaps,
-            });
-
-          if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
-            relationDtos.push(null);
-            continue;
-          }
-
-          const targetFlatObjectMetadata =
-            findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityId: targetFlatFieldMetadata.objectMetadataId,
-              flatEntityMaps: flatObjectMetadataMaps,
-            });
-
-          if (
-            isFlatFieldMetadataOfType(
-              targetFlatFieldMetadata,
-              FieldMetadataType.MORPH_RELATION,
-            )
-          ) {
-            const morphNameFromMorphFieldMetadataName =
-              getMorphNameFromMorphFieldMetadataName({
-                morphRelationFlatFieldMetadata: targetFlatFieldMetadata,
-                nameSingular: sourceFlatObjectMetadata.nameSingular,
-                namePlural: sourceFlatObjectMetadata.namePlural,
-              });
-
-            const allMorphFlatFieldMetadatas = [
-              targetFlatFieldMetadata,
-              ...findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
-                flatFieldMetadata: targetFlatFieldMetadata,
-                flatFieldMetadataMaps,
-                flatObjectMetadata: targetFlatObjectMetadata,
-              }),
-            ];
-
-            const survivorMorphField = pickMorphGroupSurvivor(
-              allMorphFlatFieldMetadatas,
-            );
-
-            relationDtos.push(
-              fromMorphOrRelationFlatFieldMetadataToRelationDto({
-                sourceFlatFieldMetadata,
-                sourceFlatObjectMetadata,
-                targetFlatFieldMetadata: {
-                  ...survivorMorphField,
-                  name: morphNameFromMorphFieldMetadataName,
-                },
-                targetFlatObjectMetadata,
-              }),
-            );
-            continue;
-          }
-
-          relationDtos.push(
-            fromMorphOrRelationFlatFieldMetadataToRelationDto({
-              sourceFlatFieldMetadata,
-              targetFlatFieldMetadata,
-              targetFlatObjectMetadata,
-              sourceFlatObjectMetadata,
-            }),
-          );
-        }
-
-        return relationDtos;
+          return resolveRelationFromFlatFieldMetadata({
+            sourceFlatFieldMetadata,
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+          });
+        });
       },
     );
   }
@@ -235,9 +202,8 @@ export class DataloaderService {
               flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
             },
           );
-        const relationDtos: Array<RelationDTO[] | null> = [];
 
-        for (const { fieldMetadataId } of dataLoaderParams) {
+        return dataLoaderParams.map(({ fieldMetadataId }) => {
           const morphFlatFieldMetadata =
             findFlatEntityByIdInFlatEntityMapsOrThrow({
               flatEntityId: fieldMetadataId,
@@ -250,70 +216,15 @@ export class DataloaderService {
               FieldMetadataType.MORPH_RELATION,
             )
           ) {
-            relationDtos.push(null);
-            continue;
+            return null;
           }
 
-          const sourceFlatObjectMetadata =
-            findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityMaps: flatObjectMetadataMaps,
-              flatEntityId: morphFlatFieldMetadata.objectMetadataId,
-            });
-
-          const relatedMorphFlatFieldMetadatas =
-            findAllOthersMorphRelationFlatFieldMetadatasOrThrow({
-              flatFieldMetadata: morphFlatFieldMetadata,
-              flatFieldMetadataMaps,
-              flatObjectMetadata: sourceFlatObjectMetadata,
-            });
-          const allMorphFlatFieldMetadatas = [
+          return resolveMorphRelationsFromFlatFieldMetadata({
             morphFlatFieldMetadata,
-            ...relatedMorphFlatFieldMetadatas,
-          ];
-
-          relationDtos.push(
-            allMorphFlatFieldMetadatas.flatMap((sourceFlatFieldMetadata) => {
-              const targetFlatFieldMetadata =
-                findFlatEntityByIdInFlatEntityMapsOrThrow({
-                  flatEntityId:
-                    sourceFlatFieldMetadata.relationTargetFieldMetadataId,
-                  flatEntityMaps: flatFieldMetadataMaps,
-                });
-
-              if (
-                !isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)
-              ) {
-                return [];
-              }
-
-              const targetFlatObjectMetadata =
-                findFlatEntityByIdInFlatEntityMapsOrThrow({
-                  flatEntityId:
-                    sourceFlatFieldMetadata.relationTargetObjectMetadataId,
-                  flatEntityMaps: flatObjectMetadataMaps,
-                });
-
-              const morphNameFromMorphFieldMetadataName =
-                getMorphNameFromMorphFieldMetadataName({
-                  morphRelationFlatFieldMetadata: sourceFlatFieldMetadata,
-                  nameSingular: targetFlatObjectMetadata.nameSingular,
-                  namePlural: targetFlatObjectMetadata.namePlural,
-                });
-
-              return fromMorphOrRelationFlatFieldMetadataToRelationDto({
-                sourceFlatFieldMetadata: {
-                  ...sourceFlatFieldMetadata,
-                  name: morphNameFromMorphFieldMetadataName,
-                },
-                targetFlatFieldMetadata,
-                targetFlatObjectMetadata,
-                sourceFlatObjectMetadata,
-              });
-            }),
-          );
-        }
-
-        return relationDtos;
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+          });
+        });
       },
     );
   }
@@ -590,6 +501,36 @@ export class DataloaderService {
           },
         );
 
+      const viewFieldsByResolvedGroupId = new Map<
+        string,
+        ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
+      >();
+
+      for (const flatViewField of Object.values(
+        flatViewFieldMaps.byUniversalIdentifier,
+      )) {
+        if (!isDefined(flatViewField) || flatViewField.deletedAt !== null) {
+          continue;
+        }
+
+        const resolvedGroupId =
+          flatViewField.overrides?.viewFieldGroupId !== undefined
+            ? flatViewField.overrides.viewFieldGroupId
+            : flatViewField.viewFieldGroupId;
+
+        if (!isDefined(resolvedGroupId)) {
+          continue;
+        }
+
+        if (!viewFieldsByResolvedGroupId.has(resolvedGroupId)) {
+          viewFieldsByResolvedGroupId.set(resolvedGroupId, []);
+        }
+
+        viewFieldsByResolvedGroupId
+          .get(resolvedGroupId)!
+          .push(fromFlatViewFieldToViewFieldDto(flatViewField));
+      }
+
       return dataLoaderParams.map(({ viewFieldGroupId }) => {
         const flatViewFieldGroup = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewFieldGroupId,
@@ -600,12 +541,184 @@ export class DataloaderService {
           return [];
         }
 
+        return viewFieldsByResolvedGroupId.get(viewFieldGroupId) ?? [];
+      });
+    });
+  }
+
+  private createViewFieldsByViewIdLoader() {
+    return new DataLoader<
+      ViewFieldsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewFieldToViewFieldDto>[]
+    >(async (dataLoaderParams: ViewFieldsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewFieldMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewFieldMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
         return findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatViewFieldGroup.viewFieldIds,
+          flatEntityIds: flatView.viewFieldIds,
           flatEntityMaps: flatViewFieldMaps,
         })
           .filter((flatViewField) => flatViewField.deletedAt === null)
           .map(fromFlatViewFieldToViewFieldDto);
+      });
+    });
+  }
+
+  private createViewFiltersByViewIdLoader() {
+    return new DataLoader<
+      ViewFiltersByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewFilterToViewFilterDto>[]
+    >(async (dataLoaderParams: ViewFiltersByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewFilterMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewFilterMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewFilterIds,
+          flatEntityMaps: flatViewFilterMaps,
+        })
+          .filter((flatViewFilter) => flatViewFilter.deletedAt === null)
+          .map(fromFlatViewFilterToViewFilterDto);
+      });
+    });
+  }
+
+  private createViewSortsByViewIdLoader() {
+    return new DataLoader<
+      ViewSortsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewSortToViewSortDto>[]
+    >(async (dataLoaderParams: ViewSortsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewSortMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewSortMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewSortIds,
+          flatEntityMaps: flatViewSortMaps,
+        })
+          .filter((flatViewSort) => flatViewSort.deletedAt === null)
+          .map(fromFlatViewSortToViewSortDto);
+      });
+    });
+  }
+
+  private createViewGroupsByViewIdLoader() {
+    return new DataLoader<
+      ViewGroupsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewGroupToViewGroupDto>[]
+    >(async (dataLoaderParams: ViewGroupsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewGroupMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewGroupMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewGroupIds,
+          flatEntityMaps: flatViewGroupMaps,
+        })
+          .filter((flatViewGroup) => flatViewGroup.deletedAt === null)
+          .map(fromFlatViewGroupToViewGroupDto);
+      });
+    });
+  }
+
+  private createViewFilterGroupsByViewIdLoader() {
+    return new DataLoader<
+      ViewFilterGroupsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewFilterGroupToViewFilterGroupDto>[]
+    >(async (dataLoaderParams: ViewFilterGroupsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewFilterGroupMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewFilterGroupMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewFilterGroupIds,
+          flatEntityMaps: flatViewFilterGroupMaps,
+        })
+          .filter(
+            (flatViewFilterGroup) => flatViewFilterGroup.deletedAt === null,
+          )
+          .map(fromFlatViewFilterGroupToViewFilterGroupDto);
       });
     });
   }

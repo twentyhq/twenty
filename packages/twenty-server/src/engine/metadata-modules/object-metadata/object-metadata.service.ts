@@ -24,6 +24,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
@@ -43,7 +44,6 @@ import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -51,7 +51,6 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
@@ -471,7 +470,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const flatNavigationMenuItemToCreate =
       await this.computeFlatNavigationMenuItemToCreate({
-        view: flatDefaultViewToCreate,
+        objectMetadata: flatObjectMetadataToCreate,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         workspaceCustomApplicationUniversalIdentifier:
@@ -583,11 +582,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    await this.createWorkspaceFavoriteForNewObjectDefaultView({
-      view: flatDefaultViewToCreate,
-      workspaceId,
-    });
-
     return createdFlatObjectMetadata;
   }
 
@@ -690,12 +684,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   private async computeFlatNavigationMenuItemToCreate({
-    view,
+    objectMetadata,
     workspaceId,
     workspaceCustomApplicationId,
     workspaceCustomApplicationUniversalIdentifier,
   }: {
-    view: UniversalFlatView & { id: string };
+    objectMetadata: { id: string; universalIdentifier: string };
     workspaceId: string;
     workspaceCustomApplicationId: string;
     workspaceCustomApplicationUniversalIdentifier: string;
@@ -721,13 +715,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     return {
       id: newId,
+      type: NavigationMenuItemType.OBJECT,
       universalIdentifier: newId,
       userWorkspaceId: null,
       targetRecordId: null,
-      targetObjectMetadataId: null,
-      targetObjectMetadataUniversalIdentifier: null,
-      viewId: view.id,
-      viewUniversalIdentifier: view.universalIdentifier,
+      targetObjectMetadataId: objectMetadata.id,
+      targetObjectMetadataUniversalIdentifier:
+        objectMetadata.universalIdentifier,
+      viewId: null,
+      viewUniversalIdentifier: null,
       folderId: null,
       folderUniversalIdentifier: null,
       name: null,
@@ -742,31 +738,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdAt: now,
       updatedAt: now,
     };
-  }
-
-  private async createWorkspaceFavoriteForNewObjectDefaultView({
-    view,
-    workspaceId,
-  }: {
-    view: UniversalFlatView & { id: string };
-    workspaceId: string;
-  }) {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const favoriteRepository =
-        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-          workspaceId,
-          'favorite',
-        );
-
-      const favoriteCount = await favoriteRepository.count();
-
-      await favoriteRepository.insert({
-        viewId: view.id,
-        position: favoriteCount,
-      });
-    }, authContext);
   }
 
   public async findOneWithinWorkspace(

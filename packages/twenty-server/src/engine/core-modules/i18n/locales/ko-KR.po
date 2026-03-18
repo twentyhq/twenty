@@ -1543,16 +1543,10 @@ msgstr ""
 msgid "Flow"
 msgstr ""
 
-#. js-lingui-id: 9110hD
+#. js-lingui-id: Fzrzfe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Folder name is required and cannot be empty"
-msgstr ""
-
-#. js-lingui-id: 2WhlK8
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Folder name is required when creating a folder"
+msgid "Folder name is required"
 msgstr ""
 
 #. js-lingui-id: eWmJYU
@@ -2081,6 +2075,18 @@ msgstr "잘못된 페이지 레이아웃 위젯 데이터입니다."
 msgid "Invalid parameters provided."
 msgstr "잘못된 매개변수가 제공되었습니다."
 
+#. js-lingui-id: KhF8C3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Invalid permission flag value"
+msgstr ""
+
+#. js-lingui-id: mMHHVP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Invalid permission setting"
+msgstr ""
+
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
@@ -2322,7 +2328,7 @@ msgid "Invalid value for position: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Sf+6YJ
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-v2-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr ""
 
@@ -2598,6 +2604,12 @@ msgstr ""
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
 msgstr ""
 
+#. js-lingui-id: oDC0sf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "link is required for LINK type"
+msgstr ""
+
 #. js-lingui-id: V5AXjr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function already exists"
@@ -2801,12 +2813,6 @@ msgstr "이름이 레이블과 동기화되지 않았습니다."
 msgid "Navigation menu item cannot be its own parent"
 msgstr ""
 
-#. js-lingui-id: xSvMwa
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Navigation menu item cannot be multiple types simultaneously"
-msgstr ""
-
 #. js-lingui-id: t38VAr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2816,12 +2822,6 @@ msgstr ""
 #. js-lingui-id: E+iJnK
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item hierarchy exceeds maximum depth."
-msgstr ""
-
-#. js-lingui-id: JePSNf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "Navigation menu item must be either a folder (with name), a view link (with viewId), a record link (with targetRecordId and targetObjectMetadataId), or an external link (with link)"
 msgstr ""
 
 #. js-lingui-id: s+CGNO
@@ -2835,6 +2835,12 @@ msgstr ""
 #. js-lingui-id: p5qcyl
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item not found."
+msgstr ""
+
+#. js-lingui-id: Ii6d/e
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "Navigation menu item type is required"
 msgstr ""
 
 #. js-lingui-id: TYhxR+
@@ -2984,6 +2990,10 @@ msgstr "객체 레이블이 너무 짧습니다"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object metadata not found"
 msgstr "객체 메타데이터를 찾을 수 없음"
 
@@ -3006,10 +3016,43 @@ msgstr "객체 메타데이터를 찾을 수 없음."
 msgid "Object not found."
 msgstr "객체를 찾을 수 없음."
 
+#. js-lingui-id: 4ib9PY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission already exists"
+msgstr ""
+
+#. js-lingui-id: iCx6+2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission for this role and object already exists"
+msgstr ""
+
+#. js-lingui-id: Wrwici
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission not found"
+msgstr ""
+
 #. js-lingui-id: Qy6mMO
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "객체 권한을 찾을 수 없음."
+
+#. js-lingui-id: 8KDEDj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission to delete not found"
+msgstr ""
+
+#. js-lingui-id: nA3bja
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission to update not found"
+msgstr ""
+
+#. js-lingui-id: wVLH1M
+#. placeholder {0}: flatObjectPermissionToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission with universal identifier {0} already exists"
+msgstr ""
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -3063,11 +3106,6 @@ msgstr "10월"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util.ts
 msgid "On delete action is only supported for many to one relations"
 msgstr ""
-
-#. js-lingui-id: eWQQpx
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
-msgstr "권한을 설정하려는 하나 이상의 객체를 찾을 수 없습니다. 삭제되었을 수 있습니다."
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -3284,6 +3322,39 @@ msgstr ""
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
 msgstr "비밀번호가 너무 약합니다"
+
+#. js-lingui-id: fxC+On
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag already exists"
+msgstr ""
+
+#. js-lingui-id: qG245w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag for this role and setting already exists"
+msgstr ""
+
+#. js-lingui-id: 2mZr45
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag not found"
+msgstr ""
+
+#. js-lingui-id: dqLRwc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag to delete not found"
+msgstr ""
+
+#. js-lingui-id: SMgh5j
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag to update not found"
+msgstr ""
+
+#. js-lingui-id: VuCvJL
+#. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag with universal identifier {0} already exists"
+msgstr ""
 
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -3538,6 +3609,16 @@ msgstr ""
 msgid "Role cannot be assigned to this entity."
 msgstr "이 엔티티에는 역할을 할당할 수 없습니다."
 
+#. js-lingui-id: k2/sGI
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Role is not editable"
+msgstr ""
+
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
@@ -3560,6 +3641,16 @@ msgstr "역할에는 최소 하나의 대상이 있어야 합니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Role not found"
 msgstr ""
 
@@ -3856,8 +3947,12 @@ msgstr ""
 
 #. js-lingui-id: sndTPB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be updated"
+msgstr ""
+
+#. js-lingui-id: aF4zgq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
+msgid "System objects cannot be updated directly. Use standardOverrides for cosmetic changes."
 msgstr ""
 
 #. js-lingui-id: 8UWeLh
@@ -3891,16 +3986,16 @@ msgstr ""
 msgid "Target URL is required"
 msgstr ""
 
-#. js-lingui-id: 9Q/KBa
+#. js-lingui-id: L3vVWc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetObjectMetadataId is required when targetRecordId is provided"
+msgid "targetObjectMetadataId is required for OBJECT type"
 msgstr ""
 
-#. js-lingui-id: vdVtAE
+#. js-lingui-id: NGynR3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "targetRecordId is required when targetObjectMetadataId is provided"
+msgid "targetRecordId and targetObjectMetadataId are required for RECORD type"
 msgstr ""
 
 #. js-lingui-id: GtycJ/
@@ -4022,10 +4117,13 @@ msgstr "요청이 너무 복잡하여 처리할 수 없습니다. 요청한 루�
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "찾고 있는 역할을 찾을 수 없습니다. 삭제되었거나 접근 권한이 없을 수 있습니다."
 
-#. js-lingui-id: HRcugS
+#. js-lingui-id: woRk0z
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "The role you are trying to modify could not be found."
+msgstr ""
+
+#. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "수정하려는 역할을 찾을 수 없습니다. 삭제되었거나 접근 권한이 없을 수 있습니다."
@@ -4034,11 +4132,6 @@ msgstr "수정하려는 역할을 찾을 수 없습니다. 삭제되었거나 �
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr ""
-
-#. js-lingui-id: H1tAJD
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
-msgid "The singular and plural labels cannot be the same for an object"
-msgstr "단수와 복수 레이블은 객체에 대해 동일할 수 없습니다"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -4173,6 +4266,12 @@ msgstr "이 이름은 예약되어 있습니다. 다른 이름을 사용하세�
 msgid "This object cannot be modified."
 msgstr "이 객체는 수정할 수 없습니다."
 
+#. js-lingui-id: X2Xp8v
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "This object permission is already set for the role"
+msgstr ""
+
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
@@ -4187,6 +4286,12 @@ msgstr "이 작업은 허용되지 않습니다. 다른 방법을 시도하든�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
 msgstr "이 작업은 지원되지 않습니다."
+
+#. js-lingui-id: 3q5jw3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "This permission is already set for the role"
+msgstr ""
 
 #. js-lingui-id: Y5C3uK
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -4236,8 +4341,12 @@ msgstr "이 역할은 편집할 수 없습니다."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "이 역할은 시스템 역할이기 때문에 수정할 수 없습니다. 사용자 정의 역할만 편집할 수 있습니다."
@@ -4824,10 +4933,10 @@ msgstr "업데이트할 뷰를 찾을 수 없습니다."
 msgid "View with same universal identifier already exists"
 msgstr ""
 
-#. js-lingui-id: qTtxHh
+#. js-lingui-id: 14WoDD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
-msgid "viewId cannot be provided together with targetRecordId or targetObjectMetadataId"
+msgid "viewId is required for VIEW type"
 msgstr ""
 
 #. js-lingui-id: l88nXn

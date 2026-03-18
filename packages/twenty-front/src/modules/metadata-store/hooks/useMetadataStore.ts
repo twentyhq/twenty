@@ -1,12 +1,14 @@
-import { isAppMetadataReadyState } from '@/metadata-store/states/isAppMetadataReadyState';
+import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import {
   ALL_METADATA_ENTITY_KEYS,
   metadataStoreState,
   type MetadataEntityKey,
   type MetadataStoreItem,
 } from '@/metadata-store/states/metadataStoreState';
+import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { useStore, type createStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type JotaiStore = ReturnType<typeof createStore>;
@@ -35,7 +37,7 @@ export const resetMetadataStore = (store: JotaiStore) => {
     store.set(metadataStoreState.atomFamily(key), EMPTY_ENTRY);
   }
 
-  store.set(isAppMetadataReadyState.atom, false);
+  store.set(isMinimalMetadataReadyState.atom, false);
 };
 
 const changeMetadataEntityAsUpToDate = (
@@ -48,14 +50,21 @@ const changeMetadataEntityAsUpToDate = (
     current: entry.draft,
     draft: [],
     status: 'up-to-date',
+    currentCollectionHash:
+      entry.draftCollectionHash ?? entry.currentCollectionHash,
+    draftCollectionHash: undefined,
   });
 };
 
 export const useMetadataStore = () => {
   const store = useStore();
 
-  const updateDraft = useCallback(
-    (key: MetadataEntityKey, data: object[]) => {
+  const replaceDraft = useCallback(
+    <K extends MetadataEntityKey>(
+      key: K,
+      data: MetadataEntityTypeMap[K][],
+      collectionHash?: string,
+    ) => {
       const currentEntry = store.get(metadataStoreState.atomFamily(key));
 
       if (
@@ -69,6 +78,9 @@ export const useMetadataStore = () => {
         ...prev,
         draft: data,
         status: 'draft-pending' as const,
+        ...(collectionHash !== undefined
+          ? { draftCollectionHash: collectionHash }
+          : {}),
       }));
     },
     [store],
@@ -112,9 +124,159 @@ export const useMetadataStore = () => {
     return { hasPersistedAnyMetadataEntity };
   }, [store]);
 
+  const addToDraft = useCallback(
+    <K extends MetadataEntityKey>({
+      key,
+      items,
+      collectionHash,
+    }: {
+      key: K;
+      items: MetadataEntityTypeMap[K][];
+      collectionHash?: string;
+    }) => {
+      if (items.length === 0) {
+        return;
+      }
+
+      const entry = store.get(metadataStoreState.atomFamily(key));
+      const baseItems = (
+        entry.status === 'draft-pending' ? entry.draft : entry.current
+      ) as Array<{ id: string }>;
+
+      let newItems = [...baseItems];
+
+      for (const item of items) {
+        const newItem = item as unknown as { id: string };
+        const existingIndex = newItems.findIndex(
+          (existing) => existing.id === newItem.id,
+        );
+
+        if (existingIndex >= 0) {
+          if (!isDeeplyEqual(newItems[existingIndex], newItem)) {
+            newItems[existingIndex] = newItem;
+          }
+        } else {
+          newItems = [...newItems, newItem];
+        }
+      }
+
+      store.set(metadataStoreState.atomFamily(key), {
+        ...entry,
+        draft: newItems,
+        status: 'draft-pending' as const,
+        ...(collectionHash !== undefined
+          ? { draftCollectionHash: collectionHash }
+          : {}),
+      });
+    },
+    [store],
+  );
+
+  const updateInDraft = useCallback(
+    <K extends MetadataEntityKey>(
+      key: K,
+      items: MetadataEntityTypeMap[K][],
+      collectionHash?: string,
+    ) => {
+      if (items.length === 0) {
+        return;
+      }
+
+      const entry = store.get(metadataStoreState.atomFamily(key));
+      const baseItems = (
+        entry.status === 'draft-pending' ? entry.draft : entry.current
+      ) as Array<{ id: string }>;
+
+      let hasChanged = false;
+      const newItems = baseItems.map((existing) => {
+        const updatedItem = (items as unknown as Array<{ id: string }>).find(
+          (item) => item.id === existing.id,
+        );
+
+        if (!isDefined(updatedItem)) {
+          return existing;
+        }
+
+        const merged = { ...existing, ...updatedItem };
+
+        if (isDeeplyEqual(existing, merged)) {
+          return existing;
+        }
+
+        hasChanged = true;
+
+        return merged;
+      });
+
+      if (!hasChanged && collectionHash === undefined) {
+        return;
+      }
+
+      store.set(metadataStoreState.atomFamily(key), {
+        ...entry,
+        draft: hasChanged ? newItems : baseItems,
+        status: 'draft-pending' as const,
+        ...(collectionHash !== undefined
+          ? { draftCollectionHash: collectionHash }
+          : {}),
+      });
+    },
+    [store],
+  );
+
+  const removeFromDraft = useCallback(
+    <K extends MetadataEntityKey>({
+      key,
+      itemIds,
+      collectionHash,
+    }: {
+      key: K;
+      itemIds: string[];
+      collectionHash?: string;
+    }) => {
+      if (itemIds.length === 0) {
+        return;
+      }
+
+      const entry = store.get(metadataStoreState.atomFamily(key));
+      const baseItems = (
+        entry.status === 'draft-pending' ? entry.draft : entry.current
+      ) as Array<{ id: string }>;
+
+      const idsToDelete = new Set(itemIds);
+      const newItems = baseItems.filter(
+        (existing) => !idsToDelete.has(existing.id),
+      );
+
+      if (
+        newItems.length === baseItems.length &&
+        collectionHash === undefined
+      ) {
+        return;
+      }
+
+      store.set(metadataStoreState.atomFamily(key), {
+        ...entry,
+        draft: newItems,
+        status: 'draft-pending' as const,
+        ...(collectionHash !== undefined
+          ? { draftCollectionHash: collectionHash }
+          : {}),
+      });
+    },
+    [store],
+  );
+
   const reset = useCallback(() => {
     resetMetadataStore(store);
   }, [store]);
 
-  return { updateDraft, applyChanges, resetMetadataStore: reset };
+  return {
+    replaceDraft,
+    applyChanges,
+    addToDraft,
+    updateInDraft,
+    removeFromDraft,
+    resetMetadataStore: reset,
+  };
 };

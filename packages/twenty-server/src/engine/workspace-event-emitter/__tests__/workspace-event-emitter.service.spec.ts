@@ -22,6 +22,7 @@ import { type EventStreamData } from 'src/engine/subscriptions/types/event-strea
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { WorkspaceEventEmitterService } from 'src/engine/workspace-event-emitter/workspace-event-emitter.service';
 
 jest.mock(
@@ -300,6 +301,14 @@ describe('WorkspaceEventEmitterService', () => {
         {
           provide: CommonSelectFieldsHelper,
           useValue: new CommonSelectFieldsHelper(),
+        },
+        {
+          provide: NavigationMenuItemRecordIdentifierService,
+          useValue: {
+            enrichNavigationMenuItemEventsWithRecordIdentifiers: jest
+              .fn()
+              .mockResolvedValue(undefined),
+          },
         },
       ],
     }).compile();

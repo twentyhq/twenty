@@ -12,14 +12,15 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { useMutation } from '@apollo/client/react';
 import {
-  useAssignRoleToAgentMutation,
-  useCreateOneRoleMutation,
-  useUpsertObjectPermissionsMutation,
-  useUpsertPermissionFlagsMutation,
   type Agent,
   type ObjectPermission,
   type PermissionFlagType,
+  AssignRoleToAgentDocument,
+  CreateOneRoleDocument,
+  UpsertObjectPermissionsDocument,
+  UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
 
 type UseWorkflowAiAgentPermissionActionsParams = {
@@ -54,10 +55,12 @@ export const useWorkflowAiAgentPermissionActions = ({
     workflowAiAgentPermissionsIsAddingPermissionState,
   );
 
-  const [createRole] = useCreateOneRoleMutation();
-  const [assignRoleToAgent] = useAssignRoleToAgentMutation();
-  const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
-  const [upsertPermissionFlags] = useUpsertPermissionFlagsMutation();
+  const [createRole] = useMutation(CreateOneRoleDocument);
+  const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
+  const [upsertObjectPermissions] = useMutation(
+    UpsertObjectPermissionsDocument,
+  );
+  const [upsertPermissionFlags] = useMutation(UpsertPermissionFlagsDocument);
 
   const roleId = workflowAiAgentActionAgent?.roleId;
 

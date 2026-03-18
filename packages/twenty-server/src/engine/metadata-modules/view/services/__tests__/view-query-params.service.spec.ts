@@ -65,7 +65,7 @@ describe('ViewQueryParamsService', () => {
         {
           provide: ViewService,
           useValue: {
-            findById: jest.fn(),
+            findByIdWithRelations: jest.fn(),
           },
         },
         {
@@ -98,7 +98,7 @@ describe('ViewQueryParamsService', () => {
 
   describe('resolveViewToQueryParams', () => {
     it('should throw error when view is not found', async () => {
-      viewService.findById.mockResolvedValue(null);
+      viewService.findByIdWithRelations.mockResolvedValue(null);
 
       await expect(
         viewQueryParamsService.resolveViewToQueryParams(
@@ -120,7 +120,7 @@ describe('ViewQueryParamsService', () => {
         viewSorts: [],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
@@ -168,7 +168,7 @@ describe('ViewQueryParamsService', () => {
         viewSorts: [],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
@@ -204,7 +204,7 @@ describe('ViewQueryParamsService', () => {
         ],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
@@ -251,7 +251,7 @@ describe('ViewQueryParamsService', () => {
         viewSorts: [],
       };
 
-      viewService.findById.mockResolvedValue(mockView as any);
+      viewService.findByIdWithRelations.mockResolvedValue(mockView as any);
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue(
         {
           flatObjectMetadataMaps: mockFlatObjectMetadataMaps,

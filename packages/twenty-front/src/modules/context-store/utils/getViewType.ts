@@ -18,7 +18,7 @@ export const getViewType = ({
   }
 
   if (isRecordIndexPage) {
-    return view?.type === ViewType.Kanban
+    return view?.type === ViewType.KANBAN
       ? ContextStoreViewType.Kanban
       : ContextStoreViewType.Table;
   }

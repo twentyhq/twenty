@@ -1,5 +1,6 @@
-import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient, useMutation, useQuery } from '@apollo/client/react';
+import { getOperationName } from '~/utils/getOperationName';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,13 +25,11 @@ import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages'
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { useCallback, useMemo } from 'react';
 import {
   type GetChatThreadsQuery,
   GetChatThreadsDocument,
-  useCreateChatThreadMutation,
-  useGetChatMessagesQuery,
-  useGetChatThreadsQuery,
+  CreateChatThreadDocument,
+  GetChatMessagesDocument,
 } from '~/generated-metadata/graphql';
 
 export const useAgentChatData = () => {
@@ -54,7 +53,7 @@ export const useAgentChatData = () => {
 
   const { scrollToBottom } = useAgentChatScrollToBottom();
 
-  const [createChatThread] = useCreateChatThreadMutation({
+  const [createChatThread] = useMutation(CreateChatThreadDocument, {
     onCompleted: (data) => {
       if (store.get(isCreatingForFirstSendState.atom)) {
         store.set(isCreatingForFirstSendState.atom, false);
@@ -137,64 +136,82 @@ export const useAgentChatData = () => {
     ],
   });
 
-  const { loading: threadsLoading } = useGetChatThreadsQuery({
-    variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
-    skip: isDefined(currentAIChatThread),
-    onCompleted: (data) => {
-      const threads = data.chatThreads.edges.map((edge) => edge.node);
-
-      if (threads.length > 0) {
-        const firstThread = threads[0];
-        const newDraft =
-          store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
-
-        setCurrentAIChatThread(firstThread.id);
-        setAgentChatInput(newDraft);
-        setCurrentAIChatThreadTitle(firstThread.title ?? null);
-
-        const hasUsageData =
-          (firstThread.conversationSize ?? 0) > 0 &&
-          isDefined(firstThread.contextWindowTokens);
-        setAgentChatUsage(
-          hasUsageData
-            ? {
-                lastMessage: null,
-                conversationSize: firstThread.conversationSize ?? 0,
-                contextWindowTokens: firstThread.contextWindowTokens ?? 0,
-                inputTokens: firstThread.totalInputTokens,
-                outputTokens: firstThread.totalOutputTokens,
-                inputCredits: firstThread.totalInputCredits,
-                outputCredits: firstThread.totalOutputCredits,
-              }
-            : null,
-        );
-      } else {
-        store.set(hasTriggeredCreateForDraftState.atom, false);
-        setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
-        setAgentChatInput(
-          store.get(agentChatDraftsByThreadIdState.atom)[
-            AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-          ] ?? '',
-        );
-        setCurrentAIChatThreadTitle(null);
-        setAgentChatUsage(null);
-      }
+  const { loading: threadsLoading, data: threadsData } = useQuery(
+    GetChatThreadsDocument,
+    {
+      variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
+      skip: isDefined(currentAIChatThread),
     },
-  });
+  );
+
+  // TODO: Refactor this useEffect to avoid unnecessary re-renders (see PR #18584 review)
+  useEffect(() => {
+    if (!threadsData) return;
+
+    const threads = threadsData.chatThreads.edges.map((edge) => edge.node);
+
+    if (threads.length > 0) {
+      const firstThread = threads[0];
+      const newDraft =
+        store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
+
+      setCurrentAIChatThread(firstThread.id);
+      setAgentChatInput(newDraft);
+      setCurrentAIChatThreadTitle(firstThread.title ?? null);
+
+      const hasUsageData =
+        (firstThread.conversationSize ?? 0) > 0 &&
+        isDefined(firstThread.contextWindowTokens);
+      setAgentChatUsage(
+        hasUsageData
+          ? {
+              lastMessage: null,
+              conversationSize: firstThread.conversationSize ?? 0,
+              contextWindowTokens: firstThread.contextWindowTokens ?? 0,
+              inputTokens: firstThread.totalInputTokens,
+              outputTokens: firstThread.totalOutputTokens,
+              inputCredits: firstThread.totalInputCredits,
+              outputCredits: firstThread.totalOutputCredits,
+            }
+          : null,
+      );
+    } else {
+      store.set(hasTriggeredCreateForDraftState.atom, false);
+      setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+      setAgentChatInput(
+        store.get(agentChatDraftsByThreadIdState.atom)[
+          AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+        ] ?? '',
+      );
+      setCurrentAIChatThreadTitle(null);
+      setAgentChatUsage(null);
+    }
+  }, [
+    threadsData,
+    store,
+    setCurrentAIChatThread,
+    setAgentChatInput,
+    setCurrentAIChatThreadTitle,
+    setAgentChatUsage,
+  ]);
 
   const isNewThread = useMemo(
     () => currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     [currentAIChatThread],
   );
 
-  const { loading: messagesLoading, data } = useGetChatMessagesQuery({
+  const { loading: messagesLoading, data } = useQuery(GetChatMessagesDocument, {
     variables: { threadId: currentAIChatThread! },
     skip: !isDefined(currentAIChatThread) || isNewThread,
-    onCompleted: () => {
+  });
+
+  // TODO: Refactor this useEffect to avoid unnecessary re-renders (see PR #18584 review)
+  useEffect(() => {
+    if (data) {
       store.set(skipMessagesSkeletonUntilLoadedState.atom, false);
       scrollToBottom();
-    },
-  });
+    }
+  }, [data, store, scrollToBottom]);
 
   const ensureThreadForDraft = useCallback(() => {
     const current = store.get(currentAIChatThreadState.atom);

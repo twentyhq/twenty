@@ -11,10 +11,11 @@ import { Button, ButtonGroup } from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
+import { useMutation, useQuery } from '@apollo/client/react';
 import {
-  useCreatePublicDomainMutation,
-  useDeletePublicDomainMutation,
-  useFindManyPublicDomainsQuery,
+  CreatePublicDomainDocument,
+  DeletePublicDomainDocument,
+  FindManyPublicDomainsDocument,
 } from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
@@ -56,7 +57,9 @@ export const SettingPublicDomain = () => {
   const navigate = useNavigateSettings();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [createPublicDomain, { loading }] = useCreatePublicDomainMutation();
+  const [createPublicDomain, { loading }] = useMutation(
+    CreatePublicDomainDocument,
+  );
 
   const [newPublicDomain, setNewPublicDomain] = useState<string | undefined>(
     selectedPublicDomain?.domain ?? '',
@@ -66,9 +69,11 @@ export const SettingPublicDomain = () => {
     string | undefined
   >(undefined);
 
-  const { refetch: refetchPublicDomains } = useFindManyPublicDomainsQuery();
+  const { refetch: refetchPublicDomains } = useQuery(
+    FindManyPublicDomainsDocument,
+  );
 
-  const [deletePublicDomain] = useDeletePublicDomainMutation();
+  const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 
   const { isLoading, publicDomainRecords, checkPublicDomainRecords } =
     useCheckPublicDomainValidRecords();

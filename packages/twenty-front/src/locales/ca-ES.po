@@ -663,10 +663,10 @@ msgstr "Sobre aquest espai de treball"
 msgid "Access workspace data"
 msgstr ""
 
-#. js-lingui-id: c2UA7k
+#. js-lingui-id: W5nhmk
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
-msgstr "Accediu a les dades del vostre espai de treball des del vostre client MCP preferit, com Claude Desktop, Windsurf o Cursor."
+msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Claude Code, Cursor, or ChatGPT. Once connected, try: \"Show me the 5 most recently created companies\" or \"Create a new person named Jane Doe\"."
+msgstr ""
 
 #. js-lingui-id: u2Cycw
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
@@ -930,11 +930,6 @@ msgstr "Afegeix una regla de filtre"
 msgid "Add first filter"
 msgstr "Afegeix el primer filtre"
 
-#. js-lingui-id: //rVZt
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerFooter.tsx
-msgid "Add folder"
-msgstr "Afegeix una carpeta"
-
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
@@ -951,23 +946,23 @@ msgid "Add Item"
 msgstr "Afegeix element"
 
 #. js-lingui-id: cI2ZVO
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Add item to folder"
 msgstr ""
 
 #. js-lingui-id: gaZXkv
-#: src/modules/object-metadata/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItemsFolder.tsx
+#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Add menu item"
 msgstr ""
 
 #. js-lingui-id: JbORSt
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item after"
 msgstr ""
 
 #. js-lingui-id: DKlI/M
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item before"
 msgstr ""
 
@@ -1100,7 +1095,6 @@ msgid "Add to Favorite"
 msgstr "Afegeix a les preferides"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
@@ -1429,7 +1423,7 @@ msgid "All Objects"
 msgstr "Tots els objectes"
 
 #. js-lingui-id: RoFE84
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 msgid "All objects are already in the sidebar"
 msgstr ""
 
@@ -1444,7 +1438,7 @@ msgid "All set!"
 msgstr "Tot a punt!"
 
 #. js-lingui-id: CHvT6e
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemObjectSystemPickerSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemObjectSystemPickerSubPage.tsx
 msgid "All system objects are already in the sidebar"
 msgstr ""
 
@@ -1545,7 +1539,7 @@ msgid "alphabetical"
 msgstr ""
 
 #. js-lingui-id: eO7HSp
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectMenuItem.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectMenuItem.tsx
 msgid "Already in navbar"
 msgstr ""
 
@@ -1588,6 +1582,7 @@ msgid "An error occurred while uploading the picture."
 msgstr "S'ha produït un error en carregar la imatge."
 
 #. js-lingui-id: XyOToQ
+#: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePerformViewSortAPIPersist.ts
 #: src/modules/views/hooks/internal/usePerformViewGroupAPIPersist.ts
@@ -1686,6 +1681,7 @@ msgstr "API i Webhooks"
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "Clau d'API"
@@ -1901,21 +1897,25 @@ msgstr ""
 
 #. js-lingui-id: OJOR8q
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
 msgstr "Esteu segur que voleu destruir aquests registres? Ja no seran recuperables."
 
 #. js-lingui-id: UK5TO6
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
 msgstr "Esteu segur que voleu destruir aquest registre? No es podrà recuperar més endavant."
 
 #. js-lingui-id: mcHVC1
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Are you sure you want to restore these records?"
 msgstr "Esteu segur que voleu restaurar aquests registres?"
 
 #. js-lingui-id: lmgkf0
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "Esteu segur que voleu restaurar aquest registre?"
 
@@ -1956,6 +1956,7 @@ msgstr "Ascendent"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Ask AI"
 msgstr "Pregunta a l'IA"
@@ -2135,6 +2136,11 @@ msgstr "Autenticació"
 #: src/modules/auth/hooks/useVerifyLogin.ts
 msgid "Authentication failed"
 msgstr "Error en l'autenticació"
+
+#. js-lingui-id: TxT0ER
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "Authentication method"
+msgstr ""
 
 #. js-lingui-id: H7qgYQ
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -2558,13 +2564,11 @@ msgstr "No pots escanejar? Copia la"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel"
 msgstr "Cancel·la"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Cancel·la l'edició"
@@ -2965,7 +2969,7 @@ msgid "Collapse folder"
 msgstr "Replega la carpeta"
 
 #. js-lingui-id: jZlrte
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
 msgid "Color"
 msgstr ""
 
@@ -3895,10 +3899,9 @@ msgid "Customization"
 msgstr "Personalització"
 
 #. js-lingui-id: srRMnJ
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditObjectViewBase.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditLinkItemView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditObjectViewBase.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
 msgid "Customize"
 msgstr ""
 
@@ -3969,6 +3972,7 @@ msgstr "Fosc"
 
 #. js-lingui-id: ogQzcZ
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "Quadre de comandament duplicat correctament"
 
@@ -3982,7 +3986,7 @@ msgstr "Taulers de comandament"
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Data"
 msgstr "Dades"
 
@@ -4287,7 +4291,7 @@ msgstr "elimina"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
@@ -4304,8 +4308,7 @@ msgstr "elimina"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
-#: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
@@ -4392,8 +4395,7 @@ msgid "Delete field"
 msgstr "Esborra camp"
 
 #. js-lingui-id: 97QUV6
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Delete Folder"
 msgstr "Elimina la carpeta"
 
@@ -4594,6 +4596,7 @@ msgstr "Destruir {objectLabelPlural}"
 
 #. js-lingui-id: kG5yO6
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Destroy Records"
 msgstr "Destruir registres"
 
@@ -4801,7 +4804,7 @@ msgid "Drop file here..."
 msgstr "Deixa el fitxer aquí..."
 
 #. js-lingui-id: euc6Ns
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Duplicate"
@@ -4933,9 +4936,9 @@ msgid "Edit Fields"
 msgstr "Edita camps"
 
 #. js-lingui-id: uPHscS
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu.ts
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit folder"
 msgstr ""
 
@@ -4956,9 +4959,9 @@ msgid "Edit Layout"
 msgstr ""
 
 #. js-lingui-id: /PoNoq
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu.ts
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit link"
 msgstr ""
 
@@ -5582,11 +5585,6 @@ msgstr "Error en eliminar el Proveïdor d'Identitats SSO"
 msgid "Error editing SSO Identity Provider"
 msgstr "Error en editar el Proveïdor d'Identitats SSO"
 
-#. js-lingui-id: GsIfmO
-#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
-msgid "Error fetching worker metrics: {errorMessage}"
-msgstr "Error en obtenir les mètriques del worker: {errorMessage}"
-
 #. js-lingui-id: GdBN5t
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Error illustration"
@@ -6126,11 +6124,13 @@ msgstr ""
 
 #. js-lingui-id: NUmmdc
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Failed to duplicate dashboard"
 msgstr "No s'ha pogut duplicar el quadre de comandament"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
 msgstr ""
 
@@ -6194,9 +6194,9 @@ msgstr "No s'ha pogut eliminar la imatge"
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Error en reintentar feines. Torneu-ho a provar més tard."
 
-#. js-lingui-id: fuRtgB
-#: src/modules/navigation-menu-item/components/NavigationMenuEditModeBar.tsx
-msgid "Failed to save navigation layout"
+#. js-lingui-id: farFvy
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Failed to save layout customization"
 msgstr ""
 
 #. js-lingui-id: y3HIOa
@@ -6314,8 +6314,7 @@ msgid "Fast Model"
 msgstr ""
 
 #. js-lingui-id: X9kySA
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFolders.tsx
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
+#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Preferits"
 
@@ -6587,8 +6586,8 @@ msgid "Flow"
 msgstr "Flux"
 
 #. js-lingui-id: kNqMMd
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelFolderInfo.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Folder"
 msgstr ""
 
@@ -6598,8 +6597,8 @@ msgid "Folder name"
 msgstr ""
 
 #. js-lingui-id: HSh8u/
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Folders"
 msgstr "Carpetes"
 
@@ -8029,7 +8028,7 @@ msgid "Layout"
 msgstr "Disseny"
 
 #. js-lingui-id: W4nIBb
-#: src/modules/navigation-menu-item/components/NavigationMenuEditModeBar.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
 msgid "Layout customization"
 msgstr ""
 
@@ -8144,8 +8143,8 @@ msgid "Line Chart"
 msgstr "Gràfic de línies"
 
 #. js-lingui-id: yzF66j
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Link"
 msgstr ""
 
@@ -8161,12 +8160,12 @@ msgid "Link copied to clipboard"
 msgstr "Enllaç copiat al porta-retalls"
 
 #. js-lingui-id: vH3ZQY
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditLinkItemView.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
-#: src/modules/navigation-menu-item/hooks/useHandleAddToNavigationDrop.ts
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu.ts
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
+#: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Link label"
 msgstr ""
 
@@ -8805,19 +8804,19 @@ msgid "Most installed version"
 msgstr ""
 
 #. js-lingui-id: 3Ib6FN
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move down"
 msgstr ""
 
 #. js-lingui-id: iSLA/r
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "Moure a l'esquerra"
 
 #. js-lingui-id: Ubl2by
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
@@ -8829,12 +8828,12 @@ msgid "Move to a folder"
 msgstr ""
 
 #. js-lingui-id: JCPOml
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move to folder"
 msgstr ""
 
 #. js-lingui-id: QyioBP
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move up"
 msgstr ""
 
@@ -9080,9 +9079,9 @@ msgid "New Field"
 msgstr "Nou camp"
 
 #. js-lingui-id: 96G6Re
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelFolderInfo.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu.ts
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "New folder"
 msgstr ""
 
@@ -9122,11 +9121,11 @@ msgid "New record"
 msgstr "Nou registre"
 
 #. js-lingui-id: x6Ckh1
-#: src/modules/side-panel/pages/navigation-menu-item/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/side-panel/hooks/useSidePanelMenu.ts
-#: src/modules/object-metadata/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/hooks/useOpenAddItemToFolderPage.ts
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
+#: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
+#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "New sidebar item"
 msgstr ""
 
@@ -9313,7 +9312,7 @@ msgid "No currency"
 msgstr "Sense moneda"
 
 #. js-lingui-id: DKVJFE
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "No custom views available"
 msgstr ""
 
@@ -9425,20 +9424,14 @@ msgid "No Files"
 msgstr "Sense fitxers"
 
 #. js-lingui-id: pYblOw
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folder"
 msgstr "Sense carpeta"
 
 #. js-lingui-id: 6XMhqL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No folders available"
 msgstr ""
-
-#. js-lingui-id: aywdyd
-#: src/modules/favorites/favorite-folder-picker/components/FavoriteFolderPickerList.tsx
-msgid "No folders found"
-msgstr "No s'ha trobat cap carpeta"
 
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
@@ -9523,7 +9516,7 @@ msgid "No object found"
 msgstr ""
 
 #. js-lingui-id: YFHO2u
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
 msgstr ""
 
@@ -9600,14 +9593,14 @@ msgid "No Results"
 msgstr "Cap resultat"
 
 #. js-lingui-id: AxPAXW
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
 #: src/modules/side-panel/components/SidePanelList.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "No results found"
 msgstr "No s'han trobat resultats"
 
@@ -9632,12 +9625,12 @@ msgid "No Select field"
 msgstr "Sense camp de selecció"
 
 #. js-lingui-id: RQ6tfU
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
 msgstr ""
 
 #. js-lingui-id: Yf4rVG
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 msgid "No system objects with views found"
 msgstr ""
 
@@ -9817,12 +9810,18 @@ msgstr ""
 
 #. js-lingui-id: b/j06W
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "OAuth"
 msgstr ""
 
 #. js-lingui-id: /PKKj/
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth Credentials"
+msgstr ""
+
+#. js-lingui-id: LNLTJB
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "OAuth or API Key"
 msgstr ""
 
 #. js-lingui-id: pNEViR
@@ -9839,9 +9838,9 @@ msgstr "objecte"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
 #: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Object"
 msgstr "Objecte"
 
@@ -9863,6 +9862,11 @@ msgstr ""
 #. js-lingui-id: 79D4Az
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 msgid "Object ID"
+msgstr ""
+
+#. js-lingui-id: wZpAXW
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "object permission"
 msgstr ""
 
 #. js-lingui-id: ecLxgy
@@ -9901,9 +9905,9 @@ msgstr ""
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Objects"
 msgstr "Objectes"
 
@@ -10083,7 +10087,7 @@ msgid "Open side panel"
 msgstr ""
 
 #. js-lingui-id: OV5wZZ
-#: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
+#: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Obert"
 
@@ -10155,7 +10159,7 @@ msgid "Organization plan"
 msgstr ""
 
 #. js-lingui-id: nV6twc
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Organize"
 msgstr ""
 
@@ -10165,9 +10169,9 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 msgid "Other"
 msgstr "Altres"
@@ -10241,7 +10245,7 @@ msgid "Overview"
 msgstr "Visió general"
 
 #. js-lingui-id: LtI9AS
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOwnerSection.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
 msgid "Owner"
 msgstr ""
 
@@ -10434,6 +10438,8 @@ msgstr "Destruir permanentment el registre"
 #. js-lingui-id: 35dBYb
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Permanently Destroy Record"
 msgstr "Destruir permanentment el registre"
 
@@ -10444,6 +10450,7 @@ msgstr "Destruir permanentment els registres"
 
 #. js-lingui-id: YyP8vD
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Permanently Destroy Records"
 msgstr "Destruir permanentment registres"
 
@@ -10456,6 +10463,11 @@ msgstr "Destruir permanentment el flux de treball"
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Permanently destroy workflows"
 msgstr "Destruir permanentment els workflows"
+
+#. js-lingui-id: yWmZKk
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "permission flag"
+msgstr ""
 
 #. js-lingui-id: 9cDpsw
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -10965,7 +10977,7 @@ msgstr "registre"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Record"
 msgstr "Registre"
 
@@ -11141,24 +11153,16 @@ msgstr "Remote"
 msgid "Remove"
 msgstr "Elimina"
 
-#. js-lingui-id: gleHgw
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "Remove {favoriteCount} favorite?"
-msgstr "Vols eliminar {favoriteCount} preferit?"
-
-#. js-lingui-id: 1VQkMD
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "Remove {favoriteCount} favorites?"
-msgstr "Vols eliminar {favoriteCount} preferits?"
-
-#. js-lingui-id: 0Urj9q
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu item?"
+#. js-lingui-id: XABoh4
+#. placeholder {0}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {0} navigation menu items?"
 msgstr ""
 
-#. js-lingui-id: Ef5jwi
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu items?"
+#. js-lingui-id: p/lN7X
+#. placeholder {1}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {1} navigation menu item?"
 msgstr ""
 
 #. js-lingui-id: 1O32oy
@@ -11182,14 +11186,13 @@ msgid "Remove Deleted filter"
 msgstr "Elimina filtre Eliminat"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Remove from favorites"
 msgstr "Elimina dels preferits"
 
 #. js-lingui-id: 9VZ6f0
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditOrganizeActions.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Remove from sidebar"
 msgstr ""
 
@@ -11236,8 +11239,7 @@ msgstr "Elimina la variable"
 
 #. js-lingui-id: 2wxgft
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
-#: src/modules/navigation-menu-item/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/favorites/components/FavoriteFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Rename"
 msgstr "Canvia el nom"
@@ -11378,6 +11380,8 @@ msgstr "Restaura el registre"
 #. js-lingui-id: NzMNOA
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Restore Record"
 msgstr "Restaura el Registre"
 
@@ -11389,6 +11393,8 @@ msgstr "Restaurar registres"
 #. js-lingui-id: Xqj0Cb
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Restore Records"
 msgstr "Restaura Registres"
 
@@ -11404,7 +11410,7 @@ msgstr "Resultat"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/side-panel/pages/search/hooks/useSidePanelSearchRecords.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Results"
 msgstr "Resultats"
 
@@ -11602,7 +11608,6 @@ msgstr "Dissabte"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save"
 msgstr "Desa"
@@ -11616,11 +11621,6 @@ msgstr "Desa com a nova vista"
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Desa el quadre de comandament"
-
-#. js-lingui-id: BZVCCj
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
-msgid "Save Page Layout"
-msgstr ""
 
 #. js-lingui-id: veLq3R
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -11666,6 +11666,8 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Search"
@@ -11704,7 +11706,7 @@ msgid "Search a field..."
 msgstr "Cerca un camp..."
 
 #. js-lingui-id: ITQFzL
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditFolderPickerSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Search a folder..."
 msgstr ""
 
@@ -11725,8 +11727,8 @@ msgid "Search a skill..."
 msgstr ""
 
 #. js-lingui-id: hVJ1MP
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
 msgid "Search a system object..."
 msgstr ""
 
@@ -11741,7 +11743,7 @@ msgid "Search a type"
 msgstr "Cerca un tipus"
 
 #. js-lingui-id: +MhOVB
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Search a view..."
 msgstr ""
 
@@ -11778,8 +11780,8 @@ msgstr "Cerca un objecte"
 
 #. js-lingui-id: BoNHR0
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Search an object..."
 msgstr ""
 
@@ -11803,7 +11805,7 @@ msgid "Search colors"
 msgstr "Cerca colors"
 
 #. js-lingui-id: AR3FV/
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelEditColorOption.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
 msgid "Search colors..."
 msgstr ""
 
@@ -11872,7 +11874,7 @@ msgid "Search records"
 msgstr "Cerca enregistraments"
 
 #. js-lingui-id: rRklUH
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Search records..."
 msgstr ""
 
@@ -12098,7 +12100,7 @@ msgid "Select a field to display in this widget"
 msgstr "Seleccioneu un camp per mostrar en aquest giny"
 
 #. js-lingui-id: dtAvBz
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Select a navigation item to edit"
 msgstr ""
 
@@ -12319,6 +12321,11 @@ msgstr ""
 msgid "Set as default"
 msgstr "Estableix com a predeterminat"
 
+#. js-lingui-id: 7f09hf
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+msgid "Set as pinned tab"
+msgstr ""
+
 #. js-lingui-id: ml98ku
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 msgid "Set as Primary"
@@ -12388,7 +12395,7 @@ msgstr "Configurant la teva base de dades..."
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -12535,11 +12542,6 @@ msgstr "Autenticació única (SSO)"
 msgid "Singular"
 msgstr "Singular"
 
-#. js-lingui-id: djfBXF
-#: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
-msgid "Singular and plural labels must be different"
-msgstr "Les etiquetes en singular i plural han de ser diferents"
-
 #. js-lingui-id: zvwLTy
 #: src/modules/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema.ts
 msgid "Singular and plural names must be different"
@@ -12664,6 +12666,11 @@ msgstr "Alguns"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Some folders"
 msgstr "Algunes carpetes"
+
+#. js-lingui-id: hqUWge
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Some layout changes could not be saved"
+msgstr ""
 
 #. js-lingui-id: nwtY4N
 #: src/pages/auth/Authorize.tsx
@@ -13123,10 +13130,10 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelSystemObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelObjectPickerSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewSystemSubView.tsx
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "System objects"
 msgstr ""
 
@@ -13505,23 +13512,14 @@ msgstr "Aquesta acció no es pot desfer. Això eliminarà permanentment la teva 
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "Aquesta acció no es pot desfer. Això restablirà permanentment el teu mètode d'autenticació de dos factors. <0/> Si us plau, escriu el teu correu electrònic per confirmar."
 
-#. js-lingui-id: XdFYs2
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "This action will delete this favorite folder and all {favoriteCount} favorites inside. Do you want to continue?"
-msgstr "Aquesta acció suprimirà aquesta carpeta de preferits i tots els {favoriteCount} preferits que conté. Vols continuar?"
-
-#. js-lingui-id: pFXbgz
-#: src/modules/favorites/components/CurrentWorkspaceMemberFavorites.tsx
-msgid "This action will delete this favorite folder and the favorite inside. Do you want to continue?"
-msgstr "Aquesta acció suprimirà aquesta carpeta de preferits i el preferit que conté. Vols continuar?"
-
-#. js-lingui-id: lAHIY2
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
-msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
+#. js-lingui-id: XxxrMw
+#. placeholder {2}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "This action will delete this folder and all {2} navigation menu items inside. Do you want to continue?"
 msgstr ""
 
 #. js-lingui-id: gSO0+U
-#: src/modules/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr ""
 
@@ -14037,7 +14035,7 @@ msgid "Type"
 msgstr "Tipus"
 
 #. js-lingui-id: SKD2e4
-#: src/modules/activities/components/ActivityRichTextEditor.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
 msgid "Type '/' for commands, '@' for mentions"
 msgstr ""
 
@@ -14048,7 +14046,7 @@ msgid "Type anything..."
 msgstr "Teclegeu qualsevol cosa..."
 
 #. js-lingui-id: UhqKcC
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemRecordSubPage.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr ""
 
@@ -14227,7 +14225,7 @@ msgstr ""
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-#: src/modules/page-layout/components/PageLayoutRendererContent.tsx
+#: src/modules/page-layout/components/PageLayoutTabsRenderer.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/components/RecordChip.tsx
@@ -14637,10 +14635,10 @@ msgid "view"
 msgstr "vista"
 
 #. js-lingui-id: jpctdh
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "View"
 msgstr "Vista"
 
@@ -14739,6 +14737,7 @@ msgstr ""
 #. js-lingui-id: ecVcAx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "Veure els xats d'IA anteriors"
@@ -14774,7 +14773,7 @@ msgid "View workspace activity logs"
 msgstr ""
 
 #. js-lingui-id: 1I6UoR
-#: src/modules/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemViewPickerSubView.tsx
+#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Views"
 msgstr ""
 
@@ -15068,6 +15067,7 @@ msgstr ""
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Workflow duplicated successfully"
 msgstr ""
 
@@ -15131,8 +15131,7 @@ msgstr "Fluxos de treball"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx
-#: src/modules/favorites/components/WorkspaceFavorites.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Workspace"
 msgstr "Espai de treball"
 

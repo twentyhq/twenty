@@ -1,5 +1,4 @@
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
-import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 type UseRecordShowContainerDataProps = {
@@ -14,10 +13,7 @@ export const useRecordShowContainerData = ({
     objectRecordId,
   );
 
-  const isPrefetchLoading = useIsPrefetchLoading();
-
   return {
     recordLoading,
-    isPrefetchLoading,
   };
 };

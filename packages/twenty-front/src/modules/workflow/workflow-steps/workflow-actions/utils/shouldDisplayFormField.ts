@@ -22,7 +22,7 @@ const SUPPORTED_FORM_FIELD_TYPES = [
   FieldMetadataType.UUID,
   FieldMetadataType.ARRAY,
   FieldMetadataType.RELATION,
-  FieldMetadataType.RICH_TEXT_V2,
+  FieldMetadataType.RICH_TEXT,
 ];
 
 export const shouldDisplayFormField = ({

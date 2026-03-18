@@ -4,8 +4,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,7 +48,7 @@ const StyledSpan = styled.span`
 `;
 
 const StyledButtonWrapper = styled.div`
-  > button {
+  button {
     color: ${themeCssVariables.font.color.primary};
     padding-right: ${themeCssVariables.spacing[6]};
   }

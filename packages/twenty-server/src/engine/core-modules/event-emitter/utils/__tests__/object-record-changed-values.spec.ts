@@ -6,6 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 const mockObjectMetadata: FlatObjectMetadata = {
   id: '1',
   icon: 'Icon123',
+  color: null,
   nameSingular: 'Object',
   namePlural: 'Objects',
   labelSingular: 'Object',
@@ -20,6 +21,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   isAuditLogged: true,
   isSearchable: true,
   indexMetadataIds: [],
+  objectPermissionIds: [],
   fieldIds: [],
   viewIds: [],
   applicationId: 'test-application-id',
@@ -35,6 +37,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   duplicateCriteria: null,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: [],
+  objectPermissionUniversalIdentifiers: [],
   viewUniversalIdentifiers: [],
   indexMetadataUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
