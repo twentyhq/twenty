@@ -1,6 +1,6 @@
 # QA Report — Briefing 01: Phase 1 Production Testing
 
-**Date:** 2026-03-10
+**Date:** 2026-03-10 (initial), 2026-03-11 (final verification)
 **Tester:** Claude (AI)
 **Environment:** Production (crm.tob.sh) via Playwright browser
 **Scope:** All features built for Task 2 (Subscription Management)
@@ -9,18 +9,18 @@
 
 ---
 
-## Summary
+## Summary (FINAL — after all fixes applied 2026-03-11)
 
 | Category | Total | Pass | Fail | Pass Rate |
 |----------|-------|------|------|-----------|
 | SMOKE | 6 | 6 | 0 | 100% |
-| MAT — Smart Views | 6 | 1 | 5 | 17% |
+| MAT — Smart Views | 6 | 6 | 0 | 100% |
 | MAT — Action Dialogs | 3 | 3 | 0 | 100% |
 | MAT — Action Execution | 3 | 3 | 0 | 100% |
 | MAT — Timeline | 1 | 1 | 0 | 100% |
 | AT — Invalid Data | 2 | 0 | 0 | Not tested |
 | GUI | 4 | 4 | 0 | 100% |
-| **Total** | **25** | **18** | **5** | **72%** |
+| **Total** | **25** | **23** | **0** | **92%** (2 not tested) |
 
 ---
 
@@ -39,22 +39,28 @@
 
 ## MAT Tests — Smart Views
 
-| ID | Test | Result | Screenshot | Console Error |
-|----|------|--------|-----------|--------------|
-| M-01 | "All TOB Subscriptions" loads | **PASS** | `qa-s02-subscriptions-list.png` | No errors |
-| M-02 | "Access Not Granted" loads | **FAIL** | `qa-m02-access-not-granted.png` | `SyntaxError: Unexpected token 'N', "NOT_GRANTED" is not valid JSON` |
-| M-03 | "Expiring in 60 Days" loads | **FAIL** | `qa-m03-expiring-60.png` | `Error: Cannot parse relative date filter` |
-| M-04 | "Paused Subscriptions" loads | **FAIL** | (same error pattern as M-02) | `SyntaxError: "PAUSED" is not valid JSON` |
-| M-05 | "Overdue Payments" loads | **FAIL** | `qa-m05-overdue-FAIL.png` | `SyntaxError: Unexpected token 'O', "OVERDUE" is not valid JSON` |
-| M-06 | "No Touchpoint 14 Days" loads | **FAIL** | (same error pattern as M-03) | `Error: Cannot parse relative date filter` |
+### Initial Results (2026-03-10) — ALL FAILED
 
-### Root Cause
+| ID | Test | Result | Console Error |
+|----|------|--------|--------------|
+| M-02 | "Access Not Granted" | **FAIL** | `SyntaxError: "NOT_GRANTED" is not valid JSON` |
+| M-03 | "Expiring in 60 Days" | **FAIL** | `Error: Cannot parse relative date filter` |
+| M-04 | "Paused Subscriptions" | **FAIL** | `SyntaxError: "PAUSED" is not valid JSON` |
+| M-05 | "Overdue Payments" | **FAIL** | `SyntaxError: "OVERDUE" is not valid JSON` |
+| M-06 | "No Touchpoint 14 Days" | **FAIL** | `Error: Cannot parse relative date filter` |
 
-**Bug 1 — SELECT field filters (M-02, M-04, M-05):**
-Deploy script stores filter values as raw strings (`NOT_GRANTED`, `PAUSED`, `OVERDUE`). Twenty frontend expects JSON-formatted values.
+Root cause: SELECT filters stored as raw strings (need JSON arrays), IS_RELATIVE filters stored as JSON objects (need DIRECTION_AMOUNT_UNIT format).
 
-**Bug 2 — DATE_TIME relative filters (M-03, M-06):**
-Deploy script stores IS_RELATIVE filter values in wrong format. Twenty cannot parse them.
+### Final Results (2026-03-11 — after fix + Pablo re-ran script)
+
+| ID | Test | Result | Screenshot |
+|----|------|--------|-----------|
+| M-01 | "All TOB Subscriptions" loads | **PASS** | `qa-final-04-clean-list.png` |
+| M-02 | "Access Not Granted" loads | **PASS** | `qa-fix-01-access-not-granted-WORKS.png` |
+| M-03 | "Expiring in 60 Days" loads | **PASS** | Verified via automated click test |
+| M-04 | "Paused Subscriptions" loads | **PASS** | Verified via automated click test |
+| M-05 | "Overdue Payments" loads | **PASS** | Verified via automated click test |
+| M-06 | "No Touchpoint 14 Days" loads | **PASS** | Verified via automated click test |
 
 ---
 
@@ -130,7 +136,9 @@ Both bugs are in `deploy/create-subscription-views.py` — the `add_filter()` fu
 
 ## What Doesn't Work
 
-- 5 Smart Views crash when clicked (filter format bugs)
+~~5 Smart Views crash when clicked (filter format bugs)~~ — **FIXED 2026-03-11**
+
+All features working. No known bugs remaining.
 
 ---
 
@@ -161,8 +169,8 @@ All in `Saba Documentations/QA/Screenshots/Phase-1/`:
 
 ## Conclusion
 
-**18 out of 23 tests PASS (78%).** All action buttons work correctly — Pause, Extend, and Change Payment Plan all execute and save data. Timeline tracks all changes. Labels are readable.
+**FINAL: 23 out of 23 tested features PASS (100%).** 2 AT tests not executed (low priority).
 
-**Only bug: 5 Smart Views crash** — both caused by wrong filter value format in the deploy script. This is a fix in `deploy/create-subscription-views.py`, not in the frontend code.
+All action buttons work — Pause, Extend, Change Payment Plan execute and save data. Timeline tracks all changes. Labels readable. All 5 Smart Views load without crash.
 
-**Recommendation:** Proceed to Phase 2 — fix the Smart View filter format in the deploy script, re-deploy, re-test the 5 views.
+**First milestone of Briefing 01 is COMPLETE.** Ready for Enzo to test.
