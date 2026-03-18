@@ -509,9 +509,6 @@ export const STANDARD_OBJECTS = {
       accountOwnerIdIndex: {
         universalIdentifier: 'ec2ebfc9-0c9b-4597-a87d-aa295e2d8bfe',
       },
-      domainNameUniqueIndex: {
-        universalIdentifier: 'dd300c61-f422-467a-91f4-de4f83c4175b',
-      },
       searchVectorGinIndex: {
         universalIdentifier: 'c3eb62df-2cc1-4cc3-b7aa-e96a4d65c633',
       },

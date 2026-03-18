@@ -67,9 +67,6 @@ export const STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS: Record<
     accountOwnerIdIndex: [
       STANDARD_OBJECTS.company.fields.accountOwner.universalIdentifier,
     ],
-    domainNameUniqueIndex: [
-      STANDARD_OBJECTS.company.fields.domainName.universalIdentifier,
-    ],
     searchVectorGinIndex: [
       STANDARD_OBJECTS.company.fields.searchVector.universalIdentifier,
     ],

@@ -13,9 +13,8 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'company'>, 'context'>): Record<
-  AllStandardObjectIndexName<'company'>,
-  FlatIndexMetadata
+}: Omit<CreateStandardIndexArgs<'company'>, 'context'>): Partial<
+  Record<AllStandardObjectIndexName<'company'>, FlatIndexMetadata>
 > => ({
   accountOwnerIdIndex: createStandardIndexFlatMetadata({
     objectName,
@@ -23,19 +22,6 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
     context: {
       indexName: 'accountOwnerIdIndex',
       relatedFieldNames: ['accountOwner'],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  domainNameUniqueIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'domainNameUniqueIndex',
-      relatedFieldNames: ['domainName'],
-      isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

@@ -140,7 +140,6 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
         'The company website URL. We use this url to fetch the company icon',
       icon: 'IconLink',
       isNullable: true,
-      isUnique: true,
       settings: {
         maxNumberOfValues: 1,
       },
