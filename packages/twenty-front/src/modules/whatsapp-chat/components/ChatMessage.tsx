@@ -255,7 +255,10 @@ export const ChatMessage = ({ message, onEdit, onDelete, onForward, onFlagLead, 
         )}
 
         {isVoice && message.mediaUrl && (
-          <VoiceMessage mediaUrl={message.mediaUrl} />
+          <VoiceMessage
+            mediaUrl={message.mediaUrl}
+            fromAgent={message.fromAgent}
+          />
         )}
 
         {editing ? (

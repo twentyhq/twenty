@@ -33,6 +33,7 @@ interface SendParams {
   toJid: string;
   conversationId: string;
   caption?: string;
+  imageType?: 'original' | 'annotated';
 }
 
 export const useStrukturanalyse = (conversationId: string | null) => {
@@ -118,6 +119,7 @@ export const useStrukturanalyse = (conversationId: string | null) => {
             to_jid: params.toJid,
             conversation_id: params.conversationId,
             caption: params.caption,
+            image_type: params.imageType ?? 'annotated',
           }),
         });
         return true;

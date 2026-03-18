@@ -12,9 +12,10 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)} 0;
 `;
 
-const StyledPlayButton = styled.button`
+const StyledPlayButton = styled.button<{ fromAgent?: boolean }>`
   align-items: center;
-  background: rgba(128, 128, 128, 0.15);
+  background: ${({ fromAgent }) =>
+    fromAgent ? 'rgba(255, 255, 255, 0.2)' : 'rgba(128, 128, 128, 0.15)'};
   border: none;
   border-radius: 50%;
   color: inherit;
@@ -26,7 +27,8 @@ const StyledPlayButton = styled.button`
   width: 32px;
 
   &:hover {
-    background: rgba(128, 128, 128, 0.25);
+    background: ${({ fromAgent }) =>
+      fromAgent ? 'rgba(255, 255, 255, 0.35)' : 'rgba(128, 128, 128, 0.25)'};
   }
 `;
 
@@ -37,8 +39,9 @@ const StyledWaveform = styled.div`
   gap: 4px;
 `;
 
-const StyledProgressBar = styled.div`
-  background: rgba(128, 128, 128, 0.2);
+const StyledProgressBar = styled.div<{ fromAgent?: boolean }>`
+  background: ${({ fromAgent }) =>
+    fromAgent ? 'rgba(255, 255, 255, 0.25)' : 'rgba(128, 128, 128, 0.2)'};
   border-radius: 2px;
   cursor: pointer;
   height: 4px;
@@ -47,11 +50,11 @@ const StyledProgressBar = styled.div`
   width: 100%;
 `;
 
-const StyledProgress = styled.div<{ width: number }>`
+const StyledProgress = styled.div<{ width: number; fromAgent?: boolean }>`
   background: currentColor;
   border-radius: 2px;
   height: 100%;
-  opacity: 0.6;
+  opacity: ${({ fromAgent }) => (fromAgent ? 0.9 : 0.6)};
   transition: width 100ms linear;
   width: ${({ width }) => width}%;
 `;
@@ -95,9 +98,10 @@ const formatDuration = (seconds: number): string => {
 
 type VoiceMessageProps = {
   mediaUrl: string;
+  fromAgent?: boolean;
 };
 
-export const VoiceMessage = ({ mediaUrl }: VoiceMessageProps) => {
+export const VoiceMessage = ({ mediaUrl, fromAgent }: VoiceMessageProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -166,7 +170,7 @@ export const VoiceMessage = ({ mediaUrl }: VoiceMessageProps) => {
 
   return (
     <StyledContainer>
-      <StyledPlayButton onClick={togglePlay}>
+      <StyledPlayButton fromAgent={fromAgent} onClick={togglePlay}>
         {isPlaying ? (
           <IconPlayerPause size={16} />
         ) : (
@@ -174,8 +178,8 @@ export const VoiceMessage = ({ mediaUrl }: VoiceMessageProps) => {
         )}
       </StyledPlayButton>
       <StyledWaveform>
-        <StyledProgressBar onClick={handleProgressClick}>
-          <StyledProgress width={progress} />
+        <StyledProgressBar fromAgent={fromAgent} onClick={handleProgressClick}>
+          <StyledProgress width={progress} fromAgent={fromAgent} />
         </StyledProgressBar>
         <StyledDuration>
           {displayTime > 0 ? formatDuration(displayTime) : '0:00'}

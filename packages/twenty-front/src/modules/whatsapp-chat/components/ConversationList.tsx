@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { IconChevronDown } from 'twenty-ui/display';
 import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
@@ -131,6 +131,7 @@ export const ConversationList = ({
   const currentUserEmail = currentMember?.userEmail ?? '';
 
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [stateFilter, setStateFilter] = useState<StateFilter>('all');
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
   const [showArchived, setShowArchived] = useState(false);
@@ -144,12 +145,27 @@ export const ConversationList = ({
   const [selectedMops, setSelectedMops] = useState<string[]>([]);
   const previousConversationsRef = useRef<WaConversation[]>([]);
 
-  // Always filter by the active session (passed from parent)
+  // Debounce search to avoid firing API calls on every keystroke
+  useEffect(() => {
+    if (!search) {
+      setDebouncedSearch('');
+      return;
+    }
+    const timer = setTimeout(() => setDebouncedSearch(search), 350);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Reset search when session changes
   const activeSessionName = sessions.length === 1 ? sessions[0].name : undefined;
+
+  useEffect(() => {
+    setSearch('');
+    setDebouncedSearch('');
+  }, [activeSessionName]);
 
   const { conversations, loading, error, hasMore, loadMore, refresh } = useConversations({
     session: activeSessionName,
-    search: search || undefined,
+    search: debouncedSearch || undefined,
   });
 
   if (

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useRef, useState, lazy, Suspense } from 'react';
 
-import { IconX } from 'twenty-ui/display';
+import { IconCheck, IconCopy, IconX } from 'twenty-ui/display';
 import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
 import { useContact } from '@/whatsapp-chat/hooks/useContact';
 import { useCloseCalls } from '@/whatsapp-chat/hooks/useCloseCalls';
@@ -820,6 +820,7 @@ const SaTabContent = ({
         toJid: conversation.leadPhoneNumber,
         conversationId: conversation.id,
         caption: type === 'output' ? 'Strukturanalyse' : undefined,
+        imageType: type === 'input' ? 'original' : 'annotated',
       });
       setSendingId(null);
     },
@@ -966,7 +967,11 @@ const SaTabContent = ({
                         }
                         title="Copy to clipboard"
                       >
-                        {copiedId === runId ? '✓' : '⎘'}
+                        {copiedId === runId ? (
+                          <IconCheck size={16} />
+                        ) : (
+                          <IconCopy size={16} />
+                        )}
                       </StyledSaCopyButton>
                     </StyledSaInterpretationHeader>
                     <StyledSaInterpretationBody>

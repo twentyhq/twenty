@@ -145,6 +145,27 @@ export const useMessages = ({
         return prev.map((m) => (matches(m) ? { ...m, ...message } : m));
       }
 
+      // Dedup outgoing agent messages: if a recent optimistic message
+      // has the same body, merge instead of adding a duplicate.
+      if (message.fromAgent) {
+        const msgTime = new Date(message.messageTimestamp).getTime();
+        const optimisticMatch = prev.find(
+          (m) =>
+            m.fromAgent &&
+            m.tempId &&
+            m.body === message.body &&
+            Math.abs(
+              new Date(m.messageTimestamp).getTime() - msgTime,
+            ) < 60_000,
+        );
+
+        if (optimisticMatch) {
+          return prev.map((m) =>
+            m === optimisticMatch ? { ...m, ...message } : m,
+          );
+        }
+      }
+
       return [...prev, message].sort(
         (a, b) =>
           new Date(a.messageTimestamp).getTime() -

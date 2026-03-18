@@ -214,15 +214,25 @@ export const WhatsAppChatContainer = () => {
         }
 
         case 'message.status': {
-          const { id, status, temp_id: tempId } = event.data as {
+          const {
+            id,
+            status,
+            temp_id: tempId,
+            waha_id: wahaId,
+          } = event.data as {
             id?: string;
             status?: WaMessage['status'];
             temp_id?: string;
+            waha_id?: string;
           };
 
           if (status) {
             if (tempId) {
-              updateMessageByTempId(tempId, { status, id: id ?? undefined });
+              updateMessageByTempId(tempId, {
+                status,
+                id: id ?? undefined,
+                wahaId: wahaId ?? undefined,
+              });
             }
 
             if (id) {

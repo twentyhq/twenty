@@ -30,6 +30,7 @@ export const useConversations = ({
   const retryCountRef = useRef(0);
 
   const cursorRef = useRef<string | undefined>(undefined);
+  const lastGoodRef = useRef<WaConversation[]>([]);
 
   // Keep ref in sync with state
   cursorRef.current = cursor;
@@ -75,6 +76,11 @@ export const useConversations = ({
         setConversations((prev) => (loadMore ? [...prev, ...items] : items));
         setCursor(data?.cursor ?? undefined);
         setHasMore(data?.hasMore ?? false);
+
+        // Remember last successful non-search result for fallback
+        if (!search && !loadMore) {
+          lastGoodRef.current = items;
+        }
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') {
           return;
@@ -85,6 +91,12 @@ export const useConversations = ({
             ? err.message
             : 'Failed to fetch conversations';
         setError(message);
+
+        // On error, restore the last known good result so the list
+        // doesn't stay empty after a failed search/fetch.
+        if (!loadMore && lastGoodRef.current.length > 0) {
+          setConversations(lastGoodRef.current);
+        }
 
         // Auto-retry on failure with exponential backoff (max 3 retries)
         if (!loadMore) {
