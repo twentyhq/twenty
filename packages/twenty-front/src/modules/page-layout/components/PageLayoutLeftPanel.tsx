@@ -8,7 +8,14 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
+import { Suspense, lazy } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+
+const SubscriptionSummaryHeader = lazy(() =>
+  import(
+    '@/object-record/record-show/components/SubscriptionSummaryHeader'
+  ).then((m) => ({ default: m.SubscriptionSummaryHeader })),
+);
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -50,6 +57,15 @@ export const PageLayoutLeftPanel = ({
         objectRecordId={targetRecordIdentifier.id}
         isInRightDrawer={isInRightDrawer}
       />
+      {targetRecordIdentifier.targetObjectNameSingular ===
+        'tobSubscription' && (
+        <Suspense fallback={null}>
+          <SubscriptionSummaryHeader
+            recordId={targetRecordIdentifier.id}
+            objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+          />
+        </Suspense>
+      )}
 
       <PageLayoutContentProvider
         value={{
