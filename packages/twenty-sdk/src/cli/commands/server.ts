@@ -106,7 +106,7 @@ export const registerServerCommands = (program: Command): void => {
         }
 
         console.log(chalk.gray('Starting Twenty container...'));
-        spawnSync(
+        const runResult = spawnSync(
           'docker',
           [
             'run',
@@ -123,6 +123,13 @@ export const registerServerCommands = (program: Command): void => {
           ],
           { stdio: 'inherit' },
         );
+
+        if (runResult.status !== 0) {
+          console.error(
+            chalk.red('Failed to start Twenty container.'),
+          );
+          process.exit(runResult.status ?? 1);
+        }
       }
 
       console.log(

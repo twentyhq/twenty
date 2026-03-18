@@ -57,8 +57,17 @@ RUN if [ "$TARGETARCH" = "arm64" ]; then echo "aarch64" > /tmp/s6arch; \
 RUN S6_ARCH=$(cat /tmp/s6arch) && \
     wget -O /tmp/s6-overlay-noarch.tar.xz \
       "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" && \
+    wget -O /tmp/s6-overlay-noarch.tar.xz.sha256 \
+      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz.sha256" && \
     wget -O /tmp/s6-overlay-arch.tar.xz \
-      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz"
+      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" && \
+    wget -O /tmp/s6-overlay-arch.tar.xz.sha256 \
+      "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz.sha256" && \
+    cd /tmp && \
+    NOARCH_SUM=$(awk '{print $1}' s6-overlay-noarch.tar.xz.sha256) && \
+    ARCH_SUM=$(awk '{print $1}' s6-overlay-arch.tar.xz.sha256) && \
+    echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
+    echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
 # === Stage 5: Final all-in-one image ===
 FROM node:22-alpine

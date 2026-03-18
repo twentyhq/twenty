@@ -1,6 +1,14 @@
 #!/bin/sh
 set -e
 
+# Generate a unique APP_SECRET per container if using the default placeholder
+if [ "$APP_SECRET" = "twenty-app-dev-secret-not-for-production" ]; then
+  APP_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+  printf '%s' "$APP_SECRET" > /run/s6/container_environment/APP_SECRET
+  export APP_SECRET
+  echo "Generated unique APP_SECRET for this container."
+fi
+
 # Wait for PostgreSQL to be ready (timeout after 60s)
 echo "Waiting for PostgreSQL..."
 TRIES=0
