@@ -38,7 +38,7 @@ yarn twenty dev
 
 ### 本地服务器管理
 
-该 SDK 包含用于管理本地 Twenty 开发服务器的命令 (包含 PostgreSQL、Redis、服务器和工作进程的一体化 Docker 镜像):
+该 SDK 包含用于管理本地 Twenty 开发服务器的命令（该服务器是一体化 Docker 镜像，内含 PostgreSQL、Redis、服务器和工作进程）：
 
 ```bash filename="Terminal"
 # Start the local server (pulls the image if needed)
@@ -57,14 +57,14 @@ yarn twenty server stop
 yarn twenty server reset
 ```
 
-The local server comes pre-seeded with a workspace and user (`tim@apple.dev` / `tim@apple.dev`), so you can start developing immediately without any manual setup.
+本地服务器预置了一个工作区和用户 (`tim@apple.dev` / `tim@apple.dev`)，因此你可以无需任何手动设置即可立即开始开发。
 
 ### 身份验证
 
-Connect your app to the local server using OAuth:
+使用 OAuth 将你的应用连接到本地服务器：
 
 ```bash filename="Terminal"
-# Authenticate via OAuth (opens browser)
+# 通过 OAuth 进行身份验证 (将打开浏览器)
 yarn twenty remote add --local
 ```
 
