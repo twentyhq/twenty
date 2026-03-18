@@ -39,7 +39,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'CHK_navigation_menu_item_type_fields',
   `("type" = 'FOLDER')
   OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)
-  OR ("type" = 'VIEW')
+  OR ("type" = 'VIEW' AND "viewId" IS NOT NULL)
   OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL)
   OR ("type" = 'LINK' AND "link" IS NOT NULL)`,
 )
@@ -87,7 +87,6 @@ export class NavigationMenuItemEntity
     nullable: false,
     type: 'enum',
     enum: NavigationMenuItemType,
-    default: NavigationMenuItemType.VIEW,
   })
   type: NavigationMenuItemType;
 

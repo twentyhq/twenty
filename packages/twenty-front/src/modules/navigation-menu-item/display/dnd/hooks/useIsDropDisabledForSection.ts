@@ -1,6 +1,6 @@
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
 import { NavigationDragSourceContext } from '@/navigation-menu-item/common/contexts/NavigationDragSourceContext';
-import { isWorkspaceDroppableId } from '@/navigation-menu-item/common/utils/isWorkspaceDroppableId';
+import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,5 +12,9 @@ export const useIsDropDisabledForSection = (isWorkspaceSection: boolean) => {
   if (sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
     return !isWorkspaceSection;
   }
-  return isWorkspaceDroppableId(sourceDroppableId) !== isWorkspaceSection;
+  const sourceIsWorkspace = canNavigationMenuItemBeDroppedIn({
+    navigationMenuItemSection: 'workspace',
+    droppableId: sourceDroppableId,
+  });
+  return sourceIsWorkspace !== isWorkspaceSection;
 };

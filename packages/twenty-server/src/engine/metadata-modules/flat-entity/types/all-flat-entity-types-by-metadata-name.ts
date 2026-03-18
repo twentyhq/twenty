@@ -12,12 +12,16 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectPermissionMaps } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission-maps.type';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag-maps.type';
+import { type FlatPermissionFlag } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag.type';
 import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
@@ -53,21 +57,23 @@ import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
+import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
-import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
+import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
+import { type UniversalFlatPermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag.type';
 import { type UniversalFlatRoleTarget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-target.type';
-import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
+import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { type UniversalFlatSkill } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-skill.type';
 import { type UniversalFlatViewFieldGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field-group.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter-group.type';
 import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
 import {
   type FlatCreateAgentAction,
@@ -102,10 +108,10 @@ import {
   type UniversalUpdateFrontComponentAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import {
-  type UniversalCreateIndexAction,
   type FlatCreateIndexAction,
   type FlatDeleteIndexAction,
   type FlatUpdateIndexAction,
+  type UniversalCreateIndexAction,
   type UniversalDeleteIndexAction,
   type UniversalUpdateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
@@ -125,6 +131,14 @@ import {
   type UniversalDeleteNavigationMenuItemAction,
   type UniversalUpdateNavigationMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
+import {
+  type FlatCreateObjectPermissionAction,
+  type FlatDeleteObjectPermissionAction,
+  type FlatUpdateObjectPermissionAction,
+  type UniversalCreateObjectPermissionAction,
+  type UniversalDeleteObjectPermissionAction,
+  type UniversalUpdateObjectPermissionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object-permission/types/workspace-migration-object-permission-action.type';
 import {
   type FlatCreateObjectAction,
   type FlatDeleteObjectAction,
@@ -157,6 +171,14 @@ import {
   type UniversalDeletePageLayoutAction,
   type UniversalUpdatePageLayoutAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
+import {
+  type FlatCreatePermissionFlagAction,
+  type FlatDeletePermissionFlagAction,
+  type FlatUpdatePermissionFlagAction,
+  type UniversalCreatePermissionFlagAction,
+  type UniversalDeletePermissionFlagAction,
+  type UniversalUpdatePermissionFlagAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/permission-flag/types/workspace-migration-permission-flag-action.type';
 import {
   type FlatCreateRoleTargetAction,
   type FlatDeleteRoleTargetAction,
@@ -198,14 +220,6 @@ import {
   type UniversalUpdateSkillAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
 import {
-  type FlatCreateViewFieldAction,
-  type FlatDeleteViewFieldAction,
-  type FlatUpdateViewFieldAction,
-  type UniversalCreateViewFieldAction,
-  type UniversalDeleteViewFieldAction,
-  type UniversalUpdateViewFieldAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
-import {
   type FlatCreateViewFieldGroupAction,
   type FlatDeleteViewFieldGroupAction,
   type FlatUpdateViewFieldGroupAction,
@@ -213,6 +227,14 @@ import {
   type UniversalDeleteViewFieldGroupAction,
   type UniversalUpdateViewFieldGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field-group/types/workspace-migration-view-field-group-action.type';
+import {
+  type FlatCreateViewFieldAction,
+  type FlatDeleteViewFieldAction,
+  type FlatUpdateViewFieldAction,
+  type UniversalCreateViewFieldAction,
+  type UniversalDeleteViewFieldAction,
+  type UniversalUpdateViewFieldAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import {
   type FlatCreateViewFilterGroupAction,
   type FlatDeleteViewFilterGroupAction,
@@ -238,6 +260,14 @@ import {
   type UniversalUpdateViewGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
 import {
+  type FlatCreateViewSortAction,
+  type FlatDeleteViewSortAction,
+  type FlatUpdateViewSortAction,
+  type UniversalCreateViewSortAction,
+  type UniversalDeleteViewSortAction,
+  type UniversalUpdateViewSortAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
+import {
   type FlatCreateViewAction,
   type FlatDeleteViewAction,
   type FlatUpdateViewAction,
@@ -253,14 +283,6 @@ import {
   type UniversalDeleteWebhookAction,
   type UniversalUpdateWebhookAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
-import {
-  type FlatCreateViewSortAction,
-  type FlatDeleteViewSortAction,
-  type FlatUpdateViewSortAction,
-  type UniversalCreateViewSortAction,
-  type UniversalDeleteViewSortAction,
-  type UniversalUpdateViewSortAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
@@ -569,6 +591,38 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatNavigationMenuItem;
     universalFlatEntity: UniversalFlatNavigationMenuItem;
     entity: NavigationMenuItemEntity;
+  };
+  permissionFlag: {
+    flatEntityMaps: FlatPermissionFlagMaps;
+    universalActions: {
+      create: UniversalCreatePermissionFlagAction;
+      update: UniversalUpdatePermissionFlagAction;
+      delete: UniversalDeletePermissionFlagAction;
+    };
+    flatActions: {
+      create: FlatCreatePermissionFlagAction;
+      update: FlatUpdatePermissionFlagAction;
+      delete: FlatDeletePermissionFlagAction;
+    };
+    flatEntity: FlatPermissionFlag;
+    universalFlatEntity: UniversalFlatPermissionFlag;
+    entity: MetadataEntity<'permissionFlag'>;
+  };
+  objectPermission: {
+    flatEntityMaps: FlatObjectPermissionMaps;
+    universalActions: {
+      create: UniversalCreateObjectPermissionAction;
+      update: UniversalUpdateObjectPermissionAction;
+      delete: UniversalDeleteObjectPermissionAction;
+    };
+    flatActions: {
+      create: FlatCreateObjectPermissionAction;
+      update: FlatUpdateObjectPermissionAction;
+      delete: FlatDeleteObjectPermissionAction;
+    };
+    flatEntity: FlatObjectPermission;
+    universalFlatEntity: UniversalFlatObjectPermission;
+    entity: MetadataEntity<'objectPermission'>;
   };
   pageLayout: {
     flatEntityMaps: FlatPageLayoutMaps;

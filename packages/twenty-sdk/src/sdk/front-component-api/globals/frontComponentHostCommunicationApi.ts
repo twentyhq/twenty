@@ -39,6 +39,8 @@ export type EnqueueSnackbarFunction = (
 
 export type CloseSidePanelFunction = () => Promise<void>;
 
+export type UpdateProgressFunction = (progress: number) => Promise<void>;
+
 export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type OpenCommandConfirmationModalHostFunction = (
@@ -53,6 +55,7 @@ export type FrontComponentHostCommunicationApiStore = {
   unmountFrontComponent?: UnmountFrontComponentFunction;
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;
+  updateProgress?: UpdateProgressFunction;
 };
 
 declare global {

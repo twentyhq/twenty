@@ -2075,6 +2075,18 @@ msgstr "بيانات أداة تخطيط الصفحة غير صالحة."
 msgid "Invalid parameters provided."
 msgstr "تم تقديم معاملات غير صالحة."
 
+#. js-lingui-id: KhF8C3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Invalid permission flag value"
+msgstr ""
+
+#. js-lingui-id: mMHHVP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Invalid permission setting"
+msgstr ""
+
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
@@ -2978,6 +2990,10 @@ msgstr "التسمية قصيرة جدًا"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object metadata not found"
 msgstr "البيانات الوصفية للكيان غير موجودة"
 
@@ -3000,10 +3016,43 @@ msgstr "البيانات الوصفية للكيان غير موجودة."
 msgid "Object not found."
 msgstr "الكائن غير موجود."
 
+#. js-lingui-id: 4ib9PY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission already exists"
+msgstr ""
+
+#. js-lingui-id: iCx6+2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission for this role and object already exists"
+msgstr ""
+
+#. js-lingui-id: Wrwici
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission not found"
+msgstr ""
+
 #. js-lingui-id: Qy6mMO
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "إذن الكائن غير موجود."
+
+#. js-lingui-id: 8KDEDj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission to delete not found"
+msgstr ""
+
+#. js-lingui-id: nA3bja
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission to update not found"
+msgstr ""
+
+#. js-lingui-id: wVLH1M
+#. placeholder {0}: flatObjectPermissionToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Object permission with universal identifier {0} already exists"
+msgstr ""
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -3057,11 +3106,6 @@ msgstr "أكتوبر"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util.ts
 msgid "On delete action is only supported for many to one relations"
 msgstr ""
-
-#. js-lingui-id: eWQQpx
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
-msgstr "لم يتم العثور على واحد أو أكثر من الكائنات التي تحاول تعيين الأذونات لها. ربما تم حذفها."
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -3278,6 +3322,39 @@ msgstr ""
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
 msgstr "كلمة المرور ضعيفة جدًا"
+
+#. js-lingui-id: fxC+On
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag already exists"
+msgstr ""
+
+#. js-lingui-id: qG245w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag for this role and setting already exists"
+msgstr ""
+
+#. js-lingui-id: 2mZr45
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag not found"
+msgstr ""
+
+#. js-lingui-id: dqLRwc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag to delete not found"
+msgstr ""
+
+#. js-lingui-id: SMgh5j
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag to update not found"
+msgstr ""
+
+#. js-lingui-id: VuCvJL
+#. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Permission flag with universal identifier {0} already exists"
+msgstr ""
 
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -3532,6 +3609,16 @@ msgstr ""
 msgid "Role cannot be assigned to this entity."
 msgstr "لا يمكن تعيين الدور لهذا الكيان."
 
+#. js-lingui-id: k2/sGI
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "Role is not editable"
+msgstr ""
+
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
@@ -3554,6 +3641,16 @@ msgstr "يجب أن يحتوي الدور على هدف واحد على الأق
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Role not found"
 msgstr ""
 
@@ -4020,10 +4117,13 @@ msgstr "الطلب معقد للغاية بحيث يتعذر معالجته. ي�
 msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "لم يتم العثور على الدور الذي تبحث عنه. ربما تم حذفه أو قد لا تكون لديك صلاحية الوصول إليه."
 
-#. js-lingui-id: HRcugS
+#. js-lingui-id: woRk0z
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "The role you are trying to modify could not be found."
+msgstr ""
+
+#. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "لم يتم العثور على الدور الذي تحاول تعديله. ربما تم حذفه أو قد لا تكون لديك صلاحية الوصول إليه."
@@ -4166,6 +4266,12 @@ msgstr ""
 msgid "This object cannot be modified."
 msgstr "لا يمكن تعديل هذا الكائن."
 
+#. js-lingui-id: X2Xp8v
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+msgid "This object permission is already set for the role"
+msgstr ""
+
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This operation is not allowed."
@@ -4180,6 +4286,12 @@ msgstr "هذه العملية غير مسموح بها. يرجى تجربة نه
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "This operation is not supported."
 msgstr "هذه العملية غير مدعومة."
+
+#. js-lingui-id: 3q5jw3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "This permission is already set for the role"
+msgstr ""
 
 #. js-lingui-id: Y5C3uK
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -4229,8 +4341,12 @@ msgstr "لا يمكن تحرير هذا الدور."
 
 #. js-lingui-id: KoDdqN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "لا يمكن تعديل هذا الدور لأنه دور نظام. يمكن تعديل الأدوار المخصصة فقط."

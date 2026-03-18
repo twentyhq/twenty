@@ -2,6 +2,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 
 export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
+  shortLabel?: string;
   icon?: string;
   isPinned?: boolean;
   availabilityType?: 'GLOBAL' | 'RECORD_SELECTION' | 'FALLBACK';

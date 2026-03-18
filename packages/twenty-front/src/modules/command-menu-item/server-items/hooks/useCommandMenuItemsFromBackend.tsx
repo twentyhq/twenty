@@ -1,26 +1,25 @@
 import { Command } from '@/command-menu-item/display/components/Command';
+import { EngineCommandMenuItem } from '@/command-menu-item/display/components/EngineCommandMenuItem';
 import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
-import { useMountEngineCommand } from '@/command-menu-item/engine-command/hooks/useMountEngineCommand';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
+
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
+  interpolateCommandMenuItemLabel,
   isDefined,
 } from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 
-import { type HeadlessFrontComponentMountContext } from '@/front-components/states/mountedHeadlessFrontComponentMapsState';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -54,11 +53,8 @@ type BuildCommandMenuItemFromFrontComponentParams = {
       objectNameSingular: string;
     };
   }) => void;
-  mountHeadlessFrontComponent: (
-    frontComponentId: string,
-    context?: HeadlessFrontComponentMountContext,
-  ) => void;
-  mountContext?: HeadlessFrontComponentMountContext;
+  recordId?: string;
+  objectNameSingular?: string;
   commandMenuContextApi: CommandMenuContextApi;
 };
 
@@ -69,32 +65,34 @@ const buildCommandMenuItemFromFrontComponent = ({
   isPinned,
   getIcon,
   openFrontComponentInSidePanel,
-  mountHeadlessFrontComponent,
-  mountContext,
+  recordId,
+  objectNameSingular,
   commandMenuContextApi,
 }: BuildCommandMenuItemFromFrontComponentParams) => {
-  const displayLabel = item.label;
+  const displayLabel = interpolateCommandMenuItemLabel({
+    label: item.label,
+    context: commandMenuContextApi,
+  });
+
+  const displayShortLabel = interpolateCommandMenuItemLabel({
+    label: item.shortLabel,
+    context: commandMenuContextApi,
+  });
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
   const isHeadless = item.frontComponent?.isHeadless === true;
 
-  const handleClick = () => {
-    if (isHeadless) {
-      mountHeadlessFrontComponent(item.frontComponentId, mountContext);
-    } else {
-      openFrontComponentInSidePanel({
-        frontComponentId: item.frontComponentId,
-        pageTitle: displayLabel,
-        pageIcon: Icon,
-        recordContext: isDefined(mountContext)
-          ? {
-              recordId: mountContext.recordId,
-              objectNameSingular: mountContext.objectNameSingular,
-            }
+  const handleNonHeadlessClick = () => {
+    openFrontComponentInSidePanel({
+      frontComponentId: item.frontComponentId,
+      pageTitle: displayLabel ?? '',
+      pageIcon: Icon,
+      recordContext:
+        isDefined(recordId) && isDefined(objectNameSingular)
+          ? { recordId, objectNameSingular }
           : undefined,
-      });
-    }
+    });
   };
 
   return {
@@ -102,7 +100,7 @@ const buildCommandMenuItemFromFrontComponent = ({
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
-    shortLabel: item.shortLabel,
+    shortLabel: displayShortLabel,
     position: item.position,
     isPinned,
     Icon,
@@ -115,10 +113,12 @@ const buildCommandMenuItemFromFrontComponent = ({
     component: isHeadless ? (
       <HeadlessFrontComponentCommandMenuItem
         frontComponentId={item.frontComponentId}
-        onClick={handleClick}
+        commandMenuItemId={item.id}
+        recordId={recordId}
+        objectNameSingular={objectNameSingular}
       />
     ) : (
-      <Command onClick={handleClick} />
+      <Command onClick={handleNonHeadlessClick} />
     ),
   };
 };
@@ -131,12 +131,6 @@ type BuildCommandMenuItemFromStandardKeyParams = {
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
   commandMenuContextApi: CommandMenuContextApi;
-  mountEngineCommand: (
-    engineCommandId: string,
-    contextStoreInstanceId: string,
-    engineComponentKey: EngineComponentKey,
-  ) => void;
-  contextStoreInstanceId: string;
 };
 
 const buildCommandItemFromEngineKey = ({
@@ -147,21 +141,21 @@ const buildCommandItemFromEngineKey = ({
   isPinned,
   getIcon,
   commandMenuContextApi,
-  mountEngineCommand,
-  contextStoreInstanceId,
 }: BuildCommandMenuItemFromStandardKeyParams) => {
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
-
-  const handleClick = () => {
-    mountEngineCommand(item.id, contextStoreInstanceId, engineComponentKey);
-  };
 
   return {
     type,
     key: `command-menu-item-engine-${item.id}`,
     scope,
-    label: item.label,
-    shortLabel: item.shortLabel,
+    label: interpolateCommandMenuItemLabel({
+      label: item.label,
+      context: commandMenuContextApi,
+    }),
+    shortLabel: interpolateCommandMenuItemLabel({
+      label: item.shortLabel,
+      context: commandMenuContextApi,
+    }),
     position: item.position,
     isPinned,
     Icon,
@@ -171,7 +165,12 @@ const buildCommandItemFromEngineKey = ({
         item.conditionalAvailabilityExpression,
         commandMenuContextApi,
       ),
-    component: <Command onClick={handleClick} />,
+    component: (
+      <EngineCommandMenuItem
+        commandMenuItemId={item.id}
+        engineComponentKey={engineComponentKey}
+      />
+    ),
   };
 };
 
@@ -180,12 +179,6 @@ export const useCommandMenuItemsFromBackend = (
 ) => {
   const { getIcon } = useIcons();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
-  const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
-  const mountEngineCommand = useMountEngineCommand();
-
-  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
-    ContextStoreComponentInstanceContext,
-  );
 
   const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
@@ -214,13 +207,10 @@ export const useCommandMenuItemsFromBackend = (
     selectedRecordIds.length >= 1 ||
     contextStoreTargetedRecordsRule.mode === 'exclusion';
 
-  const mountContext: HeadlessFrontComponentMountContext | undefined =
-    selectedRecordIds.length === 1 && isDefined(currentObjectMetadataItem)
-      ? {
-          recordId: selectedRecordIds[0],
-          objectNameSingular: currentObjectMetadataItem.nameSingular,
-        }
-      : undefined;
+  const recordId =
+    selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
+
+  const objectNameSingular = currentObjectMetadataItem?.nameSingular;
 
   const { data } = useQuery(FindManyCommandMenuItemsDocument);
 
@@ -253,8 +243,6 @@ export const useCommandMenuItemsFromBackend = (
         isPinned,
         getIcon,
         commandMenuContextApi,
-        mountEngineCommand,
-        contextStoreInstanceId,
       });
     }
 
@@ -266,9 +254,9 @@ export const useCommandMenuItemsFromBackend = (
         isPinned,
         getIcon,
         openFrontComponentInSidePanel,
-        mountHeadlessFrontComponent,
         commandMenuContextApi,
-        mountContext,
+        recordId,
+        objectNameSingular,
       });
     }
 

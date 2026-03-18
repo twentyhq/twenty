@@ -1,7 +1,7 @@
 import { ChartAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectableListItem';
 import { ChartRatioAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioAggregateOperationSelectableListItem';
 import { ChartRatioOptionValueSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -35,7 +35,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [isOptionValueMenuOpen, setIsOptionValueMenuOpen] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { pageLayoutId } = usePageLayoutIdFromContextStore();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const configuration = widgetInEditMode?.configuration;
