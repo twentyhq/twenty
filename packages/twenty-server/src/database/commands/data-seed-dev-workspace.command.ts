@@ -10,7 +10,6 @@ import {
 import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
 
 type DataSeedWorkspaceOptions = {
-  appleOnly?: boolean;
   light?: boolean;
 };
 
@@ -27,14 +26,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '--apple-only',
-    description: 'Seed only the Apple workspace',
-  })
-  parseAppleOnly(): boolean {
-    return true;
-  }
-
-  @Option({
     flags: '--light',
     description:
       'Light seed: skip demo custom objects (Pet, Survey, etc.) and limit records to 5 per object',
@@ -47,7 +38,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     _passedParams: string[],
     options: DataSeedWorkspaceOptions,
   ): Promise<void> {
-    const workspaceIds: SeededWorkspacesIds[] = options.appleOnly
+    const workspaceIds: SeededWorkspacesIds[] = options.light
       ? [SEED_APPLE_WORKSPACE_ID]
       : [SEED_APPLE_WORKSPACE_ID, SEED_YCOMBINATOR_WORKSPACE_ID];
 

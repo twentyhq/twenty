@@ -12,6 +12,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { LIGHT_EXCLUDED_OBJECT_NAMES } from 'src/engine/workspace-manager/dev-seeder/constants/light-excluded-objects.constant';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -178,12 +179,9 @@ export class DevSeederMetadataService {
     },
   };
 
-  private static readonly LIGHT_EXCLUDED_OBJECTS = new Set([
-    'pet',
-    'surveyResult',
-    'employmentHistory',
-    'petCareAgreement',
-  ]);
+  private static readonly LIGHT_EXCLUDED_OBJECTS = new Set(
+    LIGHT_EXCLUDED_OBJECT_NAMES,
+  );
 
   public async seed({
     dataSourceMetadata,

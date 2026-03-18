@@ -1,3 +1,4 @@
+import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
@@ -44,27 +45,6 @@ const containerExists = (): boolean => {
   }
 };
 
-const checkHealth = async (port: number): Promise<boolean> => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-    try {
-      const response = await fetch(`http://localhost:${port}/healthz`, {
-        signal: controller.signal,
-      });
-
-      const body = await response.json();
-
-      return body.status === 'ok';
-    } finally {
-      clearTimeout(timeoutId);
-    }
-  } catch {
-    return false;
-  }
-};
-
 const validatePort = (value: string): number => {
   const port = parseInt(value, 10);
 
@@ -88,11 +68,9 @@ export const registerServerCommands = (program: Command): void => {
     .action(async (options: { port: string }) => {
       const port = validatePort(options.port);
 
-      if (await checkHealth(port)) {
+      if (await checkServerHealth(port)) {
         console.log(
-          chalk.green(
-            `Twenty server is already running on localhost:${port}.`,
-          ),
+          chalk.green(`Twenty server is already running on localhost:${port}.`),
         );
 
         return;
@@ -148,9 +126,7 @@ export const registerServerCommands = (program: Command): void => {
       }
 
       console.log(
-        chalk.green(
-          `Twenty server starting on http://localhost:${port}`,
-        ),
+        chalk.green(`Twenty server starting on http://localhost:${port}`),
       );
       console.log(
         chalk.gray('Run `yarn twenty server logs` to follow startup progress.'),
@@ -208,7 +184,7 @@ export const registerServerCommands = (program: Command): void => {
 
       const running = isContainerRunning();
       const port = running ? getContainerPort() : DEFAULT_PORT;
-      const healthy = running ? await checkHealth(port) : false;
+      const healthy = running ? await checkServerHealth(port) : false;
 
       const statusText = healthy
         ? chalk.green('running (healthy)')

@@ -120,14 +120,14 @@ import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
+import { LIGHT_EXCLUDED_OBJECT_NAMES } from 'src/engine/workspace-manager/dev-seeder/constants/light-excluded-objects.constant';
+
 const LIGHT_MAX_RECORDS = 5;
 
-const LIGHT_EXCLUDED_TABLES = new Set([
-  '_pet',
-  '_surveyResult',
-  '_employmentHistory',
-  '_petCareAgreement',
-]);
+// Custom object tables are prefixed with underscore
+const LIGHT_EXCLUDED_TABLES = new Set(
+  LIGHT_EXCLUDED_OBJECT_NAMES.map((name) => `_${name}`),
+);
 
 type RecordSeedConfig = {
   tableName: string;

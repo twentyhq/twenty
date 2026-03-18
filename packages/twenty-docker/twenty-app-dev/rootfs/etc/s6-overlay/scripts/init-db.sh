@@ -43,6 +43,6 @@ yarn command:prod upgrade
 yarn command:prod cache:flush
 
 echo "Seeding app dev data"
-yarn command:prod workspace:seed:dev --apple-only --light || true
+yarn command:prod workspace:seed:dev --light || true
 
 echo "Database initialization complete."

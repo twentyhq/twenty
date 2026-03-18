@@ -2,36 +2,10 @@ import { authLogin } from '@/cli/operations/login';
 import { authLoginOAuth } from '@/cli/operations/login-oauth';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import inquirer from 'inquirer';
-
-const LOCAL_PORTS = [2020, 3000];
-
-const detectLocalServer = async (): Promise<string | null> => {
-  for (const port of LOCAL_PORTS) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    try {
-      const response = await fetch(`http://localhost:${port}/healthz`, {
-        signal: controller.signal,
-      });
-
-      const body = await response.json();
-
-      if (body.status === 'ok') {
-        return `http://localhost:${port}`;
-      }
-    } catch {
-      // Port not responding, try next
-    } finally {
-      clearTimeout(timeoutId);
-    }
-  }
-
-  return null;
-};
 
 const deriveRemoteName = (url: string): string => {
   try {
