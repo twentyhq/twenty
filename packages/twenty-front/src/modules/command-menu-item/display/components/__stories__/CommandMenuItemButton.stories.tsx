@@ -43,7 +43,7 @@ export const Default: Story = {
     await userEvent.click(
       await canvas.findByText(
         getCommandMenuItemLabel(
-          addToFavoritesCommandMenuItem?.shortLabel ?? '',
+          addToFavoritesCommandMenuItem?.shortLabel,
         ),
       ),
     );
@@ -59,7 +59,7 @@ export const WithLink: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const menuItem = await canvas.findByText(
-      getCommandMenuItemLabel(goToPeopleCommandMenuItem?.shortLabel ?? ''),
+      getCommandMenuItemLabel(goToPeopleCommandMenuItem?.shortLabel),
     );
     expect(menuItem).toBeVisible();
     expect(canvas.getByRole('link')).toHaveAttribute('href', '/objects/people');

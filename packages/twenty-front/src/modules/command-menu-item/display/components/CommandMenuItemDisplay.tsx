@@ -13,7 +13,7 @@ import { type MenuItemAccent } from 'twenty-ui/navigation';
 
 export type CommandMenuItemDisplayProps = {
   key: string;
-  label: MessageDescriptor | string;
+  label: Nullable<MessageDescriptor | string>;
   shortLabel?: Nullable<MessageDescriptor | string>;
   description?: MessageDescriptor | string;
   Icon: IconComponent;

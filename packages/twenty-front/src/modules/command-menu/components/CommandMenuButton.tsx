@@ -1,9 +1,8 @@
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { styled } from '@linaria/react';
-import { i18n, type MessageDescriptor } from '@lingui/core';
-import { isString } from '@sniptt/guards';
+import { type MessageDescriptor } from '@lingui/core';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   type IconComponent,
@@ -20,7 +19,7 @@ const StyledWrapper = styled.div`
 export type CommandMenuButtonProps = {
   command: {
     key: string;
-    label: string | MessageDescriptor;
+    label: Nullable<string | MessageDescriptor>;
     shortLabel?: Nullable<string | MessageDescriptor>;
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
@@ -30,23 +29,15 @@ export type CommandMenuButtonProps = {
   disabled?: boolean;
 };
 
-const getCommandMenuButtonLabel = (
-  label: string | MessageDescriptor,
-): string => {
-  return isString(label) ? label : i18n._(label);
-};
-
 export const CommandMenuButton = ({
   command,
   onClick,
   to,
   disabled = false,
 }: CommandMenuButtonProps) => {
-  const resolvedLabel = getCommandMenuButtonLabel(command.label);
+  const resolvedLabel = getCommandMenuItemLabel(command.label);
 
-  const resolvedShortLabel = isDefined(command.shortLabel)
-    ? getCommandMenuButtonLabel(command.shortLabel)
-    : undefined;
+  const resolvedShortLabel = getCommandMenuItemLabel(command.shortLabel);
 
   const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
 

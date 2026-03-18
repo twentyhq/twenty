@@ -86,7 +86,7 @@ export const DestroyMultipleRecordsCommand = () => {
   const originalLabel = getCommandMenuItemLabel(actionConfig.label);
 
   const originalShortLabel = getCommandMenuItemLabel(
-    actionConfig.shortLabel ?? '',
+    actionConfig.shortLabel,
   );
 
   const progressText = computeProgressText(progress);

@@ -50,7 +50,7 @@ export const ExportMultipleRecordsCommand = () => {
   const originalLabel = getCommandMenuItemLabel(actionConfig.label);
 
   const originalShortLabel = getCommandMenuItemLabel(
-    actionConfig.shortLabel ?? '',
+    actionConfig.shortLabel,
   );
 
   const progressText = computeProgressText(exportProgress);
