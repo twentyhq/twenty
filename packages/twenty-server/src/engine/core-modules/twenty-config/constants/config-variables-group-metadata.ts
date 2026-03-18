@@ -116,24 +116,19 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
   [ConfigVariablesGroup.ANALYTICS_CONFIG]: {
     position: 1800,
     description:
-      'We’re running a test to perform analytics within the app. This will evolve.',
+      "We're running a test to perform analytics within the app. This will evolve.",
     isHiddenOnLoad: true,
   },
   [ConfigVariablesGroup.TOKENS_DURATION]: {
     position: 1900,
     description:
-      'These have been set to sensible default so you probably don’t need to change them unless you have a specific use-case.',
-    isHiddenOnLoad: true,
-  },
-  [ConfigVariablesGroup.TWO_FACTOR_AUTHENTICATION]: {
-    position: 2000,
-    description:
-      'These have been set to sensible default so you probably don’t need to change them unless you have a specific use-case.',
+      "These have been set to sensible default so you probably don't need to change them unless you have a specific use-case.",
     isHiddenOnLoad: true,
   },
   [ConfigVariablesGroup.AWS_SES_SETTINGS]: {
     position: 2100,
-    description: 'Configure AWS SES settings for emailing domains',
+    description:
+      'Configure AWS SES settings for emailing domains (mass outbound / feature not released yet)',
     isHiddenOnLoad: true,
   },
 };
