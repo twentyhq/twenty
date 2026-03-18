@@ -8,8 +8,6 @@ import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysE
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
-import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
-import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
@@ -51,8 +49,6 @@ export const AppRouterProviders = () => {
         <WorkspaceProviderEffect />
         <ClientConfigProvider>
           <CaptchaProvider>
-            <ChromeExtensionSidecarEffect />
-            <ChromeExtensionSidecarProvider>
               <MinimalMetadataGater>
                 <AuthProvider>
                   <ApolloCoreProvider>
@@ -89,7 +85,6 @@ export const AppRouterProviders = () => {
                   </ApolloCoreProvider>
                 </AuthProvider>
               </MinimalMetadataGater>
-            </ChromeExtensionSidecarProvider>
           </CaptchaProvider>
         </ClientConfigProvider>
       </BaseThemeProvider>

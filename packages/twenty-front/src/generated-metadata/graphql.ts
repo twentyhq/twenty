@@ -812,7 +812,6 @@ export type ClientConfig = {
   calendarBookingPageId?: Maybe<Scalars['String']>;
   canManageFeatureFlags: Scalars['Boolean'];
   captcha: Captcha;
-  chromeExtensionId?: Maybe<Scalars['String']>;
   defaultSubdomain?: Maybe<Scalars['String']>;
   frontDomain: Scalars['String'];
   isAttachmentPreviewEnabled: Scalars['Boolean'];

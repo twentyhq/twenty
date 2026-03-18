@@ -144,7 +144,6 @@ describe('ClientConfigService', () => {
           provider: 'GOOGLE_RECAPTCHA',
           siteKey: 'site-key-123',
         },
-        chromeExtensionId: undefined,
         api: {
           mutationMaximumAffectedRecords: 1000,
         },

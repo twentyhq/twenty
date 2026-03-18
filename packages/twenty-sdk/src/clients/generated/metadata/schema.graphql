@@ -2402,7 +2402,6 @@ type ClientConfig {
   isAttachmentPreviewEnabled: Boolean!
   sentry: Sentry!
   captcha: Captcha!
-  chromeExtensionId: String
   api: ApiConfig!
   canManageFeatureFlags: Boolean!
   publicFeatureFlags: [PublicFeatureFlag!]!

@@ -2047,7 +2047,6 @@ export interface ClientConfig {
     isAttachmentPreviewEnabled: Scalars['Boolean']
     sentry: Sentry
     captcha: Captcha
-    chromeExtensionId?: Scalars['String']
     api: ApiConfig
     canManageFeatureFlags: Scalars['Boolean']
     publicFeatureFlags: PublicFeatureFlag[]
@@ -5052,7 +5051,6 @@ export interface ClientConfigGenqlSelection{
     isAttachmentPreviewEnabled?: boolean | number
     sentry?: SentryGenqlSelection
     captcha?: CaptchaGenqlSelection
-    chromeExtensionId?: boolean | number
     api?: ApiConfigGenqlSelection
     canManageFeatureFlags?: boolean | number
     publicFeatureFlags?: PublicFeatureFlagGenqlSelection

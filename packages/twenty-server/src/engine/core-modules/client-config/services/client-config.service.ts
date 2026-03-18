@@ -165,7 +165,6 @@ export class ClientConfigService {
         provider: captchaProvider ? captchaProvider : undefined,
         siteKey: this.twentyConfigService.get('CAPTCHA_SITE_KEY'),
       },
-      chromeExtensionId: undefined,
       api: {
         mutationMaximumAffectedRecords: this.twentyConfigService.get(
           'MUTATION_MAXIMUM_AFFECTED_RECORDS',

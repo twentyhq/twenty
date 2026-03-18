@@ -4666,9 +4666,6 @@ export default {
             "captcha": [
                 253
             ],
-            "chromeExtensionId": [
-                1
-            ],
             "api": [
                 255
             ],
