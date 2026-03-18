@@ -86,6 +86,9 @@ export const PauseSubscriptionFormModal = ({
   const { createOneRecord: createNote } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
+  const { createOneRecord: createNoteTarget } = useCreateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.NoteTarget,
+  });
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const currentMember = useRecoilValueV2(currentWorkspaceMemberState);
@@ -146,13 +149,20 @@ export const PauseSubscriptionFormModal = ({
         },
       });
 
-      // Create audit note — non-blocking, subscription update already succeeded
+      // Create audit note linked to this subscription
       try {
         const noteTitle = `Pause: ${pauseDays} days — ${reason}`;
 
-        await createNote({
+        const createdNote = await createNote({
           title: noteTitle,
         });
+
+        if (isDefined(createdNote)) {
+          await createNoteTarget({
+            noteId: createdNote.id,
+            [objectNameSingular + 'Id']: recordId,
+          });
+        }
       } catch {
         // Note creation is non-critical — subscription was already updated
       }
