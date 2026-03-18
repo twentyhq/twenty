@@ -20,7 +20,7 @@ import { type StateTransitionConfig } from 'src/engine/core-modules/state-transi
 const OPPORTUNITY_VALIDATION_COLUMNS = ['"stage"', '"companyId"'];
 
 // To add a rule: append to this array. No other changes needed.
-const OPPORTUNITY_TRANSITION_CONFIG: StateTransitionConfig = {
+export const OPPORTUNITY_TRANSITION_CONFIG: StateTransitionConfig = {
   objectName: 'opportunity',
   stageFieldName: 'stage',
   rules: [

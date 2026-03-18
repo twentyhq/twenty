@@ -1,6 +1,19 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "dockerfilePath": "packages/twenty-docker/twenty/Dockerfile"
+    "dockerfilePath": "packages/twenty-docker/twenty/Dockerfile",
+    "watchPatterns": [
+      "packages/twenty-server/src/**",
+      "packages/twenty-front/src/**",
+      "packages/twenty-shared/**",
+      "packages/twenty-ui/**",
+      "packages/twenty-emails/**",
+      "packages/twenty-docker/**",
+      "package.json",
+      "yarn.lock",
+      "tsconfig.base.json",
+      "nx.json",
+      "railway.json"
+    ]
   }
 }
