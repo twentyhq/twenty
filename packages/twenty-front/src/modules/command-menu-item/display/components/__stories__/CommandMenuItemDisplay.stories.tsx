@@ -65,9 +65,7 @@ export const AsButton: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getCommandMenuItemLabel(
-          addToFavoritesCommandMenuItem?.shortLabel ?? '',
-        ),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.shortLabel),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
@@ -103,7 +101,7 @@ export const AsListItem: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label ?? ''),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();
@@ -139,7 +137,7 @@ export const AsDropdownItem: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(
       await canvas.findByText(
-        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label ?? ''),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.label),
       ),
     );
     expect(addToFavoritesMock).toHaveBeenCalled();

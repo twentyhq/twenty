@@ -144,9 +144,10 @@ export const WorkflowEditActionEmailBase = ({
     (account) => account.id === formData.connectedAccountId,
   );
 
-  const missingDraftScopes = isDefined(selectedAccount)
-    ? getMissingDraftEmailScopes(selectedAccount)
-    : [];
+  const missingDraftScopes =
+    action.type === 'DRAFT_EMAIL' && isDefined(selectedAccount)
+      ? getMissingDraftEmailScopes(selectedAccount)
+      : [];
 
   const missingScopes =
     isDefined(selectedAccount) &&

@@ -10454,6 +10454,11 @@ msgstr "Permanently destroy workflow"
 msgid "Permanently destroy workflows"
 msgstr "Permanently destroy workflows"
 
+#. js-lingui-id: yWmZKk
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "permission flag"
+msgstr "permission flag"
+
 #. js-lingui-id: 9cDpsw
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx

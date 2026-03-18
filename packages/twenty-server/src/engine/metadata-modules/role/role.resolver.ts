@@ -40,6 +40,7 @@ import { UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/object
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
+import { fromFlatPermissionFlagToPermissionFlagDto } from 'src/engine/metadata-modules/permission-flag/utils/from-flat-permission-flag-to-permission-flag-dto.util';
 import { UpsertPermissionFlagsInput } from 'src/engine/metadata-modules/permission-flag/dtos/upsert-permission-flag-input';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import {
@@ -222,10 +223,12 @@ export class RoleResolver {
     @Args('upsertPermissionFlagsInput')
     upsertPermissionFlagsInput: UpsertPermissionFlagsInput,
   ): Promise<PermissionFlagDTO[]> {
-    return this.settingPermissionService.upsertPermissionFlags({
-      workspaceId: workspace.id,
-      input: upsertPermissionFlagsInput,
-    });
+    const flatPermissionFlags =
+      await this.settingPermissionService.upsertPermissionFlags({
+        workspaceId: workspace.id,
+        input: upsertPermissionFlagsInput,
+      });
+    return flatPermissionFlags.map(fromFlatPermissionFlagToPermissionFlagDto);
   }
 
   @Mutation(() => [FieldPermissionDTO])

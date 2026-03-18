@@ -259,6 +259,7 @@ export enum AllMetadataName {
   pageLayout = 'pageLayout',
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
+  permissionFlag = 'permissionFlag',
   role = 'role',
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
