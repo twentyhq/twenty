@@ -87,7 +87,6 @@ export class NavigationMenuItemEntity
     nullable: false,
     type: 'enum',
     enum: NavigationMenuItemType,
-    default: NavigationMenuItemType.VIEW,
   })
   type: NavigationMenuItemType;
 
