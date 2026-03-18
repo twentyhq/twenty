@@ -2,7 +2,7 @@ import { Scope } from '@nestjs/common';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { And, Any, ILike, In, Not, Or } from 'typeorm';
+import { And, Any, ILike, In, IsNull, Not, Or } from 'typeorm';
 import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -108,6 +108,7 @@ export class BlocklistItemDeleteMessagesJob {
           where: {
             connectedAccount: {
               accountOwnerId: workspaceMemberId,
+              deletedAt: IsNull(),
             },
           },
           relations: ['connectedAccount'],
@@ -116,7 +117,7 @@ export class BlocklistItemDeleteMessagesJob {
         for (const messageChannel of messageChannels) {
           const messageChannelHandles = [messageChannel.handle];
 
-          if (messageChannel.connectedAccount.handleAliases) {
+          if (isDefined(messageChannel.connectedAccount.handleAliases)) {
             messageChannelHandles.push(
               ...messageChannel.connectedAccount.handleAliases.split(','),
             );
