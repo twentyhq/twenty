@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { once } from 'events';
 import { type WriteStream, createWriteStream, mkdirSync } from 'fs';
+import { finished } from 'stream/promises';
 
 import {
   DataSource,
@@ -103,13 +105,7 @@ export class WorkspaceExportService {
     const queryRunner = this.dataSource.createQueryRunner();
 
     try {
-      await new Promise<void>((resolve, reject) => {
-        stream.on('error', reject);
-
-        stream.write("SET session_replication_role = 'replica';\n\n", () =>
-          resolve(),
-        );
-      });
+      stream.write("SET session_replication_role = 'replica';\n\n");
 
       await this.writeCoreEntityRows(workspaceId, queryRunner, stream);
 
@@ -139,10 +135,7 @@ export class WorkspaceExportService {
     } finally {
       await queryRunner.release();
       stream.end();
-      await new Promise<void>((resolve, reject) => {
-        stream.once('finish', resolve);
-        stream.once('error', reject);
-      });
+      await finished(stream);
     }
 
     return filePath;
@@ -253,10 +246,8 @@ export class WorkspaceExportService {
         );
       }
 
-      const isBufferAvailable = stream.write(batchStatements.join(''));
-
-      if (!isBufferAvailable) {
-        await new Promise<void>((resolve) => stream.once('drain', resolve));
+      if (!stream.write(batchStatements.join(''))) {
+        await once(stream, 'drain');
       }
     }
   }
