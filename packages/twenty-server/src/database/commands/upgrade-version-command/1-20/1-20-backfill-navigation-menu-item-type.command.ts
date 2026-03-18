@@ -11,7 +11,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
-  name: 'upgrade:1-19:backfill-navigation-menu-item-type',
+  name: 'upgrade:1-20:backfill-navigation-menu-item-type',
   description:
     'Backfill navigation menu item type based on existing columns, then apply NOT NULL and CHECK constraints',
 })
@@ -52,15 +52,29 @@ export class BackfillNavigationMenuItemTypeCommand extends ActiveOrSuspendedWork
     try {
       await this.backfillType(queryRunner);
       await this.cleanConflictingColumns(queryRunner);
-      await makeNavigationMenuItemTypeNotNullQueries(queryRunner);
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error(
+        `Rolling back BackfillNavigationMenuItemTypeCommand data backfill: ${error.message}`,
+      );
 
+      await queryRunner.release();
+
+      return;
+    }
+
+    await queryRunner.startTransaction();
+
+    try {
+      await makeNavigationMenuItemTypeNotNullQueries(queryRunner);
       await queryRunner.commitTransaction();
       this.logger.log('Successfully run BackfillNavigationMenuItemTypeCommand');
       this.hasRunOnce = true;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error(
-        `Rolling back BackfillNavigationMenuItemTypeCommand: ${error.message}`,
+        `Rolling back BackfillNavigationMenuItemTypeCommand schema changes: ${error.message}`,
       );
     } finally {
       await queryRunner.release();
@@ -71,7 +85,7 @@ export class BackfillNavigationMenuItemTypeCommand extends ActiveOrSuspendedWork
     queryRunner: ReturnType<DataSource['createQueryRunner']>,
   ): Promise<void> {
     await queryRunner.query(
-      `UPDATE "core"."navigationMenuItem" SET "type" = 'VIEW' WHERE "type" IS NULL AND "viewId" IS NOT NULL`,
+      `UPDATE "core"."navigationMenuItem" SET "type" = 'OBJECT' WHERE "type" = 'VIEW' AND "targetObjectMetadataId" IS NOT NULL AND "targetRecordId" IS NULL`,
     );
 
     await queryRunner.query(
@@ -80,6 +94,10 @@ export class BackfillNavigationMenuItemTypeCommand extends ActiveOrSuspendedWork
 
     await queryRunner.query(
       `UPDATE "core"."navigationMenuItem" SET "type" = 'OBJECT' WHERE "type" IS NULL AND "targetObjectMetadataId" IS NOT NULL AND "targetRecordId" IS NULL`,
+    );
+
+    await queryRunner.query(
+      `UPDATE "core"."navigationMenuItem" SET "type" = 'VIEW' WHERE "type" IS NULL AND "viewId" IS NOT NULL`,
     );
 
     await queryRunner.query(
