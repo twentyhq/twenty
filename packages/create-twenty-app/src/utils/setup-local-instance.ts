@@ -1,5 +1,10 @@
 import chalk from 'chalk';
-import { type ChildProcess, execSync, spawn, spawnSync } from 'node:child_process';
+import {
+  type ChildProcess,
+  execSync,
+  spawn,
+  spawnSync,
+} from 'node:child_process';
 import { platform } from 'node:os';
 
 const CONTAINER_NAME = 'twenty-app-dev';
@@ -77,10 +82,10 @@ const streamDockerLogs = (): ChildProcess => {
   );
 
   const formatLogLine = (line: string): string | null => {
-    if (line.includes('Waiting for PostgreSQL')) return 'Starting PostgreSQL...';
+    if (line.includes('Waiting for PostgreSQL'))
+      return 'Starting PostgreSQL...';
     if (line.includes('PostgreSQL is ready')) return 'PostgreSQL ready.';
-    if (line.includes('Ready to accept connections tcp'))
-      return 'Redis ready.';
+    if (line.includes('Ready to accept connections tcp')) return 'Redis ready.';
     if (line.includes('running initial setup'))
       return 'Running initial database setup...';
     if (line.includes('database:migrate:prod'))
@@ -88,10 +93,8 @@ const streamDockerLogs = (): ChildProcess => {
     if (line.includes('cache:flush')) return 'Flushing cache...';
     if (line.includes('command:prod upgrade'))
       return 'Running workspace upgrade...';
-    if (line.includes('workspace:seed:dev'))
-      return 'Seeding dev workspace...';
-    if (line.includes('NestApplication'))
-      return 'Starting Twenty server...';
+    if (line.includes('workspace:seed:dev')) return 'Seeding dev workspace...';
+    if (line.includes('NestApplication')) return 'Starting Twenty server...';
 
     return null;
   };
@@ -150,9 +153,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   if (existingPort) {
     const serverUrl = `http://localhost:${existingPort}`;
 
-    console.log(
-      chalk.green(`Twenty server detected on ${serverUrl}.`),
-    );
+    console.log(chalk.green(`Twenty server detected on ${serverUrl}.`));
 
     return { running: true, serverUrl };
   }
@@ -237,9 +238,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
 
   const serverUrl = 'http://localhost:2020';
 
-  console.log(
-    chalk.green(`Twenty server is running on ${serverUrl}.`),
-  );
+  console.log(chalk.green(`Twenty server is running on ${serverUrl}.`));
   console.log(
     chalk.gray('Workspace ready — login with tim@apple.dev / tim@apple.dev'),
   );

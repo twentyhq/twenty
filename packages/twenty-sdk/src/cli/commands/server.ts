@@ -198,9 +198,12 @@ export const registerServerCommands = (program: Command): void => {
       }
 
       try {
-        execSync('docker volume rm twenty-app-dev-data twenty-app-dev-storage', {
-          stdio: 'ignore',
-        });
+        execSync(
+          'docker volume rm twenty-app-dev-data twenty-app-dev-storage',
+          {
+            stdio: 'ignore',
+          },
+        );
       } catch {
         // Volumes may not exist
       }
