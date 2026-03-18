@@ -1,5 +1,6 @@
 import chalk from 'chalk';
-import { execSync, spawnSync } from 'node:child_process';
+import { type ChildProcess, execSync, spawn, spawnSync } from 'node:child_process';
+import { platform } from 'node:os';
 
 const CONTAINER_NAME = 'twenty-dev';
 const IMAGE = 'twentycrm/twenty-dev:latest';
@@ -55,6 +56,52 @@ const isContainerRunning = (): boolean => {
   } catch {
     return false;
   }
+};
+
+const streamDockerLogs = (): ChildProcess => {
+  const logProcess = spawn(
+    'docker',
+    ['logs', '-f', '--tail', '0', CONTAINER_NAME],
+    { stdio: ['ignore', 'pipe', 'pipe'] },
+  );
+
+  const formatLogLine = (line: string): string | null => {
+    // Extract meaningful progress messages from the noisy container logs
+    if (line.includes('Waiting for PostgreSQL')) return 'Starting PostgreSQL...';
+    if (line.includes('PostgreSQL is ready')) return 'PostgreSQL ready.';
+    if (line.includes('Ready to accept connections tcp'))
+      return 'Redis ready.';
+    if (line.includes('running initial setup'))
+      return 'Running initial database setup...';
+    if (line.includes('database:migrate:prod'))
+      return 'Running database migrations...';
+    if (line.includes('cache:flush')) return 'Flushing cache...';
+    if (line.includes('command:prod upgrade'))
+      return 'Running workspace upgrade...';
+    if (line.includes('workspace:seed:dev'))
+      return 'Seeding dev workspace...';
+    if (line.includes('NestApplication'))
+      return 'Starting Twenty server...';
+
+    return null;
+  };
+
+  const handleData = (data: Buffer) => {
+    const lines = data.toString().split('\n');
+
+    for (const line of lines) {
+      const formatted = formatLogLine(line);
+
+      if (formatted) {
+        process.stdout.write(chalk.gray(`  ${formatted}\n`));
+      }
+    }
+  };
+
+  logProcess.stdout?.on('data', handleData);
+  logProcess.stderr?.on('data', handleData);
+
+  return logProcess;
 };
 
 const waitForHealthy = async (
@@ -152,13 +199,12 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     }
   }
 
-  console.log(
-    chalk.gray(
-      'Waiting for Twenty to be ready (first start takes ~90s for migrations)...',
-    ),
-  );
+  console.log(chalk.gray('Waiting for Twenty to be ready...'));
 
+  const logProcess = streamDockerLogs();
   const healthy = await waitForHealthy(180);
+
+  logProcess.kill();
 
   if (!healthy) {
     console.log(
@@ -174,10 +220,22 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     chalk.green('Twenty server is running on http://localhost:2020.'),
   );
   console.log(
-    chalk.gray(
-      'Pre-seeded workspace ready — login with tim@apple.dev / tim@apple.dev',
-    ),
+    chalk.gray('Workspace ready — login with tim@apple.dev / tim@apple.dev'),
   );
+
+  // Open the browser so the user can log in
+  const openCommand =
+    platform() === 'darwin'
+      ? 'open'
+      : platform() === 'win32'
+        ? 'start'
+        : 'xdg-open';
+
+  try {
+    execSync(`${openCommand} http://localhost:2020`, { stdio: 'ignore' });
+  } catch {
+    // Ignore if browser can't be opened
+  }
 
   return { running: true };
 };

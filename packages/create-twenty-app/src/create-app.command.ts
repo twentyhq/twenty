@@ -10,6 +10,7 @@ import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
+import { execSync } from 'node:child_process';
 import * as path from 'path';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -45,6 +46,7 @@ export class CreateAppCommand {
 
       await fs.ensureDir(appDirectory);
 
+      console.log(chalk.gray('  Scaffolding project files...'));
       await copyBaseApplicationProject({
         appName,
         appDisplayName,
@@ -53,8 +55,10 @@ export class CreateAppCommand {
         exampleOptions,
       });
 
+      console.log(chalk.gray('  Installing dependencies...'));
       await install(appDirectory);
 
+      console.log(chalk.gray('  Initializing git repository...'));
       await tryGitInit(appDirectory);
 
       let localResult: LocalInstanceResult = { running: false };
@@ -72,6 +76,10 @@ export class CreateAppCommand {
 
         if (needsLocalInstance) {
           localResult = await setupLocalInstance();
+        }
+
+        if (localResult.running) {
+          await this.connectToLocal(appDirectory);
         }
       }
 
@@ -202,6 +210,22 @@ export class CreateAppCommand {
     console.log('');
   }
 
+  private async connectToLocal(appDirectory: string): Promise<void> {
+    try {
+      execSync('yarn twenty remote add --local', {
+        cwd: appDirectory,
+        stdio: 'inherit',
+      });
+      console.log(chalk.green('Authenticated with local Twenty instance.'));
+    } catch {
+      console.log(
+        chalk.yellow(
+          'Authentication skipped. Run `yarn twenty remote add --local` manually.',
+        ),
+      );
+    }
+  }
+
   private logSuccess(
     appDirectory: string,
     localResult: LocalInstanceResult,
@@ -221,6 +245,8 @@ export class CreateAppCommand {
       );
     }
 
-    console.log(chalk.gray('  yarn twenty dev                  # Start dev mode'));
+    console.log(
+      chalk.gray('  yarn twenty dev                  # Start dev mode'),
+    );
   }
 }
