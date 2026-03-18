@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -6,7 +7,13 @@ import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfi
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconCheck, IconPencil, IconX } from 'twenty-ui/display';
+import {
+  AppTooltip,
+  IconCheck,
+  IconPencil,
+  IconX,
+  TooltipDelay,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -39,8 +46,10 @@ const StyledActionButtonContainer = styled.div`
 `;
 
 export const EmailField = () => {
+  const { t } = useLingui();
   const currentUser = useAtomStateValue(currentUserState);
-  const { canEdit } = useCanEditProfileField('email');
+  const { canEdit, isBlockedByWorkspaceLimit } =
+    useCanEditProfileField('email');
   const { updateEmail } = useUpdateEmail();
 
   const [draftEmail, setDraftEmail] = useState('');
@@ -81,6 +90,9 @@ export const EmailField = () => {
   };
 
   const currentUserId = currentUser?.id;
+  const emailEditTooltipAnchorId = 'profile-email-edit-disabled-tooltip-anchor';
+  const shouldShowWorkspaceLimitTooltip =
+    !isEditing && !canEdit && isBlockedByWorkspaceLimit;
 
   return (
     <StyledContainer>
@@ -120,7 +132,13 @@ export const EmailField = () => {
           </StyledActionWrapper>
         ) : (
           <StyledActionWrapper key="view">
-            <StyledActionButtonContainer>
+            <StyledActionButtonContainer
+              id={
+                shouldShowWorkspaceLimitTooltip
+                  ? emailEditTooltipAnchorId
+                  : undefined
+              }
+            >
               <Button
                 Icon={IconPencil}
                 variant="secondary"
@@ -130,6 +148,14 @@ export const EmailField = () => {
                 type="button"
               />
             </StyledActionButtonContainer>
+            {shouldShowWorkspaceLimitTooltip && (
+              <AppTooltip
+                anchorSelect={`#${emailEditTooltipAnchorId}`}
+                content={t`You can't change your email because you belong to 2 or more workspaces.`}
+                delay={TooltipDelay.noDelay}
+                place="top"
+              />
+            )}
           </StyledActionWrapper>
         )}
       </StyledFieldRow>
