@@ -16,7 +16,9 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { StateTransitionValidatorService } from 'src/engine/core-modules/state-transition/state-transition-validator.service';
 import { type StateTransitionConfig } from 'src/engine/core-modules/state-transition/types/state-transition-config.type';
 
-// Add columns here when new rules require additional fields to be fetched
+// Columns returned by the validation query (used by contract tests).
+// Relations are verified via JOIN (not plain column fetch) so that
+// soft-deleted related records are treated as missing.
 export const OPPORTUNITY_VALIDATION_COLUMNS = ['"stage"', '"companyId"'];
 
 // To add a rule: append to this array. No other changes needed.
@@ -63,8 +65,14 @@ export class OpportunityUpdateOnePreQueryHook
     const targetStage = payload.data['stage'] as string;
     const schemaName = getWorkspaceSchemaName(authContext.workspace.id);
 
+    // LEFT JOIN company so that a soft-deleted company is treated as no
+    // company (c."id" will be NULL if the company row has deletedAt set).
     const rows: Array<Record<string, unknown>> = await this.dataSource.query(
-      `SELECT ${OPPORTUNITY_VALIDATION_COLUMNS.join(', ')} FROM ${schemaName}."opportunity" WHERE "id" = $1 AND "deletedAt" IS NULL`,
+      `SELECT o."stage", c."id" AS "companyId"
+       FROM ${schemaName}."opportunity" o
+       LEFT JOIN ${schemaName}."company" c
+         ON c."id" = o."companyId" AND c."deletedAt" IS NULL
+       WHERE o."id" = $1 AND o."deletedAt" IS NULL`,
       [payload.id],
     );
 

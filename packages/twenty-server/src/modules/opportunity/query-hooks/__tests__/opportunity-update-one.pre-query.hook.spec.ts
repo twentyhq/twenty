@@ -90,6 +90,22 @@ describe('OpportunityUpdateOnePreQueryHook', () => {
     expect(targetStage).toBe('QUOTE_REQUESTED');
   });
 
+  it('should treat a soft-deleted company as no company (companyId null from JOIN)', async () => {
+    // The SQL uses LEFT JOIN filtering deletedAt IS NULL, so a soft-deleted
+    // company causes the JOIN to return null for companyId.
+    const dbRow = { stage: 'LEAD', companyId: null };
+
+    mockQuery.mockResolvedValueOnce([dbRow]);
+
+    const payload = makePayload({ stage: 'QUOTING' });
+
+    await hook.execute(mockAuthContext, 'opportunity', payload);
+
+    const [_config, record] = mockValidate.mock.calls[0];
+
+    expect(record.companyId).toBeNull();
+  });
+
   it('should query the opportunity table and pass the opportunity id as parameter', async () => {
     mockQuery.mockResolvedValueOnce([{ stage: 'LEAD', companyId: null }]);
     mockValidate.mockReturnValueOnce(undefined);

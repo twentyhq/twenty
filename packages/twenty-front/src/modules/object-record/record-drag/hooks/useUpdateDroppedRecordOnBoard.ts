@@ -31,7 +31,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const updateDroppedRecordOnBoard = useCallback(
-    (
+    async (
       {
         recordId,
         position: newPosition,
@@ -99,6 +99,10 @@ export const useUpdateDroppedRecordOnBoard = () => {
         );
       }
 
+      // Snapshots for rollback if the server rejects the update
+      const savedInitialGroupRecordIds = [...currentRecordIdsInInitialRecordGroup];
+      const savedTargetGroupRecordIds = [...currentRecordIdsInTargetRecordGroup];
+
       const newInitialGroupRecordIds =
         currentRecordIdsInInitialRecordGroup.toSpliced(
           positionOfDroppedRecordInInitialRecordIds,
@@ -148,13 +152,35 @@ export const useUpdateDroppedRecordOnBoard = () => {
         ],
       });
 
-      updateOneRecord({
-        idToUpdate: recordId,
-        updateOneRecordInput: {
-          [selectFieldMetadataItem.name]: targetRecordGroupValue,
-          position: newPosition,
-        },
-      });
+      let updateSucceeded = false;
+
+      try {
+        const result = await updateOneRecord({
+          idToUpdate: recordId,
+          updateOneRecordInput: {
+            [selectFieldMetadataItem.name]: targetRecordGroupValue,
+            position: newPosition,
+          },
+        });
+
+        updateSucceeded = result !== null;
+      } catch {
+        // Error already surfaced to the user via the Apollo error toast.
+      }
+
+      if (!updateSucceeded) {
+        store.set(
+          recordIndexRecordIdsByGroupCallbackFamilyState(initialRecordGroupId),
+          savedInitialGroupRecordIds,
+        );
+        store.set(
+          recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
+          savedTargetGroupRecordIds,
+        );
+        upsertRecordsInStore({
+          partialRecords: [initialRecord as ObjectRecord],
+        });
+      }
     },
     [
       recordGroupDefinitions,
