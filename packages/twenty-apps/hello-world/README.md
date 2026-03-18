@@ -5,13 +5,13 @@ This is a [Twenty](https://twenty.com) application project bootstrapped with [`c
 First, authenticate to your workspace:
 
 ```bash
-yarn twenty auth:login
+yarn twenty remote add --local
 ```
 
 Then, start development mode to sync your app and watch for changes:
 
 ```bash
-yarn twenty app:dev
+yarn twenty dev
 ```
 
 Open your Twenty instance and go to `/settings/applications` section to see the result.
@@ -21,19 +21,19 @@ Open your Twenty instance and go to `/settings/applications` section to see the 
 Run `yarn twenty help` to list all available commands. Common commands:
 
 ```bash
-# Authentication
-yarn twenty auth:login     # Authenticate with Twenty
-yarn twenty auth:logout    # Remove credentials
-yarn twenty auth:status    # Check auth status
-yarn twenty auth:switch    # Switch default workspace
-yarn twenty auth:list      # List all configured workspaces
+# Remotes & Authentication
+yarn twenty remote add --local     # Authenticate with Twenty
+yarn twenty remote status         # Check auth status
+yarn twenty remote switch         # Switch default remote
+yarn twenty remote list           # List all configured remotes
+yarn twenty remote remove <name>  # Remove a remote
 
 # Application
-yarn twenty app:dev        # Start dev mode (watch, build, sync, and auto-generate typed client)
-yarn twenty entity:add     # Add a new entity (object, field, function, front-component, role, view, navigation-menu-item)
-yarn twenty function:logs  # Stream function logs
-yarn twenty function:execute  # Execute a function with JSON payload
-yarn twenty app:uninstall  # Uninstall app from workspace
+yarn twenty dev        # Start dev mode (watch, build, sync, and auto-generate typed client)
+yarn twenty add     # Add a new entity (object, field, function, front-component, role, view, navigation-menu-item)
+yarn twenty logs  # Stream function logs
+yarn twenty exec  # Execute a function with JSON payload
+yarn twenty uninstall  # Uninstall app from workspace
 ```
 
 ## Integration Tests

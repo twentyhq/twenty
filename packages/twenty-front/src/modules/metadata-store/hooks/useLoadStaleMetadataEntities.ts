@@ -54,7 +54,7 @@ const hasOverlap = (
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
   const store = useStore();
-  const { updateDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useMetadataStore();
 
   const loadStaleMetadataEntities = useCallback(
     async (staleEntityKeys: MetadataEntityKey[]) => {
@@ -80,9 +80,9 @@ export const useLoadStaleMetadataEntities = () => {
               const { flatObjects, flatFields, flatIndexes } =
                 splitObjectMetadataItemWithRelated(compositeObjects);
 
-              updateDraft('objectMetadataItems', flatObjects);
-              updateDraft('fieldMetadataItems', flatFields);
-              updateDraft('indexMetadataItems', flatIndexes);
+              replaceDraft('objectMetadataItems', flatObjects);
+              replaceDraft('fieldMetadataItems', flatFields);
+              replaceDraft('indexMetadataItems', flatIndexes);
             }),
         );
       }
@@ -116,13 +116,13 @@ export const useLoadStaleMetadataEntities = () => {
               flatViewFieldGroups,
             } = splitViewWithRelated(allViews);
 
-            updateDraft('views', flatViews);
-            updateDraft('viewFields', flatViewFields);
-            updateDraft('viewFilters', flatViewFilters);
-            updateDraft('viewSorts', flatViewSorts);
-            updateDraft('viewGroups', flatViewGroups);
-            updateDraft('viewFilterGroups', flatViewFilterGroups);
-            updateDraft('viewFieldGroups', flatViewFieldGroups);
+            replaceDraft('views', flatViews);
+            replaceDraft('viewFields', flatViewFields);
+            replaceDraft('viewFilters', flatViewFilters);
+            replaceDraft('viewSorts', flatViewSorts);
+            replaceDraft('viewGroups', flatViewGroups);
+            replaceDraft('viewFilterGroups', flatViewFilterGroups);
+            replaceDraft('viewFieldGroups', flatViewFieldGroups);
           }),
         );
       }
@@ -148,9 +148,9 @@ export const useLoadStaleMetadataEntities = () => {
                 flatPageLayoutWidgets,
               } = splitPageLayoutWithRelated(transformed);
 
-              updateDraft('pageLayouts', flatPageLayouts);
-              updateDraft('pageLayoutTabs', flatPageLayoutTabs);
-              updateDraft('pageLayoutWidgets', flatPageLayoutWidgets);
+              replaceDraft('pageLayouts', flatPageLayouts);
+              replaceDraft('pageLayoutTabs', flatPageLayoutTabs);
+              replaceDraft('pageLayoutWidgets', flatPageLayoutWidgets);
             }),
         );
       }
@@ -171,7 +171,10 @@ export const useLoadStaleMetadataEntities = () => {
                 logicFunctionsState.atom,
                 result.data.findManyLogicFunctions,
               );
-              updateDraft('logicFunctions', result.data.findManyLogicFunctions);
+              replaceDraft(
+                'logicFunctions',
+                result.data.findManyLogicFunctions,
+              );
             }),
         );
       }
@@ -188,7 +191,7 @@ export const useLoadStaleMetadataEntities = () => {
                 return;
               }
 
-              updateDraft(
+              replaceDraft(
                 'navigationMenuItems',
                 result.data.navigationMenuItems,
               );
@@ -199,7 +202,7 @@ export const useLoadStaleMetadataEntities = () => {
       await Promise.all(fetchPromises);
       applyChanges();
     },
-    [client, store, updateDraft, applyChanges],
+    [client, store, replaceDraft, applyChanges],
   );
 
   return { loadStaleMetadataEntities };

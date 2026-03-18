@@ -952,7 +952,7 @@ msgstr ""
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/display/folder/components/WorkspaceNavigationMenuItemsFolder.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Add menu item"
 msgstr ""
 
@@ -1897,21 +1897,25 @@ msgstr ""
 
 #. js-lingui-id: OJOR8q
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
 msgstr "Är du säker på att du vill förstöra dessa poster? De kommer inte att gå att återställa längre."
 
 #. js-lingui-id: UK5TO6
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
 msgstr "Är du säker på att du vill förstöra denna post? Den kan inte återställas längre."
 
 #. js-lingui-id: mcHVC1
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Are you sure you want to restore these records?"
 msgstr "Är du säker på att du vill återställa dessa poster?"
 
 #. js-lingui-id: lmgkf0
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "Är du säker på att du vill återställa denna post?"
 
@@ -1952,6 +1956,7 @@ msgstr "Stigande"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Ask AI"
 msgstr "Fråga AI"
@@ -2559,13 +2564,11 @@ msgstr "Kan inte skanna? Kopiera "
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel"
 msgstr "Avbryt"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Avbryt utgåva"
@@ -3969,6 +3972,7 @@ msgstr "Mörkt"
 
 #. js-lingui-id: ogQzcZ
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "Instrumentpanelen duplicerades framgångsrikt"
 
@@ -4391,7 +4395,7 @@ msgid "Delete field"
 msgstr "Ta bort fält"
 
 #. js-lingui-id: 97QUV6
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Delete Folder"
 msgstr "Ta bort mapp"
 
@@ -4592,6 +4596,7 @@ msgstr "Förstör {objectLabelPlural}"
 
 #. js-lingui-id: kG5yO6
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Destroy Records"
 msgstr "Förstöra poster"
 
@@ -4932,7 +4937,7 @@ msgstr "Redigera fält"
 
 #. js-lingui-id: uPHscS
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit folder"
 msgstr ""
@@ -4955,7 +4960,7 @@ msgstr ""
 
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit link"
 msgstr ""
@@ -6119,11 +6124,13 @@ msgstr ""
 
 #. js-lingui-id: NUmmdc
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Failed to duplicate dashboard"
 msgstr "Det gick inte att duplicera instrumentpanelen"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
 msgstr ""
 
@@ -6187,9 +6194,9 @@ msgstr "Misslyckades med att ta bort bild"
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Det gick inte att återsöka jobben. Försök igen senare."
 
-#. js-lingui-id: fuRtgB
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuEditModeBar.tsx
-msgid "Failed to save navigation layout"
+#. js-lingui-id: farFvy
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Failed to save layout customization"
 msgstr ""
 
 #. js-lingui-id: y3HIOa
@@ -8021,7 +8028,7 @@ msgid "Layout"
 msgstr "Layout"
 
 #. js-lingui-id: W4nIBb
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuEditModeBar.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
 msgid "Layout customization"
 msgstr ""
 
@@ -9120,7 +9127,7 @@ msgstr "Ny post"
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "New sidebar item"
 msgstr ""
 
@@ -10428,6 +10435,8 @@ msgstr "Förstöra posten permanent"
 #. js-lingui-id: 35dBYb
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Permanently Destroy Record"
 msgstr "Förstör permanent post"
 
@@ -10438,6 +10447,7 @@ msgstr "Förstöra posterna permanent"
 
 #. js-lingui-id: YyP8vD
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Permanently Destroy Records"
 msgstr "Förstör permanent poster"
 
@@ -11135,14 +11145,16 @@ msgstr "Fjärr"
 msgid "Remove"
 msgstr "Ta bort"
 
-#. js-lingui-id: 0Urj9q
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu item?"
+#. js-lingui-id: XABoh4
+#. placeholder {0}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {0} navigation menu items?"
 msgstr ""
 
-#. js-lingui-id: Ef5jwi
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu items?"
+#. js-lingui-id: p/lN7X
+#. placeholder {1}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {1} navigation menu item?"
 msgstr ""
 
 #. js-lingui-id: 1O32oy
@@ -11360,6 +11372,8 @@ msgstr "Återställ post"
 #. js-lingui-id: NzMNOA
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Restore Record"
 msgstr "Återställ post"
 
@@ -11371,6 +11385,8 @@ msgstr "Återställ poster"
 #. js-lingui-id: Xqj0Cb
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Restore Records"
 msgstr "Återställ poster"
 
@@ -11586,7 +11602,6 @@ msgstr ""
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save"
 msgstr "Spara"
@@ -11600,11 +11615,6 @@ msgstr "Spara som ny vy"
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Spara instrumentpanel"
-
-#. js-lingui-id: BZVCCj
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
-msgid "Save Page Layout"
-msgstr ""
 
 #. js-lingui-id: veLq3R
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -11650,6 +11660,8 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Search"
@@ -12644,6 +12656,11 @@ msgstr "Vissa"
 msgid "Some folders"
 msgstr "Vissa mappar"
 
+#. js-lingui-id: hqUWge
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Some layout changes could not be saved"
+msgstr ""
+
 #. js-lingui-id: nwtY4N
 #: src/pages/auth/Authorize.tsx
 msgid "Something went wrong"
@@ -13494,13 +13511,14 @@ msgstr "Denna åtgärd kan inte ångras. Detta kommer att permanent ta bort ditt
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "Denna åtgärd kan inte ångras. Detta kommer permanent att återställa din tvåfaktorsautentiseringsmetod. <0/> Vänligen skriv in din e-post för att bekräfta."
 
-#. js-lingui-id: lAHIY2
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
+#. js-lingui-id: XxxrMw
+#. placeholder {2}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "This action will delete this folder and all {2} navigation menu items inside. Do you want to continue?"
 msgstr ""
 
 #. js-lingui-id: gSO0+U
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr ""
 
@@ -14718,6 +14736,7 @@ msgstr ""
 #. js-lingui-id: ecVcAx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "Visa tidigare AI-konversationer"
@@ -15047,6 +15066,7 @@ msgstr ""
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Workflow duplicated successfully"
 msgstr ""
 
@@ -15110,7 +15130,7 @@ msgstr "Arbetsflöden"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Workspace"
 msgstr "Arbetsyta"
 

@@ -6,7 +6,7 @@ import {
 } from 'twenty-ui/display';
 
 import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
@@ -37,7 +37,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
-  const items = useWorkspaceSectionItems();
+  const items = useNavigationMenuItemSectionItems();
 
   if (!isDefined(pageChip)) {
     return null;

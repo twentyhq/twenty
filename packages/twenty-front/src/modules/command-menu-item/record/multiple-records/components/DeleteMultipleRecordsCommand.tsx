@@ -1,5 +1,5 @@
-import { Command } from '@/command-menu-item/display/components/Command';
 import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { computeProgressText } from '@/command-menu-item/utils/computeProgressText';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
@@ -78,9 +78,7 @@ export const DeleteMultipleRecordsCommand = () => {
 
   const originalLabel = getCommandMenuItemLabel(actionConfig.label);
 
-  const originalShortLabel = getCommandMenuItemLabel(
-    actionConfig.shortLabel ?? '',
-  );
+  const originalShortLabel = getCommandMenuItemLabel(actionConfig.shortLabel);
 
   const progressText = computeProgressText(progress);
 

@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
+
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { useObjectNavItemColor } from '@/navigation-menu-item/common/hooks/useObjectNavItemColor';
-import { isNavigationMenuInEditModeState } from '@/navigation-menu-item/common/states/isNavigationMenuInEditModeState';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
@@ -28,6 +30,7 @@ export type NavigationDrawerItemForObjectMetadataItemProps = {
   onEditModeClick?: () => void;
   onActiveItemClickWhenNotInEditMode?: () => void;
   isDragging?: boolean;
+  rightOptions?: ReactNode;
 };
 
 export const NavigationDrawerItemForObjectMetadataItem = ({
@@ -37,9 +40,10 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   onEditModeClick,
   onActiveItemClickWhenNotInEditMode: _onActiveItemClickWhenNotInEditMode,
   isDragging = false,
+  rightOptions,
 }: NavigationDrawerItemForObjectMetadataItemProps) => {
-  const isNavigationMenuInEditMode = useAtomStateValue(
-    isNavigationMenuInEditModeState,
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
@@ -91,9 +95,11 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         }) + '/',
       );
 
-  const handleClick = isNavigationMenuInEditMode ? onEditModeClick : undefined;
+  const handleClick = isLayoutCustomizationModeEnabled
+    ? onEditModeClick
+    : undefined;
 
-  const shouldNavigate = !isNavigationMenuInEditMode;
+  const shouldNavigate = !isLayoutCustomizationModeEnabled;
 
   const view = isDefined(navigationMenuItem?.viewId)
     ? views.find((view) => view.id === navigationMenuItem!.viewId)
@@ -156,7 +162,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       label={label}
       secondaryLabel={secondaryLabel}
       to={
-        isNavigationMenuInEditMode || isDragging
+        isLayoutCustomizationModeEnabled || isDragging
           ? undefined
           : shouldNavigate
             ? navigationPath
@@ -168,7 +174,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
-      triggerEvent={isNavigationMenuInEditMode ? 'CLICK' : undefined}
+      triggerEvent={isLayoutCustomizationModeEnabled ? 'CLICK' : undefined}
+      rightOptions={rightOptions}
     />
   );
 };

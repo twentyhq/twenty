@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 const MOCKED_COLLECTION_HASH = 'mocked';
 
 export const useLoadMockedMinimalMetadata = () => {
-  const { updateDraft, applyChanges, resetMetadataStore } = useMetadataStore();
+  const { replaceDraft, applyChanges, resetMetadataStore } = useMetadataStore();
 
   const loadMockedMinimalMetadata = useCallback(async () => {
     resetMetadataStore();
@@ -25,9 +25,9 @@ export const useLoadMockedMinimalMetadata = () => {
     const { flatObjects, flatFields, flatIndexes } =
       splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
 
-    updateDraft('objectMetadataItems', flatObjects, MOCKED_COLLECTION_HASH);
-    updateDraft('fieldMetadataItems', flatFields, MOCKED_COLLECTION_HASH);
-    updateDraft('indexMetadataItems', flatIndexes, MOCKED_COLLECTION_HASH);
+    replaceDraft('objectMetadataItems', flatObjects, MOCKED_COLLECTION_HASH);
+    replaceDraft('fieldMetadataItems', flatFields, MOCKED_COLLECTION_HASH);
+    replaceDraft('indexMetadataItems', flatIndexes, MOCKED_COLLECTION_HASH);
 
     const {
       flatViews,
@@ -39,26 +39,30 @@ export const useLoadMockedMinimalMetadata = () => {
       flatViewFieldGroups,
     } = splitViewWithRelated(mockedViews);
 
-    updateDraft('views', flatViews, MOCKED_COLLECTION_HASH);
-    updateDraft('viewFields', flatViewFields, MOCKED_COLLECTION_HASH);
-    updateDraft('viewFilters', flatViewFilters, MOCKED_COLLECTION_HASH);
-    updateDraft('viewSorts', flatViewSorts, MOCKED_COLLECTION_HASH);
-    updateDraft('viewGroups', flatViewGroups, MOCKED_COLLECTION_HASH);
-    updateDraft(
+    replaceDraft('views', flatViews, MOCKED_COLLECTION_HASH);
+    replaceDraft('viewFields', flatViewFields, MOCKED_COLLECTION_HASH);
+    replaceDraft('viewFilters', flatViewFilters, MOCKED_COLLECTION_HASH);
+    replaceDraft('viewSorts', flatViewSorts, MOCKED_COLLECTION_HASH);
+    replaceDraft('viewGroups', flatViewGroups, MOCKED_COLLECTION_HASH);
+    replaceDraft(
       'viewFilterGroups',
       flatViewFilterGroups,
       MOCKED_COLLECTION_HASH,
     );
-    updateDraft('viewFieldGroups', flatViewFieldGroups, MOCKED_COLLECTION_HASH);
+    replaceDraft(
+      'viewFieldGroups',
+      flatViewFieldGroups,
+      MOCKED_COLLECTION_HASH,
+    );
 
-    updateDraft(
+    replaceDraft(
       'navigationMenuItems',
       mockedNavigationMenuItems,
       MOCKED_COLLECTION_HASH,
     );
 
     applyChanges();
-  }, [updateDraft, applyChanges, resetMetadataStore]);
+  }, [replaceDraft, applyChanges, resetMetadataStore]);
 
   return { loadMockedMinimalMetadata };
 };

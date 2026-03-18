@@ -947,7 +947,7 @@ msgstr "Add item to folder"
 
 #. js-lingui-id: gaZXkv
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/display/folder/components/WorkspaceNavigationMenuItemsFolder.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Add menu item"
 msgstr "Add menu item"
 
@@ -1892,21 +1892,25 @@ msgstr "Are you sure you want to delete this skill? This action cannot be undone
 
 #. js-lingui-id: OJOR8q
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
 msgstr "Are you sure you want to destroy these records? They won't be recoverable anymore."
 
 #. js-lingui-id: UK5TO6
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
 msgstr "Are you sure you want to destroy this record? It cannot be recovered anymore."
 
 #. js-lingui-id: mcHVC1
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Are you sure you want to restore these records?"
 msgstr "Are you sure you want to restore these records?"
 
 #. js-lingui-id: lmgkf0
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Are you sure you want to restore this record?"
 msgstr "Are you sure you want to restore this record?"
 
@@ -1947,6 +1951,7 @@ msgstr "Ascending"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Ask AI"
 msgstr "Ask AI"
@@ -2554,13 +2559,11 @@ msgstr "Can't scan? Copy the"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel"
 msgstr "Cancel"
 
 #. js-lingui-id: HYLdMN
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Cancel Edition"
@@ -3964,6 +3967,7 @@ msgstr "Dark"
 
 #. js-lingui-id: ogQzcZ
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "Dashboard duplicated successfully"
 
@@ -4386,7 +4390,7 @@ msgid "Delete field"
 msgstr "Delete field"
 
 #. js-lingui-id: 97QUV6
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Delete Folder"
 msgstr "Delete Folder"
 
@@ -4587,6 +4591,7 @@ msgstr "Destroy {objectLabelPlural}"
 
 #. js-lingui-id: kG5yO6
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Destroy Records"
 msgstr "Destroy Records"
 
@@ -4927,7 +4932,7 @@ msgstr "Edit Fields"
 
 #. js-lingui-id: uPHscS
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu.ts
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit folder"
 msgstr "Edit folder"
@@ -4950,7 +4955,7 @@ msgstr "Edit Layout"
 
 #. js-lingui-id: /PoNoq
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu.ts
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 #: src/modules/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop.ts
 msgid "Edit link"
 msgstr "Edit link"
@@ -6114,11 +6119,13 @@ msgstr "Failed to delete skill"
 
 #. js-lingui-id: NUmmdc
 #: src/modules/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Failed to duplicate dashboard"
 msgstr "Failed to duplicate dashboard"
 
 #. js-lingui-id: WYXxQF
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Failed to duplicate workflow"
 msgstr "Failed to duplicate workflow"
 
@@ -6182,10 +6189,10 @@ msgstr "Failed to remove picture"
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Failed to retry jobs. Please try again later."
 
-#. js-lingui-id: fuRtgB
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuEditModeBar.tsx
-msgid "Failed to save navigation layout"
-msgstr "Failed to save navigation layout"
+#. js-lingui-id: farFvy
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Failed to save layout customization"
+msgstr "Failed to save layout customization"
 
 #. js-lingui-id: y3HIOa
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -8016,7 +8023,7 @@ msgid "Layout"
 msgstr "Layout"
 
 #. js-lingui-id: W4nIBb
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuEditModeBar.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
 msgid "Layout customization"
 msgstr "Layout customization"
 
@@ -9113,7 +9120,7 @@ msgstr "New record"
 #: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "New sidebar item"
 msgstr "New sidebar item"
 
@@ -10421,6 +10428,8 @@ msgstr "Permanently destroy record"
 #. js-lingui-id: 35dBYb
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand.tsx
 msgid "Permanently Destroy Record"
 msgstr "Permanently Destroy Record"
 
@@ -10431,6 +10440,7 @@ msgstr "Permanently destroy records"
 
 #. js-lingui-id: YyP8vD
 #: src/modules/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand.tsx
 msgid "Permanently Destroy Records"
 msgstr "Permanently Destroy Records"
 
@@ -11128,15 +11138,17 @@ msgstr "Remote"
 msgid "Remove"
 msgstr "Remove"
 
-#. js-lingui-id: 0Urj9q
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu item?"
-msgstr "Remove {navigationMenuItemCount} navigation menu item?"
+#. js-lingui-id: XABoh4
+#. placeholder {0}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {0} navigation menu items?"
+msgstr "Remove {0} navigation menu items?"
 
-#. js-lingui-id: Ef5jwi
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "Remove {navigationMenuItemCount} navigation menu items?"
-msgstr "Remove {navigationMenuItemCount} navigation menu items?"
+#. js-lingui-id: p/lN7X
+#. placeholder {1}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "Remove {1} navigation menu item?"
+msgstr "Remove {1} navigation menu item?"
 
 #. js-lingui-id: 1O32oy
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -11353,6 +11365,8 @@ msgstr "Restore record"
 #. js-lingui-id: NzMNOA
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
 #: src/modules/command-menu-item/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand.tsx
 msgid "Restore Record"
 msgstr "Restore Record"
 
@@ -11364,6 +11378,8 @@ msgstr "Restore records"
 #. js-lingui-id: Xqj0Cb
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 #: src/modules/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand.tsx
 msgid "Restore Records"
 msgstr "Restore Records"
 
@@ -11577,7 +11593,6 @@ msgstr "Saturday"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save"
 msgstr "Save"
@@ -11591,11 +11606,6 @@ msgstr "Save as new view"
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Save Dashboard"
-
-#. js-lingui-id: BZVCCj
-#: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
-msgid "Save Page Layout"
-msgstr "Save Page Layout"
 
 #. js-lingui-id: veLq3R
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -11641,6 +11651,8 @@ msgstr "Score"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Search"
@@ -12635,6 +12647,11 @@ msgstr "Some"
 msgid "Some folders"
 msgstr "Some folders"
 
+#. js-lingui-id: hqUWge
+#: src/modules/layout-customization/hooks/useSaveLayoutCustomization.ts
+msgid "Some layout changes could not be saved"
+msgstr "Some layout changes could not be saved"
+
 #. js-lingui-id: nwtY4N
 #: src/pages/auth/Authorize.tsx
 msgid "Something went wrong"
@@ -13477,13 +13494,14 @@ msgstr "This action cannot be undone. This will permanently remove your membersh
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 
-#. js-lingui-id: lAHIY2
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
-msgid "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
-msgstr "This action will delete this folder and all {navigationMenuItemCount} navigation menu items inside. Do you want to continue?"
+#. js-lingui-id: XxxrMw
+#. placeholder {2}: favoritesEdit.navigationMenuItemCount
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+msgid "This action will delete this folder and all {2} navigation menu items inside. Do you want to continue?"
+msgstr "This action will delete this folder and all {2} navigation menu items inside. Do you want to continue?"
 
 #. js-lingui-id: gSO0+U
-#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesFolderItem.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 
@@ -14701,6 +14719,7 @@ msgstr "View marketplace page"
 #. js-lingui-id: ecVcAx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
+#: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "View Previous AI Chats"
@@ -15030,6 +15049,7 @@ msgstr "Workflow agents"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
+#: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
 msgid "Workflow duplicated successfully"
 msgstr "Workflow duplicated successfully"
 
@@ -15093,7 +15113,7 @@ msgstr "Workflows"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceNavigationMenuItems.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Workspace"
 msgstr "Workspace"
 

@@ -1,17 +1,19 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { NavigationMenuItemFolderDisplay } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDisplay';
+import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
-import type { WorkspaceSectionItemContentProps } from '@/navigation-menu-item/display/sections/types/WorkspaceSectionItemContentProps';
+import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 
-type NavigationMenuItemDisplayProps = WorkspaceSectionItemContentProps;
+type NavigationMenuItemDisplayProps = NavigationMenuItemSectionContentProps;
 
 export const NavigationMenuItemDisplay = ({
   item,
+  isEditInPlace,
   editModeProps,
   isDragging,
   folderChildrenById,
   folderCount,
+  rightOptions,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
@@ -20,8 +22,9 @@ export const NavigationMenuItemDisplay = ({
   switch (item.type) {
     case NavigationMenuItemType.FOLDER:
       return (
-        <NavigationMenuItemFolderDisplay
+        <NavigationMenuItemFolder
           item={item}
+          isEditInPlace={isEditInPlace}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
@@ -35,10 +38,12 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemLinkDisplay
           item={item}
+          isEditInPlace={isEditInPlace}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
+          rightOptions={rightOptions}
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
@@ -49,10 +54,12 @@ export const NavigationMenuItemDisplay = ({
       return (
         <NavigationMenuItemObjectDisplay
           item={item}
+          isEditInPlace={isEditInPlace}
           editModeProps={editModeProps}
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
+          rightOptions={rightOptions}
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}

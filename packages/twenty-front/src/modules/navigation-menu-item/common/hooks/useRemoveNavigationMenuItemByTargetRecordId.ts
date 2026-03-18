@@ -14,7 +14,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
-  const { updateDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useMetadataStore();
 
   const removeNavigationMenuItemsByTargetRecordIds = useCallback(
     (targetRecordIds: string[]) => {
@@ -31,7 +31,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
           !targetRecordIdsSet.has(item.targetRecordId),
       );
 
-      updateDraft('navigationMenuItems', updatedNavigationMenuItems);
+      replaceDraft('navigationMenuItems', updatedNavigationMenuItems);
       applyChanges();
 
       cache.updateQuery(
@@ -48,7 +48,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
         },
       );
     },
-    [cache, store, updateDraft, applyChanges],
+    [cache, store, replaceDraft, applyChanges],
   );
 
   return {

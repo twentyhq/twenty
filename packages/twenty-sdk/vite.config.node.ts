@@ -26,7 +26,7 @@ export default defineConfig(() => {
         entry: {
           index: 'src/sdk/index.ts',
           cli: 'src/cli/cli.ts',
-          operations: 'src/cli/public-operations/index.ts',
+          operations: 'src/cli/operations/index.ts',
           build: 'src/build/index.ts',
           clients: 'src/clients/index.ts',
         },

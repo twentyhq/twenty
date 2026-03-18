@@ -12,7 +12,7 @@ export const JestObjectMetadataItemSetter = ({
   children: ReactNode;
   objectMetadataItems?: ObjectMetadataItem[];
 }) => {
-  const { updateDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useMetadataStore();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -20,12 +20,12 @@ export const JestObjectMetadataItemSetter = ({
     const { flatObjects, flatFields, flatIndexes } =
       splitObjectMetadataItemWithRelated(items);
 
-    updateDraft('objectMetadataItems', flatObjects);
-    updateDraft('fieldMetadataItems', flatFields);
-    updateDraft('indexMetadataItems', flatIndexes);
+    replaceDraft('objectMetadataItems', flatObjects);
+    replaceDraft('fieldMetadataItems', flatFields);
+    replaceDraft('indexMetadataItems', flatIndexes);
     applyChanges();
     setIsLoaded(true);
-  }, [objectMetadataItems, updateDraft, applyChanges]);
+  }, [objectMetadataItems, replaceDraft, applyChanges]);
 
   return isLoaded ? <>{children}</> : null;
 };
