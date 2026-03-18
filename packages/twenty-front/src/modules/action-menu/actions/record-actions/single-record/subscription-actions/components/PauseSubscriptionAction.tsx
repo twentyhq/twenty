@@ -1,6 +1,5 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { PauseSubscriptionFormModal } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/PauseSubscriptionFormModal';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
@@ -9,7 +8,13 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilComponentValueV2';
-import { useContext } from 'react';
+import { Suspense, lazy, useContext } from 'react';
+
+const PauseSubscriptionFormModal = lazy(() =>
+  import(
+    '@/action-menu/actions/record-actions/single-record/subscription-actions/components/PauseSubscriptionFormModal'
+  ).then((m) => ({ default: m.PauseSubscriptionFormModal })),
+);
 
 export const PauseSubscriptionAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -56,11 +61,13 @@ export const PauseSubscriptionAction = () => {
     <>
       <ActionDisplay onClick={handleClick} />
       {isModalOpened && (
-        <PauseSubscriptionFormModal
-          modalId={modalId}
-          recordId={recordId}
-          objectNameSingular={objectMetadataItem.nameSingular}
-        />
+        <Suspense fallback={null}>
+          <PauseSubscriptionFormModal
+            modalId={modalId}
+            recordId={recordId}
+            objectNameSingular={objectMetadataItem.nameSingular}
+          />
+        </Suspense>
       )}
     </>
   );
