@@ -6,6 +6,7 @@ import {
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
   type UnmountFrontComponentFunction,
+  type UpdateProgressFunction,
 } from '../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 
 export type FrontComponentHostCommunicationApi = {
@@ -16,4 +17,5 @@ export type FrontComponentHostCommunicationApi = {
   unmountFrontComponent: UnmountFrontComponentFunction;
   enqueueSnackbar: EnqueueSnackbarFunction;
   closeSidePanel: CloseSidePanelFunction;
+  updateProgress: UpdateProgressFunction;
 };
