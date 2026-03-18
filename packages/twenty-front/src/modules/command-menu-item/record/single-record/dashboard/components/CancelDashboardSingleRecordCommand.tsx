@@ -6,6 +6,7 @@ import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLa
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const CancelDashboardSingleRecordCommand = () => {
@@ -15,7 +16,7 @@ export const CancelDashboardSingleRecordCommand = () => {
 
   const pageLayoutId = recordStore?.pageLayoutId;
 
-  if (!pageLayoutId) {
+  if (!isDefined(pageLayoutId)) {
     throw new Error(
       'CancelDashboardSingleRecordCommand requires a valid pageLayoutId from the record store.',
     );

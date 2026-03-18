@@ -24,7 +24,9 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
       store.set(pageLayoutDraftState, (prev) => {
         const sorted = sortTabsByPosition(prev.tabs);
         const index = sorted.findIndex((t) => t.id === tabId);
-        if (index <= 0) return prev;
+        if (index <= 0) {
+          return prev;
+        }
 
         const neighborId = sorted[index - 1].id;
         const currentPosition = sorted[index].position;
@@ -33,8 +35,12 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         return {
           ...prev,
           tabs: prev.tabs.map((t) => {
-            if (t.id === tabId) return { ...t, position: neighborPosition };
-            if (t.id === neighborId) return { ...t, position: currentPosition };
+            if (t.id === tabId) {
+              return { ...t, position: neighborPosition };
+            }
+            if (t.id === neighborId) {
+              return { ...t, position: currentPosition };
+            }
             return t;
           }),
         };
@@ -48,7 +54,9 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
       store.set(pageLayoutDraftState, (prev) => {
         const sorted = sortTabsByPosition(prev.tabs);
         const index = sorted.findIndex((t) => t.id === tabId);
-        if (index < 0 || index >= sorted.length - 1) return prev;
+        if (index < 0 || index >= sorted.length - 1) {
+          return prev;
+        }
 
         const neighborId = sorted[index + 1].id;
         const currentPosition = sorted[index].position;
@@ -57,8 +65,12 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         return {
           ...prev,
           tabs: prev.tabs.map((t) => {
-            if (t.id === tabId) return { ...t, position: neighborPosition };
-            if (t.id === neighborId) return { ...t, position: currentPosition };
+            if (t.id === tabId) {
+              return { ...t, position: neighborPosition };
+            }
+            if (t.id === neighborId) {
+              return { ...t, position: currentPosition };
+            }
             return t;
           }),
         };
