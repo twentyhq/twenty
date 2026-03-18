@@ -4,7 +4,7 @@ import { execSync, spawnSync } from 'node:child_process';
 
 const CONTAINER_NAME = 'twenty-app-dev';
 const IMAGE = 'twentycrm/twenty-app-dev:latest';
-const HEALTH_URL = 'http://localhost:2020/healthz';
+const DEFAULT_PORT = 2020;
 
 const isContainerRunning = (): boolean => {
   try {
@@ -16,6 +16,19 @@ const isContainerRunning = (): boolean => {
     return result === 'true';
   } catch {
     return false;
+  }
+};
+
+const getContainerPort = (): number => {
+  try {
+    const result = execSync(
+      `docker inspect -f '{{(index (index .NetworkSettings.Ports "3000/tcp") 0).HostPort}}' ${CONTAINER_NAME}`,
+      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
+    ).trim();
+
+    return parseInt(result, 10) || DEFAULT_PORT;
+  } catch {
+    return DEFAULT_PORT;
   }
 };
 
@@ -31,23 +44,36 @@ const containerExists = (): boolean => {
   }
 };
 
-const isServerHealthy = async (): Promise<boolean> => {
+const checkHealth = async (port: number): Promise<boolean> => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3000);
 
-    const response = await fetch(HEALTH_URL, {
-      signal: controller.signal,
-    });
+    try {
+      const response = await fetch(`http://localhost:${port}/healthz`, {
+        signal: controller.signal,
+      });
 
-    clearTimeout(timeoutId);
+      const body = await response.json();
 
-    const body = await response.json();
-
-    return body.status === 'ok';
+      return body.status === 'ok';
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch {
     return false;
   }
+};
+
+const validatePort = (value: string): number => {
+  const port = parseInt(value, 10);
+
+  if (isNaN(port) || port < 1 || port > 65535) {
+    console.error(chalk.red('Invalid port number.'));
+    process.exit(1);
+  }
+
+  return port;
 };
 
 export const registerServerCommands = (program: Command): void => {
@@ -58,12 +84,14 @@ export const registerServerCommands = (program: Command): void => {
   server
     .command('start')
     .description('Start a local Twenty server')
-    .option('-p, --port <port>', 'HTTP port', '2020')
+    .option('-p, --port <port>', 'HTTP port', String(DEFAULT_PORT))
     .action(async (options: { port: string }) => {
-      if (await isServerHealthy()) {
+      const port = validatePort(options.port);
+
+      if (await checkHealth(port)) {
         console.log(
           chalk.green(
-            `Twenty server is already running on localhost:${options.port}.`,
+            `Twenty server is already running on localhost:${port}.`,
           ),
         );
 
@@ -100,22 +128,28 @@ export const registerServerCommands = (program: Command): void => {
         }
 
         console.log(chalk.gray('Starting Twenty container...'));
-        execSync(
+        spawnSync(
+          'docker',
           [
-            'docker run -d',
-            `--name ${CONTAINER_NAME}`,
-            `-p ${options.port}:3000`,
-            '-v twenty-app-dev-data:/data/postgres',
-            '-v twenty-app-dev-storage:/app/.local-storage',
+            'run',
+            '-d',
+            '--name',
+            CONTAINER_NAME,
+            '-p',
+            `${port}:3000`,
+            '-v',
+            'twenty-app-dev-data:/data/postgres',
+            '-v',
+            'twenty-app-dev-storage:/app/.local-storage',
             IMAGE,
-          ].join(' '),
+          ],
           { stdio: 'inherit' },
         );
       }
 
       console.log(
         chalk.green(
-          `Twenty server starting on http://localhost:${options.port}`,
+          `Twenty server starting on http://localhost:${port}`,
         ),
       );
       console.log(
@@ -173,7 +207,8 @@ export const registerServerCommands = (program: Command): void => {
       }
 
       const running = isContainerRunning();
-      const healthy = running ? await isServerHealthy() : false;
+      const port = running ? getContainerPort() : DEFAULT_PORT;
+      const healthy = running ? await checkHealth(port) : false;
 
       const statusText = healthy
         ? chalk.green('running (healthy)')
@@ -182,7 +217,7 @@ export const registerServerCommands = (program: Command): void => {
           : chalk.gray('stopped');
 
       console.log(`  Status:  ${statusText}`);
-      console.log(`  URL:     http://localhost:2020`);
+      console.log(`  URL:     http://localhost:${port}`);
 
       if (healthy) {
         console.log(chalk.gray('  Login:   tim@apple.dev / tim@apple.dev'));

@@ -1,53 +1,25 @@
 import chalk from 'chalk';
-import {
-  type ChildProcess,
-  execSync,
-  spawn,
-  spawnSync,
-} from 'node:child_process';
+import { execSync } from 'node:child_process';
 import { platform } from 'node:os';
-
-const CONTAINER_NAME = 'twenty-app-dev';
-const IMAGE = 'twentycrm/twenty-app-dev:latest';
 
 const TWENTY_PORTS = [2020, 3000];
 
-const isDockerAvailable = (): boolean => {
-  try {
-    execSync('docker --version', { stdio: 'ignore' });
-
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const isDockerRunning = (): boolean => {
-  try {
-    execSync('docker info', { stdio: 'ignore' });
-
-    return true;
-  } catch {
-    return false;
-  }
-};
-
 const checkHealthz = async (port: number): Promise<boolean> => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3000);
 
+  try {
     const response = await fetch(`http://localhost:${port}/healthz`, {
       signal: controller.signal,
     });
-
-    clearTimeout(timeoutId);
 
     const body = await response.json();
 
     return body.status === 'ok';
   } catch {
     return false;
+  } finally {
+    clearTimeout(timeoutId);
   }
 };
 
@@ -59,62 +31,6 @@ const detectRunningServer = async (): Promise<number | null> => {
   }
 
   return null;
-};
-
-const isContainerRunning = (): boolean => {
-  try {
-    const result = execSync(
-      `docker inspect -f '{{.State.Running}}' ${CONTAINER_NAME}`,
-      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
-    ).trim();
-
-    return result === 'true';
-  } catch {
-    return false;
-  }
-};
-
-const streamDockerLogs = (): ChildProcess => {
-  const logProcess = spawn(
-    'docker',
-    ['logs', '-f', '--tail', '0', CONTAINER_NAME],
-    { stdio: ['ignore', 'pipe', 'pipe'] },
-  );
-
-  const formatLogLine = (line: string): string | null => {
-    if (line.includes('Waiting for PostgreSQL'))
-      return 'Starting PostgreSQL...';
-    if (line.includes('PostgreSQL is ready')) return 'PostgreSQL ready.';
-    if (line.includes('Ready to accept connections tcp')) return 'Redis ready.';
-    if (line.includes('running initial setup'))
-      return 'Running initial database setup...';
-    if (line.includes('database:migrate:prod'))
-      return 'Running database migrations...';
-    if (line.includes('cache:flush')) return 'Flushing cache...';
-    if (line.includes('command:prod upgrade'))
-      return 'Running workspace upgrade...';
-    if (line.includes('workspace:seed:dev')) return 'Seeding dev workspace...';
-    if (line.includes('NestApplication')) return 'Starting Twenty server...';
-
-    return null;
-  };
-
-  const handleData = (data: Buffer) => {
-    const lines = data.toString().split('\n');
-
-    for (const line of lines) {
-      const formatted = formatLogLine(line);
-
-      if (formatted) {
-        process.stdout.write(chalk.gray(`  ${formatted}\n`));
-      }
-    }
-  };
-
-  logProcess.stdout?.on('data', handleData);
-  logProcess.stderr?.on('data', handleData);
-
-  return logProcess;
 };
 
 const waitForHealthy = async ({
@@ -143,7 +59,9 @@ export type LocalInstanceResult = {
   serverUrl?: string;
 };
 
-export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
+export const setupLocalInstance = async (
+  appDirectory: string,
+): Promise<LocalInstanceResult> => {
   console.log('');
   console.log(chalk.blue('Setting up local Twenty instance...'));
 
@@ -158,78 +76,32 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     return { running: true, serverUrl };
   }
 
-  // No server found — start the Docker container
-  if (!isDockerAvailable()) {
+  // No server found — delegate to `twenty server start` from the scaffolded app
+  console.log(chalk.gray('Starting local Twenty server...'));
+
+  try {
+    execSync('yarn twenty server start', {
+      cwd: appDirectory,
+      stdio: 'inherit',
+    });
+  } catch {
     console.log(
-      chalk.yellow('Docker is not installed. Please install Docker first.'),
+      chalk.yellow(
+        'Failed to start Twenty server. Run `yarn twenty server start` manually.',
+      ),
     );
-    console.log(chalk.gray('   See https://docs.docker.com/get-docker/'));
 
     return { running: false };
-  }
-
-  if (!isDockerRunning()) {
-    console.log(
-      chalk.yellow('Docker is not running. Please start Docker and try again.'),
-    );
-
-    return { running: false };
-  }
-
-  if (isContainerRunning()) {
-    console.log(
-      chalk.gray('Container exists but server not healthy, restarting...'),
-    );
-    execSync(`docker restart ${CONTAINER_NAME}`, { stdio: 'ignore' });
-  } else {
-    spawnSync('docker', ['rm', '-f', CONTAINER_NAME], { stdio: 'ignore' });
-
-    console.log(chalk.gray(`Pulling ${IMAGE}...`));
-
-    try {
-      execSync(`docker pull ${IMAGE}`, { stdio: 'inherit' });
-    } catch {
-      console.log(
-        chalk.gray(
-          'Pull failed (image may not be published yet), trying local image...',
-        ),
-      );
-    }
-
-    console.log(chalk.gray('Starting Twenty container...'));
-
-    try {
-      execSync(
-        [
-          'docker run -d',
-          `--name ${CONTAINER_NAME}`,
-          '-p 2020:3000',
-          '-v twenty-app-dev-data:/data/postgres',
-          '-v twenty-app-dev-storage:/app/.local-storage',
-          IMAGE,
-        ].join(' '),
-        { stdio: 'inherit' },
-      );
-    } catch {
-      console.log(
-        chalk.yellow('Failed to start Twenty container. Check Docker logs.'),
-      );
-
-      return { running: false };
-    }
   }
 
   console.log(chalk.gray('Waiting for Twenty to be ready...'));
 
-  const logProcess = streamDockerLogs();
   const healthy = await waitForHealthy({ port: 2020, timeoutSeconds: 180 });
-
-  logProcess.kill();
 
   if (!healthy) {
     console.log(
       chalk.yellow(
-        'Twenty server did not become healthy in time. Check: docker logs twenty-app-dev',
+        'Twenty server did not become healthy in time. Check: yarn twenty server logs',
       ),
     );
 
@@ -243,12 +115,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
     chalk.gray('Workspace ready — login with tim@apple.dev / tim@apple.dev'),
   );
 
-  const openCommand =
-    platform() === 'darwin'
-      ? 'open'
-      : platform() === 'win32'
-        ? 'start'
-        : 'xdg-open';
+  const openCommand = platform() === 'darwin' ? 'open' : 'xdg-open';
 
   try {
     execSync(`${openCommand} ${serverUrl}`, { stdio: 'ignore' });

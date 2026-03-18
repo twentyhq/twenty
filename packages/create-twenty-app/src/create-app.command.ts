@@ -65,7 +65,7 @@ export class CreateAppCommand {
 
       if (!options.skipLocalInstance) {
         // Auto-detect a running server first
-        localResult = await setupLocalInstance();
+        localResult = await setupLocalInstance(appDirectory);
 
         if (localResult.running && localResult.serverUrl) {
           await this.connectToLocal(appDirectory, localResult.serverUrl);

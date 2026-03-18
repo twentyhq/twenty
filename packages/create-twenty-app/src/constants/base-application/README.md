@@ -2,7 +2,7 @@ This is a [Twenty](https://twenty.com) application project bootstrapped with [`c
 
 ## Getting Started
 
-Start development mode — it auto-connects to your local Twenty server at localhost:2020:
+Start development mode — it auto-connects to your local Twenty server
 
 ```bash
 yarn twenty dev

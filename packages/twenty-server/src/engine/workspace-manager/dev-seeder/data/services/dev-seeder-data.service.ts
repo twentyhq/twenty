@@ -342,17 +342,19 @@ export class DevSeederDataService {
           light,
         });
 
-        await this.timelineActivitySeederService.seedTimelineActivities({
-          entityManager,
-          schemaName,
-          workspaceId,
-        });
+        if (!light) {
+          await this.timelineActivitySeederService.seedTimelineActivities({
+            entityManager,
+            schemaName,
+            workspaceId,
+          });
 
-        await this.seedAttachmentFiles(
-          workspaceId,
-          entityManager,
-          attachmentFileMeta,
-        );
+          await this.seedAttachmentFiles(
+            workspaceId,
+            entityManager,
+            attachmentFileMeta,
+          );
+        }
 
         await prefillWorkflows(
           entityManager,

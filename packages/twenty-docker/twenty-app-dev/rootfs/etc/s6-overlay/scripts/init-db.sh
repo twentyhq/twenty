@@ -1,9 +1,17 @@
 #!/bin/sh
 set -e
 
-# Wait for PostgreSQL to be ready
+# Wait for PostgreSQL to be ready (timeout after 60s)
 echo "Waiting for PostgreSQL..."
-until su-exec postgres pg_isready -h localhost; do sleep 0.5; done
+TRIES=0
+until su-exec postgres pg_isready -h localhost; do
+  TRIES=$((TRIES + 1))
+  if [ "$TRIES" -ge 120 ]; then
+    echo "ERROR: PostgreSQL did not become ready within 60s"
+    exit 1
+  fi
+  sleep 0.5
+done
 echo "PostgreSQL is ready."
 
 # Create role if it doesn't exist

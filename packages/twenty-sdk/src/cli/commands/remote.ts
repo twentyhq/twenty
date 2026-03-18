@@ -10,15 +10,13 @@ const LOCAL_PORTS = [2020, 3000];
 
 const detectLocalServer = async (): Promise<string | null> => {
   for (const port of LOCAL_PORTS) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
 
+    try {
       const response = await fetch(`http://localhost:${port}/healthz`, {
         signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
 
       const body = await response.json();
 
@@ -27,6 +25,8 @@ const detectLocalServer = async (): Promise<string | null> => {
       }
     } catch {
       // Port not responding, try next
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
