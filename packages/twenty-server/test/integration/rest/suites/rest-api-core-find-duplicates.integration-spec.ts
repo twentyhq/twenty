@@ -295,6 +295,44 @@ describe('Core REST API Find Duplicates endpoint', () => {
     expect(duplicatesInfo.companyDuplicates[0].name).toBe('Acme Holdings');
   });
 
+  it('should retrieve company duplicates by fuzzy name match', async () => {
+    const companyId = '5eb60119-b822-46a5-9920-ae1454997c56';
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: companyId,
+        name: 'Acme Corporation',
+        domainName: {
+          primaryLinkUrl: 'https://acme-corporation.example',
+        },
+      },
+    }).expect(201);
+
+    const response = await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies/duplicates',
+      body: {
+        data: [
+          {
+            name: 'Acme Corporaton',
+            domainName: {
+              primaryLinkUrl: 'https://another-acme.example',
+            },
+          },
+        ],
+      },
+    }).expect(200);
+
+    const [duplicatesInfo] = response.body.data;
+
+    expect(duplicatesInfo.totalCount).toBe(1);
+    expect(duplicatesInfo.companyDuplicates).toHaveLength(1);
+    expect(duplicatesInfo.companyDuplicates[0].id).toBe(companyId);
+    expect(duplicatesInfo.companyDuplicates[0].name).toBe('Acme Corporation');
+  });
+
   it('should retrieve company duplicates by exact domain match', async () => {
     const companyId = 'd9e9b3f4-c884-4fef-8a61-4c1ee0c78eb1';
 
@@ -335,6 +373,42 @@ describe('Core REST API Find Duplicates endpoint', () => {
     );
   });
 
+  it('should not retrieve company duplicates for distinct fuzzy names', async () => {
+    const companyId = '74ae30ef-6073-44a4-97a6-4d2802f4b17c';
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: companyId,
+        name: 'Acme Corp',
+        domainName: {
+          primaryLinkUrl: 'https://distinct-acme.example',
+        },
+      },
+    }).expect(201);
+
+    const response = await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies/duplicates',
+      body: {
+        data: [
+          {
+            name: 'Totally Different Inc',
+            domainName: {
+              primaryLinkUrl: 'https://totally-different.example',
+            },
+          },
+        ],
+      },
+    }).expect(200);
+
+    const [duplicatesInfo] = response.body.data;
+
+    expect(duplicatesInfo.totalCount).toBe(0);
+    expect(duplicatesInfo.companyDuplicates).toHaveLength(0);
+  });
+
   it('should return a company duplicate only once when both exact name and domain match', async () => {
     const companyId = '534a17fd-b3e0-454d-a04f-31cabf336a79';
 
@@ -370,5 +444,46 @@ describe('Core REST API Find Duplicates endpoint', () => {
     expect(duplicatesInfo.totalCount).toBe(1);
     expect(duplicatesInfo.companyDuplicates).toHaveLength(1);
     expect(duplicatesInfo.companyDuplicates[0].id).toBe(companyId);
+  });
+
+  it('should retrieve fuzzy company duplicates within the bounded response time budget', async () => {
+    const companies = Array.from({ length: 1000 }, (_, index) => ({
+      id: `00000000-0000-4000-8000-${(index + 1).toString().padStart(12, '0')}`,
+      name: index === 777 ? 'Acme Corporation' : `Benchmark Company ${index}`,
+      domainName: {
+        primaryLinkUrl:
+          index === 777
+            ? 'https://benchmark-acme.example'
+            : `https://benchmark-${index}.example`,
+      },
+    }));
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/batch/companies',
+      body: companies,
+    }).expect(201);
+
+    const startedAt = process.hrtime.bigint();
+    const response = await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies/duplicates',
+      body: {
+        data: [
+          {
+            name: 'Acme Corporaton',
+          },
+        ],
+      },
+    }).expect(200);
+    const elapsedInMilliseconds =
+      Number(process.hrtime.bigint() - startedAt) / 1_000_000;
+
+    const [duplicatesInfo] = response.body.data;
+
+    expect(duplicatesInfo.totalCount).toBe(1);
+    expect(duplicatesInfo.companyDuplicates).toHaveLength(1);
+    expect(duplicatesInfo.companyDuplicates[0].name).toBe('Acme Corporation');
+    expect(elapsedInMilliseconds).toBeLessThan(500);
   });
 });

@@ -6,7 +6,10 @@ import {
 import { settings } from 'src/engine/constants/settings';
 import { mockCompanyObjectMetadataInfo } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 import { mockPersonRecords } from 'src/engine/api/graphql/graphql-query-runner/__mocks__/mockPersonRecords';
-import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
+import {
+  buildDuplicateConditions,
+  calculateNormalizedStringSimilarity,
+} from 'src/engine/api/utils/build-duplicate-conditions.utils';
 
 describe('buildDuplicateConditions', () => {
   it('should build conditions based on duplicate criteria from composite field', () => {
@@ -166,9 +169,18 @@ describe('buildDuplicateConditions', () => {
     expect(duplicateConditons).toEqual({
       or: [
         {
-          name: {
-            eq: name,
-          },
+          or: [
+            {
+              name: {
+                eq: name,
+              },
+            },
+            {
+              name: {
+                ilike: `%${name.toLowerCase()}%`,
+              },
+            },
+          ],
         },
       ],
     });
@@ -195,9 +207,23 @@ describe('buildDuplicateConditions', () => {
     expect(duplicateConditons).toEqual({
       or: [
         {
-          name: {
-            eq: 'Acme Holdings',
-          },
+          or: [
+            {
+              name: {
+                eq: 'Acme Holdings',
+              },
+            },
+            {
+              name: {
+                ilike: '%acme%',
+              },
+            },
+            {
+              name: {
+                ilike: '%holdings%',
+              },
+            },
+          ],
         },
         {
           domainName: {
@@ -231,9 +257,79 @@ describe('buildDuplicateConditions', () => {
     expect(duplicateConditons).toEqual({
       or: [
         {
-          name: {
-            eq: 'Acme Holdings',
-          },
+          or: [
+            {
+              name: {
+                eq: 'Acme Holdings',
+              },
+            },
+            {
+              name: {
+                ilike: '%acme%',
+              },
+            },
+            {
+              name: {
+                ilike: '%holdings%',
+              },
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it('should score company names with a small typo above the fuzzy threshold', () => {
+    expect(
+      calculateNormalizedStringSimilarity(
+        'Acme Corporation',
+        'Acme Corporaton',
+      ),
+    ).toBeGreaterThanOrEqual(settings.duplicateNameSimilarityThreshold);
+  });
+
+  it('should score unrelated company names below the fuzzy threshold', () => {
+    expect(
+      calculateNormalizedStringSimilarity('Acme Corp', 'Totally Different Inc'),
+    ).toBeLessThan(settings.duplicateNameSimilarityThreshold);
+  });
+
+  it('should build a fuzzy company name prefilter alongside the exact match condition', () => {
+    const duplicateConditons = buildDuplicateConditions(
+      {
+        ...mockCompanyObjectMetadataInfo.flatObjectMetadata,
+        nameSingular: 'company',
+        duplicateCriteria: [['name']],
+      },
+      mockCompanyObjectMetadataInfo.flatObjectMetadataMaps,
+      mockCompanyObjectMetadataInfo.flatFieldMetadataMaps,
+      [
+        {
+          name: 'Acme Corporaton',
+        },
+      ],
+    );
+
+    expect(duplicateConditons).toEqual({
+      or: [
+        {
+          or: [
+            {
+              name: {
+                eq: 'Acme Corporaton',
+              },
+            },
+            {
+              name: {
+                ilike: '%acme%',
+              },
+            },
+            {
+              name: {
+                ilike: '%corporaton%',
+              },
+            },
+          ],
         },
       ],
     });

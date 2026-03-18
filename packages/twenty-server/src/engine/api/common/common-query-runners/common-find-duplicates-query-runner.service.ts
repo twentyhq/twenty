@@ -28,7 +28,10 @@ import {
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { settings } from 'src/engine/constants/settings';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.utils';
+import {
+  buildDuplicateConditions,
+  calculateNormalizedStringSimilarity,
+} from 'src/engine/api/utils/build-duplicate-conditions.utils';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -70,12 +73,16 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
+    const duplicateLookupColumns = this.buildDuplicateLookupColumns(
+      columnsToSelect,
+      flatObjectMetadata,
+    );
 
     if (isDefined(args.ids) && args.ids.length > 0) {
       const fetchedRecords = (await existingRecordsQueryBuilder
         .where({ id: In(args.ids) })
         .setFindOptions({
-          select: columnsToSelect,
+          select: duplicateLookupColumns,
         })
         .getMany()) as ObjectRecord[];
 
@@ -126,25 +133,54 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
             duplicateConditions,
           );
 
-          const duplicates = (await duplicateRecordsQueryBuilder
-            .setFindOptions({
-              select: columnsToSelect,
-            })
-            .take(QUERY_MAX_RECORDS)
-            .getMany()) as ObjectRecord[];
+          const shouldApplyFuzzyCompanyNameMatching =
+            this.shouldApplyFuzzyCompanyNameMatching(record, flatObjectMetadata);
 
-          const aggregateQueryBuilder = duplicateRecordsQueryBuilder.clone();
-          const totalCount = await aggregateQueryBuilder.getCount();
+          let duplicates: ObjectRecord[];
+          let totalCount: number;
+
+          if (shouldApplyFuzzyCompanyNameMatching) {
+            const duplicateCandidates = (await duplicateRecordsQueryBuilder
+              .setFindOptions({
+                select: duplicateLookupColumns,
+              })
+              .getMany()) as ObjectRecord[];
+
+            const filteredDuplicates =
+              this.filterDuplicateCandidatesByCriteria(
+                duplicateCandidates,
+                record,
+                flatObjectMetadata,
+                flatFieldMetadataMaps,
+              );
+
+            totalCount = filteredDuplicates.length;
+            duplicates = filteredDuplicates.slice(0, QUERY_MAX_RECORDS);
+          } else {
+            duplicates = (await duplicateRecordsQueryBuilder
+              .setFindOptions({
+                select: duplicateLookupColumns,
+              })
+              .take(QUERY_MAX_RECORDS)
+              .getMany()) as ObjectRecord[];
+
+            const aggregateQueryBuilder = duplicateRecordsQueryBuilder.clone();
+            totalCount = await aggregateQueryBuilder.getCount();
+          }
+
+          const projectedDuplicates = duplicates.map((duplicateRecord) =>
+            this.projectDuplicateRecord(duplicateRecord, columnsToSelect),
+          );
 
           const { startCursor, endCursor } = getPageInfo(
-            duplicates,
+            projectedDuplicates,
             [{ id: OrderByDirection.AscNullsFirst }],
             QUERY_MAX_RECORDS,
             true,
           );
 
           return {
-            records: duplicates,
+            records: projectedDuplicates,
             totalCount,
             hasNextPage: false,
             hasPreviousPage: false,
@@ -394,5 +430,88 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     }
 
     return undefined;
+  }
+
+  private buildDuplicateLookupColumns(
+    columnsToSelect: Record<string, boolean>,
+    flatObjectMetadata: FlatObjectMetadata,
+  ): Record<string, boolean> {
+    const duplicateLookupColumns = { ...columnsToSelect };
+
+    for (const duplicateCriteria of flatObjectMetadata.duplicateCriteria ?? []) {
+      for (const duplicateField of duplicateCriteria) {
+        duplicateLookupColumns[duplicateField] = true;
+      }
+    }
+
+    return duplicateLookupColumns;
+  }
+
+  private projectDuplicateRecord(
+    record: ObjectRecord,
+    columnsToSelect: Record<string, boolean>,
+  ): ObjectRecord {
+    const projectedRecordEntries = Object.entries(record).filter(
+      ([key]) => key === 'id' || columnsToSelect[key] === true,
+    );
+
+    return Object.fromEntries(projectedRecordEntries) as ObjectRecord;
+  }
+
+  private shouldApplyFuzzyCompanyNameMatching(
+    record: Partial<ObjectRecord>,
+    flatObjectMetadata: FlatObjectMetadata,
+  ): boolean {
+    return (
+      flatObjectMetadata.nameSingular === 'company' &&
+      typeof record.name === 'string' &&
+      record.name.length >= settings.minLengthOfStringForDuplicateCheck
+    );
+  }
+
+  private filterDuplicateCandidatesByCriteria(
+    duplicateCandidates: ObjectRecord[],
+    sourceRecord: Partial<ObjectRecord>,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): ObjectRecord[] {
+    const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    return duplicateCandidates.filter((candidateRecord) =>
+      (flatObjectMetadata.duplicateCriteria ?? []).some((duplicateCriteria) =>
+        duplicateCriteria.every((duplicateField) => {
+          const sourceValue = this.normalizeDuplicateFieldValue(
+            sourceRecord,
+            duplicateField,
+            compositeFieldMetadataMap,
+          );
+          const candidateValue = this.normalizeDuplicateFieldValue(
+            candidateRecord,
+            duplicateField,
+            compositeFieldMetadataMap,
+          );
+
+          if (!isDefined(sourceValue) || !isDefined(candidateValue)) {
+            return false;
+          }
+
+          if (
+            flatObjectMetadata.nameSingular === 'company' &&
+            duplicateCriteria.length === 1 &&
+            duplicateField === 'name'
+          ) {
+            return (
+              calculateNormalizedStringSimilarity(sourceValue, candidateValue) >=
+              settings.duplicateNameSimilarityThreshold
+            );
+          }
+
+          return sourceValue === candidateValue;
+        }),
+      ),
+    );
   }
 }

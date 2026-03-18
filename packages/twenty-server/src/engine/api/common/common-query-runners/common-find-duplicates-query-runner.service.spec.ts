@@ -7,12 +7,20 @@ import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-c
 jest.mock(
   'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select',
   () => ({
-    buildColumnsToSelect: jest.fn(() => ({ id: true, name: true })),
+    buildColumnsToSelect: jest.fn(({ select }) => ({
+      id: true,
+      ...Object.fromEntries(
+        Object.keys(select ?? {}).map((columnName) => [columnName, true]),
+      ),
+    })),
   }),
 );
 
 jest.mock('src/engine/api/utils/build-duplicate-conditions.utils', () => ({
   buildDuplicateConditions: jest.fn(),
+  calculateNormalizedStringSimilarity: jest.requireActual(
+    'src/engine/api/utils/build-duplicate-conditions.utils',
+  ).calculateNormalizedStringSimilarity,
 }));
 
 const mockedBuildDuplicateConditions = jest.mocked(buildDuplicateConditions);
@@ -254,6 +262,141 @@ describe('CommonFindDuplicatesQueryRunnerService', () => {
     expect(result[0].records).toEqual([
       { id: 'existing-company', name: 'Acme Corp' },
     ]);
+  });
+
+  it('filters fuzzy company name candidates down to records above the similarity threshold', async () => {
+    mockedBuildDuplicateConditions.mockReturnValue({
+      or: [
+        {
+          or: [
+            { name: { eq: 'Acme Corporaton' } },
+            { name: { ilike: '%acme%' } },
+            { name: { ilike: '%corporaton%' } },
+          ],
+        },
+      ],
+    });
+
+    const service = new CommonFindDuplicatesQueryRunnerService();
+    (service as never as { processNestedRelationsHelper: { processNestedRelations: jest.Mock } }).processNestedRelationsHelper =
+      {
+        processNestedRelations: jest.fn(),
+      };
+    const { queryRunnerContext, duplicateRecordsQueryBuilder } = createBaseContext([
+      { id: 'matching-company', name: 'Acme Corporation' },
+      { id: 'false-positive-company', name: 'Acme Ventures' },
+    ]);
+
+    const result = await service.run(
+      {
+        data: [{ name: 'Acme Corporaton' }],
+        selectedFieldsResult: {
+          select: { name: true },
+          relations: undefined as never,
+          aggregate: {},
+        },
+      },
+      queryRunnerContext as never,
+    );
+
+    expect(result[0].records).toEqual([
+      { id: 'matching-company', name: 'Acme Corporation' },
+    ]);
+    expect(result[0].totalCount).toBe(1);
+    expect(duplicateRecordsQueryBuilder.take).not.toHaveBeenCalled();
+    expect(duplicateRecordsQueryBuilder.setFindOptions).toHaveBeenCalledWith({
+      select: { id: true, name: true, domainNamePrimaryLinkUrl: true },
+    });
+  });
+
+  it('keeps exact company domain duplicates even when fuzzy name matching is active for the object', async () => {
+    mockedBuildDuplicateConditions.mockReturnValue({
+      or: [
+        {
+          or: [{ name: { eq: 'Acme Corporaton' } }, { name: { ilike: '%acme%' } }],
+        },
+        {
+          domainNamePrimaryLinkUrl: { eq: 'acme.com' },
+        },
+      ],
+    });
+
+    const service = new CommonFindDuplicatesQueryRunnerService();
+    (service as never as { processNestedRelationsHelper: { processNestedRelations: jest.Mock } }).processNestedRelationsHelper =
+      {
+        processNestedRelations: jest.fn(),
+      };
+    const { queryRunnerContext } = createBaseContext([
+      {
+        id: 'domain-match-company',
+        name: 'Different Name',
+        domainNamePrimaryLinkUrl: 'acme.com',
+      },
+    ]);
+
+    const result = await service.run(
+      {
+        data: [
+          {
+            name: 'Acme Corporaton',
+            domainName: { primaryLinkUrl: 'acme.com' },
+          },
+        ],
+        selectedFieldsResult: {
+          select: { name: true },
+          relations: undefined as never,
+          aggregate: {},
+        },
+      },
+      queryRunnerContext as never,
+    );
+
+    expect(result[0].records).toEqual([
+      { id: 'domain-match-company', name: 'Different Name' },
+    ]);
+    expect(result[0].totalCount).toBe(1);
+  });
+
+  it('filters 1000 fuzzy company-name candidates within the service-layer budget', async () => {
+    mockedBuildDuplicateConditions.mockReturnValue({
+      or: [
+        {
+          or: [{ name: { eq: 'Acme Corporaton' } }, { name: { ilike: '%acme%' } }],
+        },
+      ],
+    });
+
+    const service = new CommonFindDuplicatesQueryRunnerService();
+    (service as never as { processNestedRelationsHelper: { processNestedRelations: jest.Mock } }).processNestedRelationsHelper =
+      {
+        processNestedRelations: jest.fn(),
+      };
+    const duplicateRecords = Array.from({ length: 1000 }, (_, index) => ({
+      id: `company-${index}`,
+      name: index === 777 ? 'Acme Corporation' : `Acme Variant ${index}`,
+    }));
+    const { queryRunnerContext } = createBaseContext(duplicateRecords);
+
+    const startedAt = process.hrtime.bigint();
+    const result = await service.run(
+      {
+        data: [{ name: 'Acme Corporaton' }],
+        selectedFieldsResult: {
+          select: { name: true },
+          relations: undefined as never,
+          aggregate: {},
+        },
+      },
+      queryRunnerContext as never,
+    );
+    const elapsedInMilliseconds =
+      Number(process.hrtime.bigint() - startedAt) / 1_000_000;
+
+    expect(result[0].records).toEqual([
+      { id: 'company-777', name: 'Acme Corporation' },
+    ]);
+    expect(result[0].totalCount).toBe(1);
+    expect(elapsedInMilliseconds).toBeLessThan(100);
   });
 
   it('does not keep short duplicate field values that cannot trigger duplicate checks', () => {

@@ -10,5 +10,6 @@ export const settings: Settings = {
     maxFileSize: '10MB',
   },
   minLengthOfStringForDuplicateCheck: 3,
+  duplicateNameSimilarityThreshold: 0.9,
   maxVisibleViewFields: 30,
 };
