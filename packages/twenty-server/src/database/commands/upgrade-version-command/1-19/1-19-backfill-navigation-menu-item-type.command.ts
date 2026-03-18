@@ -55,9 +55,7 @@ export class BackfillNavigationMenuItemTypeCommand extends ActiveOrSuspendedWork
       await makeNavigationMenuItemTypeNotNullQueries(queryRunner);
 
       await queryRunner.commitTransaction();
-      this.logger.log(
-        'Successfully run BackfillNavigationMenuItemTypeCommand',
-      );
+      this.logger.log('Successfully run BackfillNavigationMenuItemTypeCommand');
       this.hasRunOnce = true;
     } catch (error) {
       await queryRunner.rollbackTransaction();
