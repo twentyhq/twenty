@@ -32,15 +32,21 @@ RUN npx nx run twenty-server:build
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-server
 
 # === Stage 3: Build frontend from source ===
-# Depends on twenty-server-build to force sequential execution (both builds are memory-heavy)
+# Requires ~10GB Docker memory. To skip, pre-build on host first:
+#   npx nx build twenty-front
+# The COPY below will pick up packages/twenty-front/build/ if it exists.
 FROM common-deps AS twenty-front-build
-COPY --from=twenty-server-build /dev/null /dev/null
+COPY --from=twenty-server-build /app/package.json /tmp/.build-sentinel
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
-RUN NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front
+RUN if [ -d /app/packages/twenty-front/build ]; then \
+      echo "Using pre-built frontend from host"; \
+    else \
+      NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front; \
+    fi
 
 # === Stage 4: s6-overlay ===
 FROM alpine:3.20 AS s6-fetch
