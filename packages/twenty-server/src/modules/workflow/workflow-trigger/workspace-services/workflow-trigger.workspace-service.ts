@@ -340,8 +340,7 @@ export class WorkflowTriggerWorkspaceService {
           break;
         case 'SINGLE_RECORD':
         case 'BULK_RECORDS': {
-          availabilityType =
-            CommandMenuItemAvailabilityType.RECORD_SELECTION;
+          availabilityType = CommandMenuItemAvailabilityType.RECORD_SELECTION;
 
           const { objectIdByNameSingular } =
             await this.workflowCommonWorkspaceService.getFlatEntityMaps(

@@ -97,7 +97,10 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
     ) => {
       const scope = resolveScope(item.availabilityType);
 
-      if (scope === CommandMenuItemScope.RecordSelection && !hasRecordSelection) {
+      if (
+        scope === CommandMenuItemScope.RecordSelection &&
+        !hasRecordSelection
+      ) {
         return null;
       }
 
