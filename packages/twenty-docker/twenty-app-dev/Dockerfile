@@ -76,7 +76,7 @@ COPY --from=twenty-server-build /app /app
 COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
 # s6 service definitions
-COPY packages/twenty-docker/twenty-dev/rootfs/ /
+COPY packages/twenty-docker/twenty-app-dev/rootfs/ /
 
 # Data directories
 RUN mkdir -p /data/postgres /data/redis /app/.local-storage \

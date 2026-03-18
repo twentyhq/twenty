@@ -2,8 +2,8 @@ import chalk from 'chalk';
 import { type ChildProcess, execSync, spawn, spawnSync } from 'node:child_process';
 import { platform } from 'node:os';
 
-const CONTAINER_NAME = 'twenty-dev';
-const IMAGE = 'twentycrm/twenty-dev:latest';
+const CONTAINER_NAME = 'twenty-app-dev';
+const IMAGE = 'twentycrm/twenty-app-dev:latest';
 const HEALTH_URL = 'http://localhost:2020/healthz';
 
 const isDockerAvailable = (): boolean => {
@@ -184,8 +184,8 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
           'docker run -d',
           `--name ${CONTAINER_NAME}`,
           '-p 2020:3000',
-          '-v twenty-dev-data:/data/postgres',
-          '-v twenty-dev-storage:/app/.local-storage',
+          '-v twenty-app-dev-data:/data/postgres',
+          '-v twenty-app-dev-storage:/app/.local-storage',
           IMAGE,
         ].join(' '),
         { stdio: 'inherit' },
@@ -209,7 +209,7 @@ export const setupLocalInstance = async (): Promise<LocalInstanceResult> => {
   if (!healthy) {
     console.log(
       chalk.yellow(
-        'Twenty server did not become healthy in time. Check: docker logs twenty-dev',
+        'Twenty server did not become healthy in time. Check: docker logs twenty-app-dev',
       ),
     );
 

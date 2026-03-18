@@ -2,8 +2,8 @@ import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
 
-const CONTAINER_NAME = 'twenty-dev';
-const IMAGE = 'twentycrm/twenty-dev:latest';
+const CONTAINER_NAME = 'twenty-app-dev';
+const IMAGE = 'twentycrm/twenty-app-dev:latest';
 const HEALTH_URL = 'http://localhost:2020/healthz';
 
 const isContainerRunning = (): boolean => {
@@ -105,8 +105,8 @@ export const registerServerCommands = (program: Command): void => {
             'docker run -d',
             `--name ${CONTAINER_NAME}`,
             `-p ${options.port}:3000`,
-            '-v twenty-dev-data:/data/postgres',
-            '-v twenty-dev-storage:/app/.local-storage',
+            '-v twenty-app-dev-data:/data/postgres',
+            '-v twenty-app-dev-storage:/app/.local-storage',
             IMAGE,
           ].join(' '),
           { stdio: 'inherit' },
@@ -198,7 +198,7 @@ export const registerServerCommands = (program: Command): void => {
       }
 
       try {
-        execSync('docker volume rm twenty-dev-data twenty-dev-storage', {
+        execSync('docker volume rm twenty-app-dev-data twenty-app-dev-storage', {
           stdio: 'ignore',
         });
       } catch {
