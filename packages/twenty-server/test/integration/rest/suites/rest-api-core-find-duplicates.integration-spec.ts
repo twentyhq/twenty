@@ -256,4 +256,119 @@ describe('Core REST API Find Duplicates endpoint', () => {
       },
     }).expect(400);
   });
+
+  it('should retrieve company duplicates by exact name match', async () => {
+    const companyId = '2c78e086-7bf9-4735-bf41-66c7f854d3a1';
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: companyId,
+        name: 'Acme Holdings',
+        domainName: {
+          primaryLinkUrl: 'https://acme-holdings.example',
+        },
+      },
+    }).expect(201);
+
+    const response = await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies/duplicates',
+      body: {
+        data: [
+          {
+            name: 'Acme Holdings',
+            domainName: {
+              primaryLinkUrl: 'https://another-domain.example',
+            },
+          },
+        ],
+      },
+    }).expect(200);
+
+    const [duplicatesInfo] = response.body.data;
+
+    expect(duplicatesInfo.totalCount).toBe(1);
+    expect(duplicatesInfo.companyDuplicates).toHaveLength(1);
+    expect(duplicatesInfo.companyDuplicates[0].id).toBe(companyId);
+    expect(duplicatesInfo.companyDuplicates[0].name).toBe('Acme Holdings');
+  });
+
+  it('should retrieve company duplicates by exact domain match', async () => {
+    const companyId = 'd9e9b3f4-c884-4fef-8a61-4c1ee0c78eb1';
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: companyId,
+        name: 'Domain Match Source',
+        domainName: {
+          primaryLinkUrl: 'https://shared-domain.example',
+        },
+      },
+    }).expect(201);
+
+    const response = await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies/duplicates',
+      body: {
+        data: [
+          {
+            name: 'Different Name',
+            domainName: {
+              primaryLinkUrl: 'https://shared-domain.example',
+            },
+          },
+        ],
+      },
+    }).expect(200);
+
+    const [duplicatesInfo] = response.body.data;
+
+    expect(duplicatesInfo.totalCount).toBe(1);
+    expect(duplicatesInfo.companyDuplicates).toHaveLength(1);
+    expect(duplicatesInfo.companyDuplicates[0].id).toBe(companyId);
+    expect(duplicatesInfo.companyDuplicates[0].domainName.primaryLinkUrl).toBe(
+      'https://shared-domain.example',
+    );
+  });
+
+  it('should return a company duplicate only once when both exact name and domain match', async () => {
+    const companyId = '534a17fd-b3e0-454d-a04f-31cabf336a79';
+
+    await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies',
+      body: {
+        id: companyId,
+        name: 'Dual Match Company',
+        domainName: {
+          primaryLinkUrl: 'https://dual-match.example',
+        },
+      },
+    }).expect(201);
+
+    const response = await makeRestAPIRequest({
+      method: 'post',
+      path: '/companies/duplicates',
+      body: {
+        data: [
+          {
+            name: 'Dual Match Company',
+            domainName: {
+              primaryLinkUrl: 'https://dual-match.example',
+            },
+          },
+        ],
+      },
+    }).expect(200);
+
+    const [duplicatesInfo] = response.body.data;
+
+    expect(duplicatesInfo.totalCount).toBe(1);
+    expect(duplicatesInfo.companyDuplicates).toHaveLength(1);
+    expect(duplicatesInfo.companyDuplicates[0].id).toBe(companyId);
+  });
 });

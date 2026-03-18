@@ -146,4 +146,96 @@ describe('buildDuplicateConditions', () => {
       ],
     });
   });
+
+  it('should build an exact company name condition at the minimum string length boundary', () => {
+    const name = 'A'.repeat(settings.minLengthOfStringForDuplicateCheck);
+    const duplicateConditons = buildDuplicateConditions(
+      {
+        ...mockCompanyObjectMetadataInfo.flatObjectMetadata,
+        duplicateCriteria: [['name']],
+      },
+      mockCompanyObjectMetadataInfo.flatObjectMetadataMaps,
+      mockCompanyObjectMetadataInfo.flatFieldMetadataMaps,
+      [
+        {
+          name,
+        },
+      ],
+    );
+
+    expect(duplicateConditons).toEqual({
+      or: [
+        {
+          name: {
+            eq: name,
+          },
+        },
+      ],
+    });
+  });
+
+  it('should build separate exact company name and domain conditions when both criteria are present', () => {
+    const duplicateConditons = buildDuplicateConditions(
+      {
+        ...mockCompanyObjectMetadataInfo.flatObjectMetadata,
+        duplicateCriteria: [['name'], ['domainNamePrimaryLinkUrl']],
+      },
+      mockCompanyObjectMetadataInfo.flatObjectMetadataMaps,
+      mockCompanyObjectMetadataInfo.flatFieldMetadataMaps,
+      [
+        {
+          name: 'Acme Holdings',
+          domainName: {
+            primaryLinkUrl: 'https://acme.example',
+          },
+        },
+      ],
+    );
+
+    expect(duplicateConditons).toEqual({
+      or: [
+        {
+          name: {
+            eq: 'Acme Holdings',
+          },
+        },
+        {
+          domainName: {
+            primaryLinkUrl: {
+              eq: 'https://acme.example',
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  it('should ignore empty company domain values while still using an exact name condition', () => {
+    const duplicateConditons = buildDuplicateConditions(
+      {
+        ...mockCompanyObjectMetadataInfo.flatObjectMetadata,
+        duplicateCriteria: [['name'], ['domainNamePrimaryLinkUrl']],
+      },
+      mockCompanyObjectMetadataInfo.flatObjectMetadataMaps,
+      mockCompanyObjectMetadataInfo.flatFieldMetadataMaps,
+      [
+        {
+          name: 'Acme Holdings',
+          domainName: {
+            primaryLinkUrl: '',
+          },
+        },
+      ],
+    );
+
+    expect(duplicateConditons).toEqual({
+      or: [
+        {
+          name: {
+            eq: 'Acme Holdings',
+          },
+        },
+      ],
+    });
+  });
 });
