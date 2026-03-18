@@ -21,7 +21,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   navigateToPreviousRecord: {
     universalIdentifier: 'ec10f871-415b-420b-8150-7e09f6f04833',
-    label: 'Navigate to previous ${capitalize(objectMetadataItem.labelSingular)}',
+    label:
+      'Navigate to previous ${capitalize(objectMetadataItem.labelSingular)}',
     shortLabel: null,
     icon: 'IconChevronUp',
     position: 1,
@@ -111,7 +112,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   destroySingleRecord: {
     universalIdentifier: '44a78417-c394-4bc8-961f-98b503030ddb',
-    label: 'Permanently destroy ${capitalize(objectMetadataItem.labelSingular)}',
+    label:
+      'Permanently destroy ${capitalize(objectMetadataItem.labelSingular)}',
     shortLabel: 'Destroy',
     icon: 'IconTrashX',
     position: 7,
