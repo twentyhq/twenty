@@ -33,6 +33,25 @@ export function generateFrontConfig(): void {
       configString,
     );
 
+    // If APP_LABEL is set (e.g. "UAT"), update the page title and swap the
+    // favicon for an emoji so the tab is immediately distinguishable from prod.
+    const appLabel = process.env.APP_LABEL;
+
+    if (appLabel) {
+      indexContent = indexContent.replace(
+        '<title>Twenty</title>',
+        `<title>Twenty [${appLabel}]</title>`,
+      );
+
+      // Emoji favicon via inline SVG data URI — no extra image file required.
+      const emojiFavicon = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🟡</text></svg>`;
+
+      indexContent = indexContent.replace(
+        /<link\s+rel="icon"[^>]*>/,
+        `<link rel="icon" type="image/svg+xml" href="${emojiFavicon}" data-rh="true" />`,
+      );
+    }
+
     fs.writeFileSync(indexPath, indexContent, 'utf8');
   } catch {
     // oxlint-disable-next-line no-console
