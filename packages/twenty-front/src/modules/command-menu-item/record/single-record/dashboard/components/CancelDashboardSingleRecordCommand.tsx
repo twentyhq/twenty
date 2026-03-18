@@ -15,8 +15,14 @@ export const CancelDashboardSingleRecordCommand = () => {
 
   const pageLayoutId = recordStore?.pageLayoutId;
 
+  if (!pageLayoutId) {
+    throw new Error(
+      'CancelDashboardSingleRecordCommand requires a valid pageLayoutId from the record store.',
+    );
+  }
+
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
-    pageLayoutId: pageLayoutId ?? '',
+    pageLayoutId,
     layoutType: PageLayoutType.DASHBOARD,
     targetRecordIdentifier: { id: recordId, targetObjectNameSingular: '' },
   });
