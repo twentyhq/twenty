@@ -15,17 +15,17 @@ import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/compo
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import {
-  type AiProviderItem,
-  type RawAiProviderConfig,
+  type GetAiProvidersResult,
+  parseProviderItems,
 } from '@/settings/admin-panel/ai/types/AiProviderItem';
 import { type AdminAiModelItem } from '@/settings/admin-panel/ai/types/AdminAiModelItem';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/provider-utils';
+import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/providerUtils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
 import { SetAdminDefaultAiModelDocument } from '~/generated-metadata/graphql';
-import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
+import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
 export const SettingsAdminAI = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -44,24 +44,17 @@ export const SettingsAdminAI = () => {
   const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED);
   const [setDefaultModel] = useMutation(SetAdminDefaultAiModelDocument);
 
-  const { data: providersData, loading: isLoadingProviders } = useQuery<{
-    getAiProviders: Record<string, unknown>;
-  }>(GET_AI_PROVIDERS, { skip: isBillingEnabled });
+  const { data: providersData, loading: isLoadingProviders } =
+    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS, {
+      skip: isBillingEnabled,
+    });
 
   const models = data?.getAdminAiModels?.models ?? [];
 
-  const providerItems: AiProviderItem[] = useMemo(() => {
-    const rawProviders = (providersData?.getAiProviders ?? {}) as Record<
-      string,
-      RawAiProviderConfig
-    >;
-
-    return Object.entries(rawProviders).map(([name, config]) => ({
-      id: name,
-      name,
-      ...config,
-    }));
-  }, [providersData]);
+  const providerItems = useMemo(
+    () => parseProviderItems(providersData?.getAiProviders ?? {}),
+    [providersData],
+  );
 
   const catalogProviders = useMemo(
     () =>
@@ -101,8 +94,7 @@ export const SettingsAdminAI = () => {
   const defaultFastModelId = data?.getAdminAiModels?.defaultFastModelId;
 
   const enabledModels = models.filter(
-    (model) =>
-      model.isAvailable && model.isAdminEnabled && model.deprecated !== true,
+    (model) => model.isAvailable && model.isAdminEnabled && !model.deprecated,
   );
 
   const availableModelOptions = enabledModels.map((model) => ({

@@ -7,6 +7,7 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ModelsDevEnrichmentService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-enrichment.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
@@ -16,15 +17,16 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import {
   type AIModelConfig,
-  type AiModelPreferences,
   AiProvider,
   type AiProviderConfig,
   type AiProviderModelConfig,
   type AiProvidersConfig,
-  type DataResidency,
+  DEFAULT_CONTEXT_WINDOW_TOKENS,
   DEFAULT_FAST_MODEL,
+  DEFAULT_MAX_OUTPUT_TOKENS,
   DEFAULT_SMART_MODEL,
   inferModelFamily,
+  isDefaultModelSentinel,
 } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import {
@@ -56,6 +58,7 @@ export class AiModelRegistryService {
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly providerDiscoveryService: ProviderDiscoveryService,
     private readonly modelsDevEnrichmentService: ModelsDevEnrichmentService,
+    private readonly preferencesService: AiModelPreferencesService,
   ) {
     this.buildModelRegistry();
   }
@@ -118,12 +121,7 @@ export class AiModelRegistryService {
         // Always populate config caches so admin can see all models
         this.modelConfigCache.set(
           compositeId,
-          this.toAIModelConfig(
-            compositeId,
-            provider,
-            modelDef,
-            config.dataResidency,
-          ),
+          this.toAIModelConfig(compositeId, config, modelDef),
         );
 
         this.providerModelDefCache.set(compositeId, {
@@ -150,7 +148,7 @@ export class AiModelRegistryService {
     config: AiProvidersConfig[string],
   ): AiProviderModelConfig[] {
     const models = [...(config.models ?? [])];
-    const existingRawIds = new Set(models.map((m) => m.rawModelId));
+    const existingRawIds = new Set(models.map((model) => model.rawModelId));
 
     for (const modelName of config.modelNames ?? []) {
       if (!existingRawIds.has(modelName)) {
@@ -167,26 +165,27 @@ export class AiModelRegistryService {
 
   private toAIModelConfig(
     compositeId: string,
-    provider: AiProvider,
+    providerConfig: AiProviderConfig,
     modelDef: AiProviderModelConfig,
-    providerDataResidency?: DataResidency,
   ): AIModelConfig {
     return {
       modelId: compositeId,
       label: modelDef.label,
-      provider,
+      provider: providerConfig.type,
       description: modelDef.description ?? compositeId,
       modelFamily:
-        modelDef.modelFamily ?? inferModelFamily(provider, modelDef.rawModelId),
-      dataResidency: providerDataResidency,
+        modelDef.modelFamily ??
+        inferModelFamily(providerConfig.type, modelDef.rawModelId),
+      dataResidency: providerConfig.dataResidency,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
       cachedInputCostPerMillionTokens: modelDef.cachedInputCostPerMillionTokens,
       cacheCreationCostPerMillionTokens:
         modelDef.cacheCreationCostPerMillionTokens,
       longContextCost: modelDef.longContextCost,
-      contextWindowTokens: modelDef.contextWindowTokens ?? 128000,
-      maxOutputTokens: modelDef.maxOutputTokens ?? 4096,
+      contextWindowTokens:
+        modelDef.contextWindowTokens ?? DEFAULT_CONTEXT_WINDOW_TOKENS,
+      maxOutputTokens: modelDef.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
       supportedFileTypes: modelDef.supportedFileTypes,
       doesSupportThinking: modelDef.doesSupportThinking,
       nativeCapabilities: modelDef.nativeCapabilities,
@@ -235,7 +234,7 @@ export class AiModelRegistryService {
       const provider = config.type;
 
       const existingModelIds = new Set(
-        (config.models ?? []).map((m) => m.rawModelId),
+        (config.models ?? []).map((model) => model.rawModelId),
       );
 
       const newModelDefs: AiProviderModelConfig[] = [];
@@ -328,14 +327,8 @@ export class AiModelRegistryService {
     return this.modelConfigCache.get(modelId);
   }
 
-  private getPreferences(): AiModelPreferences {
-    return this.twentyConfigService.get('AI_MODEL_PREFERENCES');
-  }
-
   getRecommendedModelIds(): Set<string> {
-    const prefs = this.getPreferences();
-
-    return new Set(prefs.recommendedModels ?? []);
+    return this.preferencesService.getRecommendedModelIds();
   }
 
   private getFirstAvailableModelFromList(
@@ -361,7 +354,7 @@ export class AiModelRegistryService {
   }
 
   private getDefaultModelForRole(role: 'fast' | 'smart'): RegisteredAIModel {
-    const prefs = this.getPreferences();
+    const prefs = this.preferencesService.getPreferences();
     const preferenceKey =
       role === 'fast' ? 'defaultFastModels' : 'defaultSmartModels';
 
@@ -382,7 +375,7 @@ export class AiModelRegistryService {
   }
 
   getEffectiveModelConfig(modelId: string): AIModelConfig {
-    if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
+    if (isDefaultModelSentinel(modelId)) {
       const defaultModel =
         modelId === DEFAULT_FAST_MODEL
           ? this.getDefaultSpeedModel()
@@ -426,24 +419,21 @@ export class AiModelRegistryService {
       provider: registeredModel.provider,
       inputCostPerMillionTokens: 0,
       outputCostPerMillionTokens: 0,
-      contextWindowTokens: 128000,
-      maxOutputTokens: 4096,
+      contextWindowTokens: DEFAULT_CONTEXT_WINDOW_TOKENS,
+      maxOutputTokens: DEFAULT_MAX_OUTPUT_TOKENS,
     };
   }
 
-  // All models are allowed unless explicitly disabled in AI_MODEL_PREFERENCES
   isModelAdminAllowed(modelId: string): boolean {
-    if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
+    if (isDefaultModelSentinel(modelId)) {
       return true;
     }
 
-    const cached = this.providerModelDefCache.get(modelId);
-
-    if (!cached) {
+    if (!this.providerModelDefCache.has(modelId)) {
       return false;
     }
 
-    const prefs = this.getPreferences();
+    const prefs = this.preferencesService.getPreferences();
     const disabledModels = prefs.disabledModels ?? [];
 
     return !disabledModels.includes(modelId);
@@ -503,76 +493,30 @@ export class AiModelRegistryService {
     });
   }
 
-  // Writes to AI_MODEL_PREFERENCES.disabledModels
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {
-    const cached = this.providerModelDefCache.get(modelId);
-
-    if (!cached) {
-      throw new AgentException(
-        `Cannot toggle model "${modelId}": not found in registry`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    const prefs = { ...this.getPreferences() };
-    const currentDisabled = prefs.disabledModels ?? [];
-
-    if (enabled) {
-      prefs.disabledModels = currentDisabled.filter((id) => id !== modelId);
-    } else {
-      if (!currentDisabled.includes(modelId)) {
-        prefs.disabledModels = [...currentDisabled, modelId];
-      }
-    }
-
-    await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
+    await this.preferencesService.setModelAdminEnabled(
+      modelId,
+      enabled,
+      this.providerModelDefCache,
+    );
   }
 
-  // Writes to AI_MODEL_PREFERENCES.recommendedModels
   async setModelRecommended(
     modelId: string,
     recommended: boolean,
   ): Promise<void> {
-    const cached = this.providerModelDefCache.get(modelId);
-
-    if (!cached) {
-      throw new AgentException(
-        `Cannot update model "${modelId}": not found in registry`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    const prefs = { ...this.getPreferences() };
-    const currentRecommended = prefs.recommendedModels ?? [];
-
-    if (recommended) {
-      if (!currentRecommended.includes(modelId)) {
-        prefs.recommendedModels = [...currentRecommended, modelId];
-      }
-    } else {
-      prefs.recommendedModels = currentRecommended.filter(
-        (id) => id !== modelId,
-      );
-    }
-
-    await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
+    await this.preferencesService.setModelRecommended(
+      modelId,
+      recommended,
+      this.providerModelDefCache,
+    );
   }
 
-  // Writes to AI_MODEL_PREFERENCES.defaultFastModels or defaultSmartModels
   async setDefaultModel(
     role: 'smart' | 'fast',
     modelId: string,
   ): Promise<void> {
-    const prefs = { ...this.getPreferences() };
-    const key = role === 'fast' ? 'defaultFastModels' : 'defaultSmartModels';
-
-    // Put the selected model first, keep the rest as fallbacks
-    const current = prefs[key] ?? [];
-    const filtered = current.filter((id) => id !== modelId);
-
-    prefs[key] = [modelId, ...filtered];
-
-    await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
+    await this.preferencesService.setDefaultModel(role, modelId);
   }
 
   getResolvedProvidersForAdmin(): AiProvidersConfig {
@@ -587,7 +531,9 @@ export class AiModelRegistryService {
     this.buildModelRegistry();
   }
 
-  async resolveModelForAgent(agent: { modelId: string } | null) {
+  async resolveModelForAgent(
+    agent: { modelId: string } | null,
+  ): Promise<RegisteredAIModel> {
     const aiModel = this.getEffectiveModelConfig(
       agent?.modelId ?? DEFAULT_SMART_MODEL,
     );

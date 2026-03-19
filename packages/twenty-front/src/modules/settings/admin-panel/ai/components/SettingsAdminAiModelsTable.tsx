@@ -14,8 +14,8 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
-import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
+import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
+import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
 const GRID_TEMPLATE_COLUMNS = '1fr 120px 40px';
 
@@ -65,9 +65,7 @@ export const SettingsAdminAiModelsTable = ({
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null);
   const { theme } = useContext(ThemeContext);
 
-  const hoveredModel = models.find(
-    (model) => model.modelId === hoveredModelId,
-  );
+  const hoveredModel = models.find((model) => model.modelId === hoveredModelId);
 
   return (
     <>
@@ -84,12 +82,11 @@ export const SettingsAdminAiModelsTable = ({
         <TableBody>
           {models.map((model) => {
             const ModelIcon = getModelIcon(model.modelFamily);
-            const providerLabel = getModelProviderLabel(model.modelFamily);
+            const familyLabel = getModelFamilyLabel(model.modelFamily);
             const safeId = sanitizeIdForSelector(model.modelId);
             const isChecked = model[checkedField] === true;
             const isDisabled =
-              showDisabledState &&
-              (!model.isAvailable || model.deprecated === true);
+              showDisabledState && (!model.isAvailable || model.deprecated);
 
             return (
               <div
@@ -124,7 +121,7 @@ export const SettingsAdminAiModelsTable = ({
                         }
                       />
                       <StyledModelLabel>{model.label}</StyledModelLabel>
-                      {showDisabledState && model.deprecated === true && (
+                      {showDisabledState && model.deprecated && (
                         <StyledDeprecatedSuffix>
                           · Deprecated
                         </StyledDeprecatedSuffix>
@@ -135,7 +132,7 @@ export const SettingsAdminAiModelsTable = ({
                     align="right"
                     color={themeCssVariables.font.color.tertiary}
                   >
-                    {providerLabel}
+                    {familyLabel}
                   </TableCell>
                   <TableCell align="right">
                     <Checkbox

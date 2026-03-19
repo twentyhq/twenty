@@ -6,14 +6,19 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+
+import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
-import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/utils/data-residency-utils';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/provider-utils';
+import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/utils/dataResidencyUtils';
+import {
+  getProviderTypeLabel,
+  PROVIDER_TYPE_LABELS,
+} from '@/settings/admin-panel/ai/utils/providerUtils';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -21,19 +26,9 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
-const PROVIDER_TYPE_OPTIONS = [
-  { value: 'openai', label: getProviderTypeLabel('openai') },
-  { value: 'anthropic', label: getProviderTypeLabel('anthropic') },
-  { value: 'google', label: getProviderTypeLabel('google') },
-  { value: 'mistral', label: getProviderTypeLabel('mistral') },
-  { value: 'xai', label: getProviderTypeLabel('xai') },
-  { value: 'groq', label: getProviderTypeLabel('groq') },
-  { value: 'bedrock', label: getProviderTypeLabel('bedrock') },
-  {
-    value: 'openai-compatible',
-    label: getProviderTypeLabel('openai-compatible'),
-  },
-];
+const PROVIDER_TYPE_OPTIONS = Object.entries(PROVIDER_TYPE_LABELS).map(
+  ([value, label]) => ({ value, label }),
+);
 
 type FormValues = {
   type: string;
@@ -156,9 +151,7 @@ export const SettingsAdminNewAiProvider = () => {
       enqueueSuccessSnackBar({
         message: t`Provider "${providerName}" added`,
       });
-      navigate(
-        getSettingsPath(SettingsPath.AdminPanel, undefined, undefined, 'ai'),
-      );
+      navigate(AI_ADMIN_PATH);
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to add provider`,
@@ -181,16 +174,7 @@ export const SettingsAdminNewAiProvider = () => {
         ]}
         actionButton={
           <SaveAndCancelButtons
-            onCancel={() =>
-              navigate(
-                getSettingsPath(
-                  SettingsPath.AdminPanel,
-                  undefined,
-                  undefined,
-                  'ai',
-                ),
-              )
-            }
+            onCancel={() => navigate(AI_ADMIN_PATH)}
             isSaveDisabled={isSubmitting}
             onSave={handleSave}
           />

@@ -35,6 +35,6 @@ export const PROVIDER_ICON_CONFIG: Record<string, IconComponent> = {
   groq: IconBrandGroq,
   mistral: IconBrandMistral,
   xai: IconBrandXai,
-  bedrock: IconBrandAnthropic,
+  bedrock: IconRobot,
   'openai-compatible': IconProviderOpenai,
 };

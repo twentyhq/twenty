@@ -166,7 +166,7 @@ export class AdminPanelResolver {
           provider: modelConfig.provider,
           isAvailable,
           isAdminEnabled,
-          deprecated: modelConfig.deprecated,
+          deprecated: modelConfig.deprecated ?? false,
           isRecommended,
           contextWindowTokens: modelConfig.contextWindowTokens,
           maxOutputTokens: modelConfig.maxOutputTokens,

@@ -5,8 +5,11 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+
+import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import {
   H2Title,
+  type IconComponent,
   IconFlag,
   IconKey,
   IconPlug,
@@ -26,9 +29,12 @@ import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type AdminAiModelItem } from '@/settings/admin-panel/ai/types/AdminAiModelItem';
-import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/AiProviderItem';
-import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/data-residency-utils';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/provider-utils';
+import {
+  type GetAiProvidersResult,
+  type RawAiProviderConfig,
+} from '@/settings/admin-panel/ai/types/AiProviderItem';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/dataResidencyUtils';
+import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/providerUtils';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -61,9 +67,8 @@ export const SettingsAdminAiProviderDetail = () => {
   const { openModal } = useModal();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: providersData } = useQuery<{
-    getAiProviders: Record<string, unknown>;
-  }>(GET_AI_PROVIDERS);
+  const { data: providersData } =
+    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
 
   const { data: modelsData } = useQuery<{
     getAdminAiModels: {
@@ -93,9 +98,7 @@ export const SettingsAdminAiProviderDetail = () => {
       enqueueSuccessSnackBar({
         message: t`Provider "${providerName}" removed`,
       });
-      navigate(
-        getSettingsPath(SettingsPath.AdminPanel, undefined, undefined, 'ai'),
-      );
+      navigate(AI_ADMIN_PATH);
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to remove provider`,
@@ -188,7 +191,11 @@ export const SettingsAdminAiProviderDetail = () => {
       return [];
     }
 
-    const items = [
+    const items: Array<{
+      Icon: IconComponent;
+      label: string;
+      value: string | React.ReactNode;
+    }> = [
       { Icon: IconTag, label: t`Name`, value: provider.name },
       {
         Icon: IconPlug,
@@ -279,12 +286,7 @@ export const SettingsAdminAiProviderDetail = () => {
         },
         {
           children: t`AI`,
-          href: getSettingsPath(
-            SettingsPath.AdminPanel,
-            undefined,
-            undefined,
-            'ai',
-          ),
+          href: AI_ADMIN_PATH,
         },
         {
           children: providerName ?? '',

@@ -1218,6 +1218,60 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
+    description: 'API key for OpenAI models (GPT, o-series)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  OPENAI_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Anthropic models (Claude)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ANTHROPIC_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Google AI models (Gemini)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  GOOGLE_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for xAI models (Grok)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  XAI_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Groq inference',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  GROQ_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Mistral models',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MISTRAL_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
     description:
       'Additional or override AI providers, deep-merged on top of the built-in catalog (ai-providers.json). Use for custom endpoints, extra regions, or credentials set via admin panel.',
     type: ConfigVariableType.JSON,

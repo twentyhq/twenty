@@ -5,7 +5,7 @@ import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
+import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
 
 export const useAiModelOptions = (
   includeDeprecated = false,
@@ -25,7 +25,7 @@ export const useAiModelOptions = (
         model.modelId === DEFAULT_FAST_MODEL ||
         model.modelId === DEFAULT_SMART_MODEL
           ? model.label
-          : `${model.label} (${getModelProviderLabel(model.modelFamily) || model.provider})`,
+          : `${model.label} (${getModelFamilyLabel(model.modelFamily) || model.provider})`,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };
@@ -54,5 +54,5 @@ export const useAiModelLabel = (
     return model.label;
   }
 
-  return `${model.label} (${getModelProviderLabel(model.modelFamily) || model.provider})`;
+  return `${model.label} (${getModelFamilyLabel(model.modelFamily) || model.provider})`;
 };

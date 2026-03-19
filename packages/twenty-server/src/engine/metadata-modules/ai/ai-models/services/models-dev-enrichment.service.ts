@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type DiscoveredModel } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
+import {
+  DEFAULT_CONTEXT_WINDOW_TOKENS,
+  DEFAULT_MAX_OUTPUT_TOKENS,
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 
 type ModelsDevModel = {
   id: string;
@@ -60,8 +64,10 @@ export class ModelsDevEnrichmentService {
         name: modelsDevModel.name ?? model.name,
         inputCostPerMillionTokens: modelsDevModel.cost?.input ?? 0,
         outputCostPerMillionTokens: modelsDevModel.cost?.output ?? 0,
-        contextWindowTokens: modelsDevModel.limit?.context ?? 128000,
-        maxOutputTokens: modelsDevModel.limit?.output ?? 4096,
+        contextWindowTokens:
+          modelsDevModel.limit?.context ?? DEFAULT_CONTEXT_WINDOW_TOKENS,
+        maxOutputTokens:
+          modelsDevModel.limit?.output ?? DEFAULT_MAX_OUTPUT_TOKENS,
         doesSupportThinking: modelsDevModel.reasoning ?? false,
         supportsToolCall: modelsDevModel.tool_call ?? false,
       };
@@ -106,8 +112,8 @@ export class ModelsDevEnrichmentService {
       ...model,
       inputCostPerMillionTokens: 0,
       outputCostPerMillionTokens: 0,
-      contextWindowTokens: 128000,
-      maxOutputTokens: 4096,
+      contextWindowTokens: DEFAULT_CONTEXT_WINDOW_TOKENS,
+      maxOutputTokens: DEFAULT_MAX_OUTPUT_TOKENS,
       doesSupportThinking: false,
       supportsToolCall: false,
     };

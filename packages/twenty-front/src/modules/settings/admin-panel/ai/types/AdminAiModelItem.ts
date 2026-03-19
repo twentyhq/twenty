@@ -5,8 +5,8 @@ export type AdminAiModelItem = {
   provider: string;
   isAvailable: boolean;
   isAdminEnabled: boolean;
-  deprecated?: boolean | null;
-  isRecommended?: boolean | null;
+  deprecated: boolean;
+  isRecommended: boolean;
   contextWindowTokens?: number | null;
   maxOutputTokens?: number | null;
   inputCostPerMillionTokens?: number | null;

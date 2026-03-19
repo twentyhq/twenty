@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AiProvider,
@@ -8,13 +9,14 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 
-// Maps provider types to their conventional env var names.
-// These match the defaults used by the AI SDKs themselves.
-const PROVIDER_ENV_VAR_MAP: Partial<
-  Record<
-    AiProvider,
-    { apiKey?: string; accessKeyId?: string; secretAccessKey?: string }
-  >
+type CredentialMapping = {
+  apiKey?: keyof ConfigVariables;
+  accessKeyId?: keyof ConfigVariables;
+  secretAccessKey?: keyof ConfigVariables;
+};
+
+const PROVIDER_CREDENTIAL_MAP: Partial<
+  Record<AiProvider, CredentialMapping>
 > = {
   [AiProvider.OPENAI]: { apiKey: 'OPENAI_API_KEY' },
   [AiProvider.ANTHROPIC]: { apiKey: 'ANTHROPIC_API_KEY' },
@@ -22,10 +24,6 @@ const PROVIDER_ENV_VAR_MAP: Partial<
   [AiProvider.XAI]: { apiKey: 'XAI_API_KEY' },
   [AiProvider.GROQ]: { apiKey: 'GROQ_API_KEY' },
   [AiProvider.MISTRAL]: { apiKey: 'MISTRAL_API_KEY' },
-  [AiProvider.BEDROCK]: {
-    accessKeyId: 'AWS_ACCESS_KEY_ID',
-    secretAccessKey: 'AWS_SECRET_ACCESS_KEY',
-  },
 };
 
 @Injectable()
@@ -41,13 +39,13 @@ export class ProviderConfigService {
   // Resolves the final provider config by layering:
   // 1. Built-in catalog (ai-providers.json), suffixed with -standard
   // 2. Custom providers (AI_CUSTOM_PROVIDERS from env/DB)
-  // 3. Env var credential injection (OPENAI_API_KEY, etc.)
+  // 3. Credential injection from registered config variables
   getResolvedProviders(): AiProvidersConfig {
     const rawCatalog = loadDefaultAiProviders();
     const catalog = this.suffixCatalogKeys(rawCatalog);
     const custom = this.twentyConfigService.get('AI_CUSTOM_PROVIDERS');
 
-    return this.injectEnvCredentials({ ...catalog, ...custom });
+    return this.injectCredentials({ ...catalog, ...custom });
   }
 
   private suffixCatalogKeys(catalog: AiProvidersConfig): AiProvidersConfig {
@@ -60,7 +58,7 @@ export class ProviderConfigService {
     return result;
   }
 
-  private injectEnvCredentials(
+  private injectCredentials(
     providers: AiProvidersConfig,
   ): AiProvidersConfig {
     const result: AiProvidersConfig = {};
@@ -75,35 +73,21 @@ export class ProviderConfigService {
   private injectProviderCredentials(
     config: AiProviderConfig,
   ): AiProviderConfig {
-    const envVars = PROVIDER_ENV_VAR_MAP[config.type];
+    const mapping = PROVIDER_CREDENTIAL_MAP[config.type];
 
-    if (!envVars) {
+    if (!mapping) {
       return config;
     }
 
     const updates: Partial<AiProviderConfig> = {};
 
-    if (envVars.apiKey && !config.apiKey) {
-      const envValue = process.env[envVars.apiKey];
+    if (mapping.apiKey && !config.apiKey) {
+      const value = this.twentyConfigService.get(mapping.apiKey) as
+        | string
+        | undefined;
 
-      if (envValue) {
-        updates.apiKey = envValue;
-      }
-    }
-
-    if (envVars.accessKeyId && !config.accessKeyId) {
-      const envValue = process.env[envVars.accessKeyId];
-
-      if (envValue) {
-        updates.accessKeyId = envValue;
-      }
-    }
-
-    if (envVars.secretAccessKey && !config.secretAccessKey) {
-      const envValue = process.env[envVars.secretAccessKey];
-
-      if (envValue) {
-        updates.secretAccessKey = envValue;
+      if (value) {
+        updates.apiKey = value;
       }
     }
 

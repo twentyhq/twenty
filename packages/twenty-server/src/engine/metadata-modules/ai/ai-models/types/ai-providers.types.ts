@@ -22,6 +22,12 @@ export enum ModelFamily {
 export const DEFAULT_FAST_MODEL = 'default-fast-model' as const;
 export const DEFAULT_SMART_MODEL = 'default-smart-model' as const;
 
+export const DEFAULT_CONTEXT_WINDOW_TOKENS = 128_000;
+export const DEFAULT_MAX_OUTPUT_TOKENS = 4_096;
+
+export const isDefaultModelSentinel = (modelId: string): boolean =>
+  modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL;
+
 // Composite format: `provider/rawModelId` or a sentinel like DEFAULT_FAST_MODEL
 export type ModelId =
   | typeof DEFAULT_FAST_MODEL
@@ -98,29 +104,25 @@ export type AiModelPreferences = {
   defaultSmartModels?: string[];
 };
 
-// Runtime format: hydrated model config with computed fields.
-// Extends AiProviderModelConfig (minus rawModelId/source/isRecommended) with required computed fields.
-export type AIModelConfig = Omit<
-  AiProviderModelConfig,
-  | 'rawModelId'
-  | 'source'
-  | 'isRecommended'
-  | 'description'
-  | 'modelFamily'
-  | 'inputCostPerMillionTokens'
-  | 'outputCostPerMillionTokens'
-  | 'contextWindowTokens'
-  | 'maxOutputTokens'
-> & {
+// Runtime format: hydrated model config with computed fields
+export type AIModelConfig = {
   modelId: string;
   provider: AiProvider;
+  label: string;
   description: string;
-  modelFamily: ModelFamily;
+  modelFamily?: ModelFamily;
   dataResidency?: DataResidency;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
   contextWindowTokens: number;
   maxOutputTokens: number;
+  cachedInputCostPerMillionTokens?: number;
+  cacheCreationCostPerMillionTokens?: number;
+  longContextCost?: LongContextCost;
+  supportedFileTypes?: SupportedFileType[];
+  doesSupportThinking?: boolean;
+  nativeCapabilities?: { webSearch?: boolean; twitterSearch?: boolean };
+  deprecated?: boolean;
 };
 
 const PROVIDER_TO_MODEL_FAMILY: Partial<Record<AiProvider, ModelFamily>> = {
@@ -144,7 +146,7 @@ const MODEL_ID_FAMILY_PATTERNS: [RegExp, ModelFamily][] = [
 export const inferModelFamily = (
   provider: AiProvider,
   rawModelId?: string,
-): ModelFamily => {
+): ModelFamily | undefined => {
   const fromProvider = PROVIDER_TO_MODEL_FAMILY[provider];
 
   if (fromProvider) {
@@ -159,5 +161,5 @@ export const inferModelFamily = (
     }
   }
 
-  return ModelFamily.OPENAI;
+  return undefined;
 };

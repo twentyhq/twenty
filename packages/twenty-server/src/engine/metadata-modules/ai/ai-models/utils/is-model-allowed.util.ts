@@ -1,7 +1,4 @@
-import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { isDefaultModelSentinel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 
 export type WorkspaceModelAvailabilitySettings = {
   useRecommendedModels: boolean;
@@ -13,7 +10,7 @@ export const isModelAllowedByWorkspace = (
   workspace: WorkspaceModelAvailabilitySettings,
   recommendedModelIds?: Set<string>,
 ): boolean => {
-  if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
+  if (isDefaultModelSentinel(modelId)) {
     return true;
   }
 

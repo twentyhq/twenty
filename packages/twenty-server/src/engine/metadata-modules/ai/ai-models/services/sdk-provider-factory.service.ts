@@ -49,39 +49,41 @@ export class SdkProviderFactoryService {
     return this.providerInstances.get(providerName);
   }
 
+  getRawProvider<T>(
+    providerName: string,
+    ...allowedTypes: AiProvider[]
+  ): T | undefined {
+    const instance = this.providerInstances.get(providerName);
+
+    if (!instance || !allowedTypes.includes(instance.providerType)) {
+      return undefined;
+    }
+
+    return instance.rawProvider as T;
+  }
+
   getRawBedrockProvider(
     providerName: string,
   ): AmazonBedrockProvider | undefined {
-    const instance = this.providerInstances.get(providerName);
-
-    if (instance?.providerType !== AiProvider.BEDROCK) {
-      return undefined;
-    }
-
-    return instance.rawProvider as AmazonBedrockProvider;
+    return this.getRawProvider<AmazonBedrockProvider>(
+      providerName,
+      AiProvider.BEDROCK,
+    );
   }
 
   getRawAnthropicProvider(providerName: string): AnthropicProvider | undefined {
-    const instance = this.providerInstances.get(providerName);
-
-    if (instance?.providerType !== AiProvider.ANTHROPIC) {
-      return undefined;
-    }
-
-    return instance.rawProvider as AnthropicProvider;
+    return this.getRawProvider<AnthropicProvider>(
+      providerName,
+      AiProvider.ANTHROPIC,
+    );
   }
 
   getRawOpenAIProvider(providerName: string): OpenAIProvider | undefined {
-    const instance = this.providerInstances.get(providerName);
-
-    if (
-      instance?.providerType !== AiProvider.OPENAI &&
-      instance?.providerType !== AiProvider.OPENAI_COMPATIBLE
-    ) {
-      return undefined;
-    }
-
-    return instance.rawProvider as OpenAIProvider;
+    return this.getRawProvider<OpenAIProvider>(
+      providerName,
+      AiProvider.OPENAI,
+      AiProvider.OPENAI_COMPATIBLE,
+    );
   }
 
   clearCache(): void {
@@ -93,19 +95,19 @@ export class SdkProviderFactoryService {
   ): AiSdkProviderInstance {
     switch (config.type) {
       case AiProvider.OPENAI:
-        return this.buildOpenAIProvider(config);
+        return this.buildStandardProvider(config, createOpenAI);
       case AiProvider.ANTHROPIC:
-        return this.buildAnthropicProvider(config);
+        return this.buildStandardProvider(config, createAnthropic);
+      case AiProvider.GOOGLE:
+        return this.buildStandardProvider(config, createGoogleGenerativeAI);
+      case AiProvider.MISTRAL:
+        return this.buildStandardProvider(config, createMistral);
+      case AiProvider.XAI:
+        return this.buildStandardProvider(config, createXai);
+      case AiProvider.GROQ:
+        return this.buildStandardProvider(config, createGroq);
       case AiProvider.BEDROCK:
         return this.buildBedrockProvider(config);
-      case AiProvider.GOOGLE:
-        return this.buildGoogleProvider(config);
-      case AiProvider.MISTRAL:
-        return this.buildMistralProvider(config);
-      case AiProvider.XAI:
-        return this.buildXaiProvider(config);
-      case AiProvider.GROQ:
-        return this.buildGroqProvider(config);
       case AiProvider.OPENAI_COMPATIBLE:
         return this.buildOpenAICompatibleProvider(config);
       default:
@@ -113,31 +115,20 @@ export class SdkProviderFactoryService {
     }
   }
 
-  private buildOpenAIProvider(config: AiProviderConfig): AiSdkProviderInstance {
-    const provider = createOpenAI({
-      ...(config.apiKey && { apiKey: config.apiKey }),
-      ...(config.baseUrl && { baseURL: config.baseUrl }),
-    });
-
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      providerType: AiProvider.OPENAI,
-    };
-  }
-
-  private buildAnthropicProvider(
+  private buildStandardProvider(
     config: AiProviderConfig,
+    factory: (opts: { apiKey?: string; baseURL?: string }) => CallableFunction,
   ): AiSdkProviderInstance {
-    const provider = createAnthropic({
+    const provider = factory({
       ...(config.apiKey && { apiKey: config.apiKey }),
       ...(config.baseUrl && { baseURL: config.baseUrl }),
     });
 
     return {
-      createModel: (modelId: string) => provider(modelId),
+      createModel: (modelId: string) =>
+        (provider as CallableFunction)(modelId) as LanguageModel,
       rawProvider: provider,
-      providerType: AiProvider.ANTHROPIC,
+      providerType: config.type,
     };
   }
 
@@ -158,60 +149,6 @@ export class SdkProviderFactoryService {
       createModel: (modelId: string) => provider(modelId),
       rawProvider: provider,
       providerType: AiProvider.BEDROCK,
-    };
-  }
-
-  private buildGoogleProvider(config: AiProviderConfig): AiSdkProviderInstance {
-    const provider = createGoogleGenerativeAI({
-      ...(config.apiKey && { apiKey: config.apiKey }),
-      ...(config.baseUrl && { baseURL: config.baseUrl }),
-    });
-
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      providerType: AiProvider.GOOGLE,
-    };
-  }
-
-  private buildMistralProvider(
-    config: AiProviderConfig,
-  ): AiSdkProviderInstance {
-    const provider = createMistral({
-      ...(config.apiKey && { apiKey: config.apiKey }),
-      ...(config.baseUrl && { baseURL: config.baseUrl }),
-    });
-
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      providerType: AiProvider.MISTRAL,
-    };
-  }
-
-  private buildXaiProvider(config: AiProviderConfig): AiSdkProviderInstance {
-    const provider = createXai({
-      ...(config.apiKey && { apiKey: config.apiKey }),
-      ...(config.baseUrl && { baseURL: config.baseUrl }),
-    });
-
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      providerType: AiProvider.XAI,
-    };
-  }
-
-  private buildGroqProvider(config: AiProviderConfig): AiSdkProviderInstance {
-    const provider = createGroq({
-      ...(config.apiKey && { apiKey: config.apiKey }),
-      ...(config.baseUrl && { baseURL: config.baseUrl }),
-    });
-
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      providerType: AiProvider.GROQ,
     };
   }
 

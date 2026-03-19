@@ -19,9 +19,10 @@
           "image/webp"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "isRecommended": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "isRecommended": true
       },
       {
         "rawModelId": "gpt-5-mini",
@@ -39,8 +40,9 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true },
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        }
       },
       {
         "rawModelId": "gpt-4.1",
@@ -58,9 +60,10 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true },
-        "isRecommended": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "isRecommended": true
       },
       {
         "rawModelId": "gpt-4.1-mini",
@@ -78,8 +81,9 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true },
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        }
       },
       {
         "rawModelId": "o3",
@@ -98,9 +102,10 @@
           "image/webp"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "o4-mini",
@@ -119,9 +124,10 @@
           "image/webp"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "gpt-4o",
@@ -139,9 +145,10 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "gpt-4o-mini",
@@ -159,9 +166,10 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "gpt-4-turbo",
@@ -178,12 +186,10 @@
           "image/gif",
           "image/webp"
         ],
-        "deprecated": true,
-        "source": "catalog"
+        "deprecated": true
       }
     ]
   },
-
   "anthropic": {
     "type": "anthropic",
     "models": [
@@ -216,9 +222,10 @@
           "text/csv"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "isRecommended": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "isRecommended": true
       },
       {
         "rawModelId": "claude-sonnet-4-6",
@@ -249,9 +256,10 @@
           "text/csv"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "isRecommended": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "isRecommended": true
       },
       {
         "rawModelId": "claude-sonnet-4-5-20250929",
@@ -282,8 +290,9 @@
           "text/csv"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        }
       },
       {
         "rawModelId": "claude-haiku-4-5-20251001",
@@ -306,9 +315,9 @@
           "text/html",
           "text/csv"
         ],
-        "doesSupportThinking": false,
-        "nativeCapabilities": { "webSearch": true },
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        }
       },
       {
         "rawModelId": "claude-opus-4-5-20251101",
@@ -339,9 +348,10 @@
           "text/csv"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "claude-sonnet-4-20250514",
@@ -372,9 +382,10 @@
           "text/csv"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "claude-opus-4-20250514",
@@ -398,9 +409,10 @@
           "text/csv"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "claude-3-5-haiku-20241022",
@@ -423,14 +435,13 @@
           "text/html",
           "text/csv"
         ],
-        "doesSupportThinking": false,
-        "nativeCapabilities": { "webSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true
+        },
+        "deprecated": true
       }
     ]
   },
-
   "google": {
     "type": "google",
     "models": [
@@ -457,8 +468,7 @@
           "image/webp"
         ],
         "doesSupportThinking": true,
-        "isRecommended": true,
-        "source": "catalog"
+        "isRecommended": true
       },
       {
         "rawModelId": "gemini-3-flash-preview",
@@ -476,8 +486,7 @@
           "image/gif",
           "image/webp"
         ],
-        "doesSupportThinking": true,
-        "source": "catalog"
+        "doesSupportThinking": true
       },
       {
         "rawModelId": "gemini-3.1-flash-lite-preview",
@@ -494,8 +503,7 @@
           "image/gif",
           "image/webp"
         ],
-        "doesSupportThinking": true,
-        "source": "catalog"
+        "doesSupportThinking": true
       },
       {
         "rawModelId": "gemini-2.5-pro",
@@ -519,8 +527,7 @@
           "image/webp"
         ],
         "doesSupportThinking": true,
-        "deprecated": true,
-        "source": "catalog"
+        "deprecated": true
       },
       {
         "rawModelId": "gemini-2.5-flash",
@@ -539,12 +546,10 @@
           "image/webp"
         ],
         "doesSupportThinking": true,
-        "deprecated": true,
-        "source": "catalog"
+        "deprecated": true
       }
     ]
   },
-
   "xai": {
     "type": "xai",
     "models": [
@@ -564,9 +569,11 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
-        "isRecommended": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true,
+          "twitterSearch": true
+        },
+        "isRecommended": true
       },
       {
         "rawModelId": "grok-4-1-fast-reasoning",
@@ -585,8 +592,10 @@
           "image/webp"
         ],
         "doesSupportThinking": true,
-        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true,
+          "twitterSearch": true
+        }
       },
       {
         "rawModelId": "grok-3",
@@ -604,9 +613,11 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true,
+          "twitterSearch": true
+        },
+        "deprecated": true
       },
       {
         "rawModelId": "grok-3-mini",
@@ -624,13 +635,14 @@
           "image/gif",
           "image/webp"
         ],
-        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
-        "deprecated": true,
-        "source": "catalog"
+        "nativeCapabilities": {
+          "webSearch": true,
+          "twitterSearch": true
+        },
+        "deprecated": true
       }
     ]
   },
-
   "groq": {
     "type": "groq",
     "models": [
@@ -643,12 +655,10 @@
         "outputCostPerMillionTokens": 0.6,
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "source": "catalog"
+        "maxOutputTokens": 16384
       }
     ]
   },
-
   "mistral": {
     "type": "mistral",
     "models": [
@@ -660,8 +670,7 @@
         "inputCostPerMillionTokens": 0.5,
         "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 256000,
-        "maxOutputTokens": 8192,
-        "source": "catalog"
+        "maxOutputTokens": 8192
       }
     ]
   }

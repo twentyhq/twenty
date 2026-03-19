@@ -11,9 +11,15 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
-import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/data-residency-utils';
-import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
-import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/dataResidencyUtils';
+import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
+import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
+
+const StyledNameValue = styled.span`
+  align-items: center;
+  display: flex;
+  gap: 4px;
+`;
 
 const StyledHoverCardWrapper = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -74,23 +80,23 @@ export const SettingsAdminAiModelHoverCard = ({
   dataResidency,
 }: SettingsAdminAiModelHoverCardProps) => {
   const ModelIcon = getModelIcon(modelFamily);
-  const providerLabel = getModelProviderLabel(modelFamily);
+  const familyLabel = getModelFamilyLabel(modelFamily);
 
   const items = [
     {
       Icon: IconTag,
       label: t`Name`,
       value: (
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <StyledNameValue>
           <ModelIcon size={14} />
           {label}
-        </span>
+        </StyledNameValue>
       ),
     },
     {
       Icon: IconServer,
       label: t`Provider`,
-      value: providerLabel ?? '—',
+      value: familyLabel ?? '—',
     },
     ...(inputCostPerMillionTokens != null || outputCostPerMillionTokens != null
       ? [

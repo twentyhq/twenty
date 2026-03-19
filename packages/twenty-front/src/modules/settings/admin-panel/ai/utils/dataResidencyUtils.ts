@@ -33,5 +33,5 @@ export const DATA_RESIDENCY_OPTIONS = Object.entries(
   DATA_RESIDENCY_CONFIG,
 ).map(([value, { label, flag }]) => ({
   value,
-  label: `${flag}  ${label}`,
+  label: `${flag} ${label}`,
 }));

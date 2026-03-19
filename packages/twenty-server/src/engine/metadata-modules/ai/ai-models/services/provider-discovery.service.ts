@@ -2,6 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 
+const OPENAI_COMPATIBLE_BASE_URLS: Record<string, string> = {
+  openai: 'https://api.openai.com',
+  groq: 'https://api.groq.com/openai',
+  xai: 'https://api.x.ai',
+  mistral: 'https://api.mistral.ai',
+};
+
 export type DiscoveredModel = {
   modelId: string;
   name: string;
@@ -59,15 +66,10 @@ export class ProviderDiscoveryService {
   private async discoverOpenAICompatible(
     config: AiProviderConfig,
   ): Promise<DiscoveredModel[]> {
-    const baseUrls: Record<string, string> = {
-      openai: 'https://api.openai.com',
-      groq: 'https://api.groq.com/openai',
-      xai: 'https://api.x.ai',
-      mistral: 'https://api.mistral.ai',
-    };
-
     const baseUrl =
-      config.baseUrl ?? baseUrls[config.type] ?? 'https://api.openai.com';
+      config.baseUrl ??
+      OPENAI_COMPATIBLE_BASE_URLS[config.type] ??
+      'https://api.openai.com';
 
     const url = `${baseUrl.replace(/\/$/, '')}/v1/models`;
 

@@ -10,7 +10,7 @@ import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderI
 import {
   getProviderIcon,
   getProviderTypeLabel,
-} from '@/settings/admin-panel/ai/utils/provider-utils';
+} from '@/settings/admin-panel/ai/utils/providerUtils';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 
