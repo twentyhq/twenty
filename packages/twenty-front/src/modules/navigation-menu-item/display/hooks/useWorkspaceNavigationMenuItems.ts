@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
@@ -13,32 +11,20 @@ export const useWorkspaceNavigationMenuItems = (): {
     useNavigationMenuItemsData();
   const views = useAtomStateValue(viewsSelector);
 
-  const allWorkspaceNavigationMenuItemViewIds = useMemo(
-    () =>
-      new Set(
-        rawWorkspaceNavigationMenuItems
-          .map((item) => item.viewId)
-          .filter((viewId) => isDefined(viewId)),
-      ),
-    [rawWorkspaceNavigationMenuItems],
+  const workspaceNavViewIds = new Set(
+    rawWorkspaceNavigationMenuItems
+      .map((item) => item.viewId)
+      .filter((viewId) => isDefined(viewId)),
   );
 
-  const objectMetadataIdsInWorkspaceNav = useMemo(
-    () =>
-      new Set([
-        ...views
-          .filter((view) => allWorkspaceNavigationMenuItemViewIds.has(view.id))
-          .map((view) => view.objectMetadataId),
-        ...rawWorkspaceNavigationMenuItems
-          .map((item) => item.targetObjectMetadataId)
-          .filter((objectMetadataId) => isDefined(objectMetadataId)),
-      ]),
-    [
-      views,
-      allWorkspaceNavigationMenuItemViewIds,
-      rawWorkspaceNavigationMenuItems,
-    ],
-  );
+  const objectMetadataIdsInWorkspaceNav = new Set([
+    ...views
+      .filter((view) => workspaceNavViewIds.has(view.id))
+      .map((view) => view.objectMetadataId),
+    ...rawWorkspaceNavigationMenuItems
+      .map((item) => item.targetObjectMetadataId)
+      .filter((objectMetadataId) => isDefined(objectMetadataId)),
+  ]);
 
   return {
     objectMetadataIdsInWorkspaceNav,
