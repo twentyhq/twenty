@@ -406,8 +406,8 @@ export class AiModelRegistryService {
       return true;
     }
 
-    // When no AI providers are configured, skip model validation entirely
-    if (this.providerModelDefCache.size === 0) {
+    // When no providers have credentials, there's nothing to enforce
+    if (this.modelRegistry.size === 0) {
       return true;
     }
 
