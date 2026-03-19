@@ -102,14 +102,14 @@ __metadata:
   linkType: hard
 
 "@ai-sdk/mistral@npm:^3.0.20":
-  version: 3.0.20
-  resolution: "@ai-sdk/mistral@npm:3.0.20"
+  version: 3.0.25
+  resolution: "@ai-sdk/mistral@npm:3.0.25"
   dependencies:
     "@ai-sdk/provider": "npm:3.0.8"
-    "@ai-sdk/provider-utils": "npm:4.0.15"
+    "@ai-sdk/provider-utils": "npm:4.0.20"
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/32caf651dae8a0fb7b7faceb8706e711404a32bc21aea94fe6bcbbe6adb09c31fc6563efd28547bdcbbfe99165145ec73fe83f4b54bd75f290b6020cc9834bc7
+  checksum: 10c0/4ea732fc807e9e8f143ecbc3168e103dbb0c43f611ab9d9fdfe532510059c18aa8b44a61c7eafda4d9a91977e7d83fa94022c4aa39be21ad035b186f8471384f
   languageName: node
   linkType: hard
 
@@ -160,6 +160,19 @@ __metadata:
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
   checksum: 10c0/e26e33c2af0270bd84e58b13e597308304d95541a23033fcc7f95a80da0ab7f9c72e9ef40e81a36e08304e5dad27d70021bbfd143bc2ac14f333fce0678a6ea2
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/provider-utils@npm:4.0.20":
+  version: 4.0.20
+  resolution: "@ai-sdk/provider-utils@npm:4.0.20"
+  dependencies:
+    "@ai-sdk/provider": "npm:3.0.8"
+    "@standard-schema/spec": "npm:^1.1.0"
+    eventsource-parser: "npm:^3.0.6"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/749d9f91b2b098f716246bbb92a801d0f8a952fed4481e48b7d36a1c026cfe96b9d956f34b95270bc4628048ad57edd7b19026c167e8ded288e741aa289d4cdd
   languageName: node
   linkType: hard
 
