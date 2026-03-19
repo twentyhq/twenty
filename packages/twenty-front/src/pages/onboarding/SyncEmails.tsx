@@ -10,6 +10,7 @@ import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/Onboar
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
+import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
@@ -19,7 +20,9 @@ import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui/display';
+import { AppPath as _AppPath } from 'twenty-shared/types';
+import { IconApple, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
+import { useNavigate } from 'react-router-dom';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -102,6 +105,12 @@ export const SyncEmails = () => {
     isMicrosoftCalendarEnabledState,
   );
 
+  const isImapSmtpCaldavEnabled = useAtomStateValue(
+    isImapSmtpCaldavEnabledState,
+  );
+
+  const navigate = useNavigate();
+
   const isGoogleProviderEnabled =
     isGoogleMessagingEnabled || isGoogleCalendarEnabled;
   const isMicrosoftProviderEnabled =
@@ -147,7 +156,15 @@ export const SyncEmails = () => {
             Icon={() => <IconMicrosoft size={theme.icon.size.sm} />}
           />
         )}
-        {!isMicrosoftProviderEnabled && !isGoogleProviderEnabled && (
+        {!userAuthenticatedWithSSO && isImapSmtpCaldavEnabled && (
+          <MainButton
+            title={t`Sync with Apple`}
+            onClick={() => navigate('/settings/accounts/new-apple-mail-connection')}
+            width={200}
+            Icon={() => <IconApple size={theme.icon.size.sm} />}
+          />
+        )}
+        {!isMicrosoftProviderEnabled && !isGoogleProviderEnabled && !isImapSmtpCaldavEnabled && (
           <MainButton
             title={t`Continue`}
             onClick={continueWithoutSync}
