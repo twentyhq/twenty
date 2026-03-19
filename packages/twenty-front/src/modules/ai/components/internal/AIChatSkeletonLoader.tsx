@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { useAgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
+import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
@@ -34,7 +34,12 @@ const NUMBER_OF_SKELETONS = 6;
 
 export const AIChatSkeletonLoader = () => {
   const { theme } = useContext(ThemeContext);
-  const { threadsLoading, messagesLoading } = useAgentChatContext();
+  const agentChatThreadsLoading = useAtomStateValue(
+    agentChatThreadsLoadingState,
+  );
+  const agentChatMessagesLoading = useAtomStateValue(
+    agentChatMessagesLoadingState,
+  );
   const skipMessagesSkeletonUntilLoaded = useAtomStateValue(
     skipMessagesSkeletonUntilLoadedState,
   );
@@ -45,13 +50,12 @@ export const AIChatSkeletonLoader = () => {
   );
 
   const isOnNewChatSlot =
-    !isDefined(currentAIChatThread) ||
     currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const showForMessagesLoading =
-    messagesLoading && !skipMessagesSkeletonUntilLoaded;
+    agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded;
   const shouldRender =
     !hasMessages &&
-    ((threadsLoading && isOnNewChatSlot) || showForMessagesLoading);
+    ((agentChatThreadsLoading && isOnNewChatSlot) || showForMessagesLoading);
 
   if (!shouldRender) {
     return null;

@@ -1,4 +1,4 @@
-import { useProcessNewMessageStreamIncrement } from '@/ai/hooks/useProcessNewMessageStreamIncrement';
+import { useProcessStreamingMessageUpdate } from '@/ai/hooks/useProcessStreamingMessageUpdate';
 import { agentChatMessageComponentFamilyState } from '@/ai/states/agentChatMessageComponentFamilyState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -7,25 +7,24 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useProcessIncrementalStreamMessages = () => {
+export const useUpdateStreamingPartsWithDiff = () => {
   const agentChatMessageFamilyCallbackState =
     useAtomComponentFamilyStateCallbackState(
       agentChatMessageComponentFamilyState,
     );
 
-  const { processNewMessageStreamIncrement } =
-    useProcessNewMessageStreamIncrement();
+  const { processStreamingMessageUpdate } = useProcessStreamingMessageUpdate();
 
-  const processIncrementalStreamMessages = useCallback(
-    (incrementalStreamMessages: ExtendedUIMessage[]) => {
-      for (const updatedMessage of incrementalStreamMessages) {
+  const updateStreamingPartsWithDiff = useCallback(
+    (incomingMessages: ExtendedUIMessage[]) => {
+      for (const incomingMessage of incomingMessages) {
         const alreadyExistingMessage = jotaiStore.get(
-          agentChatMessageFamilyCallbackState(updatedMessage.id),
+          agentChatMessageFamilyCallbackState(incomingMessage.id),
         );
 
         const messageContentHasChanged = !isDeeplyEqual(
           alreadyExistingMessage,
-          updatedMessage,
+          incomingMessage,
         );
 
         const messageAlreadyExists = isDefined(alreadyExistingMessage);
@@ -37,20 +36,20 @@ export const useProcessIncrementalStreamMessages = () => {
           continue;
         }
 
-        const clonedMessage = structuredClone(updatedMessage);
+        const clonedMessage = structuredClone(incomingMessage);
 
         jotaiStore.set(
-          agentChatMessageFamilyCallbackState(updatedMessage.id),
+          agentChatMessageFamilyCallbackState(incomingMessage.id),
           clonedMessage,
         );
 
-        processNewMessageStreamIncrement(updatedMessage);
+        processStreamingMessageUpdate(incomingMessage);
       }
     },
-    [agentChatMessageFamilyCallbackState, processNewMessageStreamIncrement],
+    [agentChatMessageFamilyCallbackState, processStreamingMessageUpdate],
   );
 
   return {
-    processIncrementalStreamMessages,
+    updateStreamingPartsWithDiff,
   };
 };
