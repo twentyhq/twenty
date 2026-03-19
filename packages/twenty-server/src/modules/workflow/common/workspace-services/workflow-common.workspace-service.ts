@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource, type QueryRunner } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -51,6 +53,8 @@ export class WorkflowCommonWorkspaceService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async getWorkflowVersionOrFail({
@@ -272,10 +276,13 @@ export class WorkflowCommonWorkspaceService {
     const dataSource =
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const queryRunner = dataSource.createQueryRunner();
+    const workspaceQueryRunner = dataSource.createQueryRunner();
+    const coreQueryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    await workspaceQueryRunner.connect();
+    await coreQueryRunner.connect();
+    await workspaceQueryRunner.startTransaction();
+    await coreQueryRunner.startTransaction();
 
     try {
       const workflow = await workflowRepository.findOne(
@@ -283,7 +290,7 @@ export class WorkflowCommonWorkspaceService {
           where: { id: workflowId },
           withDeleted: true,
         },
-        queryRunner.manager,
+        workspaceQueryRunner.manager,
       );
 
       if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
@@ -297,7 +304,7 @@ export class WorkflowCommonWorkspaceService {
         await workflowRepository.update(
           workflowId,
           { statuses: newStatuses },
-          queryRunner.manager,
+          workspaceQueryRunner.manager,
         );
       }
 
@@ -306,7 +313,7 @@ export class WorkflowCommonWorkspaceService {
           where: { workflowId },
           withDeleted: true,
         },
-        queryRunner.manager,
+        workspaceQueryRunner.manager,
       );
 
       for (const workflowVersion of workflowVersions) {
@@ -314,29 +321,38 @@ export class WorkflowCommonWorkspaceService {
           await workflowVersionRepository.update(
             workflowVersion.id,
             { status: WorkflowVersionStatus.DEACTIVATED },
-            queryRunner.manager,
+            workspaceQueryRunner.manager,
           );
 
           await this.cleanupCommandMenuItemForVersion(
             workflowVersion.id,
             workspaceId,
+            coreQueryRunner,
           );
         }
       }
 
-      await queryRunner.commitTransaction();
+      await coreQueryRunner.commitTransaction();
+      await workspaceQueryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (coreQueryRunner.isTransactionActive) {
+        await coreQueryRunner.rollbackTransaction();
+      }
+      if (workspaceQueryRunner.isTransactionActive) {
+        await workspaceQueryRunner.rollbackTransaction();
+      }
 
       throw error;
     } finally {
-      await queryRunner.release();
+      await coreQueryRunner.release();
+      await workspaceQueryRunner.release();
     }
   }
 
   private async cleanupCommandMenuItemForVersion(
     workflowVersionId: string,
     workspaceId: string,
+    coreQueryRunner?: QueryRunner,
   ) {
     const isCommandMenuItemEnabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -358,6 +374,7 @@ export class WorkflowCommonWorkspaceService {
       await this.commandMenuItemService.delete(
         existingCommandMenuItem.id,
         workspaceId,
+        coreQueryRunner,
       );
     }
   }

@@ -1,12 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
+import { DataSource, type QueryRunner } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -50,6 +53,8 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async runWorkflowVersion({
@@ -201,10 +206,13 @@ export class WorkflowTriggerWorkspaceService {
     const dataSource =
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const queryRunner = dataSource.createQueryRunner();
+    const workspaceQueryRunner = dataSource.createQueryRunner();
+    const coreQueryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    await workspaceQueryRunner.connect();
+    await coreQueryRunner.connect();
+    await workspaceQueryRunner.startTransaction();
+    await coreQueryRunner.startTransaction();
 
     try {
       if (workflow.lastPublishedVersionId !== workflowVersion.id) {
@@ -212,14 +220,14 @@ export class WorkflowTriggerWorkspaceService {
           await workflowVersionRepository.update(
             { id: workflow.lastPublishedVersionId },
             { status: WorkflowVersionStatus.ARCHIVED },
-            queryRunner.manager,
+            workspaceQueryRunner.manager,
           );
         }
 
         await workflowRepository.update(
           { id: workflow.id },
           { lastPublishedVersionId: workflowVersion.id },
-          queryRunner.manager,
+          workspaceQueryRunner.manager,
         );
       }
 
@@ -230,7 +238,7 @@ export class WorkflowTriggerWorkspaceService {
             status: WorkflowVersionStatus.ACTIVE,
           },
         },
-        queryRunner.manager,
+        workspaceQueryRunner.manager,
       );
 
       if (activeWorkflowVersions.length > 0) {
@@ -246,18 +254,28 @@ export class WorkflowTriggerWorkspaceService {
       await workflowVersionRepository.update(
         { id: workflowVersion.id },
         { status: WorkflowVersionStatus.ACTIVE },
-        queryRunner.manager,
+        workspaceQueryRunner.manager,
       );
 
-      await this.enableTrigger(workflow, workflowVersion, workspaceId);
+      await this.enableTrigger(workflow, workflowVersion, workspaceId, {
+        entityManager: workspaceQueryRunner.manager,
+        coreQueryRunner,
+      });
 
-      await queryRunner.commitTransaction();
+      await coreQueryRunner.commitTransaction();
+      await workspaceQueryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (coreQueryRunner.isTransactionActive) {
+        await coreQueryRunner.rollbackTransaction();
+      }
+      if (workspaceQueryRunner.isTransactionActive) {
+        await workspaceQueryRunner.rollbackTransaction();
+      }
 
       throw error;
     } finally {
-      await queryRunner.release();
+      await coreQueryRunner.release();
+      await workspaceQueryRunner.release();
     }
 
     await this.emitStatusUpdateEvents(
@@ -288,27 +306,40 @@ export class WorkflowTriggerWorkspaceService {
     const dataSource =
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const queryRunner = dataSource.createQueryRunner();
+    const workspaceQueryRunner = dataSource.createQueryRunner();
+    const coreQueryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    await workspaceQueryRunner.connect();
+    await coreQueryRunner.connect();
+    await workspaceQueryRunner.startTransaction();
+    await coreQueryRunner.startTransaction();
 
     try {
       await workflowVersionRepository.update(
         { id: workflowVersion.id },
         { status: WorkflowVersionStatus.DEACTIVATED },
-        queryRunner.manager,
+        workspaceQueryRunner.manager,
       );
 
-      await this.disableTrigger(workflowVersion, workspaceId);
+      await this.disableTrigger(workflowVersion, workspaceId, {
+        entityManager: workspaceQueryRunner.manager,
+        coreQueryRunner,
+      });
 
-      await queryRunner.commitTransaction();
+      await coreQueryRunner.commitTransaction();
+      await workspaceQueryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (coreQueryRunner.isTransactionActive) {
+        await coreQueryRunner.rollbackTransaction();
+      }
+      if (workspaceQueryRunner.isTransactionActive) {
+        await workspaceQueryRunner.rollbackTransaction();
+      }
 
       throw error;
     } finally {
-      await queryRunner.release();
+      await coreQueryRunner.release();
+      await workspaceQueryRunner.release();
     }
 
     await this.emitStatusUpdateEvents(
@@ -367,6 +398,10 @@ export class WorkflowTriggerWorkspaceService {
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
+    transactionContext?: {
+      entityManager: WorkspaceEntityManager;
+      coreQueryRunner: QueryRunner;
+    },
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
@@ -409,6 +444,7 @@ export class WorkflowTriggerWorkspaceService {
               availabilityObjectMetadataId,
             },
             workspaceId,
+            transactionContext?.coreQueryRunner,
           );
         } else {
           await this.commandMenuItemService.create(
@@ -422,6 +458,7 @@ export class WorkflowTriggerWorkspaceService {
               availabilityObjectMetadataId,
             },
             workspaceId,
+            transactionContext?.coreQueryRunner,
           );
         }
 
@@ -438,6 +475,7 @@ export class WorkflowTriggerWorkspaceService {
           type: AutomatedTriggerType.DATABASE_EVENT,
           settings,
           workspaceId,
+          entityManager: transactionContext?.entityManager,
         });
 
         return;
@@ -450,19 +488,23 @@ export class WorkflowTriggerWorkspaceService {
           type: AutomatedTriggerType.CRON,
           settings: { pattern },
           workspaceId,
+          entityManager: transactionContext?.entityManager,
         });
 
         return;
       }
-      default: {
+      default:
         assertNever(workflowVersion.trigger);
-      }
     }
   }
 
   private async disableTrigger(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
+    transactionContext?: {
+      entityManager: WorkspaceEntityManager;
+      coreQueryRunner: QueryRunner;
+    },
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
@@ -472,6 +514,7 @@ export class WorkflowTriggerWorkspaceService {
         await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           workspaceId,
+          entityManager: transactionContext?.entityManager,
         });
 
         return;
@@ -496,6 +539,7 @@ export class WorkflowTriggerWorkspaceService {
           await this.commandMenuItemService.delete(
             existingCommandMenuItem.id,
             workspaceId,
+            transactionContext?.coreQueryRunner,
           );
         }
 
