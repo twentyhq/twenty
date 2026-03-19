@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -8,6 +9,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
 import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 
 const APPLE_IMAP_DEFAULTS = {
   handle: '',
@@ -37,6 +39,13 @@ const APPLE_IMAP_DEFAULTS = {
 export const SettingsAccountsNewAppleMailConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
+  const [searchParams] = useSearchParams();
+  const fromOnboarding = searchParams.get('fromOnboarding') === 'true';
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
+
+  const onSaveSuccess = fromOnboarding
+    ? () => setNextOnboardingStatus()
+    : undefined;
 
   const {
     formMethods,
@@ -45,7 +54,10 @@ export const SettingsAccountsNewAppleMailConnection = () => {
     canSave,
     isSubmitting,
     loading,
-  } = useImapSmtpCaldavConnectionForm({ defaultValues: APPLE_IMAP_DEFAULTS });
+  } = useImapSmtpCaldavConnectionForm({
+    defaultValues: APPLE_IMAP_DEFAULTS,
+    onSaveSuccess,
+  });
 
   const { control } = formMethods;
 

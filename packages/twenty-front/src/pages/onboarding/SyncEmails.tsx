@@ -160,7 +160,7 @@ export const SyncEmails = () => {
         )}
         {!userAuthenticatedWithSSO && isImapSmtpCaldavEnabled && (
           <Link
-            to={getSettingsPath(SettingsPath.NewAppleMailConnection)}
+            to={`${getSettingsPath(SettingsPath.NewAppleMailConnection)}?fromOnboarding=true`}
             style={{ textDecoration: 'none' }}
           >
             <MainButton
@@ -195,6 +195,17 @@ export const SyncEmails = () => {
             width={144}
           />
         )}
+        {userAuthenticatedWithSSO &&
+          isImapSmtpCaldavEnabled &&
+          !isMicrosoftProviderEnabled &&
+          !isGoogleProviderEnabled && (
+            <Link
+              to={getSettingsPath(SettingsPath.NewAppleMailConnection)}
+              style={{ textDecoration: 'none' }}
+            >
+              <MainButton title={t`Continue`} width={144} />
+            </Link>
+          )}
       </StyledProviderContainer>
       <StyledActionLinkContainer>
         <ClickToActionLink onClick={continueWithoutSync}>

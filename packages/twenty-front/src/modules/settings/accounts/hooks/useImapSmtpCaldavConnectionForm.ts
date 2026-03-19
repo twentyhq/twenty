@@ -29,6 +29,7 @@ type UseConnectionFormProps = {
   isEditing?: boolean;
   connectedAccountId?: string;
   defaultValues?: Partial<ConnectionFormData>;
+  onSaveSuccess?: () => void;
 };
 
 export type ConnectionFormData = {
@@ -39,6 +40,7 @@ export const useImapSmtpCaldavConnectionForm = ({
   isEditing = false,
   connectedAccountId,
   defaultValues: overrideDefaultValues,
+  onSaveSuccess,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -149,6 +151,11 @@ export const useImapSmtpCaldavConnectionForm = ({
 
         enqueueSuccessSnackBar({ message: successMessage });
 
+        if (onSaveSuccess) {
+          onSaveSuccess();
+          return;
+        }
+
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
 
@@ -170,6 +177,7 @@ export const useImapSmtpCaldavConnectionForm = ({
       enqueueSuccessSnackBar,
       navigate,
       enqueueErrorSnackBar,
+      onSaveSuccess,
     ],
   );
 
