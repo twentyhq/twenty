@@ -1,0 +1,191 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { FeatureFlagKey } from 'twenty-shared/types';
+import {
+  type FindManyOptions,
+  type FindOneOptions,
+  type FindOptionsWhere,
+  Repository,
+} from 'typeorm';
+
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+
+@Injectable()
+export class MessageChannelDataAccessService {
+  private readonly logger = new Logger(MessageChannelDataAccessService.name);
+
+  constructor(
+    @InjectRepository(MessageChannelEntity)
+    private readonly coreRepository: Repository<MessageChannelEntity>,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+  ) {}
+
+  private async isMigrated(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
+      workspaceId,
+    );
+  }
+
+  async getWorkspaceRepository(workspaceId: string) {
+    return this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
+      workspaceId,
+      'messageChannel',
+    );
+  }
+
+  async findOne(
+    workspaceId: string,
+    options: FindOneOptions<MessageChannelWorkspaceEntity>,
+  ): Promise<MessageChannelWorkspaceEntity | null> {
+    if (await this.isMigrated(workspaceId)) {
+      return this.coreRepository.findOne({
+        ...options,
+        where: {
+          ...(options.where as Record<string, unknown>),
+          workspaceId,
+        },
+      } as FindOneOptions<MessageChannelEntity>) as unknown as Promise<MessageChannelWorkspaceEntity | null>;
+    }
+
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    return workspaceRepository.findOne(options);
+  }
+
+  async find(
+    workspaceId: string,
+    where?: FindOptionsWhere<MessageChannelWorkspaceEntity>,
+  ): Promise<MessageChannelWorkspaceEntity[]> {
+    if (await this.isMigrated(workspaceId)) {
+      return this.coreRepository.find({
+        where: {
+          ...(where as Record<string, unknown>),
+          workspaceId,
+        } as FindOptionsWhere<MessageChannelEntity>,
+      }) as unknown as Promise<MessageChannelWorkspaceEntity[]>;
+    }
+
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    return workspaceRepository.find({ where });
+  }
+
+  async findMany(
+    workspaceId: string,
+    options: FindManyOptions<MessageChannelWorkspaceEntity>,
+  ): Promise<MessageChannelWorkspaceEntity[]> {
+    if (await this.isMigrated(workspaceId)) {
+      const baseWhere = options.where;
+
+      if (!baseWhere) {
+        return this.coreRepository.find({
+          ...options,
+          where: { workspaceId },
+        } as FindManyOptions<MessageChannelEntity>) as unknown as Promise<
+          MessageChannelWorkspaceEntity[]
+        >;
+      }
+
+      if (Array.isArray(baseWhere)) {
+        return this.coreRepository.find({
+          ...options,
+          where: baseWhere.map((whereItem) => ({
+            ...(whereItem as Record<string, unknown>),
+            workspaceId,
+          })),
+        } as FindManyOptions<MessageChannelEntity>) as unknown as Promise<
+          MessageChannelWorkspaceEntity[]
+        >;
+      }
+
+      return this.coreRepository.find({
+        ...options,
+        where: {
+          ...(baseWhere as Record<string, unknown>),
+          workspaceId,
+        },
+      } as FindManyOptions<MessageChannelEntity>) as unknown as Promise<
+        MessageChannelWorkspaceEntity[]
+      >;
+    }
+
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    return workspaceRepository.find(options);
+  }
+
+  async save(
+    workspaceId: string,
+    data: Partial<MessageChannelWorkspaceEntity>,
+    manager?: WorkspaceEntityManager,
+  ): Promise<void> {
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    await workspaceRepository.save(data, {}, manager);
+
+    if (await this.isMigrated(workspaceId)) {
+      try {
+        await this.coreRepository.save({
+          ...data,
+          workspaceId,
+        } as unknown as MessageChannelEntity);
+      } catch (error) {
+        this.logger.error(
+          `Failed to dual-write messageChannel to core: ${error}`,
+        );
+      }
+    }
+  }
+
+  async update(
+    workspaceId: string,
+    where: FindOptionsWhere<MessageChannelWorkspaceEntity>,
+    data: Partial<MessageChannelWorkspaceEntity>,
+  ): Promise<void> {
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    await workspaceRepository.update(where, data);
+
+    if (await this.isMigrated(workspaceId)) {
+      try {
+        await this.coreRepository.update(
+          { ...where, workspaceId } as FindOptionsWhere<MessageChannelEntity>,
+          data as never,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to dual-write messageChannel update to core: ${error}`,
+        );
+      }
+    }
+  }
+
+  async delete(
+    workspaceId: string,
+    where: FindOptionsWhere<MessageChannelWorkspaceEntity>,
+  ): Promise<void> {
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    await workspaceRepository.delete(where);
+
+    if (await this.isMigrated(workspaceId)) {
+      try {
+        await this.coreRepository.delete({
+          ...where,
+          workspaceId,
+        } as FindOptionsWhere<MessageChannelEntity>);
+      } catch (error) {
+        this.logger.error(
+          `Failed to dual-write messageChannel delete to core: ${error}`,
+        );
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/message-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -9,6 +10,7 @@ import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/
 export class MessagingCursorService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
   ) {}
 
   public async updateCursor(
@@ -20,11 +22,6 @@ export class MessagingCursorService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
       const folderRepository =
         await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
           workspaceId,
@@ -32,7 +29,8 @@ export class MessagingCursorService {
         );
 
       if (!folderId) {
-        await messageChannelRepository.update(
+        await this.messageChannelDataAccessService.update(
+          workspaceId,
           {
             id: messageChannel.id,
           },
@@ -56,7 +54,8 @@ export class MessagingCursorService {
             syncCursor: nextSyncCursor,
           },
         );
-        await messageChannelRepository.update(
+        await this.messageChannelDataAccessService.update(
+          workspaceId,
           {
             id: messageChannel.id,
           },

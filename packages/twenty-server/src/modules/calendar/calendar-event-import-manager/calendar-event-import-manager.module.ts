@@ -6,6 +6,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-data-access.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -57,6 +58,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     ConnectedAccountModule,
     CalendarCommonModule,
     MetricsModule,
+    CalendarChannelDataAccessModule,
   ],
   providers: [
     CalendarAccountAuthenticationService,

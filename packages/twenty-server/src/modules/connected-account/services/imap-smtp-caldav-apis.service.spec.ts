@@ -5,6 +5,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-data-access.service';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/message-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
@@ -18,14 +20,13 @@ jest.mock('uuid', () => ({
 describe('ImapSmtpCalDavAPIService', () => {
   let service: ImapSmtpCalDavAPIService;
 
-  const mockConnectedAccountRepository = {
+  const mockConnectedAccountDataAccessService = {
     findOne: jest.fn(),
     save: jest.fn(),
   };
 
-  const mockMessageChannelRepository = {
+  const mockMessageChannelDataAccessService = {
     findOne: jest.fn(),
-    save: jest.fn(),
   };
 
   const mockCalendarChannelRepository = {
@@ -55,10 +56,6 @@ describe('ImapSmtpCalDavAPIService', () => {
             getRepository: jest
               .fn()
               .mockImplementation((_workspaceId, entity) => {
-                if (entity === 'connectedAccount')
-                  return mockConnectedAccountRepository;
-                if (entity === 'messageChannel')
-                  return mockMessageChannelRepository;
                 if (entity === 'calendarChannel')
                   return mockCalendarChannelRepository;
 
@@ -80,6 +77,14 @@ describe('ImapSmtpCalDavAPIService', () => {
         {
           provide: CreateCalendarChannelService,
           useValue: mockCreateCalendarChannelService,
+        },
+        {
+          provide: ConnectedAccountDataAccessService,
+          useValue: mockConnectedAccountDataAccessService,
+        },
+        {
+          provide: MessageChannelDataAccessService,
+          useValue: mockMessageChannelDataAccessService,
         },
       ],
     }).compile();
@@ -112,13 +117,14 @@ describe('ImapSmtpCalDavAPIService', () => {
     };
 
     it('should create new account with message channel when account does not exist and IMAP is configured', async () => {
-      mockConnectedAccountRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(baseInput);
 
-      expect(mockConnectedAccountRepository.save).toHaveBeenCalledWith(
+      expect(mockConnectedAccountDataAccessService.save).toHaveBeenCalledWith(
+        'workspace-id',
         {
           id: 'mocked-uuid',
           handle: 'test@example.com',
@@ -126,7 +132,6 @@ describe('ImapSmtpCalDavAPIService', () => {
           connectionParameters: baseInput.connectionParameters,
           accountOwnerId: 'workspace-member-id',
         },
-        {},
         {},
       );
 
@@ -162,8 +167,10 @@ describe('ImapSmtpCalDavAPIService', () => {
         connectedAccountId: 'existing-account-id',
       } as CalendarChannelWorkspaceEntity;
 
-      mockConnectedAccountRepository.findOne.mockResolvedValue(existingAccount);
-      mockMessageChannelRepository.findOne.mockResolvedValue(
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(
+        existingAccount,
+      );
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(
         existingMessageChannel,
       );
       mockCalendarChannelRepository.findOne.mockResolvedValue(
@@ -177,7 +184,8 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       await service.processAccount(inputWithConnectedAccountId);
 
-      expect(mockConnectedAccountRepository.save).toHaveBeenCalledWith(
+      expect(mockConnectedAccountDataAccessService.save).toHaveBeenCalledWith(
+        'workspace-id',
         {
           id: 'existing-account-id',
           handle: 'test@example.com',
@@ -185,7 +193,6 @@ describe('ImapSmtpCalDavAPIService', () => {
           connectionParameters: baseInput.connectionParameters,
           accountOwnerId: 'workspace-member-id',
         },
-        {},
         {},
       );
 
@@ -210,8 +217,8 @@ describe('ImapSmtpCalDavAPIService', () => {
         } as EmailAccountConnectionParameters,
       };
 
-      mockConnectedAccountRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(imapOnlyInput);
@@ -238,8 +245,8 @@ describe('ImapSmtpCalDavAPIService', () => {
         } as EmailAccountConnectionParameters,
       };
 
-      mockConnectedAccountRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(caldavOnlyInput);
@@ -272,8 +279,8 @@ describe('ImapSmtpCalDavAPIService', () => {
         } as EmailAccountConnectionParameters,
       };
 
-      mockConnectedAccountRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(imapSmtpInput);
@@ -313,8 +320,8 @@ describe('ImapSmtpCalDavAPIService', () => {
         } as EmailAccountConnectionParameters,
       };
 
-      mockConnectedAccountRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(fullConfigInput);
@@ -335,23 +342,26 @@ describe('ImapSmtpCalDavAPIService', () => {
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
       } as ConnectedAccountWorkspaceEntity;
 
-      mockConnectedAccountRepository.findOne.mockResolvedValueOnce(
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValueOnce(
         existingAccount,
       );
 
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(baseInput);
 
-      expect(mockConnectedAccountRepository.findOne).toHaveBeenCalledWith({
+      expect(
+        mockConnectedAccountDataAccessService.findOne,
+      ).toHaveBeenCalledWith('workspace-id', {
         where: {
           handle: 'test@example.com',
           accountOwnerId: 'workspace-member-id',
         },
       });
 
-      expect(mockConnectedAccountRepository.save).toHaveBeenCalledWith(
+      expect(mockConnectedAccountDataAccessService.save).toHaveBeenCalledWith(
+        'workspace-id',
         {
           id: 'existing-account-id',
           handle: 'test@example.com',
@@ -359,7 +369,6 @@ describe('ImapSmtpCalDavAPIService', () => {
           connectionParameters: baseInput.connectionParameters,
           accountOwnerId: 'workspace-member-id',
         },
-        {},
         {},
       );
     });
@@ -378,8 +387,8 @@ describe('ImapSmtpCalDavAPIService', () => {
         } as EmailAccountConnectionParameters,
       };
 
-      mockConnectedAccountRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(smtpOnlyInput);
@@ -393,8 +402,8 @@ describe('ImapSmtpCalDavAPIService', () => {
     });
 
     it('should handle transaction correctly', async () => {
-      mockConnectedAccountRepository.findOne.mockResolvedValue(null);
-      mockMessageChannelRepository.findOne.mockResolvedValue(null);
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
+      mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
       mockCalendarChannelRepository.findOne.mockResolvedValue(null);
 
       await service.processAccount(baseInput);
