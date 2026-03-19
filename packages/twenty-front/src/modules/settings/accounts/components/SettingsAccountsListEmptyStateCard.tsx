@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
+import { IconApple, IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -61,6 +61,17 @@ export const SettingsAccountsListEmptyStateCard = () => {
           title={t`Connect with Microsoft`}
           onClick={() => triggerApisOAuth(ConnectedAccountProvider.MICROSOFT)}
         />
+      )}
+
+      {isImapSmtpCaldavEnabled && (
+        <UndecoratedLink
+          to={getSettingsPath(SettingsPath.NewAppleMailConnection)}
+        >
+          <SettingsCard
+            Icon={<IconApple size={theme.icon.size.md} />}
+            title={t`Connect with Apple`}
+          />
+        </UndecoratedLink>
       )}
 
       {isImapSmtpCaldavEnabled && (
