@@ -21,19 +21,51 @@ Aplicațiile vă permit să construiți și să gestionați personalizările Twe
 ## Cerințe
 
 * Node.js 24+ și Yarn 4
-* Un spațiu de lucru Twenty și o cheie API (creați una la https://app.twenty.com/settings/api-webhooks)
+* Docker (pentru serverul local de dezvoltare Twenty)
 
 ## Începeți
 
-Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă și începeți să dezvoltați:
+Creează o aplicație nouă folosind generatorul oficial. Poate porni automat o instanță Twenty locală pentru tine:
 
 ```bash filename="Terminal"
-# Creează scheletul unei aplicații noi (include toate exemplele în mod implicit)
+# Creează scheletul unei aplicații noi — CLI-ul îți va oferi opțiunea de a porni un server Twenty local
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Pornește modul de dezvoltare: sincronizează automat modificările locale cu spațiul tău de lucru
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### Gestionarea serverului local
+
+SDK-ul include comenzi pentru a gestiona un server local de dezvoltare Twenty (imagine Docker all-in-one cu PostgreSQL, Redis, server și worker):
+
+```bash filename="Terminal"
+# Pornește serverul local (descarcă imaginea dacă este necesar)
+yarn twenty server start
+
+# Verifică starea serverului
+yarn twenty server status
+
+# Afișează în timp real jurnalele serverului
+yarn twenty server logs
+
+# Oprește serverul
+yarn twenty server stop
+
+# Resetează toate datele și pornește de la zero
+yarn twenty server reset
+```
+
+Serverul local vine preconfigurat cu un spațiu de lucru și un utilizator (`tim@apple.dev` / `tim@apple.dev`), astfel încât să poți începe să dezvolți imediat, fără nicio configurare manuală.
+
+### Autentificare
+
+Conectează-ți aplicația la serverul local folosind OAuth:
+
+```bash filename="Terminal"
+# Autentifică-te prin OAuth (se deschide browserul)
+yarn twenty remote add --local
 ```
 
 Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:

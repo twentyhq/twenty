@@ -21,19 +21,51 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 ## 先决条件
 
 * Node.js 24+ 和 Yarn 4
-* 一个 Twenty 工作空间和一个 API 密钥（在 https://app.twenty.com/settings/api-webhooks 创建）
+* Docker (用于本地 Twenty 开发服务器)
 
 ## 开始使用
 
-使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
+使用官方脚手架创建一个新应用。 它可以为你自动启动一个本地 Twenty 实例：
 
 ```bash filename="Terminal"
-# 创建一个新应用脚手架（默认包含所有示例）
+# Scaffold a new app — the CLI will offer to start a local Twenty server
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# 启动开发模式：会将本地更改自动同步到你的工作区
-yarn twenty app:dev
+# Start dev mode: automatically syncs local changes to your workspace
+yarn twenty dev
+```
+
+### 本地服务器管理
+
+该 SDK 包含用于管理本地 Twenty 开发服务器的命令（该服务器是一体化 Docker 镜像，内含 PostgreSQL、Redis、服务器和工作进程）：
+
+```bash filename="Terminal"
+# Start the local server (pulls the image if needed)
+yarn twenty server start
+
+# Check server status
+yarn twenty server status
+
+# Stream server logs
+yarn twenty server logs
+
+# Stop the server
+yarn twenty server stop
+
+# Reset all data and start fresh
+yarn twenty server reset
+```
+
+本地服务器预置了一个工作区和用户 (`tim@apple.dev` / `tim@apple.dev`)，因此你可以无需任何手动设置即可立即开始开发。
+
+### 身份验证
+
+使用 OAuth 将你的应用连接到本地服务器：
+
+```bash filename="Terminal"
+# 通过 OAuth 进行身份验证 (将打开浏览器)
+yarn twenty remote add --local
 ```
 
 脚手架工具支持两种模式，用于控制包含哪些示例文件：
