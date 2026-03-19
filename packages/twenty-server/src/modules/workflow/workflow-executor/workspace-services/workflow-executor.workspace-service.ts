@@ -28,6 +28,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { type WorkflowFailureReason } from 'src/modules/workflow/workflow-executor/types/workflow-failure-reason.type';
 import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
@@ -68,9 +69,9 @@ export class WorkflowExecutorWorkspaceService {
     shouldComputeWorkflowRunStatus = true,
     executedStepsCount = 0,
   }: WorkflowExecutorInput) {
-    await Promise.all(
+    const reasons = await Promise.all(
       stepIds.map(async (stepIdToExecute) => {
-        await this.executeFromStep({
+        return this.executeFromStep({
           stepId: stepIdToExecute,
           workflowRunId,
           workspaceId,
@@ -80,9 +81,14 @@ export class WorkflowExecutorWorkspaceService {
     );
 
     if (shouldComputeWorkflowRunStatus) {
+      const failureReason = reasons.some((reason) => reason === 'SYSTEM_ERROR')
+        ? 'SYSTEM_ERROR'
+        : (reasons.find((reason) => reason === 'USER_ERROR') ?? undefined);
+
       await this.computeWorkflowRunStatus({
         workflowRunId,
         workspaceId,
+        failureReason,
       });
     }
   }
@@ -92,7 +98,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     executedStepsCount,
-  }: WorkflowBranchExecutorInput) {
+  }: WorkflowBranchExecutorInput): Promise<WorkflowFailureReason | undefined> {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
@@ -113,7 +119,7 @@ export class WorkflowExecutorWorkspaceService {
         error: 'Step not found',
       });
 
-      return;
+      return 'SYSTEM_ERROR';
     }
 
     let actionOutput: WorkflowActionOutput;
@@ -165,7 +171,7 @@ export class WorkflowExecutorWorkspaceService {
         shouldSkipStepExecution: true,
       };
     } else {
-      return;
+      return undefined;
     }
 
     const isError =
@@ -183,7 +189,11 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     if (!shouldProcessNextSteps) {
-      return;
+      if (isError) {
+        return actionOutput.failureReason ?? 'SYSTEM_ERROR';
+      }
+
+      return undefined;
     }
 
     const shouldRunAnotherJob =
@@ -196,7 +206,7 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
       });
 
-      return;
+      return undefined;
     }
 
     const { nextStepIdsToExecute, nextStepIdsToSkip, nextStepIdsToFailSafely } =
@@ -225,6 +235,8 @@ export class WorkflowExecutorWorkspaceService {
         executedStepsCount: (executedStepsCount ?? 0) + 1,
       });
     }
+
+    return undefined;
   }
 
   async getNextStepIdsToExecute({
@@ -300,9 +312,11 @@ export class WorkflowExecutorWorkspaceService {
   private async computeWorkflowRunStatus({
     workflowRunId,
     workspaceId,
+    failureReason,
   }: {
     workflowRunId: string;
     workspaceId: string;
+    failureReason?: WorkflowFailureReason;
   }) {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -332,6 +346,7 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
         status: WorkflowRunStatus.FAILED,
         error: 'WorkflowRun failed',
+        failureReason,
       });
 
       return;
@@ -502,8 +517,13 @@ export class WorkflowExecutorWorkspaceService {
         });
       }
 
+      const failureReason: WorkflowFailureReason = isUserError
+        ? 'USER_ERROR'
+        : 'SYSTEM_ERROR';
+
       return {
         error: error.message ?? 'Execution result error, no data or error',
+        failureReason,
       };
     }
   }

@@ -187,11 +187,13 @@ export class WorkflowRunWorkspaceService {
     workspaceId,
     status,
     error,
+    failureReason,
   }: {
     workflowRunId: string;
     workspaceId: string;
     status: Extract<WorkflowRunStatus, 'COMPLETED' | 'FAILED' | 'STOPPED'>;
     error?: string;
+    failureReason?: 'USER_ERROR' | 'SYSTEM_ERROR';
   }) {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
@@ -222,8 +224,9 @@ export class WorkflowRunWorkspaceService {
           ? MetricsKeys.WorkflowRunCompleted
           : status === WorkflowRunStatus.STOPPED
             ? MetricsKeys.WorkflowRunStopped
-            : MetricsKeys.WorkflowRunFailed,
+            : this.getMetricKeyFromFailureReason(failureReason),
       eventId: workflowRunId,
+      attributes: { workspace_id: workspaceId },
     });
   }
 
@@ -250,7 +253,7 @@ export class WorkflowRunWorkspaceService {
         stepInfos: {
           ...workflowRunToUpdate.state?.stepInfos,
           [stepId]: {
-            ...(workflowRunToUpdate.state?.stepInfos[stepId] || {}),
+            ...workflowRunToUpdate.state?.stepInfos[stepId],
             result: stepInfo?.result,
             error: stepInfo?.error,
             status: stepInfo.status,
@@ -283,7 +286,7 @@ export class WorkflowRunWorkspaceService {
 
     for (const [stepId, info] of Object.entries(stepInfos)) {
       mergedStepInfos[stepId] = {
-        ...(existingStepInfos[stepId] || {}),
+        ...existingStepInfos[stepId],
         ...info,
       };
     }
@@ -335,7 +338,7 @@ export class WorkflowRunWorkspaceService {
       state: {
         ...workflowRunToUpdate.state,
         flow: {
-          ...(workflowRunToUpdate.state?.flow ?? {}),
+          ...workflowRunToUpdate.state?.flow,
           steps: updatedSteps,
         },
       },
@@ -491,5 +494,15 @@ export class WorkflowRunWorkspaceService {
           ...current,
         };
       }, {});
+  }
+
+  private getMetricKeyFromFailureReason(
+    failureReason: 'USER_ERROR' | 'SYSTEM_ERROR' | undefined,
+  ): MetricsKeys {
+    if (failureReason === 'USER_ERROR') {
+      return MetricsKeys.WorkflowRunFailedUserError;
+    }
+
+    return MetricsKeys.WorkflowRunFailedSystemError;
   }
 }
