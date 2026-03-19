@@ -13,7 +13,6 @@ import {
 import {
   combineFilters,
   isDefined,
-  isNonEmptyArray,
   isRecordGqlOperationSignature,
 } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
@@ -25,20 +24,14 @@ import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { type MetadataEventBatch } from 'src/engine/metadata-event-emitter/types/metadata-event-batch.type';
-import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
-import { enrichFieldMetadataEventWithRelations } from 'src/engine/workspace-event-emitter/utils/enrich-field-metadata-event-with-relations.util';
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
-import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -54,8 +47,9 @@ import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twent
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+
 @Injectable()
-export class WorkspaceEventEmitterService {
+export class ObjectRecordEventPublisher {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
@@ -64,57 +58,12 @@ export class WorkspaceEventEmitterService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
-    private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
   ) {}
 
   async publish(
-    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
-  ): Promise<void> {
-    if (!this.isMetadataEventBatch(eventBatch)) {
-      await this.publishToLegacyChannel(eventBatch);
-    }
-
-    await this.publishToEventStreams(eventBatch);
-  }
-
-  private isMetadataEventBatch(
-    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
-  ): eventBatch is MetadataEventBatch {
-    return 'metadataName' in eventBatch;
-  }
-
-  private async publishToLegacyChannel(
     eventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
-    const [nameSingular, operation] = eventBatch.name.split('.');
-
-    for (const eventData of eventBatch.events) {
-      const { record, updatedFields } = transformEventToWebhookEvent({
-        eventName: eventBatch.name,
-        event: eventData,
-      });
-
-      const event = {
-        action: operation,
-        objectNameSingular: nameSingular,
-        eventDate: new Date(),
-        record,
-        ...(updatedFields && { updatedFields }),
-      };
-
-      await this.subscriptionService.publish({
-        channel: SubscriptionChannel.DATABASE_EVENT_CHANNEL,
-        workspaceId: eventBatch.workspaceId,
-        payload: { onDbEvent: event },
-      });
-    }
-  }
-
-  private async publishToEventStreams(
-    eventBatch: WorkspaceEventBatch<ObjectRecordEvent> | MetadataEventBatch,
-  ): Promise<void> {
     const workspaceId = eventBatch.workspaceId;
-    const isMetadata = this.isMetadataEventBatch(eventBatch);
 
     const activeStreamIds =
       await this.eventStreamService.getActiveStreamIds(workspaceId);
@@ -128,23 +77,10 @@ export class WorkspaceEventEmitterService {
       activeStreamIds,
     );
 
+    const { permissionsContext, flatWorkspaceMemberMaps } =
+      await this.fetchObjectRecordStreamContext(workspaceId);
+
     const streamIdsToRemove: string[] = [];
-
-    const objectRecordStreamContext = !isMetadata
-      ? await this.fetchObjectRecordStreamContext(workspaceId)
-      : undefined;
-
-    const enrichedMetadataEventBatch = isMetadata
-      ? await this.enrichFieldMetadataEventsWithRelations(
-          eventBatch as MetadataEventBatch,
-        )
-          .then((batch) =>
-            this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
-              batch,
-            ),
-          )
-          .then((batch) => this.resolveObjectMetadataStandardOverrides(batch))
-      : undefined;
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -152,29 +88,17 @@ export class WorkspaceEventEmitterService {
         continue;
       }
 
-      if (isMetadata && isDefined(enrichedMetadataEventBatch)) {
-        await this.processMetadataStreamEvents(
-          streamChannelId,
-          streamData,
-          enrichedMetadataEventBatch,
-        );
-      } else if (!isMetadata) {
-        if (Object.keys(streamData.queries).length === 0) {
-          continue;
-        }
-
-        if (!isDefined(objectRecordStreamContext)) {
-          continue;
-        }
-
-        await this.processObjectRecordStreamEvents(
-          streamChannelId,
-          streamData,
-          eventBatch as WorkspaceEventBatch<ObjectRecordEvent>,
-          objectRecordStreamContext.permissionsContext,
-          objectRecordStreamContext.flatWorkspaceMemberMaps,
-        );
+      if (Object.keys(streamData.queries).length === 0) {
+        continue;
       }
+
+      await this.processObjectRecordStreamEvents({
+        streamChannelId,
+        streamData,
+        workspaceEventBatch: eventBatch,
+        permissionsContext,
+        flatWorkspaceMemberMaps,
+      });
     }
 
     await this.eventStreamService.removeFromActiveStreams(
@@ -193,198 +117,25 @@ export class WorkspaceEventEmitterService {
     return { permissionsContext, flatWorkspaceMemberMaps };
   }
 
-  private async processMetadataStreamEvents(
-    streamChannelId: string,
-    _streamData: EventStreamData,
-    metadataEventBatch: MetadataEventBatch,
-  ): Promise<void> {
-    if (!isNonEmptyArray(metadataEventBatch.events)) {
-      return;
-    }
-
-    const metadataEvents = metadataEventBatch.events.map((metadataEvent) => ({
-      ...metadataEvent,
-      updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
-    }));
-
-    const payload: EventStreamPayload = {
-      objectRecordEventsWithQueryIds: [],
-      metadataEvents,
-    };
-
-    await this.subscriptionService.publishToEventStream({
-      workspaceId: metadataEventBatch.workspaceId,
-      eventStreamChannelId: streamChannelId,
-      payload,
-    });
-  }
-
-  private async enrichFieldMetadataEventsWithRelations(
-    metadataEventBatch: MetadataEventBatch,
-  ): Promise<MetadataEventBatch> {
-    if (metadataEventBatch.metadataName !== 'fieldMetadata') {
-      return metadataEventBatch;
-    }
-
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: metadataEventBatch.workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
-        },
-      );
-
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
-      if (
-        !('after' in event.properties) ||
-        !isDefined(event.properties.after)
-      ) {
-        return event;
-      }
-
-      const enrichedAfter = enrichFieldMetadataEventWithRelations({
-        record: event.properties.after as Record<string, unknown>,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-
-      return {
-        ...event,
-        properties: {
-          ...event.properties,
-          after: enrichedAfter,
-        },
-      } as typeof event;
-    });
-
-    return { ...metadataEventBatch, events: enrichedEvents };
-  }
-
-  private async enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
-    metadataEventBatch: MetadataEventBatch,
-  ): Promise<MetadataEventBatch> {
-    if (metadataEventBatch.metadataName !== 'navigationMenuItem') {
-      return metadataEventBatch;
-    }
-
-    const enrichedEvents = await Promise.all(
-      metadataEventBatch.events.map(async (event) => {
-        if (
-          !('after' in event.properties) ||
-          !isDefined(event.properties.after)
-        ) {
-          return event;
-        }
-
-        const after = event.properties.after as Record<string, unknown>;
-        const targetRecordId = after.targetRecordId as string | undefined;
-        const targetObjectMetadataId = after.targetObjectMetadataId as
-          | string
-          | undefined;
-
-        if (!isDefined(targetRecordId) || !isDefined(targetObjectMetadataId)) {
-          return event;
-        }
-
-        const targetRecordIdentifier =
-          await this.navigationMenuItemRecordIdentifierService.resolveRecordIdentifier(
-            {
-              targetRecordId,
-              targetObjectMetadataId,
-              workspaceId: metadataEventBatch.workspaceId,
-            },
-          );
-
-        const enrichedAfter: Record<string, unknown> = {
-          ...after,
-          targetRecordIdentifier,
-        };
-
-        return {
-          ...event,
-          properties: {
-            ...event.properties,
-            after: enrichedAfter,
-          },
-        } as typeof event;
-      }),
-    );
-
-    return { ...metadataEventBatch, events: enrichedEvents };
-  }
-
-  private resolveObjectMetadataStandardOverrides(
-    metadataEventBatch: MetadataEventBatch,
-  ): MetadataEventBatch {
-    if (metadataEventBatch.metadataName !== 'objectMetadata') {
-      return metadataEventBatch;
-    }
-
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
-      const enrichedProperties = { ...event.properties };
-
-      if (
-        'before' in enrichedProperties &&
-        isDefined(enrichedProperties.before)
-      ) {
-        enrichedProperties.before =
-          this.applyStandardOverridesToObjectMetadataRecord(
-            enrichedProperties.before as Record<string, unknown>,
-          ) as typeof enrichedProperties.before;
-      }
-
-      if (
-        'after' in enrichedProperties &&
-        isDefined(enrichedProperties.after)
-      ) {
-        enrichedProperties.after =
-          this.applyStandardOverridesToObjectMetadataRecord(
-            enrichedProperties.after as Record<string, unknown>,
-          ) as typeof enrichedProperties.after;
-      }
-
-      return { ...event, properties: enrichedProperties } as typeof event;
-    });
-
-    return { ...metadataEventBatch, events: enrichedEvents };
-  }
-
-  private applyStandardOverridesToObjectMetadataRecord(
-    record: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const standardOverrides = record.standardOverrides as
-      | Record<string, unknown>
-      | null
-      | undefined;
-
-    if (!isDefined(standardOverrides)) {
-      return record;
-    }
-
-    const resolved = { ...record };
-
-    for (const key of OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES) {
-      if (isDefined(standardOverrides[key])) {
-        resolved[key] = standardOverrides[key];
-      }
-    }
-
-    return resolved;
-  }
-
-  private async processObjectRecordStreamEvents(
-    streamChannelId: string,
-    streamData: EventStreamData,
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+  private async processObjectRecordStreamEvents({
+    streamChannelId,
+    streamData,
+    workspaceEventBatch,
+    permissionsContext,
+    flatWorkspaceMemberMaps,
+  }: {
+    streamChannelId: string;
+    streamData: EventStreamData;
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: {
       flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
       flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
       flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
       userWorkspaceRoleMap: Record<string, string>;
       rolesPermissions: ObjectsPermissionsByRoleId;
-    },
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
-  ): Promise<void> {
+    };
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  }): Promise<void> {
     const { userWorkspaceId } = streamData.authContext;
 
     if (!isDefined(userWorkspaceId)) {
@@ -470,7 +221,9 @@ export class WorkspaceEventEmitterService {
     if (matchedEvents.length > 0) {
       await this.enrichEventBatchWithNestedRelations({
         objectMetadata: workspaceEventBatch.objectMetadata,
-        events: matchedEvents.map((e) => e.objectRecordEvent),
+        events: matchedEvents.map(
+          (matchedEvent) => matchedEvent.objectRecordEvent,
+        ),
         streamData,
         permissionsContext,
         workspaceId: workspaceEventBatch.workspaceId,

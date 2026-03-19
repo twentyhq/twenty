@@ -22,8 +22,7 @@ import { type EventStreamData } from 'src/engine/subscriptions/types/event-strea
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
-import { WorkspaceEventEmitterService } from 'src/engine/workspace-event-emitter/workspace-event-emitter.service';
+import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
 
 jest.mock(
   'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util',
@@ -70,8 +69,8 @@ const buildFlatFieldMetadataMaps = (
     createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
   );
 
-describe('WorkspaceEventEmitterService', () => {
-  let service: WorkspaceEventEmitterService;
+describe('ObjectRecordEventPublisher', () => {
+  let service: ObjectRecordEventPublisher;
   let mockSubscriptionService: jest.Mocked<
     Pick<SubscriptionService, 'publish' | 'publishToEventStream'>
   >;
@@ -273,7 +272,7 @@ describe('WorkspaceEventEmitterService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        WorkspaceEventEmitterService,
+        ObjectRecordEventPublisher,
         {
           provide: SubscriptionService,
           useValue: mockSubscriptionService,
@@ -302,19 +301,11 @@ describe('WorkspaceEventEmitterService', () => {
           provide: CommonSelectFieldsHelper,
           useValue: new CommonSelectFieldsHelper(),
         },
-        {
-          provide: NavigationMenuItemRecordIdentifierService,
-          useValue: {
-            enrichNavigationMenuItemEventsWithRecordIdentifiers: jest
-              .fn()
-              .mockResolvedValue(undefined),
-          },
-        },
       ],
     }).compile();
 
-    service = module.get<WorkspaceEventEmitterService>(
-      WorkspaceEventEmitterService,
+    service = module.get<ObjectRecordEventPublisher>(
+      ObjectRecordEventPublisher,
     );
   });
 
