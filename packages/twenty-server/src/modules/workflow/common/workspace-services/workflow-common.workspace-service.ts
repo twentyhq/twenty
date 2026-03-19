@@ -269,56 +269,68 @@ export class WorkflowCommonWorkspaceService {
         { shouldBypassPermissionChecks: true },
       );
 
-    const workflow = await workflowRepository.findOne({
-      where: { id: workflowId },
-      withDeleted: true,
-    });
+    const dataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
-      const newStatuses = [
-        ...workflow.statuses.filter(
-          (status) => status !== WorkflowStatus.ACTIVE,
-        ),
-        WorkflowStatus.DEACTIVATED,
-      ];
+    const queryRunner = dataSource.createQueryRunner();
 
-      await workflowRepository.update(workflowId, {
-        statuses: newStatuses,
-      });
-    }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const workflowVersions = await workflowVersionRepository.find({
-      where: {
-        workflowId,
-      },
-      withDeleted: true,
-    });
+    try {
+      const workflow = await workflowRepository.findOne(
+        {
+          where: { id: workflowId },
+          withDeleted: true,
+        },
+        queryRunner.manager,
+      );
 
-    for (const workflowVersion of workflowVersions) {
-      if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {
-        await workflowVersionRepository.update(workflowVersion.id, {
-          status: WorkflowVersionStatus.DEACTIVATED,
-        });
+      if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
+        const newStatuses = [
+          ...workflow.statuses.filter(
+            (status) => status !== WorkflowStatus.ACTIVE,
+          ),
+          WorkflowStatus.DEACTIVATED,
+        ];
 
-        try {
+        await workflowRepository.update(
+          workflowId,
+          { statuses: newStatuses },
+          queryRunner.manager,
+        );
+      }
+
+      const workflowVersions = await workflowVersionRepository.find(
+        {
+          where: { workflowId },
+          withDeleted: true,
+        },
+        queryRunner.manager,
+      );
+
+      for (const workflowVersion of workflowVersions) {
+        if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {
+          await workflowVersionRepository.update(
+            workflowVersion.id,
+            { status: WorkflowVersionStatus.DEACTIVATED },
+            queryRunner.manager,
+          );
+
           await this.cleanupCommandMenuItemForVersion(
             workflowVersion.id,
             workspaceId,
           );
-        } catch (error) {
-          try {
-            await workflowVersionRepository.update(workflowVersion.id, {
-              status: WorkflowVersionStatus.ACTIVE,
-            });
-          } catch (rollbackError) {
-            this.logger.warn(
-              `Failed to rollback version status to ACTIVE for version ${workflowVersion.id} after command menu item cleanup failure: ${rollbackError}`,
-            );
-          }
-
-          throw error;
         }
       }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 

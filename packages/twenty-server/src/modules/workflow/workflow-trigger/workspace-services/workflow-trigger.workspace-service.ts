@@ -36,7 +36,6 @@ import {
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { assertNever } from 'src/utils/assert';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -199,98 +198,73 @@ export class WorkflowTriggerWorkspaceService {
       );
     }
 
-    await this.upgradeWorkflowVersion(
-      workflow,
-      workflowVersion.id,
-      workflowRepository,
-      workflowVersionRepository,
-    );
+    const dataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    await this.setActiveVersionStatus(
-      workflowVersion,
-      workflowVersionRepository,
-      workspaceId,
-    );
+    const queryRunner = dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
-      await this.enableTrigger(workflow, workflowVersion, workspaceId);
-    } catch (error) {
-      await this.rollbackActivation({
-        workflowVersion,
-        workflow,
-        previousPublishedVersionId,
-        workflowRepository,
-        workflowVersionRepository,
-        workspaceId,
-      });
+      if (workflow.lastPublishedVersionId !== workflowVersion.id) {
+        if (workflow.lastPublishedVersionId) {
+          await workflowVersionRepository.update(
+            { id: workflow.lastPublishedVersionId },
+            { status: WorkflowVersionStatus.ARCHIVED },
+            queryRunner.manager,
+          );
+        }
 
-      throw error;
-    }
-  }
+        await workflowRepository.update(
+          { id: workflow.id },
+          { lastPublishedVersionId: workflowVersion.id },
+          queryRunner.manager,
+        );
+      }
 
-  private async rollbackActivation({
-    workflowVersion,
-    workflow,
-    previousPublishedVersionId,
-    workflowRepository,
-    workflowVersionRepository,
-    workspaceId,
-  }: {
-    workflowVersion: WorkflowVersionWorkspaceEntity;
-    workflow: WorkflowWorkspaceEntity;
-    previousPublishedVersionId: string | null;
-    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
-    workspaceId: string;
-  }) {
-    try {
+      const activeWorkflowVersions = await workflowVersionRepository.find(
+        {
+          where: {
+            workflowId: workflowVersion.workflowId,
+            status: WorkflowVersionStatus.ACTIVE,
+          },
+        },
+        queryRunner.manager,
+      );
+
+      if (activeWorkflowVersions.length > 0) {
+        throw new WorkflowTriggerException(
+          'Cannot have more than one active workflow version',
+          WorkflowTriggerExceptionCode.FORBIDDEN,
+          {
+            userFriendlyMessage: msg`Cannot have more than one active workflow version`,
+          },
+        );
+      }
+
       await workflowVersionRepository.update(
         { id: workflowVersion.id },
-        { status: workflowVersion.status },
-      );
-    } catch (rollbackError) {
-      this.logger.warn(
-        `Failed to rollback version status for version ${workflowVersion.id}: ${rollbackError}`,
-      );
-    }
-
-    if (previousPublishedVersionId === workflowVersion.id) {
-      return;
-    }
-
-    try {
-      await workflowRepository.update(
-        { id: workflow.id },
-        { lastPublishedVersionId: previousPublishedVersionId },
-      );
-    } catch (rollbackError) {
-      this.logger.warn(
-        `Failed to rollback lastPublishedVersionId for workflow ${workflow.id}: ${rollbackError}`,
-      );
-    }
-
-    if (!isDefined(previousPublishedVersionId)) {
-      return;
-    }
-
-    try {
-      await workflowVersionRepository.update(
-        { id: previousPublishedVersionId },
         { status: WorkflowVersionStatus.ACTIVE },
+        queryRunner.manager,
       );
 
-      const previousVersion = await workflowVersionRepository.findOne({
-        where: { id: previousPublishedVersionId },
-      });
+      await this.enableTrigger(workflow, workflowVersion, workspaceId);
 
-      if (isDefined(previousVersion)) {
-        await this.enableTrigger(workflow, previousVersion, workspaceId);
-      }
-    } catch (rollbackError) {
-      this.logger.warn(
-        `Failed to re-activate previous version ${previousPublishedVersionId} for workflow ${workflow.id}: ${rollbackError}`,
-      );
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
+
+    await this.emitStatusUpdateEvents(
+      workflowVersion,
+      WorkflowVersionStatus.ACTIVE,
+      workspaceId,
+    );
   }
 
   private async performDeactivationSteps(
@@ -311,111 +285,36 @@ export class WorkflowTriggerWorkspaceService {
       return;
     }
 
-    await this.setDeactivatedVersionStatus(
-      workflowVersion,
-      workflowVersionRepository,
-      workspaceId,
-    );
+    const dataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    const queryRunner = dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
+      await workflowVersionRepository.update(
+        { id: workflowVersion.id },
+        { status: WorkflowVersionStatus.DEACTIVATED },
+        queryRunner.manager,
+      );
+
       await this.disableTrigger(workflowVersion, workspaceId);
+
+      await queryRunner.commitTransaction();
     } catch (error) {
-      try {
-        await workflowVersionRepository.update(
-          { id: workflowVersion.id },
-          { status: WorkflowVersionStatus.ACTIVE },
-        );
-      } catch (rollbackError) {
-        this.logger.warn(
-          `Failed to rollback version status to ACTIVE for version ${workflowVersion.id} after disableTrigger failure: ${rollbackError}`,
-        );
-      }
+      await queryRunner.rollbackTransaction();
 
       throw error;
+    } finally {
+      await queryRunner.release();
     }
-  }
-
-  private async setActiveVersionStatus(
-    workflowVersion: WorkflowVersionWorkspaceEntity,
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-    workspaceId: string,
-  ) {
-    const activeWorkflowVersions = await workflowVersionRepository.find({
-      where: {
-        workflowId: workflowVersion.workflowId,
-        status: WorkflowVersionStatus.ACTIVE,
-      },
-    });
-
-    if (activeWorkflowVersions.length > 0) {
-      throw new WorkflowTriggerException(
-        'Cannot have more than one active workflow version',
-        WorkflowTriggerExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Cannot have more than one active workflow version`,
-        },
-      );
-    }
-
-    await workflowVersionRepository.update(
-      { id: workflowVersion.id },
-      { status: WorkflowVersionStatus.ACTIVE },
-    );
-
-    await this.emitStatusUpdateEvents(
-      workflowVersion,
-      WorkflowVersionStatus.ACTIVE,
-      workspaceId,
-    );
-  }
-
-  private async setDeactivatedVersionStatus(
-    workflowVersion: WorkflowVersionWorkspaceEntity,
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-    workspaceId: string,
-  ) {
-    if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
-      throw new WorkflowTriggerException(
-        'Cannot disable non-active workflow version',
-        WorkflowTriggerExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Cannot disable non-active workflow version`,
-        },
-      );
-    }
-
-    await workflowVersionRepository.update(
-      { id: workflowVersion.id },
-      { status: WorkflowVersionStatus.DEACTIVATED },
-    );
 
     await this.emitStatusUpdateEvents(
       workflowVersion,
       WorkflowVersionStatus.DEACTIVATED,
       workspaceId,
-    );
-  }
-
-  private async upgradeWorkflowVersion(
-    workflow: WorkflowWorkspaceEntity,
-    newPublishedVersionId: string,
-    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>,
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-  ) {
-    if (workflow.lastPublishedVersionId === newPublishedVersionId) {
-      return;
-    }
-
-    if (workflow.lastPublishedVersionId) {
-      await workflowVersionRepository.update(
-        { id: workflow.lastPublishedVersionId },
-        { status: WorkflowVersionStatus.ARCHIVED },
-      );
-    }
-
-    await workflowRepository.update(
-      { id: workflow.id },
-      { lastPublishedVersionId: newPublishedVersionId },
     );
   }
 
