@@ -761,6 +761,56 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']>;
 };
 
+export enum CalendarChannelContactAutoCreationPolicy {
+  AS_ORGANIZER = 'AS_ORGANIZER',
+  AS_PARTICIPANT = 'AS_PARTICIPANT',
+  AS_PARTICIPANT_AND_ORGANIZER = 'AS_PARTICIPANT_AND_ORGANIZER',
+  NONE = 'NONE'
+}
+
+export type CalendarChannelDto = {
+  __typename?: 'CalendarChannelDTO';
+  connectedAccountId: Scalars['UUID'];
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
+  createdAt: Scalars['DateTime'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  isContactAutoCreationEnabled: Scalars['Boolean'];
+  isSyncEnabled: Scalars['Boolean'];
+  syncCursor?: Maybe<Scalars['String']>;
+  syncStage: CalendarChannelSyncStage;
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
+  syncStatus: CalendarChannelSyncStatus;
+  syncedAt?: Maybe<Scalars['DateTime']>;
+  throttleFailureCount: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  visibility: CalendarChannelVisibility;
+};
+
+export enum CalendarChannelSyncStage {
+  CALENDAR_EVENTS_IMPORT_ONGOING = 'CALENDAR_EVENTS_IMPORT_ONGOING',
+  CALENDAR_EVENTS_IMPORT_PENDING = 'CALENDAR_EVENTS_IMPORT_PENDING',
+  CALENDAR_EVENTS_IMPORT_SCHEDULED = 'CALENDAR_EVENTS_IMPORT_SCHEDULED',
+  CALENDAR_EVENT_LIST_FETCH_ONGOING = 'CALENDAR_EVENT_LIST_FETCH_ONGOING',
+  CALENDAR_EVENT_LIST_FETCH_PENDING = 'CALENDAR_EVENT_LIST_FETCH_PENDING',
+  CALENDAR_EVENT_LIST_FETCH_SCHEDULED = 'CALENDAR_EVENT_LIST_FETCH_SCHEDULED',
+  FAILED = 'FAILED',
+  PENDING_CONFIGURATION = 'PENDING_CONFIGURATION'
+}
+
+export enum CalendarChannelSyncStatus {
+  ACTIVE = 'ACTIVE',
+  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
+  NOT_SYNCED = 'NOT_SYNCED',
+  ONGOING = 'ONGOING'
+}
+
+export enum CalendarChannelVisibility {
+  METADATA = 'METADATA',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING'
+}
+
 export type CalendarConfiguration = {
   __typename?: 'CalendarConfiguration';
   configurationType: WidgetConfigurationType;
@@ -927,6 +977,25 @@ export type ConfigVariablesGroupData = {
   variables: Array<ConfigVariable>;
 };
 
+export type ConnectedAccountDto = {
+  __typename?: 'ConnectedAccountDTO';
+  accessToken?: Maybe<Scalars['String']>;
+  authFailedAt?: Maybe<Scalars['DateTime']>;
+  connectionParameters?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  handle: Scalars['String'];
+  handleAliases?: Maybe<Array<Scalars['String']>>;
+  id: Scalars['UUID'];
+  lastCredentialsRefreshedAt?: Maybe<Scalars['DateTime']>;
+  lastSignedInAt?: Maybe<Scalars['DateTime']>;
+  oidcTokenClaims?: Maybe<Scalars['String']>;
+  provider: Scalars['String'];
+  refreshToken?: Maybe<Scalars['String']>;
+  scopes?: Maybe<Array<Scalars['String']>>;
+  updatedAt: Scalars['DateTime'];
+  userWorkspaceId: Scalars['UUID'];
+};
+
 export type ConnectedImapSmtpCaldavAccount = {
   __typename?: 'ConnectedImapSmtpCaldavAccount';
   accountOwnerId: Scalars['UUID'];
@@ -1008,6 +1077,17 @@ export type CreateApprovedAccessDomainInput = {
   email: Scalars['String'];
 };
 
+export type CreateCalendarChannelInput = {
+  connectedAccountId: Scalars['UUID'];
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicy>;
+  handle: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
+  syncStage: CalendarChannelSyncStage;
+  visibility: CalendarChannelVisibility;
+};
+
 export type CreateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
@@ -1021,6 +1101,16 @@ export type CreateCommandMenuItemInput = {
   position?: InputMaybe<Scalars['Float']>;
   shortLabel?: InputMaybe<Scalars['String']>;
   workflowVersionId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type CreateConnectedAccountInput = {
+  accessToken?: InputMaybe<Scalars['String']>;
+  handle: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+  provider: Scalars['String'];
+  refreshToken?: InputMaybe<Scalars['String']>;
+  scopes?: InputMaybe<Array<Scalars['String']>>;
+  userWorkspaceId: Scalars['UUID'];
 };
 
 export type CreateFieldInput = {
@@ -1067,6 +1157,29 @@ export type CreateLogicFunctionFromSourceInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
   universalIdentifier?: InputMaybe<Scalars['UUID']>;
+};
+
+export type CreateMessageChannelInput = {
+  connectedAccountId: Scalars['UUID'];
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicy>;
+  handle: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
+  messageFolderImportPolicy?: InputMaybe<MessageFolderImportPolicy>;
+  syncStage: MessageChannelSyncStage;
+  type: MessageChannelType;
+  visibility: MessageChannelVisibility;
+};
+
+export type CreateMessageFolderInput = {
+  externalId?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  isSentFolder?: InputMaybe<Scalars['Boolean']>;
+  messageChannelId: Scalars['UUID'];
+  name?: InputMaybe<Scalars['String']>;
+  parentFolderId?: InputMaybe<Scalars['UUID']>;
+  pendingSyncAction: MessageFolderPendingSyncAction;
 };
 
 export type CreateNavigationMenuItemInput = {
@@ -1618,6 +1731,7 @@ export enum FeatureFlagKey {
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
   IS_ATTACHMENT_MIGRATED = 'IS_ATTACHMENT_MIGRATED',
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
+  IS_CONNECTED_ACCOUNT_MIGRATED = 'IS_CONNECTED_ACCOUNT_MIGRATED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED = 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED',
   IS_DRAFT_EMAIL_ENABLED = 'IS_DRAFT_EMAIL_ENABLED',
@@ -2289,6 +2403,98 @@ export type MarketplaceAppRoleObjectPermission = {
   objectUniversalIdentifier: Scalars['String'];
 };
 
+export enum MessageChannelContactAutoCreationPolicy {
+  NONE = 'NONE',
+  SENT = 'SENT',
+  SENT_AND_RECEIVED = 'SENT_AND_RECEIVED'
+}
+
+export type MessageChannelDto = {
+  __typename?: 'MessageChannelDTO';
+  connectedAccountId: Scalars['UUID'];
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
+  createdAt: Scalars['DateTime'];
+  excludeGroupEmails: Scalars['Boolean'];
+  excludeNonProfessionalEmails: Scalars['Boolean'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  isContactAutoCreationEnabled: Scalars['Boolean'];
+  isSyncEnabled: Scalars['Boolean'];
+  messageFolderImportPolicy: MessageFolderImportPolicy;
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
+  syncCursor?: Maybe<Scalars['String']>;
+  syncStage: MessageChannelSyncStage;
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
+  syncStatus: MessageChannelSyncStatus;
+  syncedAt?: Maybe<Scalars['DateTime']>;
+  throttleFailureCount: Scalars['Float'];
+  throttleRetryAfter?: Maybe<Scalars['DateTime']>;
+  type: MessageChannelType;
+  updatedAt: Scalars['DateTime'];
+  visibility: MessageChannelVisibility;
+};
+
+export enum MessageChannelPendingGroupEmailsAction {
+  GROUP_EMAILS_DELETION = 'GROUP_EMAILS_DELETION',
+  GROUP_EMAILS_IMPORT = 'GROUP_EMAILS_IMPORT',
+  NONE = 'NONE'
+}
+
+export enum MessageChannelSyncStage {
+  FAILED = 'FAILED',
+  MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
+  MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
+  MESSAGES_IMPORT_SCHEDULED = 'MESSAGES_IMPORT_SCHEDULED',
+  MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
+  MESSAGE_LIST_FETCH_PENDING = 'MESSAGE_LIST_FETCH_PENDING',
+  MESSAGE_LIST_FETCH_SCHEDULED = 'MESSAGE_LIST_FETCH_SCHEDULED',
+  PENDING_CONFIGURATION = 'PENDING_CONFIGURATION'
+}
+
+export enum MessageChannelSyncStatus {
+  ACTIVE = 'ACTIVE',
+  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
+  NOT_SYNCED = 'NOT_SYNCED',
+  ONGOING = 'ONGOING'
+}
+
+export enum MessageChannelType {
+  EMAIL = 'EMAIL',
+  SMS = 'SMS'
+}
+
+export enum MessageChannelVisibility {
+  METADATA = 'METADATA',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
+  SUBJECT = 'SUBJECT'
+}
+
+export type MessageFolderDto = {
+  __typename?: 'MessageFolderDTO';
+  createdAt: Scalars['DateTime'];
+  externalId?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isSentFolder: Scalars['Boolean'];
+  isSynced: Scalars['Boolean'];
+  messageChannelId: Scalars['UUID'];
+  name?: Maybe<Scalars['String']>;
+  parentFolderId?: Maybe<Scalars['UUID']>;
+  pendingSyncAction: MessageFolderPendingSyncAction;
+  syncCursor?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum MessageFolderImportPolicy {
+  ALL_FOLDERS = 'ALL_FOLDERS',
+  SELECTED_FOLDERS = 'SELECTED_FOLDERS'
+}
+
+export enum MessageFolderPendingSyncAction {
+  FOLDER_DELETION = 'FOLDER_DELETION',
+  NONE = 'NONE'
+}
+
 export type MetadataEvent = {
   __typename?: 'MetadataEvent';
   metadataName: Scalars['String'];
@@ -2361,8 +2567,10 @@ export type Mutation = {
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createCalendarChannel: CalendarChannelDto;
   createChatThread: AgentChatThread;
   createCommandMenuItem: CommandMenuItem;
+  createConnectedAccount: ConnectedAccountDto;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDevelopmentApplication: DevelopmentApplication;
   createEmailingDomain: EmailingDomain;
@@ -2370,6 +2578,8 @@ export type Mutation = {
   createManyViewFieldGroups: Array<ViewFieldGroup>;
   createManyViewFields: Array<ViewField>;
   createManyViewGroups: Array<ViewGroup>;
+  createMessageChannel: MessageChannelDto;
+  createMessageFolder: MessageFolderDto;
   createNavigationMenuItem: NavigationMenuItem;
   createOIDCIdentityProvider: SetupSso;
   createObjectEvent: Analytics;
@@ -2397,12 +2607,16 @@ export type Mutation = {
   deleteApplicationRegistration: Scalars['Boolean'];
   deleteApplicationRegistrationVariable: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
+  deleteCalendarChannel: CalendarChannelDto;
   deleteCommandMenuItem: CommandMenuItem;
+  deleteConnectedAccount: ConnectedAccountDto;
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFrontComponent: FrontComponent;
   deleteJobs: DeleteJobsResponse;
+  deleteMessageChannel: MessageChannelDto;
+  deleteMessageFolder: MessageFolderDto;
   deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
   deleteOneField: Field;
@@ -2487,10 +2701,14 @@ export type Mutation = {
   updateApiKey?: Maybe<ApiKey>;
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
+  updateCalendarChannel: CalendarChannelDto;
   updateCommandMenuItem: CommandMenuItem;
+  updateConnectedAccount: ConnectedAccountDto;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlag;
+  updateMessageChannel: MessageChannelDto;
+  updateMessageFolder: MessageFolderDto;
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
@@ -2608,8 +2826,18 @@ export type MutationCreateApprovedAccessDomainArgs = {
 };
 
 
+export type MutationCreateCalendarChannelArgs = {
+  input: CreateCalendarChannelInput;
+};
+
+
 export type MutationCreateCommandMenuItemArgs = {
   input: CreateCommandMenuItemInput;
+};
+
+
+export type MutationCreateConnectedAccountArgs = {
+  input: CreateConnectedAccountInput;
 };
 
 
@@ -2648,6 +2876,16 @@ export type MutationCreateManyViewFieldsArgs = {
 
 export type MutationCreateManyViewGroupsArgs = {
   inputs: Array<CreateViewGroupInput>;
+};
+
+
+export type MutationCreateMessageChannelArgs = {
+  input: CreateMessageChannelInput;
+};
+
+
+export type MutationCreateMessageFolderArgs = {
+  input: CreateMessageFolderInput;
 };
 
 
@@ -2789,7 +3027,17 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 };
 
 
+export type MutationDeleteCalendarChannelArgs = {
+  id: Scalars['UUID'];
+};
+
+
 export type MutationDeleteCommandMenuItemArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteConnectedAccountArgs = {
   id: Scalars['UUID'];
 };
 
@@ -2812,6 +3060,16 @@ export type MutationDeleteFrontComponentArgs = {
 export type MutationDeleteJobsArgs = {
   jobIds: Array<Scalars['String']>;
   queueName: Scalars['String'];
+};
+
+
+export type MutationDeleteMessageChannelArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteMessageFolderArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -3217,8 +3475,18 @@ export type MutationUpdateApplicationRegistrationVariableArgs = {
 };
 
 
+export type MutationUpdateCalendarChannelArgs = {
+  input: UpdateCalendarChannelInput;
+};
+
+
 export type MutationUpdateCommandMenuItemArgs = {
   input: UpdateCommandMenuItemInput;
+};
+
+
+export type MutationUpdateConnectedAccountArgs = {
+  input: UpdateConnectedAccountInput;
 };
 
 
@@ -3235,6 +3503,16 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateMessageChannelArgs = {
+  input: UpdateMessageChannelInput;
+};
+
+
+export type MutationUpdateMessageFolderArgs = {
+  input: UpdateMessageFolderInput;
 };
 
 
@@ -3939,6 +4217,8 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
+  calendarChannel?: Maybe<CalendarChannelDto>;
+  calendarChannels: Array<CalendarChannelDto>;
   chatMessages: Array<AgentMessage>;
   chatThread: AgentChatThread;
   chatThreads: AgentChatThreadConnection;
@@ -3946,6 +4226,8 @@ export type Query = {
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   commandMenuItem?: Maybe<CommandMenuItem>;
   commandMenuItems: Array<CommandMenuItem>;
+  connectedAccount?: Maybe<ConnectedAccountDto>;
+  connectedAccounts: Array<ConnectedAccountDto>;
   currentUser: User;
   currentWorkspace: Workspace;
   enterpriseCheckoutSession?: Maybe<Scalars['String']>;
@@ -4020,6 +4302,10 @@ export type Query = {
   indexMetadatas: IndexConnection;
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
+  messageChannel?: Maybe<MessageChannelDto>;
+  messageChannels: Array<MessageChannelDto>;
+  messageFolder?: Maybe<MessageFolderDto>;
+  messageFolders: Array<MessageFolderDto>;
   minimalMetadata: MinimalMetadata;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
@@ -4061,6 +4347,16 @@ export type QueryBillingPortalSessionArgs = {
 };
 
 
+export type QueryCalendarChannelArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryCalendarChannelsArgs = {
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
+};
+
+
 export type QueryChatMessagesArgs = {
   threadId: Scalars['UUID'];
 };
@@ -4090,6 +4386,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 
 export type QueryCommandMenuItemArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryConnectedAccountArgs = {
   id: Scalars['UUID'];
 };
 
@@ -4354,6 +4655,26 @@ export type QueryIndexMetadatasArgs = {
 
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
+};
+
+
+export type QueryMessageChannelArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryMessageChannelsArgs = {
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
+};
+
+
+export type QueryMessageFolderArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryMessageFoldersArgs = {
+  messageChannelId?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -4871,6 +5192,18 @@ export type UpdateApplicationRegistrationVariablePayload = {
   value?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateCalendarChannelInput = {
+  id: Scalars['UUID'];
+  update: UpdateCalendarChannelInputUpdates;
+};
+
+export type UpdateCalendarChannelInputUpdates = {
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicy>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
+  visibility?: InputMaybe<CalendarChannelVisibility>;
+};
+
 export type UpdateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
@@ -4882,6 +5215,18 @@ export type UpdateCommandMenuItemInput = {
   label?: InputMaybe<Scalars['String']>;
   position?: InputMaybe<Scalars['Float']>;
   shortLabel?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateConnectedAccountInput = {
+  id: Scalars['UUID'];
+  update: UpdateConnectedAccountInputUpdates;
+};
+
+export type UpdateConnectedAccountInputUpdates = {
+  accessToken?: InputMaybe<Scalars['String']>;
+  handleAliases?: InputMaybe<Array<Scalars['String']>>;
+  refreshToken?: InputMaybe<Scalars['String']>;
+  scopes?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateFieldInput = {
@@ -4938,6 +5283,33 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateMessageChannelInput = {
+  id: Scalars['UUID'];
+  update: UpdateMessageChannelInputUpdates;
+};
+
+export type UpdateMessageChannelInputUpdates = {
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicy>;
+  excludeGroupEmails?: InputMaybe<Scalars['Boolean']>;
+  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
+  messageFolderImportPolicy?: InputMaybe<MessageFolderImportPolicy>;
+  visibility?: InputMaybe<MessageChannelVisibility>;
+};
+
+export type UpdateMessageFolderInput = {
+  id: Scalars['UUID'];
+  update: UpdateMessageFolderInputUpdates;
+};
+
+export type UpdateMessageFolderInputUpdates = {
+  isSynced?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  pendingSyncAction?: InputMaybe<MessageFolderPendingSyncAction>;
+  syncCursor?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateNavigationMenuItemInput = {
