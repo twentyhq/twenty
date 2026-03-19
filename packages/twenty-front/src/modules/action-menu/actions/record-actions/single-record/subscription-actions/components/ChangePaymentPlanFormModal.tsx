@@ -6,6 +6,7 @@ import {
   StyledActivatedBy,
   StyledModalFooter,
   StyledFormSection,
+  StyledError,
   buildTargetFieldName,
 } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/shared-subscription-modal-styles';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -45,7 +46,8 @@ const Grid = styled.div`
 
 const Card = styled.div<{ selected: boolean }>`
   border: 1px solid
-    ${({ theme, selected }) => (selected ? theme.color.blue : theme.border.color.medium)};
+    ${({ theme, selected }) =>
+      selected ? theme.color.blue : theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
   font-size: ${({ theme }) => theme.font.size.sm};
@@ -59,7 +61,7 @@ export const ChangePaymentPlanFormModal = ({
   modalId,
   recordId,
   objectNameSingular,
-}: Props) => {
+}: ChangePaymentPlanFormModalProps) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,12 +78,22 @@ export const ChangePaymentPlanFormModal = ({
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const currentMember = useRecoilValueV2(currentWorkspaceMemberState);
 
-  const { record } = useFindOneRecord({ objectNameSingular, objectRecordId: recordId });
+  const { record } = useFindOneRecord({
+    objectNameSingular,
+    objectRecordId: recordId,
+  });
 
   const current = isDefined(record) ? (record.paymentStatus as string) : null;
-  const currentLabel = OPTIONS.find((o) => o.value === current)?.label ?? 'Not set';
+  const currentLabel =
+    OPTIONS.find((o) => o.value === current)?.label ?? 'Not set';
   const selectedLabel = OPTIONS.find((o) => o.value === selected)?.label ?? '';
-  const isValid = isDefined(selected) && reason.trim().length > 0;
+  const isWithdrawn = record?.accessStatus === 'WITHDRAWN';
+  const isSameAsCurrent = isDefined(selected) && selected === current;
+  const isValid =
+    isDefined(selected) &&
+    reason.trim().length > 0 &&
+    !isWithdrawn &&
+    !isSameAsCurrent;
 
   const memberName = isDefined(currentMember)
     ? `${currentMember.name.firstName} ${currentMember.name.lastName}`.trim()
@@ -111,7 +123,9 @@ export const ChangePaymentPlanFormModal = ({
         // non-critical
       }
 
-      enqueueSuccessSnackBar({ message: `Payment plan changed to ${selectedLabel}` });
+      enqueueSuccessSnackBar({
+        message: `Payment plan changed to ${selectedLabel}`,
+      });
       closeModal(modalId);
       closeActionMenu();
     } catch {
@@ -131,7 +145,10 @@ export const ChangePaymentPlanFormModal = ({
       shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <Modal.Header>
-        <H1Title title="Change Payment Plan" fontColor={H1TitleFontColor.Primary} />
+        <H1Title
+          title="Change Payment Plan"
+          fontColor={H1TitleFontColor.Primary}
+        />
       </Modal.Header>
       <Modal.Content>
         <StyledFormSection>
@@ -148,6 +165,17 @@ export const ChangePaymentPlanFormModal = ({
             )}
           </div>
 
+          {isWithdrawn && (
+            <StyledError>
+              Cannot change payment plan for a withdrawn subscription.
+            </StyledError>
+          )}
+          {isSameAsCurrent && (
+            <StyledError>
+              Selected plan is the same as the current plan.
+            </StyledError>
+          )}
+
           <Grid>
             {OPTIONS.map((opt) => (
               <Card
@@ -155,7 +183,8 @@ export const ChangePaymentPlanFormModal = ({
                 selected={selected === opt.value}
                 onClick={() => setSelected(opt.value)}
               >
-                {opt.label}{current === opt.value ? ' (current)' : ''}
+                {opt.label}
+                {current === opt.value ? ' (current)' : ''}
               </Card>
             ))}
           </Grid>
@@ -172,7 +201,11 @@ export const ChangePaymentPlanFormModal = ({
         </StyledFormSection>
       </Modal.Content>
       <StyledModalFooter>
-        <Button title="Cancel" variant="secondary" onClick={() => closeModal(modalId)} />
+        <Button
+          title="Cancel"
+          variant="secondary"
+          onClick={() => closeModal(modalId)}
+        />
         <Button
           title="Confirm Change"
           variant="primary"

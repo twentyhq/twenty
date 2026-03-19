@@ -35,6 +35,22 @@ export const StyledFormSection = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+export const StyledWarning = styled.div`
+  background: ${({ theme }) => theme.tag.background.orange};
+  border-left: 3px solid ${({ theme }) => theme.tag.text.orange};
+  border-radius: 4px;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+`;
+
+export const StyledError = styled.div`
+  background: ${({ theme }) => theme.tag.background.red};
+  border-left: 3px solid ${({ theme }) => theme.tag.text.red};
+  border-radius: 4px;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+`;
+
 export const formatDate = (date: Date | null): string => {
   if (!isDefined(date)) {
     return 'Not set';
