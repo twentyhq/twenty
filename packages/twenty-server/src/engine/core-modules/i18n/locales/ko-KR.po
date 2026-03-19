@@ -554,6 +554,11 @@ msgstr ""
 msgid "Calendar channel is misconfigured."
 msgstr "캘린더 채널이 잘못 구성되었습니다."
 
+#. js-lingui-id: 3J2x1Q
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "Calendar channel not found."
+msgstr ""
+
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar event not found."
@@ -920,6 +925,7 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "{objectMetadataNameSingular}의 {connectFieldName}에 대해서는 연결이 허용되지 않습니다."
 
 #. js-lingui-id: /OJTzk
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Connected account not found."
 msgstr "연결된 계정을 찾을 수 없음."
@@ -1774,6 +1780,11 @@ msgstr "잘못된 감사 유형입니다."
 msgid "Invalid CALDAV credentials. Please check your username and password."
 msgstr "잘못된 CALDAV 자격 증명입니다. 사용자 이름과 비밀번호를 확인하십시오."
 
+#. js-lingui-id: cizVEW
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "Invalid calendar channel input."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1865,6 +1876,11 @@ msgstr ""
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Invalid connected account ID."
 msgstr "잘못된 연결된 계정 ID입니다."
+
+#. js-lingui-id: DH8Ofc
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+msgid "Invalid connected account input."
+msgstr ""
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2017,6 +2033,16 @@ msgstr "잘못된 레이블 형식입니다."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid limit parameter."
 msgstr "잘못된 limit 매개변수입니다."
+
+#. js-lingui-id: fNaXqL
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Invalid message channel input."
+msgstr ""
+
+#. js-lingui-id: zUyPBT
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "Invalid message folder input."
+msgstr ""
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2678,6 +2704,16 @@ msgstr "5월"
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "메시지 채널을 찾을 수 없음"
+
+#. js-lingui-id: vjIbbe
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message channel not found."
+msgstr ""
+
+#. js-lingui-id: BZbxut
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "Message folder not found."
+msgstr ""
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
