@@ -1904,7 +1904,7 @@ export type CalendarChannelVisibility = 'METADATA' | 'SHARE_EVERYTHING'
 
 export type CalendarChannelContactAutoCreationPolicy = 'AS_PARTICIPANT_AND_ORGANIZER' | 'AS_PARTICIPANT' | 'AS_ORGANIZER' | 'NONE'
 
-export interface ConnectedAccount {
+export interface ConnectedAccountDTO {
     id: Scalars['UUID']
     handle: Scalars['String']
     provider: Scalars['String']
@@ -1920,7 +1920,7 @@ export interface ConnectedAccount {
     userWorkspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    __typename: 'ConnectedAccount'
+    __typename: 'ConnectedAccountDTO'
 }
 
 export interface MessageChannel {
@@ -2730,8 +2730,8 @@ export interface Query {
     calendarChannel?: CalendarChannel
     messageChannels: MessageChannel[]
     messageChannel?: MessageChannel
-    connectedAccounts: ConnectedAccount[]
-    connectedAccount?: ConnectedAccount
+    connectedAccounts: ConnectedAccountDTO[]
+    connectedAccount?: ConnectedAccountDTO
     webhooks: Webhook[]
     webhook?: Webhook
     minimalMetadata: MinimalMetadata
@@ -2937,9 +2937,9 @@ export interface Mutation {
     createMessageChannel: MessageChannel
     updateMessageChannel: MessageChannel
     deleteMessageChannel: MessageChannel
-    createConnectedAccount: ConnectedAccount
-    updateConnectedAccount: ConnectedAccount
-    deleteConnectedAccount: ConnectedAccount
+    createConnectedAccount: ConnectedAccountDTO
+    updateConnectedAccount: ConnectedAccountDTO
+    deleteConnectedAccount: ConnectedAccountDTO
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
@@ -5005,7 +5005,7 @@ export interface CalendarChannelGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ConnectedAccountGenqlSelection{
+export interface ConnectedAccountDTOGenqlSelection{
     id?: boolean | number
     handle?: boolean | number
     provider?: boolean | number
@@ -5880,8 +5880,8 @@ export interface QueryGenqlSelection{
     calendarChannel?: (CalendarChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     messageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     messageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
-    connectedAccounts?: ConnectedAccountGenqlSelection
-    connectedAccount?: (ConnectedAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
+    connectedAccounts?: ConnectedAccountDTOGenqlSelection
+    connectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     minimalMetadata?: MinimalMetadataGenqlSelection
@@ -6112,9 +6112,9 @@ export interface MutationGenqlSelection{
     createMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateMessageChannelInput} })
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     deleteMessageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createConnectedAccount?: (ConnectedAccountGenqlSelection & { __args: {input: CreateConnectedAccountInput} })
-    updateConnectedAccount?: (ConnectedAccountGenqlSelection & { __args: {input: UpdateConnectedAccountInput} })
-    deleteConnectedAccount?: (ConnectedAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {input: CreateConnectedAccountInput} })
+    updateConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {input: UpdateConnectedAccountInput} })
+    deleteConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7903,10 +7903,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ConnectedAccount_possibleTypes: string[] = ['ConnectedAccount']
-    export const isConnectedAccount = (obj?: { __typename?: any } | null): obj is ConnectedAccount => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccount"')
-      return ConnectedAccount_possibleTypes.includes(obj.__typename)
+    const ConnectedAccountDTO_possibleTypes: string[] = ['ConnectedAccountDTO']
+    export const isConnectedAccountDTO = (obj?: { __typename?: any } | null): obj is ConnectedAccountDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountDTO"')
+      return ConnectedAccountDTO_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -2254,7 +2254,7 @@ enum CalendarChannelContactAutoCreationPolicy {
   NONE
 }
 
-type ConnectedAccount {
+type ConnectedAccountDTO {
   id: UUID!
   handle: String!
   provider: String!
@@ -3174,8 +3174,8 @@ type Query {
   calendarChannel(id: UUID!): CalendarChannel
   messageChannels(connectedAccountId: UUID): [MessageChannel!]!
   messageChannel(id: UUID!): MessageChannel
-  connectedAccounts: [ConnectedAccount!]!
-  connectedAccount(id: UUID!): ConnectedAccount
+  connectedAccounts: [ConnectedAccountDTO!]!
+  connectedAccount(id: UUID!): ConnectedAccountDTO
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
@@ -3482,9 +3482,9 @@ type Mutation {
   createMessageChannel(input: CreateMessageChannelInput!): MessageChannel!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   deleteMessageChannel(id: UUID!): MessageChannel!
-  createConnectedAccount(input: CreateConnectedAccountInput!): ConnectedAccount!
-  updateConnectedAccount(input: UpdateConnectedAccountInput!): ConnectedAccount!
-  deleteConnectedAccount(id: UUID!): ConnectedAccount!
+  createConnectedAccount(input: CreateConnectedAccountInput!): ConnectedAccountDTO!
+  updateConnectedAccount(input: UpdateConnectedAccountInput!): ConnectedAccountDTO!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!

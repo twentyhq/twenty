@@ -4375,7 +4375,7 @@ export default {
         "CalendarChannelSyncStage": {},
         "CalendarChannelVisibility": {},
         "CalendarChannelContactAutoCreationPolicy": {},
-        "ConnectedAccount": {
+        "ConnectedAccountDTO": {
             "id": [
                 3
             ],

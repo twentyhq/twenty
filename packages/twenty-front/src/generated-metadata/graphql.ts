@@ -977,8 +977,8 @@ export type ConfigVariablesGroupData = {
   variables: Array<ConfigVariable>;
 };
 
-export type ConnectedAccount = {
-  __typename?: 'ConnectedAccount';
+export type ConnectedAccountDto = {
+  __typename?: 'ConnectedAccountDTO';
   accessToken?: Maybe<Scalars['String']>;
   authFailedAt?: Maybe<Scalars['DateTime']>;
   connectionParameters?: Maybe<Scalars['JSON']>;
@@ -2574,7 +2574,7 @@ export type Mutation = {
   createCalendarChannel: CalendarChannel;
   createChatThread: AgentChatThread;
   createCommandMenuItem: CommandMenuItem;
-  createConnectedAccount: ConnectedAccount;
+  createConnectedAccount: ConnectedAccountDto;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDevelopmentApplication: DevelopmentApplication;
   createEmailingDomain: EmailingDomain;
@@ -2613,7 +2613,7 @@ export type Mutation = {
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCalendarChannel: CalendarChannel;
   deleteCommandMenuItem: CommandMenuItem;
-  deleteConnectedAccount: ConnectedAccount;
+  deleteConnectedAccount: ConnectedAccountDto;
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
@@ -2707,7 +2707,7 @@ export type Mutation = {
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
-  updateConnectedAccount: ConnectedAccount;
+  updateConnectedAccount: ConnectedAccountDto;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlag;
@@ -4230,8 +4230,8 @@ export type Query = {
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   commandMenuItem?: Maybe<CommandMenuItem>;
   commandMenuItems: Array<CommandMenuItem>;
-  connectedAccount?: Maybe<ConnectedAccount>;
-  connectedAccounts: Array<ConnectedAccount>;
+  connectedAccount?: Maybe<ConnectedAccountDto>;
+  connectedAccounts: Array<ConnectedAccountDto>;
   currentUser: User;
   currentWorkspace: Workspace;
   enterpriseCheckoutSession?: Maybe<Scalars['String']>;
