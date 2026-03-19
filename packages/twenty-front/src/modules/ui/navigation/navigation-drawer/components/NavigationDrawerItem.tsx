@@ -447,7 +447,15 @@ export const NavigationDrawerItem = ({
 
           {isDefined(rightOptions) && (
             <NavigationDrawerAnimatedCollapseWrapper>
-              <StyledRightOptionsContainer>
+              {/* When StyledItem renders as a Link, we need both handlers to
+                  prevent navigation when interacting with rightOptions:
+                  - onMouseDown: stops useMouseDownNavigation from calling navigate()
+                  - onClickCapture: prevents the native <a> follow since the child's
+                    stopPropagation blocks Link's own preventDefault */}
+              <StyledRightOptionsContainer
+                onMouseDown={(e) => e.stopPropagation()}
+                onClickCapture={(e) => e.preventDefault()}
+              >
                 <StyledRightOptionsVisbility
                   data-visible={
                     isMobile ||
