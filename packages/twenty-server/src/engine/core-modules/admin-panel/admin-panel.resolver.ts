@@ -202,10 +202,7 @@ export class AdminPanelResolver {
     @Args('modelId', { type: () => String }) modelId: string,
     @Args('recommended', { type: () => Boolean }) recommended: boolean,
   ): Promise<boolean> {
-    await this.aiModelRegistryService.setModelRecommended(
-      modelId,
-      recommended,
-    );
+    await this.aiModelRegistryService.setModelRecommended(modelId, recommended);
 
     return true;
   }

@@ -219,9 +219,9 @@ describe('AiModelRegistryService', () => {
   it('should throw error for non-existent model', () => {
     jest.spyOn(SERVICE, 'getModel').mockReturnValue(undefined);
 
-    expect(() =>
-      SERVICE.getEffectiveModelConfig('non-existent-model'),
-    ).toThrow('Model with ID non-existent-model not found');
+    expect(() => SERVICE.getEffectiveModelConfig('non-existent-model')).toThrow(
+      'Model with ID non-existent-model not found',
+    );
   });
 
   it('should find first available model from comma-separated list', () => {

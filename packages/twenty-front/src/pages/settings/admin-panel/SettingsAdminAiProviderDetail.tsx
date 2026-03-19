@@ -26,7 +26,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAdminAiModelHoverCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard';
-import { DISCOVER_AI_MODELS } from '@/settings/admin-panel/ai/graphql/mutations/discoverAiModels';
 import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -42,7 +41,10 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SetAdminAiModelEnabledDocument } from '~/generated-metadata/graphql';
+import {
+  DiscoverAiModelsDocument,
+  SetAdminAiModelEnabledDocument,
+} from '~/generated-metadata/graphql';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
@@ -109,8 +111,9 @@ export const SettingsAdminAiProviderDetail = () => {
   }>(GET_ADMIN_AI_MODELS);
 
   const [setModelEnabled] = useMutation(SetAdminAiModelEnabledDocument);
-  const [discoverModels, { loading: isDiscovering }] =
-    useMutation(DISCOVER_AI_MODELS);
+  const [discoverModels, { loading: isDiscovering }] = useMutation(
+    DiscoverAiModelsDocument,
+  );
   const [removeAiProvider] = useMutation(REMOVE_AI_PROVIDER);
 
   const handleRemoveProvider = async () => {
@@ -157,7 +160,7 @@ export const SettingsAdminAiProviderDetail = () => {
 
     const config = rawProviders[providerName];
 
-    if (!config) {
+    if (config === undefined) {
       return undefined;
     }
 

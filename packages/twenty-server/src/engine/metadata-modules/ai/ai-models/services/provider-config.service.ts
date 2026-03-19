@@ -10,7 +10,10 @@ import {
 // Maps provider types to their conventional env var names.
 // These match the defaults used by the AI SDKs themselves.
 const PROVIDER_ENV_VAR_MAP: Partial<
-  Record<AiProvider, { apiKey?: string; accessKeyId?: string; secretAccessKey?: string }>
+  Record<
+    AiProvider,
+    { apiKey?: string; accessKeyId?: string; secretAccessKey?: string }
+  >
 > = {
   [AiProvider.OPENAI]: { apiKey: 'OPENAI_API_KEY' },
   [AiProvider.ANTHROPIC]: { apiKey: 'ANTHROPIC_API_KEY' },

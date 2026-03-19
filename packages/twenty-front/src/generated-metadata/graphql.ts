@@ -2442,7 +2442,7 @@ export type Mutation = {
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
-  discoverAiModels: Scalars['Boolean'];
+  discoverAiModels: Scalars['Int'];
   duplicateDashboard: DuplicatedDashboard;
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -6654,7 +6654,7 @@ export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', get
 export type DiscoverAiModelsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DiscoverAiModelsMutation = { __typename?: 'Mutation', discoverAiModels: boolean };
+export type DiscoverAiModelsMutation = { __typename?: 'Mutation', discoverAiModels: number };
 
 export type RemoveAiProviderMutationVariables = Exact<{
   providerName: Scalars['String'];

@@ -6,7 +6,10 @@
 /* oxlint-disable eslint(no-console) */
 
 import { loadDefaultAiProviders } from '../utils/load-default-ai-providers.util';
-import { AiProvider, type AiProvidersConfig } from '../types/ai-providers.types';
+import {
+  AiProvider,
+  type AiProvidersConfig,
+} from '../types/ai-providers.types';
 
 const MODELS_DEV_API_URL = 'https://models.dev/api.json';
 
