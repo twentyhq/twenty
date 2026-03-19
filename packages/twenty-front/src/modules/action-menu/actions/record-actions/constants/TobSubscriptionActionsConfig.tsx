@@ -2,6 +2,7 @@ import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { ChangePaymentPlanAction } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/ChangePaymentPlanAction';
 import { ExtendSubscriptionAction } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/ExtendSubscriptionAction';
+import { BulkCreateTasksAction } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/BulkCreateTasksAction';
 import { OpenCaseAction } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/OpenCaseAction';
 import { PauseSubscriptionAction } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/PauseSubscriptionAction';
 import { UpdateStartDateAction } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/UpdateStartDateAction';
@@ -15,6 +16,7 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarEvent,
+  IconCheckbox,
   IconCreditCard,
   IconFlag,
   IconPlayerPause,
@@ -117,6 +119,22 @@ export const TOB_SUBSCRIPTION_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ],
       component: <OpenCaseAction />,
+    },
+    [SubscriptionSingleRecordActionKeys.BULK_CREATE_TASKS]: {
+      key: SubscriptionSingleRecordActionKeys.BULK_CREATE_TASKS,
+      label: msg`Create Follow-up Tasks`,
+      shortLabel: msg`Tasks`,
+      isPinned: false,
+      position: 6,
+      Icon: IconCheckbox,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ objectPermissions, numberOfSelectedRecords }) =>
+        objectPermissions.canUpdateObjectRecords &&
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords > 0,
+      availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
+      component: <BulkCreateTasksAction />,
     },
   },
   actionKeys: [
