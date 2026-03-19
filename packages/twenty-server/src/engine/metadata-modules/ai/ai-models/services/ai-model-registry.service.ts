@@ -406,15 +406,6 @@ export class AiModelRegistryService {
       return true;
     }
 
-    // When no providers have credentials, there's nothing to enforce
-    if (this.modelRegistry.size === 0) {
-      return true;
-    }
-
-    if (!this.providerModelDefCache.has(modelId)) {
-      return false;
-    }
-
     const prefs = this.preferencesService.getPreferences();
     const disabledModels = prefs.disabledModels ?? [];
 
@@ -425,6 +416,11 @@ export class AiModelRegistryService {
     modelId: string,
     workspace: WorkspaceModelAvailabilitySettings,
   ): void {
+    // No credentialed providers → nothing to enforce; agent is just metadata
+    if (this.modelRegistry.size === 0) {
+      return;
+    }
+
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AgentException(
         'The selected model has been disabled by the administrator.',
