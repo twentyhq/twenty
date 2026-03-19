@@ -6,6 +6,8 @@ import {
   StyledActivatedBy,
   StyledModalFooter,
   StyledFormSection,
+  StyledWarning,
+  StyledError,
   formatDate,
   buildTargetFieldName,
 } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/shared-subscription-modal-styles';
@@ -66,8 +68,13 @@ export const ExtendSubscriptionFormModal = ({
       ? new Date(record.endDate as string)
       : null;
 
+  const MAX_EXTENSION_MONTHS = 36;
   const extensionMonths = Number(extensionMonthsInput) || 0;
-  const isFormValid = extensionMonths > 0;
+  const isWithdrawn = record?.accessStatus === 'WITHDRAWN';
+  const exceedsMax = extensionMonths > MAX_EXTENSION_MONTHS;
+  const missingContract = contractId.trim().length === 0;
+
+  const isFormValid = extensionMonths > 0 && !isWithdrawn && !exceedsMax;
 
   const newEndDate = (() => {
     const baseDate = isDefined(currentEndDate) ? currentEndDate : new Date();
@@ -135,7 +142,10 @@ export const ExtendSubscriptionFormModal = ({
       shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <Modal.Header>
-        <H1Title title="Extend / Renew Subscription" fontColor={H1TitleFontColor.Primary} />
+        <H1Title
+          title="Extend / Renew Subscription"
+          fontColor={H1TitleFontColor.Primary}
+        />
       </Modal.Header>
       <Modal.Content>
         <StyledFormSection>
@@ -151,6 +161,20 @@ export const ExtendSubscriptionFormModal = ({
               </StyledPreviewRow>
             )}
           </Section>
+
+          {isWithdrawn && (
+            <StyledError>Cannot extend a withdrawn subscription.</StyledError>
+          )}
+          {exceedsMax && (
+            <StyledError>
+              Maximum extension is {MAX_EXTENSION_MONTHS} months.
+            </StyledError>
+          )}
+          {missingContract && extensionMonths > 0 && (
+            <StyledWarning>
+              Consider linking a contract reference for audit purposes.
+            </StyledWarning>
+          )}
 
           <TextInput
             label="Extension Term (Months)"
@@ -190,7 +214,11 @@ export const ExtendSubscriptionFormModal = ({
         </StyledFormSection>
       </Modal.Content>
       <StyledModalFooter>
-        <Button title="Cancel" variant="secondary" onClick={() => closeModal(modalId)} />
+        <Button
+          title="Cancel"
+          variant="secondary"
+          onClick={() => closeModal(modalId)}
+        />
         <Button
           title="Confirm Extension"
           variant="primary"

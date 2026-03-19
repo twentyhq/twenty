@@ -6,6 +6,8 @@ import {
   StyledActivatedBy,
   StyledModalFooter,
   StyledFormSection,
+  StyledWarning,
+  StyledError,
   formatDate,
   buildTargetFieldName,
 } from '@/action-menu/actions/record-actions/single-record/subscription-actions/components/shared-subscription-modal-styles';
@@ -33,6 +35,8 @@ type PauseSubscriptionFormModalProps = {
 };
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const MAX_PAUSE_DAYS = 90;
+const MAX_TOTAL_PAUSE_DAYS = 180;
 
 export const PauseSubscriptionFormModal = ({
   modalId,
@@ -75,14 +79,24 @@ export const PauseSubscriptionFormModal = ({
       : 0;
 
   const pauseDays = Number(pauseDaysInput) || 0;
-  const isFormValid = pauseDays > 0 && reason.trim().length > 0;
+  const totalPauseDays = currentPauseDays + pauseDays;
+
+  const isAlreadyPaused = record?.accessStatus === 'PAUSED';
+  const isExpired =
+    isDefined(currentEndDate) && currentEndDate.getTime() < Date.now();
+  const exceedsMaxPause = pauseDays > MAX_PAUSE_DAYS;
+  const exceedsTotalMax = totalPauseDays > MAX_TOTAL_PAUSE_DAYS;
+
+  const isFormValid =
+    pauseDays > 0 &&
+    reason.trim().length > 0 &&
+    !exceedsMaxPause &&
+    !exceedsTotalMax;
 
   const newEndDate =
     isDefined(currentEndDate) && pauseDays > 0
       ? new Date(currentEndDate.getTime() + pauseDays * MS_PER_DAY)
       : currentEndDate;
-
-  const totalPauseDays = currentPauseDays + pauseDays;
 
   const memberName = isDefined(currentMember)
     ? `${currentMember.name.firstName} ${currentMember.name.lastName}`.trim()
@@ -142,7 +156,10 @@ export const PauseSubscriptionFormModal = ({
       shouldCloseModalOnClickOutsideOrEscape={false}
     >
       <Modal.Header>
-        <H1Title title="Pause Subscription" fontColor={H1TitleFontColor.Primary} />
+        <H1Title
+          title="Pause Subscription"
+          fontColor={H1TitleFontColor.Primary}
+        />
       </Modal.Header>
       <Modal.Content>
         <StyledFormSection>
@@ -164,6 +181,27 @@ export const PauseSubscriptionFormModal = ({
               </StyledPreviewRow>
             )}
           </Section>
+
+          {isAlreadyPaused && (
+            <StyledWarning>
+              This subscription is already paused. Adding more days will extend
+              the current pause.
+            </StyledWarning>
+          )}
+          {isExpired && (
+            <StyledWarning>This subscription has already ended.</StyledWarning>
+          )}
+          {exceedsMaxPause && (
+            <StyledError>
+              Maximum single pause is {MAX_PAUSE_DAYS} days.
+            </StyledError>
+          )}
+          {exceedsTotalMax && (
+            <StyledError>
+              Total pause days ({totalPauseDays}) would exceed the maximum of{' '}
+              {MAX_TOTAL_PAUSE_DAYS} days.
+            </StyledError>
+          )}
 
           <TextInput
             label="Pause Duration (Days)"
@@ -195,7 +233,11 @@ export const PauseSubscriptionFormModal = ({
         </StyledFormSection>
       </Modal.Content>
       <StyledModalFooter>
-        <Button title="Cancel" variant="secondary" onClick={() => closeModal(modalId)} />
+        <Button
+          title="Cancel"
+          variant="secondary"
+          onClick={() => closeModal(modalId)}
+        />
         <Button
           title="Confirm Pause"
           variant="primary"
