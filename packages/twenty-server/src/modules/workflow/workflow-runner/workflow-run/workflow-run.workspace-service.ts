@@ -187,13 +187,13 @@ export class WorkflowRunWorkspaceService {
     workspaceId,
     status,
     error,
-    failureReason,
+    isSystemError,
   }: {
     workflowRunId: string;
     workspaceId: string;
     status: Extract<WorkflowRunStatus, 'COMPLETED' | 'FAILED' | 'STOPPED'>;
     error?: string;
-    failureReason?: 'USER_ERROR' | 'SYSTEM_ERROR';
+    isSystemError?: boolean;
   }) {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
@@ -218,16 +218,25 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
+    const metricKey =
+      status === WorkflowRunStatus.COMPLETED
+        ? MetricsKeys.WorkflowRunCompleted
+        : status === WorkflowRunStatus.STOPPED
+          ? MetricsKeys.WorkflowRunStopped
+          : MetricsKeys.WorkflowRunFailed;
+
     await this.metricsService.incrementCounter({
-      key:
-        status === WorkflowRunStatus.COMPLETED
-          ? MetricsKeys.WorkflowRunCompleted
-          : status === WorkflowRunStatus.STOPPED
-            ? MetricsKeys.WorkflowRunStopped
-            : this.getMetricKeyFromFailureReason(failureReason),
+      key: metricKey,
       eventId: workflowRunId,
-      attributes: { workspace_id: workspaceId },
     });
+
+    if (isSystemError) {
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.WorkflowRunSystemError,
+        eventId: workflowRunId,
+        attributes: { workspace_id: workspaceId },
+      });
+    }
   }
 
   @WithLock('workflowRunId')
@@ -494,15 +503,5 @@ export class WorkflowRunWorkspaceService {
           ...current,
         };
       }, {});
-  }
-
-  private getMetricKeyFromFailureReason(
-    failureReason: 'USER_ERROR' | 'SYSTEM_ERROR' | undefined,
-  ): MetricsKeys {
-    if (failureReason === 'USER_ERROR') {
-      return MetricsKeys.WorkflowRunFailedUserError;
-    }
-
-    return MetricsKeys.WorkflowRunFailedSystemError;
   }
 }

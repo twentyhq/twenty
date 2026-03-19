@@ -102,6 +102,7 @@ export class ResumeDelayedWorkflowJob {
             error instanceof Error
               ? error.message
               : `Error during delay resume: ${String(error)}`,
+          isSystemError: true,
         });
 
         throw error;

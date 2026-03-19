@@ -19,6 +19,8 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
@@ -28,7 +30,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { type WorkflowFailureReason } from 'src/modules/workflow/workflow-executor/types/workflow-failure-reason.type';
 import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
@@ -58,6 +59,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingService: BillingService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -69,7 +71,7 @@ export class WorkflowExecutorWorkspaceService {
     shouldComputeWorkflowRunStatus = true,
     executedStepsCount = 0,
   }: WorkflowExecutorInput) {
-    const reasons = await Promise.all(
+    await Promise.all(
       stepIds.map(async (stepIdToExecute) => {
         return this.executeFromStep({
           stepId: stepIdToExecute,
@@ -81,14 +83,9 @@ export class WorkflowExecutorWorkspaceService {
     );
 
     if (shouldComputeWorkflowRunStatus) {
-      const failureReason = reasons.some((reason) => reason === 'SYSTEM_ERROR')
-        ? 'SYSTEM_ERROR'
-        : (reasons.find((reason) => reason === 'USER_ERROR') ?? undefined);
-
       await this.computeWorkflowRunStatus({
         workflowRunId,
         workspaceId,
-        failureReason,
       });
     }
   }
@@ -98,7 +95,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     executedStepsCount,
-  }: WorkflowBranchExecutorInput): Promise<WorkflowFailureReason | undefined> {
+  }: WorkflowBranchExecutorInput): Promise<void> {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
@@ -117,9 +114,10 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
         status: WorkflowRunStatus.FAILED,
         error: 'Step not found',
+        isSystemError: true,
       });
 
-      return 'SYSTEM_ERROR';
+      return;
     }
 
     let actionOutput: WorkflowActionOutput;
@@ -171,7 +169,7 @@ export class WorkflowExecutorWorkspaceService {
         shouldSkipStepExecution: true,
       };
     } else {
-      return undefined;
+      return;
     }
 
     const isError =
@@ -189,11 +187,7 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     if (!shouldProcessNextSteps) {
-      if (isError) {
-        return actionOutput.failureReason ?? 'SYSTEM_ERROR';
-      }
-
-      return undefined;
+      return;
     }
 
     const shouldRunAnotherJob =
@@ -206,7 +200,7 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
       });
 
-      return undefined;
+      return;
     }
 
     const { nextStepIdsToExecute, nextStepIdsToSkip, nextStepIdsToFailSafely } =
@@ -235,8 +229,6 @@ export class WorkflowExecutorWorkspaceService {
         executedStepsCount: (executedStepsCount ?? 0) + 1,
       });
     }
-
-    return undefined;
   }
 
   async getNextStepIdsToExecute({
@@ -312,11 +304,9 @@ export class WorkflowExecutorWorkspaceService {
   private async computeWorkflowRunStatus({
     workflowRunId,
     workspaceId,
-    failureReason,
   }: {
     workflowRunId: string;
     workspaceId: string;
-    failureReason?: WorkflowFailureReason;
   }) {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -346,7 +336,6 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
         status: WorkflowRunStatus.FAILED,
         error: 'WorkflowRun failed',
-        failureReason,
       });
 
       return;
@@ -515,15 +504,16 @@ export class WorkflowExecutorWorkspaceService {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
         });
-      }
 
-      const failureReason: WorkflowFailureReason = isUserError
-        ? 'USER_ERROR'
-        : 'SYSTEM_ERROR';
+        await this.metricsService.incrementCounter({
+          key: MetricsKeys.WorkflowRunSystemError,
+          eventId: workflowRunId,
+          attributes: { workspace_id: workspaceId },
+        });
+      }
 
       return {
         error: error.message ?? 'Execution result error, no data or error',
-        failureReason,
       };
     }
   }
