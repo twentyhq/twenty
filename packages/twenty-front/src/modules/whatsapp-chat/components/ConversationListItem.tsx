@@ -47,12 +47,12 @@ const PIPELINE_ICONS = {
 
 // ── Styled components ───────────────────────────────────────────
 
-const StyledItem = styled.div<{ isSelected: boolean; needsReply: boolean }>`
-  background: ${({ isSelected, needsReply }) =>
-    isSelected ? '#EBF0FF' : needsReply ? '#FFFBEB' : 'transparent'};
+const StyledItem = styled.div<{ isSelected: boolean; isUnread: boolean }>`
+  background: ${({ isSelected, isUnread }) =>
+    isSelected ? '#EBF0FF' : isUnread ? '#FFFBEB' : 'transparent'};
   border-bottom: 1px solid #F3F4F6;
-  border-left: 3px solid ${({ isSelected, needsReply }) =>
-    isSelected ? '#1A6CFF' : needsReply ? '#F59E0B' : 'transparent'};
+  border-left: 3px solid ${({ isSelected, isUnread }) =>
+    isSelected ? '#1A6CFF' : isUnread ? '#F59E0B' : 'transparent'};
   border-radius: 0;
   cursor: pointer;
   display: flex;
@@ -61,8 +61,8 @@ const StyledItem = styled.div<{ isSelected: boolean; needsReply: boolean }>`
   transition: background 120ms ease, border-color 120ms ease;
 
   &:hover {
-    background: ${({ isSelected, needsReply }) =>
-      isSelected ? '#EBF0FF' : needsReply ? '#FEF3C7' : '#F5F6FA'};
+    background: ${({ isSelected, isUnread }) =>
+      isSelected ? '#EBF0FF' : isUnread ? '#FEF3C7' : '#F5F6FA'};
   }
 `;
 
@@ -123,7 +123,7 @@ const StyledName = styled.span<{ isUnread?: boolean }>`
   white-space: nowrap;
 `;
 
-const StyledNeedsReplyDot = styled.div`
+const StyledUnreadIndicator = styled.div`
   background: #F59E0B;
   border-radius: 50%;
   flex-shrink: 0;
@@ -153,9 +153,10 @@ const StyledProgramBadge = styled.span<{ bg: string; border: string; text: strin
 
 const StyledTimestamp = styled.span<{ isUnread?: boolean }>`
   color: ${({ isUnread }) =>
-    isUnread ? '#1A6CFF' : '#9CA3AF'};
+    isUnread ? '#B45309' : '#9CA3AF'};
   flex-shrink: 0;
   font-size: 12px;
+  font-weight: ${({ isUnread }) => (isUnread ? 600 : 400)};
   white-space: nowrap;
 `;
 
@@ -184,12 +185,7 @@ const StyledBadges = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledUnreadDot = styled.div`
-  background: #1A6CFF;
-  border-radius: 50%;
-  height: 8px;
-  width: 8px;
-`;
+// Removed — unified into StyledUnreadIndicator in the name group
 
 const StyledPinIcon = styled.div`
   color: #9CA3AF;
@@ -559,7 +555,13 @@ export const ConversationListItem = ({
 
   const previewPrefix = conversation.lastMessageFromAgent ? 'You: ' : '';
 
-  const needsReply = !conversation.lastMessageFromAgent;
+  // Unified unread state:
+  // - isUnread === true  → manually marked unread (always unread)
+  // - isUnread === false → manually marked read / dismissed (always read)
+  // - isUnread is null/undefined → derive from lastMessageFromAgent
+  const isUnread =
+    conversation.isUnread === true ||
+    (conversation.isUnread == null && !conversation.lastMessageFromAgent);
 
   const program = conversation.justusProgram;
   const duration = conversation.justusDuration;
@@ -590,7 +592,7 @@ export const ConversationListItem = ({
     <>
       <StyledItem
         isSelected={isSelected}
-        needsReply={needsReply}
+        isUnread={isUnread}
         onClick={() => onClick(conversation.id)}
         onContextMenu={handleContextMenu}
       >
@@ -606,10 +608,10 @@ export const ConversationListItem = ({
           <StyledContent>
             <StyledTopRow>
               <StyledNameGroup>
-                <StyledName isUnread={conversation.isUnread || needsReply}>
+                <StyledName isUnread={isUnread}>
                   {displayName}
                 </StyledName>
-                {needsReply && <StyledNeedsReplyDot />}
+                {isUnread && <StyledUnreadIndicator />}
               </StyledNameGroup>
               <StyledRightGroup>
                 {programColor && program && (
@@ -622,14 +624,14 @@ export const ConversationListItem = ({
                     {duration ? ` ${duration}` : ''}
                   </StyledProgramBadge>
                 )}
-                <StyledTimestamp isUnread={conversation.isUnread}>
+                <StyledTimestamp isUnread={isUnread}>
                   {formatTimestamp(conversation.lastMessageAt)}
                 </StyledTimestamp>
               </StyledRightGroup>
             </StyledTopRow>
 
             <StyledBottomRow>
-              <StyledPreview isUnread={conversation.isUnread}>
+              <StyledPreview isUnread={isUnread}>
                 {previewPrefix}
                 {conversation.lastMessageBody}
               </StyledPreview>
@@ -639,7 +641,6 @@ export const ConversationListItem = ({
                     <IconPinned size={14} />
                   </StyledPinIcon>
                 )}
-                {conversation.isUnread && <StyledUnreadDot />}
               </StyledBadges>
             </StyledBottomRow>
 
@@ -747,7 +748,7 @@ export const ConversationListItem = ({
                 onClick={() => {
                   onToggleRead(
                     conversation.id,
-                    !conversation.isUnread,
+                    !isUnread,
                   );
                   closeContextMenu();
                 }}
@@ -767,17 +768,17 @@ export const ConversationListItem = ({
                         width: 8,
                         height: 8,
                         borderRadius: '50%',
-                        background: conversation.isUnread
+                        background: isUnread
                           ? 'transparent'
                           : 'currentColor',
-                        border: conversation.isUnread
+                        border: isUnread
                           ? '2px solid currentColor'
                           : 'none',
                       }}
                     />
                   </div>
                 </StyledMenuIconWrapper>
-                {conversation.isUnread ? 'Mark as read' : 'Mark as unread'}
+                {isUnread ? 'Mark as read' : 'Mark as unread'}
               </StyledContextMenuItem>
             )}
 

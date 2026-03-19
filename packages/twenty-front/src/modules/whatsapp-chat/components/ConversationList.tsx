@@ -251,10 +251,15 @@ export const ConversationList = ({
       );
     }
 
-    // State filter
+    // State filter — unified unread logic (same as ConversationListItem)
     if (stateFilter === 'unread') {
-      result = result.filter((c) => c.isUnread || !c.lastMessageFromAgent);
+      result = result.filter(
+        (c) =>
+          c.isUnread === true ||
+          (c.isUnread == null && !c.lastMessageFromAgent),
+      );
     } else if (stateFilter === 'needs_reply') {
+      // Needs reply with time threshold: only conversations where lead sent last msg
       const thresholdHours = NEEDS_REPLY_HOURS[needsReplyThreshold];
       const now = Date.now();
 
