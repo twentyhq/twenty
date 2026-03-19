@@ -27,8 +27,8 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
   const eligibleFields = objectFlatFieldMetadatas.filter(
     (field) =>
       field.name !== 'deletedAt' &&
-      field.type !== FieldMetadataType.MORPH_RELATION &&
-      field.type !== FieldMetadataType.RELATION &&
+      field.type !== FieldMetadataType.TS_VECTOR &&
+      field.type !== FieldMetadataType.POSITION &&
       (field.name !== 'id' ||
         field.universalIdentifier ===
           labelIdentifierFieldMetadataUniversalIdentifier),
@@ -71,6 +71,10 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
   });
 
   sortedStandardFields.forEach((field, index) => {
+    const isVisible =
+      field.type !== FieldMetadataType.RELATION &&
+      field.type !== FieldMetadataType.MORPH_RELATION;
+
     flatViewFieldsToCreate.push({
       fieldMetadataUniversalIdentifier: field.universalIdentifier,
       viewUniversalIdentifier,
@@ -79,7 +83,7 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
       updatedAt: createdAt,
       deletedAt: null,
       universalIdentifier: v4(),
-      isVisible: true,
+      isVisible,
       size: DEFAULT_VIEW_FIELD_SIZE,
       position: index,
       aggregateOperation: null,
@@ -106,6 +110,10 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
     });
 
     customFields.forEach((field, index) => {
+      const isVisible =
+        field.type !== FieldMetadataType.RELATION &&
+        field.type !== FieldMetadataType.MORPH_RELATION;
+
       flatViewFieldsToCreate.push({
         fieldMetadataUniversalIdentifier: field.universalIdentifier,
         viewUniversalIdentifier,
@@ -114,7 +122,7 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
         updatedAt: createdAt,
         deletedAt: null,
         universalIdentifier: v4(),
-        isVisible: true,
+        isVisible,
         size: DEFAULT_VIEW_FIELD_SIZE,
         position: index,
         aggregateOperation: null,

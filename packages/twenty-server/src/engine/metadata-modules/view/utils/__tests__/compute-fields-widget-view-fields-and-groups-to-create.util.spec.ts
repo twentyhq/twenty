@@ -188,7 +188,7 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
     ).toBe(fields[0].universalIdentifier);
   });
 
-  it('should exclude RELATION and MORPH_RELATION fields', () => {
+  it('should exclude TS_VECTOR and POSITION fields', () => {
     const fields = [
       makeFieldMetadata({
         name: 'name',
@@ -196,13 +196,13 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
         isCustom: false,
       }),
       makeFieldMetadata({
-        name: 'company',
-        type: FieldMetadataType.RELATION,
+        name: 'searchVector',
+        type: FieldMetadataType.TS_VECTOR,
         isCustom: false,
       }),
       makeFieldMetadata({
-        name: 'target',
-        type: FieldMetadataType.MORPH_RELATION,
+        name: 'position',
+        type: FieldMetadataType.POSITION,
         isCustom: false,
       }),
     ];
@@ -292,8 +292,8 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
         isCustom: false,
       }),
       makeFieldMetadata({
-        name: 'company',
-        type: FieldMetadataType.RELATION,
+        name: 'searchVector',
+        type: FieldMetadataType.TS_VECTOR,
         isCustom: false,
       }),
     ];
@@ -357,5 +357,59 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
     otherPositions.forEach((pos) => {
       expect(pos).toBeGreaterThan(0);
     });
+  });
+
+  it('should make RELATION and MORPH_RELATION fields invisible by default', () => {
+    const fields = [
+      makeFieldMetadata({
+        name: 'name',
+        type: FieldMetadataType.TEXT,
+        isCustom: false,
+      }),
+      makeFieldMetadata({
+        name: 'company',
+        type: FieldMetadataType.RELATION,
+        isCustom: false,
+      }),
+      makeFieldMetadata({
+        name: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        isCustom: false,
+      }),
+      makeFieldMetadata({
+        name: 'customRelation',
+        type: FieldMetadataType.RELATION,
+        isCustom: true,
+      }),
+    ];
+
+    const result = computeFieldsWidgetViewFieldsAndGroupsToCreate({
+      objectFlatFieldMetadatas: fields,
+      viewUniversalIdentifier,
+      flatApplication,
+      labelIdentifierFieldMetadataUniversalIdentifier: null,
+    });
+
+    const viewFieldForName = result.flatViewFieldsToCreate.find(
+      (vf) =>
+        vf.fieldMetadataUniversalIdentifier === fields[0].universalIdentifier,
+    );
+    const viewFieldForCompany = result.flatViewFieldsToCreate.find(
+      (vf) =>
+        vf.fieldMetadataUniversalIdentifier === fields[1].universalIdentifier,
+    );
+    const viewFieldForTarget = result.flatViewFieldsToCreate.find(
+      (vf) =>
+        vf.fieldMetadataUniversalIdentifier === fields[2].universalIdentifier,
+    );
+    const viewFieldForCustomRelation = result.flatViewFieldsToCreate.find(
+      (vf) =>
+        vf.fieldMetadataUniversalIdentifier === fields[3].universalIdentifier,
+    );
+
+    expect(viewFieldForName!.isVisible).toBe(true);
+    expect(viewFieldForCompany!.isVisible).toBe(false);
+    expect(viewFieldForTarget!.isVisible).toBe(false);
+    expect(viewFieldForCustomRelation!.isVisible).toBe(false);
   });
 });
