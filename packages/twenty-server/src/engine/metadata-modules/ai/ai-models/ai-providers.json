@@ -1,6 +1,7 @@
 {
   "openai": {
     "type": "openai",
+    "apiKey": "{{OPENAI_API_KEY}}",
     "models": [
       {
         "rawModelId": "gpt-5.2",
@@ -192,6 +193,7 @@
   },
   "anthropic": {
     "type": "anthropic",
+    "apiKey": "{{ANTHROPIC_API_KEY}}",
     "models": [
       {
         "rawModelId": "claude-opus-4-6",
@@ -444,6 +446,7 @@
   },
   "google": {
     "type": "google",
+    "apiKey": "{{GOOGLE_API_KEY}}",
     "models": [
       {
         "rawModelId": "gemini-3.1-pro-preview",
@@ -552,6 +555,7 @@
   },
   "xai": {
     "type": "xai",
+    "apiKey": "{{XAI_API_KEY}}",
     "models": [
       {
         "rawModelId": "grok-4",
@@ -645,6 +649,7 @@
   },
   "groq": {
     "type": "groq",
+    "apiKey": "{{GROQ_API_KEY}}",
     "models": [
       {
         "rawModelId": "openai/gpt-oss-120b",
@@ -661,6 +666,7 @@
   },
   "mistral": {
     "type": "mistral",
+    "apiKey": "{{MISTRAL_API_KEY}}",
     "models": [
       {
         "rawModelId": "mistral-large-latest",

@@ -44,17 +44,6 @@ import {
   SetAdminAiModelEnabledDocument,
 } from '~/generated-metadata/graphql';
 
-// Only catalog providers map to a known env var.
-// This allowlist prevents custom providers from linking to arbitrary config variables.
-const CATALOG_PROVIDER_ENV_VARS: Record<string, string> = {
-  openai: 'OPENAI_API_KEY',
-  anthropic: 'ANTHROPIC_API_KEY',
-  google: 'GOOGLE_API_KEY',
-  xai: 'XAI_API_KEY',
-  groq: 'GROQ_API_KEY',
-  mistral: 'MISTRAL_API_KEY',
-};
-
 const REMOVE_MODAL_ID = 'settings-ai-provider-remove';
 
 export const SettingsAdminAiProviderDetail = () => {
@@ -202,13 +191,8 @@ export const SettingsAdminAiProviderDetail = () => {
       },
     ];
 
-    // Only show env var links for catalog providers to prevent
-    // custom providers from referencing arbitrary config variables
-    const envVar = !isCustomProvider
-      ? CATALOG_PROVIDER_ENV_VARS[provider.type]
-      : undefined;
-
-    if (envVar) {
+    if (provider.apiKeyConfigVariable) {
+      const envVar = provider.apiKeyConfigVariable;
       const configPath = getSettingsPath(
         SettingsPath.AdminPanelConfigVariableDetails,
         { variableName: envVar },

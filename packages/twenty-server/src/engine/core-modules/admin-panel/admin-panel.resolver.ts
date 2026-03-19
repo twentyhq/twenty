@@ -36,6 +36,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
+import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
@@ -325,18 +327,27 @@ export class AdminPanelResolver {
     const providers =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
     const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
+    const rawCatalog = loadDefaultAiProviders();
     const masked: Record<string, Record<string, unknown>> = {};
 
     for (const [name, config] of Object.entries(providers)) {
+      const isCatalog = catalogNames.has(name);
+      const rawName = isCatalog ? name.replace(/-standard$/, '') : undefined;
+      const rawConfig = rawName ? rawCatalog[rawName] : undefined;
+      const apiKeyConfigVariable = rawConfig
+        ? extractConfigVariableName(rawConfig.apiKey)
+        : undefined;
+
       masked[name] = {
         type: config.type,
-        source: catalogNames.has(name) ? 'catalog' : 'custom',
+        source: isCatalog ? 'catalog' : 'custom',
         ...(config.baseUrl && { baseUrl: config.baseUrl }),
         ...(config.region && { region: config.region }),
         ...(config.dataResidency && { dataResidency: config.dataResidency }),
         ...(config.apiKey && {
           apiKey: `${config.apiKey.substring(0, 8)}...`,
         }),
+        ...(apiKeyConfigVariable && { apiKeyConfigVariable }),
         hasAccessKey: !!(config.accessKeyId && config.secretAccessKey),
       };
     }

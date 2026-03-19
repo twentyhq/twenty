@@ -2,26 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
-
-type CredentialMapping = {
-  apiKey?: keyof ConfigVariables;
-  accessKeyId?: keyof ConfigVariables;
-  secretAccessKey?: keyof ConfigVariables;
-};
-
-const PROVIDER_CREDENTIAL_MAP: Partial<Record<AiProvider, CredentialMapping>> =
-  {
-    [AiProvider.OPENAI]: { apiKey: 'OPENAI_API_KEY' },
-    [AiProvider.ANTHROPIC]: { apiKey: 'ANTHROPIC_API_KEY' },
-    [AiProvider.GOOGLE]: { apiKey: 'GOOGLE_API_KEY' },
-    [AiProvider.XAI]: { apiKey: 'XAI_API_KEY' },
-    [AiProvider.GROQ]: { apiKey: 'GROQ_API_KEY' },
-    [AiProvider.MISTRAL]: { apiKey: 'MISTRAL_API_KEY' },
-  };
 
 @Injectable()
 export class ProviderConfigService {
@@ -33,16 +17,12 @@ export class ProviderConfigService {
     );
   }
 
-  // Resolves the final provider config by layering:
-  // 1. Built-in catalog (ai-providers.json), suffixed with -standard
-  // 2. Custom providers (AI_CUSTOM_PROVIDERS from env/DB)
-  // 3. Credential injection from registered config variables
   getResolvedProviders(): AiProvidersConfig {
     const rawCatalog = loadDefaultAiProviders();
     const catalog = this.suffixCatalogKeys(rawCatalog);
     const custom = this.twentyConfigService.get('AI_CUSTOM_PROVIDERS');
 
-    return this.injectCredentials({ ...catalog, ...custom });
+    return this.resolveTemplates({ ...catalog, ...custom });
   }
 
   private suffixCatalogKeys(catalog: AiProvidersConfig): AiProvidersConfig {
@@ -55,41 +35,57 @@ export class ProviderConfigService {
     return result;
   }
 
-  private injectCredentials(providers: AiProvidersConfig): AiProvidersConfig {
+  private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {
     const result: AiProvidersConfig = {};
 
     for (const [name, config] of Object.entries(providers)) {
-      result[name] = this.injectProviderCredentials(config);
+      result[name] = this.resolveProviderTemplates(config);
     }
 
     return result;
   }
 
-  private injectProviderCredentials(
-    config: AiProviderConfig,
-  ): AiProviderConfig {
-    const mapping = PROVIDER_CREDENTIAL_MAP[config.type];
+  private resolveProviderTemplates(config: AiProviderConfig): AiProviderConfig {
+    const resolved: Partial<AiProviderConfig> = {};
+    let hasChanges = false;
 
-    if (!mapping) {
-      return config;
-    }
+    for (const field of ['apiKey', 'accessKeyId', 'secretAccessKey'] as const) {
+      const raw = config[field];
 
-    const updates: Partial<AiProviderConfig> = {};
+      if (typeof raw !== 'string') {
+        continue;
+      }
 
-    if (mapping.apiKey && !config.apiKey) {
-      const value = this.twentyConfigService.get(mapping.apiKey) as
-        | string
-        | undefined;
+      const value = this.resolveTemplate(raw);
 
-      if (value) {
-        updates.apiKey = value;
+      if (value !== raw) {
+        resolved[field] = value;
+        hasChanges = true;
       }
     }
 
-    if (Object.keys(updates).length === 0) {
+    if (!hasChanges) {
       return config;
     }
 
-    return { ...config, ...updates };
+    return { ...config, ...resolved };
+  }
+
+  private resolveTemplate(value: string): string | undefined {
+    const varName = extractConfigVariableName(value);
+
+    if (!varName) {
+      return value;
+    }
+
+    try {
+      const resolved = this.twentyConfigService.get(
+        varName as keyof ConfigVariables,
+      ) as string | undefined;
+
+      return resolved || undefined;
+    } catch {
+      return undefined;
+    }
   }
 }
