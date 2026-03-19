@@ -80,14 +80,21 @@ export class ProviderConfigService {
       return value;
     }
 
+    // Registered config variables first (supports admin panel / DB overrides),
+    // then fall back to process.env for vars not in ConfigVariables
+    // (e.g. when CI replaces the catalog with custom provider entries).
     try {
       const resolved = this.twentyConfigService.get(
         varName as keyof ConfigVariables,
       ) as string | undefined;
 
-      return resolved || undefined;
+      if (resolved) {
+        return resolved;
+      }
     } catch {
-      return undefined;
+      // Not a registered config variable — fall through to env
     }
+
+    return process.env[varName] || undefined;
   }
 }
