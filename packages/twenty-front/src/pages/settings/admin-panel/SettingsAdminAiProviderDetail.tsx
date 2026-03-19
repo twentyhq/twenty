@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   H2Title,
@@ -160,7 +160,7 @@ export const SettingsAdminAiProviderDetail = () => {
 
     const config = rawProviders[providerName];
 
-    if (config === undefined) {
+    if (!isDefined(config)) {
       return undefined;
     }
 
