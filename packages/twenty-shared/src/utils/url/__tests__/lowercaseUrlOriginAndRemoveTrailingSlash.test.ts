@@ -60,8 +60,7 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       expected: 'https://example.com/test%E0%A4%A',
     },
     {
-      title:
-        'should preserve double-encoded URLs as-is (no decoding)',
+      title: 'should preserve double-encoded URLs as-is (no decoding)',
       input: 'https://example.com/test%2520name',
       expected: 'https://example.com/test%2520name',
     },
@@ -76,7 +75,8 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       expected: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
     },
     {
-      title: 'should preserve percent-encoding in path and query (e.g. %2F must not become /)',
+      title:
+        'should preserve percent-encoding in path and query (e.g. %2F must not become /)',
       input: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
       expected: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
     },
