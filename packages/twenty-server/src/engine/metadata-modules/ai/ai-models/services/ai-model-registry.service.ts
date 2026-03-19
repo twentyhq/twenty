@@ -305,7 +305,18 @@ export class AiModelRegistryService {
   }
 
   getRecommendedModelIds(): Set<string> {
-    return this.preferencesService.getRecommendedModelIds();
+    const allRecommended = this.preferencesService.getRecommendedModelIds();
+
+    // Only include recommended models that are actually available (have credentials)
+    const available = new Set<string>();
+
+    for (const modelId of allRecommended) {
+      if (this.modelRegistry.has(modelId)) {
+        available.add(modelId);
+      }
+    }
+
+    return available;
   }
 
   private getFirstAvailableModelFromList(
