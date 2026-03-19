@@ -406,6 +406,11 @@ export class AiModelRegistryService {
       return true;
     }
 
+    // When no AI providers are configured, skip model validation entirely
+    if (this.providerModelDefCache.size === 0) {
+      return true;
+    }
+
     if (!this.providerModelDefCache.has(modelId)) {
       return false;
     }
