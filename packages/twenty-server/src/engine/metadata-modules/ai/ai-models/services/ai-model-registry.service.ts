@@ -416,11 +416,6 @@ export class AiModelRegistryService {
     modelId: string,
     workspace: WorkspaceModelAvailabilitySettings,
   ): void {
-    // No credentialed providers → nothing to enforce; agent is just metadata
-    if (this.modelRegistry.size === 0) {
-      return;
-    }
-
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AgentException(
         'The selected model has been disabled by the administrator.',

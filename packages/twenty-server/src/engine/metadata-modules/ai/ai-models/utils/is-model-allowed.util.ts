@@ -15,7 +15,12 @@ export const isModelAllowedByWorkspace = (
   }
 
   if (workspace.useRecommendedModels) {
-    return recommendedModelIds?.has(modelId) ?? false;
+    // No recommended models configured → nothing to restrict against
+    if (!recommendedModelIds || recommendedModelIds.size === 0) {
+      return true;
+    }
+
+    return recommendedModelIds.has(modelId);
   }
 
   return workspace.enabledAiModelIds.includes(modelId);
