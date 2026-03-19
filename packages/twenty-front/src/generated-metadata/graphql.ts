@@ -3687,21 +3687,6 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']>;
 };
 
-export type OnDbEvent = {
-  __typename?: 'OnDbEvent';
-  action: DatabaseEventAction;
-  eventDate: Scalars['DateTime'];
-  objectNameSingular: Scalars['String'];
-  record: Scalars['JSON'];
-  updatedFields?: Maybe<Array<Scalars['String']>>;
-};
-
-export type OnDbEventInput = {
-  action?: InputMaybe<DatabaseEventAction>;
-  objectNameSingular?: InputMaybe<Scalars['String']>;
-  recordId?: InputMaybe<Scalars['UUID']>;
-};
-
 /** Onboarding status */
 export enum OnboardingStatus {
   BOOK_ONBOARDING = 'BOOK_ONBOARDING',
@@ -4738,18 +4723,12 @@ export type StandardOverrides = {
 export type Subscription = {
   __typename?: 'Subscription';
   logicFunctionLogs: LogicFunctionLogs;
-  onDbEvent: OnDbEvent;
   onEventSubscription?: Maybe<EventSubscription>;
 };
 
 
 export type SubscriptionLogicFunctionLogsArgs = {
   input: LogicFunctionLogsInput;
-};
-
-
-export type SubscriptionOnDbEventArgs = {
-  input: OnDbEventInput;
 };
 
 
