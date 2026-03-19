@@ -1,6 +1,5 @@
 import { getURLSafely } from '@/utils/getURLSafely';
 import { isDefined } from '@/utils/validation';
-import { safeDecodeURIComponent } from './safeDecodeURIComponent';
 
 export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   const url = getURLSafely(rawUrl);
@@ -10,10 +9,9 @@ export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   }
 
   const lowercaseOrigin = url.origin.toLowerCase();
-  const path =
-    safeDecodeURIComponent(url.pathname) +
-    safeDecodeURIComponent(url.search) +
-    url.hash;
+  // Use pathname/search as-is to preserve percent-encoding (e.g. %2F must not
+  // become / inside Google Maps data= params or similar structured URL paths).
+  const path = url.pathname + url.search + url.hash;
 
   return (lowercaseOrigin + path).replace(/\/$/, '');
 };
