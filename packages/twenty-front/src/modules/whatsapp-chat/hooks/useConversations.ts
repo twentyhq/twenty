@@ -60,10 +60,6 @@ export const useConversations = ({
           params.set('search', search);
         }
 
-        if (sort) {
-          params.set('sort', sort);
-        }
-
         if (loadMore && cursorRef.current) {
           params.set('cursor', cursorRef.current);
         }
@@ -120,8 +116,57 @@ export const useConversations = ({
         setLoading(false);
       }
     },
-    [bridgeFetch, session, search, sort, limit],
+    [bridgeFetch, session, search, limit],
   );
+
+  // Fetch all pages (used when sort=oldest to ensure full dataset)
+  const fetchAll = useCallback(async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const allItems: WaConversation[] = [];
+      let pageCursor: string | undefined;
+
+      while (true) {
+        const params = new URLSearchParams();
+        if (session) params.set('session', session);
+        if (search) params.set('search', search);
+        if (pageCursor) params.set('cursor', pageCursor);
+        params.set('limit', '100');
+
+        const path = `/api/v1/conversations?${params.toString()}`;
+        const data = await bridgeFetch<ConversationsResponse>(path, {
+          signal: controller.signal,
+        });
+
+        allItems.push(...(data?.items ?? []));
+
+        if (!data?.hasMore) break;
+        pageCursor = data?.cursor ?? undefined;
+        if (!pageCursor) break;
+      }
+
+      setConversations(allItems);
+      setCursor(undefined);
+      setHasMore(false);
+
+      if (!search) {
+        lastGoodRef.current = allItems;
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      setError(
+        err instanceof Error ? err.message : 'Failed to fetch conversations',
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [bridgeFetch, session, search]);
 
   useEffect(() => {
     if (retryTimeoutRef.current) {
@@ -130,7 +175,12 @@ export const useConversations = ({
     }
 
     retryCountRef.current = 0;
-    fetchConversations(false);
+
+    if (sort === 'oldest') {
+      fetchAll();
+    } else {
+      fetchConversations(false);
+    }
 
     return () => {
       abortRef.current?.abort();

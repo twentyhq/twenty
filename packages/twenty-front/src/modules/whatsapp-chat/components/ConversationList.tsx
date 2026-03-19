@@ -229,7 +229,7 @@ export const ConversationList = ({
       );
     }
 
-    // Segment filter — by default hide conversations with no CRM contact match
+    // Segment filter
     if (segmentFilter === 'clients') {
       result = result.filter(
         (c) => c.isClient || CLIENT_PROGRAMS.has(c.justusProgram ?? ''),
@@ -238,18 +238,8 @@ export const ConversationList = ({
       result = result.filter(
         (c) => !c.isClient && !CLIENT_PROGRAMS.has(c.justusProgram ?? ''),
       );
-    } else if (activeSessionName !== 'john_doe') {
-      // 'all': show CRM-matched contacts + any conversation with recent activity
-      // (last 7 days) even without a CRM match
-      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      result = result.filter(
-        (c) =>
-          c.contactEmail ||
-          c.justusProgram ||
-          c.isClient ||
-          new Date(c.lastMessageAt).getTime() > sevenDaysAgo,
-      );
     }
+    // 'all' → no filtering, show every conversation
 
     // State filter — unified unread logic (same as ConversationListItem)
     if (stateFilter === 'unread') {
