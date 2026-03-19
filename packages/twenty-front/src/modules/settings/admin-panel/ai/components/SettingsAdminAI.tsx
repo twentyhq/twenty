@@ -21,11 +21,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
-import {
-  type AdminAiModelConfig,
-  SetAdminDefaultAiModelDocument,
-} from '~/generated-metadata/graphql';
+import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
+import { type AdminAiModelConfig } from '~/generated-metadata/graphql';
 
 export const SettingsAdminAI = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -42,7 +40,7 @@ export const SettingsAdminAI = () => {
   }>(GET_ADMIN_AI_MODELS);
 
   const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED);
-  const [setDefaultModel] = useMutation(SetAdminDefaultAiModelDocument);
+  const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL);
 
   const { data: providersData, loading: isLoadingProviders } =
     useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS, {
