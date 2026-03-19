@@ -76,7 +76,7 @@ export const AgentChatFilePreview = ({
       <AvatarOrIcon
         Icon={IconX}
         IconColor={theme.font.color.secondary}
-        onClick={() => onRemove()}
+        onClick={onRemove}
       />
     </div>
   ) : undefined;
