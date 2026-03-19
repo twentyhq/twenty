@@ -84,8 +84,8 @@ export const TOB_SUBSCRIPTION_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
     [SubscriptionSingleRecordActionKeys.UPDATE_START_DATE]: {
       key: SubscriptionSingleRecordActionKeys.UPDATE_START_DATE,
-      label: msg`Update Start Date`,
-      shortLabel: msg`Start Date`,
+      label: 'Update Start Date',
+      shortLabel: 'Start Date',
       isPinned: false,
       position: 4,
       Icon: IconCalendarEvent,
@@ -103,8 +103,8 @@ export const TOB_SUBSCRIPTION_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
     [SubscriptionSingleRecordActionKeys.OPEN_CASE]: {
       key: SubscriptionSingleRecordActionKeys.OPEN_CASE,
-      label: msg`Open Case / Escalation`,
-      shortLabel: msg`Open Case`,
+      label: 'Open Case / Escalation',
+      shortLabel: 'Open Case',
       isPinned: false,
       position: 5,
       Icon: IconFlag,
@@ -122,8 +122,8 @@ export const TOB_SUBSCRIPTION_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
     [SubscriptionSingleRecordActionKeys.BULK_CREATE_TASKS]: {
       key: SubscriptionSingleRecordActionKeys.BULK_CREATE_TASKS,
-      label: msg`Create Follow-up Tasks`,
-      shortLabel: msg`Tasks`,
+      label: 'Create Follow-up Tasks',
+      shortLabel: 'Tasks',
       isPinned: false,
       position: 6,
       Icon: IconCheckbox,
