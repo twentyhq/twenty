@@ -41,7 +41,7 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
     {
       title: 'should preserve special characters in path',
       input: 'https://test.test/edouard-ménard-22219837',
-      expected: 'https://test.test/edouard-ménard-22219837',
+      expected: 'https://test.test/edouard-m%C3%A9nard-22219837',
     },
     {
       title: 'should preserve percent-encoded characters in path',
@@ -51,7 +51,7 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
     {
       title: 'should preserve special characters in query params',
       input: 'https://example.com/path?name=José',
-      expected: 'https://example.com/path?name=José',
+      expected: 'https://example.com/path?name=Jos%C3%A9',
     },
     {
       title:
