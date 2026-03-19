@@ -28,6 +28,7 @@ import { useConnectedImapSmtpCaldavAccount } from './useConnectedImapSmtpCaldavA
 type UseConnectionFormProps = {
   isEditing?: boolean;
   connectedAccountId?: string;
+  defaultValues?: Partial<ConnectionFormData>;
 };
 
 export type ConnectionFormData = {
@@ -37,6 +38,7 @@ export type ConnectionFormData = {
 export const useImapSmtpCaldavConnectionForm = ({
   isEditing = false,
   connectedAccountId,
+  defaultValues: overrideDefaultValues,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -44,7 +46,7 @@ export const useImapSmtpCaldavConnectionForm = ({
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
     resolver: zodResolver(connectionImapSmtpCalDav),
-    defaultValues: {
+    defaultValues: overrideDefaultValues ?? {
       handle: '',
       IMAP: { host: '', port: 993, password: '', secure: true },
       SMTP: { host: '', username: '', port: 587, password: '', secure: true },
