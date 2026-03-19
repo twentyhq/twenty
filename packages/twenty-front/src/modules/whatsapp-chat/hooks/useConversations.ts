@@ -9,12 +9,14 @@ import {
 interface UseConversationsOptions {
   session?: string;
   search?: string;
+  sort?: 'newest' | 'oldest';
   limit?: number;
 }
 
 export const useConversations = ({
   session,
   search,
+  sort,
   limit = 50,
 }: UseConversationsOptions = {}) => {
   const { bridgeFetch } = useWhatsAppBridge();
@@ -56,6 +58,10 @@ export const useConversations = ({
 
         if (search) {
           params.set('search', search);
+        }
+
+        if (sort) {
+          params.set('sort', sort);
         }
 
         if (loadMore && cursorRef.current) {
@@ -114,7 +120,7 @@ export const useConversations = ({
         setLoading(false);
       }
     },
-    [bridgeFetch, session, search, limit],
+    [bridgeFetch, session, search, sort, limit],
   );
 
   useEffect(() => {
@@ -134,7 +140,7 @@ export const useConversations = ({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, search]);
+  }, [session, search, sort]);
 
   const loadMore = useCallback(() => {
     if (hasMore && !loading) {
@@ -146,9 +152,18 @@ export const useConversations = ({
     fetchConversations(false);
   }, [fetchConversations]);
 
+  // When backend sort is active, preserve its ordering (only float pinned items).
+  // Otherwise default to newest-first.
   const sortedConversations = [...conversations].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
+
+    if (sort === 'oldest') {
+      return (
+        new Date(a.lastMessageAt).getTime() -
+        new Date(b.lastMessageAt).getTime()
+      );
+    }
 
     return (
       new Date(b.lastMessageAt).getTime() -

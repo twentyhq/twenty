@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 
 import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
+import { useSuppressHotkeys } from '@/whatsapp-chat/hooks/useSuppressHotkeys';
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -270,6 +271,8 @@ export const FlagLeadModal = ({
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const { handleFocus: hotkeyFocus, handleBlur: hotkeyBlur } =
+    useSuppressHotkeys('flag-lead-modal-input');
 
   const displayName =
     conversation.leadFullName ||
@@ -365,6 +368,8 @@ export const FlagLeadModal = ({
               placeholder="Custom status..."
               value={customStatus}
               onChange={(e) => setCustomStatus(e.target.value)}
+              onFocus={hotkeyFocus}
+              onBlur={hotkeyBlur}
               autoFocus
             />
           )}
@@ -375,6 +380,8 @@ export const FlagLeadModal = ({
             placeholder="Sales rep email..."
             value={assignedTo}
             onChange={(e) => setAssignedTo(e.target.value)}
+            onFocus={hotkeyFocus}
+            onBlur={hotkeyBlur}
           />
 
           <StyledSectionTitle>Sales Notes</StyledSectionTitle>
@@ -382,6 +389,8 @@ export const FlagLeadModal = ({
             placeholder="e.g., Showed strong interest in Feb training program..."
             value={notes}
             onChange={(e) => setNotes(e.target.value.slice(0, 2000))}
+            onFocus={hotkeyFocus}
+            onBlur={hotkeyBlur}
             maxLength={2000}
           />
           <StyledCharCount>{notes.length}/2000</StyledCharCount>

@@ -163,10 +163,20 @@ export const ConversationList = ({
     setDebouncedSearch('');
   }, [activeSessionName]);
 
-  const { conversations, loading, error, hasMore, loadMore, refresh } = useConversations({
+  const { conversations, loading, error, hasMore, loadMore, refresh, updateConversation } = useConversations({
     session: activeSessionName,
     search: debouncedSearch || undefined,
+    sort: sortOrder,
   });
+
+  // Wrap onToggleRead to also update local conversation state
+  const handleToggleRead = useCallback(
+    (id: string, isUnread: boolean) => {
+      updateConversation(id, { isUnread });
+      onToggleRead?.(id, isUnread);
+    },
+    [updateConversation, onToggleRead],
+  );
 
   if (
     onConversationsLoaded &&
@@ -229,10 +239,15 @@ export const ConversationList = ({
         (c) => !c.isClient && !CLIENT_PROGRAMS.has(c.justusProgram ?? ''),
       );
     } else if (activeSessionName !== 'john_doe') {
-      // 'all' still filters out chats with no CRM contact match
-      // (except for john_doe session which is used for testing)
+      // 'all': show CRM-matched contacts + any conversation with recent activity
+      // (last 7 days) even without a CRM match
+      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
       result = result.filter(
-        (c) => c.contactEmail || c.justusProgram || c.isClient,
+        (c) =>
+          c.contactEmail ||
+          c.justusProgram ||
+          c.isClient ||
+          new Date(c.lastMessageAt).getTime() > sevenDaysAgo,
       );
     }
 
@@ -415,7 +430,7 @@ export const ConversationList = ({
                 onClick={handleClick}
                 onTogglePin={onTogglePin}
                 onArchive={onArchive}
-                onToggleRead={onToggleRead}
+                onToggleRead={handleToggleRead}
               />
             ))}
           </>
@@ -434,7 +449,7 @@ export const ConversationList = ({
                 onClick={handleClick}
                 onTogglePin={onTogglePin}
                 onArchive={onArchive}
-                onToggleRead={onToggleRead}
+                onToggleRead={handleToggleRead}
               />
             ))}
           </>

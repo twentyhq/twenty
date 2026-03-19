@@ -76,9 +76,11 @@ export const useMessages = ({
       setMessages([]);
       setCursor(undefined);
       setHasMore(false);
+      setLoading(true);
       fetchMessages(false);
     } else {
       setMessages([]);
+      setLoading(false);
     }
 
     return () => {

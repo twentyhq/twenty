@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { type WaLabel } from '@/whatsapp-chat/types/WhatsAppTypes';
+import { useSuppressHotkeys } from '@/whatsapp-chat/hooks/useSuppressHotkeys';
 
 const PRESET_COLORS = [
   '#EF4444', // red
@@ -116,6 +117,8 @@ export const LabelPicker = ({
   const [color, setColor] = useState(PRESET_COLORS[4]);
   const [submitting, setSubmitting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { handleFocus: hotkeyFocus, handleBlur: hotkeyBlur } =
+    useSuppressHotkeys('label-picker-input');
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -159,6 +162,8 @@ export const LabelPicker = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={hotkeyFocus}
+          onBlur={hotkeyBlur}
           placeholder="Label name…"
         />
         <StyledColorRow>

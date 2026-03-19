@@ -3,12 +3,13 @@ import { useCallback, useRef, useState } from 'react';
 
 import {
   IconArchive,
+  IconCopy,
   IconPinned,
   IconPinnedOff,
   IconSparkles,
   IconUser,
 } from 'twenty-ui/display';
-import { type WaConversation, type WaLabel } from '@/whatsapp-chat/types/WhatsAppTypes';
+import { type WaConversation, type WaLabel, type WaMessage } from '@/whatsapp-chat/types/WhatsAppTypes';
 import { LabelBadge } from '@/whatsapp-chat/components/LabelBadge';
 import { LabelPicker } from '@/whatsapp-chat/components/LabelPicker';
 import { useProfilePicture } from '@/whatsapp-chat/hooks/useProfilePicture';
@@ -231,6 +232,7 @@ const StyledAddLabelButton = styled.button`
 
 type ChatHeaderProps = {
   conversation: WaConversation;
+  messages?: WaMessage[];
   labels: WaLabel[];
   onAddLabel: (name: string, color: string) => Promise<unknown>;
   onRemoveLabel: (labelId: string) => void;
@@ -241,8 +243,30 @@ type ChatHeaderProps = {
   showSalesAngel?: boolean;
 };
 
+const formatChatForClipboard = (
+  conversation: WaConversation,
+  messages: WaMessage[],
+): string => {
+  const contactName =
+    conversation.leadFullName ||
+    conversation.whatsappName ||
+    conversation.leadPhoneNumber;
+
+  const lines = messages
+    .filter((m) => !m.isDeleted)
+    .map((m) => {
+      const time = new Date(m.messageTimestamp).toLocaleString();
+      const sender = m.fromAgent ? 'Agent' : contactName;
+      const body = m.body || (m.hasMedia ? '[Media]' : '[Empty]');
+      return `[${time}] ${sender}: ${body}`;
+    });
+
+  return `Chat with ${contactName} (${conversation.leadPhoneNumber})\n${'─'.repeat(50)}\n${lines.join('\n')}`;
+};
+
 export const ChatHeader = ({
   conversation,
+  messages,
   labels,
   onAddLabel,
   onRemoveLabel,
@@ -289,6 +313,16 @@ export const ChatHeader = ({
   const handleArchive = useCallback(() => {
     onArchive?.(conversation.id);
   }, [conversation.id, onArchive]);
+
+  const [copied, setCopied] = useState(false);
+  const handleCopyChat = useCallback(() => {
+    if (!messages || messages.length === 0) return;
+    const text = formatChatForClipboard(conversation, messages);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [conversation, messages]);
 
   return (
     <StyledContainer>
@@ -352,6 +386,14 @@ export const ChatHeader = ({
             >
               Call in Close
             </StyledCloseButton>
+          )}
+          {messages && messages.length > 0 && (
+            <StyledIconButton
+              onClick={handleCopyChat}
+              title={copied ? 'Copied!' : 'Copy chat'}
+            >
+              <IconCopy size={18} />
+            </StyledIconButton>
           )}
           {onTogglePin && (
             <StyledIconButton onClick={handleTogglePin} title="Toggle pin">

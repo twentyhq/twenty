@@ -65,6 +65,28 @@ const StyledDuration = styled.span`
   opacity: 0.7;
 `;
 
+const StyledSpeedButton = styled.button<{ fromAgent?: boolean }>`
+  background: ${({ fromAgent }) =>
+    fromAgent ? 'rgba(255, 255, 255, 0.2)' : 'rgba(128, 128, 128, 0.15)'};
+  border: none;
+  border-radius: 10px;
+  color: inherit;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 3px 6px;
+
+  &:hover {
+    background: ${({ fromAgent }) =>
+      fromAgent ? 'rgba(255, 255, 255, 0.35)' : 'rgba(128, 128, 128, 0.25)'};
+  }
+`;
+
+const SPEED_OPTIONS = [1, 1.5, 2] as const;
+
 const resolveMediaUrl = (mediaUrl: string): string => {
   // Rewrite WAHA internal URLs to go through the bridge media proxy
   const wahaMatch = mediaUrl.match(
@@ -107,6 +129,7 @@ export const VoiceMessage = ({ mediaUrl, fromAgent }: VoiceMessageProps) => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [speedIndex, setSpeedIndex] = useState(0);
 
   const resolvedUrl = resolveMediaUrl(mediaUrl);
 
@@ -166,6 +189,14 @@ export const VoiceMessage = ({ mediaUrl, fromAgent }: VoiceMessageProps) => {
     [duration],
   );
 
+  const handleCycleSpeed = useCallback(() => {
+    const nextIndex = (speedIndex + 1) % SPEED_OPTIONS.length;
+    setSpeedIndex(nextIndex);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = SPEED_OPTIONS[nextIndex];
+    }
+  }, [speedIndex]);
+
   const displayTime = isPlaying || currentTime > 0 ? currentTime : duration;
 
   return (
@@ -185,6 +216,9 @@ export const VoiceMessage = ({ mediaUrl, fromAgent }: VoiceMessageProps) => {
           {displayTime > 0 ? formatDuration(displayTime) : '0:00'}
         </StyledDuration>
       </StyledWaveform>
+      <StyledSpeedButton fromAgent={fromAgent} onClick={handleCycleSpeed}>
+        {SPEED_OPTIONS[speedIndex]}x
+      </StyledSpeedButton>
     </StyledContainer>
   );
 };

@@ -18,6 +18,7 @@ import {
   extractSuggestion,
   type AgentMessage,
 } from '@/whatsapp-chat/hooks/useSalesAngel';
+import { useSuppressHotkeys } from '@/whatsapp-chat/hooks/useSuppressHotkeys';
 
 // ── Suggested Prompts ────────────────────────────────────────────
 
@@ -410,6 +411,8 @@ export const SalesAngelPanel = ({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { handleFocus: hotkeyFocus, handleBlur: hotkeyBlur } =
+    useSuppressHotkeys('sales-angel-input');
 
   const {
     messages,
@@ -638,6 +641,8 @@ export const SalesAngelPanel = ({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          onFocus={hotkeyFocus}
+          onBlur={hotkeyBlur}
           rows={1}
           disabled={isLoading}
         />

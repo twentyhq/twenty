@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 
 import { IconSearch, IconX } from 'twenty-ui/display';
+import { useSuppressHotkeys } from '@/whatsapp-chat/hooks/useSuppressHotkeys';
 
 const StyledSearchContainer = styled.div<{ isFocused?: boolean }>`
   align-items: center;
@@ -60,6 +61,8 @@ export const ConversationSearch = ({
   onChange,
 }: ConversationSearchProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const { handleFocus: hotkeyFocus, handleBlur: hotkeyBlur } =
+    useSuppressHotkeys('conversation-search-input');
 
   const handleClear = useCallback(() => {
     onChange('');
@@ -77,8 +80,8 @@ export const ConversationSearch = ({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.stopPropagation()}
         onKeyUp={(e) => e.stopPropagation()}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={(e) => { setIsFocused(true); hotkeyFocus(e); }}
+        onBlur={(e) => { setIsFocused(false); hotkeyBlur(e); }}
       />
       {value && (
         <StyledClearButton onClick={handleClear}>

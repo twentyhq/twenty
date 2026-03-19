@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 
-import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
 import { type WaConversation, type WaMessage } from '@/whatsapp-chat/types/WhatsAppTypes';
+import { useSuppressHotkeys } from '@/whatsapp-chat/hooks/useSuppressHotkeys';
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -330,6 +330,8 @@ export const ForwardMessageModal = ({
   const [targetConversation, setTargetConversation] = useState<WaConversation | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sending, setSending] = useState(false);
+  const { handleFocus: hotkeyFocus, handleBlur: hotkeyBlur } =
+    useSuppressHotkeys('forward-modal-input');
   const [options, setOptions] = useState<ForwardOptions>({
     status: 'warm',
     includeCrmLink: true,
@@ -400,6 +402,8 @@ export const ForwardMessageModal = ({
                 placeholder="Search conversations..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={hotkeyFocus}
+                onBlur={hotkeyBlur}
                 autoFocus
               />
               {filteredConversations.slice(0, 20).map((conv) => (
@@ -482,6 +486,8 @@ export const ForwardMessageModal = ({
                   placeholder="Why are you flagging this lead?"
                   value={options.whyFlagged}
                   onChange={(e) => setOptions((prev) => ({ ...prev, whyFlagged: e.target.value }))}
+                  onFocus={hotkeyFocus}
+                  onBlur={hotkeyBlur}
                 />
               )}
 

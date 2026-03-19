@@ -558,6 +558,7 @@ export const WhatsAppChatContainer = () => {
           <>
             <ChatHeader
               conversation={selectedConversation}
+              messages={messages}
               labels={labels}
               onAddLabel={addLabel}
               onRemoveLabel={removeLabel}
