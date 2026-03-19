@@ -16,7 +16,6 @@ import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/g
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { PROVIDER_TYPE_LABELS } from '@/settings/admin-panel/ai/constants/ProviderTypeLabels';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';

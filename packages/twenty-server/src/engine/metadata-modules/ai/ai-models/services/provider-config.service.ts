@@ -13,16 +13,15 @@ type CredentialMapping = {
   secretAccessKey?: keyof ConfigVariables;
 };
 
-const PROVIDER_CREDENTIAL_MAP: Partial<
-  Record<AiProvider, CredentialMapping>
-> = {
-  [AiProvider.OPENAI]: { apiKey: 'OPENAI_API_KEY' },
-  [AiProvider.ANTHROPIC]: { apiKey: 'ANTHROPIC_API_KEY' },
-  [AiProvider.GOOGLE]: { apiKey: 'GOOGLE_API_KEY' },
-  [AiProvider.XAI]: { apiKey: 'XAI_API_KEY' },
-  [AiProvider.GROQ]: { apiKey: 'GROQ_API_KEY' },
-  [AiProvider.MISTRAL]: { apiKey: 'MISTRAL_API_KEY' },
-};
+const PROVIDER_CREDENTIAL_MAP: Partial<Record<AiProvider, CredentialMapping>> =
+  {
+    [AiProvider.OPENAI]: { apiKey: 'OPENAI_API_KEY' },
+    [AiProvider.ANTHROPIC]: { apiKey: 'ANTHROPIC_API_KEY' },
+    [AiProvider.GOOGLE]: { apiKey: 'GOOGLE_API_KEY' },
+    [AiProvider.XAI]: { apiKey: 'XAI_API_KEY' },
+    [AiProvider.GROQ]: { apiKey: 'GROQ_API_KEY' },
+    [AiProvider.MISTRAL]: { apiKey: 'MISTRAL_API_KEY' },
+  };
 
 @Injectable()
 export class ProviderConfigService {
@@ -56,9 +55,7 @@ export class ProviderConfigService {
     return result;
   }
 
-  private injectCredentials(
-    providers: AiProvidersConfig,
-  ): AiProvidersConfig {
+  private injectCredentials(providers: AiProvidersConfig): AiProvidersConfig {
     const result: AiProvidersConfig = {};
 
     for (const [name, config] of Object.entries(providers)) {

@@ -26,6 +26,7 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
     AiService,
     AgentModelConfigService,
     SdkProviderFactoryService,
+    ProviderDiscoveryService,
   ],
 })
 export class AiModelsModule {}

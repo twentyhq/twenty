@@ -1,6 +1,5 @@
 import {
   IconBrandAnthropic,
-  IconBrandGemini,
   IconBrandGroq,
   IconBrandMistral,
   IconBrandXai,
