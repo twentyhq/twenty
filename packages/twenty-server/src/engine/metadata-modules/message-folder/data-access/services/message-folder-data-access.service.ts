@@ -10,6 +10,7 @@ import {
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
@@ -101,10 +102,11 @@ export class MessageFolderDataAccessService {
     workspaceId: string,
     where: FindOptionsWhere<MessageFolderWorkspaceEntity>,
     data: Partial<MessageFolderWorkspaceEntity>,
+    manager?: WorkspaceEntityManager,
   ): Promise<void> {
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
 
-    await workspaceRepository.update(where, data);
+    await workspaceRepository.update(where, data, manager);
 
     if (await this.isMigrated(workspaceId)) {
       try {

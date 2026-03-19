@@ -148,10 +148,11 @@ export class MessageChannelDataAccessService {
     workspaceId: string,
     where: FindOptionsWhere<MessageChannelWorkspaceEntity>,
     data: Partial<MessageChannelWorkspaceEntity>,
+    manager?: WorkspaceEntityManager,
   ): Promise<void> {
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
 
-    await workspaceRepository.update(where, data);
+    await workspaceRepository.update(where, data, manager);
 
     if (await this.isMigrated(workspaceId)) {
       try {
@@ -162,6 +163,37 @@ export class MessageChannelDataAccessService {
       } catch (error) {
         this.logger.error(
           `Failed to dual-write messageChannel update to core: ${error}`,
+        );
+      }
+    }
+  }
+
+  async increment(
+    workspaceId: string,
+    where: FindOptionsWhere<MessageChannelWorkspaceEntity>,
+    propertyPath: string,
+    value: number,
+  ): Promise<void> {
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    await workspaceRepository.increment(where, propertyPath, value, undefined, [
+      propertyPath,
+      'id',
+    ]);
+
+    if (await this.isMigrated(workspaceId)) {
+      try {
+        await this.coreRepository.increment(
+          {
+            ...where,
+            workspaceId,
+          } as FindOptionsWhere<MessageChannelEntity>,
+          propertyPath,
+          value,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to dual-write messageChannel increment to core: ${error}`,
         );
       }
     }

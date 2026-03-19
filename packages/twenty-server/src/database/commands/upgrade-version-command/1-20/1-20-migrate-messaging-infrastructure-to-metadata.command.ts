@@ -290,7 +290,9 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
         syncCursor: workspaceEntity.syncCursor,
         isSentFolder: workspaceEntity.isSentFolder,
         isSynced: workspaceEntity.isSynced,
-        parentFolderId: workspaceEntity.parentFolderId,
+        parentFolderId: isNonEmptyString(workspaceEntity.parentFolderId)
+          ? workspaceEntity.parentFolderId
+          : null,
         externalId: workspaceEntity.externalId,
         pendingSyncAction: workspaceEntity.pendingSyncAction,
         messageChannelId: workspaceEntity.messageChannelId,

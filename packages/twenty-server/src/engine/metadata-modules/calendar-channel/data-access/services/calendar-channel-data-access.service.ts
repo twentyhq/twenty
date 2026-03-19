@@ -166,6 +166,37 @@ export class CalendarChannelDataAccessService {
     }
   }
 
+  async increment(
+    workspaceId: string,
+    where: FindOptionsWhere<CalendarChannelWorkspaceEntity>,
+    propertyPath: string,
+    value: number,
+  ): Promise<void> {
+    const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
+
+    await workspaceRepository.increment(where, propertyPath, value, undefined, [
+      propertyPath,
+      'id',
+    ]);
+
+    if (await this.isMigrated(workspaceId)) {
+      try {
+        await this.coreRepository.increment(
+          {
+            ...where,
+            workspaceId,
+          } as FindOptionsWhere<CalendarChannelEntity>,
+          propertyPath,
+          value,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to dual-write calendarChannel increment to core: ${error}`,
+        );
+      }
+    }
+  }
+
   async delete(
     workspaceId: string,
     where: FindOptionsWhere<CalendarChannelWorkspaceEntity>,

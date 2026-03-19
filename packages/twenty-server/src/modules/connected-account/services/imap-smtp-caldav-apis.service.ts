@@ -7,18 +7,19 @@ import { v4 } from 'uuid';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
     private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
     private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
     private readonly createMessageChannelService: CreateMessageChannelService,
@@ -58,12 +59,6 @@ export class ImapSmtpCalDavAPIService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
-
         const existingAccount = connectedAccountId
           ? await this.connectedAccountDataAccessService.findOne(workspaceId, {
               where: { id: connectedAccountId },
@@ -85,7 +80,7 @@ export class ImapSmtpCalDavAPIService {
           : null;
 
         const existingCalendarChannel = existingAccount
-          ? await calendarChannelRepository.findOne({
+          ? await this.calendarChannelDataAccessService.findOne(workspaceId, {
               where: { connectedAccountId: existingAccount.id },
             })
           : null;

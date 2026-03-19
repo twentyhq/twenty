@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -29,9 +30,8 @@ describe('ImapSmtpCalDavAPIService', () => {
     findOne: jest.fn(),
   };
 
-  const mockCalendarChannelRepository = {
+  const mockCalendarChannelDataAccessService = {
     findOne: jest.fn(),
-    save: jest.fn(),
   };
 
   const mockWorkspaceDataSource = {
@@ -53,14 +53,6 @@ describe('ImapSmtpCalDavAPIService', () => {
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: {
-            getRepository: jest
-              .fn()
-              .mockImplementation((_workspaceId, entity) => {
-                if (entity === 'calendarChannel')
-                  return mockCalendarChannelRepository;
-
-                return {};
-              }),
             getGlobalWorkspaceDataSource: jest
               .fn()
               .mockResolvedValue(mockWorkspaceDataSource),
@@ -85,6 +77,10 @@ describe('ImapSmtpCalDavAPIService', () => {
         {
           provide: MessageChannelDataAccessService,
           useValue: mockMessageChannelDataAccessService,
+        },
+        {
+          provide: CalendarChannelDataAccessService,
+          useValue: mockCalendarChannelDataAccessService,
         },
       ],
     }).compile();
@@ -119,7 +115,7 @@ describe('ImapSmtpCalDavAPIService', () => {
     it('should create new account with message channel when account does not exist and IMAP is configured', async () => {
       mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(baseInput);
 
@@ -173,7 +169,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(
         existingMessageChannel,
       );
-      mockCalendarChannelRepository.findOne.mockResolvedValue(
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(
         existingCalendarChannel,
       );
 
@@ -219,7 +215,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(imapOnlyInput);
 
@@ -247,7 +243,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(caldavOnlyInput);
 
@@ -281,7 +277,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(imapSmtpInput);
 
@@ -322,7 +318,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(fullConfigInput);
 
@@ -347,7 +343,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       );
 
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(baseInput);
 
@@ -389,7 +385,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(smtpOnlyInput);
 
@@ -404,7 +400,7 @@ describe('ImapSmtpCalDavAPIService', () => {
     it('should handle transaction correctly', async () => {
       mockConnectedAccountDataAccessService.findOne.mockResolvedValue(null);
       mockMessageChannelDataAccessService.findOne.mockResolvedValue(null);
-      mockCalendarChannelRepository.findOne.mockResolvedValue(null);
+      mockCalendarChannelDataAccessService.findOne.mockResolvedValue(null);
 
       await service.processAccount(baseInput);
 
