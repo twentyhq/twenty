@@ -33,8 +33,13 @@ export const useCanEditProfileField = (field: EditableProfileField) => {
     countAvailableWorkspaces(availableWorkspaces) <= 1;
   const meetsWorkspaceLimit = !requiresSingleWorkspace || isSingleWorkspaceUser;
 
-  return {
-    canEdit:
-      workspaceAllowsField && hasProfilePermission && meetsWorkspaceLimit,
-  };
+  const canEdit =
+    workspaceAllowsField && hasProfilePermission && meetsWorkspaceLimit;
+
+  const disabledReason =
+    !canEdit && requiresSingleWorkspace && !isSingleWorkspaceUser
+      ? ('multipleWorkspaces' as const)
+      : undefined;
+
+  return { canEdit, disabledReason };
 };
