@@ -2295,6 +2295,7 @@ type ClientAIModelConfig {
   nativeCapabilities: NativeModelCapabilities
   deprecated: Boolean
   isRecommended: Boolean
+  dataResidency: String
 }
 
 enum ModelFamily {
@@ -2306,15 +2307,14 @@ enum ModelFamily {
 }
 
 enum AiProvider {
-  NONE
   OPENAI
   ANTHROPIC
   BEDROCK
   GOOGLE
   MISTRAL
-  OPENAI_COMPATIBLE
   XAI
   GROQ
+  OPENAI_COMPATIBLE
 }
 
 type AdminAIModelConfig {
@@ -2326,6 +2326,12 @@ type AdminAIModelConfig {
   isAdminEnabled: Boolean!
   deprecated: Boolean
   isRecommended: Boolean
+  contextWindowTokens: Float
+  maxOutputTokens: Float
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
+  providerName: String
+  dataResidency: String
 }
 
 type AdminAIModels {
@@ -2434,6 +2440,7 @@ enum ConfigVariableType {
   ARRAY
   STRING
   ENUM
+  JSON
 }
 
 type ConfigVariablesGroupData {
@@ -3044,6 +3051,7 @@ type Query {
   getDatabaseConfigVariable(key: String!): ConfigVariable!
   getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
   findAllApplicationRegistrations: [ApplicationRegistration!]!
+  getAiProviders: JSON!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
@@ -3325,12 +3333,17 @@ type Mutation {
   userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
+  setAdminAiModelRecommended(modelId: String!, recommended: Boolean!): Boolean!
   setAdminDefaultAiModel(role: String!, modelId: String!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   deleteDatabaseConfigVariable(key: String!): Boolean!
   retryJobs(queueName: String!, jobIds: [String!]!): RetryJobsResponse!
   deleteJobs(queueName: String!, jobIds: [String!]!): DeleteJobsResponse!
+  addAiProvider(providerName: String!, providerConfig: JSON!): Boolean!
+  removeAiProvider(providerName: String!): Boolean!
+  testAiProviderConnection(providerName: String!): Int!
+  discoverAiModels: Int!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
   createPublicDomain(domain: String!): PublicDomain!

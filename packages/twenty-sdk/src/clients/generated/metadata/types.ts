@@ -4449,7 +4449,7 @@ export default {
                 244
             ],
             "provider": [
-                246
+                245
             ],
             "inputCostPerMillionTokensInCredits": [
                 11
@@ -4465,6 +4465,9 @@ export default {
             ],
             "isRecommended": [
                 6
+            ],
+            "dataResidency": [
+                1
             ],
             "__typename": [
                 1
@@ -4483,7 +4486,7 @@ export default {
                 244
             ],
             "provider": [
-                246
+                245
             ],
             "isAvailable": [
                 6
@@ -4496,6 +4499,24 @@ export default {
             ],
             "isRecommended": [
                 6
+            ],
+            "contextWindowTokens": [
+                11
+            ],
+            "maxOutputTokens": [
+                11
+            ],
+            "inputCostPerMillionTokens": [
+                11
+            ],
+            "outputCostPerMillionTokens": [
+                11
+            ],
+            "providerName": [
+                1
+            ],
+            "dataResidency": [
+                1
             ],
             "__typename": [
                 1
@@ -6466,6 +6487,9 @@ export default {
             "findAllApplicationRegistrations": [
                 7
             ],
+            "getAiProviders": [
+                15
+            ],
             "getPostgresCredentials": [
                 310
             ],
@@ -8346,6 +8370,19 @@ export default {
                     ]
                 }
             ],
+            "setAdminAiModelRecommended": [
+                6,
+                {
+                    "modelId": [
+                        1,
+                        "String!"
+                    ],
+                    "recommended": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
             "setAdminDefaultAiModel": [
                 6,
                 {
@@ -8419,6 +8456,40 @@ export default {
                         "[String!]!"
                     ]
                 }
+            ],
+            "addAiProvider": [
+                6,
+                {
+                    "providerName": [
+                        1,
+                        "String!"
+                    ],
+                    "providerConfig": [
+                        15,
+                        "JSON!"
+                    ]
+                }
+            ],
+            "removeAiProvider": [
+                6,
+                {
+                    "providerName": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "testAiProviderConnection": [
+                21,
+                {
+                    "providerName": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "discoverAiModels": [
+                21
             ],
             "enablePostgresProxy": [
                 310
