@@ -10,7 +10,9 @@ import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
 import {
+  CalendarChannelVisibility,
   type ConnectionParameters,
+  MessageChannelVisibility,
   SaveImapSmtpCaldavAccountDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -30,6 +32,8 @@ type UseConnectionFormProps = {
   connectedAccountId?: string;
   defaultValues?: Partial<ConnectionFormData>;
   onSaveSuccess?: () => void;
+  messageVisibility?: MessageChannelVisibility;
+  calendarVisibility?: CalendarChannelVisibility;
 };
 
 export type ConnectionFormData = {
@@ -41,6 +45,8 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
   defaultValues: overrideDefaultValues,
   onSaveSuccess,
+  messageVisibility,
+  calendarVisibility,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -141,6 +147,8 @@ export const useImapSmtpCaldavConnectionForm = ({
             accountOwnerId: currentWorkspaceMember.id,
             handle: formValues.handle,
             connectionParameters,
+            messageVisibility,
+            calendarVisibility,
           },
         });
         if (!isDefined(data)) return;
@@ -178,6 +186,8 @@ export const useImapSmtpCaldavConnectionForm = ({
       navigate,
       enqueueErrorSnackBar,
       onSaveSuccess,
+      messageVisibility,
+      calendarVisibility,
     ],
   );
 

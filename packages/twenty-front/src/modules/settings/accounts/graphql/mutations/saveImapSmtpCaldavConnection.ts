@@ -6,12 +6,16 @@ export const SAVE_IMAP_SMTP_CALDAV_ACCOUNT = gql`
     $handle: String!
     $connectionParameters: EmailAccountConnectionParameters!
     $id: UUID
+    $messageVisibility: MessageChannelVisibility
+    $calendarVisibility: CalendarChannelVisibility
   ) {
     saveImapSmtpCaldavAccount(
       accountOwnerId: $accountOwnerId
       handle: $handle
       connectionParameters: $connectionParameters
       id: $id
+      messageVisibility: $messageVisibility
+      calendarVisibility: $calendarVisibility
     ) {
       success
       connectedAccountId

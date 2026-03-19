@@ -118,6 +118,12 @@ export const SyncEmails = () => {
   const isMicrosoftProviderEnabled =
     isMicrosoftMessagingEnabled || isMicrosoftCalendarEnabled;
 
+  const calendarVisibility =
+    visibility === MessageChannelVisibility.SHARE_EVERYTHING
+      ? CalendarChannelVisibility.SHARE_EVERYTHING
+      : CalendarChannelVisibility.METADATA;
+  const appleOnboardingPath = `${getSettingsPath(SettingsPath.NewAppleMailConnection)}?fromOnboarding=true&messageVisibility=${visibility}&calendarVisibility=${calendarVisibility}`;
+
   useHotkeysOnFocusedElement({
     keys: Key.Enter,
     callback: async () => {
@@ -160,7 +166,7 @@ export const SyncEmails = () => {
         )}
         {!userAuthenticatedWithSSO && isImapSmtpCaldavEnabled && (
           <Link
-            to={`${getSettingsPath(SettingsPath.NewAppleMailConnection)}?fromOnboarding=true`}
+            to={appleOnboardingPath}
             style={{ textDecoration: 'none' }}
           >
             <MainButton
@@ -200,7 +206,7 @@ export const SyncEmails = () => {
           !isMicrosoftProviderEnabled &&
           !isGoogleProviderEnabled && (
             <Link
-              to={`${getSettingsPath(SettingsPath.NewAppleMailConnection)}?fromOnboarding=true`}
+              to={appleOnboardingPath}
               style={{ textDecoration: 'none' }}
             >
               <MainButton title={t`Continue`} width={144} />

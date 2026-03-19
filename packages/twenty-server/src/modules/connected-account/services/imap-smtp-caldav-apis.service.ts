@@ -6,6 +6,8 @@ import { v4 } from 'uuid';
 
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -50,6 +52,8 @@ export class ImapSmtpCalDavAPIService {
     workspaceId: string;
     connectionParameters: EmailAccountConnectionParameters;
     connectedAccountId?: string;
+    messageVisibility?: MessageChannelVisibility;
+    calendarVisibility?: CalendarChannelVisibility;
   }): Promise<string> {
     const { handle, workspaceId, workspaceMemberId, connectedAccountId } =
       input;
@@ -130,6 +134,7 @@ export class ImapSmtpCalDavAPIService {
                 connectedAccountId: newOrExistingAccountId,
                 handle,
                 manager,
+                messageVisibility: input.messageVisibility,
               });
             }
 
@@ -139,6 +144,7 @@ export class ImapSmtpCalDavAPIService {
                 connectedAccountId: newOrExistingAccountId,
                 handle,
                 manager,
+                calendarVisibility: input.calendarVisibility,
               });
             }
           },

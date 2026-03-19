@@ -20,6 +20,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
+import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -74,6 +76,16 @@ export class ImapSmtpCaldavResolver {
     connectionParameters: EmailAccountConnectionParameters,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
+    @Args('messageVisibility', {
+      type: () => MessageChannelVisibility,
+      nullable: true,
+    })
+    messageVisibility?: MessageChannelVisibility,
+    @Args('calendarVisibility', {
+      type: () => CalendarChannelVisibility,
+      nullable: true,
+    })
+    calendarVisibility?: CalendarChannelVisibility,
   ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
     const validatedParams = await this.validateAndTestConnectionParameters(
       connectionParameters,
@@ -87,6 +99,8 @@ export class ImapSmtpCaldavResolver {
         workspaceId: workspace.id,
         connectionParameters: validatedParams,
         connectedAccountId: id,
+        messageVisibility,
+        calendarVisibility,
       });
 
     return {

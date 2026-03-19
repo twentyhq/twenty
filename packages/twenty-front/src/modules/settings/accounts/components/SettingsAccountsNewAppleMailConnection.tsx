@@ -10,6 +10,10 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
 import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import {
+  CalendarChannelVisibility,
+  MessageChannelVisibility,
+} from '~/generated/graphql';
 
 const APPLE_IMAP_DEFAULTS = {
   handle: '',
@@ -43,6 +47,13 @@ export const SettingsAccountsNewAppleMailConnection = () => {
   const fromOnboarding = searchParams.get('fromOnboarding') === 'true';
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
 
+  const messageVisibility =
+    (searchParams.get('messageVisibility') as MessageChannelVisibility | null) ??
+    undefined;
+  const calendarVisibility =
+    (searchParams.get('calendarVisibility') as CalendarChannelVisibility | null) ??
+    undefined;
+
   const onSaveSuccess = fromOnboarding
     ? () => setNextOnboardingStatus()
     : undefined;
@@ -57,6 +68,8 @@ export const SettingsAccountsNewAppleMailConnection = () => {
   } = useImapSmtpCaldavConnectionForm({
     defaultValues: APPLE_IMAP_DEFAULTS,
     onSaveSuccess,
+    messageVisibility,
+    calendarVisibility,
   });
 
   const { control } = formMethods;
