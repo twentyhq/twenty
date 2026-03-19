@@ -69,6 +69,14 @@ const SettingsNewImapSmtpCaldavConnection = lazy(() =>
   })),
 );
 
+const SettingsNewAppleMailConnection = lazy(() =>
+  import(
+    '@/settings/accounts/components/SettingsAccountsNewAppleMailConnection'
+  ).then((module) => ({
+    default: module.SettingsAccountsNewAppleMailConnection,
+  })),
+);
+
 const SettingsEditImapSmtpCaldavConnection = lazy(() =>
   import(
     '@/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection'
@@ -447,6 +455,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.AccountsEmails}
           element={<SettingsAccountsEmails />}
+        />
+        <Route
+          path={SettingsPath.NewAppleMailConnection}
+          element={<SettingsNewAppleMailConnection />}
         />
         <Route
           path={SettingsPath.NewImapSmtpCaldavConnection}
