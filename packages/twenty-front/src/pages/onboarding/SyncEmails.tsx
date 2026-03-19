@@ -19,7 +19,11 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
-import { AppPath, ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  ConnectedAccountProvider,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApple, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
 import { Link } from 'react-router-dom';
@@ -109,7 +113,6 @@ export const SyncEmails = () => {
     isImapSmtpCaldavEnabledState,
   );
 
-
   const isGoogleProviderEnabled =
     isGoogleMessagingEnabled || isGoogleCalendarEnabled;
   const isMicrosoftProviderEnabled =
@@ -156,7 +159,10 @@ export const SyncEmails = () => {
           />
         )}
         {!userAuthenticatedWithSSO && isImapSmtpCaldavEnabled && (
-          <Link to={getSettingsPath(SettingsPath.NewAppleMailConnection)} style={{ textDecoration: 'none' }}>
+          <Link
+            to={getSettingsPath(SettingsPath.NewAppleMailConnection)}
+            style={{ textDecoration: 'none' }}
+          >
             <MainButton
               title={t`Sync with Apple`}
               width={200}
@@ -164,13 +170,15 @@ export const SyncEmails = () => {
             />
           </Link>
         )}
-        {!isMicrosoftProviderEnabled && !isGoogleProviderEnabled && !isImapSmtpCaldavEnabled && (
-          <MainButton
-            title={t`Continue`}
-            onClick={continueWithoutSync}
-            width={144}
-          />
-        )}
+        {!isMicrosoftProviderEnabled &&
+          !isGoogleProviderEnabled &&
+          !isImapSmtpCaldavEnabled && (
+            <MainButton
+              title={t`Continue`}
+              onClick={continueWithoutSync}
+              width={144}
+            />
+          )}
         {userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Continue`}

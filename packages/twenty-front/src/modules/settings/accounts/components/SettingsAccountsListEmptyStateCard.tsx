@@ -10,7 +10,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconApple, IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
+import {
+  IconApple,
+  IconAt,
+  IconGoogle,
+  IconMicrosoft,
+} from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
