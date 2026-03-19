@@ -23,7 +23,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'Test Agent',
         prompt: 'You are a helpful test assistant',
-        modelId: 'openai/gpt-5-mini',
+        modelId: 'openai/gpt-4.1',
       },
     });
 
@@ -36,7 +36,7 @@ describe('Agent creation should succeed', () => {
       icon: null,
       description: null,
       prompt: 'You are a helpful test assistant',
-      modelId: 'openai/gpt-5-mini',
+      modelId: 'openai/gpt-4.1',
       responseFormat: { type: 'text' },
       roleId: null,
       isCustom: true,
@@ -88,7 +88,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'JSON Response Agent',
         prompt: 'Return structured JSON data',
-        modelId: 'openai/gpt-5-mini',
+        modelId: 'openai/gpt-4.1',
         responseFormat: {
           type: 'json',
           schema: {
@@ -127,7 +127,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'My Test Agent With Spaces',
         prompt: 'Testing name computation',
-        modelId: 'openai/gpt-5-mini',
+        modelId: 'openai/gpt-4.1',
       },
     });
 
@@ -149,7 +149,7 @@ describe('Agent creation should succeed', () => {
         icon: '  IconRobot  ',
         description: '  Description with spaces  ',
         prompt: '  Prompt with spaces  ',
-        modelId: 'openai/gpt-5-mini',
+        modelId: 'openai/gpt-4.1',
       },
     });
 
@@ -192,7 +192,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'Agent With Role',
         prompt: 'Agent with role assignment',
-        modelId: 'openai/gpt-5-mini',
+        modelId: 'openai/gpt-4.1',
         roleId: createdRoleId,
       },
     });
@@ -203,7 +203,7 @@ describe('Agent creation should succeed', () => {
       id: expect.any(String),
       label: 'Agent With Role',
       prompt: 'Agent with role assignment',
-      modelId: 'openai/gpt-5-mini',
+      modelId: 'openai/gpt-4.1',
       roleId: createdRoleId,
       isCustom: true,
     });

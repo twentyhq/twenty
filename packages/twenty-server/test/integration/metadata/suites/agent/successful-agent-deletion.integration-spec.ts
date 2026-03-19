@@ -9,7 +9,7 @@ describe('Agent deletion should succeed', () => {
       input: {
         label: 'Agent To Delete',
         prompt: 'This agent will be deleted',
-        modelId: 'openai/gpt-5-mini',
+        modelId: 'openai/gpt-4.1',
       },
     });
 

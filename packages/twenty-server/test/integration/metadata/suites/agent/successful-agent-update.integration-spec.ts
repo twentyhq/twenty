@@ -15,7 +15,7 @@ describe('Agent update should succeed', () => {
         description: 'Original description',
         icon: 'IconRobot',
         prompt: 'Original prompt',
-        modelId: 'openai/gpt-5-mini',
+        modelId: 'openai/gpt-4.1',
         responseFormat: { type: 'text' },
         evaluationInputs: ['input 1'],
       },
