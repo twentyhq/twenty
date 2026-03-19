@@ -126,14 +126,33 @@ describe('DataArgProcessorService', () => {
           isNullable: true,
           objectMetadataId: 'object-id',
           universalIdentifier: 'company-universal-id',
+          relationTargetObjectMetadataId: 'target-company-object-id',
           settings: {
             relationType: RelationType.MANY_TO_ONE,
             joinColumnName: 'companyId',
           },
         } as FlatFieldMetadata,
+        'emails-universal-id': {
+          id: 'emails-id',
+          name: 'emails',
+          type: FieldMetadataType.EMAILS,
+          isNullable: true,
+          objectMetadataId: 'target-company-object-id',
+          universalIdentifier: 'emails-universal-id',
+        } as FlatFieldMetadata,
+        'domainName-universal-id': {
+          id: 'domainName-id',
+          name: 'domainName',
+          type: FieldMetadataType.LINKS,
+          isNullable: true,
+          objectMetadataId: 'target-company-object-id',
+          universalIdentifier: 'domainName-universal-id',
+        } as FlatFieldMetadata,
       },
       universalIdentifierById: {
         'company-id': 'company-universal-id',
+        'emails-id': 'emails-universal-id',
+        'domainName-id': 'domainName-universal-id',
       },
       universalIdentifiersByApplicationId: {},
     };
@@ -148,6 +167,25 @@ describe('DataArgProcessorService', () => {
       labelIdentifierFieldMetadataUniversalIdentifier: null,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     } as FlatObjectMetadata;
+
+    const flatObjectMetadataMaps = {
+      byUniversalIdentifier: {
+        'target-company-universal-id': {
+          id: 'target-company-object-id',
+          nameSingular: 'company',
+          namePlural: 'companies',
+          isCustom: false,
+          fieldIds: ['emails-id', 'domainName-id'],
+          universalIdentifier: 'target-company-universal-id',
+          labelIdentifierFieldMetadataUniversalIdentifier: null,
+          imageIdentifierFieldMetadataUniversalIdentifier: null,
+        } as FlatObjectMetadata,
+      },
+      universalIdentifierById: {
+        'target-company-object-id': 'target-company-universal-id',
+      },
+      universalIdentifiersByApplicationId: {},
+    };
 
     const result = await dataArgProcessorService.process({
       partialRecordInputs: [
@@ -169,6 +207,7 @@ describe('DataArgProcessorService', () => {
       authContext: createMockAuthContext(),
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     });
 
     expect(result).toEqual([
