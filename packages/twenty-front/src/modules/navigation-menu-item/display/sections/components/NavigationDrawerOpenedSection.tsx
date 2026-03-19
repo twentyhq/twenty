@@ -33,12 +33,12 @@ export const NavigationDrawerOpenedSection = () => {
     return;
   }
 
-  const isObjectAlreadyInNav = objectMetadataIdsInWorkspaceNav.has(
+  const isObjectAlreadyInNavbar = objectMetadataIdsInWorkspaceNav.has(
     objectMetadataItem.id,
   );
 
   return (
-    !isObjectAlreadyInNav && (
+    !isObjectAlreadyInNavbar && (
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Opened`}
         objectMetadataItems={[objectMetadataItem]}
