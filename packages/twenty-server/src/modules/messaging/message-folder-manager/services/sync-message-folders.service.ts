@@ -132,6 +132,10 @@ export class SyncMessageFoldersService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
+    // TODO: Restore transaction wrapper once migration is complete — folder
+    // sync operations (create/update/delete) are no longer atomic since
+    // the data access layer routes writes across workspace and core schemas.
+    // Acceptable during transition as sync is idempotent and self-corrects.
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         if (folderIdsToDelete.length > 0) {

@@ -11,6 +11,7 @@ import {
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -24,6 +25,7 @@ export class CalendarChannelDataAccessService {
     private readonly coreRepository: Repository<CalendarChannelEntity>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   private async isMigrated(workspaceId: string): Promise<boolean> {
@@ -31,6 +33,46 @@ export class CalendarChannelDataAccessService {
       FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
       workspaceId,
     );
+  }
+
+  private async toCoreWhere(
+    workspaceId: string,
+    where: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const coreWhere: Record<string, unknown> = { ...where, workspaceId };
+
+    if (
+      coreWhere.connectedAccount &&
+      typeof coreWhere.connectedAccount === 'object'
+    ) {
+      const connectedAccountWhere = {
+        ...(coreWhere.connectedAccount as Record<string, unknown>),
+      };
+
+      if ('accountOwnerId' in connectedAccountWhere) {
+        const { accountOwnerId, ...restConnectedAccount } =
+          connectedAccountWhere;
+
+        const resolvedConnectedAccounts =
+          await this.connectedAccountDataAccessService.find(workspaceId, {
+            accountOwnerId,
+          } as never);
+
+        if (resolvedConnectedAccounts.length > 0) {
+          coreWhere.connectedAccountId = resolvedConnectedAccounts[0].id;
+        } else {
+          coreWhere.connectedAccountId = '00000000-0000-0000-0000-000000000000';
+        }
+
+        if (Object.keys(restConnectedAccount).length > 0) {
+          coreWhere.connectedAccount = restConnectedAccount;
+        } else {
+          delete coreWhere.connectedAccount;
+        }
+      }
+    }
+
+    return coreWhere;
   }
 
   async getWorkspaceRepository(workspaceId: string) {
@@ -47,14 +89,12 @@ export class CalendarChannelDataAccessService {
     if (await this.isMigrated(workspaceId)) {
       const where = options.where as Record<string, unknown>;
       const coreWhere = Array.isArray(where)
-        ? where.map((whereItem) => ({
-            ...(whereItem as Record<string, unknown>),
-            workspaceId,
-          }))
-        : {
-            ...(where as Record<string, unknown>),
-            workspaceId,
-          };
+        ? await Promise.all(
+            where.map((whereItem: Record<string, unknown>) =>
+              this.toCoreWhere(workspaceId, whereItem),
+            ),
+          )
+        : await this.toCoreWhere(workspaceId, where);
 
       return this.coreRepository.findOne({
         ...options,
@@ -87,14 +127,18 @@ export class CalendarChannelDataAccessService {
         const { where } = options;
 
         const coreWhere = Array.isArray(where)
-          ? where.map((whereItem) => ({
-              ...(whereItem as Record<string, unknown>),
+          ? await Promise.all(
+              where.map((whereItem) =>
+                this.toCoreWhere(
+                  workspaceId,
+                  whereItem as Record<string, unknown>,
+                ),
+              ),
+            )
+          : await this.toCoreWhere(
               workspaceId,
-            }))
-          : {
-              ...(where as Record<string, unknown>),
-              workspaceId,
-            };
+              where as Record<string, unknown>,
+            );
 
         return this.coreRepository.find({
           ...options,
@@ -115,12 +159,15 @@ export class CalendarChannelDataAccessService {
       | undefined;
 
     if (await this.isMigrated(workspaceId)) {
+      const coreWhere = where
+        ? await this.toCoreWhere(workspaceId, where as Record<string, unknown>)
+        : { workspaceId };
+
       return this.coreRepository.find({
-        where: {
-          ...(where as Record<string, unknown>),
-          workspaceId,
-        } as FindOptionsWhere<CalendarChannelEntity>,
-      }) as unknown as Promise<CalendarChannelWorkspaceEntity[]>;
+        where: coreWhere,
+      } as FindManyOptions<CalendarChannelEntity>) as unknown as Promise<
+        CalendarChannelWorkspaceEntity[]
+      >;
     }
 
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
@@ -147,6 +194,7 @@ export class CalendarChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write calendarChannel to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -170,6 +218,7 @@ export class CalendarChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write calendarChannel update to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -201,6 +250,7 @@ export class CalendarChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write calendarChannel increment to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -223,6 +273,7 @@ export class CalendarChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write calendarChannel delete to core: ${error}`,
         );
+        throw error;
       }
     }
   }

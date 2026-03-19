@@ -193,6 +193,7 @@ export class MessageChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write messageChannel to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -217,6 +218,7 @@ export class MessageChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write messageChannel update to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -248,6 +250,7 @@ export class MessageChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write messageChannel increment to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -270,6 +273,7 @@ export class MessageChannelDataAccessService {
         this.logger.error(
           `Failed to dual-write messageChannel delete to core: ${error}`,
         );
+        throw error;
       }
     }
   }

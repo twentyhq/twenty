@@ -284,6 +284,7 @@ export class ConnectedAccountDataAccessService {
         this.logger.error(
           `Failed to dual-write connectedAccount to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -313,6 +314,7 @@ export class ConnectedAccountDataAccessService {
         this.logger.error(
           `Failed to dual-write connectedAccount update to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -337,6 +339,7 @@ export class ConnectedAccountDataAccessService {
         this.logger.error(
           `Failed to dual-write connectedAccount delete to core: ${error}`,
         );
+        throw error;
       }
     }
   }

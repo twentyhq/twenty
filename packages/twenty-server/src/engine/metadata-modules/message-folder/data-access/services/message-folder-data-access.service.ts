@@ -102,6 +102,7 @@ export class MessageFolderDataAccessService {
         this.logger.error(
           `Failed to dual-write messageFolder to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -126,6 +127,7 @@ export class MessageFolderDataAccessService {
         this.logger.error(
           `Failed to dual-write messageFolder update to core: ${error}`,
         );
+        throw error;
       }
     }
   }
@@ -148,6 +150,7 @@ export class MessageFolderDataAccessService {
         this.logger.error(
           `Failed to dual-write messageFolder delete to core: ${error}`,
         );
+        throw error;
       }
     }
   }
