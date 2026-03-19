@@ -5,7 +5,7 @@ import { In } from 'typeorm';
 
 import { type DiscoveredMessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/message-folder-data-access.service';
+import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   MessageChannelContactAutoCreationPolicy,

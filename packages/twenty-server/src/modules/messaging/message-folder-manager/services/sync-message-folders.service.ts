@@ -9,7 +9,7 @@ import {
   MessageFolder,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/message-folder-data-access.service';
+import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';

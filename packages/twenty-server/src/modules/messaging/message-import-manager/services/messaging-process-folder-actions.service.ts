@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/message-folder-data-access.service';
+import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';

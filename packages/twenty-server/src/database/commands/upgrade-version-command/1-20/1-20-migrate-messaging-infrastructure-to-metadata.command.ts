@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
@@ -166,13 +167,11 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
           return true;
         })
         .map((workspaceEntity) => {
-          const handleAliases =
-            typeof workspaceEntity.handleAliases === 'string' &&
-            workspaceEntity.handleAliases
-              ? workspaceEntity.handleAliases
-                  .split(',')
-                  .map((alias) => alias.trim())
-              : null;
+          const handleAliases = isNonEmptyString(workspaceEntity.handleAliases)
+            ? workspaceEntity.handleAliases
+                .split(',')
+                .map((alias) => alias.trim())
+            : null;
 
           return {
             id: workspaceEntity.id,
@@ -328,15 +327,12 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
       );
 
     const workspaceMembers = await workspaceMemberRepository.find();
-
-    const userIds = workspaceMembers.map((member) => member.userId);
-
     const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: userIds.map((userId) => ({ userId, workspaceId })),
+      where: { workspaceId },
       select: ['id', 'userId'],
     });
 
-    const userIdToUserWorkspaceIdMap = new Map(
+    const userWorkspaceIdByUserId = new Map(
       userWorkspaces.map((userWorkspace) => [
         userWorkspace.userId,
         userWorkspace.id,
@@ -345,10 +341,10 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
 
     return new Map(
       workspaceMembers
-        .filter((member) => userIdToUserWorkspaceIdMap.has(member.userId))
+        .filter((member) => userWorkspaceIdByUserId.has(member.userId))
         .map((member) => [
           member.id,
-          userIdToUserWorkspaceIdMap.get(member.userId)!,
+          userWorkspaceIdByUserId.get(member.userId)!,
         ]),
     );
   }

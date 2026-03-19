@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
-import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-data-access.service';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';

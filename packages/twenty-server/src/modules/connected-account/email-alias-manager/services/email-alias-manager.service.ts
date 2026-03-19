@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-data-access.service';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';

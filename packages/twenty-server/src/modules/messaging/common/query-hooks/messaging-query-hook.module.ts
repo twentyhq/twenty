@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/connected-account-data-access.module';
-import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/message-channel-data-access.module';
-import { MessageFolderDataAccessModule } from 'src/engine/metadata-modules/message-folder/message-folder-data-access.module';
+import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
+import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/data-access/message-channel-data-access.module';
+import { MessageFolderDataAccessModule } from 'src/engine/metadata-modules/message-folder/data-access/message-folder-data-access.module';
 import { ApplyMessagesVisibilityRestrictionsService } from 'src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service';
 import { MessageChannelUpdateOnePreQueryHook } from 'src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook';
 import { MessageFindManyPostQueryHook } from 'src/modules/messaging/common/query-hooks/message/message-find-many.post-query.hook';

@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   type FindOneOptions,
@@ -75,10 +77,9 @@ export class ConnectedAccountDataAccessService {
     const coreData: Record<string, unknown> = { ...rest };
 
     if (handleAliases !== undefined) {
-      coreData.handleAliases =
-        typeof handleAliases === 'string' && handleAliases
-          ? handleAliases.split(',').map((alias: string) => alias.trim())
-          : null;
+      coreData.handleAliases = isNonEmptyString(handleAliases)
+        ? handleAliases.split(',').map((alias: string) => alias.trim())
+        : null;
     }
 
     if (accountOwnerId !== undefined) {

@@ -6,7 +6,7 @@ import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/connected-account-data-access.service';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import {
   type AccountType,
   type ConnectionParameters,
