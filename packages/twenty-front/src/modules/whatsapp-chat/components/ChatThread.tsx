@@ -128,6 +128,8 @@ type ChatThreadProps = {
   onForwardMessage?: (message: WaMessage) => void;
   onFlagLead?: () => void;
   onStrukturanalyse?: (message: WaMessage) => void;
+  externalDraft?: string | null;
+  onExternalDraftConsumed?: () => void;
 };
 
 export const ChatThread = ({
@@ -143,6 +145,8 @@ export const ChatThread = ({
   onForwardMessage,
   onFlagLead,
   onStrukturanalyse,
+  externalDraft,
+  onExternalDraftConsumed,
 }: ChatThreadProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -223,6 +227,8 @@ export const ChatThread = ({
       <ChatInput
         onSendText={onSendText}
         onSendMedia={onSendMedia}
+        externalDraft={externalDraft}
+        onExternalDraftConsumed={onExternalDraftConsumed}
       />
     </StyledContainer>
   );

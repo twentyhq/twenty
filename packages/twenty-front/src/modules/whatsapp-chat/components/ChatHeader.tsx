@@ -5,6 +5,7 @@ import {
   IconArchive,
   IconPinned,
   IconPinnedOff,
+  IconSparkles,
   IconUser,
 } from 'twenty-ui/display';
 import { type WaConversation, type WaLabel } from '@/whatsapp-chat/types/WhatsAppTypes';
@@ -183,6 +184,28 @@ const StyledLabelsRow = styled.div`
   position: relative;
 `;
 
+const StyledAngelButton = styled.button<{ active?: boolean }>`
+  align-items: center;
+  background: ${({ active }) => (active ? '#7c3aed' : '#F5F6F7')};
+  border: 1px solid ${({ active }) => (active ? '#7c3aed' : '#E5E7EB')};
+  border-radius: 6px;
+  color: ${({ active }) => (active ? '#FFFFFF' : '#7c3aed')};
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 4px;
+  height: 32px;
+  padding: 0 10px;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ active }) => (active ? '#6d28d9' : '#ede9fe')};
+    border-color: #7c3aed;
+  }
+`;
+
 const StyledAddLabelButton = styled.button`
   align-items: center;
   background: none;
@@ -214,6 +237,8 @@ type ChatHeaderProps = {
   onTogglePin?: (id: string, isPinned: boolean) => void;
   onArchive?: (id: string) => void;
   onToggleDetails?: () => void;
+  onToggleSalesAngel?: () => void;
+  showSalesAngel?: boolean;
 };
 
 export const ChatHeader = ({
@@ -224,6 +249,8 @@ export const ChatHeader = ({
   onTogglePin,
   onArchive,
   onToggleDetails,
+  onToggleSalesAngel,
+  showSalesAngel,
 }: ChatHeaderProps) => {
   const [showPicker, setShowPicker] = useState(false);
   const addButtonRef = useRef<HTMLButtonElement>(null);
@@ -307,6 +334,16 @@ export const ChatHeader = ({
           </StyledInfo>
         </StyledLeft>
         <StyledRight>
+          {onToggleSalesAngel && (
+            <StyledAngelButton
+              active={showSalesAngel}
+              onClick={onToggleSalesAngel}
+              title={showSalesAngel ? 'Hide Sales Angel' : 'Sales Angel'}
+            >
+              <IconSparkles size={16} />
+              {showSalesAngel ? 'Close AI' : 'Sales Angel'}
+            </StyledAngelButton>
+          )}
           {conversation.closeLeadUrl && (
             <StyledCloseButton
               href={conversation.closeLeadUrl}

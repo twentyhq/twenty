@@ -144,12 +144,18 @@ type ChatInputProps = {
   onSendText: (body: string) => void;
   onSendMedia?: (file: File) => void;
   disabled?: boolean;
+  /** External text injected by Sales Angel "Use in Chat" — appended to draft */
+  externalDraft?: string | null;
+  /** Called after externalDraft is consumed */
+  onExternalDraftConsumed?: () => void;
 };
 
 export const ChatInput = ({
   onSendText,
   onSendMedia,
   disabled = false,
+  externalDraft,
+  onExternalDraftConsumed,
 }: ChatInputProps) => {
   const [text, setText] = useState('');
   const [recording, setRecording] = useState(false);
@@ -186,6 +192,15 @@ export const ChatInput = ({
       removeFocusItemFromFocusStackById({ focusId: CHAT_INPUT_FOCUS_ID });
     };
   }, [removeFocusItemFromFocusStackById]);
+
+  // Consume external draft (e.g. from Sales Angel "Use in Chat")
+  useEffect(() => {
+    if (externalDraft) {
+      setText((prev) => (prev.trim() ? `${prev}\n\n${externalDraft}` : externalDraft));
+      textAreaRef.current?.focus();
+      onExternalDraftConsumed?.();
+    }
+  }, [externalDraft, onExternalDraftConsumed]);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);

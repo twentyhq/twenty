@@ -27,6 +27,11 @@ const LazyStrukturanalyseModal = lazy(() =>
     default: m.StrukturanalyseModal,
   })),
 );
+const LazySalesAngelSidePanel = lazy(() =>
+  import('@/whatsapp-chat/components/SalesAngelSidePanel').then((m) => ({
+    default: m.SalesAngelSidePanel,
+  })),
+);
 import { useLabels } from '@/whatsapp-chat/hooks/useLabels';
 import { useMessages } from '@/whatsapp-chat/hooks/useMessages';
 import { useSendMessage } from '@/whatsapp-chat/hooks/useSendMessage';
@@ -158,6 +163,8 @@ export const WhatsAppChatContainer = () => {
   const [showFlagLead, setShowFlagLead] = useState(false);
   const [saMessage, setSaMessage] = useState<WaMessage | null>(null);
   const saRefreshRef = useRef<(() => void) | null>(null);
+  const [showSalesAngel, setShowSalesAngel] = useState(false);
+  const [externalDraft, setExternalDraft] = useState<string | null>(null);
 
   const handleSelectSession = useCallback((session: WaSession) => {
     setActiveSessionName(session.name);
@@ -557,6 +564,8 @@ export const WhatsAppChatContainer = () => {
               onTogglePin={handleTogglePin}
               onArchive={handleArchive}
               onToggleDetails={() => setShowDetails((prev) => !prev)}
+              onToggleSalesAngel={() => setShowSalesAngel((prev) => !prev)}
+              showSalesAngel={showSalesAngel}
             />
             <ChatThread
               conversation={selectedConversation}
@@ -571,6 +580,8 @@ export const WhatsAppChatContainer = () => {
               onForwardMessage={handleForwardMessage}
               onFlagLead={handleFlagLead}
               onStrukturanalyse={handleStrukturanalyse}
+              externalDraft={externalDraft}
+              onExternalDraftConsumed={() => setExternalDraft(null)}
             />
           </>
         ) : (
@@ -590,6 +601,17 @@ export const WhatsAppChatContainer = () => {
           onUpdate={handleConversationUpdate}
           saRefreshRef={saRefreshRef}
         />
+      )}
+
+      {showSalesAngel && selectedConversation && (
+        <Suspense fallback={null}>
+          <LazySalesAngelSidePanel
+            conversationId={selectedConversation.id}
+            phoneNumber={selectedConversation.leadPhoneNumber}
+            onClose={() => setShowSalesAngel(false)}
+            onCopyToChat={(message) => setExternalDraft(message)}
+          />
+        </Suspense>
       )}
 
       {forwardingMessage && selectedConversation && (
