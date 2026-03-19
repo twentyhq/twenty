@@ -532,7 +532,18 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           ]
         : selectedRecordIds;
 
-      if (!isDefined(recordIds) || recordIds.length === 0) return;
+      if (!isDefined(recordIds) || recordIds.length === 0) {
+        // When the filter value is empty (e.g. a variable resolved to null),
+        // IS should match nothing rather than being silently dropped.
+        if (recordFilter.operand === RecordFilterOperand.IS) {
+          return {
+            [correspondingFieldMetadataItem.name + 'Id']: {
+              in: [],
+            } as RelationFilter,
+          };
+        }
+        return;
+      }
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
