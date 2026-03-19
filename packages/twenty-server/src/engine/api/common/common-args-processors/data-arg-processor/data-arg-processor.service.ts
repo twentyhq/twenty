@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isNull, isObject, isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataSettingsMapping,
   FieldMetadataType,
@@ -22,7 +22,6 @@ import { transformFullNameField } from 'src/engine/api/common/common-args-proces
 import { transformNumericField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-numeric-field.util';
 import { transformRawJsonField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-raw-json-field.util';
 import { transformTextField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-text-field.util';
-import { isDefinedObject } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-defined-object.util';
 import { isRelationNestedOperation } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-relation-nested-operation.util';
 import { validateActorFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util';
 import { validateAddressFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util';
@@ -81,7 +80,7 @@ export class DataArgProcessorService {
     authContext: WorkspaceAuthContext;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
@@ -175,8 +174,8 @@ export class DataArgProcessorService {
     fieldMetadata: FlatFieldMetadata,
     key: string,
     value: unknown,
-    flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>,
-    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
@@ -273,9 +272,9 @@ export class DataArgProcessorService {
         >;
         const connectWhere = connectOperation.connect?.where;
 
-        if (isDefinedObject(connectWhere)) {
+        if (isObject(connectWhere)) {
           const processedWhere = await this.processConnectWhere(
-            connectWhere,
+            connectWhere as Record<string, unknown>,
             fieldMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,
@@ -359,15 +358,15 @@ export class DataArgProcessorService {
   private async processConnectWhere(
     connectWhere: Record<string, unknown>,
     relationFieldMetadata: FlatFieldMetadata,
-    flatFieldMetadataMaps?: FlatEntityMaps<FlatFieldMetadata>,
-    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   ): Promise<Record<string, unknown>> {
-    if (
-      !isDefined(flatObjectMetadataMaps) ||
-      !isDefined(flatFieldMetadataMaps) ||
-      !isDefined(relationFieldMetadata.relationTargetObjectMetadataId)
-    ) {
-      return connectWhere;
+    if (!isDefined(relationFieldMetadata.relationTargetObjectMetadataId)) {
+      throw new CommonQueryRunnerException(
+        `Relation target object metadata id not found for field ${relationFieldMetadata.name}`,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
     }
 
     const targetObjectMetadata =
@@ -377,7 +376,11 @@ export class DataArgProcessorService {
       });
 
     if (!isDefined(targetObjectMetadata)) {
-      return connectWhere;
+      throw new CommonQueryRunnerException(
+        `Relation target object metadata not found for field ${relationFieldMetadata.name}`,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
     }
 
     const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
@@ -416,7 +419,7 @@ export class DataArgProcessorService {
         );
 
         // Only keep original keys — processField may add null subfields that alter WHERE semantics
-        if (isDefinedObject(whereValue) && isDefinedObject(processedValue)) {
+        if (isObject(whereValue) && isObject(processedValue)) {
           const originalKeys = new Set(Object.keys(whereValue));
 
           processedWhere[whereKey] = Object.fromEntries(
@@ -426,7 +429,6 @@ export class DataArgProcessorService {
           processedWhere[whereKey] = processedValue;
         }
       } catch {
-        // Skip validation errors — where values are matched against existing data, not created
         processedWhere[whereKey] = whereValue;
       }
     }
