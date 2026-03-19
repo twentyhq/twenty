@@ -47,7 +47,6 @@ export type AdminAiModelConfig = {
   contextWindowTokens?: Maybe<Scalars['Float']>;
   dataResidency?: Maybe<Scalars['String']>;
   deprecated?: Maybe<Scalars['Boolean']>;
-  provider?: Maybe<AiProvider>;
   inputCostPerMillionTokens?: Maybe<Scalars['Float']>;
   isAdminEnabled: Scalars['Boolean'];
   isAvailable: Scalars['Boolean'];
@@ -57,6 +56,7 @@ export type AdminAiModelConfig = {
   modelFamily?: Maybe<ModelFamily>;
   modelId: Scalars['String'];
   outputCostPerMillionTokens?: Maybe<Scalars['Float']>;
+  provider?: Maybe<AiProvider>;
   providerName?: Maybe<Scalars['String']>;
 };
 
@@ -252,6 +252,17 @@ export enum AggregateOperations {
   PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
   PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
   SUM = 'SUM'
+}
+
+export enum AiProvider {
+  ANTHROPIC = 'ANTHROPIC',
+  BEDROCK = 'BEDROCK',
+  GOOGLE = 'GOOGLE',
+  GROQ = 'GROQ',
+  MISTRAL = 'MISTRAL',
+  OPENAI = 'OPENAI',
+  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
+  XAI = 'XAI'
 }
 
 export enum AllMetadataName {
@@ -800,7 +811,6 @@ export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
   dataResidency?: Maybe<Scalars['String']>;
   deprecated?: Maybe<Scalars['Boolean']>;
-  provider?: Maybe<AiProvider>;
   inputCostPerMillionTokensInCredits: Scalars['Float'];
   isRecommended?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
@@ -808,6 +818,7 @@ export type ClientAiModelConfig = {
   modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
   outputCostPerMillionTokensInCredits: Scalars['Float'];
+  provider?: Maybe<AiProvider>;
 };
 
 export type ClientConfig = {
@@ -2033,18 +2044,6 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
-export enum AiProvider {
-  ANTHROPIC = 'ANTHROPIC',
-  BEDROCK = 'BEDROCK',
-  GOOGLE = 'GOOGLE',
-  GROQ = 'GROQ',
-  MISTRAL = 'MISTRAL',
-  NONE = 'NONE',
-  OPENAI = 'OPENAI',
-  OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
-  XAI = 'XAI'
-}
-
 export type InitiateTwoFactorAuthenticationProvisioning = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
   uri: Scalars['String'];
@@ -2356,6 +2355,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateSkill: Skill;
   activateWorkspace: Workspace;
+  addAiProvider: Scalars['Boolean'];
   addQueryToEventStream: Scalars['Boolean'];
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
@@ -2480,6 +2480,8 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitations;
   setAdminAiModelEnabled: Scalars['Boolean'];
+  setAdminAiModelRecommended: Scalars['Boolean'];
+  setAdminDefaultAiModel: Scalars['Boolean'];
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setMeteredSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
@@ -2496,7 +2498,6 @@ export type Mutation = {
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
   uninstallApplication: Scalars['Boolean'];
-  updateAiProviders: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -2559,6 +2560,12 @@ export type MutationActivateSkillArgs = {
 
 export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
+};
+
+
+export type MutationAddAiProviderArgs = {
+  providerConfig: Scalars['JSON'];
+  providerName: Scalars['String'];
 };
 
 
@@ -3151,6 +3158,12 @@ export type MutationSetAdminAiModelEnabledArgs = {
 };
 
 
+export type MutationSetAdminAiModelRecommendedArgs = {
+  modelId: Scalars['String'];
+  recommended: Scalars['Boolean'];
+};
+
+
 export type MutationSetAdminDefaultAiModelArgs = {
   modelId: Scalars['String'];
   role: Scalars['String'];
@@ -3228,11 +3241,6 @@ export type MutationTransferApplicationRegistrationOwnershipArgs = {
 
 export type MutationUninstallApplicationArgs = {
   universalIdentifier: Scalars['String'];
-};
-
-
-export type MutationUpdateAiProvidersArgs = {
-  providers: Scalars['JSON'];
 };
 
 
@@ -6632,6 +6640,14 @@ export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
 
 export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username?: string | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, password: string } | null } | null } };
 
+export type AddAiProviderMutationVariables = Exact<{
+  providerName: Scalars['String'];
+  providerConfig: Scalars['JSON'];
+}>;
+
+
+export type AddAiProviderMutation = { __typename?: 'Mutation', addAiProvider: boolean };
+
 export type DiscoverAiModelsMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -6652,6 +6668,14 @@ export type SetAdminAiModelEnabledMutationVariables = Exact<{
 
 export type SetAdminAiModelEnabledMutation = { __typename?: 'Mutation', setAdminAiModelEnabled: boolean };
 
+export type SetAdminAiModelRecommendedMutationVariables = Exact<{
+  modelId: Scalars['String'];
+  recommended: Scalars['Boolean'];
+}>;
+
+
+export type SetAdminAiModelRecommendedMutation = { __typename?: 'Mutation', setAdminAiModelRecommended: boolean };
+
 export type SetAdminDefaultAiModelMutationVariables = Exact<{
   role: Scalars['String'];
   modelId: Scalars['String'];
@@ -6667,17 +6691,10 @@ export type TestAiProviderConnectionMutationVariables = Exact<{
 
 export type TestAiProviderConnectionMutation = { __typename?: 'Mutation', testAiProviderConnection: number };
 
-export type UpdateAiProvidersMutationVariables = Exact<{
-  providers: Scalars['JSON'];
-}>;
-
-
-export type UpdateAiProvidersMutation = { __typename?: 'Mutation', updateAiProviders: boolean };
-
 export type GetAdminAiModelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAdminAiModelsQuery = { __typename?: 'Query', getAdminAiModels: { __typename?: 'AdminAIModels', defaultSmartModelId?: string | null, defaultFastModelId?: string | null, models: Array<{ __typename?: 'AdminAIModelConfig', modelId: string, label: string, modelFamily?: ModelFamily | null, provider?: AiProvider | null, isAvailable: boolean, isAdminEnabled: boolean, deprecated?: boolean | null, isRecommended?: boolean | null, contextWindowTokens?: number | null, maxOutputTokens?: number | null, inputCostPerMillionTokens?: number | null, outputCostPerMillionTokens?: number | null, providerName?: string | null }> } };
+export type GetAdminAiModelsQuery = { __typename?: 'Query', getAdminAiModels: { __typename?: 'AdminAIModels', defaultSmartModelId?: string | null, defaultFastModelId?: string | null, models: Array<{ __typename?: 'AdminAIModelConfig', modelId: string, label: string, modelFamily?: ModelFamily | null, provider?: AiProvider | null, isAvailable: boolean, isAdminEnabled: boolean, deprecated?: boolean | null, isRecommended?: boolean | null, contextWindowTokens?: number | null, maxOutputTokens?: number | null, inputCostPerMillionTokens?: number | null, outputCostPerMillionTokens?: number | null, providerName?: string | null, dataResidency?: string | null }> } };
 
 export type GetAiProvidersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7775,13 +7792,14 @@ export const PieChartDataDocument = {"kind":"Document","definitions":[{"kind":"O
 export const SaveImapSmtpCaldavAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SaveImapSmtpCaldavAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountOwnerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"handle"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectionParameters"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EmailAccountConnectionParameters"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"saveImapSmtpCaldavAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"accountOwnerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountOwnerId"}}},{"kind":"Argument","name":{"kind":"Name","value":"handle"},"value":{"kind":"Variable","name":{"kind":"Name","value":"handle"}}},{"kind":"Argument","name":{"kind":"Name","value":"connectionParameters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectionParameters"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"connectedAccountId"}}]}}]}}]} as unknown as DocumentNode<SaveImapSmtpCaldavAccountMutation, SaveImapSmtpCaldavAccountMutationVariables>;
 export const StartChannelSyncDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartChannelSync"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startChannelSync"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<StartChannelSyncMutation, StartChannelSyncMutationVariables>;
 export const GetConnectedImapSmtpCaldavAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetConnectedImapSmtpCaldavAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getConnectedImapSmtpCaldavAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"accountOwnerId"}},{"kind":"Field","name":{"kind":"Name","value":"connectionParameters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"IMAP"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"host"}},{"kind":"Field","name":{"kind":"Name","value":"port"}},{"kind":"Field","name":{"kind":"Name","value":"secure"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}},{"kind":"Field","name":{"kind":"Name","value":"SMTP"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"host"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"port"}},{"kind":"Field","name":{"kind":"Name","value":"secure"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}},{"kind":"Field","name":{"kind":"Name","value":"CALDAV"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"host"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetConnectedImapSmtpCaldavAccountQuery, GetConnectedImapSmtpCaldavAccountQueryVariables>;
+export const AddAiProviderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddAiProvider"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"providerConfig"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addAiProvider"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"providerName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}}},{"kind":"Argument","name":{"kind":"Name","value":"providerConfig"},"value":{"kind":"Variable","name":{"kind":"Name","value":"providerConfig"}}}]}]}}]} as unknown as DocumentNode<AddAiProviderMutation, AddAiProviderMutationVariables>;
 export const DiscoverAiModelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DiscoverAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"discoverAiModels"}}]}}]} as unknown as DocumentNode<DiscoverAiModelsMutation, DiscoverAiModelsMutationVariables>;
 export const RemoveAiProviderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveAiProvider"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeAiProvider"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"providerName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}}}]}]}}]} as unknown as DocumentNode<RemoveAiProviderMutation, RemoveAiProviderMutationVariables>;
 export const SetAdminAiModelEnabledDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminAiModelEnabled"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminAiModelEnabled"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"enabled"},"value":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}}}]}]}}]} as unknown as DocumentNode<SetAdminAiModelEnabledMutation, SetAdminAiModelEnabledMutationVariables>;
+export const SetAdminAiModelRecommendedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminAiModelRecommended"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recommended"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminAiModelRecommended"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"recommended"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recommended"}}}]}]}}]} as unknown as DocumentNode<SetAdminAiModelRecommendedMutation, SetAdminAiModelRecommendedMutationVariables>;
 export const SetAdminDefaultAiModelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminDefaultAiModel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"role"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminDefaultAiModel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"role"},"value":{"kind":"Variable","name":{"kind":"Name","value":"role"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}}]}]}}]} as unknown as DocumentNode<SetAdminDefaultAiModelMutation, SetAdminDefaultAiModelMutationVariables>;
 export const TestAiProviderConnectionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"TestAiProviderConnection"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"testAiProviderConnection"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"providerName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}}}]}]}}]} as unknown as DocumentNode<TestAiProviderConnectionMutation, TestAiProviderConnectionMutationVariables>;
-export const UpdateAiProvidersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAiProviders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"providers"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAiProviders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"providers"},"value":{"kind":"Variable","name":{"kind":"Name","value":"providers"}}}]}]}}]} as unknown as DocumentNode<UpdateAiProvidersMutation, UpdateAiProvidersMutationVariables>;
-export const GetAdminAiModelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"defaultSmartModelId"}},{"kind":"Field","name":{"kind":"Name","value":"defaultFastModelId"}},{"kind":"Field","name":{"kind":"Name","value":"models"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"modelFamily"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"isAdminEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"isRecommended"}},{"kind":"Field","name":{"kind":"Name","value":"contextWindowTokens"}},{"kind":"Field","name":{"kind":"Name","value":"maxOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"inputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"outputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"providerName"}}]}}]}}]}}]} as unknown as DocumentNode<GetAdminAiModelsQuery, GetAdminAiModelsQueryVariables>;
+export const GetAdminAiModelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"defaultSmartModelId"}},{"kind":"Field","name":{"kind":"Name","value":"defaultFastModelId"}},{"kind":"Field","name":{"kind":"Name","value":"models"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"modelFamily"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"isAdminEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"isRecommended"}},{"kind":"Field","name":{"kind":"Name","value":"contextWindowTokens"}},{"kind":"Field","name":{"kind":"Name","value":"maxOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"inputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"outputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"providerName"}},{"kind":"Field","name":{"kind":"Name","value":"dataResidency"}}]}}]}}]}}]} as unknown as DocumentNode<GetAdminAiModelsQuery, GetAdminAiModelsQueryVariables>;
 export const GetAiProvidersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAiProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAiProviders"}}]}}]} as unknown as DocumentNode<GetAiProvidersQuery, GetAiProvidersQueryVariables>;
 export const FindAllApplicationRegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindAllApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findAllApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApplicationRegistrationFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"author"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"websiteUrl"}},{"kind":"Field","name":{"kind":"Name","value":"termsUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isFeatured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>;
 export const CreateDatabaseConfigVariableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDatabaseConfigVariable"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"value"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDatabaseConfigVariable"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}},{"kind":"Argument","name":{"kind":"Name","value":"value"},"value":{"kind":"Variable","name":{"kind":"Name","value":"value"}}}]}]}}]} as unknown as DocumentNode<CreateDatabaseConfigVariableMutation, CreateDatabaseConfigVariableMutationVariables>;
