@@ -200,7 +200,7 @@ export const SyncEmails = () => {
           !isMicrosoftProviderEnabled &&
           !isGoogleProviderEnabled && (
             <Link
-              to={getSettingsPath(SettingsPath.NewAppleMailConnection)}
+              to={`${getSettingsPath(SettingsPath.NewAppleMailConnection)}?fromOnboarding=true`}
               style={{ textDecoration: 'none' }}
             >
               <MainButton title={t`Continue`} width={144} />
