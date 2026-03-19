@@ -1,0 +1,558 @@
+{
+  "openai": {
+    "type": "openai",
+    "models": [
+      {
+        "rawModelId": "gpt-5.2",
+        "label": "GPT-5.2",
+        "description": "Most advanced OpenAI model for coding, agentic tasks, and complex reasoning",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 1.75,
+        "outputCostPerMillionTokens": 14.0,
+        "cachedInputCostPerMillionTokens": 0.175,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "isRecommended": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gpt-5-mini",
+        "label": "GPT-5 Mini",
+        "description": "Fast and cost-efficient GPT-5 variant for well-defined tasks",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 0.25,
+        "outputCostPerMillionTokens": 2.0,
+        "cachedInputCostPerMillionTokens": 0.025,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 32768,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true },
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gpt-4.1",
+        "label": "GPT-4.1",
+        "description": "Strong model with 1M context, cost-effective output pricing",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 2.0,
+        "outputCostPerMillionTokens": 8.0,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "contextWindowTokens": 1047576,
+        "maxOutputTokens": 32768,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true },
+        "isRecommended": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gpt-4.1-mini",
+        "label": "GPT-4.1 Mini",
+        "description": "Budget-friendly model with 1M context for lightweight tasks",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 1.6,
+        "cachedInputCostPerMillionTokens": 0.1,
+        "contextWindowTokens": 1047576,
+        "maxOutputTokens": 32768,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true },
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "o3",
+        "label": "o3",
+        "description": "Reasoning model for complex queries, coding, math, and science",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 2.0,
+        "outputCostPerMillionTokens": 8.0,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 100000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "o4-mini",
+        "label": "o4-mini",
+        "description": "Cost-effective reasoning model for math, coding, and visual tasks",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 1.1,
+        "outputCostPerMillionTokens": 4.4,
+        "cachedInputCostPerMillionTokens": 0.275,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 100000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gpt-4o",
+        "label": "GPT-4o",
+        "description": "Previous generation multimodal model with strong reasoning and vision",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 2.5,
+        "outputCostPerMillionTokens": 10.0,
+        "cachedInputCostPerMillionTokens": 1.25,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gpt-4o-mini",
+        "label": "GPT-4o Mini",
+        "description": "Previous generation fast model for lightweight tasks",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.6,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gpt-4-turbo",
+        "label": "GPT-4 Turbo",
+        "description": "Legacy high-performance model with vision capabilities",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 10.0,
+        "outputCostPerMillionTokens": 30.0,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 4096,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "deprecated": true,
+        "source": "catalog"
+      }
+    ]
+  },
+
+  "anthropic": {
+    "type": "anthropic",
+    "models": [
+      {
+        "rawModelId": "claude-opus-4-6",
+        "label": "Claude Opus 4.6",
+        "description": "Flagship Claude model for software engineering, scientific reasoning, and agent teams",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 5.0,
+        "outputCostPerMillionTokens": 25.0,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "cacheCreationCostPerMillionTokens": 6.25,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 10.0,
+          "outputCostPerMillionTokens": 37.5,
+          "cachedInputCostPerMillionTokens": 1.0,
+          "cacheCreationCostPerMillionTokens": 12.5,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "isRecommended": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "claude-sonnet-4-6",
+        "label": "Claude Sonnet 4.6",
+        "description": "Most capable Sonnet model with strong coding, computer use, and agent planning",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 3.0,
+        "outputCostPerMillionTokens": 15.0,
+        "cachedInputCostPerMillionTokens": 0.3,
+        "cacheCreationCostPerMillionTokens": 3.75,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 6.0,
+          "outputCostPerMillionTokens": 22.5,
+          "cachedInputCostPerMillionTokens": 0.6,
+          "cacheCreationCostPerMillionTokens": 7.5,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 64000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "isRecommended": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "claude-sonnet-4-5-20250929",
+        "label": "Claude Sonnet 4.5",
+        "description": "Previous gen Sonnet with 1M native context for long-context workflows",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 3.0,
+        "outputCostPerMillionTokens": 15.0,
+        "cachedInputCostPerMillionTokens": 0.3,
+        "cacheCreationCostPerMillionTokens": 3.75,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 6.0,
+          "outputCostPerMillionTokens": 22.5,
+          "cachedInputCostPerMillionTokens": 0.6,
+          "cacheCreationCostPerMillionTokens": 7.5,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 64000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "claude-haiku-4-5-20251001",
+        "label": "Claude Haiku 4.5",
+        "description": "Fast and cost-effective model for high-speed processing",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 1.0,
+        "outputCostPerMillionTokens": 5.0,
+        "cachedInputCostPerMillionTokens": 0.1,
+        "cacheCreationCostPerMillionTokens": 1.25,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 64000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": false,
+        "nativeCapabilities": { "webSearch": true },
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "claude-opus-4-5-20251101",
+        "label": "Claude Opus 4.5",
+        "description": "Previous flagship model superseded by Opus 4.6",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 5.0,
+        "outputCostPerMillionTokens": 25.0,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "cacheCreationCostPerMillionTokens": 6.25,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 10.0,
+          "outputCostPerMillionTokens": 37.5,
+          "cachedInputCostPerMillionTokens": 1.0,
+          "cacheCreationCostPerMillionTokens": 12.5,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 64000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "claude-sonnet-4-20250514",
+        "label": "Claude Sonnet 4",
+        "description": "Previous gen Sonnet superseded by Sonnet 4.6",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 3.0,
+        "outputCostPerMillionTokens": 15.0,
+        "cachedInputCostPerMillionTokens": 0.3,
+        "cacheCreationCostPerMillionTokens": 3.75,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 6.0,
+          "outputCostPerMillionTokens": 22.5,
+          "cachedInputCostPerMillionTokens": 0.6,
+          "cacheCreationCostPerMillionTokens": 7.5,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 8192,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "claude-opus-4-20250514",
+        "label": "Claude Opus 4",
+        "description": "Legacy Opus model with extended thinking",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 15.0,
+        "outputCostPerMillionTokens": 75.0,
+        "cachedInputCostPerMillionTokens": 1.5,
+        "cacheCreationCostPerMillionTokens": 18.75,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 8192,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "claude-3-5-haiku-20241022",
+        "label": "Claude Haiku 3.5",
+        "description": "Legacy fast model superseded by Haiku 4.5",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 0.8,
+        "outputCostPerMillionTokens": 4.0,
+        "cachedInputCostPerMillionTokens": 0.08,
+        "cacheCreationCostPerMillionTokens": 1.0,
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 8192,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": false,
+        "nativeCapabilities": { "webSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      }
+    ]
+  },
+
+  "bedrock": {
+    "type": "bedrock",
+    "models": [
+      {
+        "rawModelId": "anthropic.claude-opus-4-6-v1",
+        "label": "Claude Opus 4.6 (Bedrock)",
+        "description": "Flagship Claude model via AWS Bedrock for enterprise deployments",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 5.0,
+        "outputCostPerMillionTokens": 25.0,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "cacheCreationCostPerMillionTokens": 6.25,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 10.0,
+          "outputCostPerMillionTokens": 37.5,
+          "cachedInputCostPerMillionTokens": 1.0,
+          "cacheCreationCostPerMillionTokens": 12.5,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "anthropic.claude-sonnet-4-6",
+        "label": "Claude Sonnet 4.6 (Bedrock)",
+        "description": "Balanced Claude model via AWS Bedrock with strong coding and agent planning",
+        "modelFamily": "anthropic",
+        "inputCostPerMillionTokens": 3.0,
+        "outputCostPerMillionTokens": 15.0,
+        "cachedInputCostPerMillionTokens": 0.3,
+        "cacheCreationCostPerMillionTokens": 3.75,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 6.0,
+          "outputCostPerMillionTokens": 22.5,
+          "cachedInputCostPerMillionTokens": 0.6,
+          "cacheCreationCostPerMillionTokens": 7.5,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 200000,
+        "maxOutputTokens": 64000,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true },
+        "source": "catalog"
+      }
+    ]
+  },
+
+  "google": {
+    "type": "google",
+    "models": [
+      {
+        "rawModelId": "gemini-3.1-pro-preview",
+        "label": "Gemini 3.1 Pro",
+        "description": "Most advanced Gemini model for reasoning, coding, and agentic workflows",
+        "modelFamily": "google",
+        "inputCostPerMillionTokens": 2.0,
+        "outputCostPerMillionTokens": 12.0,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 4.0,
+          "outputCostPerMillionTokens": 18.0,
+          "cachedInputCostPerMillionTokens": 0.4,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "isRecommended": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gemini-3-flash-preview",
+        "label": "Gemini 3 Flash",
+        "description": "Fast frontier-class Gemini model at low cost with 1M context",
+        "modelFamily": "google",
+        "inputCostPerMillionTokens": 0.5,
+        "outputCostPerMillionTokens": 3.0,
+        "cachedInputCostPerMillionTokens": 0.05,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gemini-3.1-flash-lite-preview",
+        "label": "Gemini 3.1 Flash Lite",
+        "description": "Ultra-low-cost Gemini model for high-volume tasks with 1M context",
+        "modelFamily": "google",
+        "inputCostPerMillionTokens": 0.25,
+        "outputCostPerMillionTokens": 1.5,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gemini-2.5-pro",
+        "label": "Gemini 2.5 Pro",
+        "description": "Previous gen Gemini Pro superseded by 3.1 Pro",
+        "modelFamily": "google",
+        "inputCostPerMillionTokens": 1.25,
+        "outputCostPerMillionTokens": 10.0,
+        "cachedInputCostPerMillionTokens": 0.315,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 2.5,
+          "outputCostPerMillionTokens": 15.0,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "gemini-2.5-flash",
+        "label": "Gemini 2.5 Flash",
+        "description": "Previous gen Flash superseded by Gemini 3 Flash",
+        "modelFamily": "google",
+        "inputCostPerMillionTokens": 0.3,
+        "outputCostPerMillionTokens": 2.5,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "deprecated": true,
+        "source": "catalog"
+      }
+    ]
+  },
+
+  "xai": {
+    "type": "xai",
+    "models": [
+      {
+        "rawModelId": "grok-4",
+        "label": "Grok-4",
+        "description": "Most capable Grok model with enhanced reasoning, web and Twitter search",
+        "modelFamily": "xai",
+        "inputCostPerMillionTokens": 3.0,
+        "outputCostPerMillionTokens": 15.0,
+        "cachedInputCostPerMillionTokens": 0.75,
+        "contextWindowTokens": 256000,
+        "maxOutputTokens": 8192,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
+        "isRecommended": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "grok-4-1-fast-reasoning",
+        "label": "Grok 4.1 Fast",
+        "description": "Next-generation tool-calling agent with 2M context for advanced agentic workflows",
+        "modelFamily": "xai",
+        "inputCostPerMillionTokens": 0.2,
+        "outputCostPerMillionTokens": 0.5,
+        "cachedInputCostPerMillionTokens": 0.05,
+        "contextWindowTokens": 2000000,
+        "maxOutputTokens": 8192,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "doesSupportThinking": true,
+        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "grok-3",
+        "label": "Grok-3",
+        "description": "Advanced model with web and Twitter search, optimized for real-time information",
+        "modelFamily": "xai",
+        "inputCostPerMillionTokens": 3.0,
+        "outputCostPerMillionTokens": 15.0,
+        "cachedInputCostPerMillionTokens": 0.75,
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 8192,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      },
+      {
+        "rawModelId": "grok-3-mini",
+        "label": "Grok-3 Mini",
+        "description": "Lightweight model with web and Twitter search for fast, cost-effective operations",
+        "modelFamily": "xai",
+        "inputCostPerMillionTokens": 0.3,
+        "outputCostPerMillionTokens": 0.5,
+        "cachedInputCostPerMillionTokens": 0.07,
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 8192,
+        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
+        "deprecated": true,
+        "source": "catalog"
+      }
+    ]
+  },
+
+  "groq": {
+    "type": "groq",
+    "models": [
+      {
+        "rawModelId": "openai/gpt-oss-120b",
+        "label": "GPT-OSS 120B (Groq)",
+        "description": "Large-scale open-source model with ultra-fast inference via Groq",
+        "modelFamily": "openai",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.6,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "source": "catalog"
+      }
+    ]
+  },
+
+  "mistral": {
+    "type": "mistral",
+    "models": [
+      {
+        "rawModelId": "mistral-large-latest",
+        "label": "Mistral Large",
+        "description": "Flagship Mistral model with strong reasoning and 256K context",
+        "modelFamily": "mistral",
+        "inputCostPerMillionTokens": 0.5,
+        "outputCostPerMillionTokens": 1.5,
+        "contextWindowTokens": 256000,
+        "maxOutputTokens": 8192,
+        "source": "catalog"
+      }
+    ]
+  }
+}

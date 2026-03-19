@@ -796,8 +796,6 @@ type Workspace {
   fastModel: String!
   smartModel: String!
   aiAdditionalInstructions: String
-  autoEnableNewAiModels: Boolean!
-  disabledAiModelIds: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean!
   routerModel: String!
@@ -2299,7 +2297,7 @@ type ClientAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  inferenceProvider: InferenceProvider!
+  provider: AiProvider
   inputCostPerMillionTokensInCredits: Float!
   outputCostPerMillionTokensInCredits: Float!
   nativeCapabilities: NativeModelCapabilities
@@ -2315,7 +2313,7 @@ enum ModelFamily {
   XAI
 }
 
-enum InferenceProvider {
+enum AiProvider {
   NONE
   OPENAI
   ANTHROPIC
@@ -2331,7 +2329,7 @@ type AdminAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  inferenceProvider: InferenceProvider!
+  provider: AiProvider
   isAvailable: Boolean!
   isAdminEnabled: Boolean!
   deprecated: Boolean
@@ -2339,8 +2337,9 @@ type AdminAIModelConfig {
 }
 
 type AdminAIModels {
-  autoEnableNewModels: Boolean!
   models: [AdminAIModelConfig!]!
+  defaultSmartModelId: String
+  defaultFastModelId: String
 }
 
 type Billing {
@@ -3334,6 +3333,7 @@ type Mutation {
   userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
+  setAdminDefaultAiModel(role: String!, modelId: String!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   deleteDatabaseConfigVariable(key: String!): Boolean!
@@ -4128,8 +4128,6 @@ input UpdateWorkspaceInput {
   smartModel: String
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
-  autoEnableNewAiModels: Boolean
-  disabledAiModelIds: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean
 }

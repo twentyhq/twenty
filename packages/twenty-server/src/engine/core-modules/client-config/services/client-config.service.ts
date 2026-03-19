@@ -14,11 +14,9 @@ import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/const
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import {
-  AI_MODELS,
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
-  InferenceProvider,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
@@ -48,28 +46,28 @@ export class ClientConfigService {
 
     const aiModels: ClientAIModelConfig[] = availableModels.map(
       (registeredModel) => {
-        const builtInModel = AI_MODELS.find(
-          (m) => m.modelId === registeredModel.modelId,
+        const modelConfig = this.aiModelRegistryService.getModelConfig(
+          registeredModel.modelId,
         );
 
         return {
           modelId: registeredModel.modelId,
-          label: builtInModel?.label || registeredModel.modelId,
-          modelFamily: builtInModel?.modelFamily,
-          inferenceProvider: registeredModel.inferenceProvider,
-          nativeCapabilities: builtInModel?.nativeCapabilities,
-          inputCostPerMillionTokensInCredits: builtInModel
+          label: modelConfig?.label || registeredModel.modelId,
+          modelFamily: modelConfig?.modelFamily,
+          provider: registeredModel.provider,
+          nativeCapabilities: modelConfig?.nativeCapabilities,
+          inputCostPerMillionTokensInCredits: modelConfig
             ? convertDollarsToBillingCredits(
-                builtInModel.inputCostPerMillionTokens,
+                modelConfig.inputCostPerMillionTokens,
               )
             : 0,
-          outputCostPerMillionTokensInCredits: builtInModel
+          outputCostPerMillionTokensInCredits: modelConfig
             ? convertDollarsToBillingCredits(
-                builtInModel.outputCostPerMillionTokens,
+                modelConfig.outputCostPerMillionTokens,
               )
             : 0,
-          deprecated: builtInModel?.deprecated,
-          isRecommended: builtInModel?.isRecommended,
+          deprecated: modelConfig?.deprecated,
+          isRecommended: modelConfig?.isRecommended,
         };
       },
     );
@@ -77,9 +75,8 @@ export class ClientConfigService {
     if (aiModels.length > 0) {
       const defaultSpeedModel =
         this.aiModelRegistryService.getDefaultSpeedModel();
-      const defaultSpeedModelConfig = AI_MODELS.find(
-        (m) => m.modelId === defaultSpeedModel?.modelId,
-      );
+      const defaultSpeedModelConfig =
+        this.aiModelRegistryService.getModelConfig(defaultSpeedModel?.modelId);
       const defaultSpeedModelLabel =
         defaultSpeedModelConfig?.label ||
         defaultSpeedModel?.modelId ||
@@ -87,9 +84,10 @@ export class ClientConfigService {
 
       const defaultPerformanceModel =
         this.aiModelRegistryService.getDefaultPerformanceModel();
-      const defaultPerformanceModelConfig = AI_MODELS.find(
-        (m) => m.modelId === defaultPerformanceModel?.modelId,
-      );
+      const defaultPerformanceModelConfig =
+        this.aiModelRegistryService.getModelConfig(
+          defaultPerformanceModel?.modelId,
+        );
       const defaultPerformanceModelLabel =
         defaultPerformanceModelConfig?.label ||
         defaultPerformanceModel?.modelId ||
@@ -99,14 +97,14 @@ export class ClientConfigService {
         {
           modelId: DEFAULT_SMART_MODEL,
           label: `Best (${defaultPerformanceModelLabel})`,
-          inferenceProvider: InferenceProvider.NONE,
+          provider: null,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
         },
         {
           modelId: DEFAULT_FAST_MODEL,
           label: `Best (${defaultSpeedModelLabel})`,
-          inferenceProvider: InferenceProvider.NONE,
+          provider: null,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
         },

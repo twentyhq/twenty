@@ -25,7 +25,7 @@ export const useAiModelOptions = (
         model.modelId === DEFAULT_FAST_MODEL ||
         model.modelId === DEFAULT_SMART_MODEL
           ? model.label
-          : `${model.label} (${getModelProviderLabel(model.modelFamily) || model.inferenceProvider})`,
+          : `${model.label} (${getModelProviderLabel(model.modelFamily) || model.provider})`,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };
@@ -54,5 +54,5 @@ export const useAiModelLabel = (
     return model.label;
   }
 
-  return `${model.label} (${getModelProviderLabel(model.modelFamily) || model.inferenceProvider})`;
+  return `${model.label} (${getModelProviderLabel(model.modelFamily) || model.provider})`;
 };

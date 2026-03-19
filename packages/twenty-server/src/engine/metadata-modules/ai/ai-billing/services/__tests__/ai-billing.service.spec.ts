@@ -4,9 +4,9 @@ import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import {
-  InferenceProvider,
+  AiProvider,
   ModelFamily,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -21,7 +21,7 @@ describe('AIBillingService', () => {
     modelId: 'gpt-4o',
     label: 'GPT-4o',
     modelFamily: ModelFamily.OPENAI,
-    inferenceProvider: InferenceProvider.OPENAI,
+    provider: AiProvider.OPENAI,
     inputCostPerMillionTokens: 2.5,
     outputCostPerMillionTokens: 10.0,
     cachedInputCostPerMillionTokens: 1.25,
@@ -31,7 +31,7 @@ describe('AIBillingService', () => {
     modelId: 'claude-sonnet-4-5-20250929',
     label: 'Claude Sonnet 4.5',
     modelFamily: ModelFamily.ANTHROPIC,
-    inferenceProvider: InferenceProvider.ANTHROPIC,
+    provider: AiProvider.ANTHROPIC,
     inputCostPerMillionTokens: 3.0,
     outputCostPerMillionTokens: 15.0,
     cachedInputCostPerMillionTokens: 0.3,

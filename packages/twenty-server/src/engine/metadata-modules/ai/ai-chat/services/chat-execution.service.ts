@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { anthropic } from '@ai-sdk/anthropic';
 import { groq } from '@ai-sdk/groq';
-import { openai } from '@ai-sdk/openai';
 import {
   convertToModelMessages,
   stepCountIs,
@@ -45,10 +43,11 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
   type AIModelConfig,
-  InferenceProvider,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+  AiProvider,
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -77,6 +76,7 @@ export class ChatExecutionService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly systemPromptBuilder: SystemPromptBuilderService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly sdkProviderFactory: SdkProviderFactoryService,
   ) {}
 
   async streamChat({
@@ -138,7 +138,7 @@ export class ChatExecutionService {
     );
 
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      this.getNativeWebSearchTools(registeredModel.inferenceProvider);
+      this.getNativeWebSearchTools(registeredModel);
 
     // Direct tools: native provider tools + preloaded tools.
     // These are callable directly AND as fallback through execute_tool.
@@ -203,9 +203,9 @@ export class ChatExecutionService {
       role: 'system',
       content: systemPrompt,
       providerOptions:
-        registeredModel.inferenceProvider === InferenceProvider.ANTHROPIC
+        registeredModel.provider === AiProvider.ANTHROPIC
           ? { anthropic: { cacheControl: { type: 'ephemeral' } } }
-          : registeredModel.inferenceProvider === InferenceProvider.BEDROCK
+          : registeredModel.provider === AiProvider.BEDROCK
             ? { bedrock: { cacheControl: { type: 'ephemeral' } } }
             : undefined,
     };
@@ -325,46 +325,80 @@ export class ChatExecutionService {
     return context;
   }
 
-  private getNativeWebSearchTools(inferenceProvider: InferenceProvider): {
+  private getNativeWebSearchTools(model: {
+    modelId: string;
+    provider: AiProvider;
+    providerName?: string;
+  }): {
     tools: ToolSet;
     callableToolNames: string[];
   } {
-    switch (inferenceProvider) {
-      case InferenceProvider.ANTHROPIC:
+    const empty = { tools: {}, callableToolNames: [] };
+    const providerName = model.providerName;
+
+    if (!providerName) {
+      return empty;
+    }
+
+    switch (model.provider) {
+      case AiProvider.ANTHROPIC: {
+        const provider =
+          this.sdkProviderFactory.getRawAnthropicProvider(providerName);
+
+        if (!provider) {
+          return empty;
+        }
+
         return {
-          tools: { web_search: anthropic.tools.webSearch_20250305() },
+          tools: { web_search: provider.tools.webSearch_20250305() },
           callableToolNames: ['web_search'],
         };
-      case InferenceProvider.BEDROCK: {
-        const bedrockProvider =
-          this.aiModelRegistryService.getBedrockProvider();
+      }
+      case AiProvider.BEDROCK: {
+        const provider =
+          this.sdkProviderFactory.getRawBedrockProvider(providerName);
 
-        if (bedrockProvider) {
+        if (!provider) {
+          return empty;
+        }
+
+        return {
+          tools: {
+            web_search: provider.tools.webSearch_20250305() as ToolSet[string],
+          },
+          callableToolNames: ['web_search'],
+        };
+      }
+      case AiProvider.OPENAI: {
+        const provider =
+          this.sdkProviderFactory.getRawOpenAIProvider(providerName);
+
+        if (!provider) {
+          return empty;
+        }
+
+        return {
+          tools: { web_search: provider.tools.webSearch() },
+          callableToolNames: ['web_search'],
+        };
+      }
+      case AiProvider.GROQ: {
+        const provider =
+          this.sdkProviderFactory.getRawOpenAIProvider(providerName);
+
+        if (provider) {
           return {
             tools: {
-              web_search:
-                bedrockProvider.tools.webSearch_20250305() as ToolSet[string],
+              web_search: groq.tools.browserSearch({}) as ToolSet[string],
             },
-            callableToolNames: ['web_search'],
+            callableToolNames: [],
           };
         }
 
-        return { tools: {}, callableToolNames: [] };
+        return empty;
       }
-      case InferenceProvider.OPENAI:
-        return {
-          tools: { web_search: openai.tools.webSearch() },
-          callableToolNames: ['web_search'],
-        };
-      case InferenceProvider.GROQ:
-        return {
-          tools: {
-            web_search: groq.tools.browserSearch({}) as ToolSet[string],
-          },
-          callableToolNames: [],
-        };
       default:
-        return { tools: {}, callableToolNames: [] };
+        return empty;
     }
   }
 

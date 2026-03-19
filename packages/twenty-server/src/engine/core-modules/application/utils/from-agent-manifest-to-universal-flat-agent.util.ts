@@ -3,7 +3,7 @@ import { type AgentManifest } from 'twenty-shared/application';
 import {
   DEFAULT_SMART_MODEL,
   type ModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 
 export const fromAgentManifestToUniversalFlatAgent = ({

@@ -13,7 +13,7 @@ import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/type
 import {
   DEFAULT_SMART_MODEL,
   ModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 

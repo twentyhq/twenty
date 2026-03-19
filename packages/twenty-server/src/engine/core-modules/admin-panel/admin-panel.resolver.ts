@@ -34,6 +34,8 @@ import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/conf
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
+import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
@@ -65,6 +67,7 @@ export class AdminPanelResolver {
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly providerDiscoveryService: ProviderDiscoveryService,
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -149,22 +152,36 @@ export class AdminPanelResolver {
   async getAdminAiModels(): Promise<AdminAIModelsDTO> {
     const models = this.aiModelRegistryService
       .getAllModelsWithStatus()
-      .map(({ modelConfig, isAvailable, isAdminEnabled }) => ({
+      .map(({ modelConfig, isAvailable, isAdminEnabled, providerName }) => ({
         modelId: modelConfig.modelId,
         label: modelConfig.label,
         modelFamily: modelConfig.modelFamily,
-        inferenceProvider: modelConfig.inferenceProvider,
+        provider: modelConfig.provider,
         isAvailable,
         isAdminEnabled,
         deprecated: modelConfig.deprecated,
         isRecommended: modelConfig.isRecommended,
+        contextWindowTokens: modelConfig.contextWindowTokens,
+        maxOutputTokens: modelConfig.maxOutputTokens,
+        inputCostPerMillionTokens: modelConfig.inputCostPerMillionTokens,
+        outputCostPerMillionTokens: modelConfig.outputCostPerMillionTokens,
+        providerName,
       }));
 
+    const defaultSmartModelId = this.twentyConfigService
+      .get('DEFAULT_AI_PERFORMANCE_MODEL_ID')
+      .split(',')[0]
+      ?.trim();
+
+    const defaultFastModelId = this.twentyConfigService
+      .get('DEFAULT_AI_SPEED_MODEL_ID')
+      .split(',')[0]
+      ?.trim();
+
     return {
-      autoEnableNewModels: this.twentyConfigService.get(
-        'AI_AUTO_ENABLE_NEW_MODELS',
-      ),
       models,
+      defaultSmartModelId,
+      defaultFastModelId,
     };
   }
 
@@ -175,6 +192,36 @@ export class AdminPanelResolver {
     @Args('enabled', { type: () => Boolean }) enabled: boolean,
   ): Promise<boolean> {
     await this.aiModelRegistryService.setModelAdminEnabled(modelId, enabled);
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async setAdminAiModelRecommended(
+    @Args('modelId', { type: () => String }) modelId: string,
+    @Args('recommended', { type: () => Boolean }) recommended: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelRecommended(
+      modelId,
+      recommended,
+    );
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async setAdminDefaultAiModel(
+    @Args('role', { type: () => String }) role: 'smart' | 'fast',
+    @Args('modelId', { type: () => String }) modelId: string,
+  ): Promise<boolean> {
+    const configKey: keyof ConfigVariables =
+      role === 'smart'
+        ? 'DEFAULT_AI_PERFORMANCE_MODEL_ID'
+        : 'DEFAULT_AI_SPEED_MODEL_ID';
+
+    await this.twentyConfigService.set(configKey, modelId);
 
     return true;
   }
@@ -277,5 +324,90 @@ export class AdminPanelResolver {
     ApplicationRegistrationEntity[]
   > {
     return this.applicationRegistrationService.findAll();
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => GraphQLJSON)
+  async getAiProviders(): Promise<Record<string, unknown>> {
+    const providers = this.twentyConfigService.get('AI_PROVIDERS');
+    const masked: Record<string, Record<string, unknown>> = {};
+
+    for (const [name, config] of Object.entries(providers)) {
+      masked[name] = {
+        type: config.type,
+        ...(config.baseUrl && { baseUrl: config.baseUrl }),
+        ...(config.region && { region: config.region }),
+        ...(config.apiKey && {
+          apiKey: `${config.apiKey.substring(0, 8)}...`,
+        }),
+        hasAccessKey: !!(config.accessKeyId && config.secretAccessKey),
+      };
+    }
+
+    return masked;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async addAiProvider(
+    @Args('providerName', { type: () => String }) providerName: string,
+    @Args('providerConfig', { type: () => GraphQLJSON })
+    providerConfig: AiProviderConfig,
+  ): Promise<boolean> {
+    const currentProviders = {
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    };
+
+    currentProviders[providerName] = providerConfig;
+    await this.twentyConfigService.set('AI_PROVIDERS', currentProviders);
+    this.aiModelRegistryService.refreshRegistry();
+    await this.aiModelRegistryService.discoverAndRegisterModels();
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async removeAiProvider(
+    @Args('providerName', { type: () => String })
+    providerName: string,
+  ): Promise<boolean> {
+    const currentProviders = {
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    };
+
+    delete currentProviders[providerName];
+    await this.twentyConfigService.set('AI_PROVIDERS', currentProviders);
+    this.aiModelRegistryService.refreshRegistry();
+    await this.aiModelRegistryService.discoverAndRegisterModels();
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Int)
+  async testAiProviderConnection(
+    @Args('providerName', { type: () => String })
+    providerName: string,
+  ): Promise<number> {
+    const providers = this.twentyConfigService.get('AI_PROVIDERS');
+    const providerConfig = providers[providerName];
+
+    if (!providerConfig) {
+      throw new UserInputError(
+        `Provider "${providerName}" not found in AI_PROVIDERS configuration`,
+      );
+    }
+
+    const discovered =
+      await this.providerDiscoveryService.discoverModels(providerConfig);
+
+    return discovered.length;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Int)
+  async discoverAiModels(): Promise<number> {
+    return this.aiModelRegistryService.discoverAndRegisterModels();
   }
 }

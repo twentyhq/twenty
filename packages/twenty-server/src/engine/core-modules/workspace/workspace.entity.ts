@@ -38,7 +38,7 @@ import {
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
   type ModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -313,19 +313,6 @@ export class WorkspaceEntity {
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiAdditionalInstructions: string | null;
-
-  @Field(() => Boolean, { nullable: false })
-  @Column({ type: 'boolean', nullable: false, default: true })
-  autoEnableNewAiModels: boolean;
-
-  @Field(() => [String], { nullable: true })
-  @Column({
-    type: 'varchar',
-    array: true,
-    nullable: false,
-    default: '{}',
-  })
-  disabledAiModelIds: string[];
 
   @Field(() => [String], { nullable: true })
   @Column({

@@ -8,17 +8,17 @@ import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/bill
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import {
-  InferenceProvider,
+  AiProvider,
   ModelFamily,
-  ModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+  type ModelId,
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',
 });
 
-registerEnumType(InferenceProvider, {
-  name: 'InferenceProvider',
+registerEnumType(AiProvider, {
+  name: 'AiProvider',
 });
 
 registerEnumType(ModelFamily, {
@@ -45,8 +45,8 @@ export class ClientAIModelConfig {
   @Field(() => ModelFamily, { nullable: true })
   modelFamily?: ModelFamily;
 
-  @Field(() => InferenceProvider)
-  inferenceProvider: InferenceProvider;
+  @Field(() => AiProvider, { nullable: true })
+  provider: AiProvider | null;
 
   @Field(() => Number)
   inputCostPerMillionTokensInCredits: number;
@@ -75,8 +75,8 @@ export class AdminAIModelConfig {
   @Field(() => ModelFamily, { nullable: true })
   modelFamily?: ModelFamily;
 
-  @Field(() => InferenceProvider)
-  inferenceProvider: InferenceProvider;
+  @Field(() => AiProvider, { nullable: true })
+  provider: AiProvider | null;
 
   @Field(() => Boolean)
   isAvailable: boolean;
@@ -89,15 +89,33 @@ export class AdminAIModelConfig {
 
   @Field(() => Boolean, { nullable: true })
   isRecommended?: boolean;
+
+  @Field(() => Number, { nullable: true })
+  contextWindowTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  maxOutputTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  inputCostPerMillionTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  outputCostPerMillionTokens?: number;
+
+  @Field(() => String, { nullable: true })
+  providerName?: string;
 }
 
 @ObjectType('AdminAIModels')
 export class AdminAIModelsDTO {
-  @Field(() => Boolean)
-  autoEnableNewModels: boolean;
-
   @Field(() => [AdminAIModelConfig])
   models: AdminAIModelConfig[];
+
+  @Field(() => String, { nullable: true })
+  defaultSmartModelId?: string;
+
+  @Field(() => String, { nullable: true })
+  defaultFastModelId?: string;
 }
 
 @ObjectType()

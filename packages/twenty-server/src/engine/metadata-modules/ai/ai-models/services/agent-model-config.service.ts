@@ -1,34 +1,37 @@
 import { Injectable } from '@nestjs/common';
 
-import { anthropic } from '@ai-sdk/anthropic';
-import { openai } from '@ai-sdk/openai';
+import { type AmazonBedrockProvider } from '@ai-sdk/amazon-bedrock';
+import { type AnthropicProvider } from '@ai-sdk/anthropic';
+import { type OpenAIProvider } from '@ai-sdk/openai';
 import { ProviderOptions } from '@ai-sdk/provider-utils';
 import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { InferenceProvider } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 import {
   AiModelRegistryService,
   RegisteredAIModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 @Injectable()
 export class AgentModelConfigService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly sdkProviderFactory: SdkProviderFactoryService,
   ) {}
 
   getProviderOptions(
     model: RegisteredAIModel,
     agent: FlatAgentWithRoleId,
   ): ProviderOptions {
-    switch (model.inferenceProvider) {
-      case InferenceProvider.XAI:
+    switch (model.provider) {
+      case AiProvider.XAI:
         return this.getXaiProviderOptions(agent);
-      case InferenceProvider.ANTHROPIC:
+      case AiProvider.ANTHROPIC:
         return this.getAnthropicProviderOptions(model);
-      case InferenceProvider.BEDROCK:
+      case AiProvider.BEDROCK:
         return this.getBedrockProviderOptions(model);
       default:
         return {};
@@ -45,16 +48,19 @@ export class AgentModelConfigService {
       return tools;
     }
 
-    switch (model.inferenceProvider) {
-      case InferenceProvider.ANTHROPIC:
+    switch (model.provider) {
+      case AiProvider.ANTHROPIC:
         if (agent.modelConfiguration.webSearch?.enabled) {
-          tools.web_search = anthropic.tools.webSearch_20250305();
+          const anthropicProvider = this.getAnthropicProviderForModel(model);
+
+          if (anthropicProvider) {
+            tools.web_search = anthropicProvider.tools.webSearch_20250305();
+          }
         }
         break;
-      case InferenceProvider.BEDROCK: {
+      case AiProvider.BEDROCK: {
         if (agent.modelConfiguration.webSearch?.enabled) {
-          const bedrockProvider =
-            this.aiModelRegistryService.getBedrockProvider();
+          const bedrockProvider = this.getBedrockProviderForModel(model);
 
           if (bedrockProvider) {
             tools.web_search =
@@ -63,14 +69,48 @@ export class AgentModelConfigService {
         }
         break;
       }
-      case InferenceProvider.OPENAI:
+      case AiProvider.OPENAI:
         if (agent.modelConfiguration.webSearch?.enabled) {
-          tools.web_search = openai.tools.webSearch();
+          const openaiProvider = this.getOpenAIProviderForModel(model);
+
+          if (openaiProvider) {
+            tools.web_search = openaiProvider.tools.webSearch();
+          }
         }
         break;
     }
 
     return tools;
+  }
+
+  private getAnthropicProviderForModel(
+    model: RegisteredAIModel,
+  ): AnthropicProvider | undefined {
+    if (!model.providerName) {
+      return undefined;
+    }
+
+    return this.sdkProviderFactory.getRawAnthropicProvider(model.providerName);
+  }
+
+  private getBedrockProviderForModel(
+    model: RegisteredAIModel,
+  ): AmazonBedrockProvider | undefined {
+    if (!model.providerName) {
+      return undefined;
+    }
+
+    return this.sdkProviderFactory.getRawBedrockProvider(model.providerName);
+  }
+
+  private getOpenAIProviderForModel(
+    model: RegisteredAIModel,
+  ): OpenAIProvider | undefined {
+    if (!model.providerName) {
+      return undefined;
+    }
+
+    return this.sdkProviderFactory.getRawOpenAIProvider(model.providerName);
   }
 
   private getXaiProviderOptions(agent: FlatAgentWithRoleId): ProviderOptions {

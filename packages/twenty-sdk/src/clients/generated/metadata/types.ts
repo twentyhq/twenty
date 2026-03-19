@@ -1672,12 +1672,6 @@ export default {
             "aiAdditionalInstructions": [
                 1
             ],
-            "autoEnableNewAiModels": [
-                6
-            ],
-            "disabledAiModelIds": [
-                1
-            ],
             "enabledAiModelIds": [
                 1
             ],
@@ -4474,7 +4468,7 @@ export default {
             "modelFamily": [
                 245
             ],
-            "inferenceProvider": [
+            "provider": [
                 246
             ],
             "inputCostPerMillionTokensInCredits": [
@@ -4497,7 +4491,7 @@ export default {
             ]
         },
         "ModelFamily": {},
-        "InferenceProvider": {},
+        "AiProvider": {},
         "AdminAIModelConfig": {
             "modelId": [
                 1
@@ -4508,7 +4502,7 @@ export default {
             "modelFamily": [
                 245
             ],
-            "inferenceProvider": [
+            "provider": [
                 246
             ],
             "isAvailable": [
@@ -4528,11 +4522,14 @@ export default {
             ]
         },
         "AdminAIModels": {
-            "autoEnableNewModels": [
-                6
-            ],
             "models": [
                 247
+            ],
+            "defaultSmartModelId": [
+                1
+            ],
+            "defaultFastModelId": [
+                1
             ],
             "__typename": [
                 1
@@ -8369,6 +8366,19 @@ export default {
                     ]
                 }
             ],
+            "setAdminDefaultAiModel": [
+                6,
+                {
+                    "role": [
+                        1,
+                        "String!"
+                    ],
+                    "modelId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "createDatabaseConfigVariable": [
                 6,
                 {
@@ -10397,12 +10407,6 @@ export default {
                 1
             ],
             "editableProfileFields": [
-                1
-            ],
-            "autoEnableNewAiModels": [
-                6
-            ],
-            "disabledAiModelIds": [
                 1
             ],
             "enabledAiModelIds": [

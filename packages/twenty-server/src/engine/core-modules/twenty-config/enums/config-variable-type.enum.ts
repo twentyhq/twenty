@@ -4,4 +4,5 @@ export enum ConfigVariableType {
   ARRAY = 'array',
   STRING = 'string',
   ENUM = 'enum',
+  JSON = 'json',
 }

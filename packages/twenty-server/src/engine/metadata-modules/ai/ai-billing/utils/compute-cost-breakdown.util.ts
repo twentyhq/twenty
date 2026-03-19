@@ -1,7 +1,7 @@
 import {
   type AIModelConfig,
   ModelFamily,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
 
 export type TokenUsageInput = {
   inputTokens?: number;

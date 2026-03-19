@@ -1,0 +1,273 @@
+import { Test, type TestingModule } from '@nestjs/testing';
+
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ModelsDevEnrichmentService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-enrichment.service';
+import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
+import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
+import {
+  AiProvider,
+  type AiProvidersConfig,
+  DEFAULT_SMART_MODEL,
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+
+const DEFAULT_PROVIDERS: AiProvidersConfig = loadDefaultAiProviders();
+
+describe('Default AI Providers (ai-providers.example.json)', () => {
+  it('should have at least one model per provider', () => {
+    const providers = [
+      AiProvider.OPENAI,
+      AiProvider.ANTHROPIC,
+      AiProvider.BEDROCK,
+      AiProvider.GOOGLE,
+      AiProvider.XAI,
+      AiProvider.GROQ,
+      AiProvider.MISTRAL,
+    ];
+
+    providers.forEach((provider) => {
+      const hasModel = Object.entries(DEFAULT_PROVIDERS).some(
+        ([, config]) =>
+          config.type === provider && (config.models?.length ?? 0) > 0,
+      );
+
+      expect(hasModel).toBe(true);
+    });
+  });
+
+  it('should have all required fields for each model', () => {
+    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
+      (config.models ?? []).forEach((model) => {
+        expect(model.rawModelId).toBeDefined();
+        expect(model.label).toBeDefined();
+        expect(model.inputCostPerMillionTokens).toBeDefined();
+        expect(model.outputCostPerMillionTokens).toBeDefined();
+        expect(model.contextWindowTokens).toBeGreaterThan(0);
+        expect(model.maxOutputTokens).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  it('should have unique model IDs across all providers', () => {
+    const allCompositeIds: string[] = [];
+
+    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
+      (config.models ?? []).forEach((model) => {
+        allCompositeIds.push(
+          buildCompositeModelId(config.type, model.rawModelId),
+        );
+      });
+    });
+
+    const unique = new Set(allCompositeIds);
+
+    expect(unique.size).toBe(allCompositeIds.length);
+  });
+
+  it('should have at least one non-deprecated model per provider', () => {
+    const providers = [
+      AiProvider.OPENAI,
+      AiProvider.ANTHROPIC,
+      AiProvider.BEDROCK,
+      AiProvider.GOOGLE,
+      AiProvider.XAI,
+      AiProvider.GROQ,
+      AiProvider.MISTRAL,
+    ];
+
+    providers.forEach((provider) => {
+      const hasActiveModel = Object.entries(DEFAULT_PROVIDERS).some(
+        ([, config]) =>
+          config.type === provider &&
+          (config.models ?? []).some((model) => !model.deprecated),
+      );
+
+      expect(hasActiveModel).toBe(true);
+    });
+  });
+
+  it('should have source set to catalog for all models', () => {
+    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
+      (config.models ?? []).forEach((model) => {
+        expect(model.source).toBe('catalog');
+      });
+    });
+  });
+});
+
+describe('AiModelRegistryService', () => {
+  let SERVICE: AiModelRegistryService;
+  let MOCK_CONFIG_SERVICE: jest.Mocked<TwentyConfigService>;
+
+  beforeEach(async () => {
+    MOCK_CONFIG_SERVICE = {
+      get: jest.fn().mockReturnValue({}),
+    } as any;
+
+    const MOCK_PROVIDER_CONFIG_SERVICE = {
+      getResolvedProviders: jest.fn().mockReturnValue({}),
+    };
+
+    const MODULE: TestingModule = await Test.createTestingModule({
+      providers: [
+        AiModelRegistryService,
+        {
+          provide: TwentyConfigService,
+          useValue: MOCK_CONFIG_SERVICE,
+        },
+        {
+          provide: ProviderConfigService,
+          useValue: MOCK_PROVIDER_CONFIG_SERVICE,
+        },
+        {
+          provide: SdkProviderFactoryService,
+          useValue: { clearCache: jest.fn() },
+        },
+        {
+          provide: ProviderDiscoveryService,
+          useValue: { discoverModels: jest.fn().mockResolvedValue([]) },
+        },
+        {
+          provide: ModelsDevEnrichmentService,
+          useValue: { enrichModels: jest.fn().mockResolvedValue([]) },
+        },
+      ],
+    }).compile();
+
+    SERVICE = MODULE.get<AiModelRegistryService>(AiModelRegistryService);
+  });
+
+  it('should return effective model config for DEFAULT_SMART_MODEL', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('openai/gpt-5.2');
+
+    expect(() => SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL)).toThrow(
+      'No AI models are available. Configure AI_PROVIDERS with at least one provider.',
+    );
+  });
+
+  it('should return effective model config for DEFAULT_SMART_MODEL when models are available', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('openai/gpt-5.2');
+
+    jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
+      {
+        modelId: 'openai/gpt-5.2',
+        provider: AiProvider.OPENAI,
+        model: {} as any,
+      },
+    ]);
+
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue({
+      modelId: 'openai/gpt-5.2',
+      provider: AiProvider.OPENAI,
+      model: {} as any,
+    });
+
+    const RESULT = SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL);
+
+    expect(RESULT).toBeDefined();
+    expect(RESULT.modelId).toBe('openai/gpt-5.2');
+    expect(RESULT.provider).toBe(AiProvider.OPENAI);
+  });
+
+  it('should return effective model config for DEFAULT_SMART_MODEL with custom model', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('custom/mistral');
+
+    jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
+      {
+        modelId: 'custom/mistral',
+        provider: AiProvider.OPENAI_COMPATIBLE,
+        model: {} as any,
+      },
+    ]);
+
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue({
+      modelId: 'custom/mistral',
+      provider: AiProvider.OPENAI_COMPATIBLE,
+      model: {} as any,
+    });
+
+    const RESULT = SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL);
+
+    expect(RESULT).toBeDefined();
+    expect(RESULT.modelId).toBe('custom/mistral');
+    expect(RESULT.provider).toBe(AiProvider.OPENAI_COMPATIBLE);
+    expect(RESULT.label).toBe('custom/mistral');
+    expect(RESULT.inputCostPerMillionTokens).toBe(0);
+    expect(RESULT.outputCostPerMillionTokens).toBe(0);
+  });
+
+  it('should return effective model config for custom model', () => {
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue({
+      modelId: 'custom/mistral',
+      provider: AiProvider.OPENAI_COMPATIBLE,
+      model: {} as any,
+    });
+
+    const RESULT = SERVICE.getEffectiveModelConfig('custom/mistral');
+
+    expect(RESULT).toBeDefined();
+    expect(RESULT.modelId).toBe('custom/mistral');
+    expect(RESULT.provider).toBe(AiProvider.OPENAI_COMPATIBLE);
+    expect(RESULT.label).toBe('custom/mistral');
+    expect(RESULT.inputCostPerMillionTokens).toBe(0);
+    expect(RESULT.outputCostPerMillionTokens).toBe(0);
+  });
+
+  it('should throw error for non-existent model', () => {
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue(undefined);
+
+    expect(() =>
+      SERVICE.getEffectiveModelConfig('non-existent-model'),
+    ).toThrow('Model with ID non-existent-model not found');
+  });
+
+  it('should find first available model from comma-separated list', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue(
+      'openai/gpt-5-mini,anthropic/claude-haiku-4-5-20251001,google/gemini-3-flash-preview',
+    );
+
+    const getModelSpy = jest
+      .spyOn(SERVICE, 'getModel')
+      .mockImplementation((modelId: string) => {
+        if (modelId === 'anthropic/claude-haiku-4-5-20251001') {
+          return {
+            modelId: 'anthropic/claude-haiku-4-5-20251001',
+            provider: AiProvider.ANTHROPIC,
+            model: {} as any,
+          };
+        }
+
+        return undefined;
+      });
+
+    const result = SERVICE.getDefaultSpeedModel();
+
+    expect(result).toBeDefined();
+    expect(result.modelId).toBe('anthropic/claude-haiku-4-5-20251001');
+    expect(getModelSpy).toHaveBeenCalledWith('openai/gpt-5-mini');
+    expect(getModelSpy).toHaveBeenCalledWith(
+      'anthropic/claude-haiku-4-5-20251001',
+    );
+  });
+
+  it('should fall back to any available model if none in list are available', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue('model-a,model-b,model-c');
+
+    jest.spyOn(SERVICE, 'getModel').mockReturnValue(undefined);
+    jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
+      {
+        modelId: 'fallback-model',
+        provider: AiProvider.OPENAI_COMPATIBLE,
+        model: {} as any,
+      },
+    ]);
+
+    const result = SERVICE.getDefaultSpeedModel();
+
+    expect(result).toBeDefined();
+    expect(result.modelId).toBe('fallback-model');
+  });
+});

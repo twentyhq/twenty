@@ -15,7 +15,7 @@ import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variab
 type ConfigVariableDatabaseInputProps = {
   label: string;
   value: ConfigVariableValue;
-  onChange: (value: string | number | boolean | string[] | null) => void;
+  onChange: (value: ConfigVariableValue) => void;
   type: ConfigVariableType;
   options?: ConfigVariableOptions;
   disabled?: boolean;
@@ -187,6 +187,30 @@ export const ConfigVariableDatabaseInput = ({
           disabled={disabled}
           placeholder={placeholder || t`Enter value`}
           fullWidth
+        />
+      );
+
+    case ConfigVariableType.JSON:
+      return (
+        <TextArea
+          textAreaId={`${label}-json`}
+          label={label}
+          value={
+            value !== null && value !== undefined
+              ? JSON.stringify(value, null, 2)
+              : ''
+          }
+          onChange={(text) => {
+            try {
+              const parsed = JSON.parse(text);
+              onChange(parsed as Record<string, unknown>);
+            } catch {
+              // Keep raw text until valid JSON
+            }
+          }}
+          disabled={disabled}
+          placeholder={placeholder || t`Enter JSON`}
+          minRows={4}
         />
       );
 

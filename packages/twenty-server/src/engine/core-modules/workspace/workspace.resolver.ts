@@ -221,20 +221,6 @@ export class WorkspaceResolver {
     return workspace.smartModel;
   }
 
-  @ResolveField(() => Boolean, { nullable: false })
-  async autoEnableNewAiModels(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return workspace.autoEnableNewAiModels;
-  }
-
-  @ResolveField(() => [String], { nullable: true })
-  async disabledAiModelIds(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string[]> {
-    return workspace.disabledAiModelIds;
-  }
-
   @ResolveField(() => [String], { nullable: true })
   async enabledAiModelIds(
     @Parent() workspace: WorkspaceEntity,

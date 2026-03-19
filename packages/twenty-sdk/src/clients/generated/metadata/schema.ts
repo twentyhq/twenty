@@ -582,8 +582,6 @@ export interface Workspace {
     fastModel: Scalars['String']
     smartModel: Scalars['String']
     aiAdditionalInstructions?: Scalars['String']
-    autoEnableNewAiModels: Scalars['Boolean']
-    disabledAiModelIds?: Scalars['String'][]
     enabledAiModelIds?: Scalars['String'][]
     useRecommendedModels: Scalars['Boolean']
     routerModel: Scalars['String']
@@ -1953,7 +1951,7 @@ export interface ClientAIModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
-    inferenceProvider: InferenceProvider
+    provider?: AiProvider
     inputCostPerMillionTokensInCredits: Scalars['Float']
     outputCostPerMillionTokensInCredits: Scalars['Float']
     nativeCapabilities?: NativeModelCapabilities
@@ -1964,13 +1962,13 @@ export interface ClientAIModelConfig {
 
 export type ModelFamily = 'OPENAI' | 'ANTHROPIC' | 'GOOGLE' | 'MISTRAL' | 'XAI'
 
-export type InferenceProvider = 'NONE' | 'OPENAI' | 'ANTHROPIC' | 'BEDROCK' | 'GOOGLE' | 'MISTRAL' | 'OPENAI_COMPATIBLE' | 'XAI' | 'GROQ'
+export type AiProvider = 'NONE' | 'OPENAI' | 'ANTHROPIC' | 'BEDROCK' | 'GOOGLE' | 'MISTRAL' | 'OPENAI_COMPATIBLE' | 'XAI' | 'GROQ'
 
 export interface AdminAIModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
-    inferenceProvider: InferenceProvider
+    provider?: AiProvider
     isAvailable: Scalars['Boolean']
     isAdminEnabled: Scalars['Boolean']
     deprecated?: Scalars['Boolean']
@@ -1979,8 +1977,9 @@ export interface AdminAIModelConfig {
 }
 
 export interface AdminAIModels {
-    autoEnableNewModels: Scalars['Boolean']
     models: AdminAIModelConfig[]
+    defaultSmartModelId?: Scalars['String']
+    defaultFastModelId?: Scalars['String']
     __typename: 'AdminAIModels'
 }
 
@@ -2846,6 +2845,7 @@ export interface Mutation {
     userLookupAdminPanel: UserLookup
     updateWorkspaceFeatureFlag: Scalars['Boolean']
     setAdminAiModelEnabled: Scalars['Boolean']
+    setAdminDefaultAiModel: Scalars['Boolean']
     createDatabaseConfigVariable: Scalars['Boolean']
     updateDatabaseConfigVariable: Scalars['Boolean']
     deleteDatabaseConfigVariable: Scalars['Boolean']
@@ -3489,8 +3489,6 @@ export interface WorkspaceGenqlSelection{
     fastModel?: boolean | number
     smartModel?: boolean | number
     aiAdditionalInstructions?: boolean | number
-    autoEnableNewAiModels?: boolean | number
-    disabledAiModelIds?: boolean | number
     enabledAiModelIds?: boolean | number
     useRecommendedModels?: boolean | number
     routerModel?: boolean | number
@@ -4955,7 +4953,7 @@ export interface ClientAIModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
-    inferenceProvider?: boolean | number
+    provider?: boolean | number
     inputCostPerMillionTokensInCredits?: boolean | number
     outputCostPerMillionTokensInCredits?: boolean | number
     nativeCapabilities?: NativeModelCapabilitiesGenqlSelection
@@ -4969,7 +4967,7 @@ export interface AdminAIModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
-    inferenceProvider?: boolean | number
+    provider?: boolean | number
     isAvailable?: boolean | number
     isAdminEnabled?: boolean | number
     deprecated?: boolean | number
@@ -4979,8 +4977,9 @@ export interface AdminAIModelConfigGenqlSelection{
 }
 
 export interface AdminAIModelsGenqlSelection{
-    autoEnableNewModels?: boolean | number
     models?: AdminAIModelConfigGenqlSelection
+    defaultSmartModelId?: boolean | number
+    defaultFastModelId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5930,6 +5929,7 @@ export interface MutationGenqlSelection{
     userLookupAdminPanel?: (UserLookupGenqlSelection & { __args: {userIdentifier: Scalars['String']} })
     updateWorkspaceFeatureFlag?: { __args: {workspaceId: Scalars['UUID'], featureFlag: Scalars['String'], value: Scalars['Boolean']} }
     setAdminAiModelEnabled?: { __args: {modelId: Scalars['String'], enabled: Scalars['Boolean']} }
+    setAdminDefaultAiModel?: { __args: {role: Scalars['String'], modelId: Scalars['String']} }
     createDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
     updateDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
     deleteDatabaseConfigVariable?: { __args: {key: Scalars['String']} }
@@ -6211,7 +6211,7 @@ export interface UpdateViewFilterGroupInput {id?: (Scalars['UUID'] | null),paren
 
 export interface ActivateWorkspaceInput {displayName?: (Scalars['String'] | null)}
 
-export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),autoEnableNewAiModels?: (Scalars['Boolean'] | null),disabledAiModelIds?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null)}
+export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),fastModel?: (Scalars['String'] | null),smartModel?: (Scalars['String'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),enabledAiModelIds?: (Scalars['String'][] | null),useRecommendedModels?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationInput {name: Scalars['String'],description?: (Scalars['String'] | null),logoUrl?: (Scalars['String'] | null),author?: (Scalars['String'] | null),universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),websiteUrl?: (Scalars['String'] | null),termsUrl?: (Scalars['String'] | null)}
 
@@ -8801,7 +8801,7 @@ export const enumModelFamily = {
    XAI: 'XAI' as const
 }
 
-export const enumInferenceProvider = {
+export const enumAiProvider = {
    NONE: 'NONE' as const,
    OPENAI: 'OPENAI' as const,
    ANTHROPIC: 'ANTHROPIC' as const,
