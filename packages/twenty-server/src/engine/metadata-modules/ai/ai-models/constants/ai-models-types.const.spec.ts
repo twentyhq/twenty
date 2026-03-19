@@ -9,11 +9,9 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
-import {
-  AiProvider,
-  type AiProvidersConfig,
-  DEFAULT_SMART_MODEL,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
 
 const DEFAULT_PROVIDERS: AiProvidersConfig = loadDefaultAiProviders();
 

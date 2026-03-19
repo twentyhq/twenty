@@ -1,4 +1,4 @@
-import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 
 import defaultAiProviders from '../ai-providers.json';
 

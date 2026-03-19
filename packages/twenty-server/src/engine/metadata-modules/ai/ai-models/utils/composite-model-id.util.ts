@@ -1,4 +1,4 @@
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 
 const COMPOSITE_SEPARATOR = '/';
 

@@ -3,11 +3,9 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
-import {
-  AiProvider,
-  ModelFamily,
-  type ModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
+import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
 import { ClientConfigController } from './client-config.controller';
 

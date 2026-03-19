@@ -5,10 +5,8 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import {
-  type AiModelPreferences,
-  type AiProviderModelConfig,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
+import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 
 @Injectable()
 export class AiModelPreferencesService {

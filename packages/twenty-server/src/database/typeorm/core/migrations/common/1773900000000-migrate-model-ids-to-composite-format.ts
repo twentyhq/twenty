@@ -5,7 +5,7 @@ export class MigrateModelIdsToCompositeFormat1773900000000
 {
   name = 'MigrateModelIdsToCompositeFormat1773900000000';
 
-  // Maps old model IDs to new provider/modelId composite format
+  // Maps old bare model IDs to new provider/modelId composite format
   private readonly modelIdMappings: Array<[string, string]> = [
     ['gpt-5.2', 'openai/gpt-5.2'],
     ['gpt-5-mini', 'openai/gpt-5-mini'],
@@ -40,7 +40,7 @@ export class MigrateModelIdsToCompositeFormat1773900000000
   ];
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Migrate agent.modelId
+    // Migrate agent.modelId to composite format
     for (const [oldId, newId] of this.modelIdMappings) {
       await queryRunner.query(
         `UPDATE "core"."agent" SET "modelId" = $1 WHERE "modelId" = $2`,
@@ -48,81 +48,32 @@ export class MigrateModelIdsToCompositeFormat1773900000000
       );
     }
 
-    // Migrate workspace.fastModel
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace" SET "fastModel" = $1 WHERE "fastModel" = $2`,
-        [newId, oldId],
-      );
-    }
+    // Reset workspace model columns to sentinel defaults.
+    // The runtime resolves these dynamically from admin preferences.
+    await queryRunner.query(
+      `UPDATE "core"."workspace"
+       SET "fastModel" = 'default-fast-model',
+           "smartModel" = 'default-smart-model'
+       WHERE "fastModel" != 'default-fast-model'
+          OR "smartModel" != 'default-smart-model'`,
+    );
 
-    // Migrate workspace.smartModel
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace" SET "smartModel" = $1 WHERE "smartModel" = $2`,
-        [newId, oldId],
-      );
-    }
-
-    // Migrate disabledAiModelIds array (stored as text[])
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace"
-         SET "disabledAiModelIds" = array_replace("disabledAiModelIds", $1, $2)
-         WHERE $1 = ANY("disabledAiModelIds")`,
-        [oldId, newId],
-      );
-    }
-
-    // Migrate enabledAiModelIds array (stored as text[])
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace"
-         SET "enabledAiModelIds" = array_replace("enabledAiModelIds", $1, $2)
-         WHERE $1 = ANY("enabledAiModelIds")`,
-        [oldId, newId],
-      );
-    }
+    // Clear per-workspace model allow/deny lists — admin preferences take over
+    await queryRunner.query(
+      `UPDATE "core"."workspace"
+       SET "disabledAiModelIds" = '{}',
+           "enabledAiModelIds" = '{}'
+       WHERE array_length("disabledAiModelIds", 1) > 0
+          OR array_length("enabledAiModelIds", 1) > 0`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Reverse the migration
+    // Agent model IDs: reverse the mapping
     for (const [oldId, newId] of this.modelIdMappings) {
       await queryRunner.query(
         `UPDATE "core"."agent" SET "modelId" = $1 WHERE "modelId" = $2`,
         [oldId, newId],
-      );
-    }
-
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace" SET "fastModel" = $1 WHERE "fastModel" = $2`,
-        [oldId, newId],
-      );
-    }
-
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace" SET "smartModel" = $1 WHERE "smartModel" = $2`,
-        [oldId, newId],
-      );
-    }
-
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace"
-         SET "disabledAiModelIds" = array_replace("disabledAiModelIds", $1, $2)
-         WHERE $1 = ANY("disabledAiModelIds")`,
-        [newId, oldId],
-      );
-    }
-
-    for (const [oldId, newId] of this.modelIdMappings) {
-      await queryRunner.query(
-        `UPDATE "core"."workspace"
-         SET "enabledAiModelIds" = array_replace("enabledAiModelIds", $1, $2)
-         WHERE $1 = ANY("enabledAiModelIds")`,
-        [newId, oldId],
       );
     }
   }

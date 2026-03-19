@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  AiProvider,
-  type AiProviderConfig,
-  type AiProvidersConfig,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
+import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 
 type CredentialMapping = {

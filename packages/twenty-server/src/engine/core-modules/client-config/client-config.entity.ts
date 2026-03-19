@@ -7,11 +7,9 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
-import {
-  AiProvider,
-  ModelFamily,
-  type ModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
+import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',

@@ -12,10 +12,8 @@ import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createXai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 
-import {
-  AiProvider,
-  type AiProviderConfig,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
+import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 
 export type AiSdkProviderInstance = {
   createModel: (modelId: string) => LanguageModel;

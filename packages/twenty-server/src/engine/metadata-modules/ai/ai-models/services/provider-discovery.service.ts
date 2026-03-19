@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 
 const OPENAI_COMPATIBLE_BASE_URLS: Record<string, string> = {
   openai: 'https://api.openai.com',

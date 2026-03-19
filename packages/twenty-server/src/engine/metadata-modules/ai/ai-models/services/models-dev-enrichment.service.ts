@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type DiscoveredModel } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
-import {
-  DEFAULT_CONTEXT_WINDOW_TOKENS,
-  DEFAULT_MAX_OUTPUT_TOKENS,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
+import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 
 type ModelsDevModel = {
   id: string;

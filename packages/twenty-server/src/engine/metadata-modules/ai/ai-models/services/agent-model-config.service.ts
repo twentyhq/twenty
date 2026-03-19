@@ -7,7 +7,7 @@ import { ProviderOptions } from '@ai-sdk/provider-utils';
 import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import {
   AiModelRegistryService,
   RegisteredAIModel,

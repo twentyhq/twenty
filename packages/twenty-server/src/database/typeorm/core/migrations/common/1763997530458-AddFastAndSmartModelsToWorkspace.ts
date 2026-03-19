@@ -1,9 +1,7 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { DEFAULT_FAST_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-fast-model.const';
+import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
 
 export class AddFastAndSmartModelsToWorkspace1763997530458
   implements MigrationInterface

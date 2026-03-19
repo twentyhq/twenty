@@ -1,7 +1,5 @@
-import {
-  type AIModelConfig,
-  ModelFamily,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 export type TokenUsageInput = {
   inputTokens?: number;

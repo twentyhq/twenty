@@ -1,4 +1,4 @@
-import { isDefaultModelSentinel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { isDefaultModelSentinel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-default-model-sentinel.util';
 
 export type WorkspaceModelAvailabilitySettings = {
   useRecommendedModels: boolean;
