@@ -25,6 +25,7 @@ import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/data-residency-utils';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
@@ -68,11 +69,17 @@ export const SettingsAIModelsTab = () => {
   const smartAutoOption = buildVirtualModelOption(DEFAULT_SMART_MODEL);
   const fastAutoOption = buildVirtualModelOption(DEFAULT_FAST_MODEL);
 
-  const modelOptions = enabledModels.map((model) => ({
-    value: model.modelId,
-    label: model.label,
-    Icon: getModelIcon(model.modelFamily),
-  }));
+  const modelOptions = enabledModels.map((model) => {
+    const residencyFlag = model.dataResidency
+      ? ` ${getDataResidencyDisplay(model.dataResidency)}`
+      : '';
+
+    return {
+      value: model.modelId,
+      label: `${model.label}${residencyFlag}`,
+      Icon: getModelIcon(model.modelFamily),
+    };
+  });
 
   const smartModelOptions = [...modelOptions];
 
@@ -283,19 +290,29 @@ export const SettingsAIModelsTab = () => {
           </StyledSearchContainer>
 
           <Card rounded>
-            {filteredModels.map((model, index) => (
-              <SettingsOptionCardContentToggle
-                key={model.modelId}
-                Icon={getModelIcon(model.modelFamily)}
-                title={model.label}
-                description={getModelProviderLabel(model.modelFamily)}
-                checked={model.isEnabled}
-                onChange={() =>
-                  handleModelToggle(model.modelId, model.isEnabled)
-                }
-                divider={index < filteredModels.length - 1}
-              />
-            ))}
+            {filteredModels.map((model, index) => {
+              const providerLabel = getModelProviderLabel(model.modelFamily);
+              const residency = model.dataResidency
+                ? getDataResidencyDisplay(model.dataResidency)
+                : undefined;
+              const description = residency
+                ? `${providerLabel} · ${residency}`
+                : providerLabel;
+
+              return (
+                <SettingsOptionCardContentToggle
+                  key={model.modelId}
+                  Icon={getModelIcon(model.modelFamily)}
+                  title={model.label}
+                  description={description}
+                  checked={model.isEnabled}
+                  onChange={() =>
+                    handleModelToggle(model.modelId, model.isEnabled)
+                  }
+                  divider={index < filteredModels.length - 1}
+                />
+              );
+            })}
           </Card>
         </Section>
       )}

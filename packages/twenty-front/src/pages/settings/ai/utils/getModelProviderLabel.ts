@@ -1,4 +1,4 @@
-import { MODEL_FAMILY_CONFIG } from '~/pages/settings/ai/constants/SettingsAiModelProviders';
+import { MODEL_ICON_CONFIG } from '~/pages/settings/ai/constants/SettingsAiModelProviders';
 
 export const getModelProviderLabel = (
   modelFamily: string | null | undefined,
@@ -9,5 +9,5 @@ export const getModelProviderLabel = (
 
   const key = modelFamily.toLowerCase();
 
-  return MODEL_FAMILY_CONFIG[key]?.label ?? modelFamily;
+  return MODEL_ICON_CONFIG[key]?.label ?? modelFamily;
 };

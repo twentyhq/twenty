@@ -1,23 +1,40 @@
 import {
   IconBrandAnthropic,
-  IconBrandGoogle,
+  IconBrandGemini,
+  IconBrandGroq,
   IconBrandMistral,
-  IconBrandOpenai,
   IconBrandXai,
+  IconGoogle,
+  IconModelClaude,
+  IconProviderOpenai,
   IconRobot,
   type IconComponent,
 } from 'twenty-ui/display';
 
-// Keyed by the server-side ModelFamily enum values (lowercase) since
-// the client config is fetched via REST, not GraphQL.
-export const MODEL_FAMILY_CONFIG: Record<
+// Model icons: used in model pickers, hover cards, and model lists.
+// Keyed by modelFamily. These represent the model brand, not the provider.
+export const MODEL_ICON_CONFIG: Record<
   string,
   { label: string; Icon: IconComponent }
 > = {
-  openai: { label: 'OpenAI', Icon: IconBrandOpenai },
-  anthropic: { label: 'Anthropic', Icon: IconBrandAnthropic },
-  xai: { label: 'xAI', Icon: IconBrandXai },
-  google: { label: 'Google', Icon: IconBrandGoogle },
+  openai: { label: 'GPT', Icon: IconProviderOpenai },
+  anthropic: { label: 'Claude', Icon: IconModelClaude },
+  google: { label: 'Gemini', Icon: IconBrandGemini },
+  groq: { label: 'Groq', Icon: IconBrandGroq },
   mistral: { label: 'Mistral', Icon: IconBrandMistral },
+  xai: { label: 'Grok', Icon: IconBrandXai },
   FALLBACK: { label: '', Icon: IconRobot },
+};
+
+// Provider icons: used in the admin panel provider list.
+// Keyed by provider type. These represent the company/service.
+export const PROVIDER_ICON_CONFIG: Record<string, IconComponent> = {
+  openai: IconProviderOpenai,
+  anthropic: IconBrandAnthropic,
+  google: IconGoogle,
+  groq: IconBrandGroq,
+  mistral: IconBrandMistral,
+  xai: IconBrandXai,
+  bedrock: IconBrandAnthropic,
+  'openai-compatible': IconProviderOpenai,
 };

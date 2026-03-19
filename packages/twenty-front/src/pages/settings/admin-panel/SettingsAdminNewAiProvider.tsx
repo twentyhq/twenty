@@ -3,22 +3,23 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
+import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
+import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
+import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
+import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/utils/data-residency-utils';
+import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/provider-utils';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
-import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
-import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderIcon';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const PROVIDER_TYPE_OPTIONS = [
   { value: 'openai', label: getProviderTypeLabel('openai') },
@@ -42,10 +43,11 @@ type FormValues = {
   region: string;
   accessKeyId: string;
   secretAccessKey: string;
+  dataResidency: string;
 };
 
 export const SettingsAdminNewAiProvider = () => {
-  const navigate = useNavigateSettings();
+  const navigate = useNavigate();
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,6 +64,7 @@ export const SettingsAdminNewAiProvider = () => {
       region: '',
       accessKeyId: '',
       secretAccessKey: '',
+      dataResidency: '',
     },
   });
 
@@ -73,7 +76,16 @@ export const SettingsAdminNewAiProvider = () => {
   const handleSave = async () => {
     const values = form.getValues();
 
-    const providerName = values.name.trim() || values.type;
+    if (!values.name.trim()) {
+      form.setError('name', {
+        type: 'manual',
+        message: t`Name is required`,
+      });
+
+      return;
+    }
+
+    const providerName = values.name.trim();
 
     const config: Record<string, unknown> = { type: values.type };
 
@@ -103,6 +115,10 @@ export const SettingsAdminNewAiProvider = () => {
       if (values.secretAccessKey.trim()) {
         config.secretAccessKey = values.secretAccessKey.trim();
       }
+    }
+
+    if (values.dataResidency) {
+      config.dataResidency = values.dataResidency;
     }
 
     if (!isBedrock && !isOpenAICompatible && !values.apiKey.trim()) {
@@ -140,7 +156,9 @@ export const SettingsAdminNewAiProvider = () => {
       enqueueSuccessSnackBar({
         message: t`Provider "${providerName}" added`,
       });
-      navigate(SettingsPath.AdminPanel);
+      navigate(
+        getSettingsPath(SettingsPath.AdminPanel, undefined, undefined, 'ai'),
+      );
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to add provider`,
@@ -163,7 +181,16 @@ export const SettingsAdminNewAiProvider = () => {
         ]}
         actionButton={
           <SaveAndCancelButtons
-            onCancel={() => navigate(SettingsPath.AdminPanel)}
+            onCancel={() =>
+              navigate(
+                getSettingsPath(
+                  SettingsPath.AdminPanel,
+                  undefined,
+                  undefined,
+                  'ai',
+                ),
+              )
+            }
             isSaveDisabled={isSubmitting}
             onSave={handleSave}
           />
@@ -198,12 +225,16 @@ export const SettingsAdminNewAiProvider = () => {
             <Controller
               name="name"
               control={form.control}
-              render={({ field: { onChange, value } }) => (
+              render={({
+                field: { onChange, value },
+                fieldState: { error },
+              }) => (
                 <TextInput
                   value={value}
                   onChange={onChange}
-                  placeholder={providerType}
+                  placeholder={t`e.g. my-openai-proxy`}
                   fullWidth
+                  error={error?.message}
                 />
               )}
             />
@@ -259,6 +290,29 @@ export const SettingsAdminNewAiProvider = () => {
               />
             </Section>
           )}
+
+          <Section>
+            <H2Title
+              title={t`Data Residency`}
+              description={t`Region where inference data is processed (optional / for display only)`}
+            />
+            <Controller
+              name="dataResidency"
+              control={form.control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  dropdownId="ai-provider-data-residency-select"
+                  value={value}
+                  onChange={onChange}
+                  options={[
+                    { value: '', label: t`None` },
+                    ...DATA_RESIDENCY_OPTIONS,
+                  ]}
+                  fullWidth
+                />
+              )}
+            />
+          </Section>
 
           {isBedrock && (
             <>

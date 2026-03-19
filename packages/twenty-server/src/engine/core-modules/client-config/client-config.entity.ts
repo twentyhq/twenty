@@ -62,6 +62,9 @@ export class ClientAIModelConfig {
 
   @Field(() => Boolean, { nullable: true })
   isRecommended?: boolean;
+
+  @Field(() => String, { nullable: true })
+  dataResidency?: string;
 }
 
 @ObjectType()
@@ -104,6 +107,9 @@ export class AdminAIModelConfig {
 
   @Field(() => String, { nullable: true })
   providerName?: string;
+
+  @Field(() => String, { nullable: true })
+  dataResidency?: string;
 }
 
 @ObjectType('AdminAIModels')

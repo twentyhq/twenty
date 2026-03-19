@@ -1,14 +1,14 @@
 import { useContext } from 'react';
 
-import IconAnthropicRaw from '@assets/icons/anthropic.svg?react';
+import IconModelClaudeRaw from '@assets/icons/claude.svg?react';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
 
-type IconBrandAnthropicProps = Pick<IconComponentProps, 'size'>;
+type IconModelClaudeProps = Pick<IconComponentProps, 'size'>;
 
-export const IconBrandAnthropic = (props: IconBrandAnthropicProps) => {
+export const IconModelClaude = (props: IconModelClaudeProps) => {
   const { theme } = useContext(ThemeContext);
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconAnthropicRaw height={size} width={size} />;
+  return <IconModelClaudeRaw height={size} width={size} />;
 };

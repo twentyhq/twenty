@@ -28,6 +28,10 @@ export type ModelId =
   | typeof DEFAULT_SMART_MODEL
   | (string & {});
 
+// Geographic region for data residency. Used by custom providers
+// and cloud infrastructure to indicate where inference runs.
+export type DataResidency = 'us' | 'eu' | 'global' | (string & {});
+
 export type SupportedFileType =
   | 'image/png'
   | 'image/jpeg'
@@ -47,7 +51,7 @@ export type LongContextCost = {
   thresholdTokens: number;
 };
 
-// Storage format: what goes into the AI_PROVIDERS JSON config
+// Storage format: what goes into the provider catalog or custom providers JSON
 export type AiProviderModelConfig = {
   rawModelId: string;
   label: string;
@@ -64,6 +68,7 @@ export type AiProviderModelConfig = {
   doesSupportThinking?: boolean;
   nativeCapabilities?: { webSearch?: boolean; twitterSearch?: boolean };
   deprecated?: boolean;
+  // Used as a seeding hint in ai-providers.json for loadDefaultModelPreferences()
   isRecommended?: boolean;
   source?: 'catalog' | 'discovered' | 'manual';
 };
@@ -73,24 +78,33 @@ export type AiProviderConfig = {
   apiKey?: string;
   baseUrl?: string;
   region?: string;
+  dataResidency?: DataResidency;
   accessKeyId?: string;
   secretAccessKey?: string;
   sessionToken?: string;
   models?: AiProviderModelConfig[];
-  disabledModels?: string[];
-  enabledModels?: string[];
   // @deprecated Use models[] instead. Kept for backward compat with openai-compatible configs.
   modelNames?: string[];
 };
 
 export type AiProvidersConfig = Record<string, AiProviderConfig>;
 
+// Admin preferences: separate from the model catalog.
+// Stored in AI_MODEL_PREFERENCES config variable.
+export type AiModelPreferences = {
+  disabledModels?: string[];
+  recommendedModels?: string[];
+  defaultFastModels?: string[];
+  defaultSmartModels?: string[];
+};
+
 // Runtime format: hydrated model config with computed fields.
-// Extends AiProviderModelConfig (minus rawModelId/source) with required computed fields.
+// Extends AiProviderModelConfig (minus rawModelId/source/isRecommended) with required computed fields.
 export type AIModelConfig = Omit<
   AiProviderModelConfig,
   | 'rawModelId'
   | 'source'
+  | 'isRecommended'
   | 'description'
   | 'modelFamily'
   | 'inputCostPerMillionTokens'
@@ -102,6 +116,7 @@ export type AIModelConfig = Omit<
   provider: AiProvider;
   description: string;
   modelFamily: ModelFamily;
+  dataResidency?: DataResidency;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
   contextWindowTokens: number;
@@ -111,12 +126,38 @@ export type AIModelConfig = Omit<
 const PROVIDER_TO_MODEL_FAMILY: Partial<Record<AiProvider, ModelFamily>> = {
   [AiProvider.OPENAI]: ModelFamily.OPENAI,
   [AiProvider.ANTHROPIC]: ModelFamily.ANTHROPIC,
-  [AiProvider.BEDROCK]: ModelFamily.ANTHROPIC,
   [AiProvider.GOOGLE]: ModelFamily.GOOGLE,
   [AiProvider.MISTRAL]: ModelFamily.MISTRAL,
   [AiProvider.XAI]: ModelFamily.XAI,
-  [AiProvider.GROQ]: ModelFamily.OPENAI,
 };
 
-export const inferModelFamily = (provider: AiProvider): ModelFamily =>
-  PROVIDER_TO_MODEL_FAMILY[provider] ?? ModelFamily.OPENAI;
+// For aggregator providers (Groq, Bedrock, etc.), detect model family
+// from the model's raw ID rather than assuming a fixed mapping.
+const MODEL_ID_FAMILY_PATTERNS: [RegExp, ModelFamily][] = [
+  [/claude/i, ModelFamily.ANTHROPIC],
+  [/gpt|o[134]-|chatgpt/i, ModelFamily.OPENAI],
+  [/gemini/i, ModelFamily.GOOGLE],
+  [/mistral|mixtral|pixtral/i, ModelFamily.MISTRAL],
+  [/grok/i, ModelFamily.XAI],
+];
+
+export const inferModelFamily = (
+  provider: AiProvider,
+  rawModelId?: string,
+): ModelFamily => {
+  const fromProvider = PROVIDER_TO_MODEL_FAMILY[provider];
+
+  if (fromProvider) {
+    return fromProvider;
+  }
+
+  if (rawModelId) {
+    for (const [pattern, family] of MODEL_ID_FAMILY_PATTERNS) {
+      if (pattern.test(rawModelId)) {
+        return family;
+      }
+    }
+  }
+
+  return ModelFamily.OPENAI;
+};

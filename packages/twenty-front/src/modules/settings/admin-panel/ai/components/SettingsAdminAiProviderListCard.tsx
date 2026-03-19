@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -9,13 +10,20 @@ import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderI
 import {
   getProviderIcon,
   getProviderTypeLabel,
-} from '@/settings/admin-panel/ai/utils/getProviderIcon';
+} from '@/settings/admin-panel/ai/utils/provider-utils';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
+
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
+`;
 
 type SettingsAdminAiProviderListCardProps = {
   providers: AiProviderItem[];
   isLoading?: boolean;
+  showAddButton?: boolean;
 };
 
 const getProviderDescription = (provider: AiProviderItem): string => {
@@ -41,6 +49,7 @@ const getProviderDescription = (provider: AiProviderItem): string => {
 export const SettingsAdminAiProviderListCard = ({
   providers,
   isLoading,
+  showAddButton = true,
 }: SettingsAdminAiProviderListCardProps) => {
   const navigate = useNavigate();
 
@@ -56,12 +65,18 @@ export const SettingsAdminAiProviderListCard = ({
     );
   }
 
-  if (providers.length === 0) {
+  if (providers.length === 0 && showAddButton) {
     return (
-      <Link to={getSettingsPath(SettingsPath.AdminPanelNewAiProvider)}>
-        <SettingsCard title={t`Add AI Provider`} Icon={<IconPlug />} />
-      </Link>
+      <StyledLinkContainer>
+        <Link to={getSettingsPath(SettingsPath.AdminPanelNewAiProvider)}>
+          <SettingsCard title={t`Add Custom Provider`} Icon={<IconPlug />} />
+        </Link>
+      </StyledLinkContainer>
     );
+  }
+
+  if (providers.length === 0) {
+    return null;
   }
 
   return (
@@ -70,12 +85,14 @@ export const SettingsAdminAiProviderListCard = ({
       rounded
       RowIconFn={(provider) => getProviderIcon(provider.type)}
       getItemLabel={(provider) =>
-        `${provider.name} · ${getProviderTypeLabel(provider.type)}`
+        provider.source === 'custom'
+          ? `${provider.name} · ${getProviderTypeLabel(provider.type)}`
+          : getProviderTypeLabel(provider.type)
       }
       getItemDescription={getProviderDescription}
       RowRightComponent={({ item: provider }) =>
         provider.apiKey || provider.hasAccessKey ? (
-          <Status color="green" text={t`Connected`} weight="medium" />
+          <Status color="green" text={t`Configured`} weight="medium" />
         ) : (
           <Status color="orange" text={t`No credentials`} weight="medium" />
         )
@@ -85,8 +102,8 @@ export const SettingsAdminAiProviderListCard = ({
           providerName: provider.name,
         })
       }
-      hasFooter
-      footerButtonLabel={t`Add AI Provider`}
+      hasFooter={showAddButton}
+      footerButtonLabel={t`Add Custom Provider`}
       onFooterButtonClick={() =>
         navigate(getSettingsPath(SettingsPath.AdminPanelNewAiProvider))
       }

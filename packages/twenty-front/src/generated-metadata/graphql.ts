@@ -45,6 +45,7 @@ export type AddQuerySubscriptionInput = {
 export type AdminAiModelConfig = {
   __typename?: 'AdminAIModelConfig';
   contextWindowTokens?: Maybe<Scalars['Float']>;
+  dataResidency?: Maybe<Scalars['String']>;
   deprecated?: Maybe<Scalars['Boolean']>;
   provider?: Maybe<AiProvider>;
   inputCostPerMillionTokens?: Maybe<Scalars['Float']>;
@@ -797,6 +798,7 @@ export type CheckUserExist = {
 
 export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
+  dataResidency?: Maybe<Scalars['String']>;
   deprecated?: Maybe<Scalars['Boolean']>;
   provider?: Maybe<AiProvider>;
   inputCostPerMillionTokensInCredits: Scalars['Float'];

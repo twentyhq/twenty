@@ -20,8 +20,11 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
-import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
-import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
+import {
+  type AiModelPreferences,
+  type AiProvidersConfig,
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { loadDefaultModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
@@ -1216,31 +1219,20 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description:
-      'JSON configuration for AI providers (credentials, endpoints, regions). Keys are provider names, values contain type, apiKey, baseUrl, region, etc.',
+      'Additional or override AI providers, deep-merged on top of the built-in catalog (ai-providers.json). Use for custom endpoints, extra regions, or credentials set via admin panel.',
     type: ConfigVariableType.JSON,
   })
   @IsOptional()
-  AI_PROVIDERS: AiProvidersConfig = loadDefaultAiProviders();
+  AI_CUSTOM_PROVIDERS: AiProvidersConfig = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Comma-separated list of AI model IDs for speed-optimized operations, in priority order. The first available model will be used.',
-    type: ConfigVariableType.STRING,
+      'AI model admin preferences: disabled models, recommended models, and default fast/smart model lists. Managed via admin panel or env.',
+    type: ConfigVariableType.JSON,
   })
   @IsOptional()
-  DEFAULT_AI_SPEED_MODEL_ID =
-    'openai/gpt-5-mini,anthropic/claude-haiku-4-5-20251001,google/gemini-3-flash-preview,xai/grok-4-1-fast-reasoning,mistral/mistral-large-latest';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description:
-      'Comma-separated list of AI model IDs for performance-optimized operations, in priority order. The first available model will be used.',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  DEFAULT_AI_PERFORMANCE_MODEL_ID =
-    'openai/gpt-5.2,anthropic/claude-sonnet-4-6,google/gemini-3.1-pro-preview,xai/grok-4,mistral/mistral-large-latest';
+  AI_MODEL_PREFERENCES: AiModelPreferences = loadDefaultModelPreferences();
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

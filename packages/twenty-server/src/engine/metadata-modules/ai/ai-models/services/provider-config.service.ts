@@ -6,6 +6,7 @@ import {
   type AiProviderConfig,
   type AiProvidersConfig,
 } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
+import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 
 // Maps provider types to their conventional env var names.
 // These match the defaults used by the AI SDKs themselves.
@@ -31,14 +32,34 @@ const PROVIDER_ENV_VAR_MAP: Partial<
 export class ProviderConfigService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  getResolvedProviders(): AiProvidersConfig {
-    const providers = this.twentyConfigService.get('AI_PROVIDERS');
-
-    return this.injectEnvCredentials(providers);
+  getCatalogProviderNames(): Set<string> {
+    return new Set(
+      Object.keys(loadDefaultAiProviders()).map((name) => `${name}-standard`),
+    );
   }
 
-  // Injects API keys from standard env vars (e.g. OPENAI_API_KEY)
-  // into provider configs that don't already have credentials set.
+  // Resolves the final provider config by layering:
+  // 1. Built-in catalog (ai-providers.json), suffixed with -standard
+  // 2. Custom providers (AI_CUSTOM_PROVIDERS from env/DB)
+  // 3. Env var credential injection (OPENAI_API_KEY, etc.)
+  getResolvedProviders(): AiProvidersConfig {
+    const rawCatalog = loadDefaultAiProviders();
+    const catalog = this.suffixCatalogKeys(rawCatalog);
+    const custom = this.twentyConfigService.get('AI_CUSTOM_PROVIDERS');
+
+    return this.injectEnvCredentials({ ...catalog, ...custom });
+  }
+
+  private suffixCatalogKeys(catalog: AiProvidersConfig): AiProvidersConfig {
+    const result: AiProvidersConfig = {};
+
+    for (const [name, config] of Object.entries(catalog)) {
+      result[`${name}-standard`] = config;
+    }
+
+    return result;
+  }
+
   private injectEnvCredentials(
     providers: AiProvidersConfig,
   ): AiProvidersConfig {

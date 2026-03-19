@@ -4,12 +4,14 @@ import {
   IconBolt,
   IconCoins,
   IconFileText,
+  IconFlag,
   IconServer,
   IconTag,
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/data-residency-utils';
 import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
 import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
@@ -26,6 +28,7 @@ type SettingsAdminAiModelHoverCardProps = {
   maxOutputTokens?: number | null;
   inputCostPerMillionTokens?: number | null;
   outputCostPerMillionTokens?: number | null;
+  dataResidency?: string | null;
 };
 
 const formatTokenCount = (tokens: number): string => {
@@ -68,6 +71,7 @@ export const SettingsAdminAiModelHoverCard = ({
   maxOutputTokens,
   inputCostPerMillionTokens,
   outputCostPerMillionTokens,
+  dataResidency,
 }: SettingsAdminAiModelHoverCardProps) => {
   const ModelIcon = getModelIcon(modelFamily);
   const providerLabel = getModelProviderLabel(modelFamily);
@@ -115,6 +119,15 @@ export const SettingsAdminAiModelHoverCard = ({
             Icon: IconBolt,
             label: t`Max output`,
             value: formatTokenCount(maxOutputTokens),
+          },
+        ]
+      : []),
+    ...(dataResidency
+      ? [
+          {
+            Icon: IconFlag,
+            label: t`Data residency`,
+            value: getDataResidencyDisplay(dataResidency),
           },
         ]
       : []),

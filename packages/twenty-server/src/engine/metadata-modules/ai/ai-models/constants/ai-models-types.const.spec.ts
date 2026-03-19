@@ -21,7 +21,6 @@ describe('Default AI Providers (ai-providers.example.json)', () => {
     const providers = [
       AiProvider.OPENAI,
       AiProvider.ANTHROPIC,
-      AiProvider.BEDROCK,
       AiProvider.GOOGLE,
       AiProvider.XAI,
       AiProvider.GROQ,
@@ -71,7 +70,6 @@ describe('Default AI Providers (ai-providers.example.json)', () => {
     const providers = [
       AiProvider.OPENAI,
       AiProvider.ANTHROPIC,
-      AiProvider.BEDROCK,
       AiProvider.GOOGLE,
       AiProvider.XAI,
       AiProvider.GROQ,
@@ -141,15 +139,19 @@ describe('AiModelRegistryService', () => {
   });
 
   it('should return effective model config for DEFAULT_SMART_MODEL', () => {
-    MOCK_CONFIG_SERVICE.get.mockReturnValue('openai/gpt-5.2');
+    MOCK_CONFIG_SERVICE.get.mockReturnValue({
+      defaultSmartModels: ['openai/gpt-5.2'],
+    });
 
     expect(() => SERVICE.getEffectiveModelConfig(DEFAULT_SMART_MODEL)).toThrow(
-      'No AI models are available. Configure AI_PROVIDERS with at least one provider.',
+      'No AI models are available. Configure at least one AI provider.',
     );
   });
 
   it('should return effective model config for DEFAULT_SMART_MODEL when models are available', () => {
-    MOCK_CONFIG_SERVICE.get.mockReturnValue('openai/gpt-5.2');
+    MOCK_CONFIG_SERVICE.get.mockReturnValue({
+      defaultSmartModels: ['openai/gpt-5.2'],
+    });
 
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
@@ -173,7 +175,9 @@ describe('AiModelRegistryService', () => {
   });
 
   it('should return effective model config for DEFAULT_SMART_MODEL with custom model', () => {
-    MOCK_CONFIG_SERVICE.get.mockReturnValue('custom/mistral');
+    MOCK_CONFIG_SERVICE.get.mockReturnValue({
+      defaultSmartModels: ['custom/mistral'],
+    });
 
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([
       {
@@ -224,10 +228,14 @@ describe('AiModelRegistryService', () => {
     );
   });
 
-  it('should find first available model from comma-separated list', () => {
-    MOCK_CONFIG_SERVICE.get.mockReturnValue(
-      'openai/gpt-5-mini,anthropic/claude-haiku-4-5-20251001,google/gemini-3-flash-preview',
-    );
+  it('should find first available model from preferences list', () => {
+    MOCK_CONFIG_SERVICE.get.mockReturnValue({
+      defaultFastModels: [
+        'openai/gpt-5-mini',
+        'anthropic/claude-haiku-4-5-20251001',
+        'google/gemini-3-flash-preview',
+      ],
+    });
 
     const getModelSpy = jest
       .spyOn(SERVICE, 'getModel')
@@ -254,7 +262,9 @@ describe('AiModelRegistryService', () => {
   });
 
   it('should fall back to any available model if none in list are available', () => {
-    MOCK_CONFIG_SERVICE.get.mockReturnValue('model-a,model-b,model-c');
+    MOCK_CONFIG_SERVICE.get.mockReturnValue({
+      defaultFastModels: ['model-a', 'model-b', 'model-c'],
+    });
 
     jest.spyOn(SERVICE, 'getModel').mockReturnValue(undefined);
     jest.spyOn(SERVICE, 'getAvailableModels').mockReturnValue([

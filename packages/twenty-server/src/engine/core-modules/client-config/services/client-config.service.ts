@@ -43,6 +43,8 @@ export class ClientConfigService {
 
     const availableModels =
       this.aiModelRegistryService.getAdminFilteredModels();
+    const recommendedModelIds =
+      this.aiModelRegistryService.getRecommendedModelIds();
 
     const aiModels: ClientAIModelConfig[] = availableModels.map(
       (registeredModel) => {
@@ -67,7 +69,8 @@ export class ClientConfigService {
               )
             : 0,
           deprecated: modelConfig?.deprecated,
-          isRecommended: modelConfig?.isRecommended,
+          isRecommended: recommendedModelIds.has(registeredModel.modelId),
+          dataResidency: modelConfig?.dataResidency,
         };
       },
     );

@@ -16,17 +16,17 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import {
   type AIModelConfig,
+  type AiModelPreferences,
   AiProvider,
+  type AiProviderConfig,
   type AiProviderModelConfig,
   type AiProvidersConfig,
+  type DataResidency,
   DEFAULT_FAST_MODEL,
   DEFAULT_SMART_MODEL,
   inferModelFamily,
 } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers.types';
-import {
-  buildCompositeModelId,
-  parseCompositeModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
@@ -89,20 +89,25 @@ export class AiModelRegistryService {
     this.registerModelsFromProviders(providers);
   }
 
+  private hasCredentials(config: AiProviderConfig): boolean {
+    return !!(config.apiKey || config.accessKeyId);
+  }
+
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
     for (const [providerName, config] of Object.entries(providers)) {
       const provider = config.type;
-
       const models = this.resolveModelsForProvider(config);
 
       if (models.length === 0) {
         continue;
       }
 
-      const sdkInstance = this.sdkProviderFactory.createProvider(
-        providerName,
-        config,
-      );
+      const isConfigured = this.hasCredentials(config);
+
+      // Only create SDK instances for providers with credentials
+      const sdkInstance = isConfigured
+        ? this.sdkProviderFactory.createProvider(providerName, config)
+        : undefined;
 
       for (const modelDef of models) {
         const compositeId = buildCompositeModelId(
@@ -110,23 +115,32 @@ export class AiModelRegistryService {
           modelDef.rawModelId,
         );
 
-        this.modelRegistry.set(compositeId, {
-          modelId: compositeId,
-          provider,
-          model: sdkInstance.createModel(modelDef.rawModelId),
-          doesSupportThinking: modelDef.doesSupportThinking,
-          providerName,
-        });
-
+        // Always populate config caches so admin can see all models
         this.modelConfigCache.set(
           compositeId,
-          this.toAIModelConfig(compositeId, provider, modelDef),
+          this.toAIModelConfig(
+            compositeId,
+            provider,
+            modelDef,
+            config.dataResidency,
+          ),
         );
 
         this.providerModelDefCache.set(compositeId, {
           providerName,
           modelDef,
         });
+
+        // Only register in the live registry if provider has credentials
+        if (sdkInstance) {
+          this.modelRegistry.set(compositeId, {
+            modelId: compositeId,
+            provider,
+            model: sdkInstance.createModel(modelDef.rawModelId),
+            doesSupportThinking: modelDef.doesSupportThinking,
+            providerName,
+          });
+        }
       }
     }
   }
@@ -155,19 +169,28 @@ export class AiModelRegistryService {
     compositeId: string,
     provider: AiProvider,
     modelDef: AiProviderModelConfig,
+    providerDataResidency?: DataResidency,
   ): AIModelConfig {
-    const { rawModelId: _, source: __, ...sharedFields } = modelDef;
-
     return {
-      ...sharedFields,
       modelId: compositeId,
+      label: modelDef.label,
       provider,
       description: modelDef.description ?? compositeId,
-      modelFamily: modelDef.modelFamily ?? inferModelFamily(provider),
+      modelFamily:
+        modelDef.modelFamily ?? inferModelFamily(provider, modelDef.rawModelId),
+      dataResidency: providerDataResidency,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
+      cachedInputCostPerMillionTokens: modelDef.cachedInputCostPerMillionTokens,
+      cacheCreationCostPerMillionTokens:
+        modelDef.cacheCreationCostPerMillionTokens,
+      longContextCost: modelDef.longContextCost,
       contextWindowTokens: modelDef.contextWindowTokens ?? 128000,
       maxOutputTokens: modelDef.maxOutputTokens ?? 4096,
+      supportedFileTypes: modelDef.supportedFileTypes,
+      doesSupportThinking: modelDef.doesSupportThinking,
+      nativeCapabilities: modelDef.nativeCapabilities,
+      deprecated: modelDef.deprecated,
     };
   }
 
@@ -235,7 +258,7 @@ export class AiModelRegistryService {
           rawModelId: enrichedModel.modelId,
           label: enrichedModel.name,
           description: `Discovered model from ${providerName}`,
-          modelFamily: inferModelFamily(provider),
+          modelFamily: inferModelFamily(provider, enrichedModel.modelId),
           inputCostPerMillionTokens: enrichedModel.inputCostPerMillionTokens,
           outputCostPerMillionTokens: enrichedModel.outputCostPerMillionTokens,
           contextWindowTokens: enrichedModel.contextWindowTokens,
@@ -255,9 +278,6 @@ export class AiModelRegistryService {
       );
     }
 
-    // Rebuild registry from persisted config to ensure consistency.
-    // This is needed because twentyConfigService.set() may trigger
-    // a config reload that clears the in-memory caches.
     this.buildModelRegistry();
 
     this.logger.log(
@@ -267,25 +287,33 @@ export class AiModelRegistryService {
     return totalNewModels;
   }
 
+  // Discovered models are persisted into AI_CUSTOM_PROVIDERS
   private async persistDiscoveredModels(
     providerName: string,
     newModelDefs: AiProviderModelConfig[],
   ): Promise<void> {
-    const providers = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
     };
-    const providerConfig = providers[providerName];
+    const existing = customProviders[providerName];
 
-    if (!providerConfig) {
+    // Get the resolved provider config to use its type
+    const resolvedProviders = this.providerConfigService.getResolvedProviders();
+    const resolvedConfig = resolvedProviders[providerName];
+
+    if (!resolvedConfig) {
       return;
     }
 
-    providers[providerName] = {
-      ...providerConfig,
-      models: [...(providerConfig.models ?? []), ...newModelDefs],
+    customProviders[providerName] = {
+      ...(existing ?? { type: resolvedConfig.type }),
+      models: [
+        ...(existing?.models ?? resolvedConfig.models ?? []),
+        ...newModelDefs,
+      ],
     };
 
-    await this.twentyConfigService.set('AI_PROVIDERS', providers);
+    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
   }
 
   getModel(modelId: string): RegisteredAIModel | undefined {
@@ -300,26 +328,19 @@ export class AiModelRegistryService {
     return this.modelConfigCache.get(modelId);
   }
 
+  private getPreferences(): AiModelPreferences {
+    return this.twentyConfigService.get('AI_MODEL_PREFERENCES');
+  }
+
   getRecommendedModelIds(): Set<string> {
-    const recommended = new Set<string>();
+    const prefs = this.getPreferences();
 
-    for (const [modelId, config] of this.modelConfigCache) {
-      if (config.isRecommended) {
-        recommended.add(modelId);
-      }
-    }
-
-    return recommended;
+    return new Set(prefs.recommendedModels ?? []);
   }
 
   private getFirstAvailableModelFromList(
-    modelIdList: string,
+    modelIds: string[],
   ): RegisteredAIModel | undefined {
-    const modelIds = modelIdList
-      .split(',')
-      .map((id) => id.trim())
-      .filter((id) => id.length > 0);
-
     for (const modelId of modelIds) {
       const model = this.getModel(modelId);
 
@@ -332,42 +353,27 @@ export class AiModelRegistryService {
   }
 
   getDefaultSpeedModel(): RegisteredAIModel {
-    const defaultModelIds = this.twentyConfigService.get(
-      'DEFAULT_AI_SPEED_MODEL_ID',
-    );
-    let model = this.getFirstAvailableModelFromList(defaultModelIds);
-
-    if (!model) {
-      const availableModels = this.getAvailableModels();
-
-      model = availableModels[0];
-    }
-
-    if (!model) {
-      throw new AgentException(
-        'No AI models are available. Configure AI_PROVIDERS with at least one provider.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
-
-    return model;
+    return this.getDefaultModelForRole('fast');
   }
 
   getDefaultPerformanceModel(): RegisteredAIModel {
-    const defaultModelIds = this.twentyConfigService.get(
-      'DEFAULT_AI_PERFORMANCE_MODEL_ID',
-    );
-    let model = this.getFirstAvailableModelFromList(defaultModelIds);
+    return this.getDefaultModelForRole('smart');
+  }
+
+  private getDefaultModelForRole(role: 'fast' | 'smart'): RegisteredAIModel {
+    const prefs = this.getPreferences();
+    const preferenceKey =
+      role === 'fast' ? 'defaultFastModels' : 'defaultSmartModels';
+
+    let model = this.getFirstAvailableModelFromList(prefs[preferenceKey] ?? []);
 
     if (!model) {
-      const availableModels = this.getAvailableModels();
-
-      model = availableModels[0];
+      model = this.getAvailableModels()[0];
     }
 
     if (!model) {
       throw new AgentException(
-        'No AI models are available. Configure AI_PROVIDERS with at least one provider.',
+        'No AI models are available. Configure at least one AI provider.',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
@@ -413,7 +419,10 @@ export class AiModelRegistryService {
       modelId: registeredModel.modelId,
       label: registeredModel.modelId,
       description: `Custom model: ${registeredModel.modelId}`,
-      modelFamily: inferModelFamily(registeredModel.provider),
+      modelFamily: inferModelFamily(
+        registeredModel.provider,
+        registeredModel.modelId,
+      ),
       provider: registeredModel.provider,
       inputCostPerMillionTokens: 0,
       outputCostPerMillionTokens: 0,
@@ -422,6 +431,7 @@ export class AiModelRegistryService {
     };
   }
 
+  // All models are allowed unless explicitly disabled in AI_MODEL_PREFERENCES
   isModelAdminAllowed(modelId: string): boolean {
     if (modelId === DEFAULT_FAST_MODEL || modelId === DEFAULT_SMART_MODEL) {
       return true;
@@ -433,20 +443,10 @@ export class AiModelRegistryService {
       return false;
     }
 
-    const { providerName, modelDef } = cached;
-    const { rawModelId } = parseCompositeModelId(modelId);
-    const providers = this.providerConfigService.getResolvedProviders();
-    const providerConfig = providers[providerName];
+    const prefs = this.getPreferences();
+    const disabledModels = prefs.disabledModels ?? [];
 
-    if (providerConfig?.disabledModels?.includes(rawModelId)) {
-      return false;
-    }
-
-    if (modelDef.source === 'catalog') {
-      return true;
-    }
-
-    return providerConfig?.enabledModels?.includes(rawModelId) ?? false;
+    return !disabledModels.includes(modelId);
   }
 
   validateModelAvailability(
@@ -484,75 +484,51 @@ export class AiModelRegistryService {
     modelConfig: AIModelConfig;
     isAvailable: boolean;
     isAdminEnabled: boolean;
+    isRecommended: boolean;
     providerName?: string;
   }> {
+    const recommended = this.getRecommendedModelIds();
+
     return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
       const registered = this.modelRegistry.get(modelConfig.modelId);
+      const cached = this.providerModelDefCache.get(modelConfig.modelId);
 
       return {
         modelConfig,
         isAvailable: !!registered,
         isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
-        providerName: registered?.providerName,
+        isRecommended: recommended.has(modelConfig.modelId),
+        providerName: registered?.providerName ?? cached?.providerName,
       };
     });
   }
 
+  // Writes to AI_MODEL_PREFERENCES.disabledModels
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {
     const cached = this.providerModelDefCache.get(modelId);
 
     if (!cached) {
       throw new AgentException(
-        `Cannot toggle model "${modelId}": no associated provider found`,
+        `Cannot toggle model "${modelId}": not found in registry`,
         AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
-    const { providerName, modelDef } = cached;
-    const { rawModelId } = parseCompositeModelId(modelId);
+    const prefs = { ...this.getPreferences() };
+    const currentDisabled = prefs.disabledModels ?? [];
 
-    const providers = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
-    };
-    const providerConfig = providers[providerName];
-
-    if (!providerConfig) {
-      throw new AgentException(
-        `Provider "${providerName}" not found in AI_PROVIDERS`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
-      );
-    }
-
-    const currentDisabled = providerConfig.disabledModels ?? [];
-    const currentEnabled = providerConfig.enabledModels ?? [];
-
-    if (modelDef.source === 'catalog') {
-      const newDisabled = enabled
-        ? currentDisabled.filter((id) => id !== rawModelId)
-        : currentDisabled.includes(rawModelId)
-          ? currentDisabled
-          : [...currentDisabled, rawModelId];
-
-      providers[providerName] = {
-        ...providerConfig,
-        disabledModels: newDisabled,
-      };
+    if (enabled) {
+      prefs.disabledModels = currentDisabled.filter((id) => id !== modelId);
     } else {
-      const newEnabled = enabled
-        ? currentEnabled.includes(rawModelId)
-          ? currentEnabled
-          : [...currentEnabled, rawModelId]
-        : currentEnabled.filter((id) => id !== rawModelId);
-
-      providers[providerName] = {
-        ...providerConfig,
-        enabledModels: newEnabled,
-      };
+      if (!currentDisabled.includes(modelId)) {
+        prefs.disabledModels = [...currentDisabled, modelId];
+      }
     }
 
-    await this.twentyConfigService.set('AI_PROVIDERS', providers);
+    await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
   }
 
+  // Writes to AI_MODEL_PREFERENCES.recommendedModels
   async setModelRecommended(
     modelId: string,
     recommended: boolean,
@@ -561,57 +537,50 @@ export class AiModelRegistryService {
 
     if (!cached) {
       throw new AgentException(
-        `Cannot update model "${modelId}": no associated provider found`,
+        `Cannot update model "${modelId}": not found in registry`,
         AgentExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
-    const { providerName } = cached;
-    const { rawModelId } = parseCompositeModelId(modelId);
+    const prefs = { ...this.getPreferences() };
+    const currentRecommended = prefs.recommendedModels ?? [];
 
-    const providers = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
-    };
-    const providerConfig = providers[providerName];
-
-    if (!providerConfig) {
-      throw new AgentException(
-        `Provider "${providerName}" not found in AI_PROVIDERS`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+    if (recommended) {
+      if (!currentRecommended.includes(modelId)) {
+        prefs.recommendedModels = [...currentRecommended, modelId];
+      }
+    } else {
+      prefs.recommendedModels = currentRecommended.filter(
+        (id) => id !== modelId,
       );
     }
 
-    const updatedModels = (providerConfig.models ?? []).map((model) =>
-      model.rawModelId === rawModelId
-        ? { ...model, isRecommended: recommended }
-        : model,
-    );
+    await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
+  }
 
-    providers[providerName] = {
-      ...providerConfig,
-      models: updatedModels,
-    };
+  // Writes to AI_MODEL_PREFERENCES.defaultFastModels or defaultSmartModels
+  async setDefaultModel(
+    role: 'smart' | 'fast',
+    modelId: string,
+  ): Promise<void> {
+    const prefs = { ...this.getPreferences() };
+    const key = role === 'fast' ? 'defaultFastModels' : 'defaultSmartModels';
 
-    await this.twentyConfigService.set('AI_PROVIDERS', providers);
+    // Put the selected model first, keep the rest as fallbacks
+    const current = prefs[key] ?? [];
+    const filtered = current.filter((id) => id !== modelId);
 
-    // Update caches in-place
-    const existingConfig = this.modelConfigCache.get(modelId);
+    prefs[key] = [modelId, ...filtered];
 
-    if (existingConfig) {
-      this.modelConfigCache.set(modelId, {
-        ...existingConfig,
-        isRecommended: recommended,
-      });
-    }
+    await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
+  }
 
-    const existingDef = this.providerModelDefCache.get(modelId);
+  getResolvedProvidersForAdmin(): AiProvidersConfig {
+    return this.providerConfigService.getResolvedProviders();
+  }
 
-    if (existingDef) {
-      this.providerModelDefCache.set(modelId, {
-        ...existingDef,
-        modelDef: { ...existingDef.modelDef, isRecommended: recommended },
-      });
-    }
+  getCatalogProviderNames(): Set<string> {
+    return this.providerConfigService.getCatalogProviderNames();
   }
 
   refreshRegistry(): void {

@@ -152,36 +152,37 @@ export class AdminPanelResolver {
   async getAdminAiModels(): Promise<AdminAIModelsDTO> {
     const models = this.aiModelRegistryService
       .getAllModelsWithStatus()
-      .map(({ modelConfig, isAvailable, isAdminEnabled, providerName }) => ({
-        modelId: modelConfig.modelId,
-        label: modelConfig.label,
-        modelFamily: modelConfig.modelFamily,
-        provider: modelConfig.provider,
-        isAvailable,
-        isAdminEnabled,
-        deprecated: modelConfig.deprecated,
-        isRecommended: modelConfig.isRecommended,
-        contextWindowTokens: modelConfig.contextWindowTokens,
-        maxOutputTokens: modelConfig.maxOutputTokens,
-        inputCostPerMillionTokens: modelConfig.inputCostPerMillionTokens,
-        outputCostPerMillionTokens: modelConfig.outputCostPerMillionTokens,
-        providerName,
-      }));
+      .map(
+        ({
+          modelConfig,
+          isAvailable,
+          isAdminEnabled,
+          isRecommended,
+          providerName,
+        }) => ({
+          modelId: modelConfig.modelId,
+          label: modelConfig.label,
+          modelFamily: modelConfig.modelFamily,
+          provider: modelConfig.provider,
+          isAvailable,
+          isAdminEnabled,
+          deprecated: modelConfig.deprecated,
+          isRecommended,
+          contextWindowTokens: modelConfig.contextWindowTokens,
+          maxOutputTokens: modelConfig.maxOutputTokens,
+          inputCostPerMillionTokens: modelConfig.inputCostPerMillionTokens,
+          outputCostPerMillionTokens: modelConfig.outputCostPerMillionTokens,
+          providerName,
+          dataResidency: modelConfig.dataResidency,
+        }),
+      );
 
-    const defaultSmartModelId = this.twentyConfigService
-      .get('DEFAULT_AI_PERFORMANCE_MODEL_ID')
-      .split(',')[0]
-      ?.trim();
-
-    const defaultFastModelId = this.twentyConfigService
-      .get('DEFAULT_AI_SPEED_MODEL_ID')
-      .split(',')[0]
-      ?.trim();
+    const prefs = this.twentyConfigService.get('AI_MODEL_PREFERENCES');
 
     return {
       models,
-      defaultSmartModelId,
-      defaultFastModelId,
+      defaultSmartModelId: prefs.defaultSmartModels?.[0],
+      defaultFastModelId: prefs.defaultFastModels?.[0],
     };
   }
 
@@ -213,12 +214,7 @@ export class AdminPanelResolver {
     @Args('role', { type: () => String }) role: 'smart' | 'fast',
     @Args('modelId', { type: () => String }) modelId: string,
   ): Promise<boolean> {
-    const configKey: keyof ConfigVariables =
-      role === 'smart'
-        ? 'DEFAULT_AI_PERFORMANCE_MODEL_ID'
-        : 'DEFAULT_AI_SPEED_MODEL_ID';
-
-    await this.twentyConfigService.set(configKey, modelId);
+    await this.aiModelRegistryService.setDefaultModel(role, modelId);
 
     return true;
   }
@@ -326,14 +322,18 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => GraphQLJSON)
   async getAiProviders(): Promise<Record<string, unknown>> {
-    const providers = this.twentyConfigService.get('AI_PROVIDERS');
+    const providers =
+      this.aiModelRegistryService.getResolvedProvidersForAdmin();
+    const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
     const masked: Record<string, Record<string, unknown>> = {};
 
     for (const [name, config] of Object.entries(providers)) {
       masked[name] = {
         type: config.type,
+        source: catalogNames.has(name) ? 'catalog' : 'custom',
         ...(config.baseUrl && { baseUrl: config.baseUrl }),
         ...(config.region && { region: config.region }),
+        ...(config.dataResidency && { dataResidency: config.dataResidency }),
         ...(config.apiKey && {
           apiKey: `${config.apiKey.substring(0, 8)}...`,
         }),
@@ -351,12 +351,12 @@ export class AdminPanelResolver {
     @Args('providerConfig', { type: () => GraphQLJSON })
     providerConfig: AiProviderConfig,
   ): Promise<boolean> {
-    const currentProviders = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
     };
 
-    currentProviders[providerName] = providerConfig;
-    await this.twentyConfigService.set('AI_PROVIDERS', currentProviders);
+    customProviders[providerName] = providerConfig;
+    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
     await this.aiModelRegistryService.discoverAndRegisterModels();
 
@@ -369,12 +369,12 @@ export class AdminPanelResolver {
     @Args('providerName', { type: () => String })
     providerName: string,
   ): Promise<boolean> {
-    const currentProviders = {
-      ...this.twentyConfigService.get('AI_PROVIDERS'),
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
     };
 
-    delete currentProviders[providerName];
-    await this.twentyConfigService.set('AI_PROVIDERS', currentProviders);
+    delete customProviders[providerName];
+    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
     await this.aiModelRegistryService.discoverAndRegisterModels();
 
@@ -387,12 +387,13 @@ export class AdminPanelResolver {
     @Args('providerName', { type: () => String })
     providerName: string,
   ): Promise<number> {
-    const providers = this.twentyConfigService.get('AI_PROVIDERS');
+    const providers =
+      this.aiModelRegistryService.getResolvedProvidersForAdmin();
     const providerConfig = providers[providerName];
 
     if (!providerConfig) {
       throw new UserInputError(
-        `Provider "${providerName}" not found in AI_PROVIDERS configuration`,
+        `Provider "${providerName}" not found in configuration`,
       );
     }
 
