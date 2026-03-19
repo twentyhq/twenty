@@ -11,10 +11,7 @@ import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-mod
 import { ModelsDevEnrichmentService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-enrichment.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
-import {
-  SdkProviderFactoryService,
-  type AiSdkProviderInstance,
-} from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
@@ -59,24 +56,6 @@ export class AiModelRegistryService {
     private readonly preferencesService: AiModelPreferencesService,
   ) {
     this.buildModelRegistry();
-  }
-
-  getProviderInstance(providerName: string): AiSdkProviderInstance | undefined {
-    return this.sdkProviderFactory.getProviderInstance(providerName);
-  }
-
-  getProviderInstanceForModel(
-    modelId: string,
-  ): AiSdkProviderInstance | undefined {
-    const registeredModel = this.modelRegistry.get(modelId);
-
-    if (!registeredModel?.providerName) {
-      return undefined;
-    }
-
-    return this.sdkProviderFactory.getProviderInstance(
-      registeredModel.providerName,
-    );
   }
 
   private buildModelRegistry(): void {

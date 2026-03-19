@@ -7,17 +7,13 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
 
-export const useAiModelOptions = (
-  includeDeprecated = false,
-): SelectOption<string>[] => {
+export const useAiModelOptions = (): SelectOption<string>[] => {
   const aiModels = useAtomStateValue(aiModelsState);
   const { isModelEnabled } = useWorkspaceAiModelAvailability();
 
   return aiModels
     .filter(
-      (model) =>
-        (includeDeprecated || !model.deprecated) &&
-        isModelEnabled(model.modelId, model),
+      (model) => !model.deprecated && isModelEnabled(model.modelId, model),
     )
     .map((model) => ({
       value: model.modelId,

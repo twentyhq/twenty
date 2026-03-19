@@ -28,7 +28,7 @@ import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components
 import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
-import { type AdminAiModelItem } from '@/settings/admin-panel/ai/types/AdminAiModelItem';
+import { type AdminAiModelConfig } from '~/generated-metadata/graphql';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
@@ -70,7 +70,7 @@ export const SettingsAdminAiProviderDetail = () => {
 
   const { data: modelsData } = useQuery<{
     getAdminAiModels: {
-      models: AdminAiModelItem[];
+      models: AdminAiModelConfig[];
     };
   }>(GET_ADMIN_AI_MODELS);
 

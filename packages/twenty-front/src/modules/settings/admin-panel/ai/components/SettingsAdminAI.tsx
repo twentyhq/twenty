@@ -14,7 +14,6 @@ import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
-import { type AdminAiModelItem } from '@/settings/admin-panel/ai/types/AdminAiModelItem';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
@@ -22,7 +21,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
-import { SetAdminDefaultAiModelDocument } from '~/generated-metadata/graphql';
+import {
+  type AdminAiModelConfig,
+  SetAdminDefaultAiModelDocument,
+} from '~/generated-metadata/graphql';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
 export const SettingsAdminAI = () => {
@@ -35,7 +37,7 @@ export const SettingsAdminAI = () => {
     getAdminAiModels: {
       defaultSmartModelId?: string | null;
       defaultFastModelId?: string | null;
-      models: AdminAiModelItem[];
+      models: AdminAiModelConfig[];
     };
   }>(GET_ADMIN_AI_MODELS);
 

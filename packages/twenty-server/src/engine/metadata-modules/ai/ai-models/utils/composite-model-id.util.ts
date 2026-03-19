@@ -13,17 +13,3 @@ export const buildCompositeModelId = (
   return `${provider}${COMPOSITE_SEPARATOR}${rawModelId}`;
 };
 
-export const parseCompositeModelId = (
-  compositeId: string,
-): { providerPrefix: string; rawModelId: string } => {
-  const separatorIndex = compositeId.indexOf(COMPOSITE_SEPARATOR);
-
-  if (separatorIndex === -1) {
-    return { providerPrefix: '', rawModelId: compositeId };
-  }
-
-  return {
-    providerPrefix: compositeId.substring(0, separatorIndex),
-    rawModelId: compositeId.substring(separatorIndex + 1),
-  };
-};

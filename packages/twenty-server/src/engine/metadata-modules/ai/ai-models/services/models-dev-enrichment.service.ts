@@ -26,7 +26,6 @@ export type EnrichedModel = DiscoveredModel & {
   contextWindowTokens: number;
   maxOutputTokens: number;
   doesSupportThinking: boolean;
-  supportsToolCall: boolean;
 };
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -67,7 +66,6 @@ export class ModelsDevEnrichmentService {
         maxOutputTokens:
           modelsDevModel.limit?.output ?? DEFAULT_MAX_OUTPUT_TOKENS,
         doesSupportThinking: modelsDevModel.reasoning ?? false,
-        supportsToolCall: modelsDevModel.tool_call ?? false,
       };
     });
   }
@@ -113,7 +111,6 @@ export class ModelsDevEnrichmentService {
       contextWindowTokens: DEFAULT_CONTEXT_WINDOW_TOKENS,
       maxOutputTokens: DEFAULT_MAX_OUTPUT_TOKENS,
       doesSupportThinking: false,
-      supportsToolCall: false,
     };
   }
 }

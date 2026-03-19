@@ -15,7 +15,7 @@ import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/add
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
-import { PROVIDER_TYPE_LABELS } from '@/settings/admin-panel/ai/constants/ProviderTypeLabels';
+import { PROVIDER_CONFIG } from '@/settings/admin-panel/ai/constants/ProviderConfig';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -23,8 +23,8 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
-const PROVIDER_TYPE_OPTIONS = Object.entries(PROVIDER_TYPE_LABELS).map(
-  ([value, label]) => ({ value, label }),
+const PROVIDER_TYPE_OPTIONS = Object.entries(PROVIDER_CONFIG).map(
+  ([value, { label }]) => ({ value, label }),
 );
 
 type FormValues = {

@@ -8,7 +8,7 @@ import { Checkbox } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAdminAiModelHoverCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard';
-import { type AdminAiModelItem } from '@/settings/admin-panel/ai/types/AdminAiModelItem';
+import { type AdminAiModelConfig } from '~/generated-metadata/graphql';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -48,7 +48,7 @@ const sanitizeIdForSelector = (id: string): string =>
   id.replace(/[^a-zA-Z0-9-_]/g, '_');
 
 type SettingsAdminAiModelsTableProps = {
-  models: AdminAiModelItem[];
+  models: AdminAiModelConfig[];
   onToggle: (modelId: string, currentValue: boolean) => void;
   checkedField: 'isAdminEnabled' | 'isRecommended';
   anchorPrefix: string;

@@ -1,9 +1,9 @@
-import { getDataResidencyFlag } from '@/settings/admin-panel/ai/utils/getDataResidencyFlag';
-import { getDataResidencyLabel } from '@/settings/admin-panel/ai/utils/getDataResidencyLabel';
+import { DATA_RESIDENCY_CONFIG } from '@/settings/admin-panel/ai/constants/DataResidencyConfig';
 
 export const getDataResidencyDisplay = (residency: string): string => {
-  const flag = getDataResidencyFlag(residency);
-  const label = getDataResidencyLabel(residency);
+  const entry = DATA_RESIDENCY_CONFIG[residency];
 
-  return `${flag} ${label}`;
+  return entry
+    ? `${entry.flag} ${entry.label}`
+    : `🌐 ${residency.toUpperCase()}`;
 };
