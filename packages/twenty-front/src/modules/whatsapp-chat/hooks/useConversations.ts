@@ -9,14 +9,12 @@ import {
 interface UseConversationsOptions {
   session?: string;
   search?: string;
-  sort?: 'newest' | 'oldest';
   limit?: number;
 }
 
 export const useConversations = ({
   session,
   search,
-  sort,
   limit = 50,
 }: UseConversationsOptions = {}) => {
   const { bridgeFetch } = useWhatsAppBridge();
@@ -119,55 +117,6 @@ export const useConversations = ({
     [bridgeFetch, session, search, limit],
   );
 
-  // Fetch all pages (used when sort=oldest to ensure full dataset)
-  const fetchAll = useCallback(async () => {
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const allItems: WaConversation[] = [];
-      let pageCursor: string | undefined;
-
-      while (true) {
-        const params = new URLSearchParams();
-        if (session) params.set('session', session);
-        if (search) params.set('search', search);
-        if (pageCursor) params.set('cursor', pageCursor);
-        params.set('limit', '100');
-
-        const path = `/api/v1/conversations?${params.toString()}`;
-        const data = await bridgeFetch<ConversationsResponse>(path, {
-          signal: controller.signal,
-        });
-
-        allItems.push(...(data?.items ?? []));
-
-        if (!data?.hasMore) break;
-        pageCursor = data?.cursor ?? undefined;
-        if (!pageCursor) break;
-      }
-
-      setConversations(allItems);
-      setCursor(undefined);
-      setHasMore(false);
-
-      if (!search) {
-        lastGoodRef.current = allItems;
-      }
-    } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return;
-      setError(
-        err instanceof Error ? err.message : 'Failed to fetch conversations',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [bridgeFetch, session, search]);
-
   useEffect(() => {
     if (retryTimeoutRef.current) {
       clearTimeout(retryTimeoutRef.current);
@@ -175,12 +124,7 @@ export const useConversations = ({
     }
 
     retryCountRef.current = 0;
-
-    if (sort === 'oldest') {
-      fetchAll();
-    } else {
-      fetchConversations(false);
-    }
+    fetchConversations(false);
 
     return () => {
       abortRef.current?.abort();
@@ -190,7 +134,7 @@ export const useConversations = ({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session, search, sort]);
+  }, [session, search]);
 
   const loadMore = useCallback(() => {
     if (hasMore && !loading) {
@@ -202,18 +146,9 @@ export const useConversations = ({
     fetchConversations(false);
   }, [fetchConversations]);
 
-  // When backend sort is active, preserve its ordering (only float pinned items).
-  // Otherwise default to newest-first.
   const sortedConversations = [...conversations].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
-
-    if (sort === 'oldest') {
-      return (
-        new Date(a.lastMessageAt).getTime() -
-        new Date(b.lastMessageAt).getTime()
-      );
-    }
 
     return (
       new Date(b.lastMessageAt).getTime() -

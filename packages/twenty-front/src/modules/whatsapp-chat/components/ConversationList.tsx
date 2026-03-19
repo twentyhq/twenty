@@ -166,7 +166,6 @@ export const ConversationList = ({
   const { conversations, loading, error, hasMore, loadMore, refresh, updateConversation } = useConversations({
     session: activeSessionName,
     search: debouncedSearch || undefined,
-    sort: sortOrder,
   });
 
   // Wrap onToggleRead to also update local conversation state
