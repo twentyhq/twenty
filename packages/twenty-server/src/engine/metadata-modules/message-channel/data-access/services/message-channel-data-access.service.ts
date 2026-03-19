@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -24,6 +25,7 @@ export class MessageChannelDataAccessService {
     private readonly coreRepository: Repository<MessageChannelEntity>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   private async isMigrated(workspaceId: string): Promise<boolean> {
@@ -31,6 +33,46 @@ export class MessageChannelDataAccessService {
       FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
       workspaceId,
     );
+  }
+
+  private async toCoreWhere(
+    workspaceId: string,
+    where: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const coreWhere: Record<string, unknown> = { ...where, workspaceId };
+
+    if (
+      coreWhere.connectedAccount &&
+      typeof coreWhere.connectedAccount === 'object'
+    ) {
+      const connectedAccountWhere = {
+        ...(coreWhere.connectedAccount as Record<string, unknown>),
+      };
+
+      if ('accountOwnerId' in connectedAccountWhere) {
+        const { accountOwnerId, ...restConnectedAccount } =
+          connectedAccountWhere;
+
+        const resolvedConnectedAccounts =
+          await this.connectedAccountDataAccessService.find(workspaceId, {
+            accountOwnerId,
+          } as never);
+
+        if (resolvedConnectedAccounts.length > 0) {
+          coreWhere.connectedAccountId = resolvedConnectedAccounts[0].id;
+        } else {
+          coreWhere.connectedAccountId = '00000000-0000-0000-0000-000000000000';
+        }
+
+        if (Object.keys(restConnectedAccount).length > 0) {
+          coreWhere.connectedAccount = restConnectedAccount;
+        } else {
+          delete coreWhere.connectedAccount;
+        }
+      }
+    }
+
+    return coreWhere;
   }
 
   async getWorkspaceRepository(workspaceId: string) {
@@ -45,12 +87,18 @@ export class MessageChannelDataAccessService {
     options: FindOneOptions<MessageChannelWorkspaceEntity>,
   ): Promise<MessageChannelWorkspaceEntity | null> {
     if (await this.isMigrated(workspaceId)) {
+      const where = options.where as Record<string, unknown>;
+      const coreWhere = Array.isArray(where)
+        ? await Promise.all(
+            where.map((whereItem: Record<string, unknown>) =>
+              this.toCoreWhere(workspaceId, whereItem),
+            ),
+          )
+        : await this.toCoreWhere(workspaceId, where);
+
       return this.coreRepository.findOne({
         ...options,
-        where: {
-          ...(options.where as Record<string, unknown>),
-          workspaceId,
-        },
+        where: coreWhere,
       } as FindOneOptions<MessageChannelEntity>) as unknown as Promise<MessageChannelWorkspaceEntity | null>;
     }
 
@@ -94,23 +142,28 @@ export class MessageChannelDataAccessService {
       }
 
       if (Array.isArray(baseWhere)) {
+        const coreWhereArray = await Promise.all(
+          baseWhere.map((whereItem) =>
+            this.toCoreWhere(workspaceId, whereItem as Record<string, unknown>),
+          ),
+        );
+
         return this.coreRepository.find({
           ...options,
-          where: baseWhere.map((whereItem) => ({
-            ...(whereItem as Record<string, unknown>),
-            workspaceId,
-          })),
+          where: coreWhereArray,
         } as FindManyOptions<MessageChannelEntity>) as unknown as Promise<
           MessageChannelWorkspaceEntity[]
         >;
       }
 
+      const coreWhere = await this.toCoreWhere(
+        workspaceId,
+        baseWhere as Record<string, unknown>,
+      );
+
       return this.coreRepository.find({
         ...options,
-        where: {
-          ...(baseWhere as Record<string, unknown>),
-          workspaceId,
-        },
+        where: coreWhere,
       } as FindManyOptions<MessageChannelEntity>) as unknown as Promise<
         MessageChannelWorkspaceEntity[]
       >;

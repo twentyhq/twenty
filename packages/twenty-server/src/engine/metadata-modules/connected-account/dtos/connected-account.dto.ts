@@ -12,7 +12,7 @@ import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('ConnectedAccount')
+@ObjectType('ConnectedAccountDTO')
 export class ConnectedAccountDTO {
   @IsUUID()
   @IsNotEmpty()

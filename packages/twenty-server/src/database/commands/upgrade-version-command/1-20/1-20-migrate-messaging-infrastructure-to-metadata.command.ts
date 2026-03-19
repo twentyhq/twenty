@@ -149,6 +149,13 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
       return;
     }
 
+    let migratedConnectedAccountIds = new Set(
+      connectedAccounts.map((account) => account.id),
+    );
+    let migratedMessageChannelIds = new Set(
+      messageChannels.map((channel) => channel.id),
+    );
+
     if (connectedAccounts.length > 0) {
       const coreConnectedAccounts = connectedAccounts
         .filter((workspaceEntity) => {
@@ -206,74 +213,92 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
           `Migrated ${coreConnectedAccounts.length} connected accounts for workspace ${workspaceId}`,
         );
       }
+
+      migratedConnectedAccountIds = new Set(
+        coreConnectedAccounts.map((account) => account.id),
+      );
     }
 
     if (messageChannels.length > 0) {
-      const coreMessageChannels = messageChannels.map((workspaceEntity) => ({
-        id: workspaceEntity.id,
-        visibility: workspaceEntity.visibility,
-        handle: workspaceEntity.handle ?? '',
-        type: workspaceEntity.type,
-        isContactAutoCreationEnabled:
-          workspaceEntity.isContactAutoCreationEnabled,
-        contactAutoCreationPolicy: workspaceEntity.contactAutoCreationPolicy,
-        messageFolderImportPolicy: workspaceEntity.messageFolderImportPolicy,
-        excludeNonProfessionalEmails:
-          workspaceEntity.excludeNonProfessionalEmails,
-        excludeGroupEmails: workspaceEntity.excludeGroupEmails,
-        pendingGroupEmailsAction: workspaceEntity.pendingGroupEmailsAction,
-        isSyncEnabled: workspaceEntity.isSyncEnabled,
-        syncCursor: workspaceEntity.syncCursor,
-        syncedAt: workspaceEntity.syncedAt
-          ? new Date(workspaceEntity.syncedAt)
-          : null,
-        syncStatus: workspaceEntity.syncStatus ?? 'NOT_SYNCED',
-        syncStage: workspaceEntity.syncStage,
-        syncStageStartedAt: workspaceEntity.syncStageStartedAt
-          ? new Date(workspaceEntity.syncStageStartedAt)
-          : null,
-        throttleFailureCount: workspaceEntity.throttleFailureCount,
-        throttleRetryAfter: workspaceEntity.throttleRetryAfter
-          ? new Date(workspaceEntity.throttleRetryAfter)
-          : null,
-        connectedAccountId: workspaceEntity.connectedAccountId,
-        workspaceId,
-        createdAt: workspaceEntity.createdAt,
-        updatedAt: workspaceEntity.updatedAt,
-      }));
+      const coreMessageChannels = messageChannels
+        .filter((workspaceEntity) =>
+          migratedConnectedAccountIds.has(workspaceEntity.connectedAccountId),
+        )
+        .map((workspaceEntity) => ({
+          id: workspaceEntity.id,
+          visibility: workspaceEntity.visibility,
+          handle: workspaceEntity.handle ?? '',
+          type: workspaceEntity.type,
+          isContactAutoCreationEnabled:
+            workspaceEntity.isContactAutoCreationEnabled,
+          contactAutoCreationPolicy: workspaceEntity.contactAutoCreationPolicy,
+          messageFolderImportPolicy: workspaceEntity.messageFolderImportPolicy,
+          excludeNonProfessionalEmails:
+            workspaceEntity.excludeNonProfessionalEmails,
+          excludeGroupEmails: workspaceEntity.excludeGroupEmails,
+          pendingGroupEmailsAction: workspaceEntity.pendingGroupEmailsAction,
+          isSyncEnabled: workspaceEntity.isSyncEnabled,
+          syncCursor: workspaceEntity.syncCursor,
+          syncedAt: workspaceEntity.syncedAt
+            ? new Date(workspaceEntity.syncedAt)
+            : null,
+          syncStatus: workspaceEntity.syncStatus ?? 'NOT_SYNCED',
+          syncStage: workspaceEntity.syncStage,
+          syncStageStartedAt: workspaceEntity.syncStageStartedAt
+            ? new Date(workspaceEntity.syncStageStartedAt)
+            : null,
+          throttleFailureCount: workspaceEntity.throttleFailureCount,
+          throttleRetryAfter: workspaceEntity.throttleRetryAfter
+            ? new Date(workspaceEntity.throttleRetryAfter)
+            : null,
+          connectedAccountId: workspaceEntity.connectedAccountId,
+          workspaceId,
+          createdAt: workspaceEntity.createdAt,
+          updatedAt: workspaceEntity.updatedAt,
+        }));
 
-      await this.messageChannelRepository.save(
-        coreMessageChannels as unknown as MessageChannelEntity[],
-      );
-      this.logger.log(
-        `Migrated ${coreMessageChannels.length} message channels for workspace ${workspaceId}`,
+      if (coreMessageChannels.length > 0) {
+        await this.messageChannelRepository.save(
+          coreMessageChannels as unknown as MessageChannelEntity[],
+        );
+        this.logger.log(
+          `Migrated ${coreMessageChannels.length} message channels for workspace ${workspaceId}`,
+        );
+      }
+
+      migratedMessageChannelIds = new Set(
+        coreMessageChannels.map((channel) => channel.id),
       );
     }
 
     if (calendarChannels.length > 0) {
-      const coreCalendarChannels = calendarChannels.map((workspaceEntity) => ({
-        id: workspaceEntity.id,
-        handle: workspaceEntity.handle ?? '',
-        syncStatus: workspaceEntity.syncStatus ?? 'NOT_SYNCED',
-        syncStage: workspaceEntity.syncStage,
-        visibility: workspaceEntity.visibility,
-        isContactAutoCreationEnabled:
-          workspaceEntity.isContactAutoCreationEnabled,
-        contactAutoCreationPolicy: workspaceEntity.contactAutoCreationPolicy,
-        isSyncEnabled: workspaceEntity.isSyncEnabled,
-        syncCursor: workspaceEntity.syncCursor,
-        syncedAt: workspaceEntity.syncedAt
-          ? new Date(workspaceEntity.syncedAt)
-          : null,
-        syncStageStartedAt: workspaceEntity.syncStageStartedAt
-          ? new Date(workspaceEntity.syncStageStartedAt)
-          : null,
-        throttleFailureCount: workspaceEntity.throttleFailureCount,
-        connectedAccountId: workspaceEntity.connectedAccountId,
-        workspaceId,
-        createdAt: workspaceEntity.createdAt,
-        updatedAt: workspaceEntity.updatedAt,
-      }));
+      const coreCalendarChannels = calendarChannels
+        .filter((workspaceEntity) =>
+          migratedConnectedAccountIds.has(workspaceEntity.connectedAccountId),
+        )
+        .map((workspaceEntity) => ({
+          id: workspaceEntity.id,
+          handle: workspaceEntity.handle ?? '',
+          syncStatus: workspaceEntity.syncStatus ?? 'NOT_SYNCED',
+          syncStage: workspaceEntity.syncStage,
+          visibility: workspaceEntity.visibility,
+          isContactAutoCreationEnabled:
+            workspaceEntity.isContactAutoCreationEnabled,
+          contactAutoCreationPolicy: workspaceEntity.contactAutoCreationPolicy,
+          isSyncEnabled: workspaceEntity.isSyncEnabled,
+          syncCursor: workspaceEntity.syncCursor,
+          syncedAt: workspaceEntity.syncedAt
+            ? new Date(workspaceEntity.syncedAt)
+            : null,
+          syncStageStartedAt: workspaceEntity.syncStageStartedAt
+            ? new Date(workspaceEntity.syncStageStartedAt)
+            : null,
+          throttleFailureCount: workspaceEntity.throttleFailureCount,
+          connectedAccountId: workspaceEntity.connectedAccountId,
+          workspaceId,
+          createdAt: workspaceEntity.createdAt,
+          updatedAt: workspaceEntity.updatedAt,
+        }));
 
       await this.calendarChannelRepository.save(
         coreCalendarChannels as unknown as CalendarChannelEntity[],
@@ -284,22 +309,26 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     }
 
     if (messageFolders.length > 0) {
-      const coreMessageFolders = messageFolders.map((workspaceEntity) => ({
-        id: workspaceEntity.id,
-        name: workspaceEntity.name,
-        syncCursor: workspaceEntity.syncCursor,
-        isSentFolder: workspaceEntity.isSentFolder,
-        isSynced: workspaceEntity.isSynced,
-        parentFolderId: isNonEmptyString(workspaceEntity.parentFolderId)
-          ? workspaceEntity.parentFolderId
-          : null,
-        externalId: workspaceEntity.externalId,
-        pendingSyncAction: workspaceEntity.pendingSyncAction,
-        messageChannelId: workspaceEntity.messageChannelId,
-        workspaceId,
-        createdAt: workspaceEntity.createdAt,
-        updatedAt: workspaceEntity.updatedAt,
-      }));
+      const coreMessageFolders = messageFolders
+        .filter((workspaceEntity) =>
+          migratedMessageChannelIds.has(workspaceEntity.messageChannelId),
+        )
+        .map((workspaceEntity) => ({
+          id: workspaceEntity.id,
+          name: workspaceEntity.name,
+          syncCursor: workspaceEntity.syncCursor,
+          isSentFolder: workspaceEntity.isSentFolder,
+          isSynced: workspaceEntity.isSynced,
+          parentFolderId: isNonEmptyString(workspaceEntity.parentFolderId)
+            ? workspaceEntity.parentFolderId
+            : null,
+          externalId: workspaceEntity.externalId,
+          pendingSyncAction: workspaceEntity.pendingSyncAction,
+          messageChannelId: workspaceEntity.messageChannelId,
+          workspaceId,
+          createdAt: workspaceEntity.createdAt,
+          updatedAt: workspaceEntity.updatedAt,
+        }));
 
       await this.messageFolderRepository.save(
         coreMessageFolders as unknown as MessageFolderEntity[],

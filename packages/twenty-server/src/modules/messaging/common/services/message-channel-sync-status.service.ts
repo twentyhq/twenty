@@ -21,6 +21,7 @@ import {
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
@@ -337,21 +338,39 @@ export class MessageChannelSyncStatusService {
       workspaceId,
       {
         where: { id: In(messageChannelIds) },
-        relations: ['connectedAccount', 'connectedAccount.accountOwner'],
       },
     );
 
+    const workspaceMemberRepository =
+      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
+      );
+
     for (const messageChannel of messageChannels) {
-      const userId = (
-        messageChannel as unknown as MessageChannelWorkspaceEntity
-      ).connectedAccount.accountOwner.userId;
-      const connectedAccountId = messageChannel.connectedAccount.id;
+      const connectedAccount =
+        await this.connectedAccountDataAccessService.findOne(workspaceId, {
+          where: { id: messageChannel.connectedAccountId },
+        });
+
+      if (!connectedAccount) {
+        continue;
+      }
+
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: { id: connectedAccount.accountOwnerId },
+      });
+
+      if (!workspaceMember) {
+        continue;
+      }
 
       await this.accountsToReconnectService.addAccountToReconnectByKey(
         AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
-        userId,
+        workspaceMember.userId,
         workspaceId,
-        connectedAccountId,
+        connectedAccount.id,
       );
     }
   }

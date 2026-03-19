@@ -44,12 +44,20 @@ export class MessageFolderDataAccessService {
     options: FindOneOptions<MessageFolderWorkspaceEntity>,
   ): Promise<MessageFolderWorkspaceEntity | null> {
     if (await this.isMigrated(workspaceId)) {
+      const where = options.where as Record<string, unknown>;
+      const coreWhere = Array.isArray(where)
+        ? where.map((whereItem) => ({
+            ...(whereItem as Record<string, unknown>),
+            workspaceId,
+          }))
+        : {
+            ...(where as Record<string, unknown>),
+            workspaceId,
+          };
+
       return this.coreRepository.findOne({
         ...options,
-        where: {
-          ...(options.where as Record<string, unknown>),
-          workspaceId,
-        },
+        where: coreWhere,
       } as FindOneOptions<MessageFolderEntity>) as unknown as Promise<MessageFolderWorkspaceEntity | null>;
     }
 

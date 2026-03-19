@@ -4,9 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type FindOneOptions,
   type FindOptionsWhere,
+  In,
   Repository,
 } from 'typeorm';
 
@@ -115,10 +117,87 @@ export class ConnectedAccountDataAccessService {
 
       if (userWorkspaceId) {
         coreWhere.userWorkspaceId = userWorkspaceId;
+      } else {
+        this.logger.warn(
+          `toCoreWhere: could not resolve userWorkspaceId for workspaceMember ${accountOwnerId}, returning empty result`,
+        );
+        coreWhere.id = '00000000-0000-0000-0000-000000000000';
       }
     }
 
     return coreWhere as FindOptionsWhere<ConnectedAccountEntity>;
+  }
+
+  private async fromCoreEntities(
+    workspaceId: string,
+    entities: ConnectedAccountEntity[],
+  ): Promise<ConnectedAccountWorkspaceEntity[]> {
+    if (entities.length === 0) {
+      return [];
+    }
+
+    const userWorkspaceIds = entities
+      .map((entity) => entity.userWorkspaceId)
+      .filter(isDefined);
+
+    const userWorkspaces =
+      userWorkspaceIds.length > 0
+        ? await this.userWorkspaceRepository.find({
+            where: { id: In(userWorkspaceIds) },
+            select: ['id', 'userId'],
+          })
+        : [];
+
+    const userIdByUserWorkspaceId = new Map(
+      userWorkspaces.map((userWorkspace) => [
+        userWorkspace.id,
+        userWorkspace.userId,
+      ]),
+    );
+
+    const uniqueUserIds = [
+      ...new Set(userWorkspaces.map((userWorkspace) => userWorkspace.userId)),
+    ];
+
+    const workspaceMemberRepository =
+      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+      );
+
+    const workspaceMembers =
+      uniqueUserIds.length > 0
+        ? await workspaceMemberRepository.find({
+            where: { userId: In(uniqueUserIds) },
+          })
+        : [];
+
+    const workspaceMemberIdByUserId = new Map(
+      workspaceMembers.map((workspaceMember) => [
+        workspaceMember.userId,
+        workspaceMember.id,
+      ]),
+    );
+
+    return entities.map((entity) => {
+      const userId = entity.userWorkspaceId
+        ? userIdByUserWorkspaceId.get(entity.userWorkspaceId)
+        : undefined;
+
+      const accountOwnerId = userId
+        ? workspaceMemberIdByUserId.get(userId)
+        : undefined;
+
+      const handleAliases = Array.isArray(entity.handleAliases)
+        ? entity.handleAliases.join(',')
+        : (entity.handleAliases ?? '');
+
+      return {
+        ...entity,
+        handleAliases,
+        accountOwnerId: accountOwnerId ?? null,
+      } as unknown as ConnectedAccountWorkspaceEntity;
+    });
   }
 
   async getWorkspaceRepository(workspaceId: string) {
@@ -133,15 +212,29 @@ export class ConnectedAccountDataAccessService {
     options: FindOneOptions<ConnectedAccountWorkspaceEntity>,
   ): Promise<ConnectedAccountWorkspaceEntity | null> {
     if (await this.isMigrated(workspaceId)) {
-      const coreWhere = await this.toCoreWhere(
-        workspaceId,
-        options.where as Record<string, unknown>,
-      );
+      const where = options.where as Record<string, unknown>;
+      const coreWhere = Array.isArray(where)
+        ? await Promise.all(
+            where.map((whereItem: Record<string, unknown>) =>
+              this.toCoreWhere(workspaceId, whereItem),
+            ),
+          )
+        : await this.toCoreWhere(workspaceId, where);
 
-      return this.coreRepository.findOne({
+      const coreResult = await this.coreRepository.findOne({
         ...options,
         where: coreWhere,
-      } as FindOneOptions<ConnectedAccountEntity>) as unknown as Promise<ConnectedAccountWorkspaceEntity | null>;
+      } as FindOneOptions<ConnectedAccountEntity>);
+
+      if (!coreResult) {
+        return null;
+      }
+
+      const [transformed] = await this.fromCoreEntities(workspaceId, [
+        coreResult,
+      ]);
+
+      return transformed ?? null;
     }
 
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
@@ -158,9 +251,11 @@ export class ConnectedAccountDataAccessService {
         ? await this.toCoreWhere(workspaceId, where as Record<string, unknown>)
         : { workspaceId };
 
-      return this.coreRepository.find({
+      const coreResults = await this.coreRepository.find({
         where: coreWhere,
-      }) as unknown as Promise<ConnectedAccountWorkspaceEntity[]>;
+      });
+
+      return this.fromCoreEntities(workspaceId, coreResults);
     }
 
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
