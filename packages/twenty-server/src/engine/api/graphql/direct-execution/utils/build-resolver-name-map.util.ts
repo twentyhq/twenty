@@ -7,15 +7,15 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
 export type ResolverNameMapEntry = {
-  flatObjectMetadata: FlatObjectMetadata;
+  objectMetadataUniversalIdentifier: string;
   method: WorkspaceResolverBuilderMethodNames;
   operationType: 'query' | 'mutation';
 };
 
 export const buildResolverNameMap = (
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-): Map<string, ResolverNameMapEntry> => {
-  const map = new Map<string, ResolverNameMapEntry>();
+): Record<string, ResolverNameMapEntry> => {
+  const map: Record<string, ResolverNameMapEntry> = {};
 
   const allMethods = [
     ...workspaceResolverBuilderMethodNames.queries.map((method) => ({
@@ -34,11 +34,12 @@ export const buildResolverNameMap = (
     for (const { method, operationType } of allMethods) {
       const resolverName = getResolverName(flatObjectMetadata, method);
 
-      map.set(resolverName, {
-        flatObjectMetadata,
+      map[resolverName] = {
+        objectMetadataUniversalIdentifier:
+          flatObjectMetadata.universalIdentifier,
         method,
         operationType,
-      });
+      };
     }
   }
 

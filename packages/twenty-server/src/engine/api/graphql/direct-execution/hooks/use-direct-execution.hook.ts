@@ -1,8 +1,14 @@
 import { type Request } from 'express';
+import { parse } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { isNull } from '@sniptt/guards';
 import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
+import { computeSkipWorkspaceSchemaCreation } from 'src/engine/api/graphql/direct-execution/utils/compute-skip-workspace-schema-creation.util';
+import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
+import { hasOnlyGeneratedWorkspaceResolvers } from 'src/engine/api/graphql/direct-execution/utils/has-only-generated-workspace-resolvers.util';
+import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
 export type DirectExecutionPluginConfig = {
@@ -30,17 +36,52 @@ export function useDirectExecution(
         return;
       }
 
-      // Skip introspection queries - they need the full schema
-      const queryString = req.body.query as string;
+      const generatedWorkspaceResolverNames =
+        await config.directExecutionService.getGeneratedWorkspaceResolverNames(
+          req.workspace.id,
+        );
 
-      if (queryString.includes('__schema') || queryString.includes('__type')) {
+      if (!generatedWorkspaceResolverNames) {
         return;
       }
 
-      const result = await config.directExecutionService.execute(req);
+      const queryString = req.body.query as string;
+      const operationName = req.body.operationName as string | undefined;
 
-      // null = the service couldn't handle this query, fall through
-      if (result === null) {
+      const document = parse(queryString);
+
+      if (!findOperationDefinition(document, operationName)) {
+        return;
+      }
+
+      if (
+        computeSkipWorkspaceSchemaCreation(
+          queryString,
+          document,
+          operationName,
+          generatedWorkspaceResolverNames,
+        )
+      ) {
+        req.skipWorkspaceSchemaCreation = true;
+      }
+
+      if (isSubscriptionOperation(document, operationName)) {
+        return;
+      }
+
+      if (
+        !hasOnlyGeneratedWorkspaceResolvers(
+          document,
+          operationName,
+          generatedWorkspaceResolverNames,
+        )
+      ) {
+        return;
+      }
+
+      const result = await config.directExecutionService.execute(req, document);
+
+      if (isNull(result)) {
         return;
       }
 

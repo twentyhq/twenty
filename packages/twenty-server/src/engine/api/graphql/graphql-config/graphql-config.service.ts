@@ -94,10 +94,11 @@ export class GraphQLConfigService
       resolverSchemaScope: 'core',
       buildSchemaOptions: {},
       conditionalSchema: async (context) => {
-        const { workspace, user, application } = context.req;
+        const { workspace, user, application, skipWorkspaceSchemaCreation } =
+          context.req;
 
         try {
-          if (!isDefined(workspace)) {
+          if (!isDefined(workspace) || skipWorkspaceSchemaCreation) {
             return new GraphQLSchema({});
           }
 
