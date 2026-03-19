@@ -36,12 +36,11 @@ export class CheckServerOrchestratorStep {
         this.state.applyStepEvents([
           {
             message:
-              'Cannot reach Twenty at localhost:3000.\n\n' +
-              '  Start a local server with Docker:\n' +
-              '    curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml -o docker-compose.yml\n' +
-              '    docker compose up -d\n\n' +
-              '  Or from the monorepo:\n' +
-              '    yarn start\n\n' +
+              'Cannot reach Twenty server.\n\n' +
+              '  Start a local server:\n' +
+              '    yarn twenty server start\n\n' +
+              '  Check server status:\n' +
+              '    yarn twenty server status\n\n' +
               '  Waiting for server...',
             status: 'error',
           },

@@ -19,8 +19,10 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "objectMetadata": [
     "fieldUniversalIdentifiers",
     "indexMetadataUniversalIdentifiers",
+    "objectPermissionUniversalIdentifiers",
     "viewUniversalIdentifiers",
   ],
+  "objectPermission": [],
   "pageLayout": [
     "tabUniversalIdentifiers",
   ],
@@ -31,6 +33,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "permissionFlag": [],
   "role": [
     "roleTargetUniversalIdentifiers",
+    "objectPermissionUniversalIdentifiers",
     "permissionFlagUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
     "rowLevelPermissionPredicateGroupUniversalIdentifiers",

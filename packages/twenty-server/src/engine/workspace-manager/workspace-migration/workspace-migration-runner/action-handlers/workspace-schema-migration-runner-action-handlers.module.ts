@@ -24,6 +24,9 @@ import { UpdateLogicFunctionActionHandlerService } from 'src/engine/workspace-ma
 import { CreateNavigationMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/navigation-menu-item/services/create-navigation-menu-item-action-handler.service';
 import { DeleteNavigationMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/navigation-menu-item/services/delete-navigation-menu-item-action-handler.service';
 import { UpdateNavigationMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/navigation-menu-item/services/update-navigation-menu-item-action-handler.service';
+import { CreateObjectPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object-permission/services/create-object-permission-action-handler.service';
+import { DeleteObjectPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object-permission/services/delete-object-permission-action-handler.service';
+import { UpdateObjectPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object-permission/services/update-object-permission-action-handler.service';
 import { CreateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/create-object-action-handler.service';
 import { DeleteObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/delete-object-action-handler.service';
 import { UpdateObjectActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/update-object-action-handler.service';
@@ -140,6 +143,10 @@ import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/
     CreatePermissionFlagActionHandlerService,
     UpdatePermissionFlagActionHandlerService,
     DeletePermissionFlagActionHandlerService,
+
+    CreateObjectPermissionActionHandlerService,
+    UpdateObjectPermissionActionHandlerService,
+    DeleteObjectPermissionActionHandlerService,
 
     CreateAgentActionHandlerService,
     UpdateAgentActionHandlerService,

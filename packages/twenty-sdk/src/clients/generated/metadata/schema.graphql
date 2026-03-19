@@ -2241,6 +2241,7 @@ enum AllMetadataName {
   commandMenuItem
   navigationMenuItem
   permissionFlag
+  objectPermission
   frontComponent
   webhook
 }

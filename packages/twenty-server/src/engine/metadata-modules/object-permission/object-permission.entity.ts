@@ -13,7 +13,7 @@ import {
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('objectPermission')
 @Unique('IDX_OBJECT_PERMISSION_OBJECT_METADATA_ID_ROLE_ID_UNIQUE', [
@@ -21,7 +21,7 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   'roleId',
 ])
 @Index('IDX_OBJECT_PERMISSION_WORKSPACE_ID_ROLE_ID', ['workspaceId', 'roleId'])
-export class ObjectPermissionEntity extends WorkspaceRelatedEntity {
+export class ObjectPermissionEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

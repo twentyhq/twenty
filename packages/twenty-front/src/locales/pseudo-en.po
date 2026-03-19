@@ -9859,6 +9859,11 @@ msgstr ""
 msgid "Object ID"
 msgstr ""
 
+#. js-lingui-id: wZpAXW
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "object permission"
+msgstr ""
+
 #. js-lingui-id: ecLxgy
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 msgid "Object permission options"
