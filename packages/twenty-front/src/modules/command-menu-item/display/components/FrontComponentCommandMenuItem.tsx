@@ -1,29 +1,21 @@
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
+import { Command } from '@/command-menu-item/display/components/Command';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
-import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { HeadlessCommandMenuItem } from './HeadlessCommandMenuItem';
-
-// TODO: Some code is duplicated in this component and FrontComponentCommandMenuItem
-// This will be refactored because the logic will differ between headless and non-headless front components.
-export const HeadlessFrontComponentCommandMenuItem = ({
+export const FrontComponentCommandMenuItem = ({
   frontComponentId,
-  commandMenuItemId,
 }: {
   frontComponentId: string;
-  commandMenuItemId: string;
 }) => {
-  const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
-
-  const isMounted = useAtomFamilySelectorValue(
-    isHeadlessFrontComponentMountedFamilySelector,
-    frontComponentId,
-  );
+  const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
+  const commandMenuItemConfig = useContext(CommandConfigContext);
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -50,19 +42,28 @@ export const HeadlessFrontComponentCommandMenuItem = ({
 
   const objectNameSingular = currentObjectMetadataItem?.nameSingular;
 
+  const displayLabel =
+    typeof commandMenuItemConfig?.label === 'string'
+      ? commandMenuItemConfig.label
+      : '';
+
+  const Icon = commandMenuItemConfig?.Icon;
+
   const handleClick = () => {
-    mountHeadlessFrontComponent(frontComponentId, {
-      commandMenuItemId,
-      recordId,
-      objectNameSingular,
+    if (!isDefined(Icon)) {
+      return;
+    }
+
+    openFrontComponentInSidePanel({
+      frontComponentId,
+      pageTitle: displayLabel,
+      pageIcon: Icon,
+      recordContext:
+        isDefined(recordId) && isDefined(objectNameSingular)
+          ? { recordId, objectNameSingular }
+          : undefined,
     });
   };
 
-  return (
-    <HeadlessCommandMenuItem
-      isMounted={isMounted}
-      commandMenuItemId={commandMenuItemId}
-      onClick={handleClick}
-    />
-  );
+  return <Command onClick={handleClick} />;
 };

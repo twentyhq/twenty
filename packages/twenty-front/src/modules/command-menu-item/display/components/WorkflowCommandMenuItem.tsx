@@ -2,12 +2,14 @@ import { Command } from '@/command-menu-item/display/components/Command';
 import { isBulkRecordsManualTrigger } from '@/command-menu-item/record/utils/isBulkRecordsManualTrigger';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { useStore } from 'jotai';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -16,16 +18,24 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const WorkflowCommandMenuItem = ({
-  workflowVersion,
+  workflowVersionId,
   availabilityType,
   availabilityObjectMetadataId,
 }: {
-  workflowVersion: Pick<WorkflowVersion, 'id' | 'workflowId' | 'trigger'>;
+  workflowVersionId: string;
   availabilityType: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: string | null;
 }) => {
   const store = useStore();
   const { runWorkflowVersion } = useRunWorkflowVersion();
+
+  const { record: workflowVersion } = useFindOneRecord<
+    Pick<WorkflowVersion, 'id' | 'workflowId' | 'trigger' | '__typename'>
+  >({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    objectRecordId: workflowVersionId,
+    recordGqlFields: { id: true, workflowId: true, trigger: true },
+  });
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -39,6 +49,10 @@ export const WorkflowCommandMenuItem = ({
       : [];
 
   const handleClick = async () => {
+    if (!isDefined(workflowVersion)) {
+      return;
+    }
+
     switch (availabilityType) {
       case CommandMenuItemAvailabilityTypeEnum.RECORD_SELECTION: {
         if (selectedRecordIds.length === 0) {

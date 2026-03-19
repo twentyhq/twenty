@@ -1,14 +1,12 @@
-import { resolveCommandMenuItemComponent } from '@/command-menu-item/server-items/utils/resolveCommandMenuItemComponent';
+import { EngineCommandMenuItem } from '@/command-menu-item/display/components/EngineCommandMenuItem';
+import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/components/FrontComponentCommandMenuItem';
+import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
+import { WorkflowCommandMenuItem } from '@/command-menu-item/display/components/WorkflowCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { useCallback } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
@@ -50,9 +48,10 @@ const resolveType = (
   return CommandMenuItemType.Standard;
 };
 
+// TODO: Remove this hook once we finish refactoring and we use
+// the new types to build command menu items.
 export const useConvertBackendItemToCommandMenuItemConfig = () => {
   const { getIcon } = useIcons();
-  const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
 
   const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
@@ -60,16 +59,6 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
-  );
-
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
-
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-
-  const currentObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const selectedRecordIds =
@@ -81,19 +70,10 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
     selectedRecordIds.length >= 1 ||
     contextStoreTargetedRecordsRule.mode === 'exclusion';
 
-  const recordId =
-    selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
-
-  const objectNameSingular = currentObjectMetadataItem?.nameSingular;
-
   const convertBackendItemToCommandMenuItemConfig = useCallback(
     (
       item: CommandMenuItemFieldsFragment,
       commandMenuContextApi: CommandMenuContextApi,
-      workflowVersionById: Map<
-        string,
-        Pick<WorkflowVersion, 'id' | 'workflowId' | 'trigger'>
-      >,
     ) => {
       const scope = resolveScope(item.availabilityType);
 
@@ -121,15 +101,29 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
         context: commandMenuContextApi,
       });
 
-      const component = resolveCommandMenuItemComponent({
-        item,
-        displayLabel: label,
-        Icon,
-        openFrontComponentInSidePanel,
-        recordId,
-        objectNameSingular,
-        workflowVersionById,
-      });
+      const component = isDefined(item.engineComponentKey) ? (
+        <EngineCommandMenuItem
+          commandMenuItemId={item.id}
+          engineComponentKey={item.engineComponentKey}
+        />
+      ) : isDefined(item.frontComponentId) ? (
+        item.frontComponent?.isHeadless === true ? (
+          <HeadlessFrontComponentCommandMenuItem
+            frontComponentId={item.frontComponentId}
+            commandMenuItemId={item.id}
+          />
+        ) : (
+          <FrontComponentCommandMenuItem
+            frontComponentId={item.frontComponentId}
+          />
+        )
+      ) : isDefined(item.workflowVersionId) ? (
+        <WorkflowCommandMenuItem
+          workflowVersionId={item.workflowVersionId}
+          availabilityType={item.availabilityType}
+          availabilityObjectMetadataId={item.availabilityObjectMetadataId}
+        />
+      ) : null;
 
       if (!isDefined(component)) {
         return;
@@ -153,14 +147,7 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
         component,
       };
     },
-    [
-      getIcon,
-      openFrontComponentInSidePanel,
-      contextStoreIsPageInEditMode,
-      hasRecordSelection,
-      recordId,
-      objectNameSingular,
-    ],
+    [getIcon, contextStoreIsPageInEditMode, hasRecordSelection],
   );
 
   return { convertBackendItemToCommandMenuItemConfig };
