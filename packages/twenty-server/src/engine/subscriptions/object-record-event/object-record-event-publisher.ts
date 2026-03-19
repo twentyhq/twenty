@@ -92,13 +92,13 @@ export class ObjectRecordEventPublisher {
         continue;
       }
 
-      await this.processObjectRecordStreamEvents(
+      await this.processObjectRecordStreamEvents({
         streamChannelId,
         streamData,
-        eventBatch,
+        workspaceEventBatch: eventBatch,
         permissionsContext,
         flatWorkspaceMemberMaps,
-      );
+      });
     }
 
     await this.eventStreamService.removeFromActiveStreams(
@@ -117,19 +117,25 @@ export class ObjectRecordEventPublisher {
     return { permissionsContext, flatWorkspaceMemberMaps };
   }
 
-  private async processObjectRecordStreamEvents(
-    streamChannelId: string,
-    streamData: EventStreamData,
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
+  private async processObjectRecordStreamEvents({
+    streamChannelId,
+    streamData,
+    workspaceEventBatch,
+    permissionsContext,
+    flatWorkspaceMemberMaps,
+  }: {
+    streamChannelId: string;
+    streamData: EventStreamData;
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: {
       flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
       flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
       flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
       userWorkspaceRoleMap: Record<string, string>;
       rolesPermissions: ObjectsPermissionsByRoleId;
-    },
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps,
-  ): Promise<void> {
+    };
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  }): Promise<void> {
     const { userWorkspaceId } = streamData.authContext;
 
     if (!isDefined(userWorkspaceId)) {

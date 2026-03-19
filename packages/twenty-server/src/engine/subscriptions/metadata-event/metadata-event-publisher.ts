@@ -46,7 +46,10 @@ export class MetadataEventPublisher {
         continue;
       }
 
-      await this.publishToStream(streamChannelId, enrichedBatch);
+      await this.publishToStream({
+        streamChannelId,
+        metadataEventBatch: enrichedBatch,
+      });
     }
 
     await this.eventStreamService.removeFromActiveStreams(
@@ -58,21 +61,31 @@ export class MetadataEventPublisher {
   private async enrichMetadataEventBatch(
     metadataEventBatch: MetadataEventBatch,
   ): Promise<MetadataEventBatch> {
-    const withFieldRelations =
-      await this.enrichFieldMetadataEventsWithRelations(metadataEventBatch);
-
-    const withNavigationMenuItems =
-      await this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
-        withFieldRelations,
-      );
-
-    return this.resolveObjectMetadataStandardOverrides(withNavigationMenuItems);
+    switch (metadataEventBatch.metadataName) {
+      case 'fieldMetadata':
+        return this.enrichFieldMetadataEventsWithRelations(
+          metadataEventBatch as MetadataEventBatch<'fieldMetadata'>,
+        );
+      case 'navigationMenuItem':
+        return this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
+          metadataEventBatch as MetadataEventBatch<'navigationMenuItem'>,
+        );
+      case 'objectMetadata':
+        return this.resolveObjectMetadataStandardOverrides(
+          metadataEventBatch as MetadataEventBatch<'objectMetadata'>,
+        );
+      default:
+        return metadataEventBatch;
+    }
   }
 
-  private async publishToStream(
-    streamChannelId: string,
-    metadataEventBatch: MetadataEventBatch,
-  ): Promise<void> {
+  private async publishToStream({
+    streamChannelId,
+    metadataEventBatch,
+  }: {
+    streamChannelId: string;
+    metadataEventBatch: MetadataEventBatch;
+  }): Promise<void> {
     if (!isNonEmptyArray(metadataEventBatch.events)) {
       return;
     }
@@ -95,12 +108,8 @@ export class MetadataEventPublisher {
   }
 
   private async enrichFieldMetadataEventsWithRelations(
-    metadataEventBatch: MetadataEventBatch,
-  ): Promise<MetadataEventBatch> {
-    if (metadataEventBatch.metadataName !== 'fieldMetadata') {
-      return metadataEventBatch;
-    }
-
+    metadataEventBatch: MetadataEventBatch<'fieldMetadata'>,
+  ): Promise<MetadataEventBatch<'fieldMetadata'>> {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -136,12 +145,8 @@ export class MetadataEventPublisher {
   }
 
   private async enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
-    metadataEventBatch: MetadataEventBatch,
-  ): Promise<MetadataEventBatch> {
-    if (metadataEventBatch.metadataName !== 'navigationMenuItem') {
-      return metadataEventBatch;
-    }
-
+    metadataEventBatch: MetadataEventBatch<'navigationMenuItem'>,
+  ): Promise<MetadataEventBatch<'navigationMenuItem'>> {
     const enrichedEvents = await Promise.all(
       metadataEventBatch.events.map(async (event) => {
         if (
@@ -189,12 +194,8 @@ export class MetadataEventPublisher {
   }
 
   private resolveObjectMetadataStandardOverrides(
-    metadataEventBatch: MetadataEventBatch,
-  ): MetadataEventBatch {
-    if (metadataEventBatch.metadataName !== 'objectMetadata') {
-      return metadataEventBatch;
-    }
-
+    metadataEventBatch: MetadataEventBatch<'objectMetadata'>,
+  ): MetadataEventBatch<'objectMetadata'> {
     const enrichedEvents = metadataEventBatch.events.map((event) => {
       const enrichedProperties = { ...event.properties };
 
