@@ -12,7 +12,12 @@
         "cachedInputCostPerMillionTokens": 0.175,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "isRecommended": true,
@@ -28,7 +33,12 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 32768,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true },
         "source": "catalog"
       },
@@ -42,7 +52,12 @@
         "cachedInputCostPerMillionTokens": 0.5,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true },
         "isRecommended": true,
         "source": "catalog"
@@ -57,7 +72,12 @@
         "cachedInputCostPerMillionTokens": 0.1,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true },
         "source": "catalog"
       },
@@ -71,7 +91,12 @@
         "cachedInputCostPerMillionTokens": 0.5,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
@@ -87,7 +112,12 @@
         "cachedInputCostPerMillionTokens": 0.275,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
@@ -103,7 +133,12 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
         "source": "catalog"
@@ -118,7 +153,12 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
         "source": "catalog"
@@ -132,7 +172,12 @@
         "outputCostPerMillionTokens": 30.0,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 4096,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "deprecated": true,
         "source": "catalog"
       }
@@ -160,7 +205,16 @@
         },
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "isRecommended": true,
@@ -184,7 +238,16 @@
         },
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "isRecommended": true,
@@ -208,7 +271,16 @@
         },
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 64000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "source": "catalog"
@@ -224,7 +296,16 @@
         "cacheCreationCostPerMillionTokens": 1.25,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": false,
         "nativeCapabilities": { "webSearch": true },
         "source": "catalog"
@@ -247,7 +328,16 @@
         },
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
@@ -271,7 +361,16 @@
         },
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
@@ -288,7 +387,16 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
@@ -305,7 +413,16 @@
         "cacheCreationCostPerMillionTokens": 1.0,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": false,
         "nativeCapabilities": { "webSearch": true },
         "deprecated": true,
@@ -335,7 +452,16 @@
         },
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "source": "catalog"
@@ -358,7 +484,16 @@
         },
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp", "application/pdf", "text/plain", "text/html", "text/csv"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+          "application/pdf",
+          "text/plain",
+          "text/html",
+          "text/csv"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true },
         "source": "catalog"
@@ -385,7 +520,12 @@
         },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "isRecommended": true,
         "source": "catalog"
@@ -400,7 +540,12 @@
         "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "source": "catalog"
       },
@@ -413,7 +558,12 @@
         "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "source": "catalog"
       },
@@ -432,7 +582,12 @@
         },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "deprecated": true,
         "source": "catalog"
@@ -447,7 +602,12 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "deprecated": true,
         "source": "catalog"
@@ -468,7 +628,12 @@
         "cachedInputCostPerMillionTokens": 0.75,
         "contextWindowTokens": 256000,
         "maxOutputTokens": 8192,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
         "isRecommended": true,
         "source": "catalog"
@@ -483,7 +648,12 @@
         "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 8192,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "doesSupportThinking": true,
         "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
         "source": "catalog"
@@ -498,7 +668,12 @@
         "cachedInputCostPerMillionTokens": 0.75,
         "contextWindowTokens": 131072,
         "maxOutputTokens": 8192,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
         "deprecated": true,
         "source": "catalog"
@@ -513,7 +688,12 @@
         "cachedInputCostPerMillionTokens": 0.07,
         "contextWindowTokens": 131072,
         "maxOutputTokens": 8192,
-        "supportedFileTypes": ["image/png", "image/jpeg", "image/gif", "image/webp"],
+        "supportedFileTypes": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp"
+        ],
         "nativeCapabilities": { "webSearch": true, "twitterSearch": true },
         "deprecated": true,
         "source": "catalog"
