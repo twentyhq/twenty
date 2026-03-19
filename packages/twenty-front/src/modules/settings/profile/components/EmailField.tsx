@@ -1,14 +1,15 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconCheck, IconPencil, IconX } from 'twenty-ui/display';
+import { AppTooltip, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { t } from '@lingui/core/macro';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -40,7 +41,8 @@ const StyledActionButtonContainer = styled.div`
 
 export const EmailField = () => {
   const currentUser = useAtomStateValue(currentUserState);
-  const { canEdit } = useCanEditProfileField('email');
+  const { canEdit, disabledReason } = useCanEditProfileField('email');
+  const tooltipId = useId();
   const { updateEmail } = useUpdateEmail();
 
   const [draftEmail, setDraftEmail] = useState('');
@@ -121,14 +123,23 @@ export const EmailField = () => {
         ) : (
           <StyledActionWrapper key="view">
             <StyledActionButtonContainer>
-              <Button
-                Icon={IconPencil}
-                variant="secondary"
-                size="medium"
-                onClick={handleStartEditing}
-                disabled={!canEdit}
-                type="button"
-              />
+              <div id={disabledReason === 'multipleWorkspaces' ? tooltipId : undefined}>
+                <Button
+                  Icon={IconPencil}
+                  variant="secondary"
+                  size="medium"
+                  onClick={handleStartEditing}
+                  disabled={!canEdit}
+                  type="button"
+                />
+              </div>
+              {disabledReason === 'multipleWorkspaces' && (
+                <AppTooltip
+                  anchorSelect={`#${CSS.escape(tooltipId)}`}
+                  content={t`Email cannot be changed when you belong to multiple workspaces`}
+                  place="top"
+                />
+              )}
             </StyledActionButtonContainer>
           </StyledActionWrapper>
         )}
