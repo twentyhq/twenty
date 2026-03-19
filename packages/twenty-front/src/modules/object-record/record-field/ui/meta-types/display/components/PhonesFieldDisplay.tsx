@@ -1,4 +1,3 @@
-import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { usePhonesFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesFieldDisplay';
 import { PhonesDisplay } from '@/ui/field/display/components/PhonesDisplay';
 import { useLingui } from '@lingui/react/macro';
@@ -9,7 +8,6 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 export const PhonesFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = usePhonesFieldDisplay();
   const { copyToClipboard } = useCopyToClipboard();
-  const { isFocused } = useFieldFocus();
 
   const { t } = useLingui();
 
@@ -28,7 +26,6 @@ export const PhonesFieldDisplay = () => {
   return (
     <PhonesDisplay
       value={fieldValue}
-      isFocused={isFocused}
       onPhoneNumberClick={handleClick}
     />
   );
