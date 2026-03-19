@@ -10,9 +10,7 @@ import {
 } from 'src/engine/subscriptions/event-stream.exception';
 
 @Catch(EventStreamException)
-export class WorkspaceEventEmitterExceptionFilter
-  implements GqlExceptionFilter
-{
+export class EventStreamExceptionFilter implements GqlExceptionFilter {
   catch(exception: EventStreamException) {
     switch (exception.code) {
       case EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS:
