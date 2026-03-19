@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -17,6 +18,7 @@ export class WorkspaceMemberPreQueryHookService {
   constructor(
     private readonly permissionsService: PermissionsService,
     private readonly onboardingService: OnboardingService,
+    private readonly userService: UserService,
   ) {}
 
   async validateWorkspaceMemberUpdatePermissionOrThrow({
@@ -89,6 +91,8 @@ export class WorkspaceMemberPreQueryHookService {
     if (!isDefined(firstName) && !isDefined(lastName)) {
       return;
     }
+
+    await this.userService.updateUserNames(userId, { firstName, lastName });
 
     await this.onboardingService.setOnboardingCreateProfilePending({
       userId,

@@ -360,6 +360,26 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     return updatedUser;
   }
 
+  async updateUserNames(
+    userId: string,
+    {
+      firstName,
+      lastName,
+    }: { firstName?: string; lastName?: string },
+  ) {
+    const user = await this.findUserByIdOrThrow(userId);
+
+    if (isDefined(firstName)) {
+      user.firstName = firstName;
+    }
+
+    if (isDefined(lastName)) {
+      user.lastName = lastName;
+    }
+
+    await this.userRepository.save(user);
+  }
+
   async updateUserEmail({
     user,
     workspace,
