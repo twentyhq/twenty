@@ -406,24 +406,28 @@ export class DataArgProcessorService {
         continue;
       }
 
-      const processedValue = await this.processField(
-        whereFieldMetadata,
-        whereKey,
-        whereValue,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      );
-
-      // Preserve only the original keys to avoid adding extra null fields
-      // that would change WHERE clause semantics
-      if (isDefinedObject(whereValue) && isDefinedObject(processedValue)) {
-        const originalKeys = new Set(Object.keys(whereValue));
-
-        processedWhere[whereKey] = Object.fromEntries(
-          Object.entries(processedValue).filter(([k]) => originalKeys.has(k)),
+      try {
+        const processedValue = await this.processField(
+          whereFieldMetadata,
+          whereKey,
+          whereValue,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
         );
-      } else {
-        processedWhere[whereKey] = processedValue;
+
+        // Only keep original keys — processField may add null subfields that alter WHERE semantics
+        if (isDefinedObject(whereValue) && isDefinedObject(processedValue)) {
+          const originalKeys = new Set(Object.keys(whereValue));
+
+          processedWhere[whereKey] = Object.fromEntries(
+            Object.entries(processedValue).filter(([k]) => originalKeys.has(k)),
+          );
+        } else {
+          processedWhere[whereKey] = processedValue;
+        }
+      } catch {
+        // Skip validation errors — where values are matched against existing data, not created
+        processedWhere[whereKey] = whereValue;
       }
     }
 
