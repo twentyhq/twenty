@@ -258,6 +258,11 @@ describe('DataArgProcessorService', () => {
                 authContext: createMockAuthContext(),
                 flatObjectMetadata,
                 flatFieldMetadataMaps,
+                flatObjectMetadataMaps: {
+                  byUniversalIdentifier: {},
+                  universalIdentifierById: {},
+                  universalIdentifiersByApplicationId: {},
+                },
               }),
             ).rejects.toThrowErrorMatchingSnapshot();
           });
@@ -295,6 +300,11 @@ describe('DataArgProcessorService', () => {
               authContext: createMockAuthContext(),
               flatObjectMetadata,
               flatFieldMetadataMaps,
+              flatObjectMetadataMaps: {
+                byUniversalIdentifier: {},
+                universalIdentifierById: {},
+                universalIdentifiersByApplicationId: {},
+              },
             });
 
             expect(result).toBeDefined();
