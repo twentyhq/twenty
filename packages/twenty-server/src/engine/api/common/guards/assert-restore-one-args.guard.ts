@@ -9,6 +9,7 @@ import {
   type CommonInput,
   type RestoreOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { isValidUuid } from 'twenty-shared/utils';
 
 export function assertRestoreOneArgs(
   args: unknown,
@@ -35,9 +36,9 @@ export function assertRestoreOneArgs(
     }
   }
 
-  if (!('id' in args) || !isString(args.id)) {
+  if (!('id' in args) || !isString(args.id) || !isValidUuid(args.id)) {
     throw new CommonQueryRunnerException(
-      'Missing required argument: "id" (string)',
+      'Missing required argument: "id" (UUID)',
       CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );

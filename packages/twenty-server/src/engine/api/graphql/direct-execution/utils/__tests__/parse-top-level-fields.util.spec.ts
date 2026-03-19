@@ -47,7 +47,7 @@ describe('parseTopLevelFields', () => {
     expect(fields[0].name.value).toBe('findManyPeople');
   });
 
-  it('should return the first operation when operationName is undefined', () => {
+  it('should throw when multiple operations exist and operationName is undefined', () => {
     const query = `
       query First {
         findManyCompanies { id }
@@ -57,10 +57,9 @@ describe('parseTopLevelFields', () => {
       }
     `;
 
-    const fields = parseTopLevelFields(parse(query), undefined);
-
-    expect(fields).toHaveLength(1);
-    expect(fields[0].name.value).toBe('findManyCompanies');
+    expect(() => parseTopLevelFields(parse(query), undefined)).toThrow(
+      'Must provide operation name when document contains multiple operations.',
+    );
   });
 
   it('should return an empty array when no operation matches', () => {

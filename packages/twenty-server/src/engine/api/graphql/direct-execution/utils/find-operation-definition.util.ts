@@ -1,4 +1,9 @@
-import { type DocumentNode, type OperationDefinitionNode, Kind } from 'graphql';
+import {
+  type DocumentNode,
+  type OperationDefinitionNode,
+  GraphQLError,
+  Kind,
+} from 'graphql';
 
 export const findOperationDefinition = (
   document: DocumentNode,
@@ -12,6 +17,12 @@ export const findOperationDefinition = (
   if (operationName) {
     return operations.find(
       (operation) => operation.name?.value === operationName,
+    );
+  }
+
+  if (operations.length > 1) {
+    throw new GraphQLError(
+      'Must provide operation name when document contains multiple operations.',
     );
   }
 

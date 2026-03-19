@@ -1,5 +1,5 @@
 import { type Request } from 'express';
-import { parse } from 'graphql';
+import { DocumentNode, parse } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -48,9 +48,17 @@ export function useDirectExecution(
       const queryString = req.body.query as string;
       const operationName = req.body.operationName as string | undefined;
 
-      const document = parse(queryString);
+      let document: DocumentNode;
+      try {
+        document = parse(queryString);
+      } catch {
+        return;
+      }
 
-      if (!findOperationDefinition(document, operationName)) {
+      if (
+        !findOperationDefinition(document, operationName) ||
+        isSubscriptionOperation(document, operationName)
+      ) {
         return;
       }
 
@@ -63,10 +71,6 @@ export function useDirectExecution(
         )
       ) {
         req.skipWorkspaceSchemaCreation = true;
-      }
-
-      if (isSubscriptionOperation(document, operationName)) {
-        return;
       }
 
       if (

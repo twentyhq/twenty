@@ -13,15 +13,15 @@ describe('findOperationDefinition', () => {
     expect(result?.operation).toBe('query');
   });
 
-  it('should return the first operation when multiple exist and no operationName is given', () => {
+  it('should throw when multiple operations exist and no operationName is given', () => {
     const document = parse(`
       query First { findManyCompanies { id } }
       query Second { findManyPeople { id } }
     `);
 
-    const result = findOperationDefinition(document, undefined);
-
-    expect(result?.name?.value).toBe('First');
+    expect(() => findOperationDefinition(document, undefined)).toThrow(
+      'Must provide operation name when document contains multiple operations.',
+    );
   });
 
   it('should return the named operation when operationName matches', () => {

@@ -253,7 +253,7 @@ export class DirectExecutionService {
       const name = field.name.value;
 
       if (seen.has(name)) {
-        throw new UserInputError(`Duplicate root resolver: "${name}"`).toJSON();
+        throw new UserInputError(`Duplicate root resolver: "${name}"`);
       }
 
       seen.add(name);
