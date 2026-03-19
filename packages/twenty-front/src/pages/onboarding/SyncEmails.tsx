@@ -19,10 +19,10 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
-import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { AppPath as _AppPath } from 'twenty-shared/types';
+import { AppPath, ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApple, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -109,7 +109,6 @@ export const SyncEmails = () => {
     isImapSmtpCaldavEnabledState,
   );
 
-  const navigate = useNavigate();
 
   const isGoogleProviderEnabled =
     isGoogleMessagingEnabled || isGoogleCalendarEnabled;
@@ -157,12 +156,13 @@ export const SyncEmails = () => {
           />
         )}
         {!userAuthenticatedWithSSO && isImapSmtpCaldavEnabled && (
-          <MainButton
-            title={t`Sync with Apple`}
-            onClick={() => navigate('/settings/accounts/new-apple-mail-connection')}
-            width={200}
-            Icon={() => <IconApple size={theme.icon.size.sm} />}
-          />
+          <Link to={getSettingsPath(SettingsPath.NewAppleMailConnection)} style={{ textDecoration: 'none' }}>
+            <MainButton
+              title={t`Sync with Apple`}
+              width={200}
+              Icon={() => <IconApple size={theme.icon.size.sm} />}
+            />
+          </Link>
         )}
         {!isMicrosoftProviderEnabled && !isGoogleProviderEnabled && !isImapSmtpCaldavEnabled && (
           <MainButton
