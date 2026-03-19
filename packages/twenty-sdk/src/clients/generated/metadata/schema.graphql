@@ -2205,7 +2205,7 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
-type CalendarChannelDTO {
+type CalendarChannel {
   id: UUID!
   handle: String!
   syncStatus: CalendarChannelSyncStatus!
@@ -2254,7 +2254,7 @@ enum CalendarChannelContactAutoCreationPolicy {
   NONE
 }
 
-type ConnectedAccountDTO {
+type ConnectedAccount {
   id: UUID!
   handle: String!
   provider: String!
@@ -2264,15 +2264,15 @@ type ConnectedAccountDTO {
   authFailedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
-  connectionParameters: String
+  connectionParameters: JSON
   lastSignedInAt: DateTime
-  oidcTokenClaims: String
+  oidcTokenClaims: JSON
   userWorkspaceId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type MessageChannelDTO {
+type MessageChannel {
   id: UUID!
   visibility: MessageChannelVisibility!
   handle: String!
@@ -2343,7 +2343,7 @@ enum MessageChannelSyncStage {
   FAILED
 }
 
-type MessageFolderDTO {
+type MessageFolder {
   id: UUID!
   name: String
   syncCursor: String
@@ -3168,14 +3168,14 @@ type Query {
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
-  messageFolders(messageChannelId: UUID): [MessageFolderDTO!]!
-  messageFolder(id: UUID!): MessageFolderDTO
-  calendarChannels(connectedAccountId: UUID): [CalendarChannelDTO!]!
-  calendarChannel(id: UUID!): CalendarChannelDTO
-  messageChannels(connectedAccountId: UUID): [MessageChannelDTO!]!
-  messageChannel(id: UUID!): MessageChannelDTO
-  connectedAccounts: [ConnectedAccountDTO!]!
-  connectedAccount(id: UUID!): ConnectedAccountDTO
+  messageFolders(messageChannelId: UUID): [MessageFolder!]!
+  messageFolder(id: UUID!): MessageFolder
+  calendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
+  calendarChannel(id: UUID!): CalendarChannel
+  messageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  messageChannel(id: UUID!): MessageChannel
+  connectedAccounts: [ConnectedAccount!]!
+  connectedAccount(id: UUID!): ConnectedAccount
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
@@ -3473,18 +3473,18 @@ type Mutation {
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
-  createMessageFolder(input: CreateMessageFolderInput!): MessageFolderDTO!
-  updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolderDTO!
-  deleteMessageFolder(id: UUID!): MessageFolderDTO!
-  createCalendarChannel(input: CreateCalendarChannelInput!): CalendarChannelDTO!
-  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannelDTO!
-  deleteCalendarChannel(id: UUID!): CalendarChannelDTO!
-  createMessageChannel(input: CreateMessageChannelInput!): MessageChannelDTO!
-  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannelDTO!
-  deleteMessageChannel(id: UUID!): MessageChannelDTO!
-  createConnectedAccount(input: CreateConnectedAccountInput!): ConnectedAccountDTO!
-  updateConnectedAccount(input: UpdateConnectedAccountInput!): ConnectedAccountDTO!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
+  createMessageFolder(input: CreateMessageFolderInput!): MessageFolder!
+  updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
+  deleteMessageFolder(id: UUID!): MessageFolder!
+  createCalendarChannel(input: CreateCalendarChannelInput!): CalendarChannel!
+  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
+  deleteCalendarChannel(id: UUID!): CalendarChannel!
+  createMessageChannel(input: CreateMessageChannelInput!): MessageChannel!
+  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  deleteMessageChannel(id: UUID!): MessageChannel!
+  createConnectedAccount(input: CreateConnectedAccountInput!): ConnectedAccount!
+  updateConnectedAccount(input: UpdateConnectedAccountInput!): ConnectedAccount!
+  deleteConnectedAccount(id: UUID!): ConnectedAccount!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
@@ -4384,7 +4384,8 @@ input EditSsoInput {
 input CreateMessageFolderInput {
   id: UUID
   name: String
-  isSentFolder: Boolean
+  isSentFolder: Boolean!
+  isSynced: Boolean!
   externalId: String
   pendingSyncAction: MessageFolderPendingSyncAction!
   messageChannelId: UUID!
@@ -4409,9 +4410,9 @@ input CreateCalendarChannelInput {
   visibility: CalendarChannelVisibility!
   syncStage: CalendarChannelSyncStage!
   connectedAccountId: UUID!
-  isContactAutoCreationEnabled: Boolean
-  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
-  isSyncEnabled: Boolean
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
+  isSyncEnabled: Boolean!
 }
 
 input UpdateCalendarChannelInput {
@@ -4433,10 +4434,13 @@ input CreateMessageChannelInput {
   type: MessageChannelType!
   syncStage: MessageChannelSyncStage!
   connectedAccountId: UUID!
-  isContactAutoCreationEnabled: Boolean
-  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
-  messageFolderImportPolicy: MessageFolderImportPolicy
-  isSyncEnabled: Boolean
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
+  messageFolderImportPolicy: MessageFolderImportPolicy!
+  excludeNonProfessionalEmails: Boolean!
+  excludeGroupEmails: Boolean!
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
+  isSyncEnabled: Boolean!
 }
 
 input UpdateMessageChannelInput {

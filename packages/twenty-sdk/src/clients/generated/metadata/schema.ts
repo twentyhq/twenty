@@ -1877,7 +1877,7 @@ export interface AgentTurn {
     __typename: 'AgentTurn'
 }
 
-export interface CalendarChannelDTO {
+export interface CalendarChannel {
     id: Scalars['UUID']
     handle: Scalars['String']
     syncStatus: CalendarChannelSyncStatus
@@ -1893,7 +1893,7 @@ export interface CalendarChannelDTO {
     connectedAccountId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    __typename: 'CalendarChannelDTO'
+    __typename: 'CalendarChannel'
 }
 
 export type CalendarChannelSyncStatus = 'NOT_SYNCED' | 'ONGOING' | 'ACTIVE' | 'FAILED_INSUFFICIENT_PERMISSIONS' | 'FAILED_UNKNOWN'
@@ -1904,7 +1904,7 @@ export type CalendarChannelVisibility = 'METADATA' | 'SHARE_EVERYTHING'
 
 export type CalendarChannelContactAutoCreationPolicy = 'AS_PARTICIPANT_AND_ORGANIZER' | 'AS_PARTICIPANT' | 'AS_ORGANIZER' | 'NONE'
 
-export interface ConnectedAccountDTO {
+export interface ConnectedAccount {
     id: Scalars['UUID']
     handle: Scalars['String']
     provider: Scalars['String']
@@ -1914,16 +1914,16 @@ export interface ConnectedAccountDTO {
     authFailedAt?: Scalars['DateTime']
     handleAliases?: Scalars['String'][]
     scopes?: Scalars['String'][]
-    connectionParameters?: Scalars['String']
+    connectionParameters?: Scalars['JSON']
     lastSignedInAt?: Scalars['DateTime']
-    oidcTokenClaims?: Scalars['String']
+    oidcTokenClaims?: Scalars['JSON']
     userWorkspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    __typename: 'ConnectedAccountDTO'
+    __typename: 'ConnectedAccount'
 }
 
-export interface MessageChannelDTO {
+export interface MessageChannel {
     id: Scalars['UUID']
     visibility: MessageChannelVisibility
     handle: Scalars['String']
@@ -1945,7 +1945,7 @@ export interface MessageChannelDTO {
     connectedAccountId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    __typename: 'MessageChannelDTO'
+    __typename: 'MessageChannel'
 }
 
 export type MessageChannelVisibility = 'METADATA' | 'SUBJECT' | 'SHARE_EVERYTHING'
@@ -1962,7 +1962,7 @@ export type MessageChannelSyncStatus = 'NOT_SYNCED' | 'ONGOING' | 'ACTIVE' | 'FA
 
 export type MessageChannelSyncStage = 'PENDING_CONFIGURATION' | 'MESSAGE_LIST_FETCH_PENDING' | 'MESSAGE_LIST_FETCH_SCHEDULED' | 'MESSAGE_LIST_FETCH_ONGOING' | 'MESSAGES_IMPORT_PENDING' | 'MESSAGES_IMPORT_SCHEDULED' | 'MESSAGES_IMPORT_ONGOING' | 'FAILED'
 
-export interface MessageFolderDTO {
+export interface MessageFolder {
     id: Scalars['UUID']
     name?: Scalars['String']
     syncCursor?: Scalars['String']
@@ -1974,7 +1974,7 @@ export interface MessageFolderDTO {
     messageChannelId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    __typename: 'MessageFolderDTO'
+    __typename: 'MessageFolder'
 }
 
 export type MessageFolderPendingSyncAction = 'FOLDER_DELETION' | 'NONE'
@@ -2724,14 +2724,14 @@ export interface Query {
     findWorkspaceFromInviteHash: Workspace
     validatePasswordResetToken: ValidatePasswordResetToken
     getSSOIdentityProviders: FindAvailableSSOIDP[]
-    messageFolders: MessageFolderDTO[]
-    messageFolder?: MessageFolderDTO
-    calendarChannels: CalendarChannelDTO[]
-    calendarChannel?: CalendarChannelDTO
-    messageChannels: MessageChannelDTO[]
-    messageChannel?: MessageChannelDTO
-    connectedAccounts: ConnectedAccountDTO[]
-    connectedAccount?: ConnectedAccountDTO
+    messageFolders: MessageFolder[]
+    messageFolder?: MessageFolder
+    calendarChannels: CalendarChannel[]
+    calendarChannel?: CalendarChannel
+    messageChannels: MessageChannel[]
+    messageChannel?: MessageChannel
+    connectedAccounts: ConnectedAccount[]
+    connectedAccount?: ConnectedAccount
     webhooks: Webhook[]
     webhook?: Webhook
     minimalMetadata: MinimalMetadata
@@ -2928,18 +2928,18 @@ export interface Mutation {
     createSAMLIdentityProvider: SetupSso
     deleteSSOIdentityProvider: DeleteSso
     editSSOIdentityProvider: EditSso
-    createMessageFolder: MessageFolderDTO
-    updateMessageFolder: MessageFolderDTO
-    deleteMessageFolder: MessageFolderDTO
-    createCalendarChannel: CalendarChannelDTO
-    updateCalendarChannel: CalendarChannelDTO
-    deleteCalendarChannel: CalendarChannelDTO
-    createMessageChannel: MessageChannelDTO
-    updateMessageChannel: MessageChannelDTO
-    deleteMessageChannel: MessageChannelDTO
-    createConnectedAccount: ConnectedAccountDTO
-    updateConnectedAccount: ConnectedAccountDTO
-    deleteConnectedAccount: ConnectedAccountDTO
+    createMessageFolder: MessageFolder
+    updateMessageFolder: MessageFolder
+    deleteMessageFolder: MessageFolder
+    createCalendarChannel: CalendarChannel
+    updateCalendarChannel: CalendarChannel
+    deleteCalendarChannel: CalendarChannel
+    createMessageChannel: MessageChannel
+    updateMessageChannel: MessageChannel
+    deleteMessageChannel: MessageChannel
+    createConnectedAccount: ConnectedAccount
+    updateConnectedAccount: ConnectedAccount
+    deleteConnectedAccount: ConnectedAccount
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
@@ -4985,7 +4985,7 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CalendarChannelDTOGenqlSelection{
+export interface CalendarChannelGenqlSelection{
     id?: boolean | number
     handle?: boolean | number
     syncStatus?: boolean | number
@@ -5005,7 +5005,7 @@ export interface CalendarChannelDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ConnectedAccountDTOGenqlSelection{
+export interface ConnectedAccountGenqlSelection{
     id?: boolean | number
     handle?: boolean | number
     provider?: boolean | number
@@ -5025,7 +5025,7 @@ export interface ConnectedAccountDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface MessageChannelDTOGenqlSelection{
+export interface MessageChannelGenqlSelection{
     id?: boolean | number
     visibility?: boolean | number
     handle?: boolean | number
@@ -5051,7 +5051,7 @@ export interface MessageChannelDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface MessageFolderDTOGenqlSelection{
+export interface MessageFolderGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     syncCursor?: boolean | number
@@ -5874,14 +5874,14 @@ export interface QueryGenqlSelection{
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
-    messageFolders?: (MessageFolderDTOGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
-    messageFolder?: (MessageFolderDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
-    calendarChannels?: (CalendarChannelDTOGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
-    calendarChannel?: (CalendarChannelDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
-    messageChannels?: (MessageChannelDTOGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
-    messageChannel?: (MessageChannelDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
-    connectedAccounts?: ConnectedAccountDTOGenqlSelection
-    connectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    messageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
+    messageFolder?: (MessageFolderGenqlSelection & { __args: {id: Scalars['UUID']} })
+    calendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    calendarChannel?: (CalendarChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    messageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    messageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    connectedAccounts?: ConnectedAccountGenqlSelection
+    connectedAccount?: (ConnectedAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     minimalMetadata?: MinimalMetadataGenqlSelection
@@ -6103,18 +6103,18 @@ export interface MutationGenqlSelection{
     createSAMLIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupSAMLSsoInput} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
     editSSOIdentityProvider?: (EditSsoGenqlSelection & { __args: {input: EditSsoInput} })
-    createMessageFolder?: (MessageFolderDTOGenqlSelection & { __args: {input: CreateMessageFolderInput} })
-    updateMessageFolder?: (MessageFolderDTOGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
-    deleteMessageFolder?: (MessageFolderDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createCalendarChannel?: (CalendarChannelDTOGenqlSelection & { __args: {input: CreateCalendarChannelInput} })
-    updateCalendarChannel?: (CalendarChannelDTOGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
-    deleteCalendarChannel?: (CalendarChannelDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createMessageChannel?: (MessageChannelDTOGenqlSelection & { __args: {input: CreateMessageChannelInput} })
-    updateMessageChannel?: (MessageChannelDTOGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
-    deleteMessageChannel?: (MessageChannelDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
-    createConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {input: CreateConnectedAccountInput} })
-    updateConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {input: UpdateConnectedAccountInput} })
-    deleteConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: CreateMessageFolderInput} })
+    updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
+    deleteMessageFolder?: (MessageFolderGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: CreateCalendarChannelInput} })
+    updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
+    deleteCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateMessageChannelInput} })
+    updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
+    deleteMessageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createConnectedAccount?: (ConnectedAccountGenqlSelection & { __args: {input: CreateConnectedAccountInput} })
+    updateConnectedAccount?: (ConnectedAccountGenqlSelection & { __args: {input: UpdateConnectedAccountInput} })
+    deleteConnectedAccount?: (ConnectedAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6439,19 +6439,19 @@ export interface DeleteSsoInput {identityProviderId: Scalars['UUID']}
 
 export interface EditSsoInput {id: Scalars['UUID'],status: SSOIdentityProviderStatus}
 
-export interface CreateMessageFolderInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),isSentFolder?: (Scalars['Boolean'] | null),externalId?: (Scalars['String'] | null),pendingSyncAction: MessageFolderPendingSyncAction,messageChannelId: Scalars['UUID'],parentFolderId?: (Scalars['UUID'] | null)}
+export interface CreateMessageFolderInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),isSentFolder: Scalars['Boolean'],isSynced: Scalars['Boolean'],externalId?: (Scalars['String'] | null),pendingSyncAction: MessageFolderPendingSyncAction,messageChannelId: Scalars['UUID'],parentFolderId?: (Scalars['UUID'] | null)}
 
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
 export interface UpdateMessageFolderInputUpdates {name?: (Scalars['String'] | null),syncCursor?: (Scalars['String'] | null),isSynced?: (Scalars['Boolean'] | null),pendingSyncAction?: (MessageFolderPendingSyncAction | null)}
 
-export interface CreateCalendarChannelInput {id?: (Scalars['UUID'] | null),handle: Scalars['String'],visibility: CalendarChannelVisibility,syncStage: CalendarChannelSyncStage,connectedAccountId: Scalars['UUID'],isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
+export interface CreateCalendarChannelInput {id?: (Scalars['UUID'] | null),handle: Scalars['String'],visibility: CalendarChannelVisibility,syncStage: CalendarChannelSyncStage,connectedAccountId: Scalars['UUID'],isContactAutoCreationEnabled: Scalars['Boolean'],contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy,isSyncEnabled: Scalars['Boolean']}
 
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 
 export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
 
-export interface CreateMessageChannelInput {id?: (Scalars['UUID'] | null),handle: Scalars['String'],visibility: MessageChannelVisibility,type: MessageChannelType,syncStage: MessageChannelSyncStage,connectedAccountId: Scalars['UUID'],isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
+export interface CreateMessageChannelInput {id?: (Scalars['UUID'] | null),handle: Scalars['String'],visibility: MessageChannelVisibility,type: MessageChannelType,syncStage: MessageChannelSyncStage,connectedAccountId: Scalars['UUID'],isContactAutoCreationEnabled: Scalars['Boolean'],contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy,messageFolderImportPolicy: MessageFolderImportPolicy,excludeNonProfessionalEmails: Scalars['Boolean'],excludeGroupEmails: Scalars['Boolean'],pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction,isSyncEnabled: Scalars['Boolean']}
 
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 
@@ -7895,34 +7895,34 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const CalendarChannelDTO_possibleTypes: string[] = ['CalendarChannelDTO']
-    export const isCalendarChannelDTO = (obj?: { __typename?: any } | null): obj is CalendarChannelDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannelDTO"')
-      return CalendarChannelDTO_possibleTypes.includes(obj.__typename)
+    const CalendarChannel_possibleTypes: string[] = ['CalendarChannel']
+    export const isCalendarChannel = (obj?: { __typename?: any } | null): obj is CalendarChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannel"')
+      return CalendarChannel_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const ConnectedAccountDTO_possibleTypes: string[] = ['ConnectedAccountDTO']
-    export const isConnectedAccountDTO = (obj?: { __typename?: any } | null): obj is ConnectedAccountDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountDTO"')
-      return ConnectedAccountDTO_possibleTypes.includes(obj.__typename)
+    const ConnectedAccount_possibleTypes: string[] = ['ConnectedAccount']
+    export const isConnectedAccount = (obj?: { __typename?: any } | null): obj is ConnectedAccount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccount"')
+      return ConnectedAccount_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const MessageChannelDTO_possibleTypes: string[] = ['MessageChannelDTO']
-    export const isMessageChannelDTO = (obj?: { __typename?: any } | null): obj is MessageChannelDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannelDTO"')
-      return MessageChannelDTO_possibleTypes.includes(obj.__typename)
+    const MessageChannel_possibleTypes: string[] = ['MessageChannel']
+    export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
+      return MessageChannel_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const MessageFolderDTO_possibleTypes: string[] = ['MessageFolderDTO']
-    export const isMessageFolderDTO = (obj?: { __typename?: any } | null): obj is MessageFolderDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageFolderDTO"')
-      return MessageFolderDTO_possibleTypes.includes(obj.__typename)
+    const MessageFolder_possibleTypes: string[] = ['MessageFolder']
+    export const isMessageFolder = (obj?: { __typename?: any } | null): obj is MessageFolder => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageFolder"')
+      return MessageFolder_possibleTypes.includes(obj.__typename)
     }
     
 

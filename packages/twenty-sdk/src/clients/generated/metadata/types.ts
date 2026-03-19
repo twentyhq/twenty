@@ -4321,7 +4321,7 @@ export default {
                 1
             ]
         },
-        "CalendarChannelDTO": {
+        "CalendarChannel": {
             "id": [
                 3
             ],
@@ -4375,7 +4375,7 @@ export default {
         "CalendarChannelSyncStage": {},
         "CalendarChannelVisibility": {},
         "CalendarChannelContactAutoCreationPolicy": {},
-        "ConnectedAccountDTO": {
+        "ConnectedAccount": {
             "id": [
                 3
             ],
@@ -4404,13 +4404,13 @@ export default {
                 1
             ],
             "connectionParameters": [
-                1
+                15
             ],
             "lastSignedInAt": [
                 4
             ],
             "oidcTokenClaims": [
-                1
+                15
             ],
             "userWorkspaceId": [
                 3
@@ -4425,7 +4425,7 @@ export default {
                 1
             ]
         },
-        "MessageChannelDTO": {
+        "MessageChannel": {
             "id": [
                 3
             ],
@@ -4500,7 +4500,7 @@ export default {
         "MessageChannelPendingGroupEmailsAction": {},
         "MessageChannelSyncStatus": {},
         "MessageChannelSyncStage": {},
-        "MessageFolderDTO": {
+        "MessageFolder": {
             "id": [
                 3
             ],
@@ -10993,6 +10993,9 @@ export default {
             "isSentFolder": [
                 6
             ],
+            "isSynced": [
+                6
+            ],
             "externalId": [
                 1
             ],
@@ -11121,6 +11124,15 @@ export default {
             ],
             "messageFolderImportPolicy": [
                 245
+            ],
+            "excludeNonProfessionalEmails": [
+                6
+            ],
+            "excludeGroupEmails": [
+                6
+            ],
+            "pendingGroupEmailsAction": [
+                246
             ],
             "isSyncEnabled": [
                 6
