@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -18,6 +18,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @Injectable()
 @WorkspaceCache('flatRoleTargetMaps')
 export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvider<FlatRoleTargetMaps> {
+  private readonly logger = new Logger(
+    WorkspaceFlatRoleTargetMapCacheService.name,
+  );
+
   constructor(
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
@@ -55,6 +59,23 @@ export class WorkspaceFlatRoleTargetMapCacheService extends WorkspaceCacheProvid
     const flatRoleTargetMaps = createEmptyFlatEntityMaps();
 
     for (const roleTargetEntity of roleTargets) {
+      const roleUniversalIdentifier = roleIdToUniversalIdentifierMap.get(
+        roleTargetEntity.roleId,
+      );
+      const applicationUniversalIdentifier =
+        applicationIdToUniversalIdentifierMap.get(
+          roleTargetEntity.applicationId,
+        );
+
+      if (!roleUniversalIdentifier || !applicationUniversalIdentifier) {
+        this.logger.warn(
+          `Skipping roleTarget ${roleTargetEntity.id} in workspace ${workspaceId}: ` +
+            `role ${roleTargetEntity.roleId} or application ${roleTargetEntity.applicationId} ` +
+            `has missing universalIdentifier (orphaned data from incomplete upgrade)`,
+        );
+        continue;
+      }
+
       const flatRoleTarget = fromRoleTargetEntityToFlatRoleTarget({
         entity: roleTargetEntity,
         applicationIdToUniversalIdentifierMap,
