@@ -21,19 +21,51 @@ Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi 
 ## Ön Gereksinimler
 
 * Node.js 24+ ve Yarn 4
-* Bir Twenty çalışma alanı ve bir API anahtarı (https://app.twenty.com/settings/api-webhooks adresinde oluşturun)
+* Docker (yerel Twenty geliştirme sunucusu için)
 
 ## Başlarken
 
-Resmi scaffolder aracını kullanarak yeni bir uygulama oluşturun, ardından kimlik doğrulaması yapıp geliştirmeye başlayın:
+Resmi iskelet oluşturucusunu kullanarak yeni bir uygulama oluşturun. Sizin için otomatik olarak yerel bir Twenty örneğini başlatabilir:
 
 ```bash filename="Terminal"
-# Yeni bir uygulamanın iskeletini oluşturun (varsayılan olarak tüm örnekleri içerir)
+# Yeni bir uygulamanın iskeletini oluşturun — CLI yerel bir Twenty sunucusunu başlatmayı önerecektir
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# Geliştirme modunu başlatın: yerel değişiklikleri otomatik olarak çalışma alanınızla senkronize eder
-yarn twenty app:dev
+# Geliştirme modunu başlatın: yerel değişiklikleri çalışma alanınızla otomatik olarak senkronize eder
+yarn twenty dev
+```
+
+### Yerel Sunucu Yönetimi
+
+SDK, yerel bir Twenty geliştirme sunucusunu yönetmek için komutlar içerir (PostgreSQL, Redis, sunucu ve worker içeren hepsi bir arada Docker imajı):
+
+```bash filename="Terminal"
+# Yerel sunucuyu başlatın (gerekirse imajı indirir)
+yarn twenty server start
+
+# Sunucu durumunu kontrol edin
+yarn twenty server status
+
+# Sunucu günlüklerini akış olarak görüntüleyin
+yarn twenty server logs
+
+# Sunucuyu durdurun
+yarn twenty server stop
+
+# Tüm verileri sıfırlayın ve temiz bir başlangıç yapın
+yarn twenty server reset
+```
+
+Yerel sunucu, bir çalışma alanı ve kullanıcıyla (`tim@apple.dev` / `tim@apple.dev`) önceden yapılandırılmış olarak gelir; böylece herhangi bir manuel kurulum gerektirmeden hemen geliştirmeye başlayabilirsiniz.
+
+### Kimlik Doğrulama
+
+Uygulamanızı OAuth kullanarak yerel sunucuya bağlayın:
+
+```bash filename="Terminal"
+# Authenticate via OAuth (opens browser)
+yarn twenty remote add --local
 ```
 
 İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
