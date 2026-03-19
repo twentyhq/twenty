@@ -1,6 +1,6 @@
 import { type IconComponent } from 'twenty-ui/display';
 
-import { MODEL_ICON_CONFIG } from '@/settings/admin-panel/ai/constants/SettingsAiModelProviders';
+import { MODEL_ICON_CONFIG } from '@/settings/admin-panel/ai/constants/ModelIconConfig';
 
 export const getModelIcon = (
   modelFamily: string | null | undefined,

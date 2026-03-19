@@ -29,12 +29,10 @@ import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type AdminAiModelItem } from '@/settings/admin-panel/ai/types/AdminAiModelItem';
-import {
-  type GetAiProvidersResult,
-  type RawAiProviderConfig,
-} from '@/settings/admin-panel/ai/types/AiProviderItem';
-import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/dataResidencyUtils';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/providerUtils';
+import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
+import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
+import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';

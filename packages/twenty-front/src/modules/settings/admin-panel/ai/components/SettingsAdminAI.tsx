@@ -14,12 +14,10 @@ import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
-import {
-  type GetAiProvidersResult,
-  parseProviderItems,
-} from '@/settings/admin-panel/ai/types/AiProviderItem';
 import { type AdminAiModelItem } from '@/settings/admin-panel/ai/types/AdminAiModelItem';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/providerUtils';
+import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
+import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
+import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

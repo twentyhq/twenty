@@ -25,7 +25,7 @@ import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
-import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/dataResidencyUtils';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
 import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 

@@ -11,7 +11,7 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
-import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/dataResidencyUtils';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
 import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 

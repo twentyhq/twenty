@@ -7,10 +7,8 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPlug, Status } from 'twenty-ui/display';
 
 import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderItem';
-import {
-  getProviderIcon,
-  getProviderTypeLabel,
-} from '@/settings/admin-panel/ai/utils/providerUtils';
+import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';
+import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 

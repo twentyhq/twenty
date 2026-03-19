@@ -1,4 +1,4 @@
-import { MODEL_ICON_CONFIG } from '@/settings/admin-panel/ai/constants/SettingsAiModelProviders';
+import { MODEL_ICON_CONFIG } from '@/settings/admin-panel/ai/constants/ModelIconConfig';
 
 export const getModelFamilyLabel = (
   modelFamily: string | null | undefined,
