@@ -8,7 +8,6 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
@@ -16,25 +15,12 @@ import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junctio
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { styled } from '@linaria/react';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: flex-start;
-  max-width: 100%;
-  overflow: hidden;
-  width: 100%;
-`;
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
-  const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -109,15 +95,7 @@ export const RelationFromManyFieldDisplay = () => {
       })
       .filter(isDefined);
 
-    if (isFocused) {
-      return (
-        <ExpandableList isChipCountDisplayed={isFocused}>
-          {chips}
-        </ExpandableList>
-      );
-    }
-
-    return <StyledContainer>{chips}</StyledContainer>;
+    return <ExpandableList>{chips}</ExpandableList>;
   }
 
   if (isJunctionRelation && isDefined(junctionConfig)) {
@@ -151,7 +129,7 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     return (
-      <ExpandableList isChipCountDisplayed={isFocused}>
+      <ExpandableList>
         {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
           <RecordChip
             key={record.id}
@@ -167,7 +145,7 @@ export const RelationFromManyFieldDisplay = () => {
 
   if (isRelationFromActivityTargets) {
     return (
-      <ExpandableList isChipCountDisplayed={isFocused}>
+      <ExpandableList>
         {activityTargetObjectRecords.filter(isDefined).map((record) => (
           <RecordChip
             key={record.targetObject.id}
@@ -181,7 +159,7 @@ export const RelationFromManyFieldDisplay = () => {
   }
 
   return (
-    <ExpandableList isChipCountDisplayed={isFocused}>
+    <ExpandableList>
       {fieldValue.filter(isDefined).map((record) => {
         const recordChipData = generateRecordChipData(record);
         return (

@@ -1,6 +1,5 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationFromManyFieldDisplay';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
@@ -11,7 +10,6 @@ import { isDefined } from 'twenty-shared/utils';
 export const MorphRelationOneToManyFieldDisplay = () => {
   const { morphValuesWithObjectNameSingular } =
     useMorphRelationFromManyFieldDisplay();
-  const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
   if (!isDefined(morphValuesWithObjectNameSingular)) {
@@ -39,7 +37,7 @@ export const MorphRelationOneToManyFieldDisplay = () => {
     );
 
   return (
-    <ExpandableList isChipCountDisplayed={isFocused}>
+    <ExpandableList>
       {flattenMorphValuesWithObjectNameSingular
         .filter(isDefined)
         .map(({ objectNameSingular, record }) => {
