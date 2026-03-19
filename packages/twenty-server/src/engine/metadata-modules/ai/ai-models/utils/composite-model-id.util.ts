@@ -12,4 +12,3 @@ export const buildCompositeModelId = (
 
   return `${provider}${COMPOSITE_SEPARATOR}${rawModelId}`;
 };
-

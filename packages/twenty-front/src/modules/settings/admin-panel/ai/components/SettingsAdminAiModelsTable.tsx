@@ -86,7 +86,8 @@ export const SettingsAdminAiModelsTable = ({
             const safeId = sanitizeIdForSelector(model.modelId);
             const isChecked = model[checkedField] === true;
             const isDisabled =
-              showDisabledState && (!model.isAvailable || model.deprecated);
+              showDisabledState &&
+              (!model.isAvailable || model.deprecated === true);
 
             return (
               <div
