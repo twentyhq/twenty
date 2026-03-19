@@ -157,10 +157,7 @@ export const WhatsAppChatContainer = () => {
   const [forwardingMessage, setForwardingMessage] = useState<WaMessage | null>(null);
   const [showFlagLead, setShowFlagLead] = useState(false);
   const [saMessage, setSaMessage] = useState<WaMessage | null>(null);
-  const [saWsComplete, setSaWsComplete] = useState<{
-    pictureId: string;
-    status: string;
-  } | null>(null);
+  const saRefreshRef = useRef<(() => void) | null>(null);
 
   const handleSelectSession = useCallback((session: WaSession) => {
     setActiveSessionName(session.name);
@@ -281,19 +278,8 @@ export const WhatsAppChatContainer = () => {
         }
 
         case 'strukturanalyse.complete': {
-          const saData = event.data as {
-            picture_id?: string;
-            status?: string;
-            conversation_id?: string;
-          };
-
-          if (saData.picture_id && saData.status) {
-            setSaWsComplete({
-              pictureId: saData.picture_id,
-              status: saData.status,
-            });
-          }
-
+          // Refresh SA results in ConversationDetails panel
+          saRefreshRef.current?.();
           break;
         }
 
@@ -602,6 +588,7 @@ export const WhatsAppChatContainer = () => {
           conversation={selectedConversation}
           onClose={() => setShowDetails(false)}
           onUpdate={handleConversationUpdate}
+          saRefreshRef={saRefreshRef}
         />
       )}
 
@@ -634,11 +621,7 @@ export const WhatsAppChatContainer = () => {
           <LazyStrukturanalyseModal
             message={saMessage}
             conversation={selectedConversation}
-            onWsComplete={saWsComplete}
-            onClose={() => {
-              setSaMessage(null);
-              setSaWsComplete(null);
-            }}
+            onClose={() => setSaMessage(null)}
           />
         </Suspense>
       )}

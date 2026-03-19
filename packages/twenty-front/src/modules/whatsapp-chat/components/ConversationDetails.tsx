@@ -985,12 +985,14 @@ type ConversationDetailsProps = {
   conversation: WaConversation;
   onClose: () => void;
   onUpdate?: (id: string, updates: Partial<WaConversation>) => void;
+  saRefreshRef?: React.MutableRefObject<(() => void) | null>;
 };
 
 export const ConversationDetails = ({
   conversation,
   onClose,
   onUpdate,
+  saRefreshRef,
 }: ConversationDetailsProps) => {
   const { bridgeFetch } = useWhatsAppBridge();
   const { contact, loading: contactLoading } = useContact(
@@ -1011,6 +1013,7 @@ export const ConversationDetails = ({
     loading: saLoading,
     sendImage: saSendImage,
     getFullResult: saGetFullResult,
+    fetchResults: saFetchResults,
   } = useStrukturanalyse(conversation.id);
   const [activeTab, setActiveTab] = useState<TabId>('sa');
   const [mopExpanded, setMopExpanded] = useState(false);
@@ -1020,6 +1023,14 @@ export const ConversationDetails = ({
   const [assignEmail, setAssignEmail] = useState(
     conversation.assignedToEmail ?? '',
   );
+
+  // Allow parent to trigger SA results refresh via ref (e.g. on WebSocket event)
+  useEffect(() => {
+    if (saRefreshRef) {
+      saRefreshRef.current = saFetchResults;
+      return () => { saRefreshRef.current = null; };
+    }
+  }, [saRefreshRef, saFetchResults]);
 
   const displayName =
     contact?.fullName ||
