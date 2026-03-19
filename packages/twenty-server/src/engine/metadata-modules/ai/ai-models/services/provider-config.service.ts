@@ -19,10 +19,12 @@ export class ProviderConfigService {
 
   getResolvedProviders(): AiProvidersConfig {
     const rawCatalog = loadDefaultAiProviders();
-    const catalog = this.suffixCatalogKeys(rawCatalog);
+    // Only resolve {{VAR}} templates in the committed catalog — never in
+    // user-supplied custom providers, to prevent config variable exfiltration.
+    const catalog = this.resolveTemplates(this.suffixCatalogKeys(rawCatalog));
     const custom = this.twentyConfigService.get('AI_CUSTOM_PROVIDERS');
 
-    return this.resolveTemplates({ ...catalog, ...custom });
+    return { ...catalog, ...custom };
   }
 
   private suffixCatalogKeys(catalog: AiProvidersConfig): AiProvidersConfig {
