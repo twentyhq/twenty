@@ -40,6 +40,7 @@ export { IconBrandMistral } from './icon/components/IconBrandMistral';
 export { IconBrandXai } from './icon/components/IconBrandXai';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
+export { IconApple } from './icon/components/IconApple';
 export { IconGoogle } from './icon/components/IconGoogle';
 export { IconGoogleCalendar } from './icon/components/IconGoogleCalendar';
 export { IconLockCustom } from './icon/components/IconLock';
