@@ -1236,107 +1236,6 @@ enum PageLayoutType {
   DASHBOARD
 }
 
-type FileWithSignedUrl {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
-  url: String!
-}
-
-type RecordIdentifier {
-  id: UUID!
-  labelIdentifier: String!
-  imageIdentifier: String
-}
-
-type NavigationMenuItem {
-  id: UUID!
-  userWorkspaceId: UUID
-  targetRecordId: UUID
-  targetObjectMetadataId: UUID
-  viewId: UUID
-  type: NavigationMenuItemType!
-  name: String
-  link: String
-  icon: String
-  color: String
-  folderId: UUID
-  position: Float!
-  applicationId: UUID
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  targetRecordIdentifier: RecordIdentifier
-}
-
-enum NavigationMenuItemType {
-  VIEW
-  FOLDER
-  LINK
-  OBJECT
-  RECORD
-}
-
-type ObjectRecordEventProperties {
-  updatedFields: [String!]
-  before: JSON
-  after: JSON
-  diff: JSON
-}
-
-type MetadataEvent {
-  type: MetadataEventAction!
-  metadataName: String!
-  recordId: String!
-  properties: ObjectRecordEventProperties!
-  updatedCollectionHash: String
-}
-
-"""Metadata Event Action"""
-enum MetadataEventAction {
-  CREATED
-  UPDATED
-  DELETED
-}
-
-type ObjectRecordEvent {
-  action: DatabaseEventAction!
-  objectNameSingular: String!
-  recordId: String!
-  userId: String
-  workspaceMemberId: String
-  properties: ObjectRecordEventProperties!
-}
-
-"""Database Event Action"""
-enum DatabaseEventAction {
-  CREATED
-  UPDATED
-  DELETED
-  DESTROYED
-  RESTORED
-  UPSERTED
-}
-
-type ObjectRecordEventWithQueryIds {
-  queryIds: [String!]!
-  objectRecordEvent: ObjectRecordEvent!
-}
-
-type EventSubscription {
-  eventStreamId: String!
-  objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
-  metadataEvents: [MetadataEvent!]!
-}
-
-type OnDbEvent {
-  action: DatabaseEventAction!
-  objectNameSingular: String!
-  eventDate: DateTime!
-  record: JSON!
-  updatedFields: [String!]
-}
-
 type Analytics {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -1523,6 +1422,14 @@ type ApprovedAccessDomain {
   createdAt: DateTime!
 }
 
+type FileWithSignedUrl {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+  url: String!
+}
+
 type WorkspaceInvitation {
   id: UUID!
   email: String!
@@ -1641,6 +1548,7 @@ enum FeatureFlagKey {
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
+  IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
 }
 
 type SSOIdentityProvider {
@@ -1957,6 +1865,91 @@ type WorkspaceInviteHashValid {
   isValid: Boolean!
 }
 
+type RecordIdentifier {
+  id: UUID!
+  labelIdentifier: String!
+  imageIdentifier: String
+}
+
+type NavigationMenuItem {
+  id: UUID!
+  userWorkspaceId: UUID
+  targetRecordId: UUID
+  targetObjectMetadataId: UUID
+  viewId: UUID
+  type: NavigationMenuItemType!
+  name: String
+  link: String
+  icon: String
+  color: String
+  folderId: UUID
+  position: Float!
+  applicationId: UUID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  targetRecordIdentifier: RecordIdentifier
+}
+
+enum NavigationMenuItemType {
+  VIEW
+  FOLDER
+  LINK
+  OBJECT
+  RECORD
+}
+
+type ObjectRecordEventProperties {
+  updatedFields: [String!]
+  before: JSON
+  after: JSON
+  diff: JSON
+}
+
+type MetadataEvent {
+  type: MetadataEventAction!
+  metadataName: String!
+  recordId: String!
+  properties: ObjectRecordEventProperties!
+  updatedCollectionHash: String
+}
+
+"""Metadata Event Action"""
+enum MetadataEventAction {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type ObjectRecordEvent {
+  action: DatabaseEventAction!
+  objectNameSingular: String!
+  recordId: String!
+  userId: String
+  workspaceMemberId: String
+  properties: ObjectRecordEventProperties!
+}
+
+"""Database Event Action"""
+enum DatabaseEventAction {
+  CREATED
+  UPDATED
+  DELETED
+  DESTROYED
+  RESTORED
+  UPSERTED
+}
+
+type ObjectRecordEventWithQueryIds {
+  queryIds: [String!]!
+  objectRecordEvent: ObjectRecordEvent!
+}
+
+type EventSubscription {
+  eventStreamId: String!
+  objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
+  metadataEvents: [MetadataEvent!]!
+}
+
 type LogicFunctionExecutionResult {
   """Execution result in JSON format"""
   data: JSON
@@ -2240,6 +2233,7 @@ enum AllMetadataName {
   commandMenuItem
   navigationMenuItem
   permissionFlag
+  objectPermission
   frontComponent
   webhook
 }
@@ -2403,7 +2397,6 @@ type ClientConfig {
   isAttachmentPreviewEnabled: Boolean!
   sentry: Sentry!
   captcha: Captcha!
-  chromeExtensionId: String
   api: ApiConfig!
   canManageFeatureFlags: Boolean!
   publicFeatureFlags: [PublicFeatureFlag!]!
@@ -2459,9 +2452,7 @@ enum ConfigVariablesGroup {
   MICROSOFT_AUTH
   EMAIL_SETTINGS
   LOGGING
-  METERING
-  EXCEPTION_HANDLER
-  OTHER
+  ADVANCED_SETTINGS
   BILLING_CONFIG
   CAPTCHA_CONFIG
   CLOUDFLARE_CONFIG
@@ -2472,7 +2463,6 @@ enum ConfigVariablesGroup {
   SUPPORT_CHAT_CONFIG
   ANALYTICS_CONFIG
   TOKENS_DURATION
-  TWO_FACTOR_AUTHENTICATION
   AWS_SES_SETTINGS
 }
 
@@ -3445,12 +3435,14 @@ input CreatePageLayoutTabInput {
   title: String!
   position: Float
   pageLayoutId: UUID!
+  layoutMode: PageLayoutTabLayoutMode = GRID
 }
 
 input UpdatePageLayoutTabInput {
   title: String
   position: Float
   icon: String
+  layoutMode: PageLayoutTabLayoutMode
 }
 
 input CreatePageLayoutInput {
@@ -3477,6 +3469,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
   title: String!
   position: Float!
   icon: String
+  layoutMode: PageLayoutTabLayoutMode = GRID
   widgets: [UpdatePageLayoutWidgetWithIdInput!]!
 }
 
@@ -4315,15 +4308,8 @@ enum FileFolder {
 }
 
 type Subscription {
-  onDbEvent(input: OnDbEventInput!): OnDbEvent!
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
-}
-
-input OnDbEventInput {
-  action: DatabaseEventAction
-  objectNameSingular: String
-  recordId: UUID
 }
 
 input LogicFunctionLogsInput {
