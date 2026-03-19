@@ -22,7 +22,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('MessageChannelDTO')
+@ObjectType('MessageChannel')
 export class MessageChannelDTO {
   @IsUUID()
   @IsNotEmpty()

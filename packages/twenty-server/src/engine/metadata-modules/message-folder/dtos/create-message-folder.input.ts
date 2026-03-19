@@ -25,9 +25,14 @@ export class CreateMessageFolderInput {
   name?: string;
 
   @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  isSentFolder?: boolean;
+  @IsNotEmpty()
+  @Field()
+  isSentFolder: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @Field()
+  isSynced: boolean;
 
   @IsString()
   @IsOptional()

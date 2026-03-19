@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
@@ -12,14 +13,14 @@ export class ConnectedAccountMetadataService {
     private readonly repository: Repository<ConnectedAccountEntity>,
   ) {}
 
-  async findAll(workspaceId: string): Promise<ConnectedAccountEntity[]> {
+  async findAll(workspaceId: string): Promise<ConnectedAccountDTO[]> {
     return this.repository.find({ where: { workspaceId } });
   }
 
   async findById(
     id: string,
     workspaceId: string,
-  ): Promise<ConnectedAccountEntity | null> {
+  ): Promise<ConnectedAccountDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
@@ -30,7 +31,7 @@ export class ConnectedAccountMetadataService {
       provider: string;
       userWorkspaceId: string;
     },
-  ): Promise<ConnectedAccountEntity> {
+  ): Promise<ConnectedAccountDTO> {
     const entity = this.repository.create(data);
 
     return this.repository.save(entity);
@@ -40,7 +41,7 @@ export class ConnectedAccountMetadataService {
     id: string,
     workspaceId: string,
     data: Partial<ConnectedAccountEntity>,
-  ): Promise<ConnectedAccountEntity> {
+  ): Promise<ConnectedAccountDTO> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -49,10 +50,7 @@ export class ConnectedAccountMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async delete(
-    id: string,
-    workspaceId: string,
-  ): Promise<ConnectedAccountEntity> {
+  async delete(id: string, workspaceId: string): Promise<ConnectedAccountDTO> {
     const entity = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });

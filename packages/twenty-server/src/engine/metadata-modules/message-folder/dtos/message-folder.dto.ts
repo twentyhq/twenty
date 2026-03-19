@@ -13,7 +13,7 @@ import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('MessageFolderDTO')
+@ObjectType('MessageFolder')
 export class MessageFolderDTO {
   @IsUUID()
   @IsNotEmpty()

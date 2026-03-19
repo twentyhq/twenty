@@ -40,15 +40,13 @@ export class MessageFolderResolver {
     messageChannelId?: string,
   ): Promise<MessageFolderDTO[]> {
     if (messageChannelId) {
-      return (await this.messageFolderMetadataService.findByMessageChannelId(
+      return this.messageFolderMetadataService.findByMessageChannelId(
         messageChannelId,
         workspace.id,
-      )) as unknown as MessageFolderDTO[];
+      );
     }
 
-    return (await this.messageFolderMetadataService.findAll(
-      workspace.id,
-    )) as unknown as MessageFolderDTO[];
+    return this.messageFolderMetadataService.findAll(workspace.id);
   }
 
   @Query(() => MessageFolderDTO, { nullable: true })
@@ -58,10 +56,7 @@ export class MessageFolderResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageFolderDTO | null> {
-    return (await this.messageFolderMetadataService.findById(
-      id,
-      workspace.id,
-    )) as unknown as MessageFolderDTO | null;
+    return this.messageFolderMetadataService.findById(id, workspace.id);
   }
 
   @Mutation(() => MessageFolderDTO)
@@ -71,10 +66,10 @@ export class MessageFolderResolver {
     @Args('input') input: CreateMessageFolderInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageFolderDTO> {
-    return (await this.messageFolderMetadataService.create({
+    return this.messageFolderMetadataService.create({
       ...input,
       workspaceId: workspace.id,
-    })) as unknown as MessageFolderDTO;
+    });
   }
 
   @Mutation(() => MessageFolderDTO)
@@ -84,11 +79,11 @@ export class MessageFolderResolver {
     @Args('input') input: UpdateMessageFolderInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageFolderDTO> {
-    return (await this.messageFolderMetadataService.update(
+    return this.messageFolderMetadataService.update(
       input.id,
       workspace.id,
       input.update,
-    )) as unknown as MessageFolderDTO;
+    );
   }
 
   @Mutation(() => MessageFolderDTO)
@@ -98,9 +93,6 @@ export class MessageFolderResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageFolderDTO> {
-    return (await this.messageFolderMetadataService.delete(
-      id,
-      workspace.id,
-    )) as unknown as MessageFolderDTO;
+    return this.messageFolderMetadataService.delete(id, workspace.id);
   }
 }

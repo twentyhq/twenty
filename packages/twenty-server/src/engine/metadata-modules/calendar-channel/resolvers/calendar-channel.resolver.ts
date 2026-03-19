@@ -40,15 +40,13 @@ export class CalendarChannelResolver {
     connectedAccountId?: string,
   ): Promise<CalendarChannelDTO[]> {
     if (connectedAccountId) {
-      return (await this.calendarChannelMetadataService.findByConnectedAccountId(
+      return this.calendarChannelMetadataService.findByConnectedAccountId(
         connectedAccountId,
         workspace.id,
-      )) as unknown as CalendarChannelDTO[];
+      );
     }
 
-    return (await this.calendarChannelMetadataService.findAll(
-      workspace.id,
-    )) as unknown as CalendarChannelDTO[];
+    return this.calendarChannelMetadataService.findAll(workspace.id);
   }
 
   @Query(() => CalendarChannelDTO, { nullable: true })
@@ -58,10 +56,7 @@ export class CalendarChannelResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CalendarChannelDTO | null> {
-    return (await this.calendarChannelMetadataService.findById(
-      id,
-      workspace.id,
-    )) as unknown as CalendarChannelDTO | null;
+    return this.calendarChannelMetadataService.findById(id, workspace.id);
   }
 
   @Mutation(() => CalendarChannelDTO)
@@ -71,10 +66,10 @@ export class CalendarChannelResolver {
     @Args('input') input: CreateCalendarChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CalendarChannelDTO> {
-    return (await this.calendarChannelMetadataService.create({
+    return this.calendarChannelMetadataService.create({
       ...input,
       workspaceId: workspace.id,
-    })) as unknown as CalendarChannelDTO;
+    });
   }
 
   @Mutation(() => CalendarChannelDTO)
@@ -84,11 +79,11 @@ export class CalendarChannelResolver {
     @Args('input') input: UpdateCalendarChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CalendarChannelDTO> {
-    return (await this.calendarChannelMetadataService.update(
+    return this.calendarChannelMetadataService.update(
       input.id,
       workspace.id,
       input.update,
-    )) as unknown as CalendarChannelDTO;
+    );
   }
 
   @Mutation(() => CalendarChannelDTO)
@@ -98,9 +93,6 @@ export class CalendarChannelResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CalendarChannelDTO> {
-    return (await this.calendarChannelMetadataService.delete(
-      id,
-      workspace.id,
-    )) as unknown as CalendarChannelDTO;
+    return this.calendarChannelMetadataService.delete(id, workspace.id);
   }
 }

@@ -40,15 +40,13 @@ export class MessageChannelResolver {
     connectedAccountId?: string,
   ): Promise<MessageChannelDTO[]> {
     if (connectedAccountId) {
-      return (await this.messageChannelMetadataService.findByConnectedAccountId(
+      return this.messageChannelMetadataService.findByConnectedAccountId(
         connectedAccountId,
         workspace.id,
-      )) as unknown as MessageChannelDTO[];
+      );
     }
 
-    return (await this.messageChannelMetadataService.findAll(
-      workspace.id,
-    )) as unknown as MessageChannelDTO[];
+    return this.messageChannelMetadataService.findAll(workspace.id);
   }
 
   @Query(() => MessageChannelDTO, { nullable: true })
@@ -58,10 +56,7 @@ export class MessageChannelResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageChannelDTO | null> {
-    return (await this.messageChannelMetadataService.findById(
-      id,
-      workspace.id,
-    )) as unknown as MessageChannelDTO | null;
+    return this.messageChannelMetadataService.findById(id, workspace.id);
   }
 
   @Mutation(() => MessageChannelDTO)
@@ -71,10 +66,10 @@ export class MessageChannelResolver {
     @Args('input') input: CreateMessageChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageChannelDTO> {
-    return (await this.messageChannelMetadataService.create({
+    return this.messageChannelMetadataService.create({
       ...input,
       workspaceId: workspace.id,
-    })) as unknown as MessageChannelDTO;
+    });
   }
 
   @Mutation(() => MessageChannelDTO)
@@ -84,11 +79,11 @@ export class MessageChannelResolver {
     @Args('input') input: UpdateMessageChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageChannelDTO> {
-    return (await this.messageChannelMetadataService.update(
+    return this.messageChannelMetadataService.update(
       input.id,
       workspace.id,
       input.update,
-    )) as unknown as MessageChannelDTO;
+    );
   }
 
   @Mutation(() => MessageChannelDTO)
@@ -98,9 +93,6 @@ export class MessageChannelResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MessageChannelDTO> {
-    return (await this.messageChannelMetadataService.delete(
-      id,
-      workspace.id,
-    )) as unknown as MessageChannelDTO;
+    return this.messageChannelMetadataService.delete(id, workspace.id);
   }
 }

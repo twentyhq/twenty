@@ -44,17 +44,17 @@ export class CreateCalendarChannelInput {
   connectedAccountId: string;
 
   @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  isContactAutoCreationEnabled?: boolean;
+  @IsNotEmpty()
+  @Field()
+  isContactAutoCreationEnabled: boolean;
 
   @IsEnum(CalendarChannelContactAutoCreationPolicy)
-  @IsOptional()
-  @Field(() => CalendarChannelContactAutoCreationPolicy, { nullable: true })
-  contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
+  @IsNotEmpty()
+  @Field(() => CalendarChannelContactAutoCreationPolicy)
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
 
   @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  isSyncEnabled?: boolean;
+  @IsNotEmpty()
+  @Field()
+  isSyncEnabled: boolean;
 }

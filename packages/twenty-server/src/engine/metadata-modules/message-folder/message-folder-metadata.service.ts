@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
+
+import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
 @Injectable()
@@ -12,14 +15,14 @@ export class MessageFolderMetadataService {
     private readonly repository: Repository<MessageFolderEntity>,
   ) {}
 
-  async findAll(workspaceId: string): Promise<MessageFolderEntity[]> {
+  async findAll(workspaceId: string): Promise<MessageFolderDTO[]> {
     return this.repository.find({ where: { workspaceId } });
   }
 
   async findByMessageChannelId(
     messageChannelId: string,
     workspaceId: string,
-  ): Promise<MessageFolderEntity[]> {
+  ): Promise<MessageFolderDTO[]> {
     return this.repository.find({
       where: { messageChannelId, workspaceId },
     });
@@ -28,7 +31,7 @@ export class MessageFolderMetadataService {
   async findById(
     id: string,
     workspaceId: string,
-  ): Promise<MessageFolderEntity | null> {
+  ): Promise<MessageFolderDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
@@ -36,9 +39,9 @@ export class MessageFolderMetadataService {
     data: Partial<MessageFolderEntity> & {
       workspaceId: string;
       messageChannelId: string;
-      pendingSyncAction: string;
+      pendingSyncAction: MessageFolderPendingSyncAction;
     },
-  ): Promise<MessageFolderEntity> {
+  ): Promise<MessageFolderDTO> {
     const entity = this.repository.create(data);
 
     return this.repository.save(entity);
@@ -48,7 +51,7 @@ export class MessageFolderMetadataService {
     id: string,
     workspaceId: string,
     data: Partial<MessageFolderEntity>,
-  ): Promise<MessageFolderEntity> {
+  ): Promise<MessageFolderDTO> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -57,7 +60,7 @@ export class MessageFolderMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async delete(id: string, workspaceId: string): Promise<MessageFolderEntity> {
+  async delete(id: string, workspaceId: string): Promise<MessageFolderDTO> {
     const entity = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });

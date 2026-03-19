@@ -3,6 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import {
+  MessageChannelSyncStage,
+  MessageChannelType,
+  MessageChannelVisibility,
+} from 'twenty-shared/types';
+
+import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 @Injectable()
@@ -12,14 +19,14 @@ export class MessageChannelMetadataService {
     private readonly repository: Repository<MessageChannelEntity>,
   ) {}
 
-  async findAll(workspaceId: string): Promise<MessageChannelEntity[]> {
+  async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
     return this.repository.find({ where: { workspaceId } });
   }
 
   async findByConnectedAccountId(
     connectedAccountId: string,
     workspaceId: string,
-  ): Promise<MessageChannelEntity[]> {
+  ): Promise<MessageChannelDTO[]> {
     return this.repository.find({
       where: { connectedAccountId, workspaceId },
     });
@@ -28,7 +35,7 @@ export class MessageChannelMetadataService {
   async findById(
     id: string,
     workspaceId: string,
-  ): Promise<MessageChannelEntity | null> {
+  ): Promise<MessageChannelDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
@@ -37,11 +44,11 @@ export class MessageChannelMetadataService {
       workspaceId: string;
       handle: string;
       connectedAccountId: string;
-      visibility: string;
-      type: string;
-      syncStage: string;
+      visibility: MessageChannelVisibility;
+      type: MessageChannelType;
+      syncStage: MessageChannelSyncStage;
     },
-  ): Promise<MessageChannelEntity> {
+  ): Promise<MessageChannelDTO> {
     const entity = this.repository.create(data);
 
     return this.repository.save(entity);
@@ -51,7 +58,7 @@ export class MessageChannelMetadataService {
     id: string,
     workspaceId: string,
     data: Partial<MessageChannelEntity>,
-  ): Promise<MessageChannelEntity> {
+  ): Promise<MessageChannelDTO> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -60,7 +67,7 @@ export class MessageChannelMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async delete(id: string, workspaceId: string): Promise<MessageChannelEntity> {
+  async delete(id: string, workspaceId: string): Promise<MessageChannelDTO> {
     const entity = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });

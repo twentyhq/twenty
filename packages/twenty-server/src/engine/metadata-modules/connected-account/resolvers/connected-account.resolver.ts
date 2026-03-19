@@ -34,9 +34,7 @@ export class ConnectedAccountResolver {
   async connectedAccounts(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedAccountDTO[]> {
-    return (await this.connectedAccountMetadataService.findAll(
-      workspace.id,
-    )) as unknown as ConnectedAccountDTO[];
+    return this.connectedAccountMetadataService.findAll(workspace.id);
   }
 
   @Query(() => ConnectedAccountDTO, { nullable: true })
@@ -46,10 +44,7 @@ export class ConnectedAccountResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedAccountDTO | null> {
-    return (await this.connectedAccountMetadataService.findById(
-      id,
-      workspace.id,
-    )) as unknown as ConnectedAccountDTO | null;
+    return this.connectedAccountMetadataService.findById(id, workspace.id);
   }
 
   @Mutation(() => ConnectedAccountDTO)
@@ -59,10 +54,10 @@ export class ConnectedAccountResolver {
     @Args('input') input: CreateConnectedAccountInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedAccountDTO> {
-    return (await this.connectedAccountMetadataService.create({
+    return this.connectedAccountMetadataService.create({
       ...input,
       workspaceId: workspace.id,
-    })) as unknown as ConnectedAccountDTO;
+    });
   }
 
   @Mutation(() => ConnectedAccountDTO)
@@ -72,11 +67,11 @@ export class ConnectedAccountResolver {
     @Args('input') input: UpdateConnectedAccountInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedAccountDTO> {
-    return (await this.connectedAccountMetadataService.update(
+    return this.connectedAccountMetadataService.update(
       input.id,
       workspace.id,
       input.update,
-    )) as unknown as ConnectedAccountDTO;
+    );
   }
 
   @Mutation(() => ConnectedAccountDTO)
@@ -86,9 +81,6 @@ export class ConnectedAccountResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedAccountDTO> {
-    return (await this.connectedAccountMetadataService.delete(
-      id,
-      workspace.id,
-    )) as unknown as ConnectedAccountDTO;
+    return this.connectedAccountMetadataService.delete(id, workspace.id);
   }
 }

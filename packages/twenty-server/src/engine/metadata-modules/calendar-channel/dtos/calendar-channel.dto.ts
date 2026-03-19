@@ -19,7 +19,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ObjectType('CalendarChannelDTO')
+@ObjectType('CalendarChannel')
 export class CalendarChannelDTO {
   @IsUUID()
   @IsNotEmpty()

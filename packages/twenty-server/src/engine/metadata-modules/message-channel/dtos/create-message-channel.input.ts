@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import {
   MessageChannelContactAutoCreationPolicy,
+  MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelType,
   MessageChannelVisibility,
@@ -51,22 +52,37 @@ export class CreateMessageChannelInput {
   connectedAccountId: string;
 
   @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  isContactAutoCreationEnabled?: boolean;
+  @IsNotEmpty()
+  @Field()
+  isContactAutoCreationEnabled: boolean;
 
   @IsEnum(MessageChannelContactAutoCreationPolicy)
-  @IsOptional()
-  @Field(() => MessageChannelContactAutoCreationPolicy, { nullable: true })
-  contactAutoCreationPolicy?: MessageChannelContactAutoCreationPolicy;
+  @IsNotEmpty()
+  @Field(() => MessageChannelContactAutoCreationPolicy)
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
 
   @IsEnum(MessageFolderImportPolicy)
-  @IsOptional()
-  @Field(() => MessageFolderImportPolicy, { nullable: true })
-  messageFolderImportPolicy?: MessageFolderImportPolicy;
+  @IsNotEmpty()
+  @Field(() => MessageFolderImportPolicy)
+  messageFolderImportPolicy: MessageFolderImportPolicy;
 
   @IsBoolean()
-  @IsOptional()
-  @Field({ nullable: true })
-  isSyncEnabled?: boolean;
+  @IsNotEmpty()
+  @Field()
+  excludeNonProfessionalEmails: boolean;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @Field()
+  excludeGroupEmails: boolean;
+
+  @IsEnum(MessageChannelPendingGroupEmailsAction)
+  @IsNotEmpty()
+  @Field(() => MessageChannelPendingGroupEmailsAction)
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  @Field()
+  isSyncEnabled: boolean;
 }
