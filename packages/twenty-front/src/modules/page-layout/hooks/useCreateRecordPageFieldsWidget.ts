@@ -2,13 +2,16 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewType } from '~/generated-metadata/graphql';
 
@@ -28,6 +31,12 @@ export const useCreateRecordPageFieldsWidget = () => {
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
   );
+
+  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
+    pageLayoutEditingWidgetIdComponentState,
+  );
+
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const store = useStore();
 
@@ -68,11 +77,21 @@ export const useCreateRecordPageFieldsWidget = () => {
       ...prev,
       tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
     }));
+
+    store.set(pageLayoutEditingWidgetIdState, widgetId);
+
+    navigatePageLayoutSidePanel({
+      sidePanelPage: SidePanelPages.PageLayoutFieldsSettings,
+      focusTitleInput: true,
+      resetNavigationStack: true,
+    });
   }, [
     currentPageLayout.tabs,
+    navigatePageLayoutSidePanel,
     objectMetadataItem.id,
     objectMetadataItem.labelSingular,
     pageLayoutDraftState,
+    pageLayoutEditingWidgetIdState,
     performViewAPICreate,
     store,
     tabId,

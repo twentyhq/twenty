@@ -22,7 +22,7 @@ export const createDefaultFieldsWidget = ({
     __typename: 'PageLayoutWidget',
     id,
     pageLayoutTabId,
-    title: '',
+    title: 'Fields',
     type: WidgetType.FIELDS,
     configuration: {
       __typename: 'FieldsConfiguration',
