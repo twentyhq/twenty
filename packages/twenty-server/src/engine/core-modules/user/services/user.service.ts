@@ -362,10 +362,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
   async updateUserNames(
     userId: string,
-    {
-      firstName,
-      lastName,
-    }: { firstName?: string; lastName?: string },
+    { firstName, lastName }: { firstName?: string; lastName?: string },
   ) {
     const user = await this.findUserByIdOrThrow(userId);
 
