@@ -519,6 +519,94 @@ describe('buildRecordFromImportedStructuredRow', () => {
     });
   });
 
+  it('should lowercase relation email composite subfield', () => {
+    const importedStructuredRow: ImportedStructuredRow = {
+      'emailField (relationField)': 'John.Doe@Example.COM',
+    };
+
+    const spreadsheetImportFields = [
+      {
+        fieldMetadataItemId: '6',
+        isNestedField: false,
+        isRelationConnectField: true,
+        label: 'Relation Field / Email Field',
+        key: 'emailField (relationField)',
+        fieldMetadataType: FieldMetadataType.RELATION,
+        uniqueFieldMetadataItem: {
+          name: 'emailField',
+          type: FieldMetadataType.EMAILS,
+        },
+        compositeSubFieldKey: 'primaryEmail',
+      },
+    ] as SpreadsheetImportField[];
+
+    const result = buildRecordFromImportedStructuredRow({
+      importedStructuredRow,
+      fieldMetadataItems: fields,
+      spreadsheetImportFields,
+    });
+
+    expect(result).toEqual({
+      relationField: {
+        connect: {
+          where: {
+            emailField: {
+              primaryEmail: 'john.doe@example.com',
+            },
+          },
+        },
+      },
+      createdBy: {
+        source: 'IMPORT',
+        context: {},
+      },
+    });
+  });
+
+  it('should normalize relation links composite subfield', () => {
+    const importedStructuredRow: ImportedStructuredRow = {
+      'domainNameField (relationField)': 'HTTPS://Example.COM/path/',
+    };
+
+    const spreadsheetImportFields = [
+      {
+        fieldMetadataItemId: '6',
+        isNestedField: false,
+        isRelationConnectField: true,
+        label: 'Relation Field / Domain Name Field',
+        key: 'domainNameField (relationField)',
+        fieldMetadataType: FieldMetadataType.RELATION,
+        uniqueFieldMetadataItem: {
+          name: 'linksField',
+          type: FieldMetadataType.LINKS,
+        },
+        compositeSubFieldKey: 'primaryLinkUrl',
+      },
+    ] as SpreadsheetImportField[];
+
+    const result = buildRecordFromImportedStructuredRow({
+      importedStructuredRow,
+      fieldMetadataItems: fields,
+      spreadsheetImportFields,
+    });
+
+    expect(result).toEqual({
+      relationField: {
+        connect: {
+          where: {
+            linksField: {
+              primaryLinkUrl: 'https://example.com/path',
+            },
+          },
+        },
+      },
+      createdBy: {
+        source: 'IMPORT',
+        context: {},
+      },
+    });
+  });
+
   it('should return empty record for empty imported row', () => {
     const importedStructuredRow: ImportedStructuredRow = {};
 
