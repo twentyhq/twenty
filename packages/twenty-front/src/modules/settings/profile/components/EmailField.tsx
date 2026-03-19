@@ -123,7 +123,13 @@ export const EmailField = () => {
         ) : (
           <StyledActionWrapper key="view">
             <StyledActionButtonContainer>
-              <div id={disabledReason === 'multipleWorkspaces' ? tooltipId : undefined}>
+              <div
+                id={
+                  disabledReason === 'multipleWorkspaces'
+                    ? tooltipId
+                    : undefined
+                }
+              >
                 <Button
                   Icon={IconPencil}
                   variant="secondary"
