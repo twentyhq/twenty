@@ -25,6 +25,7 @@ import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/co
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
+import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-code-steps.command';
 import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-send-email-attachments.command';
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
 import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
@@ -81,6 +82,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillMessageChannelThrottleRetryAfterCommand: BackfillMessageChannelThrottleRetryAfterCommand,
     protected readonly backfillStandardViewsAndFieldMetadataCommand: BackfillStandardViewsAndFieldMetadataCommand,
     protected readonly migrateWorkspacePicturesCommand: MigrateWorkspacePicturesCommand,
+    protected readonly migrateWorkflowCodeStepsCommand: MigrateWorkflowCodeStepsCommand,
     protected readonly migrateWorkflowSendEmailAttachmentsCommand: MigrateWorkflowSendEmailAttachmentsCommand,
 
     // 1.19 Commands
@@ -131,6 +133,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateAttachmentFilesCommand,
       this.migrateActivityRichTextAttachmentFileIdsCommand,
       this.migrateWorkspacePicturesCommand,
+      this.migrateWorkflowCodeStepsCommand,
       this.migrateWorkflowSendEmailAttachmentsCommand,
       this.backfillFileSizeAndMimeTypeCommand,
       this.backfillMessageChannelThrottleRetryAfterCommand,

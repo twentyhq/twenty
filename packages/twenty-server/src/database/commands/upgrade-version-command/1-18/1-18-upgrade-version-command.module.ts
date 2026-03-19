@@ -9,6 +9,7 @@ import { MigrateActivityRichTextAttachmentFileIdsCommand } from 'src/database/co
 import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-favorites-to-navigation-menu-items.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
+import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-code-steps.command';
 import { MigrateWorkflowSendEmailAttachmentsCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workflow-send-email-attachments.command';
 import { MigrateWorkspacePicturesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-workspace-pictures.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -65,6 +66,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     MigrateActivityRichTextAttachmentFileIdsCommand,
     BackfillMessageChannelThrottleRetryAfterCommand,
     BackfillStandardViewsAndFieldMetadataCommand,
+    MigrateWorkflowCodeStepsCommand,
     MigrateWorkflowSendEmailAttachmentsCommand,
   ],
   exports: [
@@ -76,6 +78,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     BackfillMessageChannelThrottleRetryAfterCommand,
     BackfillStandardViewsAndFieldMetadataCommand,
     MigrateWorkspacePicturesCommand,
+    MigrateWorkflowCodeStepsCommand,
     MigrateWorkflowSendEmailAttachmentsCommand,
     BackfillFileSizeAndMimeTypeCommand,
   ],
