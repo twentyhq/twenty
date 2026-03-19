@@ -242,6 +242,10 @@ export const WhatsAppChatContainer = () => {
             if (id) {
               updateMessageById(id, { status });
             }
+
+            if (wahaId && !tempId && !id) {
+              updateMessageByWahaId(wahaId, { status });
+            }
           }
 
           break;
