@@ -28,6 +28,7 @@ import { useConnectedImapSmtpCaldavAccount } from './useConnectedImapSmtpCaldavA
 type UseConnectionFormProps = {
   isEditing?: boolean;
   connectedAccountId?: string;
+  initialValues?: Partial<ImapSmtpCaldavAccount>;
 };
 
 export type ConnectionFormData = {
@@ -37,6 +38,7 @@ export type ConnectionFormData = {
 export const useImapSmtpCaldavConnectionForm = ({
   isEditing = false,
   connectedAccountId,
+  initialValues,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -46,14 +48,15 @@ export const useImapSmtpCaldavConnectionForm = ({
     resolver: zodResolver(connectionImapSmtpCalDav),
     defaultValues: {
       handle: '',
-      IMAP: { host: '', port: 993, password: '', secure: true },
-      SMTP: { host: '', username: '', port: 587, password: '', secure: true },
+      IMAP: { host: '', port: 993, password: '', secure: true, ...initialValues?.IMAP },
+      SMTP: { host: '', username: '', port: 587, password: '', secure: true, ...initialValues?.SMTP },
       CALDAV: {
         host: '',
         port: 443,
         password: '',
         secure: true,
         username: undefined,
+        ...initialValues?.CALDAV,
       },
     },
   });

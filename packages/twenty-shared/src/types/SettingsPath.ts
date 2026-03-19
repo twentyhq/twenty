@@ -8,6 +8,7 @@ export enum SettingsPath {
   AccountsCalendars = 'accounts/calendars',
   AccountsEmails = 'accounts/emails',
   NewImapSmtpCaldavConnection = 'accounts/new-imap-smtp-caldav-connection',
+  NewAppleMailConnection = 'accounts/new-apple-connection',
   EditImapSmtpCaldavConnection = 'accounts/edit-imap-smtp-caldav-connection/:connectedAccountId',
   Billing = 'billing',
   Enterprise = 'enterprise',
