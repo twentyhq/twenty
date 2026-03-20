@@ -33,7 +33,8 @@ export const computeFoldersToCreate = ({
       isSynced: discoveredFolder.isSynced,
       syncCursor: null,
       parentFolderId: isNonEmptyString(discoveredFolder.parentFolderId)
-        ? discoveredFolder.parentFolderId
+        ? (existingFoldersByExternalId.get(discoveredFolder.parentFolderId)
+            ?.id ?? null)
         : null,
     }));
 };
