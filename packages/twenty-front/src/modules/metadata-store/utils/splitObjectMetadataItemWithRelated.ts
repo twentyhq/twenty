@@ -25,8 +25,11 @@ export const splitObjectMetadataItemWithRelated = (
     const {
       fields = [],
       indexMetadatas = [],
+      readableFields: _readableFields,
+      updatableFields: _updatableFields,
       ...objectProperties
-    } = objectMetadataItemWithRelated;
+    } = objectMetadataItemWithRelated as ObjectMetadataItemWithRelated &
+      Partial<Pick<ObjectMetadataItem, 'readableFields' | 'updatableFields'>>;
 
     flatObjects.push(objectProperties);
 

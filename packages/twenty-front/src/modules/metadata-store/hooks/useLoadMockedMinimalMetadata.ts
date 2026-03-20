@@ -11,11 +11,13 @@ export const useLoadMockedMinimalMetadata = () => {
   const loadMockedMinimalMetadata = useCallback(async () => {
     resetMetadataStore();
     const [
-      { generatedMockObjectMetadataItems },
+      { generatedMockObjectMetadataItemsWithRelated },
       { mockedViews },
       { mockedNavigationMenuItems },
     ] = await Promise.all([
-      import('~/testing/utils/generatedMockObjectMetadataItems'),
+      import(
+        '~/testing/utils/generatedMockObjectMetadataItemsWithRelated'
+      ),
       import('~/testing/mock-data/generated/metadata/views/mock-views-data'),
       import(
         '~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data'
@@ -23,7 +25,9 @@ export const useLoadMockedMinimalMetadata = () => {
     ]);
 
     const { flatObjects, flatFields, flatIndexes } =
-      splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
+      splitObjectMetadataItemWithRelated(
+        generatedMockObjectMetadataItemsWithRelated,
+      );
 
     replaceDraft('objectMetadataItems', flatObjects, MOCKED_COLLECTION_HASH);
     replaceDraft('fieldMetadataItems', flatFields, MOCKED_COLLECTION_HASH);
