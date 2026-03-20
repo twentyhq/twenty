@@ -33,6 +33,9 @@ export enum AppPath {
 
   Authorize = '/authorize',
 
+  // COAT Approval Dashboard
+  CoatApproval = '/coat-approval',
+
   // WhatsApp Chat
   WhatsAppChat = '/chat',
 

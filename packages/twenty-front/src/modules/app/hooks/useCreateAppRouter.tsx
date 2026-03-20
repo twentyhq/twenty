@@ -17,6 +17,7 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { NotFound } from '~/pages/not-found/NotFound';
+import { CoatApprovalPage } from '~/pages/coat-approval/CoatApprovalPage';
 import { MeetingTranscriptsPage } from '~/pages/meeting-transcripts/MeetingTranscriptsPage';
 import { WhatsAppChatPage } from '~/pages/whatsapp-chat/WhatsAppChatPage';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
@@ -66,6 +67,10 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.MeetingTranscripts}
             element={<MeetingTranscriptsPage />}
+          />
+          <Route
+            path={AppPath.CoatApproval}
+            element={<CoatApprovalPage />}
           />
           <Route
             path={AppPath.WhatsAppChat}
