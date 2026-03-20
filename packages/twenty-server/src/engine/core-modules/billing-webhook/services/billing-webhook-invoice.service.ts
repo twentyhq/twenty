@@ -9,6 +9,10 @@ import { type Repository } from 'typeorm';
 import type Stripe from 'stripe';
 
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -40,16 +44,17 @@ export class BillingWebhookInvoiceService {
   ) {}
 
   async processStripeEvent(
-    data: Stripe.InvoiceFinalizedEvent.Data | Stripe.InvoicePaidEvent.Data,
-    eventType: string,
+    event: Stripe.InvoicePaidEvent | Stripe.InvoiceFinalizedEvent,
   ) {
-    if (eventType === BillingWebhookEvent.INVOICE_PAID) {
-      return this.processInvoicePaid(data as Stripe.InvoicePaidEvent.Data);
+    if (event.type === BillingWebhookEvent.INVOICE_PAID) {
+      return this.processInvoicePaid(
+        event.data as Stripe.InvoicePaidEvent.Data,
+      );
     }
 
-    if (eventType === BillingWebhookEvent.INVOICE_FINALIZED) {
+    if (event.type === BillingWebhookEvent.INVOICE_FINALIZED) {
       return this.processInvoiceFinalized(
-        data as Stripe.InvoiceFinalizedEvent.Data,
+        event.data as Stripe.InvoiceFinalizedEvent.Data,
       );
     }
   }
@@ -149,40 +154,51 @@ export class BillingWebhookInvoiceService {
     }
 
     const stripeCustomerId = data.object.customer as string | undefined;
+    const paidInvoicePeriodEnd = data.object.period_end;
 
-    await this.finalizePastDueDraftInvoices(stripeSubscriptionId);
+    if (isDefined(paidInvoicePeriodEnd)) {
+      await this.finalizePastDueDraftInvoicesAfterPaidInvoice(
+        stripeSubscriptionId,
+        paidInvoicePeriodEnd,
+      );
+    }
 
     if (isDefined(stripeCustomerId)) {
-      await this.refreshSuspendedAtIfNeeded(stripeCustomerId);
+      await this.delaySuspendedWorkspaceCleanup(stripeCustomerId);
     }
 
     return { stripeSubscriptionId };
   }
 
-  private async finalizePastDueDraftInvoices(
+  private async finalizePastDueDraftInvoicesAfterPaidInvoice(
     stripeSubscriptionId: string,
+    paidInvoicePeriodEnd: number,
   ): Promise<void> {
     const draftInvoices =
       await this.stripeInvoiceService.listDraftInvoices(stripeSubscriptionId);
 
-    const now = Date.now() / 1000;
+    const nowInSeconds = Date.now() / 1000;
 
     const pastDueDraftInvoices = draftInvoices.filter(
-      (invoice) => isDefined(invoice.period_end) && invoice.period_end < now,
+      (invoice) =>
+        isDefined(invoice.period_end) &&
+        invoice.period_end > paidInvoicePeriodEnd &&
+        invoice.period_end < nowInSeconds,
     );
 
     for (const invoice of pastDueDraftInvoices) {
       try {
         await this.stripeInvoiceService.finalizeInvoice(invoice.id);
       } catch (error) {
-        this.logger.error(
-          `Failed to finalize draft invoice ${invoice.id}: ${error instanceof Error ? error.message : String(error)}`,
+        throw new BillingException(
+          `Failed to finalize draft invoice ${invoice.id}: ${error.message}`,
+          BillingExceptionCode.BILLING_STRIPE_ERROR,
         );
       }
     }
   }
 
-  private async refreshSuspendedAtIfNeeded(
+  private async delaySuspendedWorkspaceCleanup(
     stripeCustomerId: string,
   ): Promise<void> {
     const billingCustomer = await this.billingCustomerRepository.findOne({
