@@ -1,6 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable, CustomError, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
@@ -59,19 +59,8 @@ export class WorkspaceMigrationRunnerException extends CustomError {
 
   constructor(args: WorkspaceMigrationRunnerExceptionConstructorArgs) {
     if (args.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED) {
-      const errorDetails = [
-        args.errors.metadata &&
-          `metadata: ${args.errors.metadata.message}`,
-        args.errors.workspaceSchema &&
-          `workspaceSchema: ${args.errors.workspaceSchema.message}`,
-        args.errors.actionTranspilation &&
-          `actionTranspilation: ${args.errors.actionTranspilation.message}`,
-      ]
-        .filter(isDefined)
-        .join('; ');
-
       super(
-        `Migration action '${args.action.type}' for '${args.action.metadataName}' failed${errorDetails ? ` (${errorDetails})` : ''}`,
+        `Migration action '${args.action.type}' for '${args.action.metadataName}' failed`,
       );
 
       this.code = args.code;
