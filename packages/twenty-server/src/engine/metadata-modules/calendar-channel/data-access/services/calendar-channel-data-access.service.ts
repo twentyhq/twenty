@@ -96,10 +96,37 @@ export class CalendarChannelDataAccessService {
           )
         : await this.toCoreWhere(workspaceId, where);
 
-      return this.coreRepository.findOne({
+      const requestedRelations = (
+        options.relations as string[] | undefined
+      )?.slice() ?? [];
+
+      const needsConnectedAccount =
+        requestedRelations.includes('connectedAccount');
+
+      const coreRelations = requestedRelations.filter(
+        (r) => r !== 'connectedAccount',
+      );
+
+      const result = await this.coreRepository.findOne({
         ...options,
         where: coreWhere,
-      } as FindOneOptions<CalendarChannelEntity>) as unknown as Promise<CalendarChannelWorkspaceEntity | null>;
+        relations: coreRelations,
+      } as FindOneOptions<CalendarChannelEntity>);
+
+      if (!result) {
+        return null;
+      }
+
+      const workspaceResult = result as unknown as CalendarChannelWorkspaceEntity;
+
+      if (needsConnectedAccount) {
+        workspaceResult.connectedAccount =
+          await this.connectedAccountDataAccessService.findOne(workspaceId, {
+            where: { id: result.connectedAccountId },
+          });
+      }
+
+      return workspaceResult;
     }
 
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
