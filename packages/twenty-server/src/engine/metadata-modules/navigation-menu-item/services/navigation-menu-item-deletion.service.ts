@@ -40,9 +40,10 @@ export class NavigationMenuItemDeletionService {
     ).filter(
       (item): item is NonNullable<typeof item> =>
         isDefined(item) &&
-        isDefined(item.targetRecordId) &&
-        !isDefined(item.viewId) &&
-        deletedRecordIdsSet.has(item.targetRecordId),
+        ((isDefined(item.targetRecordId) &&
+          !isDefined(item.viewId) &&
+          deletedRecordIdsSet.has(item.targetRecordId)) ||
+          (isDefined(item.viewId) && deletedRecordIdsSet.has(item.viewId))),
     );
 
     if (navigationMenuItemsToDelete.length === 0) {

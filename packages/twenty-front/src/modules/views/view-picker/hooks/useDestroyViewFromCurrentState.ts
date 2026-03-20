@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useRemoveNavigationMenuItemByViewId } from '@/navigation-menu-item/edit/hooks/useRemoveNavigationMenuItemByViewId';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
@@ -45,6 +46,8 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
   const { changeView } = useChangeView();
 
   const { performViewAPIDestroy } = usePerformViewAPIPersist();
+  const { removeNavigationMenuItemsByViewIds } =
+    useRemoveNavigationMenuItemByViewId();
 
   const store = useStore();
 
@@ -67,16 +70,22 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
       return;
     }
 
+    if (!viewPickerReferenceViewId) {
+      return;
+    }
+
     if (shouldChangeView) {
       changeView(remainingViews[0].id);
     }
 
+    removeNavigationMenuItemsByViewIds([viewPickerReferenceViewId]);
     await performViewAPIDestroy({ id: viewPickerReferenceViewId });
   }, [
     currentView,
     closeAndResetViewPicker,
     changeView,
     performViewAPIDestroy,
+    removeNavigationMenuItemsByViewIds,
     store,
     viewPickerIsDirtyCallbackState,
     viewPickerIsPersistingCallbackState,
