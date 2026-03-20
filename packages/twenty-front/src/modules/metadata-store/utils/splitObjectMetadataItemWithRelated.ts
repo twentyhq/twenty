@@ -6,7 +6,8 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 export type ObjectMetadataItemWithRelated = Omit<
   ObjectMetadataItem,
   'readableFields' | 'updatableFields'
->;
+> &
+  Partial<Pick<ObjectMetadataItem, 'readableFields' | 'updatableFields'>>;
 
 type SplitResult = {
   flatObjects: FlatObjectMetadataItem[];
@@ -28,8 +29,7 @@ export const splitObjectMetadataItemWithRelated = (
       readableFields: _readableFields,
       updatableFields: _updatableFields,
       ...objectProperties
-    } = objectMetadataItemWithRelated as ObjectMetadataItemWithRelated &
-      Partial<Pick<ObjectMetadataItem, 'readableFields' | 'updatableFields'>>;
+    } = objectMetadataItemWithRelated;
 
     flatObjects.push(objectProperties);
 
