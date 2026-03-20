@@ -1,8 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
-import { LAYOUT_CUSTOMIZATION_BAR_HEIGHT_PX } from '@/layout-customization/constants/layout-customization-bar-height';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
@@ -19,7 +17,6 @@ import {
 } from '@/ui/navigation/states/navigationDrawerWidthState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
@@ -33,17 +30,10 @@ export type NavigationDrawerProps = {
 
 const StyledAnimatedContainer = styled.div<{
   isExpanded: boolean;
-  isLayoutCustomizationBarVisible: boolean;
   isResizing: boolean;
 }>`
-  height: ${({ isLayoutCustomizationBarVisible }) =>
-    isLayoutCustomizationBarVisible
-      ? `calc(100vh - ${LAYOUT_CUSTOMIZATION_BAR_HEIGHT_PX}px)`
-      : '100vh'};
-  max-height: ${({ isLayoutCustomizationBarVisible }) =>
-    isLayoutCustomizationBarVisible
-      ? `calc(100vh - ${LAYOUT_CUSTOMIZATION_BAR_HEIGHT_PX}px)`
-      : '100vh'};
+  height: 100%;
+  max-height: 100%;
   overflow: hidden;
   position: relative;
   transition: ${({ isResizing }) =>
@@ -93,9 +83,6 @@ export const NavigationDrawer = ({
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
-  );
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
@@ -134,7 +121,6 @@ export const NavigationDrawer = ({
         className={className}
         data-click-outside-id={NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}
         isExpanded={isNavigationDrawerExpanded}
-        isLayoutCustomizationBarVisible={isLayoutCustomizationModeEnabled}
         isResizing={isResizing}
       >
         <StyledContainer
