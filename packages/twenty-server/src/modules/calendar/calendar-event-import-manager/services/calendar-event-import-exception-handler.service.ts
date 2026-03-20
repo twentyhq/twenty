@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import {
   type TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import {
   type CalendarEventImportDriverException,
@@ -29,7 +28,7 @@ export class CalendarEventImportErrorHandlerService {
     CalendarEventImportErrorHandlerService.name,
   );
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -133,25 +132,14 @@ export class CalendarEventImportErrorHandlerService {
       throw calendarEventImportException;
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-          workspaceId,
-          'calendarChannel',
-        );
-
-      await calendarChannelRepository.increment(
-        {
-          id: calendarChannel.id,
-        },
-        'throttleFailureCount',
-        1,
-        undefined,
-        ['throttleFailureCount', 'id'],
-      );
-    }, authContext);
+    await this.calendarChannelDataAccessService.increment(
+      workspaceId,
+      {
+        id: calendarChannel.id,
+      },
+      'throttleFailureCount',
+      1,
+    );
 
     switch (syncStep) {
       case CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH:

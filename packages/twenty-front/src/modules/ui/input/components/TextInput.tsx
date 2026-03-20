@@ -1,4 +1,5 @@
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { css } from '@linaria/core';
@@ -459,7 +460,7 @@ const TextInputWithAutoGrowWrapper = forwardRef<
       {props.autoGrow ? (
         <StyledAutogrowWrapper
           sizeVariant={props.sizeVariant}
-          node={props.value ?? props.placeholder}
+          node={isNonEmptyString(props.value) ? props.value : props.placeholder}
         >
           <TextInputComponent
             // oxlint-disable-next-line react/jsx-props-no-spreading

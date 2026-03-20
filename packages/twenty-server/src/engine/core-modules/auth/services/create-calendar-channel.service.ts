@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -9,7 +10,6 @@ import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
   CalendarChannelVisibility,
-  type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export type CreateCalendarChannelInput = {
@@ -25,6 +25,7 @@ export type CreateCalendarChannelInput = {
 export class CreateCalendarChannelService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
   ) {}
 
   async createCalendarChannel(
@@ -43,15 +44,12 @@ export class CreateCalendarChannelService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
+        const newCalendarChannelId = v4();
 
-        const newCalendarChannel = await calendarChannelRepository.save(
+        await this.calendarChannelDataAccessService.save(
+          workspaceId,
           {
-            id: v4(),
+            id: newCalendarChannelId,
             connectedAccountId,
             handle,
             visibility:
@@ -63,11 +61,10 @@ export class CreateCalendarChannelService {
               ? CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING
               : CalendarChannelSyncStage.PENDING_CONFIGURATION,
           },
-          {},
           manager,
         );
 
-        return newCalendarChannel.id;
+        return newCalendarChannelId;
       },
       authContext,
     );

@@ -202,7 +202,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
 
     [FieldMetadataType.EMAILS]: {
-      primaryEmail: castToString,
+      primaryEmail: (value: unknown) => castToString(value).toLowerCase(),
       additionalEmails: stringArrayJSONSchema.parse,
     },
     [FieldMetadataType.FULL_NAME]: {

@@ -86,24 +86,19 @@ export const Default: Story = {
             label="Notifications"
             to="/inbox"
             Icon={IconBell}
-            soon={true}
+            modifier="soon"
           />
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            keyboard={[`${getOsControlSymbol()}`, 'K']}
+            modifier={{ keyboard: [`${getOsControlSymbol()}`, 'K'] }}
           />
           <NavigationDrawerItem
             label="Settings"
             to="/settings/profile"
             Icon={IconSettings}
           />
-          <NavigationDrawerItem
-            label="Tasks"
-            to="/tasks"
-            Icon={IconCheckbox}
-            count={2}
-          />
+          <NavigationDrawerItem label="Tasks" to="/tasks" Icon={IconCheckbox} />
         </NavigationDrawerSection>
 
         <NavigationDrawerSection>

@@ -59,6 +59,9 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
+import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
+import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/data-access/message-channel-data-access.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -104,6 +107,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
+    CalendarChannelDataAccessModule,
+    ConnectedAccountDataAccessModule,
+    MessageChannelDataAccessModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
