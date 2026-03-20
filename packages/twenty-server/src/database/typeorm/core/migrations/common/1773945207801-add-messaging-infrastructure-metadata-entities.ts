@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddMessagingInfrastructureMetadataEntities1774005903909
+export class AddMessagingInfrastructureMetadataEntities1773945207801
   implements MigrationInterface
 {
-  name = 'AddMessagingInfrastructureMetadataEntities1774005903909';
+  name = 'AddMessagingInfrastructureMetadataEntities1773945207801';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
