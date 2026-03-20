@@ -1962,6 +1962,7 @@ export interface MessageFolder {
     isSentFolder: Scalars['Boolean']
     isSynced: Scalars['Boolean']
     parentFolderId?: Scalars['UUID']
+    externalId?: Scalars['String']
     pendingSyncAction: MessageFolderPendingSyncAction
     messageChannelId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -2918,6 +2919,7 @@ export interface Mutation {
     deleteSSOIdentityProvider: DeleteSso
     editSSOIdentityProvider: EditSso
     updateMessageFolder: MessageFolder
+    updateMessageFolders: MessageFolder[]
     updateMessageChannel: MessageChannel
     deleteConnectedAccount: ConnectedAccountDTO
     updateCalendarChannel: CalendarChannel
@@ -5032,6 +5034,7 @@ export interface MessageFolderGenqlSelection{
     isSentFolder?: boolean | number
     isSynced?: boolean | number
     parentFolderId?: boolean | number
+    externalId?: boolean | number
     pendingSyncAction?: boolean | number
     messageChannelId?: boolean | number
     createdAt?: boolean | number
@@ -6074,6 +6077,7 @@ export interface MutationGenqlSelection{
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
     editSSOIdentityProvider?: (EditSsoGenqlSelection & { __args: {input: EditSsoInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
+    updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     deleteConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
@@ -6404,6 +6408,8 @@ export interface EditSsoInput {id: Scalars['UUID'],status: SSOIdentityProviderSt
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
 export interface UpdateMessageFolderInputUpdates {isSynced?: (Scalars['Boolean'] | null)}
+
+export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 

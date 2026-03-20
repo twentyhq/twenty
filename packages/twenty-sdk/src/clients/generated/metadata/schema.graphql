@@ -2343,6 +2343,7 @@ type MessageFolder {
   isSentFolder: Boolean!
   isSynced: Boolean!
   parentFolderId: UUID
+  externalId: String
   pendingSyncAction: MessageFolderPendingSyncAction!
   messageChannelId: UUID!
   createdAt: DateTime!
@@ -3463,6 +3464,7 @@ type Mutation {
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
+  updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -4369,6 +4371,11 @@ input UpdateMessageFolderInput {
 
 input UpdateMessageFolderInputUpdates {
   isSynced: Boolean
+}
+
+input UpdateMessageFoldersInput {
+  ids: [UUID!]!
+  update: UpdateMessageFolderInputUpdates!
 }
 
 input UpdateMessageChannelInput {

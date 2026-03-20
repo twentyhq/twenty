@@ -87,8 +87,8 @@ export default {
         352,
         364,
         365,
-        477,
-        478
+        478,
+        479
     ],
     "types": {
         "BillingProductDTO": {
@@ -4498,6 +4498,9 @@ export default {
             "parentFolderId": [
                 3
             ],
+            "externalId": [
+                1
+            ],
             "pendingSyncAction": [
                 250
             ],
@@ -8398,11 +8401,20 @@ export default {
                     ]
                 }
             ],
+            "updateMessageFolders": [
+                249,
+                {
+                    "input": [
+                        461,
+                        "UpdateMessageFoldersInput!"
+                    ]
+                }
+            ],
             "updateMessageChannel": [
                 241,
                 {
                     "input": [
-                        461,
+                        462,
                         "UpdateMessageChannelInput!"
                     ]
                 }
@@ -8420,7 +8432,7 @@ export default {
                 235,
                 {
                     "input": [
-                        463,
+                        464,
                         "UpdateCalendarChannelInput!"
                     ]
                 }
@@ -8429,7 +8441,7 @@ export default {
                 256,
                 {
                     "input": [
-                        465,
+                        466,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -8438,7 +8450,7 @@ export default {
                 256,
                 {
                     "input": [
-                        466,
+                        467,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -8459,7 +8471,7 @@ export default {
                 221,
                 {
                     "input": [
-                        468,
+                        469,
                         "CreateSkillInput!"
                     ]
                 }
@@ -8468,7 +8480,7 @@ export default {
                 221,
                 {
                     "input": [
-                        469,
+                        470,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -8565,7 +8577,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        470,
+                        471,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -8577,7 +8589,7 @@ export default {
                 154,
                 {
                     "input": [
-                        472,
+                        473,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -8750,7 +8762,7 @@ export default {
                 68,
                 {
                     "input": [
-                        473,
+                        474,
                         "CreateOneAppTokenInput!"
                     ]
                 }
@@ -8783,7 +8795,7 @@ export default {
                 6,
                 {
                     "workspaceMigration": [
-                        475,
+                        476,
                         "WorkspaceMigrationInput!"
                     ]
                 }
@@ -8857,7 +8869,7 @@ export default {
                         "String!"
                     ],
                     "fileFolder": [
-                        478,
+                        479,
                         "FileFolder!"
                     ],
                     "filePath": [
@@ -10873,12 +10885,23 @@ export default {
                 1
             ]
         },
+        "UpdateMessageFoldersInput": {
+            "ids": [
+                3
+            ],
+            "update": [
+                460
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "UpdateMessageChannelInput": {
             "id": [
                 3
             ],
             "update": [
-                462
+                463
             ],
             "__typename": [
                 1
@@ -10915,7 +10938,7 @@ export default {
                 3
             ],
             "update": [
-                464
+                465
             ],
             "__typename": [
                 1
@@ -10963,7 +10986,7 @@ export default {
                 3
             ],
             "update": [
-                467
+                468
             ],
             "__typename": [
                 1
@@ -11037,13 +11060,13 @@ export default {
         },
         "EmailAccountConnectionParameters": {
             "IMAP": [
-                471
+                472
             ],
             "SMTP": [
-                471
+                472
             ],
             "CALDAV": [
-                471
+                472
             ],
             "__typename": [
                 1
@@ -11082,7 +11105,7 @@ export default {
         },
         "CreateOneAppTokenInput": {
             "appToken": [
-                474
+                475
             ],
             "__typename": [
                 1
@@ -11098,7 +11121,7 @@ export default {
         },
         "WorkspaceMigrationInput": {
             "actions": [
-                476
+                477
             ],
             "__typename": [
                 1
@@ -11106,7 +11129,7 @@ export default {
         },
         "WorkspaceMigrationDeleteActionInput": {
             "type": [
-                477
+                478
             ],
             "metadataName": [
                 252
@@ -11134,7 +11157,7 @@ export default {
                 218,
                 {
                     "input": [
-                        480,
+                        481,
                         "LogicFunctionLogsInput!"
                     ]
                 }
