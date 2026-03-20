@@ -45,8 +45,8 @@ export const PageLayoutContent = () => {
   if (isVerticalList) {
     if (
       isPageLayoutInEditMode &&
-      (!isRecordPageLayout ||
-        (isRecordPageLayout && isRecordPageGlobalEditionEnabled))
+      isRecordPageLayout &&
+      isRecordPageGlobalEditionEnabled
     ) {
       return (
         <PageLayoutVerticalListEditor
@@ -60,14 +60,7 @@ export const PageLayoutContent = () => {
       );
     }
 
-    return (
-      <>
-        <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
-        {isRecordPageLayout && isPageLayoutInEditMode && (
-          <RecordPageAddWidgetSection />
-        )}
-      </>
-    );
+    return <PageLayoutVerticalListViewer widgets={activeTab.widgets} />;
   }
 
   return <PageLayoutGridLayout tabId={tabId} />;
