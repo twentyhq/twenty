@@ -46,13 +46,14 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
   })
   type: MessageChannelType;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
   isContactAutoCreationEnabled: boolean;
 
   @Column({
     type: 'enum',
     enum: MessageChannelContactAutoCreationPolicy,
     nullable: false,
+    default: MessageChannelContactAutoCreationPolicy.SENT,
   })
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
 
@@ -60,13 +61,14 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
     type: 'enum',
     enum: MessageFolderImportPolicy,
     nullable: false,
+    default: MessageFolderImportPolicy.ALL_FOLDERS,
   })
   messageFolderImportPolicy: MessageFolderImportPolicy;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
   excludeNonProfessionalEmails: boolean;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
   excludeGroupEmails: boolean;
 
   @Column({
@@ -76,7 +78,7 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
   })
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
   isSyncEnabled: boolean;
 
   @Column({ type: 'varchar', nullable: true })

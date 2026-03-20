@@ -7,6 +7,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum MessageChannelExceptionCode {
   MESSAGE_CHANNEL_NOT_FOUND = 'MESSAGE_CHANNEL_NOT_FOUND',
   INVALID_MESSAGE_CHANNEL_INPUT = 'INVALID_MESSAGE_CHANNEL_INPUT',
+  MESSAGE_CHANNEL_OWNERSHIP_VIOLATION = 'MESSAGE_CHANNEL_OWNERSHIP_VIOLATION',
 }
 
 const getMessageChannelExceptionUserFriendlyMessage = (
@@ -17,6 +18,8 @@ const getMessageChannelExceptionUserFriendlyMessage = (
       return msg`Message channel not found.`;
     case MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT:
       return msg`Invalid message channel input.`;
+    case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:
+      return msg`You do not have access to this message channel.`;
     default:
       assertUnreachable(code);
   }

@@ -7,6 +7,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum CalendarChannelExceptionCode {
   CALENDAR_CHANNEL_NOT_FOUND = 'CALENDAR_CHANNEL_NOT_FOUND',
   INVALID_CALENDAR_CHANNEL_INPUT = 'INVALID_CALENDAR_CHANNEL_INPUT',
+  CALENDAR_CHANNEL_OWNERSHIP_VIOLATION = 'CALENDAR_CHANNEL_OWNERSHIP_VIOLATION',
 }
 
 const getCalendarChannelExceptionUserFriendlyMessage = (
@@ -17,6 +18,8 @@ const getCalendarChannelExceptionUserFriendlyMessage = (
       return msg`Calendar channel not found.`;
     case CalendarChannelExceptionCode.INVALID_CALENDAR_CHANNEL_INPUT:
       return msg`Invalid calendar channel input.`;
+    case CalendarChannelExceptionCode.CALENDAR_CHANNEL_OWNERSHIP_VIOLATION:
+      return msg`You do not have access to this calendar channel.`;
     default:
       assertUnreachable(code);
   }

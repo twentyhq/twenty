@@ -12,6 +12,7 @@ import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/s
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
+import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -92,6 +93,8 @@ export const seedCoreSchema = async ({
       await seedBillingCustomers({ queryRunner, schemaName, workspaceId });
       await seedBillingSubscriptions({ queryRunner, schemaName, workspaceId });
     }
+
+    await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
 
     await queryRunner.commitTransaction();
   } catch (error) {

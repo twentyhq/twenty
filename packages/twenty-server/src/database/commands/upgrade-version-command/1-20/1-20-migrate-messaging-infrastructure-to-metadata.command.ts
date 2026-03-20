@@ -309,26 +309,44 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     }
 
     if (messageFolders.length > 0) {
+      const externalIdToFolderIdMap = new Map(
+        messageFolders.map((folder) => [folder.externalId, folder.id]),
+      );
+
       const coreMessageFolders = messageFolders
         .filter((workspaceEntity) =>
           migratedMessageChannelIds.has(workspaceEntity.messageChannelId),
         )
-        .map((workspaceEntity) => ({
-          id: workspaceEntity.id,
-          name: workspaceEntity.name,
-          syncCursor: workspaceEntity.syncCursor,
-          isSentFolder: workspaceEntity.isSentFolder,
-          isSynced: workspaceEntity.isSynced,
-          parentFolderId: isNonEmptyString(workspaceEntity.parentFolderId)
-            ? workspaceEntity.parentFolderId
-            : null,
-          externalId: workspaceEntity.externalId,
-          pendingSyncAction: workspaceEntity.pendingSyncAction,
-          messageChannelId: workspaceEntity.messageChannelId,
-          workspaceId,
-          createdAt: workspaceEntity.createdAt,
-          updatedAt: workspaceEntity.updatedAt,
-        }));
+        .map((workspaceEntity) => {
+          let resolvedParentFolderId: string | null = null;
+
+          if (isNonEmptyString(workspaceEntity.parentFolderId)) {
+            resolvedParentFolderId =
+              externalIdToFolderIdMap.get(workspaceEntity.parentFolderId) ??
+              null;
+
+            if (!resolvedParentFolderId) {
+              this.logger.warn(
+                `Message folder ${workspaceEntity.id}: could not resolve parentFolderId externalId "${workspaceEntity.parentFolderId}" to a UUID`,
+              );
+            }
+          }
+
+          return {
+            id: workspaceEntity.id,
+            name: workspaceEntity.name,
+            syncCursor: workspaceEntity.syncCursor,
+            isSentFolder: workspaceEntity.isSentFolder,
+            isSynced: workspaceEntity.isSynced,
+            parentFolderId: resolvedParentFolderId,
+            externalId: workspaceEntity.externalId,
+            pendingSyncAction: workspaceEntity.pendingSyncAction,
+            messageChannelId: workspaceEntity.messageChannelId,
+            workspaceId,
+            createdAt: workspaceEntity.createdAt,
+            updatedAt: workspaceEntity.updatedAt,
+          };
+        });
 
       await this.messageFolderRepository.save(
         coreMessageFolders as unknown as MessageFolderEntity[],

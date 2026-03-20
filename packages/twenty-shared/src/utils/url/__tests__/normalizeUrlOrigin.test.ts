@@ -1,4 +1,4 @@
-import { lowercaseUrlOriginAndRemoveTrailingSlash } from '@/utils/url/lowercaseUrlOriginAndRemoveTrailingSlash';
+import { normalizeUrlOrigin } from '@/utils/url/normalizeUrlOrigin';
 
 interface TestContext {
   title: string;
@@ -6,7 +6,7 @@ interface TestContext {
   expected: string;
 }
 
-describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
+describe('normalizeUrlOrigin', () => {
   test.each<TestContext>([
     {
       title: 'should leave lowcased domain unchanged',
@@ -39,19 +39,19 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       expected: 'https://www.example.com/TEST#Hash',
     },
     {
-      title: 'should preserve special characters in path',
-      input: 'https://test.test/edouard-ménard-22219837',
-      expected: 'https://test.test/edouard-ménard-22219837',
+      title: 'should percent-encode non-ASCII characters in path',
+      input: 'https://test.test/john-döe-22219837',
+      expected: 'https://test.test/john-d%C3%B6e-22219837',
     },
     {
-      title: 'should decode already encoded special characters in path',
-      input: 'https://test.test/edouard-m%C3%A9nard-22219837',
-      expected: 'https://test.test/edouard-ménard-22219837',
+      title: 'should preserve already encoded special characters in path',
+      input: 'https://test.test/john-d%C3%B6e-22219837',
+      expected: 'https://test.test/john-d%C3%B6e-22219837',
     },
     {
-      title: 'should preserve special characters in query params',
+      title: 'should percent-encode non-ASCII characters in query params',
       input: 'https://example.com/path?name=José',
-      expected: 'https://example.com/path?name=José',
+      expected: 'https://example.com/path?name=Jos%C3%A9',
     },
     {
       title:
@@ -61,12 +61,12 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
     },
     {
       title:
-        'should preserve double-encoded URLs (encoded percent signs stay encoded once)',
+        'should preserve double-encoded URLs without decoding percent signs',
       input: 'https://example.com/test%2520name',
-      expected: 'https://example.com/test%20name',
+      expected: 'https://example.com/test%2520name',
     },
     {
-      title: 'should preserve special characters in hash fragments',
+      title: 'should percent-encode non-ASCII characters in hash fragments',
       input: 'https://example.com/path#frédéric',
       expected: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
     },
@@ -76,11 +76,18 @@ describe('lowercaseUrlOriginAndRemoveTrailingSlash', () => {
       expected: 'https://example.com/path#fr%C3%A9d%C3%A9ric',
     },
     {
-      title: 'should handle mixed encoded and non-encoded in same URL',
+      title: 'should preserve encoded path and query payloads as-is',
       input: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
-      expected: 'https://example.com/path/with/slashes?query=hello world',
+      expected: 'https://example.com/path%2Fwith%2Fslashes?query=hello%20world',
+    },
+    {
+      title: 'should preserve Google Maps payload encoding in path segments',
+      input:
+        'https://www.google.com/maps/place/Birdie+-+Eventlocation/data=!4m7!3m6!1s0x479e7674e1702985:0xe482992505cb1ba4!8m2!3d48.1584971!4d11.5538261!16s%2Fg%2F1ptwh8096!19sChIJhSlw4XR2nkcRpBvLBSWZguQ?authuser=0&hl=en&rclk=1',
+      expected:
+        'https://www.google.com/maps/place/Birdie+-+Eventlocation/data=!4m7!3m6!1s0x479e7674e1702985:0xe482992505cb1ba4!8m2!3d48.1584971!4d11.5538261!16s%2Fg%2F1ptwh8096!19sChIJhSlw4XR2nkcRpBvLBSWZguQ?authuser=0&hl=en&rclk=1',
     },
   ])('$title', ({ input, expected }) => {
-    expect(lowercaseUrlOriginAndRemoveTrailingSlash(input)).toBe(expected);
+    expect(normalizeUrlOrigin(input)).toBe(expected);
   });
 });

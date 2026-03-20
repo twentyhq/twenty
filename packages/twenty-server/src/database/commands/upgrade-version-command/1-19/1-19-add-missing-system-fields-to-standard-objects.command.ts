@@ -55,25 +55,54 @@ const FIRST_NON_TS_VECTOR_UNIVERSAL_IDENTIFIER =
 
 const DUPLICATE_KEY_MESSAGE = 'duplicate key value violates unique constraint';
 
+const getNestedErrorMessages = (
+  error: WorkspaceMigrationRunnerException,
+): string | undefined => {
+  const nestedErrors = error.errors;
+
+  if (!isDefined(nestedErrors)) {
+    return undefined;
+  }
+
+  const details = [
+    nestedErrors.metadata && `metadata: ${nestedErrors.metadata.message}`,
+    nestedErrors.workspaceSchema &&
+      `workspaceSchema: ${nestedErrors.workspaceSchema.message}`,
+    nestedErrors.actionTranspilation &&
+      `actionTranspilation: ${nestedErrors.actionTranspilation.message}`,
+  ]
+    .filter(isDefined)
+    .join('; ');
+
+  return details || undefined;
+};
+
 const isUniqueViolationError = (error: Error): boolean => {
   if (error.message.includes(DUPLICATE_KEY_MESSAGE)) {
     return true;
   }
 
   if (error instanceof WorkspaceMigrationRunnerException) {
-    const nestedErrors = [
-      error.errors?.metadata,
-      error.errors?.workspaceSchema,
-      error.errors?.actionTranspilation,
-    ];
+    const nestedMessages = getNestedErrorMessages(error);
 
-    return nestedErrors.some(
-      (nestedError) =>
-        nestedError?.message?.includes(DUPLICATE_KEY_MESSAGE) === true,
-    );
+    return nestedMessages?.includes(DUPLICATE_KEY_MESSAGE) === true;
   }
 
   return false;
+};
+
+const enrichErrorMessage = (error: Error): Error => {
+  if (!(error instanceof WorkspaceMigrationRunnerException)) {
+    return error;
+  }
+
+  const details = getNestedErrorMessages(error);
+
+  if (isDefined(details)) {
+    error.message = `${error.message} (${details})`;
+  }
+
+  return error;
 };
 
 @Command({
@@ -123,7 +152,7 @@ export class AddMissingSystemFieldsToStandardObjectsCommand extends ActiveOrSusp
         });
       } catch (error) {
         if (!isUniqueViolationError(error)) {
-          throw error;
+          throw enrichErrorMessage(error);
         }
 
         this.logger.warn(
@@ -182,7 +211,7 @@ export class AddMissingSystemFieldsToStandardObjectsCommand extends ActiveOrSusp
         });
       } catch (error) {
         if (!isUniqueViolationError(error)) {
-          throw error;
+          throw enrichErrorMessage(error);
         }
 
         this.logger.warn(
