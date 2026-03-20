@@ -264,7 +264,7 @@ export class GroupByWithRecordsService {
         flatFieldMetadataMaps,
       );
 
-      const { sql: orderByRawSQL, relationJoins } =
+      const { orderByRawSQL, relationJoins } =
         graphqlQueryParser.getOrderByRawSQL(
           orderByForRecords,
           flatObjectMetadata.nameSingular,

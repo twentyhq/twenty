@@ -173,7 +173,7 @@ export class GraphqlQueryParser {
     orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
     objectNameSingular: string,
     isForwardPagination = true,
-  ): { sql: string; relationJoins: RelationJoinInfo[] } {
+  ): { orderByRawSQL: string; relationJoins: RelationJoinInfo[] } {
     const parseResult = this.orderFieldParser.parse(
       orderBy as ObjectRecordOrderBy,
       objectNameSingular,
@@ -209,11 +209,11 @@ export class GraphqlQueryParser {
 
     const orderByRawSQLString = orderByRawSQLClauseArray.join(', ');
 
-    const sql = isNonEmptyString(orderByRawSQLString)
+    const orderByRawSQL = isNonEmptyString(orderByRawSQLString)
       ? `ORDER BY ${orderByRawSQLString}`
       : '';
 
-    return { sql, relationJoins: parseResult.relationJoins };
+    return { orderByRawSQL, relationJoins: parseResult.relationJoins };
   }
 
   public applyGroupByOrderToBuilder(
