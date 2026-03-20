@@ -8,6 +8,7 @@ export const GET_MY_CALENDAR_CHANNELS = gql`
       visibility
       syncStatus
       syncStage
+      syncStageStartedAt
       isContactAutoCreationEnabled
       contactAutoCreationPolicy
       isSyncEnabled

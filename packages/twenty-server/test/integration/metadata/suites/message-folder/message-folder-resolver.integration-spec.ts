@@ -130,9 +130,9 @@ describe('messageFolderResolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       const folders = response.body.data.myMessageFolders;
+      const folderIds = folders.map((folder: { id: string }) => folder.id);
 
-      expect(folders.length).toBeGreaterThan(0);
-      expect(folders[0].id).toBe(janeFolderId);
+      expect(folderIds).toContain(janeFolderId);
     });
 
     it('should deny filtering by another user messageChannelId', async () => {
@@ -148,7 +148,7 @@ describe('messageFolderResolver (e2e)', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
     it('should not expose hidden fields', async () => {
@@ -210,7 +210,7 @@ describe('messageFolderResolver (e2e)', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
   });
 });

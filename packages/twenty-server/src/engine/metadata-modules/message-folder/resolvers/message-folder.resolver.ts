@@ -1,7 +1,8 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { ForbiddenException, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -36,13 +37,19 @@ export class MessageFolderResolver {
   @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async myMessageFolders(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @Args('messageChannelId', {
       type: () => UUIDScalarType,
       nullable: true,
     })
     messageChannelId?: string,
   ): Promise<MessageFolderDTO[]> {
+    if (!isDefined(userWorkspaceId)) {
+      throw new ForbiddenException(
+        'User-scoped queries require a user context (API keys are not supported)',
+      );
+    }
+
     if (messageChannelId) {
       await this.messageChannelMetadataService.verifyOwnership(
         messageChannelId,
@@ -82,8 +89,14 @@ export class MessageFolderResolver {
   async updateMessageFolder(
     @Args('input') input: UpdateMessageFolderInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<MessageFolderDTO> {
+    if (!isDefined(userWorkspaceId)) {
+      throw new ForbiddenException(
+        'User-scoped mutations require a user context (API keys are not supported)',
+      );
+    }
+
     await this.messageFolderMetadataService.verifyOwnership(
       input.id,
       userWorkspaceId,

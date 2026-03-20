@@ -111,7 +111,7 @@ describe('calendarChannelResolver (e2e)', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
   });
 
@@ -159,7 +159,7 @@ describe('calendarChannelResolver (e2e)', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
   });
 });

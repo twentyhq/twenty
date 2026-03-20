@@ -29,10 +29,18 @@ export const SettingsAccountsMessageChannelsContainer = () => {
   const { channels: messageChannels } = useMyMessageChannels();
 
   useEffect(() => {
-    if (messageChannels.length > 0) {
+    if (messageChannels.length === 0) {
+      return;
+    }
+
+    const currentSelectionStillExists = activeTabId
+      ? messageChannels.some((channel) => channel.id === activeTabId)
+      : false;
+
+    if (!currentSelectionStillExists) {
       setSettingsAccountsSelectedMessageChannel(messageChannels[0]);
     }
-  }, [messageChannels, setSettingsAccountsSelectedMessageChannel]);
+  }, [messageChannels, activeTabId, setSettingsAccountsSelectedMessageChannel]);
 
   const tabs = messageChannels.map((messageChannel) => ({
     id: messageChannel.id,

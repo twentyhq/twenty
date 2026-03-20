@@ -18,6 +18,7 @@ type MetadataCalendarChannel = {
   visibility: string;
   syncStatus: string;
   syncStage: string;
+  syncStageStartedAt: string | null;
   isContactAutoCreationEnabled: boolean;
   contactAutoCreationPolicy: string;
   isSyncEnabled: boolean;
@@ -93,12 +94,13 @@ export const useMyCalendarChannels = () => {
             syncStatus: channel.syncStatus,
             syncStage: channel.syncStage,
             syncCursor: '',
-            syncStageStartedAt: new Date(),
+            syncStageStartedAt: channel.syncStageStartedAt
+              ? new Date(channel.syncStageStartedAt)
+              : null,
             throttleFailureCount: 0,
+            connectedAccountId: channel.connectedAccountId,
             __typename: 'CalendarChannel',
-          }) as unknown as CalendarChannel & {
-            connectedAccount: ConnectedAccount;
-          },
+          }) as CalendarChannel,
       );
   }, [isMigrated, workspaceChannels, metadataData]);
 

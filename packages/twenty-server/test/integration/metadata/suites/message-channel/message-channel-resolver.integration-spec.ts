@@ -115,9 +115,11 @@ describe('messageChannelResolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       const channels = response.body.data.myMessageChannels;
+      const channelIds = channels.map(
+        (channel: { id: string }) => channel.id,
+      );
 
-      expect(channels.length).toBeGreaterThan(0);
-      expect(channels[0].id).toBe(janeChannelId);
+      expect(channelIds).toContain(janeChannelId);
     });
 
     it('should deny filtering by another user connectedAccountId', async () => {
@@ -133,7 +135,7 @@ describe('messageChannelResolver (e2e)', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
     it('should not return syncCursor', async () => {
@@ -197,7 +199,7 @@ describe('messageChannelResolver (e2e)', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
   });
 });

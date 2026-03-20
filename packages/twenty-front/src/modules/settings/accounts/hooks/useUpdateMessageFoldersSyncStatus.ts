@@ -32,19 +32,39 @@ export const useUpdateMessageFoldersSyncStatus = () => {
       isSynced,
     }: UpdateMessageFoldersSyncStatusArgs) => {
       if (isMigrated) {
-        await Promise.all(
-          messageFolderIds.map((folderId) =>
-            apolloClient.mutate({
-              mutation: UPDATE_MESSAGE_FOLDER,
-              variables: {
-                input: {
-                  id: folderId,
-                  update: { isSynced },
+        const BATCH_SIZE = 10;
+        const errors: unknown[] = [];
+
+        for (
+          let index = 0;
+          index < messageFolderIds.length;
+          index += BATCH_SIZE
+        ) {
+          const batch = messageFolderIds.slice(index, index + BATCH_SIZE);
+          const results = await Promise.allSettled(
+            batch.map((folderId) =>
+              apolloClient.mutate({
+                mutation: UPDATE_MESSAGE_FOLDER,
+                variables: {
+                  input: {
+                    id: folderId,
+                    update: { isSynced },
+                  },
                 },
-              },
-            }),
-          ),
-        );
+              }),
+            ),
+          );
+
+          for (const result of results) {
+            if (result.status === 'rejected') {
+              errors.push(result.reason);
+            }
+          }
+        }
+
+        if (errors.length > 0) {
+          throw new Error('Failed to update some message folders sync status.');
+        }
 
         return;
       }

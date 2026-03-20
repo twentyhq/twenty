@@ -37,15 +37,15 @@ export const useMyMessageFolders = (messageChannelId?: string) => {
       objectNameSingular: CoreObjectNameSingular.MessageChannel,
       objectRecordId: messageChannelId,
       recordGqlFields,
-      skip: isMigrated,
+      skip: isMigrated || !messageChannelId,
     });
 
   const { data: metadataData, loading: metadataLoading } = useQuery<{
     myMessageFolders: MetadataMessageFolder[];
   }>(GET_MY_MESSAGE_FOLDERS, {
     client: apolloClient,
-    variables: { messageChannelId },
-    skip: !isMigrated || !messageChannelId,
+    variables: messageChannelId ? { messageChannelId } : undefined,
+    skip: !isMigrated,
   });
 
   const messageFolders = useMemo<MessageFolder[]>(() => {

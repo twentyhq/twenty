@@ -211,8 +211,7 @@ describe('connectedAccountResolver (e2e)', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors.length).toBeGreaterThan(0);
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
   });
 });

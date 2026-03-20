@@ -26,6 +26,7 @@ type MetadataMessageChannel = {
   isSyncEnabled: boolean;
   syncStatus: string;
   syncStage: string;
+  syncStageStartedAt: string | null;
   connectedAccountId: string;
   createdAt: string;
   updatedAt: string;
@@ -109,12 +110,13 @@ export const useMyMessageChannels = () => {
             syncStatus: channel.syncStatus,
             syncStage: channel.syncStage,
             syncCursor: '',
-            syncStageStartedAt: new Date(),
+            syncStageStartedAt: channel.syncStageStartedAt
+              ? new Date(channel.syncStageStartedAt)
+              : null,
             throttleFailureCount: 0,
+            connectedAccountId: channel.connectedAccountId,
             __typename: 'MessageChannel',
-          }) as unknown as MessageChannel & {
-            connectedAccount: ConnectedAccount;
-          },
+          }) as MessageChannel,
       );
   }, [isMigrated, workspaceChannels, metadataData]);
 
