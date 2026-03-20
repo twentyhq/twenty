@@ -59,7 +59,7 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
 
-  const isFieldInputOnly = useIsFieldInputOnly();
+  const isFieldInputOnly = useIsFieldInputOnly() && !isReadOnly;
 
   const showButton =
     !isFieldInputOnly &&

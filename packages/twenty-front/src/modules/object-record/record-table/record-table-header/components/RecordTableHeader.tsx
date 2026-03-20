@@ -5,10 +5,13 @@ import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/r
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
+import { RecordTableHeaderEmptyLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderEmptyLastColumn';
 import { RecordTableHeaderFirstCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstCell';
 import { RecordTableHeaderFirstScrollableCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell';
 import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastEmptyColumn';
 import { useResizeTableHeader } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
+import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { filterOutByProperty } from 'twenty-shared/utils';
 
@@ -23,6 +26,10 @@ const StyledHeaderContainer = styled.div`
 export const RecordTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
+
+  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
+    isRecordTableColumnHeadersReadOnlyComponentState,
+  );
 
   const recordFieldsWithoutLabelIdentifierAndFirstOne = visibleRecordFields
     .filter(
@@ -50,7 +57,11 @@ export const RecordTableHeader = () => {
           />
         ),
       )}
-      <RecordTableHeaderAddColumnButton />
+      {isRecordTableColumnHeadersReadOnly ? (
+        <RecordTableHeaderEmptyLastColumn />
+      ) : (
+        <RecordTableHeaderAddColumnButton />
+      )}
       <RecordTableHeaderLastEmptyColumn />
     </StyledHeaderContainer>
   );

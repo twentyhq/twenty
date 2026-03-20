@@ -7,6 +7,7 @@ import { RecordUpdateContext } from '@/object-record/record-table/contexts/Entit
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
 
@@ -23,6 +24,10 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   } = useRecordIndexContextOrThrow();
   const { recordId, isRecordReadOnly, rowIndex } =
     useRecordTableRowContextOrThrow();
+
+  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+    isRecordTableCellsNonEditableComponentState,
+  );
 
   const { recordField } = useContext(RecordTableCellContext);
   const { objectMetadataItem, onRecordIdentifierClick, triggerEvent } =
@@ -57,16 +62,18 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifier: true,
         isLabelIdentifierCompact: shouldCompactRecordIndexLabelIdentifier,
         displayedMaxRows: 1,
-        isRecordFieldReadOnly: isRecordFieldReadOnly({
-          isRecordReadOnly: isRecordReadOnly ?? false,
-          isSystemObject: objectMetadataItem.isSystem,
-          objectPermissions,
-          fieldMetadataItem: {
-            id: recordField.fieldMetadataItemId,
-            isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
-            isCustom: fieldDefinition.metadata.isCustom ?? false,
-          },
-        }),
+        isRecordFieldReadOnly:
+          isRecordTableCellsNonEditable ||
+          isRecordFieldReadOnly({
+            isRecordReadOnly: isRecordReadOnly ?? false,
+            isSystemObject: objectMetadataItem.isSystem,
+            objectPermissions,
+            fieldMetadataItem: {
+              id: recordField.fieldMetadataItemId,
+              isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+              isCustom: fieldDefinition.metadata.isCustom ?? false,
+            },
+          }),
         maxWidth: recordField.size,
         onRecordChipClick: handleChipClick,
         isForbidden: !hasObjectReadPermissions,
