@@ -92,7 +92,7 @@ const seedConnectedAccounts = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}."connectedAccount"`, [
+    .into(`${schemaName}.connectedAccount`, [
       'id',
       'handle',
       'provider',
@@ -163,7 +163,7 @@ const seedMessageChannels = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}."messageChannel"`, [
+    .into(`${schemaName}.messageChannel`, [
       'id',
       'handle',
       'visibility',
@@ -228,7 +228,7 @@ const seedCalendarChannels = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}."calendarChannel"`, [
+    .into(`${schemaName}.calendarChannel`, [
       'id',
       'handle',
       'visibility',
@@ -291,7 +291,7 @@ const seedMessageFolders = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}."messageFolder"`, [
+    .into(`${schemaName}.messageFolder`, [
       'id',
       'name',
       'isSynced',
