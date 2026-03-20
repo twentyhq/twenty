@@ -70,8 +70,6 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
 
   const fieldsConfiguration = widget.configuration as FieldsConfiguration;
 
-  console.log('fieldsConfiguration', fieldsConfiguration);
-
   const { groups, displayMode } = useFieldsWidgetGroupsForDisplay({
     widgetId: widget.id,
     viewId: fieldsConfiguration.viewId ?? null,

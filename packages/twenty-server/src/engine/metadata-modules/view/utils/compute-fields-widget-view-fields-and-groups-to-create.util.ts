@@ -37,8 +37,6 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
   const standardFields = eligibleFields.filter((field) => !field.isCustom);
   const customFields = eligibleFields.filter((field) => field.isCustom);
 
-  // Sort standard fields so the label identifier is first (lowest position),
-  // as required by the view field validation rules.
   const sortedStandardFields = [...standardFields].sort((a, b) => {
     const aIsLabel =
       a.universalIdentifier === labelIdentifierFieldMetadataUniversalIdentifier;
