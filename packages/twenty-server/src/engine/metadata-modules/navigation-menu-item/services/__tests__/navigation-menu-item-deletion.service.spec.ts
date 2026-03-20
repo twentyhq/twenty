@@ -24,12 +24,14 @@ describe('NavigationMenuItemDeletionService', () => {
     viewId: null,
   };
 
-  const buildFlatNavigationMenuItemMaps = (items: Array<{ id: string }>) => ({
+  const buildFlatNavigationMenuItemMaps = (
+    items: Array<{ id: string; universalIdentifier: string }>,
+  ) => ({
     byUniversalIdentifier: Object.fromEntries(
-      items.map((item) => [item.id, item]),
+      items.map((item) => [item.universalIdentifier, item]),
     ),
     universalIdentifierById: Object.fromEntries(
-      items.map((item) => [item.id, item.id]),
+      items.map((item) => [item.id, item.universalIdentifier]),
     ),
     universalIdentifiersByApplicationId: {},
     byUserWorkspaceIdAndFolderId: {},

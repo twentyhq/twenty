@@ -78,8 +78,8 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
       changeView(remainingViews[0].id);
     }
 
-    removeNavigationMenuItemsByViewIds([viewPickerReferenceViewId]);
     await performViewAPIDestroy({ id: viewPickerReferenceViewId });
+    removeNavigationMenuItemsByViewIds([viewPickerReferenceViewId]);
   }, [
     currentView,
     closeAndResetViewPicker,
