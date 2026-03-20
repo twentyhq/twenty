@@ -1,7 +1,7 @@
 import { CoatApprovalDetail } from '@/coat-approval/components/CoatApprovalDetail';
 import { CoatApprovalEmptyDetail } from '@/coat-approval/components/CoatApprovalEmptyDetail';
 import { useCoatContractDetail } from '@/coat-approval/hooks/useCoatContractDetail';
-import { type CoatContractDetailRecord } from '@/coat-approval/types/coat-approval.types';
+import { type CoatContractRecord } from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -79,7 +79,7 @@ export const CoatApprovalRightPanel = ({
   }
 
   const contractRecord =
-    contract as unknown as CoatContractDetailRecord;
+    contract as unknown as CoatContractRecord;
 
   return (
     <StyledRightPanel>

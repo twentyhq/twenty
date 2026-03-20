@@ -1,10 +1,10 @@
 import { CoatApprovalActions } from '@/coat-approval/components/CoatApprovalActions';
-import { type CoatContractDetailRecord } from '@/coat-approval/types/coat-approval.types';
+import { type CoatContractRecord } from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
 type CoatApprovalDetailProps = {
-  contract: CoatContractDetailRecord;
+  contract: CoatContractRecord;
 };
 
 const StyledDetailContainer = styled.div`
@@ -75,16 +75,6 @@ const StyledEmptyText = styled.span`
   font-style: italic;
 `;
 
-const StyledLink = styled.a`
-  color: ${({ theme }) => theme.color.blue};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 const getStatusColor = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
@@ -128,16 +118,27 @@ const formatDate = (dateString: string | null): string => {
   }
 };
 
-const renderValue = (value: string | null) => {
-  if (!isDefined(value) || value.trim().length === 0) {
+const formatCurrency = (value: number | null, currency: string | null): string => {
+  if (!isDefined(value)) {
+    return 'Not available';
+  }
+
+  return `${currency ?? 'CHF'} ${value.toLocaleString('de-DE', { minimumFractionDigits: 2 })}`;
+};
+
+const renderValue = (value: string | number | null) => {
+  if (!isDefined(value) || (typeof value === 'string' && value.trim().length === 0)) {
     return <StyledEmptyText>Not available</StyledEmptyText>;
   }
 
-  return value;
+  return String(value);
 };
 
 export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
   const statusColor = getStatusColor(contract.status);
+  const customerName = [contract.customerFirstName, contract.customerLastName]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <StyledDetailContainer>
@@ -160,54 +161,52 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
               {renderValue(contract.contractId)}
             </StyledInfoValue>
 
-            <StyledInfoLabel>Internal ID</StyledInfoLabel>
+            <StyledInfoLabel>Contract Type</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.internalContractId)}
+              {renderValue(contract.contractType)}
             </StyledInfoValue>
 
-            <StyledInfoLabel>Signature Date</StyledInfoLabel>
+            <StyledInfoLabel>Source</StyledInfoLabel>
             <StyledInfoValue>
-              {formatDate(contract.signatureDate)}
+              {renderValue(contract.source)}
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Start Date</StyledInfoLabel>
+            <StyledInfoValue>
+              {formatDate(contract.startDate)}
+            </StyledInfoValue>
+
+            <StyledInfoLabel>End Date</StyledInfoLabel>
+            <StyledInfoValue>
+              {formatDate(contract.endDate)}
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Duration</StyledInfoLabel>
+            <StyledInfoValue>
+              {isDefined(contract.durationMonths)
+                ? `${contract.durationMonths} months`
+                : renderValue(null)}
             </StyledInfoValue>
 
             <StyledInfoLabel>Product</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.programName)}
+              {renderValue(contract.program)}
             </StyledInfoValue>
 
-            <StyledInfoLabel>Payment Agreement</StyledInfoLabel>
+            <StyledInfoLabel>Program ID</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.paymentAgreement)}
+              {renderValue(contract.programId)}
             </StyledInfoValue>
 
-            <StyledInfoLabel>Payment Plan</StyledInfoLabel>
+            <StyledInfoLabel>Value</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.paymentPlan)}
+              {formatCurrency(contract.valueGrossBase, contract.currencyBase)}
             </StyledInfoValue>
 
-            {isDefined(contract.errorCode) &&
-              contract.errorCode.trim().length > 0 && (
-                <>
-                  <StyledInfoLabel>Error Code</StyledInfoLabel>
-                  <StyledInfoValue>{contract.errorCode}</StyledInfoValue>
-                </>
-              )}
-
-            {isDefined(contract.docusealUrl) &&
-              contract.docusealUrl.trim().length > 0 && (
-                <>
-                  <StyledInfoLabel>DocuSeal</StyledInfoLabel>
-                  <StyledInfoValue>
-                    <StyledLink
-                      href={contract.docusealUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View Document
-                    </StyledLink>
-                  </StyledInfoValue>
-                </>
-              )}
+            <StyledInfoLabel>Bexio ID</StyledInfoLabel>
+            <StyledInfoValue>
+              {renderValue(contract.bexioId)}
+            </StyledInfoValue>
           </StyledInfoGrid>
         </StyledSection>
 
@@ -216,17 +215,12 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
           <StyledInfoGrid>
             <StyledInfoLabel>Name</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.customerName)}
+              {customerName || <StyledEmptyText>Not available</StyledEmptyText>}
             </StyledInfoValue>
 
             <StyledInfoLabel>Email</StyledInfoLabel>
             <StyledInfoValue>
               {renderValue(contract.customerEmail)}
-            </StyledInfoValue>
-
-            <StyledInfoLabel>Billing Address</StyledInfoLabel>
-            <StyledInfoValue>
-              {renderValue(contract.billingAddress)}
             </StyledInfoValue>
           </StyledInfoGrid>
         </StyledSection>
