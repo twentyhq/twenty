@@ -71,17 +71,10 @@ export class CalendarFetchEventsService {
           refreshToken,
         };
 
-        if (!isDefined(calendarChannel.syncCursor)) {
-          throw new CalendarEventImportDriverException(
-            'Sync cursor is required',
-            CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-          );
-        }
-
         const getCalendarEventsResponse =
           await this.getCalendarEventsService.getCalendarEvents(
             connectedAccountWithFreshTokens,
-            calendarChannel.syncCursor,
+            calendarChannel.syncCursor || undefined,
           );
 
         const hasFullEvents = getCalendarEventsResponse.fullEvents;
