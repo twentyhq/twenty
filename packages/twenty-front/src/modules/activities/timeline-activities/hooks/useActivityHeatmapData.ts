@@ -11,10 +11,22 @@ export const useActivityHeatmapData = (
   timelineActivities: TimelineActivity[],
 ) => {
   return useMemo(() => {
+    const now = new Date();
+    const oneYearAgo = new Date(now);
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const from = oneYearAgo.toISOString().substring(0, 10);
+    const to = now.toISOString().substring(0, 10);
+
     const countsByDay = new Map<string, number>();
 
     for (const activity of timelineActivities) {
       const day = activity.createdAt.substring(0, 10);
+
+      if (day < from || day > to) {
+        continue;
+      }
+
       countsByDay.set(day, (countsByDay.get(day) ?? 0) + 1);
     }
 
@@ -23,13 +35,6 @@ export const useActivityHeatmapData = (
     for (const [day, value] of countsByDay) {
       data.push({ day, value });
     }
-
-    const now = new Date();
-    const oneYearAgo = new Date(now);
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
-    const from = oneYearAgo.toISOString().substring(0, 10);
-    const to = now.toISOString().substring(0, 10);
 
     return { data, from, to };
   }, [timelineActivities]);
