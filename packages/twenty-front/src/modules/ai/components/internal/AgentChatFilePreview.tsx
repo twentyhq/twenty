@@ -72,11 +72,13 @@ export const AgentChatFilePreview = ({
   );
 
   const rightComponent = onRemove ? (
-    <AvatarOrIcon
-      Icon={IconX}
-      IconColor={theme.font.color.secondary}
-      onClick={onRemove}
-    />
+    <div onClick={(e) => e.stopPropagation()}>
+      <AvatarOrIcon
+        Icon={IconX}
+        IconColor={theme.font.color.secondary}
+        onClick={onRemove}
+      />
+    </div>
   ) : undefined;
 
   const hasRightDivider = isDefined(onRemove);

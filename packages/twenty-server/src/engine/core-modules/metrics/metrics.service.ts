@@ -85,11 +85,13 @@ export class MetricsService {
     eventId,
     attributes,
     shouldStoreInCache = true,
+    debugLog,
   }: {
     key: MetricsKeys;
     eventId?: string;
     attributes?: Attributes;
     shouldStoreInCache?: boolean;
+    debugLog?: string;
   }) {
     const counter = this.getMeter().createCounter(key);
 
@@ -97,6 +99,10 @@ export class MetricsService {
 
     if (shouldStoreInCache && eventId) {
       this.metricsCacheService.updateCounter(key, [eventId]);
+    }
+
+    if (isDefined(debugLog)) {
+      this.logger.debug(debugLog);
     }
   }
 

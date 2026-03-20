@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
@@ -15,6 +16,7 @@ export class EmailAliasManagerService {
     private readonly googleEmailAliasManagerService: GoogleEmailAliasManagerService,
     private readonly microsoftEmailAliasManagerService: MicrosoftEmailAliasManagerService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   public async refreshHandleAliases(
@@ -50,13 +52,8 @@ export class EmailAliasManagerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const connectedAccountRepository =
-        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-          workspaceId,
-          'connectedAccount',
-        );
-
-      await connectedAccountRepository.update(
+      await this.connectedAccountDataAccessService.update(
+        workspaceId,
         { id: connectedAccount.id },
         {
           handleAliases: handleAliases.join(','), // TODO: modify handleAliases to be of fieldmetadatatype array

@@ -554,6 +554,11 @@ msgstr ""
 msgid "Calendar channel is misconfigured."
 msgstr "日历通道配置错误。"
 
+#. js-lingui-id: 3J2x1Q
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "Calendar channel not found."
+msgstr ""
+
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar event not found."
@@ -920,6 +925,7 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "在{objectMetadataNameSingular}上不允许为{connectFieldName}进行连接。"
 
 #. js-lingui-id: /OJTzk
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Connected account not found."
 msgstr "未找到已连接账户。"
@@ -1774,6 +1780,11 @@ msgstr "审计类型无效。"
 msgid "Invalid CALDAV credentials. Please check your username and password."
 msgstr "CALDAV 凭证无效。请检查您的用户名和密码。"
 
+#. js-lingui-id: cizVEW
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "Invalid calendar channel input."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1865,6 +1876,11 @@ msgstr ""
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Invalid connected account ID."
 msgstr "无效的已连接账户 ID。"
+
+#. js-lingui-id: DH8Ofc
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+msgid "Invalid connected account input."
+msgstr ""
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2017,6 +2033,16 @@ msgstr "标签格式无效。"
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid limit parameter."
 msgstr "limit 参数无效。"
+
+#. js-lingui-id: fNaXqL
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Invalid message channel input."
+msgstr ""
+
+#. js-lingui-id: zUyPBT
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "Invalid message folder input."
+msgstr ""
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2678,6 +2704,16 @@ msgstr "五月"
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "消息通道未找到"
+
+#. js-lingui-id: vjIbbe
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message channel not found."
+msgstr ""
+
+#. js-lingui-id: BZbxut
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "Message folder not found."
+msgstr ""
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
