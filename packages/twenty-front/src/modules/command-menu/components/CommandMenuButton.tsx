@@ -59,7 +59,11 @@ export const CommandMenuButton = ({
           ariaLabel={resolvedLabel}
         />
       ) : (
-        <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
+        <div
+          id={`command-menu-item-entry-${command.key}`}
+          key={command.key}
+          data-testid="tooltip"
+        >
           <IconButton
             Icon={command.Icon}
             size="small"

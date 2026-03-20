@@ -21,6 +21,7 @@ import {
 import { sleep } from '~/utils/sleep';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -293,4 +294,27 @@ export const SubPageNavigation: Story = {
       return <Story />;
     },
   ],
+};
+
+export const PinnedActionTooltip: Story = {
+  render: () => (
+    <CommandMenuButton
+      command={{
+        key: 'navigate-to-next-record',
+        label: 'Navigate to next record',
+        Icon: IconPlus,
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const tooltipTrigger = await canvas.findByTestId('tooltip');
+
+    await userEvent.hover(tooltipTrigger);
+
+    const tooltip = await body.findByRole('tooltip');
+
+    await waitFor(() => expect(tooltip).toBeVisible());
+  },
 };
