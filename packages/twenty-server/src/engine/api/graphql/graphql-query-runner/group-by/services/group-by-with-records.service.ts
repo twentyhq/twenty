@@ -264,12 +264,20 @@ export class GroupByWithRecordsService {
         flatFieldMetadataMaps,
       );
 
-      const orderByRawSQL = graphqlQueryParser.getOrderByRawSQL(
-        orderByForRecords,
-        flatObjectMetadata.nameSingular,
-      );
+      const { sql: orderByRawSQL, relationJoins } =
+        graphqlQueryParser.getOrderByRawSQL(
+          orderByForRecords,
+          flatObjectMetadata.nameSingular,
+        );
 
       if (isNonEmptyString(orderByRawSQL)) {
+        for (const joinInfo of relationJoins) {
+          queryBuilder.leftJoin(
+            `${flatObjectMetadata.nameSingular}.${joinInfo.joinAlias}`,
+            joinInfo.joinAlias,
+          );
+        }
+
         return queryBuilder.addSelect(
           `ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions} ${orderByRawSQL})`,
           'record_row_number',
