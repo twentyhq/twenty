@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { IconPlayerPause, IconPlayerPlay } from 'twenty-ui/display';
@@ -131,6 +132,25 @@ const StyledTranscription = styled.div<{ fromAgent?: boolean }>`
   word-break: break-word;
 `;
 
+const dotPulse = keyframes`
+  0%, 20% { opacity: 0.3; }
+  50% { opacity: 1; }
+  80%, 100% { opacity: 0.3; }
+`;
+
+const StyledTranscribing = styled.div`
+  font-size: 12px;
+  font-style: italic;
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  opacity: 0.5;
+
+  & span {
+    animation: ${dotPulse} 1.4s ease-in-out infinite;
+  }
+  & span:nth-of-type(2) { animation-delay: 0.2s; }
+  & span:nth-of-type(3) { animation-delay: 0.4s; }
+`;
+
 type VoiceMessageProps = {
   mediaUrl: string;
   fromAgent?: boolean;
@@ -235,11 +255,15 @@ export const VoiceMessage = ({ mediaUrl, fromAgent, transcription }: VoiceMessag
           {SPEED_OPTIONS[speedIndex]}x
         </StyledSpeedButton>
       </StyledContainer>
-      {transcription && (
+      {transcription ? (
         <StyledTranscription fromAgent={fromAgent}>
           {transcription}
         </StyledTranscription>
-      )}
+      ) : !fromAgent ? (
+        <StyledTranscribing>
+          Transcribing<span>.</span><span>.</span><span>.</span>
+        </StyledTranscribing>
+      ) : null}
     </div>
   );
 };
