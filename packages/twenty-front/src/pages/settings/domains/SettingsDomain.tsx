@@ -182,6 +182,9 @@ export const SettingsDomain = () => {
   };
 
   const handleSave = async () => {
+    const isValid = await form.trigger();
+    if (!isValid) return;
+
     const values = form.getValues();
 
     if (

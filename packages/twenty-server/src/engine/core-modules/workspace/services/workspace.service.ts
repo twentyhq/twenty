@@ -149,7 +149,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
+    if (
+      isDefined(payload.subdomain) &&
+      workspace.subdomain !== payload.subdomain
+    ) {
       await this.subdomainManagerService.validateSubdomainOrThrow(
         payload.subdomain,
       );
