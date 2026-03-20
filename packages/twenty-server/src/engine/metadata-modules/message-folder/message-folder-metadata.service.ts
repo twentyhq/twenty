@@ -183,6 +183,23 @@ export class MessageFolderMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
+  async updateMany({
+    ids,
+    workspaceId,
+    data,
+  }: {
+    ids: string[];
+    workspaceId: string;
+    data: Partial<MessageFolderEntity>;
+  }): Promise<MessageFolderDTO[]> {
+    await this.repository.update(
+      { id: In(ids), workspaceId },
+      data as Record<string, unknown>,
+    );
+
+    return this.repository.find({ where: { id: In(ids), workspaceId } });
+  }
+
   async delete({
     id,
     workspaceId,

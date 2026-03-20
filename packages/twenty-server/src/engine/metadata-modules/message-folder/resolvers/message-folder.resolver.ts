@@ -15,7 +15,10 @@ import {
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
-import { UpdateMessageFolderInput } from 'src/engine/metadata-modules/message-folder/dtos/update-message-folder.input';
+import {
+  UpdateMessageFolderInput,
+  UpdateMessageFoldersInput,
+} from 'src/engine/metadata-modules/message-folder/dtos/update-message-folder.input';
 import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-folder/interceptors/message-folder-graphql-api-exception.interceptor';
 import { MessageFolderMetadataService } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.service';
 
@@ -69,6 +72,31 @@ export class MessageFolderResolver {
 
     return this.messageFolderMetadataService.update({
       id: input.id,
+      workspaceId: workspace.id,
+      data: input.update,
+    });
+  }
+
+  @Mutation(() => [MessageFolderDTO])
+  @UseGuards(NoPermissionGuard)
+  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
+  async updateMessageFolders(
+    @Args('input') input: UpdateMessageFoldersInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<MessageFolderDTO[]> {
+    await Promise.all(
+      input.ids.map((id) =>
+        this.messageFolderMetadataService.verifyOwnership({
+          id,
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        }),
+      ),
+    );
+
+    return this.messageFolderMetadataService.updateMany({
+      ids: input.ids,
       workspaceId: workspace.id,
       data: input.update,
     });

@@ -31,3 +31,16 @@ export class UpdateMessageFolderInput {
   @Field(() => UpdateMessageFolderInputUpdates)
   update: UpdateMessageFolderInputUpdates;
 }
+
+@InputType()
+export class UpdateMessageFoldersInput {
+  @IsUUID('4', { each: true })
+  @IsNotEmpty({ each: true })
+  @Field(() => [UUIDScalarType])
+  ids: string[];
+
+  @Type(() => UpdateMessageFolderInputUpdates)
+  @ValidateNested()
+  @Field(() => UpdateMessageFolderInputUpdates)
+  update: UpdateMessageFolderInputUpdates;
+}

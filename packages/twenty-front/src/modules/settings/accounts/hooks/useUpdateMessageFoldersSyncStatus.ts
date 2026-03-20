@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useLingui } from '@lingui/react/macro';
 
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
-import { UPDATE_MESSAGE_FOLDER } from '@/settings/accounts/graphql/mutations/updateMessageFolder';
+import { UPDATE_MESSAGE_FOLDERS } from '@/settings/accounts/graphql/mutations/updateMessageFolders';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient } from '@apollo/client/react';
 import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
@@ -36,41 +36,26 @@ export const useUpdateMessageFoldersSyncStatus = () => {
       isSynced,
     }: UpdateMessageFoldersSyncStatusArgs) => {
       if (isMigrated) {
-        const BATCH_SIZE = 10;
-        const errors: unknown[] = [];
-
-        for (
-          let index = 0;
-          index < messageFolderIds.length;
-          index += BATCH_SIZE
-        ) {
-          const batch = messageFolderIds.slice(index, index + BATCH_SIZE);
-          const results = await Promise.allSettled(
-            batch.map((folderId) =>
-              apolloClient.mutate({
-                mutation: UPDATE_MESSAGE_FOLDER,
-                variables: {
-                  input: {
-                    id: folderId,
-                    update: { isSynced },
-                  },
-                },
-              }),
-            ),
-          );
-
-          for (const result of results) {
-            if (result.status === 'rejected') {
-              errors.push(result.reason);
-            }
-          }
+        if (messageFolderIds.length === 0) {
+          return;
         }
 
-        if (errors.length > 0) {
-          throw new Error(
-            t`Failed to update some message folders sync status.`,
-          );
-        }
+        await apolloClient.mutate({
+          mutation: UPDATE_MESSAGE_FOLDERS,
+          variables: {
+            input: {
+              ids: messageFolderIds,
+              update: { isSynced },
+            },
+          },
+          optimisticResponse: {
+            updateMessageFolders: messageFolderIds.map((id) => ({
+              __typename: 'MessageFolder',
+              id,
+              isSynced,
+            })),
+          },
+        });
 
         return;
       }
