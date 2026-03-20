@@ -1,4 +1,5 @@
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -10,6 +11,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionFontColor } from 'twenty-ui/layout';
@@ -80,6 +82,7 @@ export const PauseSubscriptionFormModal = ({
       CoreObjectNameSingular.SubscriptionPeriodChangeRequest,
   });
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const currentMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const { record } = useFindOneRecord({
     objectNameSingular,
@@ -120,6 +123,9 @@ export const PauseSubscriptionFormModal = ({
         notes,
         proofReference,
         requestStatus: 'PENDING',
+        ...(isDefined(currentMember) && {
+          requestedById: currentMember.id,
+        }),
       });
 
       enqueueSuccessSnackBar({

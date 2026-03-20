@@ -1,12 +1,15 @@
 import { Action } from '@/action-menu/actions/components/Action';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 const EXTENSION_DAYS = 90;
 
@@ -26,6 +29,7 @@ export const ExtendSubscriptionAction = () => {
   });
   const { enqueueDialog } = useDialogManager();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const currentMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const handleClick = () => {
     if (!record) {
@@ -65,6 +69,9 @@ export const ExtendSubscriptionAction = () => {
                 duration: EXTENSION_DAYS,
                 reason: 'Extension / Renewal',
                 requestStatus: 'PENDING',
+                ...(isDefined(currentMember) && {
+                  requestedById: currentMember.id,
+                }),
               });
 
               enqueueSuccessSnackBar({
