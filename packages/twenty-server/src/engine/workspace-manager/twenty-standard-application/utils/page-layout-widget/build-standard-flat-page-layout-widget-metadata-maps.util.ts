@@ -77,10 +77,12 @@ const buildRecordPageWidgetConfigurations = ({
   widgetType,
   layoutObjectName,
   standardObjectMetadataRelatedEntityIds,
+  fieldUniversalIdentifier,
 }: {
   widgetType: WidgetType;
   layoutObjectName: AllStandardObjectName | null;
   standardObjectMetadataRelatedEntityIds: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs['standardObjectMetadataRelatedEntityIds'];
+  fieldUniversalIdentifier?: string;
 }): {
   configuration: AllPageLayoutWidgetConfiguration;
   universalConfiguration: CreateStandardPageLayoutWidgetContext['universalConfiguration'];
@@ -89,6 +91,18 @@ const buildRecordPageWidgetConfigurations = ({
     return buildFieldsWidgetConfiguration({
       objectName: layoutObjectName,
       standardObjectMetadataRelatedEntityIds,
+    });
+  }
+
+  if (
+    widgetType === WidgetType.FIELD &&
+    isDefined(layoutObjectName) &&
+    isDefined(fieldUniversalIdentifier)
+  ) {
+    return buildFieldWidgetConfiguration({
+      objectName: layoutObjectName,
+      standardObjectMetadataRelatedEntityIds,
+      fieldUniversalIdentifier,
     });
   }
 
@@ -175,6 +189,47 @@ const buildFieldsWidgetConfiguration = ({
   };
 };
 
+const buildFieldWidgetConfiguration = ({
+  objectName,
+  standardObjectMetadataRelatedEntityIds,
+  fieldUniversalIdentifier,
+}: {
+  objectName: AllStandardObjectName;
+  standardObjectMetadataRelatedEntityIds: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs['standardObjectMetadataRelatedEntityIds'];
+  fieldUniversalIdentifier: string;
+}): {
+  configuration: AllPageLayoutWidgetConfiguration;
+  universalConfiguration: CreateStandardPageLayoutWidgetContext['universalConfiguration'];
+} => {
+  const fields = standardObjectMetadataRelatedEntityIds[objectName]
+    .fields as Record<string, { id: string }>;
+
+  const fieldName = Object.keys(STANDARD_OBJECTS[objectName].fields).find(
+    (name) =>
+      (
+        STANDARD_OBJECTS[objectName].fields as Record<
+          string,
+          { universalIdentifier: string }
+        >
+      )[name]?.universalIdentifier === fieldUniversalIdentifier,
+  );
+
+  const fieldMetadataId = fieldName ? (fields[fieldName]?.id ?? null) : null;
+
+  return {
+    configuration: {
+      configurationType: WidgetConfigurationType.FIELD,
+      fieldMetadataId: fieldMetadataId ?? fieldUniversalIdentifier,
+      layout: 'CARD' as const,
+    },
+    universalConfiguration: {
+      configurationType: WidgetConfigurationType.FIELD,
+      fieldMetadataId: fieldUniversalIdentifier,
+      layout: 'CARD' as const,
+    },
+  };
+};
+
 const computeRecordPageWidgets = ({
   now,
   workspaceId,
@@ -225,6 +280,7 @@ const computeRecordPageWidgets = ({
             widgetType: widget.type,
             layoutObjectName,
             standardObjectMetadataRelatedEntityIds,
+            fieldUniversalIdentifier: widget.fieldUniversalIdentifier,
           });
 
         allWidgets.push(

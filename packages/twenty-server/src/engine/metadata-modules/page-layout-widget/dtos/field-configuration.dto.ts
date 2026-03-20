@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsIn, IsNotEmpty } from 'class-validator';
+import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { type FieldConfiguration } from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -11,4 +11,14 @@ export class FieldConfigurationDTO implements FieldConfiguration {
   @IsIn([WidgetConfigurationType.FIELD])
   @IsNotEmpty()
   configurationType: WidgetConfigurationType.FIELD;
+
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
+  fieldMetadataId: string;
+
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
+  layout: 'CARD' | 'FIELD' | 'VIEW';
 }
