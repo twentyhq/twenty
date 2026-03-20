@@ -9,22 +9,19 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+  GraphqlDirectExecutionException,
+  GraphqlDirectExecutionExceptionCode,
+} from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import {
-  type CommonInput,
-  type GroupByQueryArgs,
-} from 'src/engine/api/common/types/common-query-args.type';
+import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 export function assertGroupByArgs(
   args: unknown,
-): asserts args is CommonInput<GroupByQueryArgs> {
+): asserts args is GroupByResolverArgs {
   if (!isObject(args)) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: it must be an object',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
@@ -38,49 +35,40 @@ export function assertGroupByArgs(
     'groupBy',
     'viewId',
     'includeRecords',
-    'selectedFields',
     'limit',
     'offsetForRecords',
   ]);
 
   for (const key of argKeys) {
     if (!allowedKeys.has(key)) {
-      throw new CommonQueryRunnerException(
+      throw new GraphqlDirectExecutionException(
         `Argument not allowed: ${key}`,
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
   }
 
   if (!('groupBy' in args) || !Array.isArray(args.groupBy)) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Missing required argument: "groupBy" (array)',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-    );
-  }
-
-  if (!('selectedFields' in args) || !isObject(args.selectedFields)) {
-    throw new CommonQueryRunnerException(
-      'Missing required argument: "selectedFields"',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
   if ('filter' in args && isDefined(args.filter) && !isObject(args.filter)) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: "filter" must be an object',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
   if ('orderBy' in args && isDefined(args.orderBy) && !isArray(args.orderBy)) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderBy" must be an array',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
@@ -90,17 +78,17 @@ export function assertGroupByArgs(
     isDefined(args.orderByForRecords) &&
     !isArray(args.orderByForRecords)
   ) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderByForRecords" must be an array',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
   if ('viewId' in args && isDefined(args.viewId) && !isString(args.viewId)) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: "viewId" must be a string',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
@@ -110,17 +98,17 @@ export function assertGroupByArgs(
     isDefined(args.includeRecords) &&
     !isBoolean(args.includeRecords)
   ) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: "includeRecords" must be a boolean',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
   if ('limit' in args && isDefined(args.limit) && !isNumber(args.limit)) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: "limit" must be a number',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
@@ -130,9 +118,9 @@ export function assertGroupByArgs(
     isDefined(args.offsetForRecords) &&
     !isNumber(args.offsetForRecords)
   ) {
-    throw new CommonQueryRunnerException(
+    throw new GraphqlDirectExecutionException(
       'Invalid argument: "offsetForRecords" must be a number',
-      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }

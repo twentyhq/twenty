@@ -3,19 +3,19 @@ import { parse } from 'graphql';
 import { hasOnlyGeneratedWorkspaceResolvers } from 'src/engine/api/graphql/direct-execution/utils/has-only-generated-workspace-resolvers.util';
 
 const GENERATED_RESOLVERS = new Set([
-  'findManyCompanies',
-  'findOneCompany',
+  'companies',
+  'company',
   'createOneCompany',
-  'findManyPeople',
-  'findOnePerson',
+  'people',
+  'person',
 ]);
 
 describe('hasOnlyGeneratedWorkspaceResolvers', () => {
   it('should return true when all fields are generated workspace resolvers', () => {
     const query = `
       query {
-        findManyCompanies { id name }
-        findManyPeople { id email }
+        companies { id name }
+        people { id email }
       }
     `;
 
@@ -31,7 +31,7 @@ describe('hasOnlyGeneratedWorkspaceResolvers', () => {
   it('should return true for a single generated workspace resolver', () => {
     const query = `
       query {
-        findOneCompany(filter: { id: { eq: "123" } }) { id }
+        company(filter: { id: { eq: "123" } }) { id }
       }
     `;
 
@@ -47,8 +47,8 @@ describe('hasOnlyGeneratedWorkspaceResolvers', () => {
   it('should return false when all fields are core resolvers', () => {
     const query = `
       query {
-        currentWorkspace { id }
-        currentUser { id }
+        search { id }
+        getTimelineCalendarEventsFromOpportunityId { id }
       }
     `;
 
@@ -64,8 +64,8 @@ describe('hasOnlyGeneratedWorkspaceResolvers', () => {
   it('should return false for mixed queries', () => {
     const query = `
       query {
-        findManyCompanies { id }
-        currentWorkspace { id }
+        companies { id }
+        getTimelineCalendarEventsFromOpportunityId { id }
       }
     `;
 
@@ -80,7 +80,7 @@ describe('hasOnlyGeneratedWorkspaceResolvers', () => {
 
   it('should return true when no operation matches (no fields to check)', () => {
     const query = `
-      query GetCompanies { findManyCompanies { id } }
+      query GetCompanies { companies { id } }
     `;
 
     expect(
@@ -95,10 +95,10 @@ describe('hasOnlyGeneratedWorkspaceResolvers', () => {
   it('should respect operationName', () => {
     const query = `
       query WorkspaceQuery {
-        findManyCompanies { id }
+        companies { id }
       }
       query CoreQuery {
-        currentWorkspace { id }
+        getTimelineCalendarEventsFromOpportunityId { id }
       }
     `;
 

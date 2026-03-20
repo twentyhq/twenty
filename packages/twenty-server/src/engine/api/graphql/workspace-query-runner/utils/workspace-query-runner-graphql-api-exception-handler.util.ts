@@ -2,6 +2,8 @@ import { type QueryFailedError } from 'typeorm';
 
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
+import { GraphqlDirectExecutionException } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
+import { graphqlDirectExecutionToGraphqlApiExceptionHandler } from 'src/engine/api/graphql/direct-execution/utils/graphql-direct-execution-to-graphql-api-exception-handler.util';
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
@@ -45,6 +47,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return apiKeyGraphqlApiExceptionHandler(error);
     case error instanceof ThrottlerException:
       return throttlerToGraphqlApiExceptionHandler(error);
+    case error instanceof GraphqlDirectExecutionException:
+      return graphqlDirectExecutionToGraphqlApiExceptionHandler(error);
     default:
       throw error;
   }

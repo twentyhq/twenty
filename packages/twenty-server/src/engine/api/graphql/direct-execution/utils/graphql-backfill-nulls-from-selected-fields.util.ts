@@ -2,7 +2,7 @@
 // that are missing from the resolved object. Since direct execution bypasses
 // schema resolution, we need to explicitly set requested-but-missing fields
 // to null so the response shape matches what GraphQL would produce.
-export const backfillNullsFromSelectedFields = (
+export const graphQLBackfillNullsFromSelectedFields = (
   result: unknown,
   selectedFields: Record<string, object>,
 ): unknown => {
@@ -12,7 +12,7 @@ export const backfillNullsFromSelectedFields = (
 
   if (Array.isArray(result)) {
     return result.map((item) =>
-      backfillNullsFromSelectedFields(item, selectedFields),
+      graphQLBackfillNullsFromSelectedFields(item, selectedFields),
     );
   }
 
@@ -35,13 +35,13 @@ export const backfillNullsFromSelectedFields = (
 
     if (Array.isArray(record[key])) {
       record[key] = (record[key] as unknown[]).map((item) =>
-        backfillNullsFromSelectedFields(
+        graphQLBackfillNullsFromSelectedFields(
           item,
           subFields as Record<string, object>,
         ),
       );
     } else if (typeof record[key] === 'object') {
-      backfillNullsFromSelectedFields(
+      graphQLBackfillNullsFromSelectedFields(
         record[key],
         subFields as Record<string, object>,
       );

@@ -1,8 +1,8 @@
 import { parse } from 'graphql';
 
-import { parseTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/parse-top-level-fields.util';
+import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 
-describe('parseTopLevelFields', () => {
+describe('graphQLExtractTopLevelFields', () => {
   it('should return top-level fields from a query', () => {
     const query = `
       query {
@@ -11,7 +11,7 @@ describe('parseTopLevelFields', () => {
       }
     `;
 
-    const fields = parseTopLevelFields(parse(query), undefined);
+    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
 
     expect(fields).toHaveLength(2);
     expect(fields[0].name.value).toBe('findManyCompanies');
@@ -25,7 +25,7 @@ describe('parseTopLevelFields', () => {
       }
     `;
 
-    const fields = parseTopLevelFields(parse(query), undefined);
+    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
 
     expect(fields).toHaveLength(1);
     expect(fields[0].name.value).toBe('createOnePerson');
@@ -41,7 +41,7 @@ describe('parseTopLevelFields', () => {
       }
     `;
 
-    const fields = parseTopLevelFields(parse(query), 'GetPeople');
+    const fields = graphQLExtractTopLevelFields(parse(query), 'GetPeople');
 
     expect(fields).toHaveLength(1);
     expect(fields[0].name.value).toBe('findManyPeople');
@@ -57,7 +57,7 @@ describe('parseTopLevelFields', () => {
       }
     `;
 
-    expect(() => parseTopLevelFields(parse(query), undefined)).toThrow(
+    expect(() => graphQLExtractTopLevelFields(parse(query), undefined)).toThrow(
       'Must provide operation name when document contains multiple operations.',
     );
   });
@@ -69,7 +69,7 @@ describe('parseTopLevelFields', () => {
       }
     `;
 
-    const fields = parseTopLevelFields(parse(query), 'NonExistent');
+    const fields = graphQLExtractTopLevelFields(parse(query), 'NonExistent');
 
     expect(fields).toEqual([]);
   });

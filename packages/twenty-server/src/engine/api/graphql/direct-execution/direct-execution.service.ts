@@ -1,50 +1,68 @@
 import { Injectable } from '@nestjs/common';
 
+import { type MessageDescriptor } from '@lingui/core';
 import { type Request } from 'express';
 import {
+  GraphQLError,
   type DocumentNode,
   type FieldNode,
   type GraphQLFormattedError,
-  GraphQLError,
+  type GraphQLResolveInfo,
 } from 'graphql';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
-import { type DirectExecutionBaseHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-base.handler';
-import { DirectExecutionCreateManyHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-create-many.handler';
-import { DirectExecutionCreateOneHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-create-one.handler';
-import { DirectExecutionDeleteManyHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-delete-many.handler';
-import { DirectExecutionDeleteOneHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-delete-one.handler';
-import { DirectExecutionDestroyManyHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-destroy-many.handler';
-import { DirectExecutionDestroyOneHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-destroy-one.handler';
-import { DirectExecutionFindDuplicatesHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-find-duplicates.handler';
-import { DirectExecutionFindManyHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-find-many.handler';
-import { DirectExecutionFindOneHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-find-one.handler';
-import { DirectExecutionGroupByHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-group-by.handler';
-import { DirectExecutionMergeManyHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-merge-many.handler';
-import { DirectExecutionRestoreManyHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-restore-many.handler';
-import { DirectExecutionRestoreOneHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-restore-one.handler';
-import { DirectExecutionUpdateManyHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-update-many.handler';
-import { DirectExecutionUpdateOneHandler } from 'src/engine/api/graphql/direct-execution/handlers/direct-execution-update-one.handler';
+import graphqlFields from 'graphql-fields';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
-  buildFragmentMap,
-  selectionSetToSelectedFields,
-} from 'src/engine/api/graphql/direct-execution/utils/ast-to-selected-fields.util';
-import { backfillNullsFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/backfill-nulls-from-selected-fields.util';
+  GraphqlDirectExecutionException,
+  GraphqlDirectExecutionExceptionCode,
+} from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
+import { assertCreateManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-create-many-args.util';
+import { assertCreateOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-create-one-args.util';
+import { assertDeleteManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-delete-many-args.util';
+import { assertDeleteOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-delete-one-args.util';
+import { assertDestroyManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-destroy-many-args.util';
+import { assertDestroyOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-destroy-one-args.util';
+import { assertFindDuplicatesArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-find-duplicates-args.util';
+import { assertFindManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-find-many-args.util';
+import { assertFindOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-find-one-args.util';
+import { assertGroupByArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-group-by-args.util';
+import { assertMergeManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-merge-many-args.util';
+import { assertRestoreManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-restore-many-args.util';
+import { assertRestoreOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-restore-one-args.util';
+import { assertUpdateManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-update-many-args.util';
+import { assertUpdateOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-update-one-args.util';
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
-import { coerceArgsForDirectExecution } from 'src/engine/api/graphql/direct-execution/utils/coerce-args-for-direct-execution.util';
+import { buildWorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/direct-execution/utils/build-workspace-schema-builder-context.util';
 import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
-import { parseTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/parse-top-level-fields.util';
-import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { graphQLBackfillNullsFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-backfill-nulls-from-selected-fields.util';
+import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
+import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
+import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
-import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { CreateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/create-many-resolver.factory';
+import { CreateOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/create-one-resolver.factory';
+import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
+import { DeleteOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-one-resolver.factory';
+import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
+import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
+import { FindDuplicatesResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/find-duplicates-resolver.factory';
+import { FindManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/find-many-resolver.factory';
+import { FindOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/find-one-resolver.factory';
+import { GroupByResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/group-by-resolver.factory';
+import { MergeManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/merge-many-resolver.factory';
+import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
+import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
+import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
+import { UpdateOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-one-resolver.factory';
+import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
+import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -55,56 +73,85 @@ type DirectExecutionResult = {
 
 @Injectable()
 export class DirectExecutionService {
-  private readonly handlerMap: Map<string, DirectExecutionBaseHandler>;
+  private readonly factoryMap: Map<
+    string,
+    WorkspaceResolverBuilderFactoryInterface
+  >;
+
+  private readonly argsAssertionMap: Map<string, (args: unknown) => void>;
 
   constructor(
     private readonly workspaceFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly findManyHandler: DirectExecutionFindManyHandler,
-    private readonly findOneHandler: DirectExecutionFindOneHandler,
-    private readonly findDuplicatesHandler: DirectExecutionFindDuplicatesHandler,
-    private readonly groupByHandler: DirectExecutionGroupByHandler,
-    private readonly createOneHandler: DirectExecutionCreateOneHandler,
-    private readonly createManyHandler: DirectExecutionCreateManyHandler,
-    private readonly updateOneHandler: DirectExecutionUpdateOneHandler,
-    private readonly updateManyHandler: DirectExecutionUpdateManyHandler,
-    private readonly deleteOneHandler: DirectExecutionDeleteOneHandler,
-    private readonly deleteManyHandler: DirectExecutionDeleteManyHandler,
-    private readonly destroyOneHandler: DirectExecutionDestroyOneHandler,
-    private readonly destroyManyHandler: DirectExecutionDestroyManyHandler,
-    private readonly restoreOneHandler: DirectExecutionRestoreOneHandler,
-    private readonly restoreManyHandler: DirectExecutionRestoreManyHandler,
-    private readonly mergeManyHandler: DirectExecutionMergeManyHandler,
+    private readonly i18nService: I18nService,
+    private readonly findManyResolverFactory: FindManyResolverFactory,
+    private readonly findOneResolverFactory: FindOneResolverFactory,
+    private readonly findDuplicatesResolverFactory: FindDuplicatesResolverFactory,
+    private readonly groupByResolverFactory: GroupByResolverFactory,
+    private readonly createOneResolverFactory: CreateOneResolverFactory,
+    private readonly createManyResolverFactory: CreateManyResolverFactory,
+    private readonly updateOneResolverFactory: UpdateOneResolverFactory,
+    private readonly updateManyResolverFactory: UpdateManyResolverFactory,
+    private readonly deleteOneResolverFactory: DeleteOneResolverFactory,
+    private readonly deleteManyResolverFactory: DeleteManyResolverFactory,
+    private readonly destroyOneResolverFactory: DestroyOneResolverFactory,
+    private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
+    private readonly restoreOneResolverFactory: RestoreOneResolverFactory,
+    private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
+    private readonly mergeManyResolverFactory: MergeManyResolverFactory,
   ) {
-    this.handlerMap = new Map<string, DirectExecutionBaseHandler>([
-      [RESOLVER_METHOD_NAMES.FIND_MANY, this.findManyHandler],
-      [RESOLVER_METHOD_NAMES.FIND_ONE, this.findOneHandler],
-      [RESOLVER_METHOD_NAMES.FIND_DUPLICATES, this.findDuplicatesHandler],
-      [RESOLVER_METHOD_NAMES.GROUP_BY, this.groupByHandler],
-      [RESOLVER_METHOD_NAMES.CREATE_ONE, this.createOneHandler],
-      [RESOLVER_METHOD_NAMES.CREATE_MANY, this.createManyHandler],
-      [RESOLVER_METHOD_NAMES.UPDATE_ONE, this.updateOneHandler],
-      [RESOLVER_METHOD_NAMES.UPDATE_MANY, this.updateManyHandler],
-      [RESOLVER_METHOD_NAMES.DELETE_ONE, this.deleteOneHandler],
-      [RESOLVER_METHOD_NAMES.DELETE_MANY, this.deleteManyHandler],
-      [RESOLVER_METHOD_NAMES.DESTROY_ONE, this.destroyOneHandler],
-      [RESOLVER_METHOD_NAMES.DESTROY_MANY, this.destroyManyHandler],
-      [RESOLVER_METHOD_NAMES.RESTORE_ONE, this.restoreOneHandler],
-      [RESOLVER_METHOD_NAMES.RESTORE_MANY, this.restoreManyHandler],
-      [RESOLVER_METHOD_NAMES.MERGE_MANY, this.mergeManyHandler],
+    this.factoryMap = new Map<string, WorkspaceResolverBuilderFactoryInterface>(
+      [
+        [RESOLVER_METHOD_NAMES.FIND_MANY, this.findManyResolverFactory],
+        [RESOLVER_METHOD_NAMES.FIND_ONE, this.findOneResolverFactory],
+        [
+          RESOLVER_METHOD_NAMES.FIND_DUPLICATES,
+          this.findDuplicatesResolverFactory,
+        ],
+        [RESOLVER_METHOD_NAMES.GROUP_BY, this.groupByResolverFactory],
+        [RESOLVER_METHOD_NAMES.CREATE_ONE, this.createOneResolverFactory],
+        [RESOLVER_METHOD_NAMES.CREATE_MANY, this.createManyResolverFactory],
+        [RESOLVER_METHOD_NAMES.UPDATE_ONE, this.updateOneResolverFactory],
+        [RESOLVER_METHOD_NAMES.UPDATE_MANY, this.updateManyResolverFactory],
+        [RESOLVER_METHOD_NAMES.DELETE_ONE, this.deleteOneResolverFactory],
+        [RESOLVER_METHOD_NAMES.DELETE_MANY, this.deleteManyResolverFactory],
+        [RESOLVER_METHOD_NAMES.DESTROY_ONE, this.destroyOneResolverFactory],
+        [RESOLVER_METHOD_NAMES.DESTROY_MANY, this.destroyManyResolverFactory],
+        [RESOLVER_METHOD_NAMES.RESTORE_ONE, this.restoreOneResolverFactory],
+        [RESOLVER_METHOD_NAMES.RESTORE_MANY, this.restoreManyResolverFactory],
+        [RESOLVER_METHOD_NAMES.MERGE_MANY, this.mergeManyResolverFactory],
+      ],
+    );
+
+    this.argsAssertionMap = new Map<string, (args: unknown) => void>([
+      [RESOLVER_METHOD_NAMES.FIND_MANY, assertFindManyArgs],
+      [RESOLVER_METHOD_NAMES.FIND_ONE, assertFindOneArgs],
+      [RESOLVER_METHOD_NAMES.FIND_DUPLICATES, assertFindDuplicatesArgs],
+      [RESOLVER_METHOD_NAMES.GROUP_BY, assertGroupByArgs],
+      [RESOLVER_METHOD_NAMES.CREATE_ONE, assertCreateOneArgs],
+      [RESOLVER_METHOD_NAMES.CREATE_MANY, assertCreateManyArgs],
+      [RESOLVER_METHOD_NAMES.UPDATE_ONE, assertUpdateOneArgs],
+      [RESOLVER_METHOD_NAMES.UPDATE_MANY, assertUpdateManyArgs],
+      [RESOLVER_METHOD_NAMES.DELETE_ONE, assertDeleteOneArgs],
+      [RESOLVER_METHOD_NAMES.DELETE_MANY, assertDeleteManyArgs],
+      [RESOLVER_METHOD_NAMES.DESTROY_ONE, assertDestroyOneArgs],
+      [RESOLVER_METHOD_NAMES.DESTROY_MANY, assertDestroyManyArgs],
+      [RESOLVER_METHOD_NAMES.RESTORE_ONE, assertRestoreOneArgs],
+      [RESOLVER_METHOD_NAMES.RESTORE_MANY, assertRestoreManyArgs],
+      [RESOLVER_METHOD_NAMES.MERGE_MANY, assertMergeManyArgs],
     ]);
   }
 
   async getGeneratedWorkspaceResolverNames(
     workspaceId: string,
   ): Promise<Set<string> | null> {
-    const { resolverNameMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['resolverNameMap'],
-    );
+    const { graphQLResolverNameMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'graphQLResolverNameMap',
+      ]);
 
-    return new Set(Object.keys(resolverNameMap));
+    return new Set(Object.keys(graphQLResolverNameMap));
   }
 
   async execute(
@@ -118,20 +165,20 @@ export class DirectExecutionService {
         return null;
       }
 
-      const topLevelFields = parseTopLevelFields(
+      const topLevelFields = graphQLExtractTopLevelFields(
         document,
         req.body.operationName,
       );
 
       this.checkRootResolverLimitsOrThrow(topLevelFields);
 
-      const fragmentMap = buildFragmentMap(document);
+      const fragmentMap = graphQLBuildFragmentMap(document);
       const variables = req.body.variables ?? {};
       const data: Record<string, unknown> = {};
 
-      const { resolverNameMap } =
+      const { graphQLResolverNameMap } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'resolverNameMap',
+          'graphQLResolverNameMap',
         ]);
 
       const {
@@ -140,88 +187,116 @@ export class DirectExecutionService {
         objectIdByNameSingular,
       } = await this.loadWorkspaceMetadata(workspaceId);
 
-      for (const field of topLevelFields) {
-        const entry = resolverNameMap[field.name.value];
-        const responseKey = field.alias?.value ?? field.name.value;
+      const results = await Promise.allSettled(
+        topLevelFields.map(async (field) => {
+          const entry = graphQLResolverNameMap[field.name.value];
+          const responseKey = field.alias?.value ?? field.name.value;
 
-        const selectedFields = selectionSetToSelectedFields(
-          field.selectionSet,
-          fragmentMap,
-        );
-        const args = coerceArgsForDirectExecution(
-          extractArgumentsFromAst(field.arguments, variables),
-        );
+          const args = extractArgumentsFromAst(field.arguments, variables);
 
-        try {
-          data[responseKey] = await this.executeField(
-            entry,
-            { ...args, selectedFields },
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            objectIdByNameSingular,
+          const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo(
+            field,
+            fragmentMap,
           );
 
-          backfillNullsFromSelectedFields(data[responseKey], selectedFields);
-        } catch (error) {
-          data[responseKey] = null;
+          const workspaceSchemaBuilderContext =
+            buildWorkspaceSchemaBuilderContext(
+              entry,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              objectIdByNameSingular,
+            );
 
-          return { data, errors: [this.formatError(error)] };
+          const result = await this.executeField({
+            entry,
+            args,
+            graphqlPartialResolveInfo,
+            workspaceSchemaBuilderContext,
+          });
+
+          graphQLBackfillNullsFromSelectedFields(
+            result,
+            graphqlFields(graphqlPartialResolveInfo as GraphQLResolveInfo),
+          );
+
+          return { responseKey, result };
+        }),
+      );
+
+      const errors: GraphQLFormattedError[] = [];
+
+      for (const settled of results) {
+        if (settled.status === 'fulfilled') {
+          data[settled.value.responseKey] = settled.value.result;
+        } else {
+          errors.push(this.formatError(settled.reason, req));
         }
+      }
+
+      if (errors.length > 0) {
+        return { data, errors };
       }
 
       return { data };
     } catch (error) {
-      return { data: null, errors: [this.formatError(error)] };
+      return { data: null, errors: [this.formatError(error, req)] };
     }
   }
 
-  private async executeField(
-    entry: ResolverNameMapEntry,
-    args: Record<string, unknown>,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-    objectIdByNameSingular: Record<string, string>,
-  ): Promise<unknown> {
-    const handler = this.handlerMap.get(entry.method);
+  private async executeField({
+    entry,
+    args,
+    graphqlPartialResolveInfo,
+    workspaceSchemaBuilderContext,
+  }: {
+    entry: ResolverNameMapEntry;
+    args: Record<string, unknown>;
+    graphqlPartialResolveInfo: Pick<
+      GraphQLResolveInfo,
+      'fieldNodes' | 'fragments'
+    >;
+    workspaceSchemaBuilderContext: WorkspaceSchemaBuilderContext;
+  }): Promise<unknown> {
+    const factory = this.factoryMap.get(entry.method);
+    const assertFunction = this.argsAssertionMap.get(entry.method);
 
-    if (!handler) {
-      throw new Error(`Unknown method: ${entry.method}`);
-    }
-
-    const flatObjectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        entry.objectMetadataUniversalIdentifier
-      ];
-
-    if (!isDefined(flatObjectMetadata)) {
-      throw new Error(
-        `Object metadata not found for universal identifier: ${entry.objectMetadataUniversalIdentifier}`,
+    if (!isDefined(factory) || !isDefined(assertFunction)) {
+      throw new GraphqlDirectExecutionException(
+        `Unknown method: ${entry.method}`,
+        GraphqlDirectExecutionExceptionCode.UNKNOWN_METHOD,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 
-    const context: CommonBaseQueryRunnerContext = {
-      authContext: getWorkspaceAuthContext(),
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-    };
+    assertFunction(args);
 
-    const helper = new ObjectRecordsToGraphqlConnectionHelper(
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
+    const resolver = factory.create(workspaceSchemaBuilderContext);
+
+    return resolver(
+      null,
+      args,
+      null,
+      graphqlPartialResolveInfo as GraphQLResolveInfo,
     );
-
-    return handler.handle(args, context, helper);
   }
 
-  private formatError(error: any): GraphQLFormattedError {
+  private formatError(error: any, req: Request): GraphQLFormattedError {
     try {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error);
     } catch (graphqlError) {
       if (graphqlError instanceof GraphQLError) {
-        return graphqlError.toJSON();
+        const json = graphqlError.toJSON();
+
+        if (json.extensions?.userFriendlyMessage) {
+          const userLocale = req.locale ?? SOURCE_LOCALE;
+          const i18n = this.i18nService.getI18nInstance(userLocale);
+
+          json.extensions.userFriendlyMessage = i18n._(
+            json.extensions.userFriendlyMessage as MessageDescriptor,
+          );
+        }
+
+        return json;
       }
     }
 
