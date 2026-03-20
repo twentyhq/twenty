@@ -148,24 +148,29 @@ export class BillingWebhookInvoiceService {
 
   private async processInvoicePaid(data: Stripe.InvoicePaidEvent.Data) {
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
-
-    if (!isDefined(stripeSubscriptionId)) {
-      return;
-    }
-
     const stripeCustomerId = data.object.customer as string | undefined;
     const paidInvoicePeriodEnd = data.object.period_end;
 
-    if (isDefined(paidInvoicePeriodEnd)) {
-      await this.finalizePastDueDraftInvoicesAfterPaidInvoice(
-        stripeSubscriptionId,
-        paidInvoicePeriodEnd,
+    if (
+      !isDefined(stripeSubscriptionId) ||
+      !isDefined(stripeCustomerId) ||
+      !isDefined(paidInvoicePeriodEnd)
+    ) {
+      throw new BillingException(
+        'Invalid invoice paid event data',
+        BillingExceptionCode.BILLING_STRIPE_ERROR,
       );
     }
 
-    if (isDefined(stripeCustomerId)) {
-      await this.delaySuspendedWorkspaceCleanup(stripeCustomerId);
-    }
+    // Paying a past-due invoice won't reactivate the subscription if Stripe
+    // already generated a draft for the next period. Finalize it so Stripe
+    // can collect payment and resume the subscription.
+    await this.finalizePastDueDraftInvoicesAfterPaidInvoice(
+      stripeSubscriptionId,
+      paidInvoicePeriodEnd,
+    );
+
+    await this.delaySuspendedWorkspaceCleanup(stripeCustomerId);
 
     return { stripeSubscriptionId };
   }
