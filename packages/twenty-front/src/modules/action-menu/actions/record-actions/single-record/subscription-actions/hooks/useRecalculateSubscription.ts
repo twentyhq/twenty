@@ -58,7 +58,7 @@ export const useRecalculateSubscription = () => {
       for (const period of sorted) {
         if (!isDefined(period.endDate)) {
           hasOpenEndedPeriod = true;
-          break;
+          continue;
         }
 
         const end = new Date(period.endDate);
@@ -101,16 +101,23 @@ export const useRecalculateSubscription = () => {
         inactiveReason,
       );
 
+      const endDateIso =
+        !hasOpenEndedPeriod && isDefined(maxEndDate)
+          ? maxEndDate.toISOString()
+          : null;
+
       await updateOneRecord({
         objectNameSingular: CoreObjectNameSingular.TobSubscription,
         idToUpdate: subscriptionId,
         updateOneRecordInput: {
           subscriptionStatus,
           inactiveReason: isDefined(inactiveReason) ? inactiveReason : null,
-          ...(!hasOpenEndedPeriod &&
-            isDefined(maxEndDate) && {
-              finalEndDate: maxEndDate.toISOString(),
-            }),
+          // Write to both finalEndDate (new) and endDate (old) so smart views
+          // like "Expiring in 60 Days" keep working during the transition
+          ...(isDefined(endDateIso) && {
+            finalEndDate: endDateIso,
+            endDate: endDateIso,
+          }),
           pauseDays,
           accessStatus,
         },

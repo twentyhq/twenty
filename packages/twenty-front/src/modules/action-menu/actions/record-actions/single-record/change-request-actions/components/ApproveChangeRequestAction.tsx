@@ -4,6 +4,7 @@ import { useRecalculateSubscription } from '@/action-menu/actions/record-actions
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
@@ -13,6 +14,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+type PeriodRecord = {
+  id: string;
+  periodType: string;
+  startDate: string;
+  endDate: string | null;
+  source: string;
+};
+
 export const ApproveChangeRequestAction = () => {
   const recordId = useSelectedRecordIdOrThrow();
 
@@ -21,6 +30,25 @@ export const ApproveChangeRequestAction = () => {
       CoreObjectNameSingular.SubscriptionPeriodChangeRequest,
     objectRecordId: recordId,
   });
+
+  const subscriptionId = changeRequest?.subscriptionId as string | undefined;
+
+  // Fetch the parent subscription (to get startDate/endDate for lazy init)
+  const { record: subscription } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.TobSubscription,
+    objectRecordId: subscriptionId ?? '',
+    skip: !isDefined(subscriptionId),
+  });
+
+  // Fetch ALL existing periods for this subscription
+  const { records: existingPeriods, refetch: refetchPeriods } =
+    useFindManyRecords({
+      objectNameSingular: CoreObjectNameSingular.SubscriptionPeriod,
+      filter: isDefined(subscriptionId)
+        ? { subscriptionId: { eq: subscriptionId } }
+        : undefined,
+      skip: !isDefined(subscriptionId),
+    });
 
   const { updateOneRecord } = useUpdateOneRecord();
   const { createOneRecord: createPeriod } = useCreateOneRecord({
@@ -36,7 +64,14 @@ export const ApproveChangeRequestAction = () => {
       return;
     }
 
-    const subscriptionId = changeRequest.subscriptionId;
+    if (!isDefined(subscriptionId)) {
+      enqueueErrorSnackBar({
+        message: 'Cannot approve: no subscription linked',
+      });
+
+      return;
+    }
+
     const requestStartDate = new Date(changeRequest.startDate as string);
     const now = new Date();
 
@@ -50,6 +85,29 @@ export const ApproveChangeRequestAction = () => {
       });
 
       return;
+    }
+
+    // Validation: no pause during pause
+    if (changeRequest.periodType === 'PAUSE' && existingPeriods.length > 0) {
+      const coveringPeriod = existingPeriods.find((period) => {
+        const start = new Date(period.startDate as string).getTime();
+        const end = isDefined(period.endDate)
+          ? new Date(period.endDate as string).getTime()
+          : Infinity;
+
+        return (
+          requestStartDate.getTime() >= start &&
+          requestStartDate.getTime() < end
+        );
+      });
+
+      if (isDefined(coveringPeriod) && coveringPeriod.periodType === 'PAUSE') {
+        enqueueErrorSnackBar({
+          message: 'Cannot approve: subscription is already paused at this date',
+        });
+
+        return;
+      }
     }
 
     enqueueDialog({
@@ -78,20 +136,98 @@ export const ApproveChangeRequestAction = () => {
                 },
               });
 
-              const duration = changeRequest.duration as number;
-              const pauseEndDate = new Date(
-                requestStartDate.getTime() + duration * MS_PER_DAY,
+              // 2. Lazy initialization: if no periods exist yet (Dagster-created
+              // or pre-migration subscription), create an initial period from
+              // the subscription's startDate/endDate
+              let allPeriods: PeriodRecord[] = existingPeriods.map(
+                (period) => ({
+                  id: period.id as string,
+                  periodType: period.periodType as string,
+                  startDate: period.startDate as string,
+                  endDate: period.endDate as string | null,
+                  source: period.source as string,
+                }),
               );
 
-              const createdPeriods: Array<{
-                id: string;
-                periodType: string;
-                startDate: string;
-                endDate: string | null;
-              }> = [];
+              if (
+                allPeriods.length === 0 &&
+                isDefined(subscription) &&
+                isDefined(subscription.startDate)
+              ) {
+                const initialPeriod = await createPeriod({
+                  subscriptionId,
+                  periodType: 'ACTIVE',
+                  startDate: (subscription.startDate as string),
+                  endDate: isDefined(subscription.endDate)
+                    ? (subscription.endDate as string)
+                    : null,
+                  source: 'CONTRACT',
+                });
+                allPeriods.push({
+                  id: initialPeriod.id as string,
+                  periodType: 'ACTIVE',
+                  startDate: subscription.startDate as string,
+                  endDate: isDefined(subscription.endDate)
+                    ? (subscription.endDate as string)
+                    : null,
+                  source: 'CONTRACT',
+                });
+              }
+
+              const duration = changeRequest.duration as number;
 
               if (changeRequest.periodType === 'PAUSE') {
-                // Create pause period
+                // 3a. Find the active period that covers the pause start date
+                const coveringPeriodIndex = allPeriods.findIndex((period) => {
+                  const start = new Date(period.startDate).getTime();
+                  const end = isDefined(period.endDate)
+                    ? new Date(period.endDate).getTime()
+                    : Infinity;
+
+                  return (
+                    period.periodType === 'ACTIVE' &&
+                    requestStartDate.getTime() >= start &&
+                    requestStartDate.getTime() < end
+                  );
+                });
+
+                if (coveringPeriodIndex === -1) {
+                  enqueueErrorSnackBar({
+                    message:
+                      'Cannot approve: no active period covers the pause start date',
+                  });
+
+                  return;
+                }
+
+                const coveringPeriod = allPeriods[coveringPeriodIndex];
+                const originalEndDate = coveringPeriod.endDate;
+                const pauseEndDate = new Date(
+                  requestStartDate.getTime() + duration * MS_PER_DAY,
+                );
+
+                // Calculate resumption end date: original end + pause duration
+                const resumptionEndDate = isDefined(originalEndDate)
+                  ? new Date(
+                      new Date(originalEndDate).getTime() +
+                        duration * MS_PER_DAY,
+                    )
+                  : null;
+
+                // 3b. Shorten the existing active period
+                await updateOneRecord({
+                  objectNameSingular: CoreObjectNameSingular.SubscriptionPeriod,
+                  idToUpdate: coveringPeriod.id,
+                  updateOneRecordInput: {
+                    endDate: requestStartDate.toISOString(),
+                  },
+                });
+                allPeriods[coveringPeriodIndex] = {
+                  ...coveringPeriod,
+                  endDate: requestStartDate.toISOString(),
+                };
+
+                // 3c. Create pause period
                 const pausePeriod = await createPeriod({
                   subscriptionId,
                   periodType: 'PAUSE',
@@ -100,30 +236,36 @@ export const ApproveChangeRequestAction = () => {
                   source: 'CHANGE_REQUEST',
                   changeRequestId: recordId,
                 });
-                createdPeriods.push({
+                allPeriods.push({
                   id: pausePeriod.id as string,
                   periodType: 'PAUSE',
                   startDate: requestStartDate.toISOString(),
                   endDate: pauseEndDate.toISOString(),
+                  source: 'CHANGE_REQUEST',
                 });
 
-                // Create resumption active period
+                // 3d. Create resumption active period with concrete end date
                 const resumptionPeriod = await createPeriod({
                   subscriptionId,
                   periodType: 'ACTIVE',
                   startDate: pauseEndDate.toISOString(),
-                  endDate: null,
+                  endDate: isDefined(resumptionEndDate)
+                    ? resumptionEndDate.toISOString()
+                    : null,
                   source: 'CHANGE_REQUEST',
                   changeRequestId: recordId,
                 });
-                createdPeriods.push({
+                allPeriods.push({
                   id: resumptionPeriod.id as string,
                   periodType: 'ACTIVE',
                   startDate: pauseEndDate.toISOString(),
-                  endDate: null,
+                  endDate: isDefined(resumptionEndDate)
+                    ? resumptionEndDate.toISOString()
+                    : null,
+                  source: 'CHANGE_REQUEST',
                 });
               } else {
-                // EXTENSION: create new active period
+                // 4. EXTENSION: create new active period
                 const extensionEndDate = new Date(
                   requestStartDate.getTime() + duration * MS_PER_DAY,
                 );
@@ -136,17 +278,24 @@ export const ApproveChangeRequestAction = () => {
                   source: 'CHANGE_REQUEST',
                   changeRequestId: recordId,
                 });
-                createdPeriods.push({
+                allPeriods.push({
                   id: extensionPeriod.id as string,
                   periodType: 'ACTIVE',
                   startDate: requestStartDate.toISOString(),
                   endDate: extensionEndDate.toISOString(),
+                  source: 'CHANGE_REQUEST',
                 });
               }
 
-              // TODO: After migration (step 7 with Pablo), fetch ALL periods
-              // for the subscription instead of just newly created ones.
-              await recalculate(subscriptionId, createdPeriods, 0);
+              // 5. Recalculate with ALL periods
+              const historicalPauseDays =
+                isDefined(subscription) &&
+                isDefined(subscription.historicalPauseDays) &&
+                typeof subscription.historicalPauseDays === 'number'
+                  ? subscription.historicalPauseDays
+                  : 0;
+
+              await recalculate(subscriptionId, allPeriods, historicalPauseDays);
 
               enqueueSuccessSnackBar({
                 message: 'Change request approved — subscription updated',
