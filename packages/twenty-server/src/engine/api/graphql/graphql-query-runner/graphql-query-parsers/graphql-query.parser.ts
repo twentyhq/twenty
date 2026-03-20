@@ -13,6 +13,7 @@ import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-q
 import {
   GraphqlQueryOrderFieldParser,
   type OrderByClause,
+  type RelationJoinInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import {
   GraphqlQuerySelectedFieldsParser,
@@ -172,7 +173,7 @@ export class GraphqlQueryParser {
     orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
     objectNameSingular: string,
     isForwardPagination = true,
-  ): string {
+  ): { orderByRawSQL: string; relationJoins: RelationJoinInfo[] } {
     const parseResult = this.orderFieldParser.parse(
       orderBy as ObjectRecordOrderBy,
       objectNameSingular,
@@ -208,11 +209,11 @@ export class GraphqlQueryParser {
 
     const orderByRawSQLString = orderByRawSQLClauseArray.join(', ');
 
-    const orderByCompleteSQLClause = isNonEmptyString(orderByRawSQLString)
+    const orderByRawSQL = isNonEmptyString(orderByRawSQLString)
       ? `ORDER BY ${orderByRawSQLString}`
       : '';
 
-    return orderByCompleteSQLClause;
+    return { orderByRawSQL, relationJoins: parseResult.relationJoins };
   }
 
   public applyGroupByOrderToBuilder(
