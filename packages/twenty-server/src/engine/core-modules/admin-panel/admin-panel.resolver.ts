@@ -346,7 +346,7 @@ export class AdminPanelResolver {
 
       masked[name] = {
         type: config.type,
-        label: config.label ?? name,
+        label: config.label ?? rawConfig?.label ?? name,
         source: isCatalog ? 'catalog' : 'custom',
         ...(config.baseUrl && { baseUrl: config.baseUrl }),
         ...(config.region && { region: config.region }),
