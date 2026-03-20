@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useRemoveNavigationMenuItemByViewId } from '@/navigation-menu-item/edit/hooks/useRemoveNavigationMenuItemByViewId';
+import { useOptimisticRemoveNavigationMenuItemsByViewId } from '@/navigation-menu-item/edit/hooks/useOptimisticRemoveNavigationMenuItemsByViewId';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
@@ -47,7 +47,7 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
 
   const { performViewAPIDestroy } = usePerformViewAPIPersist();
   const { removeNavigationMenuItemsByViewIds } =
-    useRemoveNavigationMenuItemByViewId();
+    useOptimisticRemoveNavigationMenuItemsByViewId();
 
   const store = useStore();
 
@@ -67,10 +67,6 @@ export const useDestroyViewFromCurrentState = (viewBarInstanceId?: string) => {
     );
 
     if (remainingViews.length === 0) {
-      return;
-    }
-
-    if (!viewPickerReferenceViewId) {
       return;
     }
 
