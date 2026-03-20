@@ -13,7 +13,7 @@ import { type MenuItemAccent } from 'twenty-ui/navigation';
 
 export type CommandMenuItemDisplayProps = {
   key: string;
-  label: MessageDescriptor | string;
+  label: Nullable<MessageDescriptor | string>;
   shortLabel?: Nullable<MessageDescriptor | string>;
   description?: MessageDescriptor | string;
   Icon: IconComponent;
@@ -26,11 +26,13 @@ export const CommandMenuItemDisplay = ({
   onClick,
   to,
   disabled,
+  progress,
   showDisabledLoader = false,
 }: {
   onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
+  progress?: number;
   showDisabledLoader?: boolean;
 }) => {
   const action = useContext(CommandConfigContext);
@@ -66,6 +68,7 @@ export const CommandMenuItemDisplay = ({
         onClick={onClickWhenEnabled}
         to={toWhenEnabled}
         disabled={isDisabled}
+        progress={progress}
         showDisabledLoader={showDisabledLoader}
       />
     );

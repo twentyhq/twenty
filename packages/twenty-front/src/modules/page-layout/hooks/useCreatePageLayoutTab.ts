@@ -2,8 +2,8 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { getDefaultTabLayoutMode } from '@/page-layout/utils/getDefaultTabLayoutMode';
 import { getEmptyTabLayout } from '@/page-layout/utils/getEmptyTabLayout';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -12,7 +12,13 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
+export const useCreatePageLayoutTab = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -28,7 +34,6 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     pageLayoutId,
   );
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
   const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListInstanceId,
@@ -52,6 +57,7 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         title: title || `Tab ${tabsLength + 1}`,
         position: maxPosition + 1,
         pageLayoutId: pageLayoutId,
+        layoutMode: getDefaultTabLayoutMode(pageLayoutDraft.type),
         widgets: [],
         isOverridden: false,
         createdAt: new Date().toISOString(),

@@ -22,34 +22,27 @@ const renewTokenMutation = async (
 ) => {
   const httpLink = new HttpLink({ uri });
 
-  // Create new client to call refresh token graphql mutation
   const client = new ApolloClient({
     link: ApolloLink.from([logger, httpLink]),
     cache: new InMemoryCache({}),
   });
 
-  let data: RenewTokenMutation | null | undefined;
-  try {
-    const result = await client.mutate<
-      RenewTokenMutation,
-      RenewTokenMutationVariables
-    >({
-      mutation: RenewTokenDocument,
-      variables: {
-        appToken: refreshToken,
-      },
-      fetchPolicy: 'network-only',
-    });
-    data = result.data;
-  } catch {
-    throw new Error('Something went wrong during token renewal');
+  const result = await client.mutate<
+    RenewTokenMutation,
+    RenewTokenMutationVariables
+  >({
+    mutation: RenewTokenDocument,
+    variables: {
+      appToken: refreshToken,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  if (isUndefinedOrNull(result.data)) {
+    throw new Error('Token renewal returned empty data');
   }
 
-  if (isUndefinedOrNull(data)) {
-    throw new Error('Something went wrong during token renewal');
-  }
-
-  return data;
+  return result.data;
 };
 
 export const renewToken = async (

@@ -1236,66 +1236,6 @@ enum PageLayoutType {
   DASHBOARD
 }
 
-type ObjectRecordEventProperties {
-  updatedFields: [String!]
-  before: JSON
-  after: JSON
-  diff: JSON
-}
-
-type MetadataEvent {
-  type: MetadataEventAction!
-  metadataName: String!
-  recordId: String!
-  properties: ObjectRecordEventProperties!
-  updatedCollectionHash: String
-}
-
-"""Metadata Event Action"""
-enum MetadataEventAction {
-  CREATED
-  UPDATED
-  DELETED
-}
-
-type ObjectRecordEvent {
-  action: DatabaseEventAction!
-  objectNameSingular: String!
-  recordId: String!
-  userId: String
-  workspaceMemberId: String
-  properties: ObjectRecordEventProperties!
-}
-
-"""Database Event Action"""
-enum DatabaseEventAction {
-  CREATED
-  UPDATED
-  DELETED
-  DESTROYED
-  RESTORED
-  UPSERTED
-}
-
-type ObjectRecordEventWithQueryIds {
-  queryIds: [String!]!
-  objectRecordEvent: ObjectRecordEvent!
-}
-
-type EventSubscription {
-  eventStreamId: String!
-  objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
-  metadataEvents: [MetadataEvent!]!
-}
-
-type OnDbEvent {
-  action: DatabaseEventAction!
-  objectNameSingular: String!
-  eventDate: DateTime!
-  record: JSON!
-  updatedFields: [String!]
-}
-
 type Analytics {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -1608,6 +1548,8 @@ enum FeatureFlagKey {
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
+  IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
+  IS_CONNECTED_ACCOUNT_MIGRATED
 }
 
 type SSOIdentityProvider {
@@ -1957,6 +1899,58 @@ enum NavigationMenuItemType {
   RECORD
 }
 
+type ObjectRecordEventProperties {
+  updatedFields: [String!]
+  before: JSON
+  after: JSON
+  diff: JSON
+}
+
+type MetadataEvent {
+  type: MetadataEventAction!
+  metadataName: String!
+  recordId: String!
+  properties: ObjectRecordEventProperties!
+  updatedCollectionHash: String
+}
+
+"""Metadata Event Action"""
+enum MetadataEventAction {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type ObjectRecordEvent {
+  action: DatabaseEventAction!
+  objectNameSingular: String!
+  recordId: String!
+  userId: String
+  workspaceMemberId: String
+  properties: ObjectRecordEventProperties!
+}
+
+"""Database Event Action"""
+enum DatabaseEventAction {
+  CREATED
+  UPDATED
+  DELETED
+  DESTROYED
+  RESTORED
+  UPSERTED
+}
+
+type ObjectRecordEventWithQueryIds {
+  queryIds: [String!]!
+  objectRecordEvent: ObjectRecordEvent!
+}
+
+type EventSubscription {
+  eventStreamId: String!
+  objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
+  metadataEvents: [MetadataEvent!]!
+}
+
 type LogicFunctionExecutionResult {
   """Execution result in JSON format"""
   data: JSON
@@ -2211,6 +2205,163 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
+type CalendarChannel {
+  id: UUID!
+  handle: String!
+  syncStatus: CalendarChannelSyncStatus!
+  syncStage: CalendarChannelSyncStage!
+  visibility: CalendarChannelVisibility!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
+  isSyncEnabled: Boolean!
+  syncCursor: String
+  syncedAt: DateTime
+  syncStageStartedAt: DateTime
+  throttleFailureCount: Float!
+  connectedAccountId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum CalendarChannelSyncStatus {
+  NOT_SYNCED
+  ONGOING
+  ACTIVE
+  FAILED_INSUFFICIENT_PERMISSIONS
+  FAILED_UNKNOWN
+}
+
+enum CalendarChannelSyncStage {
+  PENDING_CONFIGURATION
+  CALENDAR_EVENT_LIST_FETCH_PENDING
+  CALENDAR_EVENT_LIST_FETCH_SCHEDULED
+  CALENDAR_EVENT_LIST_FETCH_ONGOING
+  CALENDAR_EVENTS_IMPORT_PENDING
+  CALENDAR_EVENTS_IMPORT_SCHEDULED
+  CALENDAR_EVENTS_IMPORT_ONGOING
+  FAILED
+}
+
+enum CalendarChannelVisibility {
+  METADATA
+  SHARE_EVERYTHING
+}
+
+enum CalendarChannelContactAutoCreationPolicy {
+  AS_PARTICIPANT_AND_ORGANIZER
+  AS_PARTICIPANT
+  AS_ORGANIZER
+  NONE
+}
+
+type ConnectedAccountDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  accessToken: String
+  refreshToken: String
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  connectionParameters: JSON
+  lastSignedInAt: DateTime
+  oidcTokenClaims: JSON
+  userWorkspaceId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type MessageChannel {
+  id: UUID!
+  visibility: MessageChannelVisibility!
+  handle: String!
+  type: MessageChannelType!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
+  messageFolderImportPolicy: MessageFolderImportPolicy!
+  excludeNonProfessionalEmails: Boolean!
+  excludeGroupEmails: Boolean!
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
+  isSyncEnabled: Boolean!
+  syncCursor: String
+  syncedAt: DateTime
+  syncStatus: MessageChannelSyncStatus!
+  syncStage: MessageChannelSyncStage!
+  syncStageStartedAt: DateTime
+  throttleFailureCount: Float!
+  throttleRetryAfter: DateTime
+  connectedAccountId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum MessageChannelVisibility {
+  METADATA
+  SUBJECT
+  SHARE_EVERYTHING
+}
+
+enum MessageChannelType {
+  EMAIL
+  SMS
+}
+
+enum MessageChannelContactAutoCreationPolicy {
+  SENT_AND_RECEIVED
+  SENT
+  NONE
+}
+
+enum MessageFolderImportPolicy {
+  ALL_FOLDERS
+  SELECTED_FOLDERS
+}
+
+enum MessageChannelPendingGroupEmailsAction {
+  GROUP_EMAILS_DELETION
+  GROUP_EMAILS_IMPORT
+  NONE
+}
+
+enum MessageChannelSyncStatus {
+  NOT_SYNCED
+  ONGOING
+  ACTIVE
+  FAILED_INSUFFICIENT_PERMISSIONS
+  FAILED_UNKNOWN
+}
+
+enum MessageChannelSyncStage {
+  PENDING_CONFIGURATION
+  MESSAGE_LIST_FETCH_PENDING
+  MESSAGE_LIST_FETCH_SCHEDULED
+  MESSAGE_LIST_FETCH_ONGOING
+  MESSAGES_IMPORT_PENDING
+  MESSAGES_IMPORT_SCHEDULED
+  MESSAGES_IMPORT_ONGOING
+  FAILED
+}
+
+type MessageFolder {
+  id: UUID!
+  name: String
+  syncCursor: String
+  isSentFolder: Boolean!
+  isSynced: Boolean!
+  parentFolderId: UUID
+  externalId: String
+  pendingSyncAction: MessageFolderPendingSyncAction!
+  messageChannelId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum MessageFolderPendingSyncAction {
+  FOLDER_DELETION
+  NONE
+}
+
 type CollectionHash {
   collectionName: AllMetadataName!
   hash: String!
@@ -2239,6 +2390,8 @@ enum AllMetadataName {
   pageLayoutTab
   commandMenuItem
   navigationMenuItem
+  permissionFlag
+  objectPermission
   frontComponent
   webhook
 }
@@ -2402,7 +2555,6 @@ type ClientConfig {
   isAttachmentPreviewEnabled: Boolean!
   sentry: Sentry!
   captcha: Captcha!
-  chromeExtensionId: String
   api: ApiConfig!
   canManageFeatureFlags: Boolean!
   publicFeatureFlags: [PublicFeatureFlag!]!
@@ -2458,9 +2610,7 @@ enum ConfigVariablesGroup {
   MICROSOFT_AUTH
   EMAIL_SETTINGS
   LOGGING
-  METERING
-  EXCEPTION_HANDLER
-  OTHER
+  ADVANCED_SETTINGS
   BILLING_CONFIG
   CAPTCHA_CONFIG
   CLOUDFLARE_CONFIG
@@ -2471,7 +2621,6 @@ enum ConfigVariablesGroup {
   SUPPORT_CHAT_CONFIG
   ANALYTICS_CONFIG
   TOKENS_DURATION
-  TWO_FACTOR_AUTHENTICATION
   AWS_SES_SETTINGS
 }
 
@@ -2925,6 +3074,8 @@ type EventLogQueryResult {
 }
 
 type Query {
+  navigationMenuItems: [NavigationMenuItem!]!
+  navigationMenuItem(id: UUID!): NavigationMenuItem
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   getPageLayoutTabs(pageLayoutId: String!): [PageLayoutTab!]!
@@ -2978,13 +3129,11 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
-  navigationMenuItems: [NavigationMenuItem!]!
-  navigationMenuItem(id: UUID!): NavigationMenuItem
-  apiKeys: [ApiKey!]!
-  apiKey(input: GetApiKeyInput!): ApiKey
   getRoles: [Role!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
+  apiKeys: [ApiKey!]!
+  apiKey(input: GetApiKeyInput!): ApiKey
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
   field(
@@ -3019,6 +3168,14 @@ type Query {
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
+  messageFolders(messageChannelId: UUID): [MessageFolder!]!
+  messageFolder(id: UUID!): MessageFolder
+  calendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
+  calendarChannel(id: UUID!): CalendarChannel
+  messageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  messageChannel(id: UUID!): MessageChannel
+  connectedAccounts: [ConnectedAccountDTO!]!
+  connectedAccount(id: UUID!): ConnectedAccountDTO
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
@@ -3171,6 +3328,15 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
+  createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
+  updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
+  deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
+  uploadAIChatFile(file: Upload!): FileWithSignedUrl!
+  uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
+  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
+  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
+  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
+  uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   createObjectEvent(event: String!, recordId: UUID!, objectMetadataId: UUID!, properties: JSON): Analytics!
   trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
@@ -3218,12 +3384,6 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
-  uploadAIChatFile(file: Upload!): FileWithSignedUrl!
-  uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
-  uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
-  uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
-  uploadFilesFieldFile(file: Upload!, fieldMetadataId: String!): FileWithSignedUrl!
-  uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
@@ -3234,13 +3394,6 @@ type Mutation {
   cancelSwitchMeteredPrice: BillingUpdate!
   refreshEnterpriseValidityToken: Boolean!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
-  updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
-  deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
-  createApiKey(input: CreateApiKeyInput!): ApiKey!
-  updateApiKey(input: UpdateApiKeyInput!): ApiKey
-  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
-  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3259,6 +3412,10 @@ type Mutation {
   createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
   deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  createApiKey(input: CreateApiKeyInput!): ApiKey!
+  updateApiKey(input: UpdateApiKeyInput!): ApiKey
+  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
+  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
@@ -3316,6 +3473,18 @@ type Mutation {
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
+  createMessageFolder(input: CreateMessageFolderInput!): MessageFolder!
+  updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
+  deleteMessageFolder(id: UUID!): MessageFolder!
+  createCalendarChannel(input: CreateCalendarChannelInput!): CalendarChannel!
+  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
+  deleteCalendarChannel(id: UUID!): CalendarChannel!
+  createMessageChannel(input: CreateMessageChannelInput!): MessageChannel!
+  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  deleteMessageChannel(id: UUID!): MessageChannel!
+  createConnectedAccount(input: CreateConnectedAccountInput!): ConnectedAccountDTO!
+  updateConnectedAccount(input: UpdateConnectedAccountInput!): ConnectedAccountDTO!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
@@ -3373,6 +3542,41 @@ input RemoveQueryFromEventStreamInput {
   queryId: String!
 }
 
+input CreateNavigationMenuItemInput {
+  id: UUID
+  userWorkspaceId: UUID
+  targetRecordId: UUID
+  targetObjectMetadataId: UUID
+  viewId: UUID
+  type: NavigationMenuItemType!
+  name: String
+  link: String
+  icon: String
+  color: String
+  folderId: UUID
+  position: Float
+}
+
+input UpdateOneNavigationMenuItemInput {
+  """The id of the record to update"""
+  id: UUID!
+
+  """The record to update"""
+  update: UpdateNavigationMenuItemInput!
+}
+
+input UpdateNavigationMenuItemInput {
+  folderId: UUID
+  position: Float
+  name: String
+  link: String
+  icon: String
+  color: String
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 enum AnalyticsType {
   PAGEVIEW
   TRACK
@@ -3409,12 +3613,14 @@ input CreatePageLayoutTabInput {
   title: String!
   position: Float
   pageLayoutId: UUID!
+  layoutMode: PageLayoutTabLayoutMode = GRID
 }
 
 input UpdatePageLayoutTabInput {
   title: String
   position: Float
   icon: String
+  layoutMode: PageLayoutTabLayoutMode
 }
 
 input CreatePageLayoutInput {
@@ -3441,6 +3647,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
   title: String!
   position: Float!
   icon: String
+  layoutMode: PageLayoutTabLayoutMode = GRID
   widgets: [UpdatePageLayoutWidgetWithIdInput!]!
 }
 
@@ -3793,58 +4000,6 @@ input UpdateAgentInput {
   evaluationInputs: [String!]
 }
 
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
-
-input CreateNavigationMenuItemInput {
-  userWorkspaceId: UUID
-  targetRecordId: UUID
-  targetObjectMetadataId: UUID
-  viewId: UUID
-  type: NavigationMenuItemType!
-  name: String
-  link: String
-  icon: String
-  color: String
-  folderId: UUID
-  position: Float
-}
-
-input UpdateOneNavigationMenuItemInput {
-  """The id of the record to update"""
-  id: UUID!
-
-  """The record to update"""
-  update: UpdateNavigationMenuItemInput!
-}
-
-input UpdateNavigationMenuItemInput {
-  folderId: UUID
-  position: Float
-  name: String
-  link: String
-  icon: String
-  color: String
-}
-
-input CreateApiKeyInput {
-  name: String!
-  expiresAt: String!
-  revokedAt: String
-  roleId: UUID!
-}
-
-input UpdateApiKeyInput {
-  id: UUID!
-  name: String
-  expiresAt: String
-  revokedAt: String
-}
-
-input RevokeApiKeyInput {
-  id: UUID!
-}
-
 input CreateRoleInput {
   id: String
   label: String!
@@ -3952,6 +4107,24 @@ input DeleteApprovedAccessDomainInput {
 input ValidateApprovedAccessDomainInput {
   validationToken: String!
   approvedAccessDomainId: UUID!
+}
+
+input CreateApiKeyInput {
+  name: String!
+  expiresAt: String!
+  revokedAt: String
+  roleId: UUID!
+}
+
+input UpdateApiKeyInput {
+  id: UUID!
+  name: String
+  expiresAt: String
+  revokedAt: String
+}
+
+input RevokeApiKeyInput {
+  id: UUID!
 }
 
 input CreateOneFieldMetadataInput {
@@ -4208,6 +4381,105 @@ input EditSsoInput {
   status: SSOIdentityProviderStatus!
 }
 
+input CreateMessageFolderInput {
+  id: UUID
+  name: String
+  isSentFolder: Boolean!
+  isSynced: Boolean!
+  externalId: String
+  pendingSyncAction: MessageFolderPendingSyncAction!
+  messageChannelId: UUID!
+  parentFolderId: UUID
+}
+
+input UpdateMessageFolderInput {
+  id: UUID!
+  update: UpdateMessageFolderInputUpdates!
+}
+
+input UpdateMessageFolderInputUpdates {
+  name: String
+  syncCursor: String
+  isSynced: Boolean
+  pendingSyncAction: MessageFolderPendingSyncAction
+}
+
+input CreateCalendarChannelInput {
+  id: UUID
+  handle: String!
+  visibility: CalendarChannelVisibility!
+  syncStage: CalendarChannelSyncStage!
+  connectedAccountId: UUID!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
+  isSyncEnabled: Boolean!
+}
+
+input UpdateCalendarChannelInput {
+  id: UUID!
+  update: UpdateCalendarChannelInputUpdates!
+}
+
+input UpdateCalendarChannelInputUpdates {
+  visibility: CalendarChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
+  isSyncEnabled: Boolean
+}
+
+input CreateMessageChannelInput {
+  id: UUID
+  handle: String!
+  visibility: MessageChannelVisibility!
+  type: MessageChannelType!
+  syncStage: MessageChannelSyncStage!
+  connectedAccountId: UUID!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
+  messageFolderImportPolicy: MessageFolderImportPolicy!
+  excludeNonProfessionalEmails: Boolean!
+  excludeGroupEmails: Boolean!
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
+  isSyncEnabled: Boolean!
+}
+
+input UpdateMessageChannelInput {
+  id: UUID!
+  update: UpdateMessageChannelInputUpdates!
+}
+
+input UpdateMessageChannelInputUpdates {
+  visibility: MessageChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
+  messageFolderImportPolicy: MessageFolderImportPolicy
+  isSyncEnabled: Boolean
+  excludeNonProfessionalEmails: Boolean
+  excludeGroupEmails: Boolean
+}
+
+input CreateConnectedAccountInput {
+  id: UUID
+  handle: String!
+  provider: String!
+  accessToken: String
+  refreshToken: String
+  scopes: [String!]
+  userWorkspaceId: UUID!
+}
+
+input UpdateConnectedAccountInput {
+  id: UUID!
+  update: UpdateConnectedAccountInputUpdates!
+}
+
+input UpdateConnectedAccountInputUpdates {
+  accessToken: String
+  refreshToken: String
+  handleAliases: [String!]
+  scopes: [String!]
+}
+
 input CreateWebhookInput {
   id: UUID
   targetUrl: String!
@@ -4313,15 +4585,8 @@ enum FileFolder {
 }
 
 type Subscription {
-  onDbEvent(input: OnDbEventInput!): OnDbEvent!
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
-}
-
-input OnDbEventInput {
-  action: DatabaseEventAction
-  objectNameSingular: String
-  recordId: UUID
 }
 
 input LogicFunctionLogsInput {

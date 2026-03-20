@@ -21,19 +21,51 @@ Le app ti consentono di creare e gestire le personalizzazioni di Twenty **come c
 ## Prerequisiti
 
 * Node.js 24+ e Yarn 4
-* Uno spazio di lavoro Twenty e una chiave API (creane una su https://app.twenty.com/settings/api-webhooks)
+* Docker (per il server di sviluppo locale di Twenty)
 
 ## Per iniziare
 
-Crea una nuova app utilizzando lo scaffolder ufficiale, quindi autenticati e inizia a sviluppare:
+Crea una nuova app utilizzando lo scaffolder ufficiale. Può avviare automaticamente un'istanza locale di Twenty per te:
 
 ```bash filename="Terminal"
-# Crea lo scaffold di una nuova app (include tutti gli esempi per impostazione predefinita)
+# Crea lo scaffold di una nuova app — la CLI offrirà di avviare un server locale di Twenty
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Avvia la modalità di sviluppo: sincronizza automaticamente le modifiche locali con il tuo workspace
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### Gestione del server locale
+
+L'SDK include comandi per gestire un server di sviluppo locale di Twenty (immagine Docker all-in-one con PostgreSQL, Redis, server e worker):
+
+```bash filename="Terminal"
+# Avvia il server locale (scarica l'immagine se necessario)
+yarn twenty server start
+
+# Verifica lo stato del server
+yarn twenty server status
+
+# Segui i log del server
+yarn twenty server logs
+
+# Arresta il server
+yarn twenty server stop
+
+# Reimposta tutti i dati e riparti da zero
+yarn twenty server reset
+```
+
+Il server locale è preconfigurato con uno spazio di lavoro e un utente (`tim@apple.dev` / `tim@apple.dev`), così puoi iniziare a sviluppare immediatamente senza alcuna configurazione manuale.
+
+### Autenticazione
+
+Collega la tua app al server locale tramite OAuth:
+
+```bash filename="Terminal"
+# Autenticati tramite OAuth (apre il browser)
+yarn twenty remote add --local
 ```
 
 Lo strumento di scaffolding supporta due modalità per controllare quali file di esempio vengono inclusi:

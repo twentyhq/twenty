@@ -58,7 +58,7 @@ const StyledFolderContainer = styled.div<{
   border: ${({ $isSelectedInEditMode }) =>
     $isSelectedInEditMode
       ? `1px solid ${themeCssVariables.color.blue}`
-      : '1px solid transparent'};
+      : 'none'};
   border-radius: ${themeCssVariables.border.radius.sm};
   transition: background-color 150ms ease-in-out;
 
@@ -240,7 +240,6 @@ export const NavigationMenuItemFolderDnd = ({
       triggerEvent="CLICK"
       preventCollapseOnMobile={isMobile}
       isDragging={isDragging}
-      alwaysShowRightOptions
     />
   );
 

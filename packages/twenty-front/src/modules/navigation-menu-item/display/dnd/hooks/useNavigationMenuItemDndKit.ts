@@ -18,7 +18,6 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { DROP_RESULT_OPTIONS } from '@/navigation-menu-item/display/dnd/constants/navigationMenuItemDndKitDropResultOptions';
 import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop';
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleNavigationMenuItemDragAndDrop';
-import { useHandleWorkspaceNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleWorkspaceNavigationMenuItemDragAndDrop';
 import { resolveDropTarget } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitResolveDropTarget';
 import { toDropResult } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitToDropResult';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -92,9 +91,7 @@ export const useNavigationMenuItemDndKit = (
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleAddToNavigationDrop } = useHandleAddToNavigationDrop();
   const { handleNavigationMenuItemDragAndDrop } =
-    useHandleNavigationMenuItemDragAndDrop();
-  const { handleWorkspaceNavigationMenuItemDragAndDrop } =
-    useHandleWorkspaceNavigationMenuItemDragAndDrop();
+    useHandleNavigationMenuItemDragAndDrop(sectionType);
 
   const items = isWorkspaceSection
     ? workspaceNavigationMenuItems
@@ -169,25 +166,13 @@ export const useNavigationMenuItemDndKit = (
     [sectionType, getAddToNavPayload, isSourceFolderDrag],
   );
 
-  const applyWorkspaceReorderIfAllowed = useCallback(
+  const applyWorkspaceReorder = useCallback(
     (
       id: string,
       source: DropDestination,
       destination: DropDestination,
       insertBeforeItemId?: string | null,
     ) => {
-      const draggedItem = getNavItemById(id);
-      const destFolderId = extractFolderIdFromDroppableId(
-        destination.droppableId,
-        'workspace',
-      );
-      if (
-        isDefined(destFolderId) &&
-        isDefined(draggedItem) &&
-        isNavigationMenuItemFolder(draggedItem)
-      ) {
-        return;
-      }
       const result = toDropResult(
         id,
         {
@@ -197,7 +182,7 @@ export const useNavigationMenuItemDndKit = (
         destination,
       );
       const provided: ResponderProvided = { announce: () => {} };
-      handleWorkspaceNavigationMenuItemDragAndDrop(
+      handleNavigationMenuItemDragAndDrop(
         {
           ...result,
           ...DROP_RESULT_OPTIONS,
@@ -206,7 +191,7 @@ export const useNavigationMenuItemDndKit = (
         provided,
       );
     },
-    [getNavItemById, handleWorkspaceNavigationMenuItemDragAndDrop],
+    [handleNavigationMenuItemDragAndDrop],
   );
 
   const handleDragStart = (event: DragStartPayload) => {
@@ -344,7 +329,7 @@ export const useNavigationMenuItemDndKit = (
         const insertBeforeItemId = resolved.isTargetFolder
           ? null
           : String(target?.id ?? '');
-        applyWorkspaceReorderIfAllowed(
+        applyWorkspaceReorder(
           draggableId,
           { droppableId: initialGroup, index: initialIndex },
           resolved.destination,
@@ -388,7 +373,7 @@ export const useNavigationMenuItemDndKit = (
           droppableId: destination.droppableId,
         })
       ) {
-        applyWorkspaceReorderIfAllowed(
+        applyWorkspaceReorder(
           draggableId,
           {
             droppableId: data?.sourceDroppableId ?? '',

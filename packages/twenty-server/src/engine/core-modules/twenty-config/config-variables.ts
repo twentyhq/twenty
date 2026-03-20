@@ -44,7 +44,7 @@ import {
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Enable or disable password authentication for users',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -52,7 +52,7 @@ export class ConfigVariables {
   AUTH_PASSWORD_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Prefills tim@apple.dev in the login form, used in local development for quicker sign-in',
     type: ConfigVariableType.BOOLEAN,
@@ -62,7 +62,7 @@ export class ConfigVariables {
   SIGN_IN_PREFILLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Require email verification for user accounts',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -70,7 +70,7 @@ export class ConfigVariables {
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Enable safe mode for outbound requests (prevents private IPs and other security risks). Applies to HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections.',
     type: ConfigVariableType.BOOLEAN,
@@ -155,14 +155,14 @@ export class ConfigVariables {
   MESSAGING_PROVIDER_GMAIL_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Enable or disable the IMAP messaging integration',
     type: ConfigVariableType.BOOLEAN,
   })
   IS_IMAP_SMTP_CALDAV_ENABLED = true;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       "Enable or disable requests to twenty-icons to get companies' icons",
     type: ConfigVariableType.BOOLEAN,
@@ -216,7 +216,7 @@ export class ConfigVariables {
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Enable or disable the seeding of standard record page layouts',
     type: ConfigVariableType.BOOLEAN,
@@ -335,13 +335,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
-    description: 'Email address used for system notifications',
-    type: ConfigVariableType.STRING,
-  })
-  EMAIL_SYSTEM_ADDRESS = 'system@yourdomain.com';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Name used in the From header for outgoing emails',
     type: ConfigVariableType.STRING,
   })
@@ -396,7 +389,7 @@ export class ConfigVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
     type: ConfigVariableType.BOOLEAN,
@@ -475,7 +468,6 @@ export class ConfigVariables {
     description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
     options: Object.values(LogicFunctionDriverType),
-    isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
@@ -596,7 +588,6 @@ export class ConfigVariables {
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
     type: ConfigVariableType.STRING,
     options: Object.values(CodeInterpreterDriverType),
-    isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
@@ -742,7 +733,6 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
-    isEnvOnly: true,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -758,16 +748,9 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
-    description: 'ID for the Chrome extension',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  CHROME_EXTENSION_ID: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Page ID for Cal.com booking integration',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -805,7 +788,7 @@ export class ConfigVariables {
   LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.METERING,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
     type: ConfigVariableType.ARRAY,
     options: ['OpenTelemetry', 'Console'],
@@ -816,16 +799,7 @@ export class ConfigVariables {
   METER_DRIVER: MeterDriver[] = [];
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.METERING,
-    description: 'Endpoint URL for the OpenTelemetry collector',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  OTLP_COLLECTOR_ENDPOINT_URL: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for logging (only console for now)',
     type: ConfigVariableType.ENUM,
     options: Object.values(LoggerDriverType),
@@ -836,7 +810,7 @@ export class ConfigVariables {
   LOGGER_DRIVER: LoggerDriverType = LoggerDriverType.CONSOLE;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Data Source Name (DSN) for Sentry logging',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -847,7 +821,7 @@ export class ConfigVariables {
   SENTRY_DSN: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Front-end DSN for Sentry logging',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -857,7 +831,7 @@ export class ConfigVariables {
   )
   SENTRY_FRONT_DSN: string;
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.EXCEPTION_HANDLER,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Environment name for Sentry logging',
     type: ConfigVariableType.STRING,
   })
@@ -912,9 +886,9 @@ export class ConfigVariables {
   PG_DATABASE_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
-    description: 'Database connection URL',
+    description: 'Optional PostgreSQL replica connection URL for read queries',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
@@ -938,16 +912,7 @@ export class ConfigVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description: 'Enable pg connection pool sharing across tenants',
-    isEnvOnly: true,
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  PG_ENABLE_POOL_SHARING = true;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Maximum number of clients in pg connection pool',
     isEnvOnly: true,
     type: ConfigVariableType.NUMBER,
@@ -957,7 +922,7 @@ export class ConfigVariables {
   PG_POOL_MAX_CONNECTIONS = 10;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Idle timeout in milliseconds for pg connection pool clients',
     isEnvOnly: true,
     type: ConfigVariableType.NUMBER,
@@ -967,7 +932,7 @@ export class ConfigVariables {
   PG_POOL_IDLE_TIMEOUT_MS = 600000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Allow idle pg connection pool clients to exit',
     isEnvOnly: true,
     type: ConfigVariableType.BOOLEAN,
@@ -1007,7 +972,7 @@ export class ConfigVariables {
   REDIS_URL: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description:
       'Optional separate Redis connection for queues with a different eviction policy (advanced production use case, most self-hosters do not need this)',
@@ -1228,7 +1193,7 @@ export class ConfigVariables {
   CLOUDFLARE_PUBLIC_DOMAIN_ZONE_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
     description: 'Random string to validate queries from Cloudflare',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -1237,7 +1202,7 @@ export class ConfigVariables {
   CLOUDFLARE_WEBHOOK_SECRET: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
     description:
       'Id to generate value for CNAME record to validate ownership and manage ssl for custom hostname with Cloudflare',
     type: ConfigVariableType.STRING,
@@ -1414,13 +1379,12 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,
-    isEnvOnly: true,
   })
   @IsOptional()
   IS_MULTIWORKSPACE_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Number of inactive days before sending a deletion warning for workspaces. Used in the workspace deletion cron job to determine when to send warning emails.',
     type: ConfigVariableType.NUMBER,
@@ -1433,7 +1397,7 @@ export class ConfigVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 7;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Number of inactive days before soft deleting workspaces',
     type: ConfigVariableType.NUMBER,
   })
@@ -1445,7 +1409,7 @@ export class ConfigVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION = 14;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Number of inactive days before deleting workspaces',
     type: ConfigVariableType.NUMBER,
   })
@@ -1453,7 +1417,7 @@ export class ConfigVariables {
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 21;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Maximum number of workspaces that can be deleted in a single execution',
     type: ConfigVariableType.NUMBER,
@@ -1503,7 +1467,6 @@ export class ConfigVariables {
     description: 'Driver for captcha integration',
     type: ConfigVariableType.ENUM,
     options: Object.values(CaptchaDriverType),
-    isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
@@ -1537,7 +1500,7 @@ export class ConfigVariables {
   ENTERPRISE_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description:
       'Signed enterprise validity token (JWT). Used as fallback when no token is stored in the database.',
@@ -1549,13 +1512,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Base URL for the Enterprise API on twenty.com',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
   ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Health monitoring time window in minutes',
     type: ConfigVariableType.NUMBER,
   })
@@ -1564,7 +1528,7 @@ export class ConfigVariables {
   HEALTH_METRICS_TIME_WINDOW_IN_MINUTES = 5;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Enable or disable the attachment preview feature',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -1576,13 +1540,14 @@ export class ConfigVariables {
     description: 'Twenty server version',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
+    isHiddenInAdminPanel: true,
   })
   @IsOptionalOrEmptyString()
   @IsTwentySemVer()
   APP_VERSION?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Enable or disable google map api usage',
     type: ConfigVariableType.BOOLEAN,
   })
@@ -1590,7 +1555,7 @@ export class ConfigVariables {
   IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description: 'Google map api key for places and map',
     type: ConfigVariableType.STRING,
@@ -1599,20 +1564,22 @@ export class ConfigVariables {
   GOOGLE_MAP_API_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description: 'Mintlify API key for documentation search',
     isEnvOnly: true,
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
   MINTLIFY_API_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description: 'Mintlify subdomain for documentation search',
     isEnvOnly: true,
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -1663,7 +1630,7 @@ export class ConfigVariables {
   AWS_SES_ACCOUNT_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Timeout in milliseconds for primary database queries',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
@@ -1673,7 +1640,7 @@ export class ConfigVariables {
   PG_DATABASE_PRIMARY_TIMEOUT_MS: number = 10000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Timeout in milliseconds for replica database queries',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
@@ -1683,7 +1650,7 @@ export class ConfigVariables {
   PG_DATABASE_REPLICA_TIMEOUT_MS: number = 10000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Default npm registry URL for resolving app packages (e.g. https://registry.npmjs.org)',
     type: ConfigVariableType.STRING,
@@ -1693,7 +1660,7 @@ export class ConfigVariables {
   APP_REGISTRY_URL: string = 'https://registry.npmjs.org';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description:
       'Auth token for the default npm registry (for private packages)',
