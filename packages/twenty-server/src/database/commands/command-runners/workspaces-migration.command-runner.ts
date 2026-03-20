@@ -10,7 +10,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export type WorkspacesMigrationCommandOptions = {
   workspaceIds: string[];
@@ -178,27 +177,12 @@ export abstract class WorkspacesMigrationCommandRunner<
       }
     }
 
-    this.migrationReport.fail.forEach(({ error, workspaceId }) => {
+    this.migrationReport.fail.forEach(({ error, workspaceId }) =>
       this.logger.error(
         `Error in workspace ${workspaceId}: ${error.message}`,
         error.stack,
-      );
-
-      if (error instanceof WorkspaceMigrationRunnerException) {
-        const nestedErrors = [
-          error.errors?.metadata &&
-            `metadata: ${error.errors.metadata.message}`,
-          error.errors?.workspaceSchema &&
-            `workspaceSchema: ${error.errors.workspaceSchema.message}`,
-          error.errors?.actionTranspilation &&
-            `actionTranspilation: ${error.errors.actionTranspilation.message}`,
-        ].filter(isDefined);
-
-        nestedErrors.forEach((detail) =>
-          this.logger.error(`  └─ ${detail}`),
-        );
-      }
-    });
+      ),
+    );
   }
 
   public abstract runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void>;
