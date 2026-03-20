@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { ActivityHeatmap } from '@/activities/timeline-activities/components/ActivityHeatmap';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -86,6 +87,7 @@ export const TimelineCard = () => {
 
   return (
     <StyledMainContainer>
+      <ActivityHeatmap timelineActivities={timelineActivities} />
       <EventList
         targetableObject={targetRecord}
         title={t`All`}

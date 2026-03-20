@@ -51,6 +51,7 @@
     "@mantine/hooks": "^8.3.11",
     "@mantine/utils": "^6.0.22",
     "@monaco-editor/react": "^4.7.0",
+    "@nivo/calendar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
