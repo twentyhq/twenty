@@ -166,6 +166,10 @@ plugins: [
 
 Execute `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'você@seudominio.com';` no contêiner de banco de dados para obter acesso ao painel administrativo.
 
+#### Ao executar um fluxo de trabalho, a execução do fluxo de trabalho falha com "A execução da função de lógica está desativada. Defina LOGIC_FUNCTION_TYPE como LOCAL ou LAMBDA para ativar."
+
+Em produção, as funções de lógica estão desativadas por padrão. Defina a variável de ambiente `LOGIC_FUNCTION_TYPE` como `LOCAL` ou `LAMBDA` para ativá-las. Isso pode ser configurado por meio de variáveis de ambiente ou pelas variáveis de banco de dados do painel de administração. Veja o [guia de configuração de Funções de Lógica](/l/pt/developers/self-host/capabilities/setup#logic-functions-available-drivers) para obter detalhes.
+
 ### Docker compose com um clique
 
 #### Impossível efetuar login
