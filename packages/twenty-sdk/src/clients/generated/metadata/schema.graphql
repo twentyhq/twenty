@@ -3082,6 +3082,12 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
+  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
+  getView(id: String!): View
+  getViewSorts(viewId: String): [ViewSort!]!
+  getViewSort(id: String!): ViewSort
+  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
+  getViewFieldGroup(id: String!): ViewFieldGroup
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
@@ -3100,12 +3106,6 @@ type Query {
   ): ObjectConnection!
   getViewFields(viewId: String!): [ViewField!]!
   getViewField(id: String!): ViewField
-  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
-  getView(id: String!): View
-  getViewSorts(viewId: String): [ViewSort!]!
-  getViewSort(id: String!): ViewSort
-  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
-  getViewFieldGroup(id: String!): ViewFieldGroup
   index(
     """The id of the record to find."""
     id: UUID!
@@ -3349,18 +3349,6 @@ type Mutation {
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
-  deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
-  createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
-  executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
-  updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
-  createOneObject(input: CreateOneObjectInput!): Object!
-  deleteOneObject(input: DeleteOneObjectInput!): Object!
-  updateOneObject(input: UpdateOneObjectInput!): Object!
-  updateViewField(input: UpdateViewFieldInput!): ViewField!
-  createViewField(input: CreateViewFieldInput!): ViewField!
-  createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
-  deleteViewField(input: DeleteViewFieldInput!): ViewField!
-  destroyViewField(input: DestroyViewFieldInput!): ViewField!
   createView(input: CreateViewInput!): View!
   updateView(id: String!, input: UpdateViewInput!): View!
   deleteView(id: String!): Boolean!
@@ -3375,6 +3363,18 @@ type Mutation {
   deleteViewFieldGroup(input: DeleteViewFieldGroupInput!): ViewFieldGroup!
   destroyViewFieldGroup(input: DestroyViewFieldGroupInput!): ViewFieldGroup!
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
+  deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
+  createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
+  executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
+  updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
+  createOneObject(input: CreateOneObjectInput!): Object!
+  deleteOneObject(input: DeleteOneObjectInput!): Object!
+  updateOneObject(input: UpdateOneObjectInput!): Object!
+  updateViewField(input: UpdateViewFieldInput!): ViewField!
+  createViewField(input: CreateViewFieldInput!): ViewField!
+  createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
+  deleteViewField(input: DeleteViewFieldInput!): ViewField!
+  destroyViewField(input: DestroyViewFieldInput!): ViewField!
   createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   deleteCommandMenuItem(id: UUID!): CommandMenuItem!
@@ -3663,135 +3663,6 @@ input UpdatePageLayoutWidgetWithIdInput {
   conditionalDisplay: JSON
 }
 
-input CreateLogicFunctionFromSourceInput {
-  id: UUID
-  universalIdentifier: UUID
-  name: String!
-  description: String
-  timeoutSeconds: Float
-  toolInputSchema: JSON
-  isTool: Boolean
-  source: JSON
-  cronTriggerSettings: JSON
-  databaseEventTriggerSettings: JSON
-  httpRouteTriggerSettings: JSON
-}
-
-input ExecuteOneLogicFunctionInput {
-  """Id of the logic function to execute"""
-  id: UUID!
-
-  """Payload in JSON format"""
-  payload: JSON!
-}
-
-input UpdateLogicFunctionFromSourceInput {
-  """Id of the logic function to update"""
-  id: UUID!
-
-  """The logic function updates"""
-  update: UpdateLogicFunctionFromSourceInputUpdates!
-}
-
-input UpdateLogicFunctionFromSourceInputUpdates {
-  name: String
-  description: String
-  timeoutSeconds: Float
-  sourceHandlerCode: String
-  toolInputSchema: JSON
-  handlerName: String
-  sourceHandlerPath: String
-  isTool: Boolean
-  cronTriggerSettings: JSON
-  databaseEventTriggerSettings: JSON
-  httpRouteTriggerSettings: JSON
-}
-
-input CreateOneObjectInput {
-  """The object to create"""
-  object: CreateObjectInput!
-}
-
-input CreateObjectInput {
-  nameSingular: String!
-  namePlural: String!
-  labelSingular: String!
-  labelPlural: String!
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  skipNameField: Boolean
-  isRemote: Boolean
-  primaryKeyColumnType: String
-  primaryKeyFieldMetadataSettings: JSON
-  isLabelSyncedWithName: Boolean
-}
-
-input DeleteOneObjectInput {
-  """The id of the record to delete."""
-  id: UUID!
-}
-
-input UpdateOneObjectInput {
-  update: UpdateObjectPayload!
-
-  """The id of the object to update"""
-  id: UUID!
-}
-
-input UpdateObjectPayload {
-  labelSingular: String
-  labelPlural: String
-  nameSingular: String
-  namePlural: String
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  isActive: Boolean
-  labelIdentifierFieldMetadataId: UUID
-  imageIdentifierFieldMetadataId: UUID
-  isLabelSyncedWithName: Boolean
-}
-
-input UpdateViewFieldInput {
-  """The id of the view field to update"""
-  id: UUID!
-
-  """The view field to update"""
-  update: UpdateViewFieldInputUpdates!
-}
-
-input UpdateViewFieldInputUpdates {
-  isVisible: Boolean
-  size: Float
-  position: Float
-  aggregateOperation: AggregateOperations
-  viewFieldGroupId: UUID
-}
-
-input CreateViewFieldInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  viewId: UUID!
-  isVisible: Boolean = true
-  size: Float = 0
-  position: Float = 0
-  aggregateOperation: AggregateOperations
-  viewFieldGroupId: UUID
-}
-
-input DeleteViewFieldInput {
-  """The id of the view field to delete."""
-  id: UUID!
-}
-
-input DestroyViewFieldInput {
-  """The id of the view field to destroy."""
-  id: UUID!
-}
-
 input CreateViewInput {
   id: UUID
   name: String!
@@ -3920,6 +3791,135 @@ input UpsertFieldsWidgetFieldInput {
   viewFieldId: UUID!
   isVisible: Boolean!
   position: Float!
+}
+
+input CreateLogicFunctionFromSourceInput {
+  id: UUID
+  universalIdentifier: UUID
+  name: String!
+  description: String
+  timeoutSeconds: Float
+  toolInputSchema: JSON
+  isTool: Boolean
+  source: JSON
+  cronTriggerSettings: JSON
+  databaseEventTriggerSettings: JSON
+  httpRouteTriggerSettings: JSON
+}
+
+input ExecuteOneLogicFunctionInput {
+  """Id of the logic function to execute"""
+  id: UUID!
+
+  """Payload in JSON format"""
+  payload: JSON!
+}
+
+input UpdateLogicFunctionFromSourceInput {
+  """Id of the logic function to update"""
+  id: UUID!
+
+  """The logic function updates"""
+  update: UpdateLogicFunctionFromSourceInputUpdates!
+}
+
+input UpdateLogicFunctionFromSourceInputUpdates {
+  name: String
+  description: String
+  timeoutSeconds: Float
+  sourceHandlerCode: String
+  toolInputSchema: JSON
+  handlerName: String
+  sourceHandlerPath: String
+  isTool: Boolean
+  cronTriggerSettings: JSON
+  databaseEventTriggerSettings: JSON
+  httpRouteTriggerSettings: JSON
+}
+
+input CreateOneObjectInput {
+  """The object to create"""
+  object: CreateObjectInput!
+}
+
+input CreateObjectInput {
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  skipNameField: Boolean
+  isRemote: Boolean
+  primaryKeyColumnType: String
+  primaryKeyFieldMetadataSettings: JSON
+  isLabelSyncedWithName: Boolean
+}
+
+input DeleteOneObjectInput {
+  """The id of the record to delete."""
+  id: UUID!
+}
+
+input UpdateOneObjectInput {
+  update: UpdateObjectPayload!
+
+  """The id of the object to update"""
+  id: UUID!
+}
+
+input UpdateObjectPayload {
+  labelSingular: String
+  labelPlural: String
+  nameSingular: String
+  namePlural: String
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  isActive: Boolean
+  labelIdentifierFieldMetadataId: UUID
+  imageIdentifierFieldMetadataId: UUID
+  isLabelSyncedWithName: Boolean
+}
+
+input UpdateViewFieldInput {
+  """The id of the view field to update"""
+  id: UUID!
+
+  """The view field to update"""
+  update: UpdateViewFieldInputUpdates!
+}
+
+input UpdateViewFieldInputUpdates {
+  isVisible: Boolean
+  size: Float
+  position: Float
+  aggregateOperation: AggregateOperations
+  viewFieldGroupId: UUID
+}
+
+input CreateViewFieldInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  viewId: UUID!
+  isVisible: Boolean = true
+  size: Float = 0
+  position: Float = 0
+  aggregateOperation: AggregateOperations
+  viewFieldGroupId: UUID
+}
+
+input DeleteViewFieldInput {
+  """The id of the view field to delete."""
+  id: UUID!
+}
+
+input DestroyViewFieldInput {
+  """The id of the view field to destroy."""
+  id: UUID!
 }
 
 input CreateCommandMenuItemInput {
