@@ -41,14 +41,14 @@ export const ApproveChangeRequestAction = () => {
   });
 
   // Fetch ALL existing periods for this subscription
-  const { records: existingPeriods, refetch: refetchPeriods } =
-    useFindManyRecords({
-      objectNameSingular: CoreObjectNameSingular.SubscriptionPeriod,
-      filter: isDefined(subscriptionId)
-        ? { subscriptionId: { eq: subscriptionId } }
-        : undefined,
-      skip: !isDefined(subscriptionId),
-    });
+  const { records: existingPeriods } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.SubscriptionPeriod,
+    filter: isDefined(subscriptionId)
+      ? { subscriptionId: { eq: subscriptionId } }
+      : undefined,
+    skip: !isDefined(subscriptionId),
+    limit: 200,
+  });
 
   const { updateOneRecord } = useUpdateOneRecord();
   const { createOneRecord: createPeriod } = useCreateOneRecord({
@@ -122,21 +122,7 @@ export const ApproveChangeRequestAction = () => {
           role: 'confirm',
           onClick: async () => {
             try {
-              // 1. Mark Change Request as approved
-              await updateOneRecord({
-                objectNameSingular:
-                  CoreObjectNameSingular.SubscriptionPeriodChangeRequest,
-                idToUpdate: recordId,
-                updateOneRecordInput: {
-                  requestStatus: 'APPROVED',
-                  processedAt: new Date().toISOString(),
-                  ...(isDefined(currentMember) && {
-                    processedById: currentMember.id,
-                  }),
-                },
-              });
-
-              // 2. Lazy initialization: if no periods exist yet (Dagster-created
+              // 1. Lazy initialization: if no periods exist yet (Dagster-created
               // or pre-migration subscription), create an initial period from
               // the subscription's startDate/endDate
               let allPeriods: PeriodRecord[] = existingPeriods.map(
@@ -287,7 +273,23 @@ export const ApproveChangeRequestAction = () => {
                 });
               }
 
-              // 5. Recalculate with ALL periods
+              // 5. Mark Change Request as approved (after periods are
+              // created so we don't end up with an approved CR but no periods
+              // if period creation fails)
+              await updateOneRecord({
+                objectNameSingular:
+                  CoreObjectNameSingular.SubscriptionPeriodChangeRequest,
+                idToUpdate: recordId,
+                updateOneRecordInput: {
+                  requestStatus: 'APPROVED',
+                  processedAt: new Date().toISOString(),
+                  ...(isDefined(currentMember) && {
+                    processedById: currentMember.id,
+                  }),
+                },
+              });
+
+              // 6. Recalculate with ALL periods
               const historicalPauseDays =
                 isDefined(subscription) &&
                 isDefined(subscription.historicalPauseDays) &&
