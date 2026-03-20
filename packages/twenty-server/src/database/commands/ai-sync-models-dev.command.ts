@@ -2,22 +2,19 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 
 const MODELS_DEV_API_URL = 'https://models.dev/api.json';
 
-const PROVIDER_TYPE_MAP: Record<string, AiProvider> = {
-  openai: AiProvider.OPENAI,
-  anthropic: AiProvider.ANTHROPIC,
-  google: AiProvider.GOOGLE,
-  mistral: AiProvider.MISTRAL,
-  xai: AiProvider.XAI,
-  groq: AiProvider.GROQ,
-};
-
-const RELEVANT_PROVIDERS = Object.keys(PROVIDER_TYPE_MAP);
+const RELEVANT_PROVIDERS = [
+  'openai',
+  'anthropic',
+  'google',
+  'mistral',
+  'xai',
+  'groq',
+];
 
 type ModelsDevModel = {
   id: string;
@@ -37,7 +34,7 @@ type ModelsDevData = Record<string, ModelsDevProvider>;
 type CatalogEntry = {
   compositeId: string;
   rawModelId: string;
-  provider: AiProvider;
+  providerName: string;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
 };
@@ -85,12 +82,14 @@ export class AiSyncModelsDevCommand extends CommandRunner {
   private getCatalogEntries(providers: AiProvidersConfig): CatalogEntry[] {
     const entries: CatalogEntry[] = [];
 
-    for (const config of Object.values(providers)) {
+    for (const [key, config] of Object.entries(providers)) {
+      const providerName = config.name ?? key;
+
       for (const model of config.models ?? []) {
         entries.push({
-          compositeId: `${config.type}/${model.rawModelId}`,
+          compositeId: `${providerName}/${model.rawModelId}`,
           rawModelId: model.rawModelId,
-          provider: config.type,
+          providerName,
           inputCostPerMillionTokens: model.inputCostPerMillionTokens ?? 0,
           outputCostPerMillionTokens: model.outputCostPerMillionTokens ?? 0,
         });
@@ -100,12 +99,6 @@ export class AiSyncModelsDevCommand extends CommandRunner {
     return entries;
   }
 
-  private getProviderKey(provider: AiProvider): string | undefined {
-    return Object.entries(PROVIDER_TYPE_MAP).find(
-      ([, p]) => p === provider,
-    )?.[0];
-  }
-
   private findPricingDiffs(
     catalogEntries: CatalogEntry[],
     data: ModelsDevData,
@@ -113,11 +106,7 @@ export class AiSyncModelsDevCommand extends CommandRunner {
     const diffs: string[] = [];
 
     for (const entry of catalogEntries) {
-      const providerKey = this.getProviderKey(entry.provider);
-
-      if (!providerKey) continue;
-
-      const model = data[providerKey]?.models[entry.rawModelId];
+      const model = data[entry.providerName]?.models[entry.rawModelId];
 
       if (!model) continue;
 
@@ -146,17 +135,11 @@ export class AiSyncModelsDevCommand extends CommandRunner {
     const missing: string[] = [];
 
     for (const entry of catalogEntries) {
-      if (entry.provider === AiProvider.BEDROCK) continue;
-
-      const providerKey = this.getProviderKey(entry.provider);
-
-      if (!providerKey) continue;
-
-      const providerData = data[providerKey];
+      const providerData = data[entry.providerName];
 
       if (!providerData) {
         missing.push(
-          `  ${entry.compositeId} (provider ${providerKey} not found)`,
+          `  ${entry.compositeId} (provider ${entry.providerName} not found)`,
         );
         continue;
       }
@@ -176,24 +159,21 @@ export class AiSyncModelsDevCommand extends CommandRunner {
     const catalogRawIdsByProvider = new Map<string, Set<string>>();
 
     for (const entry of catalogEntries) {
-      const providerKey = this.getProviderKey(entry.provider);
-
-      if (!providerKey) continue;
-
-      if (!catalogRawIdsByProvider.has(providerKey)) {
-        catalogRawIdsByProvider.set(providerKey, new Set());
+      if (!catalogRawIdsByProvider.has(entry.providerName)) {
+        catalogRawIdsByProvider.set(entry.providerName, new Set());
       }
-      catalogRawIdsByProvider.get(providerKey)!.add(entry.rawModelId);
+      catalogRawIdsByProvider.get(entry.providerName)!.add(entry.rawModelId);
     }
 
     const newModels: string[] = [];
 
-    for (const providerKey of RELEVANT_PROVIDERS) {
-      const providerData = data[providerKey];
+    for (const providerName of RELEVANT_PROVIDERS) {
+      const providerData = data[providerName];
 
       if (!providerData) continue;
 
-      const knownRawIds = catalogRawIdsByProvider.get(providerKey) ?? new Set();
+      const knownRawIds =
+        catalogRawIdsByProvider.get(providerName) ?? new Set();
 
       for (const [modelId, model] of Object.entries(providerData.models)) {
         if (!knownRawIds.has(modelId)) {
@@ -201,7 +181,7 @@ export class AiSyncModelsDevCommand extends CommandRunner {
             ? `$${model.cost.input ?? '?'}/$${model.cost.output ?? '?'}`
             : 'no pricing';
 
-          newModels.push(`  ${providerKey}/${modelId} (${cost})`);
+          newModels.push(`  ${providerName}/${modelId} (${cost})`);
         }
       }
     }

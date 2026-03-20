@@ -34,8 +34,9 @@ import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/conf
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
+import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -46,6 +47,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
+import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 
 @UsePipes(ResolverValidationPipe)
@@ -69,7 +71,7 @@ export class AdminPanelResolver {
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly providerDiscoveryService: ProviderDiscoveryService,
+    private readonly modelsDevCatalogService: ModelsDevCatalogService,
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -168,7 +170,7 @@ export class AdminPanelResolver {
           modelId: modelConfig.modelId,
           label: modelConfig.label,
           modelFamily: modelConfig.modelFamily,
-          provider: modelConfig.provider,
+          sdkPackage: modelConfig.sdkPackage,
           isAvailable,
           isAdminEnabled,
           deprecated: modelConfig.deprecated ?? false,
@@ -336,17 +338,18 @@ export class AdminPanelResolver {
     const rawCatalog = loadDefaultAiProviders();
     const masked: Record<string, Record<string, unknown>> = {};
 
-    for (const [name, config] of Object.entries(providers)) {
-      const isCatalog = catalogNames.has(name);
-      const rawName = isCatalog ? name.replace(/-standard$/, '') : undefined;
+    for (const [key, config] of Object.entries(providers)) {
+      const isCatalog = catalogNames.has(key);
+      const rawName = isCatalog ? key.replace(/-standard$/, '') : undefined;
       const rawConfig = rawName ? rawCatalog[rawName] : undefined;
       const apiKeyConfigVariable = rawConfig
         ? extractConfigVariableName(rawConfig.apiKey)
         : undefined;
 
-      masked[name] = {
-        type: config.type,
-        label: config.label ?? name,
+      masked[key] = {
+        npm: config.npm,
+        name: config.name ?? key,
+        label: config.label ?? key,
         source: isCatalog ? 'catalog' : 'custom',
         ...(config.baseUrl && { baseUrl: config.baseUrl }),
         ...(config.region && { region: config.region }),
@@ -376,7 +379,6 @@ export class AdminPanelResolver {
     customProviders[providerName] = providerConfig;
     await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
-    await this.aiModelRegistryService.discoverAndRegisterModels();
 
     return true;
   }
@@ -394,36 +396,90 @@ export class AdminPanelResolver {
     delete customProviders[providerName];
     await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
-    await this.aiModelRegistryService.discoverAndRegisterModels();
 
     return true;
   }
 
   @UseGuards(AdminPanelGuard)
-  @Mutation(() => Int)
-  async testAiProviderConnection(
-    @Args('providerName', { type: () => String })
-    providerName: string,
-  ): Promise<number> {
-    const providers =
-      this.aiModelRegistryService.getResolvedProvidersForAdmin();
-    const providerConfig = providers[providerName];
-
-    if (!providerConfig) {
-      throw new UserInputError(
-        `Provider "${providerName}" not found in configuration`,
-      );
-    }
-
-    const discovered =
-      await this.providerDiscoveryService.discoverModels(providerConfig);
-
-    return discovered.length;
+  @Query(() => [ModelsDevModelSuggestionDTO])
+  async getModelsDevSuggestions(
+    @Args('providerType', { type: () => String }) providerType: string,
+  ): Promise<ModelsDevModelSuggestionDTO[]> {
+    return this.modelsDevCatalogService.getModelSuggestions(providerType);
   }
 
   @UseGuards(AdminPanelGuard)
-  @Mutation(() => Int)
-  async discoverAiModels(): Promise<number> {
-    return this.aiModelRegistryService.discoverAndRegisterModels();
+  @Mutation(() => Boolean)
+  async addModelToProvider(
+    @Args('providerName', { type: () => String }) providerName: string,
+    @Args('modelConfig', { type: () => GraphQLJSON })
+    modelConfig: AiProviderModelConfig,
+  ): Promise<boolean> {
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
+    };
+
+    const existing = customProviders[providerName];
+
+    if (!existing) {
+      throw new UserInputError(
+        `Provider "${providerName}" not found in custom providers`,
+      );
+    }
+
+    const existingModels = existing.models ?? [];
+    const alreadyExists = existingModels.some(
+      (model: AiProviderModelConfig) =>
+        model.rawModelId === modelConfig.rawModelId,
+    );
+
+    if (alreadyExists) {
+      throw new UserInputError(
+        `Model "${modelConfig.rawModelId}" already exists on provider "${providerName}"`,
+      );
+    }
+
+    customProviders[providerName] = {
+      ...existing,
+      models: [...existingModels, { ...modelConfig, source: 'manual' }],
+    };
+
+    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
+    this.aiModelRegistryService.refreshRegistry();
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async removeModelFromProvider(
+    @Args('providerName', { type: () => String }) providerName: string,
+    @Args('rawModelId', { type: () => String }) rawModelId: string,
+  ): Promise<boolean> {
+    const customProviders = {
+      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
+    };
+
+    const existing = customProviders[providerName];
+
+    if (!existing) {
+      throw new UserInputError(
+        `Provider "${providerName}" not found in custom providers`,
+      );
+    }
+
+    const existingModels = existing.models ?? [];
+
+    customProviders[providerName] = {
+      ...existing,
+      models: existingModels.filter(
+        (model: AiProviderModelConfig) => model.rawModelId !== rawModelId,
+      ),
+    };
+
+    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
+    this.aiModelRegistryService.refreshRegistry();
+
+    return true;
   }
 }

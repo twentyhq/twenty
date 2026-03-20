@@ -20,5 +20,5 @@ export type AiProviderModelConfig = {
   deprecated?: boolean;
   // Used as a seeding hint in ai-providers.json for loadDefaultModelPreferences()
   isRecommended?: boolean;
-  source?: 'catalog' | 'discovered' | 'manual';
+  source?: 'catalog' | 'manual';
 };

@@ -13,7 +13,7 @@ import {
   IconFlag,
   IconKey,
   IconPlug,
-  IconRefresh,
+  IconPlus,
   IconServer,
   IconTag,
   IconTrash,
@@ -21,10 +21,11 @@ import {
 } from 'twenty-ui/display';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { RoundedLink } from 'twenty-ui/navigation';
+import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelsTable';
+import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
 import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -39,11 +40,11 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import {
   type AdminAiModelConfig,
-  DiscoverAiModelsDocument,
   SetAdminAiModelEnabledDocument,
 } from '~/generated-metadata/graphql';
 
-const REMOVE_MODAL_ID = 'settings-ai-provider-remove';
+const REMOVE_PROVIDER_MODAL_ID = 'settings-ai-provider-remove';
+const REMOVE_MODEL_MODAL_ID = 'settings-ai-model-remove';
 
 export const SettingsAdminAiProviderDetail = () => {
   const { providerName } = useParams<{ providerName: string }>();
@@ -52,6 +53,11 @@ export const SettingsAdminAiProviderDetail = () => {
   const { refetch: refetchClientConfig } = useClientConfig();
   const { openModal } = useModal();
   const [searchQuery, setSearchQuery] = useState('');
+  const [modelToRemove, setModelToRemove] = useState<{
+    modelId: string;
+    label: string;
+    rawModelId: string;
+  } | null>(null);
 
   const { data: providersData } =
     useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
@@ -63,10 +69,8 @@ export const SettingsAdminAiProviderDetail = () => {
   }>(GET_ADMIN_AI_MODELS);
 
   const [setModelEnabled] = useMutation(SetAdminAiModelEnabledDocument);
-  const [discoverModels, { loading: isDiscovering }] = useMutation(
-    DiscoverAiModelsDocument,
-  );
   const [removeAiProvider] = useMutation(REMOVE_AI_PROVIDER);
+  const [removeModelFromProvider] = useMutation(REMOVE_MODEL_FROM_PROVIDER);
 
   const handleRemoveProvider = async () => {
     if (!providerName) {
@@ -88,6 +92,34 @@ export const SettingsAdminAiProviderDetail = () => {
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to remove provider`,
+      });
+    }
+  };
+
+  const handleRemoveModel = async () => {
+    if (!providerName || !modelToRemove) {
+      return;
+    }
+
+    try {
+      await removeModelFromProvider({
+        variables: {
+          providerName,
+          rawModelId: modelToRemove.rawModelId,
+        },
+        refetchQueries: [
+          { query: GET_AI_PROVIDERS },
+          { query: GET_ADMIN_AI_MODELS },
+        ],
+      });
+      await refetchClientConfig();
+      enqueueSuccessSnackBar({
+        message: t`Model "${modelToRemove.label}" removed`,
+      });
+      setModelToRemove(null);
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to remove model`,
       });
     }
   };
@@ -148,28 +180,17 @@ export const SettingsAdminAiProviderDetail = () => {
     }
   };
 
-  const handleDiscoverModels = async () => {
-    try {
-      const result = await discoverModels({
-        refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
-      });
-      await refetchClientConfig();
-      const count = result.data?.discoverAiModels ?? 0;
+  const handleModelRemoveClick = (model: AdminAiModelConfig) => {
+    const rawModelId = model.modelId.includes('/')
+      ? model.modelId.split('/').slice(1).join('/')
+      : model.modelId;
 
-      if (count > 0) {
-        enqueueSuccessSnackBar({
-          message: t`Discovered ${count} new models`,
-        });
-      } else {
-        enqueueSuccessSnackBar({
-          message: t`No new models found. All available models are already registered.`,
-        });
-      }
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message: t`Model discovery failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      });
-    }
+    setModelToRemove({
+      modelId: model.modelId,
+      label: model.label,
+      rawModelId,
+    });
+    openModal(REMOVE_MODEL_MODAL_ID);
   };
 
   const providerInfoItems = useMemo(() => {
@@ -189,8 +210,8 @@ export const SettingsAdminAiProviderDetail = () => {
       },
       {
         Icon: IconPlug,
-        label: t`Type`,
-        value: provider.type,
+        label: t`SDK Package`,
+        value: provider.npm,
       },
     ];
 
@@ -258,6 +279,10 @@ export const SettingsAdminAiProviderDetail = () => {
     return items;
   }, [provider, navigate, isCustomProvider]);
 
+  const newModelPath = providerName
+    ? getSettingsPath(SettingsPath.AdminPanelNewAiModel, { providerName })
+    : undefined;
+
   return (
     <SubMenuTopBarContainer
       links={[
@@ -282,7 +307,7 @@ export const SettingsAdminAiProviderDetail = () => {
         <Section>
           <H2Title
             title={provider?.label ?? providerName ?? ''}
-            description={provider ? provider.type : t`Loading...`}
+            description={provider ? provider.npm : t`Loading...`}
           />
 
           {provider && (
@@ -299,7 +324,7 @@ export const SettingsAdminAiProviderDetail = () => {
             title={t`Models`}
             description={
               isCustomProvider
-                ? t`Discovered models. Toggle to enable or disable.`
+                ? t`Models for this provider. Toggle to enable or disable.`
                 : t`Built-in models from this provider. Toggle to enable or disable.`
             }
           />
@@ -312,35 +337,26 @@ export const SettingsAdminAiProviderDetail = () => {
             />
           )}
 
-          {filteredModels.length === 0 && isCustomProvider ? (
-            <Button
-              Icon={isDiscovering ? undefined : IconRefresh}
-              title={isDiscovering ? t`Discovering...` : t`Discover Models`}
-              variant="secondary"
-              onClick={handleDiscoverModels}
-              disabled={isDiscovering}
+          {filteredModels.length > 0 && (
+            <SettingsAdminAiModelsTable
+              models={filteredModels}
+              onToggle={handleModelToggle}
+              checkedField="isAdminEnabled"
+              anchorPrefix="provider-model-row"
+              showDisabledState
+              onRemove={isCustomProvider ? handleModelRemoveClick : undefined}
             />
-          ) : filteredModels.length > 0 ? (
-            <>
-              <SettingsAdminAiModelsTable
-                models={filteredModels}
-                onToggle={handleModelToggle}
-                checkedField="isAdminEnabled"
-                anchorPrefix="provider-model-row"
-                showDisabledState
-              />
+          )}
 
-              {isCustomProvider && (
-                <Button
-                  Icon={isDiscovering ? undefined : IconRefresh}
-                  title={isDiscovering ? t`Discovering...` : t`Discover Models`}
-                  variant="secondary"
-                  onClick={handleDiscoverModels}
-                  disabled={isDiscovering}
-                />
-              )}
-            </>
-          ) : null}
+          {isCustomProvider && newModelPath && (
+            <UndecoratedLink to={newModelPath}>
+              <Button
+                Icon={IconPlus}
+                title={t`Add Model`}
+                variant="secondary"
+              />
+            </UndecoratedLink>
+          )}
         </Section>
 
         {isCustomProvider && (
@@ -354,17 +370,26 @@ export const SettingsAdminAiProviderDetail = () => {
               title={t`Remove provider`}
               variant="secondary"
               accent="danger"
-              onClick={() => openModal(REMOVE_MODAL_ID)}
+              onClick={() => openModal(REMOVE_PROVIDER_MODAL_ID)}
             />
           </Section>
         )}
       </SettingsPageContainer>
 
       <ConfirmationModal
-        modalInstanceId={REMOVE_MODAL_ID}
+        modalInstanceId={REMOVE_PROVIDER_MODAL_ID}
         title={t`Remove provider "${provider?.label ?? providerName}"`}
         subtitle={t`This will disconnect all models from this provider. Models will no longer be available until a new provider is configured.`}
         onConfirmClick={handleRemoveProvider}
+        confirmButtonText={t`Remove`}
+        confirmButtonAccent="danger"
+      />
+
+      <ConfirmationModal
+        modalInstanceId={REMOVE_MODEL_MODAL_ID}
+        title={t`Remove model "${modelToRemove?.label ?? ''}"`}
+        subtitle={t`This model will be removed from the provider. You can re-add it later.`}
+        onConfirmClick={handleRemoveModel}
         confirmButtonText={t`Remove`}
         confirmButtonAccent="danger"
       />

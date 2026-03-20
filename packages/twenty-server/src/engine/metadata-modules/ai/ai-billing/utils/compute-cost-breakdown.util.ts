@@ -1,5 +1,4 @@
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 export type TokenUsageInput = {
   inputTokens?: number;
@@ -45,17 +44,20 @@ export const computeCostBreakdown = (
   const cachedInputTokens = safeNumber(usage.cachedInputTokens);
   const cacheCreationTokens = safeNumber(usage.cacheCreationTokens);
 
-  const isAnthropicFamily = model.modelFamily === ModelFamily.ANTHROPIC;
+  // Anthropic SDK reports tokens differently from OpenAI-family SDKs
+  const isAnthropicSdk =
+    model.sdkPackage === '@ai-sdk/anthropic' ||
+    model.sdkPackage === '@ai-sdk/amazon-bedrock';
 
-  const adjustedInputTokens = isAnthropicFamily
+  const adjustedInputTokens = isAnthropicSdk
     ? rawInputTokens
     : Math.max(0, rawInputTokens - cachedInputTokens);
 
-  const adjustedOutputTokens = isAnthropicFamily
+  const adjustedOutputTokens = isAnthropicSdk
     ? rawOutputTokens
     : Math.max(0, rawOutputTokens - reasoningTokens);
 
-  const totalInputTokens = isAnthropicFamily
+  const totalInputTokens = isAnthropicSdk
     ? rawInputTokens + cachedInputTokens + cacheCreationTokens
     : rawInputTokens + cacheCreationTokens;
 

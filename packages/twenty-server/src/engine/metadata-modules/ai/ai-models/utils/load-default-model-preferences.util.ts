@@ -22,11 +22,13 @@ export const loadDefaultModelPreferences = (): AiModelPreferences => {
   const catalog = loadDefaultAiProviders();
   const recommendedModels: string[] = [];
 
-  for (const config of Object.values(catalog)) {
+  for (const [key, config] of Object.entries(catalog)) {
+    const providerName = config.name ?? key;
+
     for (const model of config.models ?? []) {
       if (model.isRecommended) {
         recommendedModels.push(
-          buildCompositeModelId(config.type, model.rawModelId),
+          buildCompositeModelId(providerName, model.rawModelId),
         );
       }
     }

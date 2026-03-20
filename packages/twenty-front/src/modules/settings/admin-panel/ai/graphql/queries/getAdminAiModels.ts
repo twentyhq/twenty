@@ -9,7 +9,7 @@ export const GET_ADMIN_AI_MODELS = gql`
         modelId
         label
         modelFamily
-        provider
+        sdkPackage
         isAvailable
         isAdminEnabled
         deprecated

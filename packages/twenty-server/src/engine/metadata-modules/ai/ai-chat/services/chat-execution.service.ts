@@ -41,10 +41,12 @@ import {
   extractCodeInterpreterFiles,
   type ExtractedFile,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import {
+  AiModelRegistryService,
+  type RegisteredAIModel,
+} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -201,9 +203,9 @@ export class ChatExecutionService {
       role: 'system',
       content: systemPrompt,
       providerOptions:
-        registeredModel.provider === AiProvider.ANTHROPIC
+        registeredModel.sdkPackage === '@ai-sdk/anthropic'
           ? { anthropic: { cacheControl: { type: 'ephemeral' } } }
-          : registeredModel.provider === AiProvider.BEDROCK
+          : registeredModel.sdkPackage === '@ai-sdk/amazon-bedrock'
             ? { bedrock: { cacheControl: { type: 'ephemeral' } } }
             : undefined,
     };
@@ -323,11 +325,7 @@ export class ChatExecutionService {
     return context;
   }
 
-  private getNativeWebSearchTools(model: {
-    modelId: string;
-    provider: AiProvider;
-    providerName?: string;
-  }): {
+  private getNativeWebSearchTools(model: RegisteredAIModel): {
     tools: ToolSet;
     callableToolNames: string[];
   } {
@@ -338,8 +336,8 @@ export class ChatExecutionService {
       return empty;
     }
 
-    switch (model.provider) {
-      case AiProvider.ANTHROPIC: {
+    switch (model.sdkPackage) {
+      case '@ai-sdk/anthropic': {
         const provider =
           this.sdkProviderFactory.getRawAnthropicProvider(providerName);
 
@@ -352,7 +350,7 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case AiProvider.BEDROCK: {
+      case '@ai-sdk/amazon-bedrock': {
         const provider =
           this.sdkProviderFactory.getRawBedrockProvider(providerName);
 
@@ -367,7 +365,7 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case AiProvider.OPENAI: {
+      case '@ai-sdk/openai': {
         const provider =
           this.sdkProviderFactory.getRawOpenAIProvider(providerName);
 
@@ -380,20 +378,13 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case AiProvider.GROQ: {
-        const provider =
-          this.sdkProviderFactory.getRawOpenAIProvider(providerName);
-
-        if (provider) {
-          return {
-            tools: {
-              web_search: groq.tools.browserSearch({}) as ToolSet[string],
-            },
-            callableToolNames: [],
-          };
-        }
-
-        return empty;
+      case '@ai-sdk/groq': {
+        return {
+          tools: {
+            web_search: groq.tools.browserSearch({}) as ToolSet[string],
+          },
+          callableToolNames: [],
+        };
       }
       default:
         return empty;

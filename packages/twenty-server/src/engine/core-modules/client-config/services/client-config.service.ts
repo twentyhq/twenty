@@ -54,7 +54,7 @@ export class ClientConfigService {
           modelId: registeredModel.modelId,
           label: modelConfig?.label || registeredModel.modelId,
           modelFamily: modelConfig?.modelFamily,
-          provider: registeredModel.provider,
+          sdkPackage: registeredModel.sdkPackage,
           nativeCapabilities: modelConfig?.nativeCapabilities,
           inputCostPerMillionTokensInCredits: modelConfig
             ? convertDollarsToBillingCredits(
@@ -98,14 +98,14 @@ export class ClientConfigService {
         {
           modelId: DEFAULT_SMART_MODEL,
           label: `Best (${defaultPerformanceModelLabel})`,
-          provider: null,
+          sdkPackage: null,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
         },
         {
           modelId: DEFAULT_FAST_MODEL,
           label: `Best (${defaultSpeedModelLabel})`,
-          provider: null,
+          sdkPackage: null,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
         },

@@ -1,5 +1,8 @@
 export type RawAiProviderConfig = {
-  type: string;
+  // npm package for the AI SDK driver (e.g. '@ai-sdk/openai')
+  npm: string;
+  // models.dev provider identifier (e.g. 'openai')
+  name?: string;
   label?: string;
   source?: 'catalog' | 'custom';
   baseUrl?: string;

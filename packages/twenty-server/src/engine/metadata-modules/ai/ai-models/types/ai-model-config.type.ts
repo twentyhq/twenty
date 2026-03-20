@@ -1,4 +1,3 @@
-import { type AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type DataResidency } from 'src/engine/metadata-modules/ai/ai-models/types/data-residency.type';
 import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
@@ -6,7 +5,8 @@ import { type SupportedFileType } from 'src/engine/metadata-modules/ai/ai-models
 
 export type AIModelConfig = {
   modelId: string;
-  provider: AiProvider;
+  // npm package for the SDK driver (e.g. '@ai-sdk/openai')
+  sdkPackage: string;
   label: string;
   description: string;
   modelFamily?: ModelFamily;

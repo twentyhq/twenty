@@ -16,7 +16,7 @@ import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/add
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
-import { PROVIDER_CONFIG } from '@/settings/admin-panel/ai/constants/ProviderConfig';
+import { SDK_PACKAGE_OPTIONS } from '@/settings/admin-panel/ai/constants/SdkPackageOptions';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -24,12 +24,8 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
-const PROVIDER_TYPE_OPTIONS = Object.entries(PROVIDER_CONFIG).map(
-  ([value, { label }]) => ({ value, label }),
-);
-
 type FormValues = {
-  type: string;
+  npm: string;
   label: string;
   apiKey: string;
   baseUrl: string;
@@ -50,7 +46,7 @@ export const SettingsAdminNewAiProvider = () => {
   const form = useForm<FormValues>({
     mode: 'onSubmit',
     defaultValues: {
-      type: 'openai',
+      npm: '@ai-sdk/openai',
       label: '',
       apiKey: '',
       baseUrl: '',
@@ -61,9 +57,9 @@ export const SettingsAdminNewAiProvider = () => {
     },
   });
 
-  const providerType = form.watch('type');
-  const isBedrock = providerType === 'bedrock';
-  const isOpenAICompatible = providerType === 'openai-compatible';
+  const npmPackage = form.watch('npm');
+  const isBedrock = npmPackage === '@ai-sdk/amazon-bedrock';
+  const isOpenAICompatible = npmPackage === '@ai-sdk/openai-compatible';
   const needsApiKey = !isBedrock;
 
   const handleSave = async () => {
@@ -90,7 +86,7 @@ export const SettingsAdminNewAiProvider = () => {
     }
 
     const config: Record<string, unknown> = {
-      type: values.type,
+      npm: values.npm,
       label: values.label.trim(),
     };
 
@@ -194,17 +190,17 @@ export const SettingsAdminNewAiProvider = () => {
           <Section>
             <H2Title
               title={t`Provider`}
-              description={t`Select the AI provider type`}
+              description={t`Select the AI SDK package`}
             />
             <Controller
-              name="type"
+              name="npm"
               control={form.control}
               render={({ field: { onChange, value } }) => (
                 <Select
-                  dropdownId="ai-provider-type-select"
+                  dropdownId="ai-provider-npm-select"
                   value={value}
                   onChange={onChange}
-                  options={PROVIDER_TYPE_OPTIONS}
+                  options={SDK_PACKAGE_OPTIONS}
                   fullWidth
                 />
               )}

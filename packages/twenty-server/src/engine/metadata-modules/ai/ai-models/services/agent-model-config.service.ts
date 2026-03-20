@@ -7,7 +7,6 @@ import { ProviderOptions } from '@ai-sdk/provider-utils';
 import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import {
   AiModelRegistryService,
   RegisteredAIModel,
@@ -26,12 +25,12 @@ export class AgentModelConfigService {
     model: RegisteredAIModel,
     agent: FlatAgentWithRoleId,
   ): ProviderOptions {
-    switch (model.provider) {
-      case AiProvider.XAI:
+    switch (model.sdkPackage) {
+      case '@ai-sdk/xai':
         return this.getXaiProviderOptions(agent);
-      case AiProvider.ANTHROPIC:
+      case '@ai-sdk/anthropic':
         return this.getAnthropicProviderOptions(model);
-      case AiProvider.BEDROCK:
+      case '@ai-sdk/amazon-bedrock':
         return this.getBedrockProviderOptions(model);
       default:
         return {};
@@ -48,8 +47,8 @@ export class AgentModelConfigService {
       return tools;
     }
 
-    switch (model.provider) {
-      case AiProvider.ANTHROPIC:
+    switch (model.sdkPackage) {
+      case '@ai-sdk/anthropic':
         if (agent.modelConfiguration.webSearch?.enabled) {
           const anthropicProvider = this.getAnthropicProviderForModel(model);
 
@@ -58,7 +57,7 @@ export class AgentModelConfigService {
           }
         }
         break;
-      case AiProvider.BEDROCK: {
+      case '@ai-sdk/amazon-bedrock': {
         if (agent.modelConfiguration.webSearch?.enabled) {
           const bedrockProvider = this.getBedrockProviderForModel(model);
 
@@ -69,7 +68,7 @@ export class AgentModelConfigService {
         }
         break;
       }
-      case AiProvider.OPENAI:
+      case '@ai-sdk/openai':
         if (agent.modelConfiguration.webSearch?.enabled) {
           const openaiProvider = this.getOpenAIProviderForModel(model);
 

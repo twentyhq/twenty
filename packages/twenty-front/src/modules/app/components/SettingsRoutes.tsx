@@ -388,6 +388,14 @@ const SettingsAdminAiProviderDetail = lazy(() =>
   ),
 );
 
+const SettingsAdminNewAiModel = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminNewAiModel').then(
+    (module) => ({
+      default: module.SettingsAdminNewAiModel,
+    }),
+  ),
+);
+
 const SettingsUpdates = lazy(() =>
   import('~/pages/settings/updates/SettingsUpdates').then((module) => ({
     default: module.SettingsUpdates,
@@ -704,6 +712,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelNewAiProvider}
             element={<SettingsAdminNewAiProvider />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelNewAiModel}
+            element={<SettingsAdminNewAiModel />}
           />
           <Route
             path={SettingsPath.AdminPanelAiProviderDetail}

@@ -3,8 +3,9 @@ import { useContext, useState } from 'react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
-import { Checkbox } from 'twenty-ui/input';
+import { isDefined } from 'twenty-shared/utils';
+import { AppTooltip, IconTrash, TooltipDelay } from 'twenty-ui/display';
+import { Checkbox, IconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAdminAiModelHoverCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard';
@@ -17,6 +18,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
 const GRID_TEMPLATE_COLUMNS = '1fr 120px 40px';
+const GRID_TEMPLATE_COLUMNS_WITH_REMOVE = '1fr 120px 40px 32px';
 
 const StyledModelNameCell = styled.div`
   align-items: center;
@@ -52,6 +54,7 @@ type SettingsAdminAiModelsTableProps = {
   checkedField: 'isAdminEnabled' | 'isRecommended';
   anchorPrefix: string;
   showDisabledState?: boolean;
+  onRemove?: (model: AdminAiModelConfig) => void;
 };
 
 export const SettingsAdminAiModelsTable = ({
@@ -60,16 +63,21 @@ export const SettingsAdminAiModelsTable = ({
   checkedField,
   anchorPrefix,
   showDisabledState = false,
+  onRemove,
 }: SettingsAdminAiModelsTableProps) => {
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null);
   const { theme } = useContext(ThemeContext);
 
   const hoveredModel = models.find((model) => model.modelId === hoveredModelId);
+  const hasRemove = isDefined(onRemove);
+  const gridColumns = hasRemove
+    ? GRID_TEMPLATE_COLUMNS_WITH_REMOVE
+    : GRID_TEMPLATE_COLUMNS;
 
   return (
     <>
       <Table>
-        <TableRow gridTemplateColumns={GRID_TEMPLATE_COLUMNS}>
+        <TableRow gridTemplateColumns={gridColumns}>
           <TableHeader>
             <Trans>Name</Trans>
           </TableHeader>
@@ -77,6 +85,7 @@ export const SettingsAdminAiModelsTable = ({
             <Trans>Provider</Trans>
           </TableHeader>
           <TableHeader />
+          {hasRemove && <TableHeader />}
         </TableRow>
         <TableBody>
           {models.map((model) => {
@@ -97,7 +106,7 @@ export const SettingsAdminAiModelsTable = ({
                 onMouseLeave={() => setHoveredModelId(null)}
               >
                 <TableRow
-                  gridTemplateColumns={GRID_TEMPLATE_COLUMNS}
+                  gridTemplateColumns={gridColumns}
                   onClick={
                     isDisabled
                       ? undefined
@@ -142,6 +151,20 @@ export const SettingsAdminAiModelsTable = ({
                       onChange={() => onToggle(model.modelId, isChecked)}
                     />
                   </TableCell>
+                  {hasRemove && (
+                    <TableCell align="right">
+                      <IconButton
+                        Icon={IconTrash}
+                        accent="danger"
+                        variant="tertiary"
+                        size="small"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onRemove(model);
+                        }}
+                      />
+                    </TableCell>
+                  )}
                 </TableRow>
               </div>
             );

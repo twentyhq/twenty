@@ -8,12 +8,9 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
-import { ModelsDevEnrichmentService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-enrichment.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
-import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
@@ -31,10 +28,14 @@ import {
 
 export interface RegisteredAIModel {
   modelId: string;
-  provider: AiProvider;
+  // npm package for SDK-specific behavior (e.g. '@ai-sdk/anthropic')
+  sdkPackage: string;
   model: LanguageModel;
   doesSupportThinking?: boolean;
+  // Config key (e.g. 'openai-standard')
   providerName?: string;
+  // models.dev identifier (e.g. 'openai')
+  modelsDevName?: string;
 }
 
 @Injectable()
@@ -51,8 +52,6 @@ export class AiModelRegistryService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly providerConfigService: ProviderConfigService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
-    private readonly providerDiscoveryService: ProviderDiscoveryService,
-    private readonly modelsDevEnrichmentService: ModelsDevEnrichmentService,
     private readonly preferencesService: AiModelPreferencesService,
   ) {
     this.buildModelRegistry();
@@ -74,9 +73,9 @@ export class AiModelRegistryService {
   }
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
-    for (const [providerName, config] of Object.entries(providers)) {
-      const provider = config.type;
-      const models = this.resolveModelsForProvider(config);
+    for (const [providerKey, config] of Object.entries(providers)) {
+      const modelsDevName = config.name ?? providerKey;
+      const models = config.models ?? [];
 
       if (models.length === 0) {
         continue;
@@ -84,75 +83,54 @@ export class AiModelRegistryService {
 
       const isConfigured = this.hasCredentials(config);
 
-      // Only create SDK instances for providers with credentials
       const sdkInstance = isConfigured
-        ? this.sdkProviderFactory.createProvider(providerName, config)
+        ? this.sdkProviderFactory.createProvider(providerKey, config)
         : undefined;
 
       for (const modelDef of models) {
         const compositeId = buildCompositeModelId(
-          provider,
+          modelsDevName,
           modelDef.rawModelId,
         );
 
-        // Always populate config caches so admin can see all models
         this.modelConfigCache.set(
           compositeId,
-          this.toAIModelConfig(compositeId, config, modelDef),
+          this.toAIModelConfig(compositeId, modelsDevName, config, modelDef),
         );
 
         this.providerModelDefCache.set(compositeId, {
-          providerName,
+          providerName: providerKey,
           modelDef,
         });
 
-        // Only register in the live registry if provider has credentials
         if (sdkInstance) {
           this.modelRegistry.set(compositeId, {
             modelId: compositeId,
-            provider,
+            sdkPackage: config.npm,
             model: sdkInstance.createModel(modelDef.rawModelId),
             doesSupportThinking: modelDef.doesSupportThinking,
-            providerName,
+            providerName: providerKey,
+            modelsDevName,
           });
         }
       }
     }
   }
 
-  // Merges models[] with legacy modelNames[] (openai-compatible backward compat)
-  private resolveModelsForProvider(
-    config: AiProvidersConfig[string],
-  ): AiProviderModelConfig[] {
-    const models = [...(config.models ?? [])];
-    const existingRawIds = new Set(models.map((model) => model.rawModelId));
-
-    for (const modelName of config.modelNames ?? []) {
-      if (!existingRawIds.has(modelName)) {
-        models.push({
-          rawModelId: modelName,
-          label: modelName,
-          source: 'manual',
-        });
-      }
-    }
-
-    return models;
-  }
-
   private toAIModelConfig(
     compositeId: string,
+    modelsDevName: string,
     providerConfig: AiProviderConfig,
     modelDef: AiProviderModelConfig,
   ): AIModelConfig {
     return {
       modelId: compositeId,
       label: modelDef.label,
-      provider: providerConfig.type,
+      sdkPackage: providerConfig.npm,
       description: modelDef.description ?? compositeId,
       modelFamily:
         modelDef.modelFamily ??
-        inferModelFamily(providerConfig.type, modelDef.rawModelId),
+        inferModelFamily(modelsDevName, modelDef.rawModelId),
       dataResidency: providerConfig.dataResidency,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
@@ -168,128 +146,6 @@ export class AiModelRegistryService {
       nativeCapabilities: modelDef.nativeCapabilities,
       deprecated: modelDef.deprecated,
     };
-  }
-
-  async discoverAndRegisterModels(): Promise<number> {
-    const providers = this.providerConfigService.getResolvedProviders();
-    const providerNames = Object.keys(providers);
-
-    this.logger.log(
-      `Starting model discovery for ${providerNames.length} providers: ${providerNames.join(', ') || '(none)'}`,
-    );
-
-    let totalNewModels = 0;
-
-    for (const [providerName, config] of Object.entries(providers)) {
-      if (config.type === AiProvider.OPENAI_COMPATIBLE) {
-        this.logger.log(
-          `Skipping "${providerName}": openai-compatible providers don't support discovery`,
-        );
-        continue;
-      }
-
-      this.logger.log(
-        `Discovering models for provider "${providerName}" (type: ${config.type})`,
-      );
-
-      const discoveredModels =
-        await this.providerDiscoveryService.discoverModels(config);
-
-      this.logger.log(
-        `Provider "${providerName}": discovery returned ${discoveredModels.length} models`,
-      );
-
-      if (discoveredModels.length === 0) {
-        continue;
-      }
-
-      const enrichedModels = await this.modelsDevEnrichmentService.enrichModels(
-        config.type,
-        discoveredModels,
-      );
-
-      const provider = config.type;
-
-      const existingModelIds = new Set(
-        (config.models ?? []).map((model) => model.rawModelId),
-      );
-
-      const newModelDefs: AiProviderModelConfig[] = [];
-
-      for (const enrichedModel of enrichedModels) {
-        if (existingModelIds.has(enrichedModel.modelId)) {
-          continue;
-        }
-
-        const compositeId = buildCompositeModelId(
-          provider,
-          enrichedModel.modelId,
-        );
-
-        if (this.modelRegistry.has(compositeId)) {
-          continue;
-        }
-
-        newModelDefs.push({
-          rawModelId: enrichedModel.modelId,
-          label: enrichedModel.name,
-          description: `Discovered model from ${providerName}`,
-          modelFamily: inferModelFamily(provider, enrichedModel.modelId),
-          inputCostPerMillionTokens: enrichedModel.inputCostPerMillionTokens,
-          outputCostPerMillionTokens: enrichedModel.outputCostPerMillionTokens,
-          contextWindowTokens: enrichedModel.contextWindowTokens,
-          maxOutputTokens: enrichedModel.maxOutputTokens,
-          doesSupportThinking: enrichedModel.doesSupportThinking,
-          source: 'discovered',
-        });
-      }
-
-      if (newModelDefs.length > 0) {
-        await this.persistDiscoveredModels(providerName, newModelDefs);
-        totalNewModels += newModelDefs.length;
-      }
-
-      this.logger.log(
-        `Provider "${providerName}": ${enrichedModels.length} discovered, ${existingModelIds.size} existing, ${newModelDefs.length} new`,
-      );
-    }
-
-    this.buildModelRegistry();
-
-    this.logger.log(
-      `Discovery complete. ${totalNewModels} new models added. Registry now has ${this.modelConfigCache.size} models total.`,
-    );
-
-    return totalNewModels;
-  }
-
-  // Discovered models are persisted into AI_CUSTOM_PROVIDERS
-  private async persistDiscoveredModels(
-    providerName: string,
-    newModelDefs: AiProviderModelConfig[],
-  ): Promise<void> {
-    const customProviders = {
-      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
-    };
-    const existing = customProviders[providerName];
-
-    // Get the resolved provider config to use its type
-    const resolvedProviders = this.providerConfigService.getResolvedProviders();
-    const resolvedConfig = resolvedProviders[providerName];
-
-    if (!resolvedConfig) {
-      return;
-    }
-
-    customProviders[providerName] = {
-      ...(existing ?? { type: resolvedConfig.type }),
-      models: [
-        ...(existing?.models ?? resolvedConfig.models ?? []),
-        ...newModelDefs,
-      ],
-    };
-
-    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
   }
 
   getModel(modelId: string): RegisteredAIModel | undefined {
@@ -390,10 +246,10 @@ export class AiModelRegistryService {
       label: registeredModel.modelId,
       description: `Custom model: ${registeredModel.modelId}`,
       modelFamily: inferModelFamily(
-        registeredModel.provider,
+        registeredModel.modelsDevName ?? '',
         registeredModel.modelId,
       ),
-      provider: registeredModel.provider,
+      sdkPackage: registeredModel.sdkPackage,
       inputCostPerMillionTokens: 0,
       outputCostPerMillionTokens: 0,
       contextWindowTokens: DEFAULT_CONTEXT_WINDOW_TOKENS,

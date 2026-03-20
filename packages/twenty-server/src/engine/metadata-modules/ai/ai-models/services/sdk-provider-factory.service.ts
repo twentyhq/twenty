@@ -12,14 +12,12 @@ import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createXai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 
 export type AiSdkProviderInstance = {
   createModel: (modelId: string) => LanguageModel;
-  // Raw SDK provider for accessing native tools (webSearch, etc.)
   rawProvider: unknown;
-  providerType: AiProvider;
+  sdkPackage: string;
 };
 
 @Injectable()
@@ -49,11 +47,11 @@ export class SdkProviderFactoryService {
 
   getRawProvider<T>(
     providerName: string,
-    ...allowedTypes: AiProvider[]
+    ...allowedPackages: string[]
   ): T | undefined {
     const instance = this.providerInstances.get(providerName);
 
-    if (!instance || !allowedTypes.includes(instance.providerType)) {
+    if (!instance || !allowedPackages.includes(instance.sdkPackage)) {
       return undefined;
     }
 
@@ -65,22 +63,22 @@ export class SdkProviderFactoryService {
   ): AmazonBedrockProvider | undefined {
     return this.getRawProvider<AmazonBedrockProvider>(
       providerName,
-      AiProvider.BEDROCK,
+      '@ai-sdk/amazon-bedrock',
     );
   }
 
   getRawAnthropicProvider(providerName: string): AnthropicProvider | undefined {
     return this.getRawProvider<AnthropicProvider>(
       providerName,
-      AiProvider.ANTHROPIC,
+      '@ai-sdk/anthropic',
     );
   }
 
   getRawOpenAIProvider(providerName: string): OpenAIProvider | undefined {
     return this.getRawProvider<OpenAIProvider>(
       providerName,
-      AiProvider.OPENAI,
-      AiProvider.OPENAI_COMPATIBLE,
+      '@ai-sdk/openai',
+      '@ai-sdk/openai-compatible',
     );
   }
 
@@ -91,25 +89,25 @@ export class SdkProviderFactoryService {
   private buildProviderInstance(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
-    switch (config.type) {
-      case AiProvider.OPENAI:
+    switch (config.npm) {
+      case '@ai-sdk/openai':
         return this.buildStandardProvider(config, createOpenAI);
-      case AiProvider.ANTHROPIC:
+      case '@ai-sdk/anthropic':
         return this.buildStandardProvider(config, createAnthropic);
-      case AiProvider.GOOGLE:
+      case '@ai-sdk/google':
         return this.buildStandardProvider(config, createGoogleGenerativeAI);
-      case AiProvider.MISTRAL:
+      case '@ai-sdk/mistral':
         return this.buildStandardProvider(config, createMistral);
-      case AiProvider.XAI:
+      case '@ai-sdk/xai':
         return this.buildStandardProvider(config, createXai);
-      case AiProvider.GROQ:
+      case '@ai-sdk/groq':
         return this.buildStandardProvider(config, createGroq);
-      case AiProvider.BEDROCK:
+      case '@ai-sdk/amazon-bedrock':
         return this.buildBedrockProvider(config);
-      case AiProvider.OPENAI_COMPATIBLE:
+      case '@ai-sdk/openai-compatible':
         return this.buildOpenAICompatibleProvider(config);
       default:
-        throw new Error(`Unsupported provider type: ${config.type}`);
+        throw new Error(`Unsupported SDK package: ${config.npm}`);
     }
   }
 
@@ -126,7 +124,7 @@ export class SdkProviderFactoryService {
       createModel: (modelId: string) =>
         (provider as CallableFunction)(modelId) as LanguageModel,
       rawProvider: provider,
-      providerType: config.type,
+      sdkPackage: config.npm,
     };
   }
 
@@ -146,7 +144,7 @@ export class SdkProviderFactoryService {
     return {
       createModel: (modelId: string) => provider(modelId),
       rawProvider: provider,
-      providerType: AiProvider.BEDROCK,
+      sdkPackage: '@ai-sdk/amazon-bedrock',
     };
   }
 
@@ -165,7 +163,7 @@ export class SdkProviderFactoryService {
     return {
       createModel: (modelId: string) => provider(modelId),
       rawProvider: provider,
-      providerType: AiProvider.OPENAI_COMPATIBLE,
+      sdkPackage: '@ai-sdk/openai-compatible',
     };
   }
 }

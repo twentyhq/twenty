@@ -80,7 +80,7 @@ export const SettingsAdminAiProviderListCard = ({
     <SettingsListCard
       items={providers}
       rounded
-      RowIconFn={(provider) => getProviderIcon(provider.type)}
+      RowIconFn={(provider) => getProviderIcon(provider.modelsDevName)}
       getItemLabel={(provider) => provider.label ?? provider.name}
       getItemDescription={getProviderDescription}
       RowRightComponent={({ item: provider }) =>

@@ -1,14 +1,12 @@
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
-
 const COMPOSITE_SEPARATOR = '/';
 
 export const buildCompositeModelId = (
-  provider: AiProvider,
+  providerName: string,
   rawModelId: string,
 ): string => {
-  if (provider === rawModelId.split(COMPOSITE_SEPARATOR)[0]) {
+  if (providerName === rawModelId.split(COMPOSITE_SEPARATOR)[0]) {
     return rawModelId;
   }
 
-  return `${provider}${COMPOSITE_SEPARATOR}${rawModelId}`;
+  return `${providerName}${COMPOSITE_SEPARATOR}${rawModelId}`;
 };

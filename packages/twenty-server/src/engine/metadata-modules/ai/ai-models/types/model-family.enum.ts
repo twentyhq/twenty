@@ -1,7 +1,7 @@
 export enum ModelFamily {
-  OPENAI = 'openai',
-  ANTHROPIC = 'anthropic',
-  GOOGLE = 'google',
+  GPT = 'gpt',
+  CLAUDE = 'claude',
+  GEMINI = 'gemini',
   MISTRAL = 'mistral',
-  XAI = 'xai',
+  GROK = 'grok',
 }

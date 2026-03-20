@@ -26,7 +26,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
+import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
 const StyledSearchContainer = styled.div`
@@ -218,7 +218,7 @@ export const SettingsAIModelsTab = () => {
         return (
           model.label.toLowerCase().includes(query) ||
           (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
-          (model.provider?.toLowerCase().includes(query) ?? false)
+          (model.sdkPackage?.toLowerCase().includes(query) ?? false)
         );
       })
     : allModelsWithAvailability;
@@ -291,7 +291,7 @@ export const SettingsAIModelsTab = () => {
 
           <Card rounded>
             {filteredModels.map((model, index) => {
-              const familyLabel = getProviderTypeLabel(model.provider ?? '');
+              const familyLabel = getModelFamilyLabel(model.modelFamily ?? '');
               const residency = model.dataResidency
                 ? getDataResidencyDisplay(model.dataResidency)
                 : undefined;

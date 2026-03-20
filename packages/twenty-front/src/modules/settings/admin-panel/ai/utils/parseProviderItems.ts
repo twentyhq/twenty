@@ -5,5 +5,10 @@ export const parseProviderItems = (
   rawProviders: Record<string, unknown>,
 ): AiProviderItem[] =>
   Object.entries(rawProviders as Record<string, RawAiProviderConfig>).map(
-    ([name, config]) => ({ id: name, name, ...config }),
+    ([key, config]) => ({
+      ...config,
+      id: key,
+      name: key,
+      modelsDevName: config.name ?? key,
+    }),
   );

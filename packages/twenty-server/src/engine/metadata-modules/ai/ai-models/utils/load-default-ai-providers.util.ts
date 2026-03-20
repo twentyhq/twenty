@@ -5,7 +5,9 @@ import defaultAiProviders from '../ai-providers.json';
 export const loadDefaultAiProviders = (): AiProvidersConfig => {
   const catalog = defaultAiProviders as unknown as AiProvidersConfig;
 
-  for (const config of Object.values(catalog)) {
+  for (const [key, config] of Object.entries(catalog)) {
+    config.name = key;
+
     for (const model of config.models ?? []) {
       model.source = 'catalog';
     }

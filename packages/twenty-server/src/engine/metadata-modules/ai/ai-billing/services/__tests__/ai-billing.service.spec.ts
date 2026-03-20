@@ -3,7 +3,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -18,8 +17,8 @@ describe('AIBillingService', () => {
   const openaiModelConfig = {
     modelId: 'gpt-4o',
     label: 'GPT-4o',
-    modelFamily: ModelFamily.OPENAI,
-    provider: AiProvider.OPENAI,
+    modelFamily: ModelFamily.GPT,
+    sdkPackage: '@ai-sdk/openai',
     inputCostPerMillionTokens: 2.5,
     outputCostPerMillionTokens: 10.0,
     cachedInputCostPerMillionTokens: 1.25,
@@ -28,8 +27,8 @@ describe('AIBillingService', () => {
   const anthropicModelConfig = {
     modelId: 'claude-sonnet-4-5-20250929',
     label: 'Claude Sonnet 4.5',
-    modelFamily: ModelFamily.ANTHROPIC,
-    provider: AiProvider.ANTHROPIC,
+    modelFamily: ModelFamily.CLAUDE,
+    sdkPackage: '@ai-sdk/anthropic',
     inputCostPerMillionTokens: 3.0,
     outputCostPerMillionTokens: 15.0,
     cachedInputCostPerMillionTokens: 0.3,

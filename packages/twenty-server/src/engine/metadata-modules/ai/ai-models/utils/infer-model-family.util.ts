@@ -1,32 +1,32 @@
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
-const PROVIDER_TO_MODEL_FAMILY: Partial<Record<AiProvider, ModelFamily>> = {
-  [AiProvider.OPENAI]: ModelFamily.OPENAI,
-  [AiProvider.ANTHROPIC]: ModelFamily.ANTHROPIC,
-  [AiProvider.GOOGLE]: ModelFamily.GOOGLE,
-  [AiProvider.MISTRAL]: ModelFamily.MISTRAL,
-  [AiProvider.XAI]: ModelFamily.XAI,
+// Maps models.dev provider names to model families.
+const NAME_TO_MODEL_FAMILY: Record<string, ModelFamily> = {
+  openai: ModelFamily.GPT,
+  anthropic: ModelFamily.CLAUDE,
+  google: ModelFamily.GEMINI,
+  mistral: ModelFamily.MISTRAL,
+  xai: ModelFamily.GROK,
 };
 
 // For aggregator providers (Groq, Bedrock, etc.), detect model family
 // from the model's raw ID rather than assuming a fixed mapping.
 const MODEL_ID_FAMILY_PATTERNS: [RegExp, ModelFamily][] = [
-  [/claude/i, ModelFamily.ANTHROPIC],
-  [/gpt|o[134]-|chatgpt/i, ModelFamily.OPENAI],
-  [/gemini/i, ModelFamily.GOOGLE],
+  [/claude/i, ModelFamily.CLAUDE],
+  [/gpt|o[134]-|chatgpt/i, ModelFamily.GPT],
+  [/gemini/i, ModelFamily.GEMINI],
   [/mistral|mixtral|pixtral/i, ModelFamily.MISTRAL],
-  [/grok/i, ModelFamily.XAI],
+  [/grok/i, ModelFamily.GROK],
 ];
 
 export const inferModelFamily = (
-  provider: AiProvider,
+  providerName: string,
   rawModelId?: string,
 ): ModelFamily | undefined => {
-  const fromProvider = PROVIDER_TO_MODEL_FAMILY[provider];
+  const fromName = NAME_TO_MODEL_FAMILY[providerName];
 
-  if (fromProvider) {
-    return fromProvider;
+  if (fromName) {
+    return fromName;
   }
 
   if (rawModelId) {

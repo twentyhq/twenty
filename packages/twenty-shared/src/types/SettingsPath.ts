@@ -63,6 +63,7 @@ export enum SettingsPath {
   AdminPanelConfigVariableDetails = 'admin-panel/config-variables/:variableName',
   AdminPanelNewAiProvider = 'admin-panel/ai/new-provider',
   AdminPanelAiProviderDetail = 'admin-panel/ai/providers/:providerName',
+  AdminPanelNewAiModel = 'admin-panel/ai/providers/:providerName/new-model',
 
   Roles = 'roles',
   RoleCreate = 'roles/create',

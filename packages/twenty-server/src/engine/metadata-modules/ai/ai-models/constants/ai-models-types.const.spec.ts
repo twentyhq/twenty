@@ -2,37 +2,32 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
-import { ModelsDevEnrichmentService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-enrichment.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
-import { ProviderDiscoveryService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-discovery.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
-import { AiProvider } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider.enum';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
 
 const DEFAULT_PROVIDERS: AiProvidersConfig = loadDefaultAiProviders();
 
+const EXPECTED_PROVIDERS = [
+  'openai',
+  'anthropic',
+  'google',
+  'xai',
+  'groq',
+  'mistral',
+];
+
 describe('Default AI Providers (ai-providers.json)', () => {
   it('should have at least one model per provider', () => {
-    const providers = [
-      AiProvider.OPENAI,
-      AiProvider.ANTHROPIC,
-      AiProvider.GOOGLE,
-      AiProvider.XAI,
-      AiProvider.GROQ,
-      AiProvider.MISTRAL,
-    ];
+    EXPECTED_PROVIDERS.forEach((providerName) => {
+      const config = DEFAULT_PROVIDERS[providerName];
 
-    providers.forEach((provider) => {
-      const hasModel = Object.entries(DEFAULT_PROVIDERS).some(
-        ([, config]) =>
-          config.type === provider && (config.models?.length ?? 0) > 0,
-      );
-
-      expect(hasModel).toBe(true);
+      expect(config).toBeDefined();
+      expect((config?.models?.length ?? 0) > 0).toBe(true);
     });
   });
 
@@ -52,10 +47,12 @@ describe('Default AI Providers (ai-providers.json)', () => {
   it('should have unique model IDs across all providers', () => {
     const allCompositeIds: string[] = [];
 
-    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
+    Object.entries(DEFAULT_PROVIDERS).forEach(([key, config]) => {
+      const providerName = config.name ?? key;
+
       (config.models ?? []).forEach((model) => {
         allCompositeIds.push(
-          buildCompositeModelId(config.type, model.rawModelId),
+          buildCompositeModelId(providerName, model.rawModelId),
         );
       });
     });
@@ -66,20 +63,10 @@ describe('Default AI Providers (ai-providers.json)', () => {
   });
 
   it('should have at least one non-deprecated model per provider', () => {
-    const providers = [
-      AiProvider.OPENAI,
-      AiProvider.ANTHROPIC,
-      AiProvider.GOOGLE,
-      AiProvider.XAI,
-      AiProvider.GROQ,
-      AiProvider.MISTRAL,
-    ];
-
-    providers.forEach((provider) => {
-      const hasActiveModel = Object.entries(DEFAULT_PROVIDERS).some(
-        ([, config]) =>
-          config.type === provider &&
-          (config.models ?? []).some((model) => !model.deprecated),
+    EXPECTED_PROVIDERS.forEach((providerName) => {
+      const config = DEFAULT_PROVIDERS[providerName];
+      const hasActiveModel = (config?.models ?? []).some(
+        (model) => !model.deprecated,
       );
 
       expect(hasActiveModel).toBe(true);
@@ -91,6 +78,13 @@ describe('Default AI Providers (ai-providers.json)', () => {
       (config.models ?? []).forEach((model) => {
         expect(model.source).toBe('catalog');
       });
+    });
+  });
+
+  it('should have npm field set for all providers', () => {
+    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
+      expect(config.npm).toBeDefined();
+      expect(config.npm).toMatch(/^@ai-sdk\//);
     });
   });
 });
@@ -133,14 +127,6 @@ describe('AiModelRegistryService', () => {
           useValue: { clearCache: jest.fn() },
         },
         {
-          provide: ProviderDiscoveryService,
-          useValue: { discoverModels: jest.fn().mockResolvedValue([]) },
-        },
-        {
-          provide: ModelsDevEnrichmentService,
-          useValue: { enrichModels: jest.fn().mockResolvedValue([]) },
-        },
-        {
           provide: AiModelPreferencesService,
           useValue: mockPreferencesService,
         },
@@ -160,14 +146,14 @@ describe('AiModelRegistryService', () => {
     jest.spyOn(service, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'openai/gpt-5.2',
-        provider: AiProvider.OPENAI,
+        sdkPackage: '@ai-sdk/openai',
         model: {} as any,
       },
     ]);
 
     jest.spyOn(service, 'getModel').mockReturnValue({
       modelId: 'openai/gpt-5.2',
-      provider: AiProvider.OPENAI,
+      sdkPackage: '@ai-sdk/openai',
       model: {} as any,
     });
 
@@ -175,21 +161,21 @@ describe('AiModelRegistryService', () => {
 
     expect(result).toBeDefined();
     expect(result.modelId).toBe('openai/gpt-5.2');
-    expect(result.provider).toBe(AiProvider.OPENAI);
+    expect(result.sdkPackage).toBe('@ai-sdk/openai');
   });
 
   it('should return effective model config for DEFAULT_SMART_MODEL with custom model', () => {
     jest.spyOn(service, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'custom/mistral',
-        provider: AiProvider.OPENAI_COMPATIBLE,
+        sdkPackage: '@ai-sdk/openai-compatible',
         model: {} as any,
       },
     ]);
 
     jest.spyOn(service, 'getModel').mockReturnValue({
       modelId: 'custom/mistral',
-      provider: AiProvider.OPENAI_COMPATIBLE,
+      sdkPackage: '@ai-sdk/openai-compatible',
       model: {} as any,
     });
 
@@ -197,7 +183,7 @@ describe('AiModelRegistryService', () => {
 
     expect(result).toBeDefined();
     expect(result.modelId).toBe('custom/mistral');
-    expect(result.provider).toBe(AiProvider.OPENAI_COMPATIBLE);
+    expect(result.sdkPackage).toBe('@ai-sdk/openai-compatible');
     expect(result.label).toBe('custom/mistral');
     expect(result.inputCostPerMillionTokens).toBe(0);
     expect(result.outputCostPerMillionTokens).toBe(0);
@@ -206,7 +192,7 @@ describe('AiModelRegistryService', () => {
   it('should return effective model config for custom model', () => {
     jest.spyOn(service, 'getModel').mockReturnValue({
       modelId: 'custom/mistral',
-      provider: AiProvider.OPENAI_COMPATIBLE,
+      sdkPackage: '@ai-sdk/openai-compatible',
       model: {} as any,
     });
 
@@ -214,7 +200,7 @@ describe('AiModelRegistryService', () => {
 
     expect(result).toBeDefined();
     expect(result.modelId).toBe('custom/mistral');
-    expect(result.provider).toBe(AiProvider.OPENAI_COMPATIBLE);
+    expect(result.sdkPackage).toBe('@ai-sdk/openai-compatible');
     expect(result.label).toBe('custom/mistral');
     expect(result.inputCostPerMillionTokens).toBe(0);
     expect(result.outputCostPerMillionTokens).toBe(0);
@@ -243,7 +229,7 @@ describe('AiModelRegistryService', () => {
         if (modelId === 'anthropic/claude-haiku-4-5-20251001') {
           return {
             modelId: 'anthropic/claude-haiku-4-5-20251001',
-            provider: AiProvider.ANTHROPIC,
+            sdkPackage: '@ai-sdk/anthropic',
             model: {} as any,
           };
         }
@@ -270,7 +256,7 @@ describe('AiModelRegistryService', () => {
     jest.spyOn(service, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'fallback-model',
-        provider: AiProvider.OPENAI_COMPATIBLE,
+        sdkPackage: '@ai-sdk/openai-compatible',
         model: {} as any,
       },
     ]);

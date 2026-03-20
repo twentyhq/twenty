@@ -13,11 +13,10 @@ export const MODEL_ICON_CONFIG: Record<
   string,
   { label: string; Icon: IconComponent }
 > = {
-  openai: { label: 'GPT', Icon: IconProviderOpenai },
-  anthropic: { label: 'Claude', Icon: IconModelClaude },
-  google: { label: 'Gemini', Icon: IconBrandGemini },
-  groq: { label: 'Groq', Icon: IconBrandGroq },
+  gpt: { label: 'GPT', Icon: IconProviderOpenai },
+  claude: { label: 'Claude', Icon: IconModelClaude },
+  gemini: { label: 'Gemini', Icon: IconBrandGemini },
   mistral: { label: 'Mistral', Icon: IconBrandMistral },
-  xai: { label: 'Grok', Icon: IconBrandXai },
+  grok: { label: 'Grok', Icon: IconBrandXai },
   FALLBACK: { label: '', Icon: IconRobot },
 };
