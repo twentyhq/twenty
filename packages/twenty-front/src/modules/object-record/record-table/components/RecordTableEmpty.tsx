@@ -7,7 +7,8 @@ import { RecordTableWidthEffect } from '@/object-record/record-table/components/
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
-import { RECORD_TABLE_HTML_ID } from '@/object-record/record-table/constants/RecordTableHtmlId';
+import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
@@ -33,7 +34,12 @@ export interface RecordTableEmptyProps {
 }
 
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } =
+    useRecordTableContextOrThrow();
+
+  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
+    isRecordTableColumnHeadersReadOnlyComponentState,
+  );
 
   const recordTableWidth = useAtomComponentStateValue(
     recordTableWidthComponentState,
@@ -66,10 +72,13 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
     visibleRecordFields,
   });
 
+  const leftColumnsWidth = isRecordTableColumnHeadersReadOnly
+    ? 0
+    : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH + RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
+
   const emptyTableContainerComputedWidth =
     visibleRecordFieldsWidth +
-    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH +
-    RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+    leftColumnsWidth +
     RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH +
     totalColumnsBorderWidth +
     resizeOffsetToAddOnlyIfItMakesTableContainerGrow;
@@ -89,7 +98,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
       <RecordTableStyleWrapper
         ref={tableBodyRef}
         style={columnWidthStyles}
-        id={RECORD_TABLE_HTML_ID}
+        id={getRecordTableHtmlId(recordTableId)}
       >
         <RecordTableHeader />
       </RecordTableStyleWrapper>

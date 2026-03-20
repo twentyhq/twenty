@@ -8,10 +8,12 @@ export const computeLastRecordTableColumnWidth = ({
   recordFields,
   tableWidth,
   shouldCompactFirstColumn,
+  hideLeftColumns,
 }: {
   recordFields: Pick<RecordField, 'size'>[];
   tableWidth: number;
   shouldCompactFirstColumn: boolean;
+  hideLeftColumns?: boolean;
 }) => {
   const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
     shouldCompactFirstColumn,
@@ -20,9 +22,13 @@ export const computeLastRecordTableColumnWidth = ({
 
   const widthOfBorders = recordFields.length + 1;
 
+  const leftColumnsWidth = hideLeftColumns
+    ? 0
+    : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+      RECORD_TABLE_COLUMN_CHECKBOX_WIDTH;
+
   const fixedColumnsWidth =
-    RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-    RECORD_TABLE_COLUMN_CHECKBOX_WIDTH +
+    leftColumnsWidth +
     RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH +
     widthOfBorders;
 
