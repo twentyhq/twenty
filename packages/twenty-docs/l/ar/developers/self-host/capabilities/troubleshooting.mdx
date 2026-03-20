@@ -166,6 +166,10 @@ plugins: [
 
 قم بتشغيل `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` في حاوية قاعدة البيانات للحصول على الوصول إلى لوحة الإدارة.
 
+#### عند تشغيل سير العمل، يفشل تشغيل سير العمل مع الرسالة "تم تعطيل تنفيذ دوال المنطق. عيّن LOGIC_FUNCTION_TYPE إلى LOCAL أو LAMBDA لتمكين ذلك."
+
+في بيئة الإنتاج، يتم تعطيل دوال المنطق افتراضيًا. قم بتعيين متغير البيئة `LOGIC_FUNCTION_TYPE` إلى `LOCAL` أو `LAMBDA` لتمكينها. يمكن تكوين ذلك عبر متغيرات البيئة أو من خلال متغيرات قاعدة البيانات في لوحة الإدارة. راجع [دليل إعداد دوال المنطق](/l/ar/developers/self-host/capabilities/setup#logic-functions-available-drivers) للحصول على التفاصيل.
+
 ### Docker compose بنقرة واحدة
 
 #### غير قادر على تسجيل الدخول

@@ -41,6 +41,7 @@ export class MessageFolderEntity extends WorkspaceRelatedEntity {
     type: 'enum',
     enum: MessageFolderPendingSyncAction,
     nullable: false,
+    default: MessageFolderPendingSyncAction.NONE,
   })
   pendingSyncAction: MessageFolderPendingSyncAction;
 

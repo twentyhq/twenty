@@ -10,6 +10,7 @@ type ApiServiceOptions = {
   disableInterceptors?: boolean;
   serverUrl?: string;
   token?: string;
+  skipAuth?: boolean;
 };
 
 export class ApiService {

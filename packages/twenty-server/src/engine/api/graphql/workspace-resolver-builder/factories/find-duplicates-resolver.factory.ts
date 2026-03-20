@@ -31,7 +31,7 @@ export class FindDuplicatesResolverFactory
   ): Resolver<FindDuplicatesResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, requestContext, info) => {
+    return async (_source, args, _requestContext, info) => {
       const selectedFields = graphqlFields(info);
 
       const resolverContext = createQueryRunnerContext({

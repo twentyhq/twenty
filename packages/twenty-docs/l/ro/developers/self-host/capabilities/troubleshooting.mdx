@@ -167,6 +167,10 @@ plugins: [
 
 Rulați `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'tine@domeniultău.com';` în containerul de baze de date pentru a obține acces la panoul de administrare.
 
+#### Când rulați un flux de lucru, rularea fluxului de lucru eșuează cu "Execuția funcțiilor logice este dezactivată. Setați LOGIC_FUNCTION_TYPE la LOCAL sau LAMBDA pentru a le activa."
+
+În producție, funcțiile logice sunt dezactivate în mod implicit. Setați variabila de mediu `LOGIC_FUNCTION_TYPE` la `LOCAL` sau `LAMBDA` pentru a le activa. Acest lucru poate fi configurat prin variabile de mediu sau prin variabilele bazei de date din panoul de administrare. Consultați [Ghidul de configurare a funcțiilor logice](/l/ro/developers/self-host/capabilities/setup#logic-functions-available-drivers) pentru detalii.
+
 ### Docker compose cu un singur click
 
 #### Nu se poate conecta
