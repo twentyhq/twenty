@@ -1,7 +1,13 @@
-import { type IconComponent, type IconComponentProps } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import { createElement } from 'react';
 
 const MODELS_DEV_LOGO_BASE = 'https://models.dev/logos';
+
+type ModelsDevLogoProps = {
+  size?: number;
+  className?: string;
+  style?: React.CSSProperties;
+};
 
 const iconCache = new Map<string, IconComponent>();
 
@@ -12,11 +18,11 @@ export const getModelsDevLogoIcon = (providerId: string): IconComponent => {
     return cached;
   }
 
-  const ModelsDevLogo: IconComponent = ({
+  const ModelsDevLogo = ({
     size = 16,
     className,
     style,
-  }: IconComponentProps) =>
+  }: ModelsDevLogoProps) =>
     createElement('img', {
       src: `${MODELS_DEV_LOGO_BASE}/${providerId}.svg`,
       alt: providerId,
@@ -28,7 +34,7 @@ export const getModelsDevLogoIcon = (providerId: string): IconComponent => {
 
   ModelsDevLogo.displayName = `ModelsDevLogo(${providerId})`;
 
-  iconCache.set(providerId, ModelsDevLogo);
+  iconCache.set(providerId, ModelsDevLogo as IconComponent);
 
-  return ModelsDevLogo;
+  return ModelsDevLogo as IconComponent;
 };
