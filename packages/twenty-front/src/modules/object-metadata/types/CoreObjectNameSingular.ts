@@ -32,4 +32,6 @@ export enum CoreObjectNameSingular {
   WorkflowVersion = 'workflowVersion',
   WorkflowRun = 'workflowRun',
   TobSubscription = 'tobSubscription',
+  SubscriptionPeriod = 'subscriptionPeriod',
+  SubscriptionPeriodChangeRequest = 'subscriptionPeriodChangeRequest',
 }
