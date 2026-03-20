@@ -271,11 +271,19 @@ export class GroupByWithRecordsService {
         );
 
       if (isNonEmptyString(orderByRawSQL)) {
+        const existingJoinAliases = new Set(
+          queryBuilder.expressionMap.joinAttributes.map(
+            (joinAttribute) => joinAttribute.alias.name,
+          ),
+        );
+
         for (const joinInfo of relationJoins) {
-          queryBuilder.leftJoin(
-            `${flatObjectMetadata.nameSingular}.${joinInfo.joinAlias}`,
-            joinInfo.joinAlias,
-          );
+          if (!existingJoinAliases.has(joinInfo.joinAlias)) {
+            queryBuilder.leftJoin(
+              `${flatObjectMetadata.nameSingular}.${joinInfo.joinAlias}`,
+              joinInfo.joinAlias,
+            );
+          }
         }
 
         return queryBuilder.addSelect(
