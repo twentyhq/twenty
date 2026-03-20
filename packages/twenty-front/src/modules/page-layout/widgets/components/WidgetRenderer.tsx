@@ -153,7 +153,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   // TODO: remove once all record page layouts widgets use the editable contain in edit mode
   const shouldWrapWithEditingWrapper =
-    isWidgetEditable && variant === 'side-column';
+    isWidgetEditable &&
+    variant === 'side-column' &&
+    !isRecordPageGlobalEditionEnabled;
 
   const widgetCard = (
     <WidgetCard
