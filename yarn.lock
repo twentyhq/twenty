@@ -56509,6 +56509,7 @@ __metadata:
     "@mantine/hooks": "npm:^8.3.11"
     "@mantine/utils": "npm:^6.0.22"
     "@monaco-editor/react": "npm:^4.7.0"
+    "@nivo/calendar": "npm:^0.99.0"
     "@nivo/core": "npm:^0.99.0"
     "@nivo/line": "npm:^0.99.0"
     "@nivo/pie": "npm:^0.99.0"
