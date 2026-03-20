@@ -8,7 +8,6 @@ import { IconPlug, Status } from 'twenty-ui/display';
 
 import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderItem';
 import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 
@@ -82,11 +81,7 @@ export const SettingsAdminAiProviderListCard = ({
       items={providers}
       rounded
       RowIconFn={(provider) => getProviderIcon(provider.type)}
-      getItemLabel={(provider) =>
-        provider.source === 'custom'
-          ? `${provider.name} · ${getProviderTypeLabel(provider.type)}`
-          : getProviderTypeLabel(provider.type)
-      }
+      getItemLabel={(provider) => provider.label ?? provider.name}
       getItemDescription={getProviderDescription}
       RowRightComponent={({ item: provider }) =>
         provider.apiKey || provider.hasAccessKey ? (

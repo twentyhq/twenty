@@ -1,6 +1,7 @@
 {
   "openai": {
     "type": "openai",
+    "label": "OpenAI",
     "apiKey": "{{OPENAI_API_KEY}}",
     "models": [
       {
@@ -193,6 +194,7 @@
   },
   "anthropic": {
     "type": "anthropic",
+    "label": "Anthropic",
     "apiKey": "{{ANTHROPIC_API_KEY}}",
     "models": [
       {
@@ -446,6 +448,7 @@
   },
   "google": {
     "type": "google",
+    "label": "Google",
     "apiKey": "{{GOOGLE_API_KEY}}",
     "models": [
       {
@@ -555,6 +558,7 @@
   },
   "xai": {
     "type": "xai",
+    "label": "xAI",
     "apiKey": "{{XAI_API_KEY}}",
     "models": [
       {
@@ -649,6 +653,7 @@
   },
   "groq": {
     "type": "groq",
+    "label": "Groq",
     "apiKey": "{{GROQ_API_KEY}}",
     "models": [
       {
@@ -666,6 +671,7 @@
   },
   "mistral": {
     "type": "mistral",
+    "label": "Mistral",
     "apiKey": "{{MISTRAL_API_KEY}}",
     "models": [
       {

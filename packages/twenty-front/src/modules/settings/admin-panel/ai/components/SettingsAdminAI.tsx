@@ -15,7 +15,6 @@ import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/compo
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -58,11 +57,7 @@ export const SettingsAdminAI = () => {
     () =>
       providerItems
         .filter((provider) => provider.source !== 'custom')
-        .sort((a, b) =>
-          getProviderTypeLabel(a.type).localeCompare(
-            getProviderTypeLabel(b.type),
-          ),
-        ),
+        .sort((a, b) => (a.label ?? a.name).localeCompare(b.label ?? b.name)),
     [providerItems],
   );
 

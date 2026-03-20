@@ -15,7 +15,6 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 
 const GRID_TEMPLATE_COLUMNS = '1fr 120px 40px';
 
@@ -82,7 +81,8 @@ export const SettingsAdminAiModelsTable = ({
         <TableBody>
           {models.map((model) => {
             const ModelIcon = getModelIcon(model.modelFamily);
-            const providerLabel = getProviderTypeLabel(model.provider ?? '');
+            const providerLabel =
+              model.providerLabel ?? model.providerName ?? '';
             const safeId = sanitizeIdForSelector(model.modelId);
             const isChecked = model[checkedField] === true;
             const isDisabled =
@@ -162,7 +162,9 @@ export const SettingsAdminAiModelsTable = ({
           <SettingsAdminAiModelHoverCard
             label={hoveredModel.label}
             modelFamily={hoveredModel.modelFamily}
-            provider={hoveredModel.provider}
+            providerLabel={
+              hoveredModel.providerLabel ?? hoveredModel.providerName ?? ''
+            }
             contextWindowTokens={hoveredModel.contextWindowTokens}
             maxOutputTokens={hoveredModel.maxOutputTokens}
             inputCostPerMillionTokens={hoveredModel.inputCostPerMillionTokens}

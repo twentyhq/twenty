@@ -8,6 +8,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
+import { computeProviderNameFromLabel } from '@/settings/admin-panel/ai/utils/computeProviderNameFromLabel';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
@@ -29,7 +30,7 @@ const PROVIDER_TYPE_OPTIONS = Object.entries(PROVIDER_CONFIG).map(
 
 type FormValues = {
   type: string;
-  name: string;
+  label: string;
   apiKey: string;
   baseUrl: string;
   region: string;
@@ -50,7 +51,7 @@ export const SettingsAdminNewAiProvider = () => {
     mode: 'onSubmit',
     defaultValues: {
       type: 'openai',
-      name: '',
+      label: '',
       apiKey: '',
       baseUrl: '',
       region: '',
@@ -68,18 +69,30 @@ export const SettingsAdminNewAiProvider = () => {
   const handleSave = async () => {
     const values = form.getValues();
 
-    if (!values.name.trim()) {
-      form.setError('name', {
+    if (!values.label.trim()) {
+      form.setError('label', {
         type: 'manual',
-        message: t`Name is required`,
+        message: t`Label is required`,
       });
 
       return;
     }
 
-    const providerName = values.name.trim();
+    const providerName = computeProviderNameFromLabel(values.label);
 
-    const config: Record<string, unknown> = { type: values.type };
+    if (!providerName) {
+      form.setError('label', {
+        type: 'manual',
+        message: t`Label must contain at least one alphanumeric character`,
+      });
+
+      return;
+    }
+
+    const config: Record<string, unknown> = {
+      type: values.type,
+      label: values.label.trim(),
+    };
 
     if (needsApiKey && values.apiKey.trim()) {
       config.apiKey = values.apiKey.trim();
@@ -146,7 +159,7 @@ export const SettingsAdminNewAiProvider = () => {
       });
 
       enqueueSuccessSnackBar({
-        message: t`Provider "${providerName}" added`,
+        message: t`Provider "${values.label.trim()}" added`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
@@ -200,11 +213,11 @@ export const SettingsAdminNewAiProvider = () => {
 
           <Section>
             <H2Title
-              title={t`Name`}
-              description={t`A unique name for this provider instance`}
+              title={t`Label`}
+              description={t`A display name for this provider`}
             />
             <Controller
-              name="name"
+              name="label"
               control={form.control}
               render={({
                 field: { onChange, value },
@@ -213,7 +226,7 @@ export const SettingsAdminNewAiProvider = () => {
                 <TextInput
                   value={value}
                   onChange={onChange}
-                  placeholder={t`e.g. my-openai-proxy`}
+                  placeholder={t`e.g. My OpenAI Proxy`}
                   fullWidth
                   error={error?.message}
                 />

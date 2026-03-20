@@ -4,6 +4,7 @@ import { type DataResidency } from 'src/engine/metadata-modules/ai/ai-models/typ
 
 export type AiProviderConfig = {
   type: AiProvider;
+  label?: string;
   apiKey?: string;
   baseUrl?: string;
   region?: string;

@@ -31,7 +31,6 @@ import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getA
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
-import { getProviderTypeLabel } from '@/settings/admin-panel/ai/utils/getProviderTypeLabel';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -83,7 +82,7 @@ export const SettingsAdminAiProviderDetail = () => {
         ],
       });
       enqueueSuccessSnackBar({
-        message: t`Provider "${providerName}" removed`,
+        message: t`Provider "${provider?.label ?? providerName}" removed`,
       });
       navigate(AI_ADMIN_PATH);
     } catch {
@@ -183,11 +182,15 @@ export const SettingsAdminAiProviderDetail = () => {
       label: string;
       value: string | React.ReactNode;
     }> = [
-      { Icon: IconTag, label: t`Name`, value: provider.name },
+      {
+        Icon: IconTag,
+        label: t`Name`,
+        value: provider.label ?? provider.name,
+      },
       {
         Icon: IconPlug,
         label: t`Type`,
-        value: getProviderTypeLabel(provider.type),
+        value: provider.type,
       },
     ];
 
@@ -271,17 +274,15 @@ export const SettingsAdminAiProviderDetail = () => {
           href: AI_ADMIN_PATH,
         },
         {
-          children: providerName ?? '',
+          children: provider?.label ?? providerName ?? '',
         },
       ]}
     >
       <SettingsPageContainer>
         <Section>
           <H2Title
-            title={providerName ?? ''}
-            description={
-              provider ? getProviderTypeLabel(provider.type) : t`Loading...`
-            }
+            title={provider?.label ?? providerName ?? ''}
+            description={provider ? provider.type : t`Loading...`}
           />
 
           {provider && (
@@ -361,7 +362,7 @@ export const SettingsAdminAiProviderDetail = () => {
 
       <ConfirmationModal
         modalInstanceId={REMOVE_MODAL_ID}
-        title={t`Remove provider "${providerName}"`}
+        title={t`Remove provider "${provider?.label ?? providerName}"`}
         subtitle={t`This will disconnect all models from this provider. Models will no longer be available until a new provider is configured.`}
         onConfirmClick={handleRemoveProvider}
         confirmButtonText={t`Remove`}

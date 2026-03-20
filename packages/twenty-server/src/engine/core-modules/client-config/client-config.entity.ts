@@ -107,6 +107,9 @@ export class AdminAIModelConfig {
   providerName?: string;
 
   @Field(() => String, { nullable: true })
+  providerLabel?: string;
+
+  @Field(() => String, { nullable: true })
   dataResidency?: string;
 }
 

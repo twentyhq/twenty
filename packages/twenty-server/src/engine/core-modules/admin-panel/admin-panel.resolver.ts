@@ -152,6 +152,9 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => AdminAIModelsDTO)
   async getAdminAiModels(): Promise<AdminAIModelsDTO> {
+    const resolvedProviders =
+      this.aiModelRegistryService.getResolvedProvidersForAdmin();
+
     const models = this.aiModelRegistryService
       .getAllModelsWithStatus()
       .map(
@@ -175,6 +178,9 @@ export class AdminPanelResolver {
           inputCostPerMillionTokens: modelConfig.inputCostPerMillionTokens,
           outputCostPerMillionTokens: modelConfig.outputCostPerMillionTokens,
           providerName,
+          providerLabel: providerName
+            ? (resolvedProviders[providerName]?.label ?? providerName)
+            : undefined,
           dataResidency: modelConfig.dataResidency,
         }),
       );
@@ -340,6 +346,7 @@ export class AdminPanelResolver {
 
       masked[name] = {
         type: config.type,
+        label: config.label ?? name,
         source: isCatalog ? 'catalog' : 'custom',
         ...(config.baseUrl && { baseUrl: config.baseUrl }),
         ...(config.region && { region: config.region }),

@@ -1,5 +1,6 @@
 export type RawAiProviderConfig = {
   type: string;
+  label?: string;
   source?: 'catalog' | 'custom';
   baseUrl?: string;
   region?: string;
