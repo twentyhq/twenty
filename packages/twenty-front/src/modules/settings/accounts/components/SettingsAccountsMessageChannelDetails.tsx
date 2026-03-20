@@ -9,7 +9,6 @@ import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { useApolloClient } from '@apollo/client/react';
 import { useMutation } from '@apollo/client/react';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';

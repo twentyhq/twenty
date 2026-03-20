@@ -96,15 +96,13 @@ export class MessageChannelDataAccessService {
           )
         : await this.toCoreWhere(workspaceId, where);
 
-      const requestedRelations = (
-        options.relations as string[] | undefined
-      )?.slice() ?? [];
+      const requestedRelations =
+        (options.relations as string[] | undefined)?.slice() ?? [];
 
       const needsConnectedAccount =
         requestedRelations.includes('connectedAccount');
 
-      const needsMessageFolders =
-        requestedRelations.includes('messageFolders');
+      const needsMessageFolders = requestedRelations.includes('messageFolders');
 
       const coreRelations = requestedRelations.filter(
         (r) => r !== 'connectedAccount' && r !== 'messageFolders',
@@ -120,13 +118,18 @@ export class MessageChannelDataAccessService {
         return null;
       }
 
-      const workspaceResult = result as unknown as MessageChannelWorkspaceEntity;
+      const workspaceResult =
+        result as unknown as MessageChannelWorkspaceEntity;
 
       if (needsConnectedAccount) {
-        workspaceResult.connectedAccount =
+        const connectedAccount =
           await this.connectedAccountDataAccessService.findOne(workspaceId, {
             where: { id: result.connectedAccountId },
           });
+
+        if (connectedAccount) {
+          workspaceResult.connectedAccount = connectedAccount;
+        }
       }
 
       if (needsMessageFolders) {
@@ -138,8 +141,7 @@ export class MessageChannelDataAccessService {
           relations: ['messageFolders'],
         });
 
-        workspaceResult.messageFolders =
-          workspaceChannel?.messageFolders ?? [];
+        workspaceResult.messageFolders = workspaceChannel?.messageFolders ?? [];
       }
 
       return workspaceResult;

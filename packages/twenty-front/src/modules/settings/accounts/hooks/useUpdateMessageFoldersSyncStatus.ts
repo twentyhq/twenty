@@ -1,7 +1,5 @@
 import { useCallback } from 'react';
 
-import { useLingui } from '@lingui/react/macro';
-
 import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { UPDATE_MESSAGE_FOLDERS } from '@/settings/accounts/graphql/mutations/updateMessageFolders';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
@@ -14,8 +12,6 @@ type UpdateMessageFoldersSyncStatusArgs = {
 };
 
 export const useUpdateMessageFoldersSyncStatus = () => {
-  const { t } = useLingui();
-
   const featureFlagsMap = useFeatureFlagsMap();
   const isMigrated =
     featureFlagsMap[FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED] ?? false;
@@ -65,7 +61,7 @@ export const useUpdateMessageFoldersSyncStatus = () => {
         updateOneRecordInput: { isSynced },
       });
     },
-    [isMigrated, apolloClient, updateManyRecords, t],
+    [isMigrated, apolloClient, updateManyRecords],
   );
 
   return { updateMessageFoldersSyncStatus };

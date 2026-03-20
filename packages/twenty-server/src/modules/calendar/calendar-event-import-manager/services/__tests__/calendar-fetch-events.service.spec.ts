@@ -17,10 +17,12 @@ const mockCalendarChannelDataAccessService = {
 };
 
 const mockCalendarAccountAuthenticationService = {
-  validateAndRefreshConnectedAccountAuthentication: jest.fn().mockResolvedValue({
-    accessToken: 'fresh-access-token',
-    refreshToken: 'fresh-refresh-token',
-  }),
+  validateAndRefreshConnectedAccountAuthentication: jest
+    .fn()
+    .mockResolvedValue({
+      accessToken: 'fresh-access-token',
+      refreshToken: 'fresh-refresh-token',
+    }),
 };
 
 const mockCalendarEventsImportService = {
@@ -36,11 +38,9 @@ const mockCacheStorage = {
 };
 
 const mockGlobalWorkspaceOrmManager = {
-  executeInWorkspaceContext: jest.fn(
-    async (callback: () => Promise<void>) => {
-      await callback();
-    },
-  ),
+  executeInWorkspaceContext: jest.fn(async (callback: () => Promise<void>) => {
+    await callback();
+  }),
 };
 
 const workspaceId = 'workspace-123';
@@ -147,9 +147,7 @@ describe('CalendarFetchEventsService', () => {
         workspaceId,
       );
 
-      expect(
-        mockCalendarChannelDataAccessService.update,
-      ).toHaveBeenCalledWith(
+      expect(mockCalendarChannelDataAccessService.update).toHaveBeenCalledWith(
         workspaceId,
         { id: 'channel-123' },
         { syncCursor: 'new-cursor-abc' },

@@ -96,9 +96,8 @@ export class CalendarChannelDataAccessService {
           )
         : await this.toCoreWhere(workspaceId, where);
 
-      const requestedRelations = (
-        options.relations as string[] | undefined
-      )?.slice() ?? [];
+      const requestedRelations =
+        (options.relations as string[] | undefined)?.slice() ?? [];
 
       const needsConnectedAccount =
         requestedRelations.includes('connectedAccount');
@@ -117,13 +116,18 @@ export class CalendarChannelDataAccessService {
         return null;
       }
 
-      const workspaceResult = result as unknown as CalendarChannelWorkspaceEntity;
+      const workspaceResult =
+        result as unknown as CalendarChannelWorkspaceEntity;
 
       if (needsConnectedAccount) {
-        workspaceResult.connectedAccount =
+        const connectedAccount =
           await this.connectedAccountDataAccessService.findOne(workspaceId, {
             where: { id: result.connectedAccountId },
           });
+
+        if (connectedAccount) {
+          workspaceResult.connectedAccount = connectedAccount;
+        }
       }
 
       return workspaceResult;

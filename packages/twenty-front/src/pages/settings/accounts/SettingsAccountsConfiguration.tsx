@@ -5,17 +5,20 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { CoreObjectNameSingular, FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
 import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
 import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
 import { SettingsAccountsConfigurationStepCalendar } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar';
@@ -83,21 +86,19 @@ export const SettingsAccountsConfiguration = () => {
       skip: !connectedAccountId || isMigrated,
     });
 
-  const { data: metadataMessageChannelData } = useQuery(
-    GET_MY_MESSAGE_CHANNELS,
-    {
-      variables: { connectedAccountId },
-      skip: !isMigrated || !connectedAccountId,
-    },
-  );
+  const { data: metadataMessageChannelData } = useQuery<{
+    myMessageChannels: MessageChannel[];
+  }>(GET_MY_MESSAGE_CHANNELS, {
+    variables: { connectedAccountId },
+    skip: !isMigrated || !connectedAccountId,
+  });
 
-  const { data: metadataCalendarChannelData } = useQuery(
-    GET_MY_CALENDAR_CHANNELS,
-    {
-      variables: { connectedAccountId },
-      skip: !isMigrated || !connectedAccountId,
-    },
-  );
+  const { data: metadataCalendarChannelData } = useQuery<{
+    myCalendarChannels: CalendarChannel[];
+  }>(GET_MY_CALENDAR_CHANNELS, {
+    variables: { connectedAccountId },
+    skip: !isMigrated || !connectedAccountId,
+  });
 
   const messageChannels = isMigrated
     ? (metadataMessageChannelData?.myMessageChannels ?? [])

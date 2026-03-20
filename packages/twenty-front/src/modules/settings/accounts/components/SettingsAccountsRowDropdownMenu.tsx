@@ -1,5 +1,4 @@
-import { useApolloClient } from '@apollo/client/react';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CalendarChannelSyncStage } from '@/accounts/types/CalendarChannel';
 import { MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
