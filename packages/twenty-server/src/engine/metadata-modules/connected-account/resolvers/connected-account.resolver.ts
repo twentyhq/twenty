@@ -35,10 +35,10 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountDTO[]> {
-    return this.connectedAccountMetadataService.findByUserWorkspaceId(
+    return this.connectedAccountMetadataService.findByUserWorkspaceId({
       userWorkspaceId,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
   }
 
   @Query(() => [ConnectedAccountDTO])
@@ -58,12 +58,15 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountDTO> {
-    await this.connectedAccountMetadataService.verifyOwnership(
+    await this.connectedAccountMetadataService.verifyOwnership({
       id,
       userWorkspaceId,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
-    return this.connectedAccountMetadataService.delete(id, workspace.id);
+    return this.connectedAccountMetadataService.delete({
+      id,
+      workspaceId: workspace.id,
+    });
   }
 }

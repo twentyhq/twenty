@@ -21,61 +21,77 @@ export class ConnectedAccountMetadataService {
     return this.repository.find({ where: { workspaceId } });
   }
 
-  async findByUserWorkspaceId(
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<ConnectedAccountDTO[]> {
+  async findByUserWorkspaceId({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountDTO[]> {
     return this.repository.find({
       where: { userWorkspaceId, workspaceId },
     });
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ConnectedAccountDTO | null> {
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async findByIds(
-    ids: string[],
-    workspaceId: string,
-  ): Promise<ConnectedAccountDTO[]> {
+  async findByIds({
+    ids,
+    workspaceId,
+  }: {
+    ids: string[];
+    workspaceId: string;
+  }): Promise<ConnectedAccountDTO[]> {
     return this.repository.find({
       where: { id: In(ids), workspaceId },
     });
   }
 
-  async verifyOwnership(
-    id: string,
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<ConnectedAccountEntity> {
-    const entity = await this.repository.findOne({
+  async verifyOwnership({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.repository.findOne({
       where: { id, workspaceId },
     });
 
-    if (!entity) {
+    if (!connectedAccount) {
       throw new ConnectedAccountException(
         `Connected account ${id} not found`,
         ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
 
-    if (entity.userWorkspaceId !== userWorkspaceId) {
+    if (connectedAccount.userWorkspaceId !== userWorkspaceId) {
       throw new ConnectedAccountException(
         `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,
         ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION,
       );
     }
 
-    return entity;
+    return connectedAccount;
   }
 
-  async getUserConnectedAccountIds(
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<string[]> {
+  async getUserConnectedAccountIds({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<string[]> {
     const accounts = await this.repository.find({
       where: { userWorkspaceId, workspaceId },
       select: ['id'],
@@ -97,11 +113,15 @@ export class ConnectedAccountMetadataService {
     return this.repository.save(entity);
   }
 
-  async update(
-    id: string,
-    workspaceId: string,
-    data: Partial<ConnectedAccountEntity>,
-  ): Promise<ConnectedAccountDTO> {
+  async update({
+    id,
+    workspaceId,
+    data,
+  }: {
+    id: string;
+    workspaceId: string;
+    data: Partial<ConnectedAccountEntity>;
+  }): Promise<ConnectedAccountDTO> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -110,13 +130,19 @@ export class ConnectedAccountMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async delete(id: string, workspaceId: string): Promise<ConnectedAccountDTO> {
-    const entity = await this.repository.findOneOrFail({
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountDTO> {
+    const connectedAccount = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });
 
     await this.repository.delete({ id, workspaceId });
 
-    return entity;
+    return connectedAccount;
   }
 }

@@ -33,7 +33,6 @@ export const messageFolderGraphqlApiExceptionHandler = (error: Error) => {
     }
   }
 
-  // Ownership checks cascade through message channel and connected account
   if (error instanceof MessageChannelException) {
     switch (error.code) {
       case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:

@@ -28,19 +28,62 @@ export class CalendarChannelMetadataService {
     return this.repository.find({ where: { workspaceId } });
   }
 
-  async findByConnectedAccountId(
-    connectedAccountId: string,
-    workspaceId: string,
-  ): Promise<CalendarChannelDTO[]> {
+  async findByUserWorkspaceId({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<CalendarChannelDTO[]> {
+    const userAccountIds =
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    return this.findByConnectedAccountIds({
+      connectedAccountIds: userAccountIds,
+      workspaceId,
+    });
+  }
+
+  async findByConnectedAccountIdForUser({
+    connectedAccountId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    connectedAccountId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<CalendarChannelDTO[]> {
+    await this.connectedAccountMetadataService.verifyOwnership({
+      id: connectedAccountId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    return this.findByConnectedAccountId({ connectedAccountId, workspaceId });
+  }
+
+  async findByConnectedAccountId({
+    connectedAccountId,
+    workspaceId,
+  }: {
+    connectedAccountId: string;
+    workspaceId: string;
+  }): Promise<CalendarChannelDTO[]> {
     return this.repository.find({
       where: { connectedAccountId, workspaceId },
     });
   }
 
-  async findByConnectedAccountIds(
-    connectedAccountIds: string[],
-    workspaceId: string,
-  ): Promise<CalendarChannelDTO[]> {
+  async findByConnectedAccountIds({
+    connectedAccountIds,
+    workspaceId,
+  }: {
+    connectedAccountIds: string[];
+    workspaceId: string;
+  }): Promise<CalendarChannelDTO[]> {
     if (connectedAccountIds.length === 0) {
       return [];
     }
@@ -50,23 +93,30 @@ export class CalendarChannelMetadataService {
     });
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<CalendarChannelDTO | null> {
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<CalendarChannelDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async verifyOwnership(
-    id: string,
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<CalendarChannelEntity> {
-    const entity = await this.repository.findOne({
+  async verifyOwnership({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<CalendarChannelEntity> {
+    const calendarChannel = await this.repository.findOne({
       where: { id, workspaceId },
     });
 
-    if (!entity) {
+    if (!calendarChannel) {
       throw new CalendarChannelException(
         `Calendar channel ${id} not found`,
         CalendarChannelExceptionCode.CALENDAR_CHANNEL_NOT_FOUND,
@@ -74,19 +124,19 @@ export class CalendarChannelMetadataService {
     }
 
     const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds(
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
-      );
+      });
 
-    if (!userAccountIds.includes(entity.connectedAccountId)) {
+    if (!userAccountIds.includes(calendarChannel.connectedAccountId)) {
       throw new CalendarChannelException(
         `Calendar channel ${id} does not belong to user workspace ${userWorkspaceId}`,
         CalendarChannelExceptionCode.CALENDAR_CHANNEL_OWNERSHIP_VIOLATION,
       );
     }
 
-    return entity;
+    return calendarChannel;
   }
 
   async create(
@@ -103,11 +153,15 @@ export class CalendarChannelMetadataService {
     return this.repository.save(entity);
   }
 
-  async update(
-    id: string,
-    workspaceId: string,
-    data: Partial<CalendarChannelEntity>,
-  ): Promise<CalendarChannelDTO> {
+  async update({
+    id,
+    workspaceId,
+    data,
+  }: {
+    id: string;
+    workspaceId: string;
+    data: Partial<CalendarChannelEntity>;
+  }): Promise<CalendarChannelDTO> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -116,13 +170,19 @@ export class CalendarChannelMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async delete(id: string, workspaceId: string): Promise<CalendarChannelDTO> {
-    const entity = await this.repository.findOneOrFail({
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<CalendarChannelDTO> {
+    const calendarChannel = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });
 
     await this.repository.delete({ id, workspaceId });
 
-    return entity;
+    return calendarChannel;
   }
 }

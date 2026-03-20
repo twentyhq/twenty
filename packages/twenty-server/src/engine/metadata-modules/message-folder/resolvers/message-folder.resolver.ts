@@ -14,8 +14,6 @@ import {
 } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
 import { UpdateMessageFolderInput } from 'src/engine/metadata-modules/message-folder/dtos/update-message-folder.input';
 import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-folder/interceptors/message-folder-graphql-api-exception.interceptor';
@@ -27,8 +25,6 @@ import { MessageFolderMetadataService } from 'src/engine/metadata-modules/messag
 export class MessageFolderResolver {
   constructor(
     private readonly messageFolderMetadataService: MessageFolderMetadataService,
-    private readonly messageChannelMetadataService: MessageChannelMetadataService,
-    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   @Query(() => [MessageFolderDTO])
@@ -44,36 +40,17 @@ export class MessageFolderResolver {
     messageChannelId?: string,
   ): Promise<MessageFolderDTO[]> {
     if (messageChannelId) {
-      await this.messageChannelMetadataService.verifyOwnership(
+      return this.messageFolderMetadataService.findByMessageChannelIdForUser({
         messageChannelId,
         userWorkspaceId,
-        workspace.id,
-      );
-
-      return this.messageFolderMetadataService.findByMessageChannelId(
-        messageChannelId,
-        workspace.id,
-      );
+        workspaceId: workspace.id,
+      });
     }
 
-    const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds(
-        userWorkspaceId,
-        workspace.id,
-      );
-
-    const userChannels =
-      await this.messageChannelMetadataService.findByConnectedAccountIds(
-        userAccountIds,
-        workspace.id,
-      );
-
-    const userChannelIds = userChannels.map((channel) => channel.id);
-
-    return this.messageFolderMetadataService.findByMessageChannelIds(
-      userChannelIds,
-      workspace.id,
-    );
+    return this.messageFolderMetadataService.findByUserWorkspaceId({
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => MessageFolderDTO)
@@ -84,16 +61,16 @@ export class MessageFolderResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<MessageFolderDTO> {
-    await this.messageFolderMetadataService.verifyOwnership(
-      input.id,
+    await this.messageFolderMetadataService.verifyOwnership({
+      id: input.id,
       userWorkspaceId,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
-    return this.messageFolderMetadataService.update(
-      input.id,
-      workspace.id,
-      input.update,
-    );
+    return this.messageFolderMetadataService.update({
+      id: input.id,
+      workspaceId: workspace.id,
+      data: input.update,
+    });
   }
 }

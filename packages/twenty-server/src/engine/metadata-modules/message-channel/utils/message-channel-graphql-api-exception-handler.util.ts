@@ -29,7 +29,6 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
     }
   }
 
-  // Ownership checks cascade through connected account
   if (error instanceof ConnectedAccountException) {
     switch (error.code) {
       case ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION:

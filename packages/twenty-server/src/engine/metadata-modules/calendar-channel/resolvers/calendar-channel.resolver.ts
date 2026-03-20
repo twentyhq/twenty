@@ -18,7 +18,6 @@ import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/cale
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { UpdateCalendarChannelInput } from 'src/engine/metadata-modules/calendar-channel/dtos/update-calendar-channel.input';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
-import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @UseInterceptors(CalendarChannelGraphqlApiExceptionInterceptor)
@@ -26,7 +25,6 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 export class CalendarChannelResolver {
   constructor(
     private readonly calendarChannelMetadataService: CalendarChannelMetadataService,
-    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   @Query(() => [CalendarChannelDTO])
@@ -42,28 +40,19 @@ export class CalendarChannelResolver {
     connectedAccountId?: string,
   ): Promise<CalendarChannelDTO[]> {
     if (connectedAccountId) {
-      await this.connectedAccountMetadataService.verifyOwnership(
-        connectedAccountId,
-        userWorkspaceId,
-        workspace.id,
-      );
-
-      return this.calendarChannelMetadataService.findByConnectedAccountId(
-        connectedAccountId,
-        workspace.id,
+      return this.calendarChannelMetadataService.findByConnectedAccountIdForUser(
+        {
+          connectedAccountId,
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        },
       );
     }
 
-    const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds(
-        userWorkspaceId,
-        workspace.id,
-      );
-
-    return this.calendarChannelMetadataService.findByConnectedAccountIds(
-      userAccountIds,
-      workspace.id,
-    );
+    return this.calendarChannelMetadataService.findByUserWorkspaceId({
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => CalendarChannelDTO)
@@ -74,16 +63,16 @@ export class CalendarChannelResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CalendarChannelDTO> {
-    await this.calendarChannelMetadataService.verifyOwnership(
-      input.id,
+    await this.calendarChannelMetadataService.verifyOwnership({
+      id: input.id,
       userWorkspaceId,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
-    return this.calendarChannelMetadataService.update(
-      input.id,
-      workspace.id,
-      input.update,
-    );
+    return this.calendarChannelMetadataService.update({
+      id: input.id,
+      workspaceId: workspace.id,
+      data: input.update,
+    });
   }
 }

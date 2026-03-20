@@ -27,19 +27,70 @@ export class MessageFolderMetadataService {
     return this.repository.find({ where: { workspaceId } });
   }
 
-  async findByMessageChannelId(
-    messageChannelId: string,
-    workspaceId: string,
-  ): Promise<MessageFolderDTO[]> {
+  async findByUserWorkspaceId({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageFolderDTO[]> {
+    const userAccountIds =
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    const userChannels =
+      await this.messageChannelMetadataService.findByConnectedAccountIds({
+        connectedAccountIds: userAccountIds,
+        workspaceId,
+      });
+
+    const userChannelIds = userChannels.map((channel) => channel.id);
+
+    return this.findByMessageChannelIds({
+      messageChannelIds: userChannelIds,
+      workspaceId,
+    });
+  }
+
+  async findByMessageChannelIdForUser({
+    messageChannelId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageFolderDTO[]> {
+    await this.messageChannelMetadataService.verifyOwnership({
+      id: messageChannelId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    return this.findByMessageChannelId({ messageChannelId, workspaceId });
+  }
+
+  async findByMessageChannelId({
+    messageChannelId,
+    workspaceId,
+  }: {
+    messageChannelId: string;
+    workspaceId: string;
+  }): Promise<MessageFolderDTO[]> {
     return this.repository.find({
       where: { messageChannelId, workspaceId },
     });
   }
 
-  async findByMessageChannelIds(
-    messageChannelIds: string[],
-    workspaceId: string,
-  ): Promise<MessageFolderDTO[]> {
+  async findByMessageChannelIds({
+    messageChannelIds,
+    workspaceId,
+  }: {
+    messageChannelIds: string[];
+    workspaceId: string;
+  }): Promise<MessageFolderDTO[]> {
     if (messageChannelIds.length === 0) {
       return [];
     }
@@ -49,23 +100,30 @@ export class MessageFolderMetadataService {
     });
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<MessageFolderDTO | null> {
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<MessageFolderDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async verifyOwnership(
-    id: string,
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<MessageFolderEntity> {
-    const entity = await this.repository.findOne({
+  async verifyOwnership({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageFolderEntity> {
+    const messageFolder = await this.repository.findOne({
       where: { id, workspaceId },
     });
 
-    if (!entity) {
+    if (!messageFolder) {
       throw new MessageFolderException(
         `Message folder ${id} not found`,
         MessageFolderExceptionCode.MESSAGE_FOLDER_NOT_FOUND,
@@ -73,15 +131,15 @@ export class MessageFolderMetadataService {
     }
 
     const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds(
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
-      );
+      });
 
-    const messageChannel = await this.messageChannelMetadataService.findById(
-      entity.messageChannelId,
+    const messageChannel = await this.messageChannelMetadataService.findById({
+      id: messageFolder.messageChannelId,
       workspaceId,
-    );
+    });
 
     if (
       !messageChannel ||
@@ -93,7 +151,7 @@ export class MessageFolderMetadataService {
       );
     }
 
-    return entity;
+    return messageFolder;
   }
 
   async create(
@@ -108,11 +166,15 @@ export class MessageFolderMetadataService {
     return this.repository.save(entity);
   }
 
-  async update(
-    id: string,
-    workspaceId: string,
-    data: Partial<MessageFolderEntity>,
-  ): Promise<MessageFolderDTO> {
+  async update({
+    id,
+    workspaceId,
+    data,
+  }: {
+    id: string;
+    workspaceId: string;
+    data: Partial<MessageFolderEntity>;
+  }): Promise<MessageFolderDTO> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -121,13 +183,19 @@ export class MessageFolderMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async delete(id: string, workspaceId: string): Promise<MessageFolderDTO> {
-    const entity = await this.repository.findOneOrFail({
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<MessageFolderDTO> {
+    const messageFolder = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });
 
     await this.repository.delete({ id, workspaceId });
 
-    return entity;
+    return messageFolder;
   }
 }

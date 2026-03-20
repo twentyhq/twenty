@@ -1,10 +1,12 @@
 import { useCallback } from 'react';
 
+import { useLingui } from '@lingui/react/macro';
+
+import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 import { UPDATE_MESSAGE_FOLDER } from '@/settings/accounts/graphql/mutations/updateMessageFolder';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient } from '@apollo/client/react';
 import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
-import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
 
 type UpdateMessageFoldersSyncStatusArgs = {
   messageFolderIds: string[];
@@ -12,6 +14,8 @@ type UpdateMessageFoldersSyncStatusArgs = {
 };
 
 export const useUpdateMessageFoldersSyncStatus = () => {
+  const { t } = useLingui();
+
   const featureFlagsMap = useFeatureFlagsMap();
   const isMigrated =
     featureFlagsMap[FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED] ?? false;
@@ -63,7 +67,9 @@ export const useUpdateMessageFoldersSyncStatus = () => {
         }
 
         if (errors.length > 0) {
-          throw new Error('Failed to update some message folders sync status.');
+          throw new Error(
+            t`Failed to update some message folders sync status.`,
+          );
         }
 
         return;
@@ -74,7 +80,7 @@ export const useUpdateMessageFoldersSyncStatus = () => {
         updateOneRecordInput: { isSynced },
       });
     },
-    [isMigrated, apolloClient, updateManyRecords],
+    [isMigrated, apolloClient, updateManyRecords, t],
   );
 
   return { updateMessageFoldersSyncStatus };

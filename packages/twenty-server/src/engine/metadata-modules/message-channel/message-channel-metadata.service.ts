@@ -29,19 +29,62 @@ export class MessageChannelMetadataService {
     return this.repository.find({ where: { workspaceId } });
   }
 
-  async findByConnectedAccountId(
-    connectedAccountId: string,
-    workspaceId: string,
-  ): Promise<MessageChannelDTO[]> {
+  async findByUserWorkspaceId({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO[]> {
+    const userAccountIds =
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    return this.findByConnectedAccountIds({
+      connectedAccountIds: userAccountIds,
+      workspaceId,
+    });
+  }
+
+  async findByConnectedAccountIdForUser({
+    connectedAccountId,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    connectedAccountId: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO[]> {
+    await this.connectedAccountMetadataService.verifyOwnership({
+      id: connectedAccountId,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    return this.findByConnectedAccountId({ connectedAccountId, workspaceId });
+  }
+
+  async findByConnectedAccountId({
+    connectedAccountId,
+    workspaceId,
+  }: {
+    connectedAccountId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO[]> {
     return this.repository.find({
       where: { connectedAccountId, workspaceId },
     });
   }
 
-  async findByConnectedAccountIds(
-    connectedAccountIds: string[],
-    workspaceId: string,
-  ): Promise<MessageChannelDTO[]> {
+  async findByConnectedAccountIds({
+    connectedAccountIds,
+    workspaceId,
+  }: {
+    connectedAccountIds: string[];
+    workspaceId: string;
+  }): Promise<MessageChannelDTO[]> {
     if (connectedAccountIds.length === 0) {
       return [];
     }
@@ -51,23 +94,30 @@ export class MessageChannelMetadataService {
     });
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<MessageChannelDTO | null> {
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async verifyOwnership(
-    id: string,
-    userWorkspaceId: string,
-    workspaceId: string,
-  ): Promise<MessageChannelEntity> {
-    const entity = await this.repository.findOne({
+  async verifyOwnership({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.repository.findOne({
       where: { id, workspaceId },
     });
 
-    if (!entity) {
+    if (!messageChannel) {
       throw new MessageChannelException(
         `Message channel ${id} not found`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
@@ -75,19 +125,19 @@ export class MessageChannelMetadataService {
     }
 
     const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds(
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
-      );
+      });
 
-    if (!userAccountIds.includes(entity.connectedAccountId)) {
+    if (!userAccountIds.includes(messageChannel.connectedAccountId)) {
       throw new MessageChannelException(
         `Message channel ${id} does not belong to user workspace ${userWorkspaceId}`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
       );
     }
 
-    return entity;
+    return messageChannel;
   }
 
   async create(
@@ -105,11 +155,15 @@ export class MessageChannelMetadataService {
     return this.repository.save(entity);
   }
 
-  async update(
-    id: string,
-    workspaceId: string,
-    data: Partial<MessageChannelEntity>,
-  ): Promise<MessageChannelDTO> {
+  async update({
+    id,
+    workspaceId,
+    data,
+  }: {
+    id: string;
+    workspaceId: string;
+    data: Partial<MessageChannelEntity>;
+  }): Promise<MessageChannelDTO> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -118,13 +172,19 @@ export class MessageChannelMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
-  async delete(id: string, workspaceId: string): Promise<MessageChannelDTO> {
-    const entity = await this.repository.findOneOrFail({
+  async delete({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });
 
     await this.repository.delete({ id, workspaceId });
 
-    return entity;
+    return messageChannel;
   }
 }
