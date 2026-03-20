@@ -1,6 +1,9 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { UPDATE_CALENDAR_CHANNEL } from '@/settings/accounts/graphql/mutations/updateCalendarChannel';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { useMutation } from '@apollo/client/react';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { styled } from '@linaria/react';
@@ -27,26 +30,33 @@ type SettingsAccountsCalendarChannelDetailsProps = {
 export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
 }: SettingsAccountsCalendarChannelDetailsProps) => {
+  const featureFlagsMap = useFeatureFlagsMap();
+  const isMigrated =
+    featureFlagsMap[FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED] ?? false;
+
   const { updateOneRecord } = useUpdateOneRecord();
+  const [updateMetadataChannel] = useMutation(UPDATE_CALENDAR_CHANNEL);
+
+  const updateChannel = (update: Record<string, unknown>) => {
+    if (isMigrated) {
+      updateMetadataChannel({
+        variables: { input: { id: calendarChannel.id, update } },
+      });
+    } else {
+      updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+        idToUpdate: calendarChannel.id,
+        updateOneRecordInput: update,
+      });
+    }
+  };
 
   const handleVisibilityChange = (value: CalendarChannelVisibility) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
-      idToUpdate: calendarChannel.id,
-      updateOneRecordInput: {
-        visibility: value,
-      },
-    });
+    updateChannel({ visibility: value });
   };
 
   const handleContactAutoCreationToggle = (value: boolean) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
-      idToUpdate: calendarChannel.id,
-      updateOneRecordInput: {
-        isContactAutoCreationEnabled: value,
-      },
-    });
+    updateChannel({ isContactAutoCreationEnabled: value });
   };
 
   return (
