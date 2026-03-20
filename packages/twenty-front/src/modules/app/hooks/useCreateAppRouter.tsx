@@ -19,11 +19,12 @@ import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { MeetingTranscriptsPage } from '~/pages/meeting-transcripts/MeetingTranscriptsPage';
-import { WhatsAppChatPage } from '~/pages/whatsapp-chat/WhatsAppChatPage';
-
 // Lazy-loaded pages to reduce main bundle size
 const CoatApprovalPage = React.lazy(
   () => import('~/pages/coat-approval/CoatApprovalPage').then(m => ({ default: m.CoatApprovalPage })),
+);
+const WhatsAppChatPage = React.lazy(
+  () => import('~/pages/whatsapp-chat/WhatsAppChatPage').then(m => ({ default: m.WhatsAppChatPage })),
 );
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
