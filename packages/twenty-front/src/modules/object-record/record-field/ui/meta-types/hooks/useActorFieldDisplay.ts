@@ -45,9 +45,10 @@ export const useActorFieldDisplay = (): ActorFieldDisplayValue | undefined => {
   }
 
   const { name, avatarUrl } = relatedWorkspaceMember;
+  const fullName = `${name.firstName} ${name.lastName}`.trim();
   return {
     fieldValue,
-    name: `${name.firstName} ${name.lastName}`,
+    name: fullName || fieldValue.name,
     avatarUrl: avatarUrl,
   };
 };

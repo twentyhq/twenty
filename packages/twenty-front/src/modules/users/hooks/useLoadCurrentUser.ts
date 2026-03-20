@@ -2,6 +2,7 @@ import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
@@ -32,6 +33,9 @@ export const useLoadCurrentUser = () => {
   const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
+  );
+  const setCurrentWorkspaceDeletedMembers = useSetAtomState(
+    currentWorkspaceDeletedMembersState,
   );
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
@@ -66,6 +70,10 @@ export const useLoadCurrentUser = () => {
 
     if (isDefined(user.workspaceMembers)) {
       setCurrentWorkspaceMembers(user.workspaceMembers);
+    }
+
+    if (isDefined(user.deletedWorkspaceMembers)) {
+      setCurrentWorkspaceDeletedMembers(user.deletedWorkspaceMembers);
     }
 
     if (isDefined(user.availableWorkspaces)) {
@@ -138,6 +146,7 @@ export const useLoadCurrentUser = () => {
     setCurrentWorkspace,
     isOnAWorkspace,
     setCurrentWorkspaceMembers,
+    setCurrentWorkspaceDeletedMembers,
     setAvailableWorkspaces,
     setCurrentUserWorkspace,
     setCurrentWorkspaceMember,

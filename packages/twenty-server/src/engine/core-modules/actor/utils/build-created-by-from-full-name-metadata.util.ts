@@ -11,9 +11,14 @@ type BuildCreatedByFromFullNameMetadataArgs = {
 export const buildCreatedByFromFullNameMetadata = ({
   fullNameMetadata,
   workspaceMemberId,
-}: BuildCreatedByFromFullNameMetadataArgs): ActorMetadata => ({
-  workspaceMemberId,
-  source: FieldActorSource.MANUAL,
-  name: `${fullNameMetadata.firstName} ${fullNameMetadata.lastName}`,
-  context: {},
-});
+}: BuildCreatedByFromFullNameMetadataArgs): ActorMetadata => {
+  const fullName =
+    `${fullNameMetadata.firstName} ${fullNameMetadata.lastName}`.trim();
+
+  return {
+    workspaceMemberId,
+    source: FieldActorSource.MANUAL,
+    name: fullName || 'Anonymous',
+    context: {},
+  };
+};
