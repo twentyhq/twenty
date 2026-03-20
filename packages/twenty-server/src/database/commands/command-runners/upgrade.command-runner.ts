@@ -21,7 +21,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import {
   type CompareVersionMajorAndMinorReturnType,
   compareVersionMajorAndMinor,
@@ -262,12 +261,8 @@ If any workspaces are not on the previous minor version, roll back to that versi
         );
       }
       case 'equal': {
-        try {
-          for (const command of this.commands) {
-            await command.runOnWorkspace(args);
-          }
-        } catch (error) {
-          throw this.enrichErrorMessage(error);
+        for (const command of this.commands) {
+          await command.runOnWorkspace(args);
         }
 
         if (!options.dryRun) {
@@ -298,36 +293,6 @@ If any workspaces are not on the previous minor version, roll back to that versi
         );
       }
     }
-  }
-
-  private enrichErrorMessage(error: Error): Error {
-    if (!(error instanceof WorkspaceMigrationRunnerException)) {
-      return error;
-    }
-
-    const nestedErrors = error.errors;
-
-    if (!isDefined(nestedErrors)) {
-      return error;
-    }
-
-    const details = [
-      nestedErrors.metadata && `metadata: ${nestedErrors.metadata.message}`,
-      nestedErrors.workspaceSchema &&
-        `workspaceSchema: ${nestedErrors.workspaceSchema.message}`,
-      nestedErrors.actionTranspilation &&
-        `actionTranspilation: ${nestedErrors.actionTranspilation.message}`,
-    ]
-      .filter(isDefined)
-      .join('; ');
-
-    if (!details) {
-      return error;
-    }
-
-    error.message = `${error.message} (${details})`;
-
-    return error;
   }
 
   private retrieveCurrentAppVersion() {
