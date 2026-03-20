@@ -14,6 +14,7 @@ type MetadataMessageFolder = {
   isSynced: boolean;
   isSentFolder: boolean;
   parentFolderId: string | null;
+  externalId: string | null;
   messageChannelId: string;
   createdAt: string;
   updatedAt: string;
@@ -66,7 +67,7 @@ export const useMyMessageFolders = (messageChannelId?: string) => {
         isSentFolder: folder.isSentFolder,
         parentFolderId: folder.parentFolderId,
         messageChannelId: folder.messageChannelId,
-        externalId: null,
+        externalId: folder.externalId,
         __typename: 'MessageFolder' as const,
       }),
     );

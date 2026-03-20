@@ -8,6 +8,7 @@ export const GET_MY_MESSAGE_FOLDERS = gql`
       isSynced
       isSentFolder
       parentFolderId
+      externalId
       messageChannelId
       createdAt
       updatedAt
