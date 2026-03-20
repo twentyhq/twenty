@@ -17,6 +17,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
+import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
 import { SettingsAccountsConfigurationStepCalendar } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar';
 import { SettingsAccountsConfigurationStepEmail } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepEmail';
 
@@ -140,13 +141,20 @@ export const SettingsAccountsConfiguration = () => {
 
   if (showEmailStep) {
     return (
-      <SettingsAccountsConfigurationStepEmail
-        messageChannel={messageChannel}
-        hasNextStep={isDefined(calendarChannel)}
-        isSubmitting={isSubmitting}
-        onNext={handleNext}
-        onAddAccount={handleAddAccount}
-      />
+      <>
+        {isMigrated && (
+          <SettingsAccountsConfigurationSelectedMessageChannelEffect
+            messageChannel={messageChannel as unknown as MessageChannel}
+          />
+        )}
+        <SettingsAccountsConfigurationStepEmail
+          messageChannel={messageChannel}
+          hasNextStep={isDefined(calendarChannel)}
+          isSubmitting={isSubmitting}
+          onNext={handleNext}
+          onAddAccount={handleAddAccount}
+        />
+      </>
     );
   }
 
