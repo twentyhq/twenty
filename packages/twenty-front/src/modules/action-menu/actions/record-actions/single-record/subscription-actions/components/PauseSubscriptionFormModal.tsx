@@ -1,15 +1,12 @@
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useRecoilValueV2 } from '@/ui/utilities/state/jotai/hooks/useRecoilValueV2';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,11 +34,6 @@ const StyledPreviewRow = styled.div`
 
 const StyledPreviewLabel = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledActivatedBy = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledFooter = styled(Modal.Footer)`
@@ -78,17 +70,16 @@ export const PauseSubscriptionFormModal = ({
   const [pauseDaysInput, setPauseDaysInput] = useState('');
   const [reason, setReason] = useState('');
   const [notes, setNotes] = useState('');
+  const [proofReference, setProofReference] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { closeModal } = useModal();
   const { closeActionMenu } = useCloseActionMenu();
-  const { updateOneRecord } = useUpdateOneRecord();
-  const { createOneRecord: createNote } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Note,
+  const { createOneRecord: createChangeRequest } = useCreateOneRecord({
+    objectNameSingular:
+      CoreObjectNameSingular.SubscriptionPeriodChangeRequest,
   });
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-
-  const currentMember = useRecoilValueV2(currentWorkspaceMemberState);
 
   const { record } = useFindOneRecord({
     objectNameSingular,
@@ -100,13 +91,6 @@ export const PauseSubscriptionFormModal = ({
       ? new Date(record.endDate as string)
       : null;
 
-  const currentPauseDays =
-    isDefined(record) &&
-    isDefined(record.pauseDays) &&
-    typeof record.pauseDays === 'number'
-      ? record.pauseDays
-      : 0;
-
   const pauseDays = Number(pauseDaysInput) || 0;
   const isFormValid = pauseDays > 0 && reason.trim().length > 0;
 
@@ -114,12 +98,6 @@ export const PauseSubscriptionFormModal = ({
     isDefined(currentEndDate) && pauseDays > 0
       ? new Date(currentEndDate.getTime() + pauseDays * MS_PER_DAY)
       : currentEndDate;
-
-  const totalPauseDays = currentPauseDays + pauseDays;
-
-  const memberName = isDefined(currentMember)
-    ? `${currentMember.name.firstName} ${currentMember.name.lastName}`.trim()
-    : 'Unknown';
 
   const handleCancel = () => {
     closeModal(modalId);
@@ -133,39 +111,26 @@ export const PauseSubscriptionFormModal = ({
     setIsSubmitting(true);
 
     try {
-      await updateOneRecord({
-        objectNameSingular,
-        idToUpdate: recordId,
-        updateOneRecordInput: {
-          accessStatus: 'PAUSED',
-          pauseDays: totalPauseDays,
-          ...(isDefined(newEndDate) && {
-            endDate: newEndDate.toISOString(),
-            finalEndDate: newEndDate.toISOString(),
-          }),
-        },
+      await createChangeRequest({
+        subscriptionId: recordId,
+        periodType: 'PAUSE',
+        startDate: new Date().toISOString(),
+        duration: pauseDays,
+        reason,
+        notes,
+        proofReference,
+        requestStatus: 'PENDING',
       });
 
-      // Create audit note — non-blocking, subscription update already succeeded
-      try {
-        const noteTitle = `Pause: ${pauseDays} days — ${reason}`;
-
-        await createNote({
-          title: noteTitle,
-        });
-      } catch {
-        // Note creation is non-critical — subscription was already updated
-      }
-
       enqueueSuccessSnackBar({
-        message: `Subscription paused for ${pauseDays} days`,
+        message: 'Change request created — pending approval',
       });
 
       closeModal(modalId);
       closeActionMenu();
     } catch {
       enqueueErrorSnackBar({
-        message: 'Failed to pause subscription',
+        message: 'Failed to create change request',
       });
     } finally {
       setIsSubmitting(false);
@@ -196,14 +161,8 @@ export const PauseSubscriptionFormModal = ({
             </StyledPreviewRow>
             {pauseDays > 0 && (
               <StyledPreviewRow>
-                <StyledPreviewLabel>New End Date:</StyledPreviewLabel>
+                <StyledPreviewLabel>New End Date (after approval):</StyledPreviewLabel>
                 <span>{formatDate(newEndDate)}</span>
-              </StyledPreviewRow>
-            )}
-            {currentPauseDays > 0 && (
-              <StyledPreviewRow>
-                <StyledPreviewLabel>Previous Pause Days:</StyledPreviewLabel>
-                <span>{currentPauseDays}</span>
               </StyledPreviewRow>
             )}
           </Section>
@@ -234,13 +193,19 @@ export const PauseSubscriptionFormModal = ({
             minRows={3}
           />
 
-          <StyledActivatedBy>Activated by: {memberName}</StyledActivatedBy>
+          <TextInput
+            label="Proof Reference (optional)"
+            value={proofReference}
+            onChange={(value) => setProofReference(value)}
+            placeholder="Ticket ID or document link"
+            fullWidth
+          />
         </StyledFormSection>
       </Modal.Content>
       <StyledFooter>
         <Button title="Cancel" variant="secondary" onClick={handleCancel} />
         <Button
-          title="Confirm Pause"
+          title="Submit Change Request"
           variant="primary"
           accent="blue"
           disabled={!isFormValid || isSubmitting}
