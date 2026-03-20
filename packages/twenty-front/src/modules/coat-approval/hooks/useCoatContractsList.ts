@@ -14,14 +14,14 @@ const buildCoatFilter = (
     clauses.push({
       or: [
         { name: { ilike: `%${filterValues.searchTerm}%` } },
-        { customerName: { ilike: `%${filterValues.searchTerm}%` } },
+        { customerFirstName: { ilike: `%${filterValues.searchTerm}%` } },
+        { customerLastName: { ilike: `%${filterValues.searchTerm}%` } },
         { customerEmail: { ilike: `%${filterValues.searchTerm}%` } },
         { contractId: { ilike: `%${filterValues.searchTerm}%` } },
       ],
     });
   }
 
-  // TODO: Confirm the exact field name for export status on the tobContract object
   if (filterValues.exportStatus) {
     clauses.push({
       status: { eq: filterValues.exportStatus },
@@ -30,19 +30,19 @@ const buildCoatFilter = (
 
   if (filterValues.programName) {
     clauses.push({
-      programName: { ilike: `%${filterValues.programName}%` },
+      program: { ilike: `%${filterValues.programName}%` },
     });
   }
 
   if (filterValues.dateFrom) {
     clauses.push({
-      signatureDate: { gte: filterValues.dateFrom },
+      startDate: { gte: filterValues.dateFrom },
     });
   }
 
   if (filterValues.dateTo) {
     clauses.push({
-      signatureDate: { lte: filterValues.dateTo },
+      startDate: { lte: filterValues.dateTo },
     });
   }
 
@@ -64,7 +64,7 @@ export const useCoatContractsList = (filterValues: CoatFilterValues) => {
     useFindManyRecords({
       objectNameSingular: COAT_OBJECT_NAME_SINGULAR,
       filter,
-      orderBy: [{ signatureDate: 'DescNullsLast' }],
+      orderBy: [{ createdAt: 'DescNullsLast' }],
       recordGqlFields: COAT_LIST_GQL_FIELDS,
       limit: COAT_LIST_PAGE_SIZE,
     });

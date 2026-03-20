@@ -1,6 +1,3 @@
-// TODO: Verify exact field names against the tobContract object in Twenty once available.
-// The field names below are based on the COAT Workshop app columns and may need adjustment.
-
 export type CoatExportStatus =
   | 'NEEDS_APPROVAL'
   | 'READY_FOR_EXPORT'
@@ -18,20 +15,21 @@ export type CoatContractRecord = {
   id: string;
   name: string;
   createdAt: string;
-  customerName: string | null;
-  customerEmail: string | null;
-  programName: string | null;
-  // TODO: Confirm the exact field name for export status on the tobContract object
-  status: string | null;
-  signatureDate: string | null;
-  paymentAgreement: string | null;
-  errorCode: string | null;
-};
-
-export type CoatContractDetailRecord = CoatContractRecord & {
-  billingAddress: string | null;
-  paymentPlan: string | null;
   contractId: string | null;
-  internalContractId: string | null;
-  docusealUrl: string | null;
+  contractName: string | null;
+  contractType: string | null;
+  program: string | null;
+  programId: string | null;
+  status: string | null;
+  customerEmail: string | null;
+  customerFirstName: string | null;
+  customerLastName: string | null;
+  valueGrossBase: number | null;
+  currencyBase: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  completionDate: string | null;
+  bexioId: string | null;
+  source: string | null;
+  durationMonths: number | null;
 };

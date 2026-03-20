@@ -94,10 +94,10 @@ export const CoatApprovalList = ({
           <CoatApprovalListItem
             key={contractRecord.id}
             contractName={contractRecord.name}
-            customerName={contractRecord.customerName}
-            programName={contractRecord.programName}
+            customerName={[contractRecord.customerFirstName, contractRecord.customerLastName].filter(Boolean).join(' ') || null}
+            programName={contractRecord.program}
             status={contractRecord.status}
-            signatureDate={contractRecord.signatureDate}
+            signatureDate={contractRecord.completionDate ?? contractRecord.startDate}
             isSelected={contractRecord.id === selectedContractId}
             onClick={() => onSelectContract(contractRecord.id)}
           />
