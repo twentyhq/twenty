@@ -27,7 +27,11 @@ export class CommandLogger {
   }
 
   error(message: string, stack?: string, context?: string) {
-    this.logger.error(message, stack, context);
+    if (stack !== undefined) {
+      this.logger.error(message, stack, context);
+    } else {
+      this.logger.error(message);
+    }
   }
 
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
