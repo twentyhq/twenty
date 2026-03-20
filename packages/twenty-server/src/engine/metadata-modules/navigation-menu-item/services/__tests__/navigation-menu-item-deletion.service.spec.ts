@@ -93,7 +93,10 @@ describe('NavigationMenuItemDeletionService', () => {
       allFlatEntityOperationByMetadataName: {
         navigationMenuItem: {
           flatEntityToCreate: [],
-          flatEntityToDelete: [recordNavigationMenuItem, viewNavigationMenuItem],
+          flatEntityToDelete: [
+            recordNavigationMenuItem,
+            viewNavigationMenuItem,
+          ],
           flatEntityToUpdate: [],
         },
       },

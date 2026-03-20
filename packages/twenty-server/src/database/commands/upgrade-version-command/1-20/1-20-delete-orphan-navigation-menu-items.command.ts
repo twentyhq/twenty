@@ -92,11 +92,12 @@ export class DeleteOrphanNavigationMenuItemsCommand extends ActiveOrSuspendedWor
       )
       .map((item) => item.id);
 
-    const orphanRecordItemIds = await this.findOrphanRecordNavigationMenuItemIds(
-      workspaceId,
-      navigationMenuItems,
-      flatObjectMetadataMaps,
-    );
+    const orphanRecordItemIds =
+      await this.findOrphanRecordNavigationMenuItemIds(
+        workspaceId,
+        navigationMenuItems,
+        flatObjectMetadataMaps,
+      );
 
     const orphanNavigationMenuItemIds = Array.from(
       new Set([
@@ -151,7 +152,10 @@ export class DeleteOrphanNavigationMenuItemsCommand extends ActiveOrSuspendedWor
       const existingItemIds =
         itemIdsByObjectMetadataId.get(item.targetObjectMetadataId) ?? [];
       existingItemIds.push(item.id);
-      itemIdsByObjectMetadataId.set(item.targetObjectMetadataId, existingItemIds);
+      itemIdsByObjectMetadataId.set(
+        item.targetObjectMetadataId,
+        existingItemIds,
+      );
 
       const existingRecordIds =
         recordIdsByObjectMetadataId.get(item.targetObjectMetadataId) ?? [];

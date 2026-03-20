@@ -55,8 +55,7 @@ export const ViewPickerOptionDropdown = ({
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const { createNavigationMenuItem } = useCreateNavigationMenuItem();
-  const { currentWorkspaceMemberId } =
-    useNavigationMenuItemsData();
+  const { currentWorkspaceMemberId } = useNavigationMenuItemsData();
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
 
   // Users with VIEWS permission can edit all views
