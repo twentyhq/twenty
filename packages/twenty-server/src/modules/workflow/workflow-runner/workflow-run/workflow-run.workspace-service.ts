@@ -234,7 +234,7 @@ export class WorkflowRunWorkspaceService {
       await this.metricsService.incrementCounter({
         key: MetricsKeys.WorkflowRunSystemError,
         eventId: workflowRunId,
-        attributes: { workspace_id: workspaceId },
+        debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
       });
     }
   }
