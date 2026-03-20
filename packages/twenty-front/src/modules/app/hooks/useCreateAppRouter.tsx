@@ -1,3 +1,4 @@
+import React from 'react';
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
@@ -17,9 +18,13 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { NotFound } from '~/pages/not-found/NotFound';
-import { CoatApprovalPage } from '~/pages/coat-approval/CoatApprovalPage';
 import { MeetingTranscriptsPage } from '~/pages/meeting-transcripts/MeetingTranscriptsPage';
 import { WhatsAppChatPage } from '~/pages/whatsapp-chat/WhatsAppChatPage';
+
+// Lazy-loaded pages to reduce main bundle size
+const CoatApprovalPage = React.lazy(
+  () => import('~/pages/coat-approval/CoatApprovalPage').then(m => ({ default: m.CoatApprovalPage })),
+);
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { BookCall } from '~/pages/onboarding/BookCall';
