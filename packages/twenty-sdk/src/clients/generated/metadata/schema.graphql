@@ -2489,6 +2489,7 @@ type AdminAIModelConfig {
   inputCostPerMillionTokens: Float
   outputCostPerMillionTokens: Float
   providerName: String
+  providerLabel: String
   dataResidency: String
 }
 

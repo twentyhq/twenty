@@ -2072,6 +2072,7 @@ export interface AdminAIModelConfig {
     inputCostPerMillionTokens?: Scalars['Float']
     outputCostPerMillionTokens?: Scalars['Float']
     providerName?: Scalars['String']
+    providerLabel?: Scalars['String']
     dataResidency?: Scalars['String']
     __typename: 'AdminAIModelConfig'
 }
@@ -5175,6 +5176,7 @@ export interface AdminAIModelConfigGenqlSelection{
     inputCostPerMillionTokens?: boolean | number
     outputCostPerMillionTokens?: boolean | number
     providerName?: boolean | number
+    providerLabel?: boolean | number
     dataResidency?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

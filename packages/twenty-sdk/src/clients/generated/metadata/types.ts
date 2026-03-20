@@ -4679,7 +4679,7 @@ export default {
                 260
             ],
             "provider": [
-                245
+                261
             ],
             "inputCostPerMillionTokensInCredits": [
                 11
@@ -4716,7 +4716,7 @@ export default {
                 260
             ],
             "provider": [
-                245
+                261
             ],
             "isAvailable": [
                 6
@@ -4743,6 +4743,9 @@ export default {
                 11
             ],
             "providerName": [
+                1
+            ],
+            "providerLabel": [
                 1
             ],
             "dataResidency": [
