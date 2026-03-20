@@ -3,6 +3,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { useMyCalendarChannels } from '@/settings/accounts/hooks/useMyCalendarChannels';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient, useQuery } from '@apollo/client/react';
@@ -56,6 +58,11 @@ export const useMyConnectedAccounts = () => {
     skip: !isMigrated,
   });
 
+  const { channels: messageChannels, loading: messageChannelsLoading } =
+    useMyMessageChannels();
+  const { channels: calendarChannels, loading: calendarChannelsLoading } =
+    useMyCalendarChannels();
+
   const accounts = useMemo<ConnectedAccount[]>(() => {
     if (!isMigrated) {
       return workspaceAccounts;
@@ -78,16 +85,32 @@ export const useMyConnectedAccounts = () => {
           authFailedAt: account.authFailedAt
             ? new Date(account.authFailedAt)
             : null,
-          messageChannels: [],
-          calendarChannels: [],
+          messageChannels: messageChannels.filter(
+            (channel) =>
+              (channel as unknown as { connectedAccountId: string })
+                .connectedAccountId === account.id,
+          ),
+          calendarChannels: calendarChannels.filter(
+            (channel) =>
+              (channel as unknown as { connectedAccountId: string })
+                .connectedAccountId === account.id,
+          ),
           scopes: account.scopes,
           __typename: 'ConnectedAccount',
         }) as ConnectedAccount,
     );
-  }, [isMigrated, workspaceAccounts, metadataData]);
+  }, [
+    isMigrated,
+    workspaceAccounts,
+    metadataData,
+    messageChannels,
+    calendarChannels,
+  ]);
 
   return {
     accounts,
-    loading: isMigrated ? metadataLoading : workspaceLoading,
+    loading: isMigrated
+      ? metadataLoading || messageChannelsLoading || calendarChannelsLoading
+      : workspaceLoading,
   };
 };
