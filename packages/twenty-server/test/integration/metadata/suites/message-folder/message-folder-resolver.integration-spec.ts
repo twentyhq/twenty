@@ -73,6 +73,9 @@ describe('messageFolderResolver (e2e)', () => {
       const folderIds = folders.map((folder: { id: string }) => folder.id);
 
       expect(folderIds).toContain(MESSAGE_FOLDER_DATA_SEED_IDS.JANE_INBOX);
+      expect(folderIds).not.toContain(
+        MESSAGE_FOLDER_DATA_SEED_IDS.JONY_INBOX,
+      );
     });
 
     it('should deny filtering by another user messageChannelId', async () => {

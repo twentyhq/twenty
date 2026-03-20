@@ -75,6 +75,7 @@ describe('messageChannelResolver (e2e)', () => {
       );
 
       expect(channelIds).toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JANE);
+      expect(channelIds).not.toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JONY);
     });
 
     it('should deny filtering by another user connectedAccountId', async () => {
