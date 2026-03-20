@@ -256,6 +256,28 @@ export const WhatsAppChatContainer = () => {
           break;
         }
 
+        case 'message.transcription': {
+          const {
+            wahaId,
+            messageId,
+            transcription,
+          } = event.data as {
+            wahaId?: string;
+            messageId?: string;
+            transcription?: string;
+          };
+
+          if (transcription) {
+            if (messageId) {
+              updateMessageById(messageId, { body: transcription });
+            } else if (wahaId) {
+              updateMessageByWahaId(wahaId, { body: transcription });
+            }
+          }
+
+          break;
+        }
+
         case 'message.edited': {
           const {
             id,

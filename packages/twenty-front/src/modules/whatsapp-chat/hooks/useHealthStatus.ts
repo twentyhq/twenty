@@ -12,9 +12,9 @@ export type HealthIssue = {
 
 interface HealthResponse {
   status: string;
-  twenty_ok: boolean;
-  waha_ok: boolean;
-  waha_failed_sessions: string[];
+  twenty_ok?: boolean;
+  waha_ok?: boolean;
+  waha_failed_sessions?: string[];
 }
 
 interface HealthStatus {
@@ -46,6 +46,7 @@ export const useHealthStatus = (
     try {
       const health = await bridgeFetch<HealthResponse>('/healthz');
 
+      // Only show these if the bridge explicitly reports them
       if (health.twenty_ok === false) {
         issues.push({
           level: 'error',
@@ -64,7 +65,6 @@ export const useHealthStatus = (
         });
       }
 
-      // Check if the user's active session is failed
       if (
         activeSessionName &&
         health.waha_failed_sessions?.includes(activeSessionName)

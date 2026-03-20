@@ -258,6 +258,7 @@ export const ChatMessage = ({ message, onEdit, onDelete, onForward, onFlagLead, 
           <VoiceMessage
             mediaUrl={message.mediaUrl}
             fromAgent={message.fromAgent}
+            transcription={message.body}
           />
         )}
 

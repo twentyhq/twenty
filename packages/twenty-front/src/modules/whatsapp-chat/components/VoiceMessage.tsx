@@ -118,12 +118,26 @@ const formatDuration = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
+const StyledTranscription = styled.div<{ fromAgent?: boolean }>`
+  border-top: 1px solid
+    ${({ fromAgent }) =>
+      fromAgent ? 'rgba(255, 255, 255, 0.15)' : 'rgba(128, 128, 128, 0.15)'};
+  font-size: 13px;
+  line-height: 1.4;
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  opacity: 0.85;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  white-space: pre-wrap;
+  word-break: break-word;
+`;
+
 type VoiceMessageProps = {
   mediaUrl: string;
   fromAgent?: boolean;
+  transcription?: string | null;
 };
 
-export const VoiceMessage = ({ mediaUrl, fromAgent }: VoiceMessageProps) => {
+export const VoiceMessage = ({ mediaUrl, fromAgent, transcription }: VoiceMessageProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -200,25 +214,32 @@ export const VoiceMessage = ({ mediaUrl, fromAgent }: VoiceMessageProps) => {
   const displayTime = isPlaying || currentTime > 0 ? currentTime : duration;
 
   return (
-    <StyledContainer>
-      <StyledPlayButton fromAgent={fromAgent} onClick={togglePlay}>
-        {isPlaying ? (
-          <IconPlayerPause size={16} />
-        ) : (
-          <IconPlayerPlay size={16} />
-        )}
-      </StyledPlayButton>
-      <StyledWaveform>
-        <StyledProgressBar fromAgent={fromAgent} onClick={handleProgressClick}>
-          <StyledProgress width={progress} fromAgent={fromAgent} />
-        </StyledProgressBar>
-        <StyledDuration>
-          {displayTime > 0 ? formatDuration(displayTime) : '0:00'}
-        </StyledDuration>
-      </StyledWaveform>
-      <StyledSpeedButton fromAgent={fromAgent} onClick={handleCycleSpeed}>
-        {SPEED_OPTIONS[speedIndex]}x
-      </StyledSpeedButton>
-    </StyledContainer>
+    <div>
+      <StyledContainer>
+        <StyledPlayButton fromAgent={fromAgent} onClick={togglePlay}>
+          {isPlaying ? (
+            <IconPlayerPause size={16} />
+          ) : (
+            <IconPlayerPlay size={16} />
+          )}
+        </StyledPlayButton>
+        <StyledWaveform>
+          <StyledProgressBar fromAgent={fromAgent} onClick={handleProgressClick}>
+            <StyledProgress width={progress} fromAgent={fromAgent} />
+          </StyledProgressBar>
+          <StyledDuration>
+            {displayTime > 0 ? formatDuration(displayTime) : '0:00'}
+          </StyledDuration>
+        </StyledWaveform>
+        <StyledSpeedButton fromAgent={fromAgent} onClick={handleCycleSpeed}>
+          {SPEED_OPTIONS[speedIndex]}x
+        </StyledSpeedButton>
+      </StyledContainer>
+      {transcription && (
+        <StyledTranscription fromAgent={fromAgent}>
+          {transcription}
+        </StyledTranscription>
+      )}
+    </div>
   );
 };
