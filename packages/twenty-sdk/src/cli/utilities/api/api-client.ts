@@ -12,8 +12,14 @@ export class ApiClient {
     disableInterceptors?: boolean;
     serverUrl?: string;
     token?: string;
+    skipAuth?: boolean;
   }) {
-    const { disableInterceptors = false, serverUrl, token } = options || {};
+    const {
+      disableInterceptors = false,
+      serverUrl,
+      token,
+      skipAuth = false,
+    } = options || {};
     this.configService = new ConfigService();
     this.tokenOverride = token;
     this.serverUrlOverride = serverUrl;
@@ -24,7 +30,7 @@ export class ApiClient {
 
       config.baseURL = this.serverUrlOverride ?? twentyConfig.apiUrl;
 
-      if (!config.headers.Authorization) {
+      if (!config.headers.Authorization && !skipAuth) {
         const authToken = await this.resolveAuthToken();
 
         if (authToken) {

@@ -65,8 +65,12 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     args: CommonInput<UpdateOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<UpdateOneQueryArgs>> {
-    const { authContext, flatObjectMetadata, flatFieldMetadataMaps } =
-      queryRunnerContext;
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = queryRunnerContext;
 
     return {
       ...args,
@@ -76,6 +80,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
           authContext,
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
           shouldBackfillPositionIfUndefined: false,
         })
       )[0],

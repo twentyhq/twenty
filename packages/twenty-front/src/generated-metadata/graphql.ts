@@ -761,6 +761,55 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type CalendarChannel = {
+  __typename?: 'CalendarChannel';
+  connectedAccountId: Scalars['UUID'];
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
+  createdAt: Scalars['DateTime'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  isContactAutoCreationEnabled: Scalars['Boolean'];
+  isSyncEnabled: Scalars['Boolean'];
+  syncStage: CalendarChannelSyncStage;
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
+  syncStatus: CalendarChannelSyncStatus;
+  syncedAt?: Maybe<Scalars['DateTime']>;
+  throttleFailureCount: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  visibility: CalendarChannelVisibility;
+};
+
+export enum CalendarChannelContactAutoCreationPolicy {
+  AS_ORGANIZER = 'AS_ORGANIZER',
+  AS_PARTICIPANT = 'AS_PARTICIPANT',
+  AS_PARTICIPANT_AND_ORGANIZER = 'AS_PARTICIPANT_AND_ORGANIZER',
+  NONE = 'NONE'
+}
+
+export enum CalendarChannelSyncStage {
+  CALENDAR_EVENTS_IMPORT_ONGOING = 'CALENDAR_EVENTS_IMPORT_ONGOING',
+  CALENDAR_EVENTS_IMPORT_PENDING = 'CALENDAR_EVENTS_IMPORT_PENDING',
+  CALENDAR_EVENTS_IMPORT_SCHEDULED = 'CALENDAR_EVENTS_IMPORT_SCHEDULED',
+  CALENDAR_EVENT_LIST_FETCH_ONGOING = 'CALENDAR_EVENT_LIST_FETCH_ONGOING',
+  CALENDAR_EVENT_LIST_FETCH_PENDING = 'CALENDAR_EVENT_LIST_FETCH_PENDING',
+  CALENDAR_EVENT_LIST_FETCH_SCHEDULED = 'CALENDAR_EVENT_LIST_FETCH_SCHEDULED',
+  FAILED = 'FAILED',
+  PENDING_CONFIGURATION = 'PENDING_CONFIGURATION'
+}
+
+export enum CalendarChannelSyncStatus {
+  ACTIVE = 'ACTIVE',
+  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
+  NOT_SYNCED = 'NOT_SYNCED',
+  ONGOING = 'ONGOING'
+}
+
+export enum CalendarChannelVisibility {
+  METADATA = 'METADATA',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING'
+}
+
 export type CalendarConfiguration = {
   __typename?: 'CalendarConfiguration';
   configurationType: WidgetConfigurationType;
@@ -925,6 +974,21 @@ export type ConfigVariablesGroupData = {
   isHiddenOnLoad: Scalars['Boolean'];
   name: ConfigVariablesGroup;
   variables: Array<ConfigVariable>;
+};
+
+export type ConnectedAccountDto = {
+  __typename?: 'ConnectedAccountDTO';
+  authFailedAt?: Maybe<Scalars['DateTime']>;
+  createdAt: Scalars['DateTime'];
+  handle: Scalars['String'];
+  handleAliases?: Maybe<Array<Scalars['String']>>;
+  id: Scalars['UUID'];
+  lastCredentialsRefreshedAt?: Maybe<Scalars['DateTime']>;
+  lastSignedInAt?: Maybe<Scalars['DateTime']>;
+  provider: Scalars['String'];
+  scopes?: Maybe<Array<Scalars['String']>>;
+  updatedAt: Scalars['DateTime'];
+  userWorkspaceId: Scalars['UUID'];
 };
 
 export type ConnectedImapSmtpCaldavAccount = {
@@ -1618,8 +1682,10 @@ export enum FeatureFlagKey {
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
   IS_ATTACHMENT_MIGRATED = 'IS_ATTACHMENT_MIGRATED',
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
+  IS_CONNECTED_ACCOUNT_MIGRATED = 'IS_CONNECTED_ACCOUNT_MIGRATED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED = 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED',
+  IS_DIRECT_GRAPHQL_EXECUTION_ENABLED = 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED',
   IS_DRAFT_EMAIL_ENABLED = 'IS_DRAFT_EMAIL_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -2289,6 +2355,96 @@ export type MarketplaceAppRoleObjectPermission = {
   objectUniversalIdentifier: Scalars['String'];
 };
 
+export type MessageChannel = {
+  __typename?: 'MessageChannel';
+  connectedAccountId: Scalars['UUID'];
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
+  createdAt: Scalars['DateTime'];
+  excludeGroupEmails: Scalars['Boolean'];
+  excludeNonProfessionalEmails: Scalars['Boolean'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  isContactAutoCreationEnabled: Scalars['Boolean'];
+  isSyncEnabled: Scalars['Boolean'];
+  messageFolderImportPolicy: MessageFolderImportPolicy;
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
+  syncStage: MessageChannelSyncStage;
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
+  syncStatus: MessageChannelSyncStatus;
+  syncedAt?: Maybe<Scalars['DateTime']>;
+  throttleFailureCount: Scalars['Float'];
+  throttleRetryAfter?: Maybe<Scalars['DateTime']>;
+  type: MessageChannelType;
+  updatedAt: Scalars['DateTime'];
+  visibility: MessageChannelVisibility;
+};
+
+export enum MessageChannelContactAutoCreationPolicy {
+  NONE = 'NONE',
+  SENT = 'SENT',
+  SENT_AND_RECEIVED = 'SENT_AND_RECEIVED'
+}
+
+export enum MessageChannelPendingGroupEmailsAction {
+  GROUP_EMAILS_DELETION = 'GROUP_EMAILS_DELETION',
+  GROUP_EMAILS_IMPORT = 'GROUP_EMAILS_IMPORT',
+  NONE = 'NONE'
+}
+
+export enum MessageChannelSyncStage {
+  FAILED = 'FAILED',
+  MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
+  MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
+  MESSAGES_IMPORT_SCHEDULED = 'MESSAGES_IMPORT_SCHEDULED',
+  MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
+  MESSAGE_LIST_FETCH_PENDING = 'MESSAGE_LIST_FETCH_PENDING',
+  MESSAGE_LIST_FETCH_SCHEDULED = 'MESSAGE_LIST_FETCH_SCHEDULED',
+  PENDING_CONFIGURATION = 'PENDING_CONFIGURATION'
+}
+
+export enum MessageChannelSyncStatus {
+  ACTIVE = 'ACTIVE',
+  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
+  NOT_SYNCED = 'NOT_SYNCED',
+  ONGOING = 'ONGOING'
+}
+
+export enum MessageChannelType {
+  EMAIL = 'EMAIL',
+  SMS = 'SMS'
+}
+
+export enum MessageChannelVisibility {
+  METADATA = 'METADATA',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
+  SUBJECT = 'SUBJECT'
+}
+
+export type MessageFolder = {
+  __typename?: 'MessageFolder';
+  createdAt: Scalars['DateTime'];
+  externalId?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isSentFolder: Scalars['Boolean'];
+  isSynced: Scalars['Boolean'];
+  messageChannelId: Scalars['UUID'];
+  name?: Maybe<Scalars['String']>;
+  parentFolderId?: Maybe<Scalars['UUID']>;
+  pendingSyncAction: MessageFolderPendingSyncAction;
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum MessageFolderImportPolicy {
+  ALL_FOLDERS = 'ALL_FOLDERS',
+  SELECTED_FOLDERS = 'SELECTED_FOLDERS'
+}
+
+export enum MessageFolderPendingSyncAction {
+  FOLDER_DELETION = 'FOLDER_DELETION',
+  NONE = 'NONE'
+}
+
 export type MetadataEvent = {
   __typename?: 'MetadataEvent';
   metadataName: Scalars['String'];
@@ -2398,6 +2554,7 @@ export type Mutation = {
   deleteApplicationRegistrationVariable: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
   deleteCommandMenuItem: CommandMenuItem;
+  deleteConnectedAccount: ConnectedAccountDto;
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
@@ -2487,10 +2644,14 @@ export type Mutation = {
   updateApiKey?: Maybe<ApiKey>;
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
+  updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlag;
+  updateMessageChannel: MessageChannel;
+  updateMessageFolder: MessageFolder;
+  updateMessageFolders: Array<MessageFolder>;
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
@@ -2790,6 +2951,11 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 
 export type MutationDeleteCommandMenuItemArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type MutationDeleteConnectedAccountArgs = {
   id: Scalars['UUID'];
 };
 
@@ -3217,6 +3383,11 @@ export type MutationUpdateApplicationRegistrationVariableArgs = {
 };
 
 
+export type MutationUpdateCalendarChannelArgs = {
+  input: UpdateCalendarChannelInput;
+};
+
+
 export type MutationUpdateCommandMenuItemArgs = {
   input: UpdateCommandMenuItemInput;
 };
@@ -3235,6 +3406,21 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateMessageChannelArgs = {
+  input: UpdateMessageChannelInput;
+};
+
+
+export type MutationUpdateMessageFolderArgs = {
+  input: UpdateMessageFolderInput;
+};
+
+
+export type MutationUpdateMessageFoldersArgs = {
+  input: UpdateMessageFoldersInput;
 };
 
 
@@ -3946,6 +4132,7 @@ export type Query = {
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   commandMenuItem?: Maybe<CommandMenuItem>;
   commandMenuItems: Array<CommandMenuItem>;
+  connectedAccounts: Array<ConnectedAccountDto>;
   currentUser: User;
   currentWorkspace: Workspace;
   enterpriseCheckoutSession?: Maybe<Scalars['String']>;
@@ -4021,6 +4208,10 @@ export type Query = {
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
   minimalMetadata: MinimalMetadata;
+  myCalendarChannels: Array<CalendarChannel>;
+  myConnectedAccounts: Array<ConnectedAccountDto>;
+  myMessageChannels: Array<MessageChannel>;
+  myMessageFolders: Array<MessageFolder>;
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
@@ -4354,6 +4545,21 @@ export type QueryIndexMetadatasArgs = {
 
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
+};
+
+
+export type QueryMyCalendarChannelsArgs = {
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
+};
+
+
+export type QueryMyMessageChannelsArgs = {
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
+};
+
+
+export type QueryMyMessageFoldersArgs = {
+  messageChannelId?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -4871,6 +5077,18 @@ export type UpdateApplicationRegistrationVariablePayload = {
   value?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateCalendarChannelInput = {
+  id: Scalars['UUID'];
+  update: UpdateCalendarChannelInputUpdates;
+};
+
+export type UpdateCalendarChannelInputUpdates = {
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicy>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
+  visibility?: InputMaybe<CalendarChannelVisibility>;
+};
+
 export type UpdateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
@@ -4938,6 +5156,35 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateMessageChannelInput = {
+  id: Scalars['UUID'];
+  update: UpdateMessageChannelInputUpdates;
+};
+
+export type UpdateMessageChannelInputUpdates = {
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicy>;
+  excludeGroupEmails?: InputMaybe<Scalars['Boolean']>;
+  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
+  messageFolderImportPolicy?: InputMaybe<MessageFolderImportPolicy>;
+  visibility?: InputMaybe<MessageChannelVisibility>;
+};
+
+export type UpdateMessageFolderInput = {
+  id: Scalars['UUID'];
+  update: UpdateMessageFolderInputUpdates;
+};
+
+export type UpdateMessageFolderInputUpdates = {
+  isSynced?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type UpdateMessageFoldersInput = {
+  ids: Array<Scalars['UUID']>;
+  update: UpdateMessageFolderInputUpdates;
 };
 
 export type UpdateNavigationMenuItemInput = {
@@ -6577,6 +6824,13 @@ export type PieChartDataQueryVariables = Exact<{
 
 export type PieChartDataQuery = { __typename?: 'Query', pieChartData: { __typename?: 'PieChartData', showLegend: boolean, showDataLabels: boolean, showCenterMetric: boolean, hasTooManyGroups: boolean, formattedToRawLookup: any, data: Array<{ __typename?: 'PieChartDataItem', id: string, value: number }> } };
 
+export type DeleteConnectedAccountMutationVariables = Exact<{
+  id: Scalars['UUID'];
+}>;
+
+
+export type DeleteConnectedAccountMutation = { __typename?: 'Mutation', deleteConnectedAccount: { __typename?: 'ConnectedAccountDTO', id: string } };
+
 export type SaveImapSmtpCaldavAccountMutationVariables = Exact<{
   accountOwnerId: Scalars['UUID'];
   handle: Scalars['String'];
@@ -6594,12 +6848,66 @@ export type StartChannelSyncMutationVariables = Exact<{
 
 export type StartChannelSyncMutation = { __typename?: 'Mutation', startChannelSync: { __typename?: 'ChannelSyncSuccess', success: boolean } };
 
+export type UpdateCalendarChannelMutationVariables = Exact<{
+  input: UpdateCalendarChannelInput;
+}>;
+
+
+export type UpdateCalendarChannelMutation = { __typename?: 'Mutation', updateCalendarChannel: { __typename?: 'CalendarChannel', id: string, visibility: CalendarChannelVisibility, isContactAutoCreationEnabled: boolean, contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy } };
+
+export type UpdateMessageChannelMutationVariables = Exact<{
+  input: UpdateMessageChannelInput;
+}>;
+
+
+export type UpdateMessageChannelMutation = { __typename?: 'Mutation', updateMessageChannel: { __typename?: 'MessageChannel', id: string, visibility: MessageChannelVisibility, contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy, excludeNonProfessionalEmails: boolean, excludeGroupEmails: boolean, messageFolderImportPolicy: MessageFolderImportPolicy } };
+
+export type UpdateMessageFolderMutationVariables = Exact<{
+  input: UpdateMessageFolderInput;
+}>;
+
+
+export type UpdateMessageFolderMutation = { __typename?: 'Mutation', updateMessageFolder: { __typename?: 'MessageFolder', id: string, isSynced: boolean } };
+
+export type UpdateMessageFoldersMutationVariables = Exact<{
+  input: UpdateMessageFoldersInput;
+}>;
+
+
+export type UpdateMessageFoldersMutation = { __typename?: 'Mutation', updateMessageFolders: Array<{ __typename?: 'MessageFolder', id: string, isSynced: boolean }> };
+
 export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
   id: Scalars['UUID'];
 }>;
 
 
 export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, accountOwnerId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'ConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username?: string | null, password: string } | null, SMTP?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, port: number, secure?: boolean | null, password: string } | null, CALDAV?: { __typename?: 'ConnectionParametersOutput', host: string, username?: string | null, password: string } | null } | null } };
+
+export type MyCalendarChannelsQueryVariables = Exact<{
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
+}>;
+
+
+export type MyCalendarChannelsQuery = { __typename?: 'Query', myCalendarChannels: Array<{ __typename?: 'CalendarChannel', id: string, handle: string, visibility: CalendarChannelVisibility, syncStatus: CalendarChannelSyncStatus, syncStage: CalendarChannelSyncStage, syncStageStartedAt?: string | null, isContactAutoCreationEnabled: boolean, contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy, isSyncEnabled: boolean, connectedAccountId: string, createdAt: string, updatedAt: string }> };
+
+export type MyConnectedAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyConnectedAccountsQuery = { __typename?: 'Query', myConnectedAccounts: Array<{ __typename?: 'ConnectedAccountDTO', id: string, handle: string, provider: string, authFailedAt?: string | null, scopes?: Array<string> | null, handleAliases?: Array<string> | null, lastSignedInAt?: string | null, userWorkspaceId: string, createdAt: string, updatedAt: string }> };
+
+export type MyMessageChannelsQueryVariables = Exact<{
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
+}>;
+
+
+export type MyMessageChannelsQuery = { __typename?: 'Query', myMessageChannels: Array<{ __typename?: 'MessageChannel', id: string, handle: string, visibility: MessageChannelVisibility, type: MessageChannelType, isContactAutoCreationEnabled: boolean, contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy, messageFolderImportPolicy: MessageFolderImportPolicy, excludeNonProfessionalEmails: boolean, excludeGroupEmails: boolean, isSyncEnabled: boolean, syncStatus: MessageChannelSyncStatus, syncStage: MessageChannelSyncStage, syncStageStartedAt?: string | null, connectedAccountId: string, createdAt: string, updatedAt: string }> };
+
+export type MyMessageFoldersQueryVariables = Exact<{
+  messageChannelId?: InputMaybe<Scalars['UUID']>;
+}>;
+
+
+export type MyMessageFoldersQuery = { __typename?: 'Query', myMessageFolders: Array<{ __typename?: 'MessageFolder', id: string, name?: string | null, isSynced: boolean, isSentFolder: boolean, parentFolderId?: string | null, externalId?: string | null, messageChannelId: string, createdAt: string, updatedAt: string }> };
 
 export type SetAdminAiModelEnabledMutationVariables = Exact<{
   modelId: Scalars['String'];
@@ -7702,9 +8010,18 @@ export const FindAllRecordPageLayoutsDocument = {"kind":"Document","definitions"
 export const BarChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BarChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"BarChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"barChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"}},{"kind":"Field","name":{"kind":"Name","value":"indexBy"}},{"kind":"Field","name":{"kind":"Name","value":"keys"}},{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}}]}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"layout"}},{"kind":"Field","name":{"kind":"Name","value":"groupMode"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<BarChartDataQuery, BarChartDataQueryVariables>;
 export const LineChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"LineChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LineChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lineChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"series"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"x"}},{"kind":"Field","name":{"kind":"Name","value":"y"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"xAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"yAxisLabel"}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<LineChartDataQuery, LineChartDataQueryVariables>;
 export const PieChartDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PieChartData"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PieChartDataInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pieChartData"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}},{"kind":"Field","name":{"kind":"Name","value":"showLegend"}},{"kind":"Field","name":{"kind":"Name","value":"showDataLabels"}},{"kind":"Field","name":{"kind":"Name","value":"showCenterMetric"}},{"kind":"Field","name":{"kind":"Name","value":"hasTooManyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"formattedToRawLookup"}}]}}]}}]} as unknown as DocumentNode<PieChartDataQuery, PieChartDataQueryVariables>;
+export const DeleteConnectedAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteConnectedAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteConnectedAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteConnectedAccountMutation, DeleteConnectedAccountMutationVariables>;
 export const SaveImapSmtpCaldavAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SaveImapSmtpCaldavAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountOwnerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"handle"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectionParameters"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EmailAccountConnectionParameters"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"saveImapSmtpCaldavAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"accountOwnerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountOwnerId"}}},{"kind":"Argument","name":{"kind":"Name","value":"handle"},"value":{"kind":"Variable","name":{"kind":"Name","value":"handle"}}},{"kind":"Argument","name":{"kind":"Name","value":"connectionParameters"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectionParameters"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"connectedAccountId"}}]}}]}}]} as unknown as DocumentNode<SaveImapSmtpCaldavAccountMutation, SaveImapSmtpCaldavAccountMutationVariables>;
 export const StartChannelSyncDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartChannelSync"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startChannelSync"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<StartChannelSyncMutation, StartChannelSyncMutationVariables>;
+export const UpdateCalendarChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCalendarChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCalendarChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCalendarChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"isContactAutoCreationEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"contactAutoCreationPolicy"}}]}}]}}]} as unknown as DocumentNode<UpdateCalendarChannelMutation, UpdateCalendarChannelMutationVariables>;
+export const UpdateMessageChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMessageChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateMessageChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateMessageChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"contactAutoCreationPolicy"}},{"kind":"Field","name":{"kind":"Name","value":"excludeNonProfessionalEmails"}},{"kind":"Field","name":{"kind":"Name","value":"excludeGroupEmails"}},{"kind":"Field","name":{"kind":"Name","value":"messageFolderImportPolicy"}}]}}]}}]} as unknown as DocumentNode<UpdateMessageChannelMutation, UpdateMessageChannelMutationVariables>;
+export const UpdateMessageFolderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMessageFolder"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateMessageFolderInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateMessageFolder"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isSynced"}}]}}]}}]} as unknown as DocumentNode<UpdateMessageFolderMutation, UpdateMessageFolderMutationVariables>;
+export const UpdateMessageFoldersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMessageFolders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateMessageFoldersInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateMessageFolders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isSynced"}}]}}]}}]} as unknown as DocumentNode<UpdateMessageFoldersMutation, UpdateMessageFoldersMutationVariables>;
 export const GetConnectedImapSmtpCaldavAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetConnectedImapSmtpCaldavAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getConnectedImapSmtpCaldavAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"accountOwnerId"}},{"kind":"Field","name":{"kind":"Name","value":"connectionParameters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"IMAP"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"host"}},{"kind":"Field","name":{"kind":"Name","value":"port"}},{"kind":"Field","name":{"kind":"Name","value":"secure"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}},{"kind":"Field","name":{"kind":"Name","value":"SMTP"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"host"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"port"}},{"kind":"Field","name":{"kind":"Name","value":"secure"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}},{"kind":"Field","name":{"kind":"Name","value":"CALDAV"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"host"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"password"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetConnectedImapSmtpCaldavAccountQuery, GetConnectedImapSmtpCaldavAccountQueryVariables>;
+export const MyCalendarChannelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyCalendarChannels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myCalendarChannels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"syncStage"}},{"kind":"Field","name":{"kind":"Name","value":"syncStageStartedAt"}},{"kind":"Field","name":{"kind":"Name","value":"isContactAutoCreationEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"contactAutoCreationPolicy"}},{"kind":"Field","name":{"kind":"Name","value":"isSyncEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"connectedAccountId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<MyCalendarChannelsQuery, MyCalendarChannelsQueryVariables>;
+export const MyConnectedAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyConnectedAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myConnectedAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"provider"}},{"kind":"Field","name":{"kind":"Name","value":"authFailedAt"}},{"kind":"Field","name":{"kind":"Name","value":"scopes"}},{"kind":"Field","name":{"kind":"Name","value":"handleAliases"}},{"kind":"Field","name":{"kind":"Name","value":"lastSignedInAt"}},{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<MyConnectedAccountsQuery, MyConnectedAccountsQueryVariables>;
+export const MyMessageChannelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyMessageChannels"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myMessageChannels"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"connectedAccountId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"connectedAccountId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"isContactAutoCreationEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"contactAutoCreationPolicy"}},{"kind":"Field","name":{"kind":"Name","value":"messageFolderImportPolicy"}},{"kind":"Field","name":{"kind":"Name","value":"excludeNonProfessionalEmails"}},{"kind":"Field","name":{"kind":"Name","value":"excludeGroupEmails"}},{"kind":"Field","name":{"kind":"Name","value":"isSyncEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"syncStatus"}},{"kind":"Field","name":{"kind":"Name","value":"syncStage"}},{"kind":"Field","name":{"kind":"Name","value":"syncStageStartedAt"}},{"kind":"Field","name":{"kind":"Name","value":"connectedAccountId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<MyMessageChannelsQuery, MyMessageChannelsQueryVariables>;
+export const MyMessageFoldersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyMessageFolders"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageChannelId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myMessageFolders"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"messageChannelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageChannelId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isSynced"}},{"kind":"Field","name":{"kind":"Name","value":"isSentFolder"}},{"kind":"Field","name":{"kind":"Name","value":"parentFolderId"}},{"kind":"Field","name":{"kind":"Name","value":"externalId"}},{"kind":"Field","name":{"kind":"Name","value":"messageChannelId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<MyMessageFoldersQuery, MyMessageFoldersQueryVariables>;
 export const SetAdminAiModelEnabledDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminAiModelEnabled"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminAiModelEnabled"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"enabled"},"value":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}}}]}]}}]} as unknown as DocumentNode<SetAdminAiModelEnabledMutation, SetAdminAiModelEnabledMutationVariables>;
 export const GetAdminAiModelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"autoEnableNewModels"}},{"kind":"Field","name":{"kind":"Name","value":"models"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"modelFamily"}},{"kind":"Field","name":{"kind":"Name","value":"inferenceProvider"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"isAdminEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"deprecated"}},{"kind":"Field","name":{"kind":"Name","value":"isRecommended"}}]}}]}}]}}]} as unknown as DocumentNode<GetAdminAiModelsQuery, GetAdminAiModelsQueryVariables>;
 export const FindAllApplicationRegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindAllApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findAllApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApplicationRegistrationFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"author"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"websiteUrl"}},{"kind":"Field","name":{"kind":"Name","value":"termsUrl"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isFeatured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>;

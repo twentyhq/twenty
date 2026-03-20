@@ -1548,7 +1548,9 @@ enum FeatureFlagKey {
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
+  IS_DIRECT_GRAPHQL_EXECUTION_ENABLED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
+  IS_CONNECTED_ACCOUNT_MIGRATED
 }
 
 type SSOIdentityProvider {
@@ -2202,6 +2204,156 @@ type AgentTurn {
   evaluations: [AgentTurnEvaluation!]!
   messages: [AgentMessage!]!
   createdAt: DateTime!
+}
+
+type CalendarChannel {
+  id: UUID!
+  handle: String!
+  syncStatus: CalendarChannelSyncStatus!
+  syncStage: CalendarChannelSyncStage!
+  visibility: CalendarChannelVisibility!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
+  isSyncEnabled: Boolean!
+  syncedAt: DateTime
+  syncStageStartedAt: DateTime
+  throttleFailureCount: Float!
+  connectedAccountId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum CalendarChannelSyncStatus {
+  NOT_SYNCED
+  ONGOING
+  ACTIVE
+  FAILED_INSUFFICIENT_PERMISSIONS
+  FAILED_UNKNOWN
+}
+
+enum CalendarChannelSyncStage {
+  PENDING_CONFIGURATION
+  CALENDAR_EVENT_LIST_FETCH_PENDING
+  CALENDAR_EVENT_LIST_FETCH_SCHEDULED
+  CALENDAR_EVENT_LIST_FETCH_ONGOING
+  CALENDAR_EVENTS_IMPORT_PENDING
+  CALENDAR_EVENTS_IMPORT_SCHEDULED
+  CALENDAR_EVENTS_IMPORT_ONGOING
+  FAILED
+}
+
+enum CalendarChannelVisibility {
+  METADATA
+  SHARE_EVERYTHING
+}
+
+enum CalendarChannelContactAutoCreationPolicy {
+  AS_PARTICIPANT_AND_ORGANIZER
+  AS_PARTICIPANT
+  AS_ORGANIZER
+  NONE
+}
+
+type ConnectedAccountDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type MessageChannel {
+  id: UUID!
+  visibility: MessageChannelVisibility!
+  handle: String!
+  type: MessageChannelType!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
+  messageFolderImportPolicy: MessageFolderImportPolicy!
+  excludeNonProfessionalEmails: Boolean!
+  excludeGroupEmails: Boolean!
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
+  isSyncEnabled: Boolean!
+  syncedAt: DateTime
+  syncStatus: MessageChannelSyncStatus!
+  syncStage: MessageChannelSyncStage!
+  syncStageStartedAt: DateTime
+  throttleFailureCount: Float!
+  throttleRetryAfter: DateTime
+  connectedAccountId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum MessageChannelVisibility {
+  METADATA
+  SUBJECT
+  SHARE_EVERYTHING
+}
+
+enum MessageChannelType {
+  EMAIL
+  SMS
+}
+
+enum MessageChannelContactAutoCreationPolicy {
+  SENT_AND_RECEIVED
+  SENT
+  NONE
+}
+
+enum MessageFolderImportPolicy {
+  ALL_FOLDERS
+  SELECTED_FOLDERS
+}
+
+enum MessageChannelPendingGroupEmailsAction {
+  GROUP_EMAILS_DELETION
+  GROUP_EMAILS_IMPORT
+  NONE
+}
+
+enum MessageChannelSyncStatus {
+  NOT_SYNCED
+  ONGOING
+  ACTIVE
+  FAILED_INSUFFICIENT_PERMISSIONS
+  FAILED_UNKNOWN
+}
+
+enum MessageChannelSyncStage {
+  PENDING_CONFIGURATION
+  MESSAGE_LIST_FETCH_PENDING
+  MESSAGE_LIST_FETCH_SCHEDULED
+  MESSAGE_LIST_FETCH_ONGOING
+  MESSAGES_IMPORT_PENDING
+  MESSAGES_IMPORT_SCHEDULED
+  MESSAGES_IMPORT_ONGOING
+  FAILED
+}
+
+type MessageFolder {
+  id: UUID!
+  name: String
+  isSentFolder: Boolean!
+  isSynced: Boolean!
+  parentFolderId: UUID
+  externalId: String
+  pendingSyncAction: MessageFolderPendingSyncAction!
+  messageChannelId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum MessageFolderPendingSyncAction {
+  FOLDER_DELETION
+  NONE
 }
 
 type CollectionHash {
@@ -3010,6 +3162,11 @@ type Query {
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
+  myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
+  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  myConnectedAccounts: [ConnectedAccountDTO!]!
+  connectedAccounts: [ConnectedAccountDTO!]!
+  myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
@@ -3307,6 +3464,11 @@ type Mutation {
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
+  updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
+  updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
+  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
+  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
@@ -4201,6 +4363,47 @@ input DeleteSsoInput {
 input EditSsoInput {
   id: UUID!
   status: SSOIdentityProviderStatus!
+}
+
+input UpdateMessageFolderInput {
+  id: UUID!
+  update: UpdateMessageFolderInputUpdates!
+}
+
+input UpdateMessageFolderInputUpdates {
+  isSynced: Boolean
+}
+
+input UpdateMessageFoldersInput {
+  ids: [UUID!]!
+  update: UpdateMessageFolderInputUpdates!
+}
+
+input UpdateMessageChannelInput {
+  id: UUID!
+  update: UpdateMessageChannelInputUpdates!
+}
+
+input UpdateMessageChannelInputUpdates {
+  visibility: MessageChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
+  messageFolderImportPolicy: MessageFolderImportPolicy
+  isSyncEnabled: Boolean
+  excludeNonProfessionalEmails: Boolean
+  excludeGroupEmails: Boolean
+}
+
+input UpdateCalendarChannelInput {
+  id: UUID!
+  update: UpdateCalendarChannelInputUpdates!
+}
+
+input UpdateCalendarChannelInputUpdates {
+  visibility: CalendarChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
+  isSyncEnabled: Boolean
 }
 
 input CreateWebhookInput {

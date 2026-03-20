@@ -112,7 +112,7 @@ export class ApplicationDevelopmentResolver {
     @Args() { applicationId }: GenerateApplicationTokenInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user?: { id: string },
-    @AuthUserWorkspaceId() userWorkspaceId?: string,
+    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
   ): Promise<ApplicationTokenPairDTO> {
     return this.applicationTokenService.generateApplicationTokenPair({
       workspaceId,
