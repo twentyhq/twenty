@@ -39,6 +39,11 @@ export const useWhatsAppBridge = () => {
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          // Token expired — reload to trigger Twenty's auth refresh
+          window.location.reload();
+          throw new Error('Session expired, reloading…');
+        }
         const errorBody = await response.text().catch(() => 'Unknown error');
         throw new Error(
           `Bridge API error ${response.status}: ${errorBody}`,
