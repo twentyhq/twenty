@@ -8,7 +8,9 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { MessageChannelResolver } from 'src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver';
+import { MessageFolderDataAccessModule } from 'src/engine/metadata-modules/message-folder/data-access/message-folder-data-access.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     FeatureFlagModule,
     ConnectedAccountMetadataModule,
+    MessageFolderDataAccessModule,
+    MessagingImportManagerModule,
   ],
   providers: [
     MessageChannelMetadataService,
