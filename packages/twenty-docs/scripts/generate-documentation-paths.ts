@@ -97,5 +97,5 @@ export type DocumentationPath =
 
 fs.writeFileSync(path.join(outputDir, 'DocumentationPaths.ts'), pathsContent);
 
-console.log(`Generated documentation constants to ${outputDir}`);
-console.log(`Total paths: ${sortedPaths.length}`);
+process.stdout.write(`Generated documentation constants to ${outputDir}\n`);
+process.stdout.write(`Total paths: ${sortedPaths.length}\n`);
