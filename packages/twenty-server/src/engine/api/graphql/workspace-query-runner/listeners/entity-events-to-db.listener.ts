@@ -20,7 +20,7 @@ import { CallWebhookJobsJob } from 'src/engine/metadata-modules/webhook/jobs/cal
 import { WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { WorkspaceEventEmitterService } from 'src/engine/workspace-event-emitter/workspace-event-emitter.service';
+import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class EntityEventsToDbListener {
     private readonly webhookQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.triggerQueue)
     private readonly triggerQueueService: MessageQueueService,
-    private readonly workspaceEventEmitterService: WorkspaceEventEmitterService,
+    private readonly objectRecordEventPublisher: ObjectRecordEventPublisher,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -79,7 +79,7 @@ export class EntityEventsToDbListener {
     };
 
     const promises = [
-      this.workspaceEventEmitterService.publish(batchEvent),
+      this.objectRecordEventPublisher.publish(batchEvent),
       this.webhookQueueService.add<WorkspaceEventBatchForWebhook<T>>(
         CallWebhookJobsJob.name,
         batchEventForWebhook,

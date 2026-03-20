@@ -40,6 +40,7 @@ import { IdentifyObjectPermissionMetadataCommand } from 'src/database/commands/u
 import { IdentifyPermissionFlagMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-permission-flag-metadata.command';
 import { MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-object-permission-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-update-standard-index-view-names.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
@@ -105,6 +106,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.21 Commands
     protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
+    protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
   ) {
     super(
       workspaceRepository,
@@ -163,6 +165,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillCommandMenuItemsCommand,
       this.backfillPageLayoutsCommand,
       this.seedCliApplicationRegistrationCommand,
+      this.migrateMessagingInfrastructureToMetadataCommand,
     ];
 
     const commands_1210: VersionCommands = [
