@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
+import { SettingsAccountsSelectedMessageChannelEffect } from '@/settings/accounts/components/SettingsAccountsSelectedMessageChannelEffect';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
@@ -9,7 +10,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -27,20 +28,6 @@ export const SettingsAccountsMessageChannelsContainer = () => {
   );
 
   const { channels: messageChannels } = useMyMessageChannels();
-
-  useEffect(() => {
-    if (messageChannels.length === 0) {
-      return;
-    }
-
-    const currentSelectionStillExists = activeTabId
-      ? messageChannels.some((channel) => channel.id === activeTabId)
-      : false;
-
-    if (!currentSelectionStillExists) {
-      setSettingsAccountsSelectedMessageChannel(messageChannels[0]);
-    }
-  }, [messageChannels, activeTabId, setSettingsAccountsSelectedMessageChannel]);
 
   const tabs = messageChannels.map((messageChannel) => ({
     id: messageChannel.id,
@@ -65,6 +52,9 @@ export const SettingsAccountsMessageChannelsContainer = () => {
 
   return (
     <>
+      <SettingsAccountsSelectedMessageChannelEffect
+        messageChannels={messageChannels}
+      />
       {tabs.length > 1 && (
         <StyledMessageContainer>
           <TabList
