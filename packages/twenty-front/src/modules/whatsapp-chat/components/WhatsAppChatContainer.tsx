@@ -90,10 +90,16 @@ const StyledHealthBanner = styled.div<{ level: 'error' | 'warning' }>`
   color: ${({ level }) =>
     level === 'error' ? '#DC2626' : '#92400E'};
   display: flex;
-  flex-direction: column;
   font-size: 12px;
   gap: 2px;
+  justify-content: space-between;
   padding: 6px 12px;
+`;
+
+const StyledHealthContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 `;
 
 const StyledHealthMessage = styled.div`
@@ -106,6 +112,25 @@ const StyledHealthMessage = styled.div`
 const StyledHealthDetail = styled.div`
   font-weight: 400;
   opacity: 0.8;
+`;
+
+const StyledReloadButton = styled.button<{ level: 'error' | 'warning' }>`
+  background: ${({ level }) =>
+    level === 'error' ? '#DC2626' : '#92400E'};
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.85;
+  }
 `;
 
 const StyledSessionHeader = styled.div`
@@ -582,12 +607,20 @@ export const WhatsAppChatContainer = () => {
       <StyledCenterPanel>
         {healthStatus.issues.map((issue, i) => (
           <StyledHealthBanner key={i} level={issue.level}>
-            <StyledHealthMessage>
-              {issue.level === 'error' ? '\u26A0' : '\u26A0'} {issue.message}
-            </StyledHealthMessage>
-            {issue.detail && (
-              <StyledHealthDetail>{issue.detail}</StyledHealthDetail>
-            )}
+            <StyledHealthContent>
+              <StyledHealthMessage>
+                {issue.level === 'error' ? '\u26A0' : '\u26A0'} {issue.message}
+              </StyledHealthMessage>
+              {issue.detail && (
+                <StyledHealthDetail>{issue.detail}</StyledHealthDetail>
+              )}
+            </StyledHealthContent>
+            <StyledReloadButton
+              level={issue.level}
+              onClick={() => window.location.reload()}
+            >
+              Reload page
+            </StyledReloadButton>
           </StyledHealthBanner>
         ))}
 
