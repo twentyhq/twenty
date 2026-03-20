@@ -46,7 +46,7 @@ export const useHealthStatus = (
     try {
       const health = await bridgeFetch<HealthResponse>('/healthz');
 
-      if (!health.twenty_ok) {
+      if (health.twenty_ok === false) {
         issues.push({
           level: 'error',
           message: 'CRM database is unreachable',
@@ -55,7 +55,7 @@ export const useHealthStatus = (
         });
       }
 
-      if (!health.waha_ok) {
+      if (health.waha_ok === false) {
         issues.push({
           level: 'error',
           message: 'WhatsApp service is unreachable',
