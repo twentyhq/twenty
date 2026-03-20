@@ -1,9 +1,8 @@
-import { ForbiddenException, UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -34,14 +33,8 @@ export class ConnectedAccountResolver {
   @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async myConnectedAccounts(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountDTO[]> {
-    if (!isDefined(userWorkspaceId)) {
-      throw new ForbiddenException(
-        'User-scoped queries require a user context (API keys are not supported)',
-      );
-    }
-
     return this.connectedAccountMetadataService.findByUserWorkspaceId(
       userWorkspaceId,
       workspace.id,
@@ -63,14 +56,8 @@ export class ConnectedAccountResolver {
   async deleteConnectedAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountDTO> {
-    if (!isDefined(userWorkspaceId)) {
-      throw new ForbiddenException(
-        'User-scoped mutations require a user context (API keys are not supported)',
-      );
-    }
-
     await this.connectedAccountMetadataService.verifyOwnership(
       id,
       userWorkspaceId,

@@ -1,8 +1,7 @@
-import { ForbiddenException, UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -35,19 +34,13 @@ export class CalendarChannelResolver {
   @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async myCalendarChannels(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('connectedAccountId', {
       type: () => UUIDScalarType,
       nullable: true,
     })
     connectedAccountId?: string,
   ): Promise<CalendarChannelDTO[]> {
-    if (!isDefined(userWorkspaceId)) {
-      throw new ForbiddenException(
-        'User-scoped queries require a user context (API keys are not supported)',
-      );
-    }
-
     if (connectedAccountId) {
       await this.connectedAccountMetadataService.verifyOwnership(
         connectedAccountId,
@@ -79,14 +72,8 @@ export class CalendarChannelResolver {
   async updateCalendarChannel(
     @Args('input') input: UpdateCalendarChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CalendarChannelDTO> {
-    if (!isDefined(userWorkspaceId)) {
-      throw new ForbiddenException(
-        'User-scoped mutations require a user context (API keys are not supported)',
-      );
-    }
-
     await this.calendarChannelMetadataService.verifyOwnership(
       input.id,
       userWorkspaceId,
