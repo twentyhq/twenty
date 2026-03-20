@@ -34,7 +34,7 @@ import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agen
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
-import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
@@ -71,7 +71,7 @@ export class ChatExecutionService {
     private readonly toolRegistry: ToolRegistryService,
     private readonly skillService: SkillService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiBillingService: AIBillingService,
+    private readonly aiBillingService: AiBillingService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly systemPromptBuilder: SystemPromptBuilderService,

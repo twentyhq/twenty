@@ -2,11 +2,11 @@ const COMPOSITE_SEPARATOR = '/';
 
 export const buildCompositeModelId = (
   providerName: string,
-  rawModelId: string,
+  modelName: string,
 ): string => {
-  if (providerName === rawModelId.split(COMPOSITE_SEPARATOR)[0]) {
-    return rawModelId;
+  if (providerName === modelName.split(COMPOSITE_SEPARATOR)[0]) {
+    return modelName;
   }
 
-  return `${providerName}${COMPOSITE_SEPARATOR}${rawModelId}`;
+  return `${providerName}${COMPOSITE_SEPARATOR}${modelName}`;
 };

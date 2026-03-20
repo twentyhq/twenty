@@ -77,7 +77,7 @@ export const SettingsAIModelsTab = () => {
     return {
       value: model.modelId,
       label: `${model.label}${residencyFlag}`,
-      Icon: getModelIcon(model.modelFamily),
+      Icon: getModelIcon(model.modelFamily, model.providerName),
     };
   });
 
@@ -302,7 +302,7 @@ export const SettingsAIModelsTab = () => {
               return (
                 <SettingsOptionCardContentToggle
                   key={model.modelId}
-                  Icon={getModelIcon(model.modelFamily)}
+                  Icon={getModelIcon(model.modelFamily, model.providerName)}
                   title={model.label}
                   description={description}
                   checked={model.isEnabled}

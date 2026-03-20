@@ -1,28 +1,33 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import { useMutation } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-
-import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
-import { computeProviderNameFromLabel } from '@/settings/admin-panel/ai/utils/computeProviderNameFromLabel';
-import { H2Title } from 'twenty-ui/display';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { H2Title, IconPlus, Info } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
+import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
+import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
+import { PROVIDER_CONFIG } from '@/settings/admin-panel/ai/constants/ProviderConfig';
+import { SDK_PACKAGE_OPTIONS } from '@/settings/admin-panel/ai/constants/SdkPackageOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
-import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
-import { SDK_PACKAGE_OPTIONS } from '@/settings/admin-panel/ai/constants/SdkPackageOptions';
+import { GET_MODELS_DEV_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevProviders';
+import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
+import { computeProviderNameFromLabel } from '@/settings/admin-panel/ai/utils/computeProviderNameFromLabel';
+import { getModelsDevLogoIcon } from '@/settings/admin-panel/ai/utils/getModelsDevLogoIcon';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+
+type ModelsDevProvider = { id: string; modelCount: number; npm: string };
 
 type FormValues = {
   npm: string;
@@ -40,13 +45,49 @@ export const SettingsAdminNewAiProvider = () => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedModelsDevId, setSelectedModelsDevId] = useState<string | null>(
+    null,
+  );
+  const [isCustomMode, setIsCustomMode] = useState(false);
 
   const [addAiProvider] = useMutation(ADD_AI_PROVIDER);
+
+  const { data: modelsDevData } = useQuery<{
+    getModelsDevProviders: ModelsDevProvider[];
+  }>(GET_MODELS_DEV_PROVIDERS);
+
+  const modelsDevProviders = useMemo(
+    () => modelsDevData?.getModelsDevProviders ?? [],
+    [modelsDevData],
+  );
+
+  const modelsDevByIdMap = useMemo(
+    () =>
+      new Map(modelsDevProviders.map((provider) => [provider.id, provider])),
+    [modelsDevProviders],
+  );
+
+  const providerOptions = useMemo(
+    () =>
+      modelsDevProviders.map((provider) => {
+        const known = PROVIDER_CONFIG[provider.id];
+        const label = isDefined(known)
+          ? `${known.label} (${provider.modelCount} models)`
+          : `${provider.id} (${provider.modelCount} models)`;
+
+        return {
+          value: provider.id,
+          label,
+          Icon: known?.Icon ?? getModelsDevLogoIcon(provider.id),
+        };
+      }),
+    [modelsDevProviders],
+  );
 
   const form = useForm<FormValues>({
     mode: 'onSubmit',
     defaultValues: {
-      npm: '@ai-sdk/openai',
+      npm: '@ai-sdk/openai-compatible',
       label: '',
       apiKey: '',
       baseUrl: '',
@@ -57,10 +98,35 @@ export const SettingsAdminNewAiProvider = () => {
     },
   });
 
+  const hasSelected = selectedModelsDevId !== null || isCustomMode;
   const npmPackage = form.watch('npm');
   const isBedrock = npmPackage === '@ai-sdk/amazon-bedrock';
   const isOpenAICompatible = npmPackage === '@ai-sdk/openai-compatible';
   const needsApiKey = !isBedrock;
+  const isModelsDevWithoutNativeSdk =
+    selectedModelsDevId !== null && isOpenAICompatible;
+
+  const handleProviderSelected = (providerId: string) => {
+    setSelectedModelsDevId(providerId);
+    setIsCustomMode(false);
+
+    const suggestion = modelsDevByIdMap.get(providerId);
+
+    form.setValue('npm', suggestion?.npm ?? '@ai-sdk/openai-compatible');
+
+    const known = PROVIDER_CONFIG[providerId];
+    const fallbackLabel =
+      providerId.charAt(0).toUpperCase() + providerId.slice(1);
+
+    form.setValue('label', known?.label ?? fallbackLabel);
+  };
+
+  const handleCustomMode = () => {
+    setSelectedModelsDevId(null);
+    setIsCustomMode(true);
+    form.setValue('npm', '@ai-sdk/openai-compatible');
+    form.setValue('label', '');
+  };
 
   const handleSave = async () => {
     const values = form.getValues();
@@ -85,18 +151,20 @@ export const SettingsAdminNewAiProvider = () => {
       return;
     }
 
-    const config: Record<string, unknown> = {
+    const config: Partial<RawAiProviderConfig> = {
       npm: values.npm,
       label: values.label.trim(),
+      ...(selectedModelsDevId && { name: selectedModelsDevId }),
+      ...(needsApiKey &&
+        values.apiKey.trim() && {
+          apiKey: values.apiKey.trim(),
+        }),
+      ...(isOpenAICompatible &&
+        values.baseUrl.trim() && {
+          baseUrl: values.baseUrl.trim(),
+        }),
+      ...(values.dataResidency && { dataResidency: values.dataResidency }),
     };
-
-    if (needsApiKey && values.apiKey.trim()) {
-      config.apiKey = values.apiKey.trim();
-    }
-
-    if (isOpenAICompatible && values.baseUrl.trim()) {
-      config.baseUrl = values.baseUrl.trim();
-    }
 
     if (isBedrock) {
       if (!values.region.trim()) {
@@ -108,18 +176,6 @@ export const SettingsAdminNewAiProvider = () => {
         return;
       }
       config.region = values.region.trim();
-
-      if (values.accessKeyId.trim()) {
-        config.accessKeyId = values.accessKeyId.trim();
-      }
-
-      if (values.secretAccessKey.trim()) {
-        config.secretAccessKey = values.secretAccessKey.trim();
-      }
-    }
-
-    if (values.dataResidency) {
-      config.dataResidency = values.dataResidency;
     }
 
     if (!isBedrock && !isOpenAICompatible && !values.apiKey.trim()) {
@@ -181,7 +237,7 @@ export const SettingsAdminNewAiProvider = () => {
         actionButton={
           <SaveAndCancelButtons
             onCancel={() => navigate(AI_ADMIN_PATH)}
-            isSaveDisabled={isSubmitting}
+            isSaveDisabled={isSubmitting || !hasSelected}
             onSave={handleSave}
           />
         }
@@ -190,129 +246,61 @@ export const SettingsAdminNewAiProvider = () => {
           <Section>
             <H2Title
               title={t`Provider`}
-              description={t`Select the AI SDK package`}
+              description={t`Select a known provider or create a custom one`}
             />
-            <Controller
-              name="npm"
-              control={form.control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  dropdownId="ai-provider-npm-select"
-                  value={value}
-                  onChange={onChange}
-                  options={SDK_PACKAGE_OPTIONS}
-                  fullWidth
-                />
-              )}
-            />
-          </Section>
-
-          <Section>
-            <H2Title
-              title={t`Label`}
-              description={t`A display name for this provider`}
-            />
-            <Controller
-              name="label"
-              control={form.control}
-              render={({
-                field: { onChange, value },
-                fieldState: { error },
-              }) => (
-                <TextInput
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t`e.g. My OpenAI Proxy`}
-                  fullWidth
-                  error={error?.message}
-                />
-              )}
+            <Select
+              dropdownId="ai-provider-models-dev-select"
+              value={selectedModelsDevId ?? undefined}
+              onChange={handleProviderSelected}
+              options={providerOptions}
+              withSearchInput
+              fullWidth
+              callToActionButton={{
+                text: t`Custom provider`,
+                onClick: handleCustomMode,
+                Icon: IconPlus,
+              }}
             />
           </Section>
 
-          {needsApiKey && (
-            <Section>
-              <H2Title
-                title={t`API Key`}
-                description={t`Your provider API key for authentication`}
-              />
-              <Controller
-                name="apiKey"
-                control={form.control}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
-                  <TextInput
-                    value={value}
-                    onChange={onChange}
-                    placeholder="sk-..."
-                    fullWidth
-                    type="password"
-                    error={error?.message}
-                  />
-                )}
-              />
-            </Section>
+          {isModelsDevWithoutNativeSdk && (
+            <Info
+              accent="blue"
+              text={t`This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us.`}
+            />
           )}
 
-          {isOpenAICompatible && (
-            <Section>
-              <H2Title
-                title={t`Base URL`}
-                description={t`The API endpoint for your OpenAI-compatible provider`}
-              />
-              <Controller
-                name="baseUrl"
-                control={form.control}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
-                  <TextInput
-                    value={value}
-                    onChange={onChange}
-                    placeholder="https://api.example.com/v1"
-                    fullWidth
-                    error={error?.message}
-                  />
-                )}
-              />
-            </Section>
-          )}
-
-          <Section>
-            <H2Title
-              title={t`Data Residency`}
-              description={t`Region where inference data is processed (optional / for display only)`}
-            />
-            <Controller
-              name="dataResidency"
-              control={form.control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  dropdownId="ai-provider-data-residency-select"
-                  value={value}
-                  onChange={onChange}
-                  options={[
-                    { value: '', label: t`None` },
-                    ...DATA_RESIDENCY_OPTIONS,
-                  ]}
-                  fullWidth
-                />
-              )}
-            />
-          </Section>
-
-          {isBedrock && (
+          {hasSelected && (
             <>
+              {isCustomMode && (
+                <Section>
+                  <H2Title
+                    title={t`SDK Package`}
+                    description={t`The AI SDK driver for this provider`}
+                  />
+                  <Controller
+                    name="npm"
+                    control={form.control}
+                    render={({ field: { onChange, value } }) => (
+                      <Select
+                        dropdownId="ai-provider-npm-select"
+                        value={value}
+                        onChange={onChange}
+                        options={SDK_PACKAGE_OPTIONS}
+                        fullWidth
+                      />
+                    )}
+                  />
+                </Section>
+              )}
+
               <Section>
                 <H2Title
-                  title={t`Region`}
-                  description={t`The AWS region for Bedrock`}
+                  title={t`Label`}
+                  description={t`A display name for this provider`}
                 />
                 <Controller
-                  name="region"
+                  name="label"
                   control={form.control}
                   render={({
                     field: { onChange, value },
@@ -321,7 +309,11 @@ export const SettingsAdminNewAiProvider = () => {
                     <TextInput
                       value={value}
                       onChange={onChange}
-                      placeholder="us-east-1"
+                      placeholder={
+                        isCustomMode
+                          ? t`e.g. My OpenAI Proxy`
+                          : t`e.g. OpenAI EU`
+                      }
                       fullWidth
                       error={error?.message}
                     />
@@ -329,43 +321,144 @@ export const SettingsAdminNewAiProvider = () => {
                 />
               </Section>
 
+              {needsApiKey && (
+                <Section>
+                  <H2Title
+                    title={t`API Key`}
+                    description={t`Your provider API key for authentication`}
+                  />
+                  <Controller
+                    name="apiKey"
+                    control={form.control}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextInput
+                        value={value}
+                        onChange={onChange}
+                        placeholder="sk-..."
+                        fullWidth
+                        type="password"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                </Section>
+              )}
+
+              {isOpenAICompatible && (
+                <Section>
+                  <H2Title
+                    title={t`Base URL`}
+                    description={t`The API endpoint for your OpenAI-compatible provider`}
+                  />
+                  <Controller
+                    name="baseUrl"
+                    control={form.control}
+                    render={({
+                      field: { onChange, value },
+                      fieldState: { error },
+                    }) => (
+                      <TextInput
+                        value={value}
+                        onChange={onChange}
+                        placeholder="https://api.example.com/v1"
+                        fullWidth
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                </Section>
+              )}
+
               <Section>
                 <H2Title
-                  title={t`Access Key ID`}
-                  description={t`Optional — uses IAM role if empty`}
+                  title={t`Data Residency`}
+                  description={t`Region where inference data is processed (optional)`}
                 />
                 <Controller
-                  name="accessKeyId"
+                  name="dataResidency"
                   control={form.control}
                   render={({ field: { onChange, value } }) => (
-                    <TextInput
+                    <Select
+                      dropdownId="ai-provider-data-residency-select"
                       value={value}
                       onChange={onChange}
-                      placeholder={t`AKIA...`}
+                      options={[
+                        { value: '', label: t`None` },
+                        ...DATA_RESIDENCY_OPTIONS,
+                      ]}
                       fullWidth
                     />
                   )}
                 />
               </Section>
 
-              <Section>
-                <H2Title
-                  title={t`Secret Access Key`}
-                  description={t`Optional — uses IAM role if empty`}
-                />
-                <Controller
-                  name="secretAccessKey"
-                  control={form.control}
-                  render={({ field: { onChange, value } }) => (
-                    <TextInput
-                      value={value}
-                      onChange={onChange}
-                      fullWidth
-                      type="password"
+              {isBedrock && (
+                <>
+                  <Section>
+                    <H2Title
+                      title={t`Region`}
+                      description={t`The AWS region for Bedrock`}
                     />
-                  )}
-                />
-              </Section>
+                    <Controller
+                      name="region"
+                      control={form.control}
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
+                        <TextInput
+                          value={value}
+                          onChange={onChange}
+                          placeholder="us-east-1"
+                          fullWidth
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                  </Section>
+
+                  <Section>
+                    <H2Title
+                      title={t`Access Key ID`}
+                      description={t`Optional — uses IAM role if empty`}
+                    />
+                    <Controller
+                      name="accessKeyId"
+                      control={form.control}
+                      render={({ field: { onChange, value } }) => (
+                        <TextInput
+                          value={value}
+                          onChange={onChange}
+                          placeholder={t`AKIA...`}
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </Section>
+
+                  <Section>
+                    <H2Title
+                      title={t`Secret Access Key`}
+                      description={t`Optional — uses IAM role if empty`}
+                    />
+                    <Controller
+                      name="secretAccessKey"
+                      control={form.control}
+                      render={({ field: { onChange, value } }) => (
+                        <TextInput
+                          value={value}
+                          onChange={onChange}
+                          fullWidth
+                          type="password"
+                        />
+                      )}
+                    />
+                  </Section>
+                </>
+              )}
             </>
           )}
         </SettingsPageContainer>

@@ -12,14 +12,7 @@ import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/ty
 
 const DEFAULT_PROVIDERS: AiProvidersConfig = loadDefaultAiProviders();
 
-const EXPECTED_PROVIDERS = [
-  'openai',
-  'anthropic',
-  'google',
-  'xai',
-  'groq',
-  'mistral',
-];
+const EXPECTED_PROVIDERS = ['openai', 'anthropic', 'google', 'xai', 'mistral'];
 
 describe('Default AI Providers (ai-providers.json)', () => {
   it('should have at least one model per provider', () => {
@@ -34,7 +27,7 @@ describe('Default AI Providers (ai-providers.json)', () => {
   it('should have all required fields for each model', () => {
     Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
       (config.models ?? []).forEach((model) => {
-        expect(model.rawModelId).toBeDefined();
+        expect(model.name).toBeDefined();
         expect(model.label).toBeDefined();
         expect(model.inputCostPerMillionTokens).toBeDefined();
         expect(model.outputCostPerMillionTokens).toBeDefined();
@@ -48,12 +41,8 @@ describe('Default AI Providers (ai-providers.json)', () => {
     const allCompositeIds: string[] = [];
 
     Object.entries(DEFAULT_PROVIDERS).forEach(([key, config]) => {
-      const providerName = config.name ?? key;
-
       (config.models ?? []).forEach((model) => {
-        allCompositeIds.push(
-          buildCompositeModelId(providerName, model.rawModelId),
-        );
+        allCompositeIds.push(buildCompositeModelId(key, model.name));
       });
     });
 

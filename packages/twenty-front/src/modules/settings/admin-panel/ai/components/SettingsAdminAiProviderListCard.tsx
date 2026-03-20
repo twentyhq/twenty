@@ -80,8 +80,8 @@ export const SettingsAdminAiProviderListCard = ({
     <SettingsListCard
       items={providers}
       rounded
-      RowIconFn={(provider) => getProviderIcon(provider.modelsDevName)}
-      getItemLabel={(provider) => provider.label ?? provider.name}
+      RowIconFn={(provider) => getProviderIcon(provider.name ?? provider.id)}
+      getItemLabel={(provider) => provider.label ?? provider.id}
       getItemDescription={getProviderDescription}
       RowRightComponent={({ item: provider }) =>
         provider.apiKey || provider.hasAccessKey ? (
@@ -92,7 +92,7 @@ export const SettingsAdminAiProviderListCard = ({
       }
       to={(provider) =>
         getSettingsPath(SettingsPath.AdminPanelAiProviderDetail, {
-          providerName: provider.name,
+          providerName: provider.id,
         })
       }
       hasFooter={showAddButton}

@@ -255,7 +255,11 @@ export const typeTransformers: Record<
         try {
           const parsed = JSON.parse(value);
 
-          if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+          if (
+            parsed !== null &&
+            typeof parsed === 'object' &&
+            !Array.isArray(parsed)
+          ) {
             return parsed;
           }
 

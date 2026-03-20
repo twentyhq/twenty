@@ -21,7 +21,7 @@ const MODEL_ID_FAMILY_PATTERNS: [RegExp, ModelFamily][] = [
 
 export const inferModelFamily = (
   providerName: string,
-  rawModelId?: string,
+  modelName?: string,
 ): ModelFamily | undefined => {
   const fromName = NAME_TO_MODEL_FAMILY[providerName];
 
@@ -29,9 +29,9 @@ export const inferModelFamily = (
     return fromName;
   }
 
-  if (rawModelId) {
+  if (modelName) {
     for (const [pattern, family] of MODEL_ID_FAMILY_PATTERNS) {
-      if (pattern.test(rawModelId)) {
+      if (pattern.test(modelName)) {
         return family;
       }
     }

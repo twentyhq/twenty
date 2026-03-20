@@ -20,6 +20,7 @@ export const GET_ADMIN_AI_MODELS = gql`
         outputCostPerMillionTokens
         providerName
         providerLabel
+        name
         dataResidency
       }
     }

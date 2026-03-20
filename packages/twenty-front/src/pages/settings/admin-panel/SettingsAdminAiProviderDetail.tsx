@@ -24,13 +24,13 @@ import { Section } from 'twenty-ui/layout';
 import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelsTable';
-import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
 import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
+import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
-import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -56,13 +56,13 @@ export const SettingsAdminAiProviderDetail = () => {
   const [modelToRemove, setModelToRemove] = useState<{
     modelId: string;
     label: string;
-    rawModelId: string;
+    name: string;
   } | null>(null);
 
-  const { data: providersData } =
+  const { data: providersData, loading: isLoadingProviders } =
     useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
 
-  const { data: modelsData } = useQuery<{
+  const { data: modelsData, loading: isLoadingModels } = useQuery<{
     getAdminAiModels: {
       models: AdminAiModelConfig[];
     };
@@ -105,7 +105,7 @@ export const SettingsAdminAiProviderDetail = () => {
       await removeModelFromProvider({
         variables: {
           providerName,
-          rawModelId: modelToRemove.rawModelId,
+          name: modelToRemove.name,
         },
         refetchQueries: [
           { query: GET_AI_PROVIDERS },
@@ -129,18 +129,13 @@ export const SettingsAdminAiProviderDetail = () => {
       return undefined;
     }
 
-    const rawProviders = providersData.getAiProviders as Record<
-      string,
-      RawAiProviderConfig
-    >;
-
-    const config = rawProviders[providerName];
+    const config = providersData.getAiProviders[providerName];
 
     if (!isDefined(config)) {
       return undefined;
     }
 
-    return { name: providerName, ...config };
+    return { id: providerName, ...config };
   }, [providerName, providersData]);
 
   const isCustomProvider = provider?.source === 'custom';
@@ -181,14 +176,10 @@ export const SettingsAdminAiProviderDetail = () => {
   };
 
   const handleModelRemoveClick = (model: AdminAiModelConfig) => {
-    const rawModelId = model.modelId.includes('/')
-      ? model.modelId.split('/').slice(1).join('/')
-      : model.modelId;
-
     setModelToRemove({
       modelId: model.modelId,
       label: model.label,
-      rawModelId,
+      name: model.name ?? model.modelId,
     });
     openModal(REMOVE_MODEL_MODAL_ID);
   };
@@ -206,11 +197,11 @@ export const SettingsAdminAiProviderDetail = () => {
       {
         Icon: IconTag,
         label: t`Name`,
-        value: provider.label ?? provider.name,
+        value: provider.label ?? provider.id,
       },
       {
         Icon: IconPlug,
-        label: t`SDK Package`,
+        label: t`SDK`,
         value: provider.npm,
       },
     ];
@@ -283,6 +274,10 @@ export const SettingsAdminAiProviderDetail = () => {
     ? getSettingsPath(SettingsPath.AdminPanelNewAiModel, { providerName })
     : undefined;
 
+  if (isLoadingProviders || isLoadingModels) {
+    return <SettingsSkeletonLoader />;
+  }
+
   return (
     <SubMenuTopBarContainer
       links={[
@@ -307,7 +302,7 @@ export const SettingsAdminAiProviderDetail = () => {
         <Section>
           <H2Title
             title={provider?.label ?? providerName ?? ''}
-            description={provider ? provider.npm : t`Loading...`}
+            description={provider?.npm ?? ''}
           />
 
           {provider && (
@@ -344,6 +339,7 @@ export const SettingsAdminAiProviderDetail = () => {
               checkedField="isAdminEnabled"
               anchorPrefix="provider-model-row"
               showDisabledState
+              secondaryColumn="cost"
               onRemove={isCustomProvider ? handleModelRemoveClick : undefined}
             />
           )}

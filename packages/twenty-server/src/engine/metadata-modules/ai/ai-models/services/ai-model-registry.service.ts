@@ -31,8 +31,8 @@ export interface RegisteredAIModel {
   // npm package for SDK-specific behavior (e.g. '@ai-sdk/anthropic')
   sdkPackage: string;
   model: LanguageModel;
-  doesSupportThinking?: boolean;
-  // Config key (e.g. 'openai-standard')
+  supportsReasoning?: boolean;
+  // Config key (e.g. 'openai')
   providerName?: string;
   // models.dev identifier (e.g. 'openai')
   modelsDevName?: string;
@@ -74,7 +74,13 @@ export class AiModelRegistryService {
 
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
     for (const [providerKey, config] of Object.entries(providers)) {
-      const modelsDevName = config.name ?? providerKey;
+      if (!config.npm) {
+        this.logger.warn(
+          `Skipping provider "${providerKey}": missing npm field`,
+        );
+        continue;
+      }
+
       const models = config.models ?? [];
 
       if (models.length === 0) {
@@ -88,29 +94,39 @@ export class AiModelRegistryService {
         : undefined;
 
       for (const modelDef of models) {
-        const compositeId = buildCompositeModelId(
-          modelsDevName,
-          modelDef.rawModelId,
-        );
+        // Backward compat: custom providers stored before the rename may have rawModelId
+        const modelName =
+          modelDef.name ?? (modelDef as Record<string, unknown>).rawModelId;
+
+        if (!modelName || typeof modelName !== 'string') {
+          this.logger.warn(
+            `Skipping model in "${providerKey}" with missing name`,
+          );
+          continue;
+        }
+
+        const compositeId = buildCompositeModelId(providerKey, modelName);
+
+        const normalizedModelDef = { ...modelDef, name: modelName };
 
         this.modelConfigCache.set(
           compositeId,
-          this.toAIModelConfig(compositeId, modelsDevName, config, modelDef),
+          this.toAIModelConfig(compositeId, config, normalizedModelDef),
         );
 
         this.providerModelDefCache.set(compositeId, {
           providerName: providerKey,
-          modelDef,
+          modelDef: normalizedModelDef,
         });
 
         if (sdkInstance) {
           this.modelRegistry.set(compositeId, {
             modelId: compositeId,
             sdkPackage: config.npm,
-            model: sdkInstance.createModel(modelDef.rawModelId),
-            doesSupportThinking: modelDef.doesSupportThinking,
+            model: sdkInstance.createModel(modelName),
+            supportsReasoning: modelDef.supportsReasoning,
             providerName: providerKey,
-            modelsDevName,
+            modelsDevName: config.name,
           });
         }
       }
@@ -119,7 +135,6 @@ export class AiModelRegistryService {
 
   private toAIModelConfig(
     compositeId: string,
-    modelsDevName: string,
     providerConfig: AiProviderConfig,
     modelDef: AiProviderModelConfig,
   ): AIModelConfig {
@@ -130,7 +145,7 @@ export class AiModelRegistryService {
       description: modelDef.description ?? compositeId,
       modelFamily:
         modelDef.modelFamily ??
-        inferModelFamily(modelsDevName, modelDef.rawModelId),
+        inferModelFamily(providerConfig.name ?? '', modelDef.name),
       dataResidency: providerConfig.dataResidency,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
       outputCostPerMillionTokens: modelDef.outputCostPerMillionTokens ?? 0,
@@ -141,9 +156,8 @@ export class AiModelRegistryService {
       contextWindowTokens:
         modelDef.contextWindowTokens ?? DEFAULT_CONTEXT_WINDOW_TOKENS,
       maxOutputTokens: modelDef.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
-      supportedFileTypes: modelDef.supportedFileTypes,
-      doesSupportThinking: modelDef.doesSupportThinking,
-      nativeCapabilities: modelDef.nativeCapabilities,
+      modalities: modelDef.modalities,
+      supportsReasoning: modelDef.supportsReasoning,
       deprecated: modelDef.deprecated,
     };
   }
@@ -305,6 +319,7 @@ export class AiModelRegistryService {
     isAdminEnabled: boolean;
     isRecommended: boolean;
     providerName?: string;
+    name?: string;
   }> {
     const recommended = this.getRecommendedModelIds();
 
@@ -318,6 +333,7 @@ export class AiModelRegistryService {
         isAdminEnabled: this.isModelAdminAllowed(modelConfig.modelId),
         isRecommended: recommended.has(modelConfig.modelId),
         providerName: registered?.providerName ?? cached?.providerName,
+        name: cached?.modelDef.name,
       };
     });
   }
@@ -345,7 +361,11 @@ export class AiModelRegistryService {
     role: 'smart' | 'fast',
     modelId: string,
   ): Promise<void> {
-    await this.preferencesService.setDefaultModel(role, modelId);
+    await this.preferencesService.setDefaultModel(
+      role,
+      modelId,
+      this.providerModelDefCache,
+    );
   }
 
   getResolvedProvidersForAdmin(): AiProvidersConfig {

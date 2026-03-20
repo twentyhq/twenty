@@ -1,13 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
+import {
+  DATA_RESIDENCY_CONFIG,
+  type DataResidencyKey,
+} from '@/settings/admin-panel/ai/constants/DataResidencyConfig';
 
-import { DATA_RESIDENCY_CONFIG } from '@/settings/admin-panel/ai/constants/DataResidencyConfig';
+const isDataResidencyKey = (key: string): key is DataResidencyKey =>
+  key in DATA_RESIDENCY_CONFIG;
 
 export const getDataResidencyDisplay = (residency: string): string => {
-  const entry = DATA_RESIDENCY_CONFIG[residency] as
-    | { flag: string; label: string }
-    | undefined;
+  if (isDataResidencyKey(residency)) {
+    const entry = DATA_RESIDENCY_CONFIG[residency];
 
-  return isDefined(entry)
-    ? `${entry.flag} ${entry.label}`
-    : `🌐 ${residency.toUpperCase()}`;
+    return `${entry.flag} ${entry.label}`;
+  }
+
+  return `🌐 ${residency.toUpperCase()}`;
 };

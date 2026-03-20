@@ -16,6 +16,7 @@ import {
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { formatTokenCount } from '~/utils/format/formatTokenCount';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -76,19 +77,6 @@ const StyledSectionTitle = styled.span`
   font-weight: ${themeCssVariables.font.weight.semiBold};
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
-
-const formatTokenCount = (count: number): string => {
-  if (count >= 1_000_000_000) {
-    return `${(count / 1_000_000_000).toFixed(1)}B`;
-  }
-  if (count >= 1_000_000) {
-    return `${(count / 1_000_000).toFixed(1)}M`;
-  }
-  if (count >= 1_000) {
-    return `${(count / 1_000).toFixed(1)}K`;
-  }
-  return count.toString();
-};
 
 const formatCredits = (credits: number): string => {
   if (Number.isInteger(credits)) {

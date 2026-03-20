@@ -1,46 +1,81 @@
 import { useMemo, useState } from 'react';
 
+import { styled } from '@linaria/react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ADD_MODEL_TO_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addModelToProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { GET_MODELS_DEV_SUGGESTIONS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevSuggestions';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
-import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Toggle } from 'twenty-ui/input';
+import { Checkbox, Toggle } from 'twenty-ui/input';
+
+const StyledComboInputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  > * + * {
+    margin-left: ${themeCssVariables.spacing[4]};
+  }
+`;
+
+const MODALITY_OPTIONS = [
+  { value: 'image', label: 'Image' },
+  { value: 'pdf', label: 'PDF' },
+  { value: 'audio', label: 'Audio' },
+  { value: 'video', label: 'Video' },
+] as const;
+
+const StyledCheckboxRow = styled.div`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]} 0;
+`;
+
+const StyledModalitiesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 type ModelSuggestion = {
   modelId: string;
   name: string;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
+  cachedInputCostPerMillionTokens?: number;
+  cacheCreationCostPerMillionTokens?: number;
   contextWindowTokens: number;
   maxOutputTokens: number;
-  doesSupportThinking: boolean;
+  modalities: string[];
+  supportsReasoning: boolean;
 };
 
 type FormValues = {
-  rawModelId: string;
+  name: string;
   label: string;
   inputCostPerMillionTokens: string;
   outputCostPerMillionTokens: string;
+  cachedInputCostPerMillionTokens: string;
+  cacheCreationCostPerMillionTokens: string;
   contextWindowTokens: string;
   maxOutputTokens: string;
-  doesSupportThinking: boolean;
+  modalities: string[];
+  supportsReasoning: boolean;
 };
 
 export const SettingsAdminNewAiModel = () => {
@@ -49,6 +84,7 @@ export const SettingsAdminNewAiModel = () => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCustomModelId, setIsCustomModelId] = useState(false);
 
   const { data: providersData } =
     useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
@@ -58,24 +94,22 @@ export const SettingsAdminNewAiModel = () => {
       return undefined;
     }
 
-    const rawProviders = providersData.getAiProviders as Record<
-      string,
-      RawAiProviderConfig
-    >;
-
-    return rawProviders[providerName];
+    return providersData.getAiProviders[providerName];
   }, [providerName, providersData]);
 
-  const providerType = provider?.name ?? '';
+  const modelsDevName = provider?.name;
 
   const { data: suggestionsData } = useQuery<{
     getModelsDevSuggestions: ModelSuggestion[];
   }>(GET_MODELS_DEV_SUGGESTIONS, {
-    variables: { providerType },
-    skip: !providerType,
+    variables: { providerType: modelsDevName ?? '' },
+    skip: !modelsDevName,
   });
 
-  const suggestions = suggestionsData?.getModelsDevSuggestions ?? [];
+  const suggestions = useMemo(
+    () => suggestionsData?.getModelsDevSuggestions ?? [],
+    [suggestionsData],
+  );
 
   const suggestionsByModelId = useMemo(() => {
     const map = new Map<string, ModelSuggestion>();
@@ -101,13 +135,16 @@ export const SettingsAdminNewAiModel = () => {
   const form = useForm<FormValues>({
     mode: 'onSubmit',
     defaultValues: {
-      rawModelId: '',
+      name: '',
       label: '',
       inputCostPerMillionTokens: '',
       outputCostPerMillionTokens: '',
+      cachedInputCostPerMillionTokens: '',
+      cacheCreationCostPerMillionTokens: '',
       contextWindowTokens: '',
       maxOutputTokens: '',
-      doesSupportThinking: false,
+      modalities: [],
+      supportsReasoning: false,
     },
   });
 
@@ -118,7 +155,7 @@ export const SettingsAdminNewAiModel = () => {
     : getSettingsPath(SettingsPath.AdminPanel);
 
   const handleModelIdSelected = (modelId: string) => {
-    form.setValue('rawModelId', modelId);
+    form.setValue('name', modelId);
     const suggestion = suggestionsByModelId.get(modelId);
 
     if (isDefined(suggestion)) {
@@ -132,19 +169,36 @@ export const SettingsAdminNewAiModel = () => {
         String(suggestion.outputCostPerMillionTokens),
       );
       form.setValue(
+        'cachedInputCostPerMillionTokens',
+        isDefined(suggestion.cachedInputCostPerMillionTokens)
+          ? String(suggestion.cachedInputCostPerMillionTokens)
+          : '',
+      );
+      form.setValue(
+        'cacheCreationCostPerMillionTokens',
+        isDefined(suggestion.cacheCreationCostPerMillionTokens)
+          ? String(suggestion.cacheCreationCostPerMillionTokens)
+          : '',
+      );
+      form.setValue(
         'contextWindowTokens',
         String(suggestion.contextWindowTokens),
       );
       form.setValue('maxOutputTokens', String(suggestion.maxOutputTokens));
-      form.setValue('doesSupportThinking', suggestion.doesSupportThinking);
+      form.setValue('modalities', suggestion.modalities ?? []);
+      form.setValue('supportsReasoning', suggestion.supportsReasoning);
     }
   };
 
   const handleSave = async () => {
+    if (!providerName) {
+      return;
+    }
+
     const values = form.getValues();
 
-    if (!values.rawModelId.trim()) {
-      form.setError('rawModelId', {
+    if (!values.name.trim()) {
+      form.setError('name', {
         type: 'manual',
         message: t`Model ID is required`,
       });
@@ -161,8 +215,15 @@ export const SettingsAdminNewAiModel = () => {
       return;
     }
 
+    const cachedInput = parseFloat(
+      values.cachedInputCostPerMillionTokens || '',
+    );
+    const cacheCreation = parseFloat(
+      values.cacheCreationCostPerMillionTokens || '',
+    );
+
     const modelConfig = {
-      rawModelId: values.rawModelId.trim(),
+      name: values.name.trim(),
       label: values.label.trim(),
       inputCostPerMillionTokens: parseFloat(
         values.inputCostPerMillionTokens || '0',
@@ -170,9 +231,18 @@ export const SettingsAdminNewAiModel = () => {
       outputCostPerMillionTokens: parseFloat(
         values.outputCostPerMillionTokens || '0',
       ),
+      ...(isFinite(cachedInput) && {
+        cachedInputCostPerMillionTokens: cachedInput,
+      }),
+      ...(isFinite(cacheCreation) && {
+        cacheCreationCostPerMillionTokens: cacheCreation,
+      }),
       contextWindowTokens: parseInt(values.contextWindowTokens || '0', 10),
       maxOutputTokens: parseInt(values.maxOutputTokens || '0', 10),
-      doesSupportThinking: values.doesSupportThinking,
+      ...(values.modalities.length > 0 && {
+        modalities: values.modalities,
+      }),
+      supportsReasoning: values.supportsReasoning,
     };
 
     setIsSubmitting(true);
@@ -203,6 +273,7 @@ export const SettingsAdminNewAiModel = () => {
   };
 
   const hasSuggestions = modelIdOptions.length > 0;
+  const showModelSelect = hasSuggestions && !isCustomModelId;
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
@@ -232,14 +303,14 @@ export const SettingsAdminNewAiModel = () => {
             <H2Title
               title={t`Model ID`}
               description={
-                hasSuggestions
-                  ? t`Select from known models or type a custom ID`
+                showModelSelect
+                  ? t`Select a known model or add a custom one`
                   : t`The model identifier used by the provider API`
               }
             />
-            {hasSuggestions ? (
+            {showModelSelect ? (
               <Controller
-                name="rawModelId"
+                name="name"
                 control={form.control}
                 render={({ field: { value } }) => (
                   <Select
@@ -249,12 +320,17 @@ export const SettingsAdminNewAiModel = () => {
                     options={modelIdOptions}
                     withSearchInput
                     fullWidth
+                    callToActionButton={{
+                      text: t`Custom model ID`,
+                      onClick: () => setIsCustomModelId(true),
+                      Icon: IconPlus,
+                    }}
                   />
                 )}
               />
             ) : (
               <Controller
-                name="rawModelId"
+                name="name"
                 control={form.control}
                 render={({
                   field: { onChange, value },
@@ -300,30 +376,69 @@ export const SettingsAdminNewAiModel = () => {
               title={t`Pricing`}
               description={t`Cost per million tokens (USD)`}
             />
-            <Controller
-              name="inputCostPerMillionTokens"
-              control={form.control}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t`Input cost (e.g. 2.50)`}
-                  fullWidth
-                />
-              )}
+            <StyledComboInputContainer>
+              <Controller
+                name="inputCostPerMillionTokens"
+                control={form.control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    label={t`Input`}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t`e.g. 2.50`}
+                    fullWidth
+                  />
+                )}
+              />
+              <Controller
+                name="outputCostPerMillionTokens"
+                control={form.control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    label={t`Output`}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t`e.g. 10.00`}
+                    fullWidth
+                  />
+                )}
+              />
+            </StyledComboInputContainer>
+          </Section>
+
+          <Section>
+            <H2Title
+              title={t`Cache pricing`}
+              description={t`Cost per million tokens for cached input (USD)`}
             />
-            <Controller
-              name="outputCostPerMillionTokens"
-              control={form.control}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t`Output cost (e.g. 10.00)`}
-                  fullWidth
-                />
-              )}
-            />
+            <StyledComboInputContainer>
+              <Controller
+                name="cachedInputCostPerMillionTokens"
+                control={form.control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    label={t`Cache read`}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t`e.g. 1.25`}
+                    fullWidth
+                  />
+                )}
+              />
+              <Controller
+                name="cacheCreationCostPerMillionTokens"
+                control={form.control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    label={t`Cache write`}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t`e.g. 3.75`}
+                    fullWidth
+                  />
+                )}
+              />
+            </StyledComboInputContainer>
           </Section>
 
           <Section>
@@ -331,39 +446,91 @@ export const SettingsAdminNewAiModel = () => {
               title={t`Limits`}
               description={t`Token limits for context and output`}
             />
-            <Controller
-              name="contextWindowTokens"
-              control={form.control}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t`Context window (e.g. 128000)`}
-                  fullWidth
-                />
-              )}
+            <StyledComboInputContainer>
+              <Controller
+                name="contextWindowTokens"
+                control={form.control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    label={t`Context window`}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t`e.g. 128000`}
+                    fullWidth
+                  />
+                )}
+              />
+              <Controller
+                name="maxOutputTokens"
+                control={form.control}
+                render={({ field: { onChange, value } }) => (
+                  <TextInput
+                    label={t`Max output`}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={t`e.g. 16384`}
+                    fullWidth
+                  />
+                )}
+              />
+            </StyledComboInputContainer>
+          </Section>
+
+          <Section>
+            <H2Title
+              title={t`Supported input types`}
+              description={t`Types of content this model can process besides text`}
             />
             <Controller
-              name="maxOutputTokens"
+              name="modalities"
               control={form.control}
               render={({ field: { onChange, value } }) => (
-                <TextInput
-                  value={value}
-                  onChange={onChange}
-                  placeholder={t`Max output (e.g. 16384)`}
-                  fullWidth
-                />
+                <StyledModalitiesContainer>
+                  {MODALITY_OPTIONS.map((option) => {
+                    const isChecked = value.includes(option.value);
+
+                    return (
+                      <StyledCheckboxRow
+                        key={option.value}
+                        onClick={() => {
+                          const updated = isChecked
+                            ? value.filter(
+                                (modality) => modality !== option.value,
+                              )
+                            : [...value, option.value];
+
+                          onChange(updated);
+                        }}
+                      >
+                        <Checkbox
+                          checked={isChecked}
+                          onChange={(event) => {
+                            event.stopPropagation();
+                            const updated = event.target.checked
+                              ? [...value, option.value]
+                              : value.filter(
+                                  (modality) => modality !== option.value,
+                                );
+
+                            onChange(updated);
+                          }}
+                        />
+                        <span>{option.label}</span>
+                      </StyledCheckboxRow>
+                    );
+                  })}
+                </StyledModalitiesContainer>
               )}
             />
           </Section>
 
           <Section>
             <H2Title
-              title={t`Supports thinking`}
+              title={t`Supports reasoning`}
               description={t`Whether this model supports chain-of-thought reasoning`}
             />
             <Controller
-              name="doesSupportThinking"
+              name="supportsReasoning"
               control={form.control}
               render={({ field: { onChange, value } }) => (
                 <Toggle value={value} onChange={onChange} />

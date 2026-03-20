@@ -7,9 +7,12 @@ export const GET_MODELS_DEV_SUGGESTIONS = gql`
       name
       inputCostPerMillionTokens
       outputCostPerMillionTokens
+      cachedInputCostPerMillionTokens
+      cacheCreationCostPerMillionTokens
       contextWindowTokens
       maxOutputTokens
-      doesSupportThinking
+      modalities
+      supportsReasoning
     }
   }
 `;

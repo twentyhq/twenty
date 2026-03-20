@@ -48,6 +48,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
 import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.dto';
+import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 
 @UsePipes(ResolverValidationPipe)
@@ -166,6 +167,7 @@ export class AdminPanelResolver {
           isAdminEnabled,
           isRecommended,
           providerName,
+          name,
         }) => ({
           modelId: modelConfig.modelId,
           label: modelConfig.label,
@@ -183,6 +185,7 @@ export class AdminPanelResolver {
           providerLabel: providerName
             ? (resolvedProviders[providerName]?.label ?? providerName)
             : undefined,
+          name,
           dataResidency: modelConfig.dataResidency,
         }),
       );
@@ -340,17 +343,16 @@ export class AdminPanelResolver {
 
     for (const [key, config] of Object.entries(providers)) {
       const isCatalog = catalogNames.has(key);
-      const rawName = isCatalog ? key.replace(/-standard$/, '') : undefined;
-      const rawConfig = rawName ? rawCatalog[rawName] : undefined;
+      const rawConfig = isCatalog ? rawCatalog[key] : undefined;
       const apiKeyConfigVariable = rawConfig
         ? extractConfigVariableName(rawConfig.apiKey)
         : undefined;
 
       masked[key] = {
         npm: config.npm,
-        name: config.name ?? key,
         label: config.label ?? key,
         source: isCatalog ? 'catalog' : 'custom',
+        ...(config.name && { name: config.name }),
         ...(config.baseUrl && { baseUrl: config.baseUrl }),
         ...(config.region && { region: config.region }),
         ...(config.dataResidency && { dataResidency: config.dataResidency }),
@@ -401,6 +403,12 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
+  @Query(() => [ModelsDevProviderSuggestionDTO])
+  async getModelsDevProviders(): Promise<ModelsDevProviderSuggestionDTO[]> {
+    return this.modelsDevCatalogService.getProviderSuggestions();
+  }
+
+  @UseGuards(AdminPanelGuard)
   @Query(() => [ModelsDevModelSuggestionDTO])
   async getModelsDevSuggestions(
     @Args('providerType', { type: () => String }) providerType: string,
@@ -429,13 +437,12 @@ export class AdminPanelResolver {
 
     const existingModels = existing.models ?? [];
     const alreadyExists = existingModels.some(
-      (model: AiProviderModelConfig) =>
-        model.rawModelId === modelConfig.rawModelId,
+      (model: AiProviderModelConfig) => model.name === modelConfig.name,
     );
 
     if (alreadyExists) {
       throw new UserInputError(
-        `Model "${modelConfig.rawModelId}" already exists on provider "${providerName}"`,
+        `Model "${modelConfig.name}" already exists on provider "${providerName}"`,
       );
     }
 
@@ -454,7 +461,7 @@ export class AdminPanelResolver {
   @Mutation(() => Boolean)
   async removeModelFromProvider(
     @Args('providerName', { type: () => String }) providerName: string,
-    @Args('rawModelId', { type: () => String }) rawModelId: string,
+    @Args('modelName', { type: () => String }) modelName: string,
   ): Promise<boolean> {
     const customProviders = {
       ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
@@ -473,7 +480,7 @@ export class AdminPanelResolver {
     customProviders[providerName] = {
       ...existing,
       models: existingModels.filter(
-        (model: AiProviderModelConfig) => model.rawModelId !== rawModelId,
+        (model: AiProviderModelConfig) => model.name !== modelName,
       ),
     };
 

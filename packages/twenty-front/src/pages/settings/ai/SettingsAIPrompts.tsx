@@ -14,6 +14,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { formatTokenCount } from '~/utils/format/formatTokenCount';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -145,18 +146,8 @@ export const SettingsAIPrompts = () => {
       section.title !== 'User Context',
   );
 
-  const formatTokenCount = (count: number): string => {
-    if (count >= 1000) {
-      const kTokens = (count / 1000).toFixed(1);
-
-      return t`~${kTokens}k tokens`;
-    }
-
-    return t`~${count} tokens`;
-  };
-
   const totalTokenCount = isDefined(preview)
-    ? formatTokenCount(preview.estimatedTokenCount)
+    ? `~${formatTokenCount(preview.estimatedTokenCount)} tokens`
     : '';
   const pageTitle = isDefined(preview)
     ? t`System Prompt (${totalTokenCount})`

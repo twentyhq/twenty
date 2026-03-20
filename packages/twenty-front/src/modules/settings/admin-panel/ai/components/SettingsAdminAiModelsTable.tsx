@@ -17,8 +17,40 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
-const GRID_TEMPLATE_COLUMNS = '1fr 120px 40px';
-const GRID_TEMPLATE_COLUMNS_WITH_REMOVE = '1fr 120px 40px 32px';
+const getProviderDisplayLabel = (
+  model: Pick<AdminAiModelConfig, 'providerLabel' | 'providerName'>,
+): string => model.providerLabel ?? model.providerName ?? '';
+
+const formatCost = (
+  model: Pick<
+    AdminAiModelConfig,
+    'inputCostPerMillionTokens' | 'outputCostPerMillionTokens'
+  >,
+): string => {
+  const input = model.inputCostPerMillionTokens;
+  const output = model.outputCostPerMillionTokens;
+
+  if (!isDefined(input) && !isDefined(output)) {
+    return '—';
+  }
+
+  const fmt = (val: number | null | undefined) =>
+    isDefined(val) ? `$${val}` : '—';
+
+  return `${fmt(input)} / ${fmt(output)}`;
+};
+
+type SecondaryColumn = 'provider' | 'cost';
+
+const GRID_TEMPLATE_COLUMNS: Record<SecondaryColumn, string> = {
+  provider: '1fr 120px 40px',
+  cost: '1fr 140px 40px',
+};
+
+const GRID_TEMPLATE_COLUMNS_WITH_REMOVE: Record<SecondaryColumn, string> = {
+  provider: '1fr 120px 40px 32px',
+  cost: '1fr 140px 40px 32px',
+};
 
 const StyledModelNameCell = styled.div`
   align-items: center;
@@ -55,6 +87,7 @@ type SettingsAdminAiModelsTableProps = {
   anchorPrefix: string;
   showDisabledState?: boolean;
   onRemove?: (model: AdminAiModelConfig) => void;
+  secondaryColumn?: SecondaryColumn;
 };
 
 export const SettingsAdminAiModelsTable = ({
@@ -64,6 +97,7 @@ export const SettingsAdminAiModelsTable = ({
   anchorPrefix,
   showDisabledState = false,
   onRemove,
+  secondaryColumn = 'provider',
 }: SettingsAdminAiModelsTableProps) => {
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null);
   const { theme } = useContext(ThemeContext);
@@ -71,8 +105,8 @@ export const SettingsAdminAiModelsTable = ({
   const hoveredModel = models.find((model) => model.modelId === hoveredModelId);
   const hasRemove = isDefined(onRemove);
   const gridColumns = hasRemove
-    ? GRID_TEMPLATE_COLUMNS_WITH_REMOVE
-    : GRID_TEMPLATE_COLUMNS;
+    ? GRID_TEMPLATE_COLUMNS_WITH_REMOVE[secondaryColumn]
+    : GRID_TEMPLATE_COLUMNS[secondaryColumn];
 
   return (
     <>
@@ -82,16 +116,22 @@ export const SettingsAdminAiModelsTable = ({
             <Trans>Name</Trans>
           </TableHeader>
           <TableHeader align="right">
-            <Trans>Provider</Trans>
+            {secondaryColumn === 'provider' ? (
+              <Trans>Provider</Trans>
+            ) : (
+              <Trans>Cost / 1M tokens</Trans>
+            )}
           </TableHeader>
           <TableHeader />
           {hasRemove && <TableHeader />}
         </TableRow>
         <TableBody>
           {models.map((model) => {
-            const ModelIcon = getModelIcon(model.modelFamily);
-            const providerLabel =
-              model.providerLabel ?? model.providerName ?? '';
+            const ModelIcon = getModelIcon(
+              model.modelFamily,
+              model.providerName,
+            );
+            const displayLabel = getProviderDisplayLabel(model);
             const safeId = sanitizeIdForSelector(model.modelId);
             const isChecked = model[checkedField] === true;
             const isDisabled =
@@ -142,9 +182,14 @@ export const SettingsAdminAiModelsTable = ({
                     align="right"
                     color={themeCssVariables.font.color.tertiary}
                   >
-                    {providerLabel}
+                    {secondaryColumn === 'provider'
+                      ? displayLabel
+                      : formatCost(model)}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell
+                    align="right"
+                    onClick={(event) => event.stopPropagation()}
+                  >
                     <Checkbox
                       checked={isChecked}
                       disabled={isDisabled}
@@ -185,9 +230,8 @@ export const SettingsAdminAiModelsTable = ({
           <SettingsAdminAiModelHoverCard
             label={hoveredModel.label}
             modelFamily={hoveredModel.modelFamily}
-            providerLabel={
-              hoveredModel.providerLabel ?? hoveredModel.providerName ?? ''
-            }
+            providerName={hoveredModel.providerName}
+            providerLabel={getProviderDisplayLabel(hoveredModel)}
             contextWindowTokens={hoveredModel.contextWindowTokens}
             maxOutputTokens={hoveredModel.maxOutputTokens}
             inputCostPerMillionTokens={hoveredModel.inputCostPerMillionTokens}

@@ -1,5 +1,17 @@
+export type DataResidencyKey =
+  | 'us'
+  | 'eu'
+  | 'global'
+  | 'uk'
+  | 'ap'
+  | 'jp'
+  | 'au'
+  | 'ca'
+  | 'de'
+  | 'fr';
+
 export const DATA_RESIDENCY_CONFIG: Record<
-  string,
+  DataResidencyKey,
   { label: string; flag: string }
 > = {
   us: { label: 'United States', flag: '🇺🇸' },

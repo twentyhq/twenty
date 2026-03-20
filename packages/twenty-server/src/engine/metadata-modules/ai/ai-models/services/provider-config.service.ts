@@ -12,29 +12,18 @@ export class ProviderConfigService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   getCatalogProviderNames(): Set<string> {
-    return new Set(
-      Object.keys(loadDefaultAiProviders()).map((name) => `${name}-standard`),
-    );
+    return new Set(Object.keys(loadDefaultAiProviders()));
   }
 
   getResolvedProviders(): AiProvidersConfig {
     const rawCatalog = loadDefaultAiProviders();
     // Only resolve {{VAR}} templates in the committed catalog — never in
     // user-supplied custom providers, to prevent config variable exfiltration.
-    const catalog = this.resolveTemplates(this.suffixCatalogKeys(rawCatalog));
+    const catalog = this.resolveTemplates(rawCatalog);
     const custom = this.twentyConfigService.get('AI_CUSTOM_PROVIDERS');
 
+    // Custom providers override catalog entries with the same key
     return { ...catalog, ...custom };
-  }
-
-  private suffixCatalogKeys(catalog: AiProvidersConfig): AiProvidersConfig {
-    const result: AiProvidersConfig = {};
-
-    for (const [name, config] of Object.entries(catalog)) {
-      result[`${name}-standard`] = config;
-    }
-
-    return result;
   }
 
   private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {

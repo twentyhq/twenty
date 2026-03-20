@@ -8,6 +8,7 @@ import { Tag } from 'twenty-ui/components';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { billingState } from '@/client-config/states/billingState';
+import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelsTable';
@@ -30,7 +31,7 @@ export const SettingsAdminAI = () => {
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const { refetch: refetchClientConfig } = useClientConfig();
 
-  const { data } = useQuery<{
+  const { data, loading: isLoadingModels } = useQuery<{
     getAdminAiModels: {
       defaultSmartModelId?: string | null;
       defaultFastModelId?: string | null;
@@ -57,7 +58,7 @@ export const SettingsAdminAI = () => {
     () =>
       providerItems
         .filter((provider) => provider.source !== 'custom')
-        .sort((a, b) => (a.label ?? a.name).localeCompare(b.label ?? b.name)),
+        .sort((a, b) => (a.label ?? a.id).localeCompare(b.label ?? b.id)),
     [providerItems],
   );
 
@@ -65,6 +66,10 @@ export const SettingsAdminAI = () => {
     () => providerItems.filter((provider) => provider.source === 'custom'),
     [providerItems],
   );
+
+  if (isLoadingProviders || isLoadingModels) {
+    return <SettingsAdminTabSkeletonLoader />;
+  }
 
   const handleRecommendedToggle = async (
     modelId: string,
@@ -93,7 +98,7 @@ export const SettingsAdminAI = () => {
   const availableModelOptions = enabledModels.map((model) => ({
     value: model.modelId,
     label: model.label,
-    Icon: getModelIcon(model.modelFamily),
+    Icon: getModelIcon(model.modelFamily, model.providerName),
   }));
 
   const handleDefaultModelChange = async (
@@ -125,7 +130,6 @@ export const SettingsAdminAI = () => {
 
             <SettingsAdminAiProviderListCard
               providers={catalogProviders}
-              isLoading={isLoadingProviders}
               showAddButton={false}
             />
           </Section>
@@ -146,7 +150,6 @@ export const SettingsAdminAI = () => {
 
             <SettingsAdminAiProviderListCard
               providers={customProviders}
-              isLoading={isLoadingProviders}
               showAddButton
             />
           </Section>

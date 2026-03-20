@@ -13,6 +13,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
+import { formatTokenCount } from '~/utils/format/formatTokenCount';
 
 const StyledNameValue = styled.span`
   align-items: center;
@@ -29,24 +30,13 @@ const StyledHoverCardWrapper = styled.div`
 type SettingsAdminAiModelHoverCardProps = {
   label: string;
   modelFamily?: string | null;
+  providerName?: string | null;
   providerLabel: string;
   contextWindowTokens?: number | null;
   maxOutputTokens?: number | null;
   inputCostPerMillionTokens?: number | null;
   outputCostPerMillionTokens?: number | null;
   dataResidency?: string | null;
-};
-
-const formatTokenCount = (tokens: number): string => {
-  if (tokens >= 1_000_000) {
-    return `${Math.round(tokens / 1_000_000)}M tokens`;
-  }
-
-  if (tokens >= 1_000) {
-    return `${Math.round(tokens / 1_000)}k tokens`;
-  }
-
-  return `${tokens} tokens`;
 };
 
 const formatCost = (
@@ -73,6 +63,7 @@ const formatCost = (
 export const SettingsAdminAiModelHoverCard = ({
   label,
   modelFamily,
+  providerName,
   providerLabel,
   contextWindowTokens,
   maxOutputTokens,
@@ -80,7 +71,7 @@ export const SettingsAdminAiModelHoverCard = ({
   outputCostPerMillionTokens,
   dataResidency,
 }: SettingsAdminAiModelHoverCardProps) => {
-  const ModelIcon = getModelIcon(modelFamily);
+  const ModelIcon = getModelIcon(modelFamily, providerName);
 
   const items = [
     {
@@ -115,7 +106,7 @@ export const SettingsAdminAiModelHoverCard = ({
           {
             Icon: IconFileText,
             label: t`Context`,
-            value: formatTokenCount(contextWindowTokens),
+            value: `${formatTokenCount(contextWindowTokens)} tokens`,
           },
         ]
       : []),
@@ -124,7 +115,7 @@ export const SettingsAdminAiModelHoverCard = ({
           {
             Icon: IconBolt,
             label: t`Max output`,
-            value: formatTokenCount(maxOutputTokens),
+            value: `${formatTokenCount(maxOutputTokens)} tokens`,
           },
         ]
       : []),

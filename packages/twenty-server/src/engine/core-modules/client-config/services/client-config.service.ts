@@ -8,6 +8,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import {
   type ClientAIModelConfig,
   type ClientConfig,
+  type NativeModelCapabilities,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
@@ -24,6 +25,21 @@ export class ClientConfigService {
     private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
   ) {}
+
+  // Capabilities that the AI SDK natively supports per provider
+  private deriveNativeCapabilities(
+    sdkPackage?: string,
+  ): NativeModelCapabilities | undefined {
+    switch (sdkPackage) {
+      case '@ai-sdk/openai':
+      case '@ai-sdk/anthropic':
+      case '@ai-sdk/amazon-bedrock':
+      case '@ai-sdk/groq':
+        return { webSearch: true };
+      default:
+        return undefined;
+    }
+  }
 
   private isCloudflareIntegrationEnabled(): boolean {
     return (
@@ -55,7 +71,10 @@ export class ClientConfigService {
           label: modelConfig?.label || registeredModel.modelId,
           modelFamily: modelConfig?.modelFamily,
           sdkPackage: registeredModel.sdkPackage,
-          nativeCapabilities: modelConfig?.nativeCapabilities,
+          providerName: registeredModel.providerName,
+          nativeCapabilities: this.deriveNativeCapabilities(
+            registeredModel.sdkPackage,
+          ),
           inputCostPerMillionTokensInCredits: modelConfig
             ? convertDollarsToBillingCredits(
                 modelConfig.inputCostPerMillionTokens,

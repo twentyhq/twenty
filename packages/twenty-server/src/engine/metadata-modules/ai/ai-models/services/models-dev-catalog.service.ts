@@ -1,33 +1,31 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-type ModelsDevModel = {
-  id: string;
-  name: string;
-  reasoning?: boolean;
-  tool_call?: boolean;
-  cost?: { input?: number; output?: number };
-  limit?: { context?: number; output?: number };
-};
-
-type ModelsDevProvider = {
-  id: string;
-  models: Record<string, ModelsDevModel>;
-};
-
-type ModelsDevData = Record<string, ModelsDevProvider>;
+import {
+  inferNpmPackage,
+  MODELS_DEV_API_URL,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-api.type';
 
 export type ModelsDevModelSuggestion = {
   modelId: string;
   name: string;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
+  cachedInputCostPerMillionTokens?: number;
+  cacheCreationCostPerMillionTokens?: number;
   contextWindowTokens: number;
   maxOutputTokens: number;
-  doesSupportThinking: boolean;
+  modalities: string[];
+  supportsReasoning: boolean;
+};
+
+export type ModelsDevProviderSuggestion = {
+  id: string;
+  modelCount: number;
+  npm: string;
 };
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-const MODELS_DEV_API_URL = 'https://models.dev/api.json';
 
 const NON_LANGUAGE_PATTERNS = [
   'embed',
@@ -46,6 +44,29 @@ export class ModelsDevCatalogService {
   private readonly logger = new Logger(ModelsDevCatalogService.name);
   private cache: ModelsDevData | null = null;
   private cacheTimestamp = 0;
+
+  async getProviderSuggestions(): Promise<ModelsDevProviderSuggestion[]> {
+    const data = await this.getCachedData();
+
+    if (!data) {
+      return [];
+    }
+
+    return Object.entries(data)
+      .filter(([, provider]) => {
+        const models = Object.keys(provider.models ?? {});
+
+        return models.some((modelId) => this.isLanguageModel(modelId));
+      })
+      .map(([id, provider]) => ({
+        id,
+        modelCount: Object.keys(provider.models ?? {}).filter((modelId) =>
+          this.isLanguageModel(modelId),
+        ).length,
+        npm: inferNpmPackage(id),
+      }))
+      .sort((a, b) => b.modelCount - a.modelCount);
+  }
 
   async getModelSuggestions(
     providerType: string,
@@ -69,9 +90,14 @@ export class ModelsDevCatalogService {
         name: model.name ?? modelId,
         inputCostPerMillionTokens: model.cost?.input ?? 0,
         outputCostPerMillionTokens: model.cost?.output ?? 0,
+        cachedInputCostPerMillionTokens: model.cost?.cache_read,
+        cacheCreationCostPerMillionTokens: model.cost?.cache_write,
         contextWindowTokens: model.limit?.context ?? 0,
         maxOutputTokens: model.limit?.output ?? 0,
-        doesSupportThinking: model.reasoning ?? false,
+        modalities: (model.modalities?.input ?? []).filter(
+          (modality) => modality !== 'text',
+        ),
+        supportsReasoning: model.reasoning ?? false,
       }));
   }
 

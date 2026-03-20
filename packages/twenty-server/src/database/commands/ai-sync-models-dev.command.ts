@@ -1,62 +1,117 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Logger } from '@nestjs/common';
 
-import { Command, CommandRunner } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
+import {
+  KNOWN_SDK_PROVIDERS,
+  MODELS_DEV_API_URL,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-api.type';
+import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 
-const MODELS_DEV_API_URL = 'https://models.dev/api.json';
-
-const RELEVANT_PROVIDERS = [
-  'openai',
-  'anthropic',
-  'google',
-  'mistral',
-  'xai',
-  'groq',
+// Non-language model prefixes to exclude
+const EXCLUDED_MODEL_PREFIXES = [
+  'text-embedding',
+  'embedding',
+  'dall-e',
+  'tts-',
+  'whisper',
+  'moderation',
+  'davinci',
+  'babbage',
+  'ada',
+  'curie',
+  'text-search',
+  'text-similarity',
+  'code-search',
+  'text-davinci',
+  'text-curie',
+  'text-babbage',
+  'text-ada',
+  'ft:',
+  'canary',
 ];
 
-type ModelsDevModel = {
-  id: string;
-  name: string;
-  reasoning?: boolean;
-  cost?: { input?: number; output?: number };
-  limit?: { context?: number; output?: number };
+const EXCLUDED_MODEL_SUFFIXES = ['-audio-preview', '-realtime-preview'];
+
+const LONG_CONTEXT_THRESHOLD_TOKENS = 200000;
+
+type ProviderLabels = Record<string, string>;
+
+const PROVIDER_LABELS: ProviderLabels = {
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  google: 'Google',
+  mistral: 'Mistral',
+  xai: 'xAI',
+  groq: 'Groq',
 };
 
-type ModelsDevProvider = {
-  id: string;
-  models: Record<string, ModelsDevModel>;
+const API_KEY_TEMPLATES: Record<string, string> = {
+  openai: '{{OPENAI_API_KEY}}',
+  anthropic: '{{ANTHROPIC_API_KEY}}',
+  google: '{{GOOGLE_API_KEY}}',
+  mistral: '{{MISTRAL_API_KEY}}',
+  xai: '{{XAI_API_KEY}}',
+  groq: '{{GROQ_API_KEY}}',
 };
 
-type ModelsDevData = Record<string, ModelsDevProvider>;
-
-type CatalogEntry = {
-  compositeId: string;
-  rawModelId: string;
-  providerName: string;
+type LongContextCostEntry = {
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;
+  cachedInputCostPerMillionTokens?: number;
+  cacheCreationCostPerMillionTokens?: number;
+  thresholdTokens: number;
 };
+
+type GeneratedModel = {
+  name: string;
+  label: string;
+  description?: string;
+  modelFamily?: string;
+  inputCostPerMillionTokens?: number;
+  outputCostPerMillionTokens?: number;
+  cachedInputCostPerMillionTokens?: number;
+  cacheCreationCostPerMillionTokens?: number;
+  longContextCost?: LongContextCostEntry;
+  contextWindowTokens?: number;
+  maxOutputTokens?: number;
+  modalities?: string[];
+  supportsReasoning?: boolean;
+  deprecated?: boolean;
+};
+
+type GeneratedProvider = {
+  npm: string;
+  label: string;
+  apiKey: string;
+  models: GeneratedModel[];
+};
+
+type CommandOptions = { dryRun?: boolean };
 
 @Command({
   name: 'ai:sync-models-dev',
   description:
-    'Compare ai-providers.json against models.dev API — reports pricing diffs, new models, and removed models',
+    'Generate ai-providers.json from models.dev API data with objective inclusion/deprecation criteria',
 })
 export class AiSyncModelsDevCommand extends CommandRunner {
   private readonly logger = new Logger(AiSyncModelsDevCommand.name);
 
-  async run(): Promise<void> {
-    const defaultProviders = loadDefaultAiProviders();
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Print what would change without writing ai-providers.json',
+    required: false,
+  })
+  parseDryRun(): boolean {
+    return true;
+  }
 
-    if (Object.keys(defaultProviders).length === 0) {
-      this.logger.error(
-        'No default providers found. Make sure ai-providers.json exists.',
-      );
-
-      return;
-    }
+  async run(_args: string[], options?: CommandOptions): Promise<void> {
+    const dryRun = options?.dryRun ?? false;
 
     this.logger.log('Fetching models.dev API...');
 
@@ -71,156 +126,235 @@ export class AiSyncModelsDevCommand extends CommandRunner {
     }
 
     const data: ModelsDevData = await response.json();
-    const catalogEntries = this.getCatalogEntries(defaultProviders);
-    const pricingDiffs = this.findPricingDiffs(catalogEntries, data);
-    const notInModelsdev = this.findMissingFromModelsdev(catalogEntries, data);
-    const newModels = this.findNewModels(catalogEntries, data);
 
-    this.printReport(pricingDiffs, notInModelsdev, newModels);
-  }
+    this.logger.log(
+      `Fetched ${Object.keys(data).length} providers from models.dev`,
+    );
 
-  private getCatalogEntries(providers: AiProvidersConfig): CatalogEntry[] {
-    const entries: CatalogEntry[] = [];
+    const generated = this.generateCatalog(data);
+    const json = JSON.stringify(generated, null, 2) + '\n';
 
-    for (const [key, config] of Object.entries(providers)) {
-      const providerName = config.name ?? key;
+    this.printSummary(generated);
 
-      for (const model of config.models ?? []) {
-        entries.push({
-          compositeId: `${providerName}/${model.rawModelId}`,
-          rawModelId: model.rawModelId,
-          providerName,
-          inputCostPerMillionTokens: model.inputCostPerMillionTokens ?? 0,
-          outputCostPerMillionTokens: model.outputCostPerMillionTokens ?? 0,
-        });
-      }
+    if (dryRun) {
+      this.logger.log('[DRY RUN] Would write ai-providers.json');
+
+      return;
     }
 
-    return entries;
+    const outputPath = path.resolve(
+      process.cwd(),
+      'src',
+      'engine',
+      'metadata-modules',
+      'ai',
+      'ai-models',
+      'ai-providers.json',
+    );
+
+    fs.writeFileSync(outputPath, json, 'utf-8');
+    this.logger.log(`Wrote ${outputPath}`);
   }
 
-  private findPricingDiffs(
-    catalogEntries: CatalogEntry[],
+  private generateCatalog(
     data: ModelsDevData,
-  ): string[] {
-    const diffs: string[] = [];
+  ): Record<string, GeneratedProvider> {
+    const result: Record<string, GeneratedProvider> = {};
 
-    for (const entry of catalogEntries) {
-      const model = data[entry.providerName]?.models[entry.rawModelId];
-
-      if (!model) continue;
-
-      const mdInput = model.cost?.input ?? 0;
-      const mdOutput = model.cost?.output ?? 0;
-
-      if (
-        Math.abs(mdInput - entry.inputCostPerMillionTokens) > 0.001 ||
-        Math.abs(mdOutput - entry.outputCostPerMillionTokens) > 0.001
-      ) {
-        diffs.push(
-          `  ${entry.compositeId}:` +
-            `\n    input:  ours=$${entry.inputCostPerMillionTokens} models.dev=$${mdInput}` +
-            `\n    output: ours=$${entry.outputCostPerMillionTokens} models.dev=$${mdOutput}`,
-        );
-      }
-    }
-
-    return diffs;
-  }
-
-  private findMissingFromModelsdev(
-    catalogEntries: CatalogEntry[],
-    data: ModelsDevData,
-  ): string[] {
-    const missing: string[] = [];
-
-    for (const entry of catalogEntries) {
-      const providerData = data[entry.providerName];
+    for (const providerName of KNOWN_SDK_PROVIDERS) {
+      const providerData = data[providerName];
 
       if (!providerData) {
-        missing.push(
-          `  ${entry.compositeId} (provider ${entry.providerName} not found)`,
+        this.logger.warn(`Provider "${providerName}" not found in models.dev`);
+        continue;
+      }
+
+      const models = this.buildModelsForProvider(
+        providerName,
+        providerData.models,
+      );
+
+      if (models.length === 0) {
+        this.logger.warn(
+          `No qualifying models for "${providerName}", skipping`,
         );
         continue;
       }
 
-      if (!providerData.models[entry.rawModelId]) {
-        missing.push(`  ${entry.compositeId}`);
-      }
+      result[providerName] = {
+        npm: `@ai-sdk/${providerName}`,
+        label: PROVIDER_LABELS[providerName] ?? providerName,
+        apiKey: API_KEY_TEMPLATES[providerName] ?? '',
+        models,
+      };
     }
 
-    return missing;
+    return result;
   }
 
-  private findNewModels(
-    catalogEntries: CatalogEntry[],
-    data: ModelsDevData,
-  ): string[] {
-    const catalogRawIdsByProvider = new Map<string, Set<string>>();
+  private buildModelsForProvider(
+    providerName: string,
+    modelsDevModels: Record<string, { name: string } & Record<string, unknown>>,
+  ): GeneratedModel[] {
+    const qualifying: GeneratedModel[] = [];
 
-    for (const entry of catalogEntries) {
-      if (!catalogRawIdsByProvider.has(entry.providerName)) {
-        catalogRawIdsByProvider.set(entry.providerName, new Set());
+    for (const [modelId, modelData] of Object.entries(modelsDevModels)) {
+      if (!this.isLanguageModel(modelId)) continue;
+      if (!this.meetsInclusionCriteria(modelData)) continue;
+
+      const family = inferModelFamily(providerName, modelId);
+
+      const model: GeneratedModel = {
+        name: modelId,
+        label: modelData.name ?? modelId,
+        modelFamily: family,
+      };
+
+      this.extractCost(modelData, model);
+      this.extractLimits(modelData, model);
+      this.extractModalities(modelData, model);
+
+      if (modelData.reasoning === true) {
+        model.supportsReasoning = true;
       }
-      catalogRawIdsByProvider.get(entry.providerName)!.add(entry.rawModelId);
+
+      if (modelData.status === 'deprecated') {
+        model.deprecated = true;
+      }
+
+      qualifying.push(model);
     }
 
-    const newModels: string[] = [];
-
-    for (const providerName of RELEVANT_PROVIDERS) {
-      const providerData = data[providerName];
-
-      if (!providerData) continue;
-
-      const knownRawIds =
-        catalogRawIdsByProvider.get(providerName) ?? new Set();
-
-      for (const [modelId, model] of Object.entries(providerData.models)) {
-        if (!knownRawIds.has(modelId)) {
-          const cost = model.cost
-            ? `$${model.cost.input ?? '?'}/$${model.cost.output ?? '?'}`
-            : 'no pricing';
-
-          newModels.push(`  ${providerName}/${modelId} (${cost})`);
-        }
-      }
-    }
-
-    return newModels;
+    return qualifying;
   }
 
-  private printReport(
-    pricingDiffs: string[],
-    notInModelsdev: string[],
-    newModels: string[],
+  private extractCost(
+    modelData: Record<string, unknown>,
+    model: GeneratedModel,
   ): void {
-    this.logger.log('=== models.dev Sync Report ===');
+    const cost = modelData.cost as Record<string, unknown> | undefined;
 
-    if (pricingDiffs.length > 0) {
-      this.logger.log(`PRICING DIFFS (${pricingDiffs.length}):`);
-      this.logger.log(pricingDiffs.join('\n'));
-    } else {
-      this.logger.log('No pricing diffs found.');
+    if (!cost) return;
+
+    if (typeof cost.input === 'number') {
+      model.inputCostPerMillionTokens = cost.input;
+    }
+    if (typeof cost.output === 'number') {
+      model.outputCostPerMillionTokens = cost.output;
+    }
+    if (typeof cost.cache_read === 'number') {
+      model.cachedInputCostPerMillionTokens = cost.cache_read;
+    }
+    if (typeof cost.cache_write === 'number') {
+      model.cacheCreationCostPerMillionTokens = cost.cache_write;
     }
 
-    if (notInModelsdev.length > 0) {
-      this.logger.log(`NOT IN models.dev (${notInModelsdev.length}):`);
-      this.logger.log(notInModelsdev.join('\n'));
+    const longCtx = cost.context_over_200k as
+      | Record<string, unknown>
+      | undefined;
+
+    if (longCtx && typeof longCtx.input === 'number') {
+      model.longContextCost = {
+        inputCostPerMillionTokens: longCtx.input as number,
+        outputCostPerMillionTokens: (longCtx.output as number) ?? 0,
+        thresholdTokens: LONG_CONTEXT_THRESHOLD_TOKENS,
+      };
+      if (typeof longCtx.cache_read === 'number') {
+        model.longContextCost.cachedInputCostPerMillionTokens =
+          longCtx.cache_read;
+      }
+      if (typeof longCtx.cache_write === 'number') {
+        model.longContextCost.cacheCreationCostPerMillionTokens =
+          longCtx.cache_write;
+      }
+    }
+  }
+
+  private extractLimits(
+    modelData: Record<string, unknown>,
+    model: GeneratedModel,
+  ): void {
+    const limit = modelData.limit as Record<string, unknown> | undefined;
+
+    if (!limit) return;
+
+    if (typeof limit.context === 'number') {
+      model.contextWindowTokens = limit.context;
+    }
+    if (typeof limit.output === 'number') {
+      model.maxOutputTokens = limit.output;
+    }
+  }
+
+  private extractModalities(
+    modelData: Record<string, unknown>,
+    model: GeneratedModel,
+  ): void {
+    const modalities = modelData.modalities as { input?: string[] } | undefined;
+
+    if (!modalities?.input) return;
+
+    const relevant = modalities.input.filter((modality) => modality !== 'text');
+
+    if (relevant.length > 0) {
+      model.modalities = relevant;
+    }
+  }
+
+  private isLanguageModel(modelId: string): boolean {
+    const lowerId = modelId.toLowerCase();
+
+    for (const prefix of EXCLUDED_MODEL_PREFIXES) {
+      if (lowerId.startsWith(prefix)) return false;
     }
 
-    if (newModels.length > 0) {
-      this.logger.log(`NEW MODELS AVAILABLE (${newModels.length}):`);
-      this.logger.log(newModels.join('\n'));
-    } else {
-      this.logger.log('No new models available.');
+    for (const suffix of EXCLUDED_MODEL_SUFFIXES) {
+      if (lowerId.endsWith(suffix)) return false;
     }
 
-    if (pricingDiffs.length > 0) {
-      this.logger.warn(
-        'Action needed: review pricing diffs above and update ai-providers.json',
+    return true;
+  }
+
+  private meetsInclusionCriteria(modelData: Record<string, unknown>): boolean {
+    if (modelData.status === 'beta') return false;
+    if (modelData.tool_call !== true) return false;
+
+    const cost = modelData.cost as
+      | { input?: number; output?: number }
+      | undefined;
+
+    if (cost?.input === undefined) return false;
+
+    const limit = modelData.limit as
+      | { context?: number; output?: number }
+      | undefined;
+
+    if (limit?.context === undefined) return false;
+
+    return true;
+  }
+
+  private printSummary(catalog: Record<string, GeneratedProvider>): void {
+    this.logger.log('=== Generation Summary ===');
+
+    let totalModels = 0;
+    let deprecatedCount = 0;
+
+    for (const [providerName, provider] of Object.entries(catalog)) {
+      const deprecated = provider.models.filter(
+        (model) => model.deprecated,
+      ).length;
+      const active = provider.models.length - deprecated;
+
+      this.logger.log(
+        `  ${providerName}: ${provider.models.length} models (${active} active, ${deprecated} deprecated)`,
       );
-    } else {
-      this.logger.log('All good! Catalog is in sync with models.dev pricing.');
+      totalModels += provider.models.length;
+      deprecatedCount += deprecated;
     }
+
+    this.logger.log(
+      `Total: ${totalModels} models (${totalModels - deprecatedCount} active, ${deprecatedCount} deprecated)`,
+    );
   }
 }

@@ -17,8 +17,8 @@ export type BillingUsageInput = {
 };
 
 @Injectable()
-export class AIBillingService {
-  private readonly logger = new Logger(AIBillingService.name);
+export class AiBillingService {
+  private readonly logger = new Logger(AiBillingService.name);
 
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -27,11 +27,6 @@ export class AIBillingService {
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
     const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
-
-    if (!model) {
-      throw new Error(`AI model with id ${modelId} not found`);
-    }
-
     const { usage, cacheCreationTokens = 0 } = billingInput;
 
     const breakdown = computeCostBreakdown(model, {

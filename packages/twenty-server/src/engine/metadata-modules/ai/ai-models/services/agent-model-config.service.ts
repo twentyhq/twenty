@@ -144,7 +144,7 @@ export class AgentModelConfigService {
   private getAnthropicProviderOptions(
     model: RegisteredAIModel,
   ): ProviderOptions {
-    if (!model.doesSupportThinking) {
+    if (!model.supportsReasoning) {
       return {};
     }
 
@@ -159,7 +159,7 @@ export class AgentModelConfigService {
   }
 
   private getBedrockProviderOptions(model: RegisteredAIModel): ProviderOptions {
-    if (!model.doesSupportThinking) {
+    if (!model.supportsReasoning) {
       return {};
     }
 

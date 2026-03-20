@@ -14,12 +14,21 @@ export class ModelsDevModelSuggestionDTO {
   @Field(() => Number)
   outputCostPerMillionTokens: number;
 
+  @Field(() => Number, { nullable: true })
+  cachedInputCostPerMillionTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  cacheCreationCostPerMillionTokens?: number;
+
   @Field(() => Number)
   contextWindowTokens: number;
 
   @Field(() => Number)
   maxOutputTokens: number;
 
+  @Field(() => [String])
+  modalities: string[];
+
   @Field(() => Boolean)
-  doesSupportThinking: boolean;
+  supportsReasoning: boolean;
 }

@@ -49,7 +49,13 @@ export class AiModelPreferencesService {
   async setDefaultModel(
     role: 'smart' | 'fast',
     modelId: string,
+    modelDefCache: Map<
+      string,
+      { providerName: string; modelDef: AiProviderModelConfig }
+    >,
   ): Promise<void> {
+    this.validateModelExists(modelId, modelDefCache);
+
     const prefs = { ...this.getPreferences() };
     const key = role === 'fast' ? 'defaultFastModels' : 'defaultSmartModels';
 
