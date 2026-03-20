@@ -74,87 +74,62 @@ export const getStackedBarDimensions = ({
   const valuePixelDelta =
     stackRange === 0 ? 0 : stackValueToPixel(Math.abs(value));
 
+  const clampToAxis = (pixel: number) =>
+    Math.max(0, Math.min(valueAxisLength, pixel));
+
   if (isVertical && isNegative) {
-    const currentStack = negativeStackPixel;
     const newStack = negativeStackPixel - valuePixelDelta;
-
-    const clampedCurrentStack = Math.max(
-      0,
-      Math.min(valueAxisLength, currentStack),
-    );
-    const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-
-    const height = clampedCurrentStack - clampedNewStack;
+    const clampedCurrent = clampToAxis(negativeStackPixel);
+    const clampedNew = clampToAxis(newStack);
 
     return {
       x: categoryPosition,
-      y: valueAxisLength - clampedCurrentStack,
+      y: valueAxisLength - clampedCurrent,
       width: barThickness,
-      height,
+      height: clampedCurrent - clampedNew,
       newPositiveStackPixel: positiveStackPixel,
       newNegativeStackPixel: newStack,
     };
   }
 
   if (isVertical) {
-    const currentStack = positiveStackPixel;
     const newStack = positiveStackPixel + valuePixelDelta;
-
-    const clampedCurrentStack = Math.max(
-      0,
-      Math.min(valueAxisLength, currentStack),
-    );
-    const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-
-    const height = clampedNewStack - clampedCurrentStack;
+    const clampedCurrent = clampToAxis(positiveStackPixel);
+    const clampedNew = clampToAxis(newStack);
 
     return {
       x: categoryPosition,
-      y: valueAxisLength - clampedNewStack,
+      y: valueAxisLength - clampedNew,
       width: barThickness,
-      height,
+      height: clampedNew - clampedCurrent,
       newPositiveStackPixel: newStack,
       newNegativeStackPixel: negativeStackPixel,
     };
   }
 
   if (isNegative) {
-    const currentStack = negativeStackPixel;
     const newStack = negativeStackPixel - valuePixelDelta;
-
-    const clampedCurrentStack = Math.max(
-      0,
-      Math.min(valueAxisLength, currentStack),
-    );
-    const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-
-    const width = clampedCurrentStack - clampedNewStack;
+    const clampedCurrent = clampToAxis(negativeStackPixel);
+    const clampedNew = clampToAxis(newStack);
 
     return {
-      x: clampedNewStack,
+      x: clampedNew,
       y: categoryPosition,
-      width,
+      width: clampedCurrent - clampedNew,
       height: barThickness,
       newPositiveStackPixel: positiveStackPixel,
       newNegativeStackPixel: newStack,
     };
   }
 
-  const currentStack = positiveStackPixel;
   const newStack = positiveStackPixel + valuePixelDelta;
-
-  const clampedCurrentStack = Math.max(
-    0,
-    Math.min(valueAxisLength, currentStack),
-  );
-  const clampedNewStack = Math.max(0, Math.min(valueAxisLength, newStack));
-
-  const width = clampedNewStack - clampedCurrentStack;
+  const clampedCurrent = clampToAxis(positiveStackPixel);
+  const clampedNew = clampToAxis(newStack);
 
   return {
-    x: clampedCurrentStack,
+    x: clampedCurrent,
     y: categoryPosition,
-    width,
+    width: clampedNew - clampedCurrent,
     height: barThickness,
     newPositiveStackPixel: newStack,
     newNegativeStackPixel: negativeStackPixel,

@@ -55,6 +55,13 @@ export const computeValueTickValues = ({
   }
 
   if (preserveDomainBounds) {
+    if (minimum > maximum) {
+      return {
+        tickValues: [minimum],
+        domain: { min: minimum, max: minimum },
+      };
+    }
+
     const tickValues: number[] = [Number(minimum.toFixed(12))];
     const firstInteriorTick =
       Math.ceil(minimum / niceStepInterval) * niceStepInterval;

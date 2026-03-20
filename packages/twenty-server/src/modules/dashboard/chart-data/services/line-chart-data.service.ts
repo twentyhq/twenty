@@ -235,14 +235,12 @@ export class LineChartDataService {
         )
       : rawResults;
 
-    const rangeFilteredResults = filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -357,14 +355,12 @@ export class LineChartDataService {
 
     const isStacked = configuration.isStacked ?? false;
 
-    const rangeFilteredResults = filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -479,13 +475,11 @@ export class LineChartDataService {
 
     const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
-    const filteredXValues = limitedXValues;
-
     const series = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
       const prefixedSeriesId = `${seriesIdPrefix}${seriesId}`;
 
-      let dataPoints = filteredXValues.map((xValue) => ({
+      let dataPoints = limitedXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
       }));

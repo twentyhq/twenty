@@ -228,14 +228,12 @@ export class BarChartDataService {
         )
       : rawResults;
 
-    const rangeFilteredResults = filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -361,14 +359,12 @@ export class BarChartDataService {
       configuration.groupMode ?? BarChartGroupMode.STACKED;
     const isStacked = effectiveGroupMode === BarChartGroupMode.STACKED;
 
-    const rangeFilteredResults = filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,

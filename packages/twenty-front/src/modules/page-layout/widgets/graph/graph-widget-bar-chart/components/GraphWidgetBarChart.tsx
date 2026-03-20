@@ -26,6 +26,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
+import { isNumber } from '@sniptt/guards';
 import { useContext, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -170,10 +171,10 @@ export const GraphWidgetBarChart = ({
     const labels: string[] = [];
     for (const dataItem of data) {
       for (const visibleKey of visibleKeys) {
-        if (isDefined(dataItem[visibleKey])) {
-          labels.push(
-            formatGraphValue(dataItem[visibleKey] as number, formatOptions),
-          );
+        const value = dataItem[visibleKey];
+
+        if (isNumber(value)) {
+          labels.push(formatGraphValue(value, formatOptions));
         }
       }
     }
