@@ -105,7 +105,7 @@ export const SettingsAdminAiProviderDetail = () => {
       await removeModelFromProvider({
         variables: {
           providerName,
-          name: modelToRemove.name,
+          modelName: modelToRemove.name,
         },
         refetchQueries: [
           { query: GET_AI_PROVIDERS },

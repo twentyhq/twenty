@@ -18,11 +18,7 @@ export const getModelsDevLogoIcon = (providerId: string): IconComponent => {
     return cached;
   }
 
-  const ModelsDevLogo = ({
-    size = 16,
-    className,
-    style,
-  }: ModelsDevLogoProps) =>
+  const ModelsDevLogo = ({ size = 16, className, style }: ModelsDevLogoProps) =>
     createElement('img', {
       src: `${MODELS_DEV_LOGO_BASE}/${providerId}.svg`,
       alt: providerId,
