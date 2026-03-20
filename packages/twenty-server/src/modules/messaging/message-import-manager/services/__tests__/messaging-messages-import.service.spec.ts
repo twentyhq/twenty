@@ -22,6 +22,7 @@ import { MessagingGetMessagesService } from 'src/modules/messaging/message-impor
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
 describe('MessagingMessagesImportService', () => {
@@ -125,6 +126,12 @@ describe('MessagingMessagesImportService', () => {
           executeInWorkspaceContext: jest
             .fn()
             .mockImplementation((fn: () => any, _authContext?: any) => fn()),
+        },
+      },
+      {
+        provide: MessageChannelDataAccessService,
+        useValue: {
+          update: jest.fn().mockResolvedValue(undefined),
         },
       },
       {
