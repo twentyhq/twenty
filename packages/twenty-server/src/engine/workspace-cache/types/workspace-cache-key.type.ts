@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { type EntityMetadata } from 'typeorm';
 
+import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -66,7 +67,7 @@ export type AdditionalCacheDataMaps = {
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   applicationVariableMaps: ApplicationVariableCacheMaps;
-  graphQLResolverNameMap: Record<string, GraphQLResolverNameMapEntry>;
+  graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &

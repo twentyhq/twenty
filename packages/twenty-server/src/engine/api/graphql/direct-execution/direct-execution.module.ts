@@ -14,10 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
     WorkspaceResolverBuilderModule,
   ],
-  providers: [
-    DirectExecutionService,
-    WorkspaceResolverNameMapCacheService,
-  ],
+  providers: [DirectExecutionService, WorkspaceResolverNameMapCacheService],
   exports: [DirectExecutionService],
 })
 export class DirectExecutionModule {}

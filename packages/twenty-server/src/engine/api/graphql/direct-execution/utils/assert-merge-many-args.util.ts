@@ -22,11 +22,7 @@ export function assertMergeManyArgs(
 
   const argKeys = Object.keys(args);
 
-  const allowedKeys = new Set([
-    'ids',
-    'conflictPriorityIndex',
-    'dryRun',
-  ]);
+  const allowedKeys = new Set(['ids', 'conflictPriorityIndex', 'dryRun']);
 
   for (const key of argKeys) {
     if (!allowedKeys.has(key)) {
