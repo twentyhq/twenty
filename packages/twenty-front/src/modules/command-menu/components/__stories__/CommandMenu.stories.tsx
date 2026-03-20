@@ -46,6 +46,7 @@ import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const openTimeout = 50;
+const longTooltipDelayInMs = 1000;
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
@@ -308,12 +309,21 @@ export const PinnedActionTooltip: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
+    const tooltipButton = await canvas.findByRole('button', {
+      name: 'Navigate to next record',
+    });
+
+    await waitFor(() => expect(tooltipButton).toBeVisible());
     const tooltipTrigger = await canvas.findByTestId('tooltip');
 
+    await waitFor(() => expect(tooltipTrigger).toBeVisible());
     await userEvent.hover(tooltipTrigger);
 
-    const tooltip = await body.findByRole('tooltip');
+    const tooltip = await within(document.body).findByRole(
+      'tooltip',
+      {},
+      { timeout: longTooltipDelayInMs + 1000 },
+    );
 
     await waitFor(() => expect(tooltip).toBeVisible());
   },
