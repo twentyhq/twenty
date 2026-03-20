@@ -37,6 +37,7 @@ import { useMessages } from '@/whatsapp-chat/hooks/useMessages';
 import { useSendMessage } from '@/whatsapp-chat/hooks/useSendMessage';
 import { useSessions } from '@/whatsapp-chat/hooks/useSessions';
 import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
+import { useHealthStatus } from '@/whatsapp-chat/hooks/useHealthStatus';
 import { useWhatsAppWebSocket } from '@/whatsapp-chat/hooks/useWhatsAppWebSocket';
 import {
   type WaConversation,
@@ -80,27 +81,31 @@ const StyledEmptySubtext = styled.span`
   font-weight: 400;
 `;
 
-const StyledConnectionStatus = styled.div<{ connected: boolean }>`
+const StyledHealthBanner = styled.div<{ level: 'error' | 'warning' }>`
   align-items: center;
-  background: ${({ connected }) =>
-    connected ? '#F0FDF4' : '#FEF2F2'};
-  border-bottom: 1px solid ${({ connected }) =>
-    connected ? '#BBF7D0' : '#FECACA'};
-  color: ${({ connected }) =>
-    connected ? '#166534' : '#DC2626'};
+  background: ${({ level }) =>
+    level === 'error' ? '#FEF2F2' : '#FFFBEB'};
+  border-bottom: 1px solid
+    ${({ level }) => (level === 'error' ? '#FECACA' : '#FDE68A')};
+  color: ${({ level }) =>
+    level === 'error' ? '#DC2626' : '#92400E'};
   display: flex;
+  flex-direction: column;
   font-size: 12px;
-  gap: 4px;
-  justify-content: center;
-  padding: 2px;
+  gap: 2px;
+  padding: 6px 12px;
 `;
 
-const StyledDot = styled.div<{ connected: boolean }>`
-  background: ${({ connected }) =>
-    connected ? '#22C55E' : '#EF4444'};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
+const StyledHealthMessage = styled.div`
+  align-items: center;
+  display: flex;
+  font-weight: 600;
+  gap: 6px;
+`;
+
+const StyledHealthDetail = styled.div`
+  font-weight: 400;
+  opacity: 0.8;
 `;
 
 const StyledSessionHeader = styled.div`
@@ -314,6 +319,8 @@ export const WhatsAppChatContainer = () => {
   } = useWhatsAppWebSocket({
     onEvent: handleWebSocketEvent,
   });
+
+  const healthStatus = useHealthStatus(connected, activeSessionName ?? null);
 
   // Subscribe to conversation WebSocket channel when it changes
   useEffect(() => {
@@ -551,12 +558,16 @@ export const WhatsAppChatContainer = () => {
       />
 
       <StyledCenterPanel>
-        {!connected && (
-          <StyledConnectionStatus connected={false}>
-            <StyledDot connected={false} />
-            Reconnecting to WhatsApp bridge...
-          </StyledConnectionStatus>
-        )}
+        {healthStatus.issues.map((issue, i) => (
+          <StyledHealthBanner key={i} level={issue.level}>
+            <StyledHealthMessage>
+              {issue.level === 'error' ? '\u26A0' : '\u26A0'} {issue.message}
+            </StyledHealthMessage>
+            {issue.detail && (
+              <StyledHealthDetail>{issue.detail}</StyledHealthDetail>
+            )}
+          </StyledHealthBanner>
+        ))}
 
         {selectedConversation ? (
           <>
