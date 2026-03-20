@@ -6,6 +6,14 @@ import {
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
+  ConnectedAccountException,
+  ConnectedAccountExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/connected-account.exception';
+import {
+  MessageChannelException,
+  MessageChannelExceptionCode,
+} from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import {
   MessageFolderException,
   MessageFolderExceptionCode,
 } from 'src/engine/metadata-modules/message-folder/message-folder.exception';
@@ -22,6 +30,27 @@ export const messageFolderGraphqlApiExceptionHandler = (error: Error) => {
       default: {
         return assertUnreachable(error.code);
       }
+    }
+  }
+
+  // Ownership checks cascade through message channel and connected account
+  if (error instanceof MessageChannelException) {
+    switch (error.code) {
+      case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:
+      case MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND:
+        throw new ForbiddenError(error);
+      default:
+        break;
+    }
+  }
+
+  if (error instanceof ConnectedAccountException) {
+    switch (error.code) {
+      case ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION:
+      case ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
+        throw new ForbiddenError(error);
+      default:
+        break;
     }
   }
 

@@ -9,6 +9,10 @@ import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
 } from 'src/engine/metadata-modules/calendar-channel/calendar-channel.exception';
+import {
+  ConnectedAccountException,
+  ConnectedAccountExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 
 export const calendarChannelGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof CalendarChannelException) {
@@ -22,6 +26,17 @@ export const calendarChannelGraphqlApiExceptionHandler = (error: Error) => {
       default: {
         return assertUnreachable(error.code);
       }
+    }
+  }
+
+  // Ownership checks cascade through connected account
+  if (error instanceof ConnectedAccountException) {
+    switch (error.code) {
+      case ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION:
+      case ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
+        throw new ForbiddenError(error);
+      default:
+        break;
     }
   }
 
