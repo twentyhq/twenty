@@ -1,20 +1,20 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import {
   FeatureFlagGuard,
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-message-channel.input';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
@@ -26,13 +26,15 @@ import { MessageChannelMetadataService } from 'src/engine/metadata-modules/messa
 export class MessageChannelResolver {
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   @Query(() => [MessageChannelDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(NoPermissionGuard)
   @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async messageChannels(
+  async myMessageChannels(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('connectedAccountId', {
       type: () => UUIDScalarType,
       nullable: true,
@@ -40,59 +42,48 @@ export class MessageChannelResolver {
     connectedAccountId?: string,
   ): Promise<MessageChannelDTO[]> {
     if (connectedAccountId) {
+      await this.connectedAccountMetadataService.verifyOwnership(
+        connectedAccountId,
+        userWorkspaceId,
+        workspace.id,
+      );
+
       return this.messageChannelMetadataService.findByConnectedAccountId(
         connectedAccountId,
         workspace.id,
       );
     }
 
-    return this.messageChannelMetadataService.findAll(workspace.id);
-  }
+    const userAccountIds =
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds(
+        userWorkspaceId,
+        workspace.id,
+      );
 
-  @Query(() => MessageChannelDTO, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async messageChannel(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<MessageChannelDTO | null> {
-    return this.messageChannelMetadataService.findById(id, workspace.id);
-  }
-
-  @Mutation(() => MessageChannelDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async createMessageChannel(
-    @Args('input') input: CreateMessageChannelInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<MessageChannelDTO> {
-    return this.messageChannelMetadataService.create({
-      ...input,
-      workspaceId: workspace.id,
-    });
+    return this.messageChannelMetadataService.findByConnectedAccountIds(
+      userAccountIds,
+      workspace.id,
+    );
   }
 
   @Mutation(() => MessageChannelDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(NoPermissionGuard)
   @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async updateMessageChannel(
     @Args('input') input: UpdateMessageChannelInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<MessageChannelDTO> {
+    await this.messageChannelMetadataService.verifyOwnership(
+      input.id,
+      userWorkspaceId,
+      workspace.id,
+    );
+
     return this.messageChannelMetadataService.update(
       input.id,
       workspace.id,
       input.update,
     );
-  }
-
-  @Mutation(() => MessageChannelDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async deleteMessageChannel(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<MessageChannelDTO> {
-    return this.messageChannelMetadataService.delete(id, workspace.id);
   }
 }

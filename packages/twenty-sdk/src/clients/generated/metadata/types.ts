@@ -87,8 +87,8 @@ export default {
         352,
         364,
         365,
-        483,
-        484
+        477,
+        478
     ],
     "types": {
         "BillingProductDTO": {
@@ -4346,9 +4346,6 @@ export default {
             "isSyncEnabled": [
                 6
             ],
-            "syncCursor": [
-                1
-            ],
             "syncedAt": [
                 4
             ],
@@ -4385,12 +4382,6 @@ export default {
             "provider": [
                 1
             ],
-            "accessToken": [
-                1
-            ],
-            "refreshToken": [
-                1
-            ],
             "lastCredentialsRefreshedAt": [
                 4
             ],
@@ -4403,14 +4394,8 @@ export default {
             "scopes": [
                 1
             ],
-            "connectionParameters": [
-                15
-            ],
             "lastSignedInAt": [
                 4
-            ],
-            "oidcTokenClaims": [
-                15
             ],
             "userWorkspaceId": [
                 3
@@ -4459,9 +4444,6 @@ export default {
             "isSyncEnabled": [
                 6
             ],
-            "syncCursor": [
-                1
-            ],
             "syncedAt": [
                 4
             ],
@@ -4507,9 +4489,6 @@ export default {
             "name": [
                 1
             ],
-            "syncCursor": [
-                1
-            ],
             "isSentFolder": [
                 6
             ],
@@ -4518,9 +4497,6 @@ export default {
             ],
             "parentFolderId": [
                 3
-            ],
-            "externalId": [
-                1
             ],
             "pendingSyncAction": [
                 250
@@ -6484,7 +6460,7 @@ export default {
             "getSSOIdentityProviders": [
                 184
             ],
-            "messageFolders": [
+            "myMessageFolders": [
                 249,
                 {
                     "messageChannelId": [
@@ -6492,33 +6468,7 @@ export default {
                     ]
                 }
             ],
-            "messageFolder": [
-                249,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "calendarChannels": [
-                235,
-                {
-                    "connectedAccountId": [
-                        3
-                    ]
-                }
-            ],
-            "calendarChannel": [
-                235,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "messageChannels": [
+            "myMessageChannels": [
                 241,
                 {
                     "connectedAccountId": [
@@ -6526,24 +6476,17 @@ export default {
                     ]
                 }
             ],
-            "messageChannel": [
-                241,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
+            "myConnectedAccounts": [
+                240
             ],
             "connectedAccounts": [
                 240
             ],
-            "connectedAccount": [
-                240,
+            "myCalendarChannels": [
+                235,
                 {
-                    "id": [
-                        3,
-                        "UUID!"
+                    "connectedAccountId": [
+                        3
                     ]
                 }
             ],
@@ -8446,66 +8389,12 @@ export default {
                     ]
                 }
             ],
-            "createMessageFolder": [
-                249,
-                {
-                    "input": [
-                        459,
-                        "CreateMessageFolderInput!"
-                    ]
-                }
-            ],
             "updateMessageFolder": [
                 249,
                 {
                     "input": [
-                        460,
+                        459,
                         "UpdateMessageFolderInput!"
-                    ]
-                }
-            ],
-            "deleteMessageFolder": [
-                249,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createCalendarChannel": [
-                235,
-                {
-                    "input": [
-                        462,
-                        "CreateCalendarChannelInput!"
-                    ]
-                }
-            ],
-            "updateCalendarChannel": [
-                235,
-                {
-                    "input": [
-                        463,
-                        "UpdateCalendarChannelInput!"
-                    ]
-                }
-            ],
-            "deleteCalendarChannel": [
-                235,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createMessageChannel": [
-                241,
-                {
-                    "input": [
-                        465,
-                        "CreateMessageChannelInput!"
                     ]
                 }
             ],
@@ -8513,35 +8402,8 @@ export default {
                 241,
                 {
                     "input": [
-                        466,
+                        461,
                         "UpdateMessageChannelInput!"
-                    ]
-                }
-            ],
-            "deleteMessageChannel": [
-                241,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createConnectedAccount": [
-                240,
-                {
-                    "input": [
-                        468,
-                        "CreateConnectedAccountInput!"
-                    ]
-                }
-            ],
-            "updateConnectedAccount": [
-                240,
-                {
-                    "input": [
-                        469,
-                        "UpdateConnectedAccountInput!"
                     ]
                 }
             ],
@@ -8554,11 +8416,20 @@ export default {
                     ]
                 }
             ],
+            "updateCalendarChannel": [
+                235,
+                {
+                    "input": [
+                        463,
+                        "UpdateCalendarChannelInput!"
+                    ]
+                }
+            ],
             "createWebhook": [
                 256,
                 {
                     "input": [
-                        471,
+                        465,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -8567,7 +8438,7 @@ export default {
                 256,
                 {
                     "input": [
-                        472,
+                        466,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -8588,7 +8459,7 @@ export default {
                 221,
                 {
                     "input": [
-                        474,
+                        468,
                         "CreateSkillInput!"
                     ]
                 }
@@ -8597,7 +8468,7 @@ export default {
                 221,
                 {
                     "input": [
-                        475,
+                        469,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -8694,7 +8565,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        476,
+                        470,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -8706,7 +8577,7 @@ export default {
                 154,
                 {
                     "input": [
-                        478,
+                        472,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -8879,7 +8750,7 @@ export default {
                 68,
                 {
                     "input": [
-                        479,
+                        473,
                         "CreateOneAppTokenInput!"
                     ]
                 }
@@ -8912,7 +8783,7 @@ export default {
                 6,
                 {
                     "workspaceMigration": [
-                        481,
+                        475,
                         "WorkspaceMigrationInput!"
                     ]
                 }
@@ -8986,7 +8857,7 @@ export default {
                         "String!"
                     ],
                     "fileFolder": [
-                        484,
+                        478,
                         "FileFolder!"
                     ],
                     "filePath": [
@@ -10983,86 +10854,56 @@ export default {
                 1
             ]
         },
-        "CreateMessageFolderInput": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "isSentFolder": [
-                6
-            ],
-            "isSynced": [
-                6
-            ],
-            "externalId": [
-                1
-            ],
-            "pendingSyncAction": [
-                250
-            ],
-            "messageChannelId": [
-                3
-            ],
-            "parentFolderId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "UpdateMessageFolderInput": {
             "id": [
                 3
             ],
             "update": [
-                461
+                460
             ],
             "__typename": [
                 1
             ]
         },
         "UpdateMessageFolderInputUpdates": {
-            "name": [
-                1
-            ],
-            "syncCursor": [
-                1
-            ],
             "isSynced": [
                 6
-            ],
-            "pendingSyncAction": [
-                250
             ],
             "__typename": [
                 1
             ]
         },
-        "CreateCalendarChannelInput": {
+        "UpdateMessageChannelInput": {
             "id": [
                 3
             ],
-            "handle": [
+            "update": [
+                462
+            ],
+            "__typename": [
                 1
-            ],
+            ]
+        },
+        "UpdateMessageChannelInputUpdates": {
             "visibility": [
-                238
-            ],
-            "syncStage": [
-                237
-            ],
-            "connectedAccountId": [
-                3
+                242
             ],
             "isContactAutoCreationEnabled": [
                 6
             ],
             "contactAutoCreationPolicy": [
-                239
+                244
+            ],
+            "messageFolderImportPolicy": [
+                245
             ],
             "isSyncEnabled": [
+                6
+            ],
+            "excludeNonProfessionalEmails": [
+                6
+            ],
+            "excludeGroupEmails": [
                 6
             ],
             "__typename": [
@@ -11097,141 +10938,6 @@ export default {
                 1
             ]
         },
-        "CreateMessageChannelInput": {
-            "id": [
-                3
-            ],
-            "handle": [
-                1
-            ],
-            "visibility": [
-                242
-            ],
-            "type": [
-                243
-            ],
-            "syncStage": [
-                248
-            ],
-            "connectedAccountId": [
-                3
-            ],
-            "isContactAutoCreationEnabled": [
-                6
-            ],
-            "contactAutoCreationPolicy": [
-                244
-            ],
-            "messageFolderImportPolicy": [
-                245
-            ],
-            "excludeNonProfessionalEmails": [
-                6
-            ],
-            "excludeGroupEmails": [
-                6
-            ],
-            "pendingGroupEmailsAction": [
-                246
-            ],
-            "isSyncEnabled": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateMessageChannelInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                467
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateMessageChannelInputUpdates": {
-            "visibility": [
-                242
-            ],
-            "isContactAutoCreationEnabled": [
-                6
-            ],
-            "contactAutoCreationPolicy": [
-                244
-            ],
-            "messageFolderImportPolicy": [
-                245
-            ],
-            "isSyncEnabled": [
-                6
-            ],
-            "excludeNonProfessionalEmails": [
-                6
-            ],
-            "excludeGroupEmails": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateConnectedAccountInput": {
-            "id": [
-                3
-            ],
-            "handle": [
-                1
-            ],
-            "provider": [
-                1
-            ],
-            "accessToken": [
-                1
-            ],
-            "refreshToken": [
-                1
-            ],
-            "scopes": [
-                1
-            ],
-            "userWorkspaceId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateConnectedAccountInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                470
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateConnectedAccountInputUpdates": {
-            "accessToken": [
-                1
-            ],
-            "refreshToken": [
-                1
-            ],
-            "handleAliases": [
-                1
-            ],
-            "scopes": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "CreateWebhookInput": {
             "id": [
                 3
@@ -11257,7 +10963,7 @@ export default {
                 3
             ],
             "update": [
-                473
+                467
             ],
             "__typename": [
                 1
@@ -11331,13 +11037,13 @@ export default {
         },
         "EmailAccountConnectionParameters": {
             "IMAP": [
-                477
+                471
             ],
             "SMTP": [
-                477
+                471
             ],
             "CALDAV": [
-                477
+                471
             ],
             "__typename": [
                 1
@@ -11376,7 +11082,7 @@ export default {
         },
         "CreateOneAppTokenInput": {
             "appToken": [
-                480
+                474
             ],
             "__typename": [
                 1
@@ -11392,7 +11098,7 @@ export default {
         },
         "WorkspaceMigrationInput": {
             "actions": [
-                482
+                476
             ],
             "__typename": [
                 1
@@ -11400,7 +11106,7 @@ export default {
         },
         "WorkspaceMigrationDeleteActionInput": {
             "type": [
-                483
+                477
             ],
             "metadataName": [
                 252
@@ -11428,7 +11134,7 @@ export default {
                 218,
                 {
                     "input": [
-                        486,
+                        480,
                         "LogicFunctionLogsInput!"
                     ]
                 }

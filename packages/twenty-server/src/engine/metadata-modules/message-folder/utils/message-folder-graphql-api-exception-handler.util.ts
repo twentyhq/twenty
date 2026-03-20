@@ -1,6 +1,7 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -16,6 +17,8 @@ export const messageFolderGraphqlApiExceptionHandler = (error: Error) => {
         throw new NotFoundError(error);
       case MessageFolderExceptionCode.INVALID_MESSAGE_FOLDER_INPUT:
         throw new UserInputError(error);
+      case MessageFolderExceptionCode.MESSAGE_FOLDER_OWNERSHIP_VIOLATION:
+        throw new ForbiddenError(error);
       default: {
         return assertUnreachable(error.code);
       }

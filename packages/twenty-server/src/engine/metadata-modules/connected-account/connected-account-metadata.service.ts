@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
+import {
+  ConnectedAccountException,
+  ConnectedAccountExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -17,11 +21,67 @@ export class ConnectedAccountMetadataService {
     return this.repository.find({ where: { workspaceId } });
   }
 
+  async findByUserWorkspaceId(
+    userWorkspaceId: string,
+    workspaceId: string,
+  ): Promise<ConnectedAccountDTO[]> {
+    return this.repository.find({
+      where: { userWorkspaceId, workspaceId },
+    });
+  }
+
   async findById(
     id: string,
     workspaceId: string,
   ): Promise<ConnectedAccountDTO | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
+  }
+
+  async findByIds(
+    ids: string[],
+    workspaceId: string,
+  ): Promise<ConnectedAccountDTO[]> {
+    return this.repository.find({
+      where: { id: In(ids), workspaceId },
+    });
+  }
+
+  async verifyOwnership(
+    id: string,
+    userWorkspaceId: string,
+    workspaceId: string,
+  ): Promise<ConnectedAccountEntity> {
+    const entity = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (!entity) {
+      throw new ConnectedAccountException(
+        `Connected account ${id} not found`,
+        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+      );
+    }
+
+    if (entity.userWorkspaceId !== userWorkspaceId) {
+      throw new ConnectedAccountException(
+        `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,
+        ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION,
+      );
+    }
+
+    return entity;
+  }
+
+  async getUserConnectedAccountIds(
+    userWorkspaceId: string,
+    workspaceId: string,
+  ): Promise<string[]> {
+    const accounts = await this.repository.find({
+      where: { userWorkspaceId, workspaceId },
+      select: ['id'],
+    });
+
+    return accounts.map((account) => account.id);
   }
 
   async create(

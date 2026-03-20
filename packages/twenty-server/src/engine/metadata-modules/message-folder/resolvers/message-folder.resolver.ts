@@ -1,20 +1,21 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import {
   FeatureFlagGuard,
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateMessageFolderInput } from 'src/engine/metadata-modules/message-folder/dtos/create-message-folder.input';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
 import { UpdateMessageFolderInput } from 'src/engine/metadata-modules/message-folder/dtos/update-message-folder.input';
 import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-folder/interceptors/message-folder-graphql-api-exception.interceptor';
@@ -26,13 +27,16 @@ import { MessageFolderMetadataService } from 'src/engine/metadata-modules/messag
 export class MessageFolderResolver {
   constructor(
     private readonly messageFolderMetadataService: MessageFolderMetadataService,
+    private readonly messageChannelMetadataService: MessageChannelMetadataService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   @Query(() => [MessageFolderDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(NoPermissionGuard)
   @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async messageFolders(
+  async myMessageFolders(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('messageChannelId', {
       type: () => UUIDScalarType,
       nullable: true,
@@ -40,59 +44,56 @@ export class MessageFolderResolver {
     messageChannelId?: string,
   ): Promise<MessageFolderDTO[]> {
     if (messageChannelId) {
+      await this.messageChannelMetadataService.verifyOwnership(
+        messageChannelId,
+        userWorkspaceId,
+        workspace.id,
+      );
+
       return this.messageFolderMetadataService.findByMessageChannelId(
         messageChannelId,
         workspace.id,
       );
     }
 
-    return this.messageFolderMetadataService.findAll(workspace.id);
-  }
+    const userAccountIds =
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds(
+        userWorkspaceId,
+        workspace.id,
+      );
 
-  @Query(() => MessageFolderDTO, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async messageFolder(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<MessageFolderDTO | null> {
-    return this.messageFolderMetadataService.findById(id, workspace.id);
-  }
+    const userChannels =
+      await this.messageChannelMetadataService.findByConnectedAccountIds(
+        userAccountIds,
+        workspace.id,
+      );
 
-  @Mutation(() => MessageFolderDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async createMessageFolder(
-    @Args('input') input: CreateMessageFolderInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<MessageFolderDTO> {
-    return this.messageFolderMetadataService.create({
-      ...input,
-      workspaceId: workspace.id,
-    });
+    const userChannelIds = userChannels.map((channel) => channel.id);
+
+    return this.messageFolderMetadataService.findByMessageChannelIds(
+      userChannelIds,
+      workspace.id,
+    );
   }
 
   @Mutation(() => MessageFolderDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(NoPermissionGuard)
   @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async updateMessageFolder(
     @Args('input') input: UpdateMessageFolderInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<MessageFolderDTO> {
+    await this.messageFolderMetadataService.verifyOwnership(
+      input.id,
+      userWorkspaceId,
+      workspace.id,
+    );
+
     return this.messageFolderMetadataService.update(
       input.id,
       workspace.id,
       input.update,
     );
-  }
-
-  @Mutation(() => MessageFolderDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
-  async deleteMessageFolder(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<MessageFolderDTO> {
-    return this.messageFolderMetadataService.delete(id, workspace.id);
   }
 }

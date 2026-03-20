@@ -1,24 +1,15 @@
 import { styled } from '@linaria/react';
 
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import {
-  type MessageChannel,
-  MessageChannelSyncStage,
-} from '@/accounts/types/MessageChannel';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import React, { useCallback } from 'react';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import React, { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -31,48 +22,17 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     activeTabIdComponentState,
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,
   );
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setSettingsAccountsSelectedMessageChannel = useSetAtomState(
     settingsAccountsSelectedMessageChannelState,
   );
 
-  const { records: accounts } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
-      },
-    },
-  });
+  const { channels: messageChannels } = useMyMessageChannels();
 
-  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-    depth: 1,
-  });
-
-  const { records: messageChannels } = useFindManyRecords<
-    MessageChannel & {
-      connectedAccount: ConnectedAccount;
+  useEffect(() => {
+    if (messageChannels.length > 0) {
+      setSettingsAccountsSelectedMessageChannel(messageChannels[0]);
     }
-  >({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-    filter: {
-      connectedAccountId: {
-        in: accounts.map((account) => account.id),
-      },
-      isSyncEnabled: {
-        eq: true,
-      },
-      syncStage: {
-        neq: MessageChannelSyncStage.PENDING_CONFIGURATION,
-      },
-    },
-    recordGqlFields,
-    onCompleted: (data) => {
-      setSettingsAccountsSelectedMessageChannel(data[0]);
-    },
-    skip: !accounts.length,
-  });
+  }, [messageChannels, setSettingsAccountsSelectedMessageChannel]);
 
   const tabs = messageChannels.map((messageChannel) => ({
     id: messageChannel.id,

@@ -25,9 +25,7 @@ export class MessageFolderDTO {
   @Field(() => String, { nullable: true })
   name: string | null;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
+  @HideField()
   syncCursor: string | null;
 
   @IsBoolean()
@@ -43,9 +41,7 @@ export class MessageFolderDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   parentFolderId: string | null;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
+  @HideField()
   externalId: string | null;
 
   @IsEnum(MessageFolderPendingSyncAction)
