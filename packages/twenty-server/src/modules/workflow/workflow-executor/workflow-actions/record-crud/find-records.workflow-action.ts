@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -93,6 +94,28 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         };
       })
       .filter(isDefined);
+
+    const OPERANDS_WITHOUT_VALUE = [
+      ViewFilterOperand.IS_EMPTY,
+      ViewFilterOperand.IS_NOT_EMPTY,
+      ViewFilterOperand.IS_IN_PAST,
+      ViewFilterOperand.IS_IN_FUTURE,
+      ViewFilterOperand.IS_TODAY,
+    ];
+
+    if (workflowActionInput.filter?.recordFilters) {
+      for (const filter of workflowActionInput.filter.recordFilters) {
+        if (
+          !OPERANDS_WITHOUT_VALUE.includes(filter.operand) &&
+          (!isDefined(filter.value) || filter.value === '')
+        ) {
+          throw new WorkflowStepExecutorException(
+            `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
+            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+          );
+        }
+      }
+    }
 
     const gqlOperationFilter =
       workflowActionInput.filter?.recordFilters &&
