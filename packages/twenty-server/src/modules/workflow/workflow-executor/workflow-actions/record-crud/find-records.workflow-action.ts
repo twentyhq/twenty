@@ -98,6 +98,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const OPERANDS_WITHOUT_VALUE = [
       ViewFilterOperand.IS_EMPTY,
       ViewFilterOperand.IS_NOT_EMPTY,
+      ViewFilterOperand.IS_NOT_NULL,
       ViewFilterOperand.IS_IN_PAST,
       ViewFilterOperand.IS_IN_FUTURE,
       ViewFilterOperand.IS_TODAY,
