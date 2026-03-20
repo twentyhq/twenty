@@ -7,14 +7,14 @@ import { expect, within } from 'storybook/test';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
-import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -35,14 +35,15 @@ import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/sta
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
-  GraphOrderBy,
-  WidgetType,
   AggregateOperations,
   AxisNameDisplay,
   BarChartLayout,
+  FieldDisplayMode,
+  GraphOrderBy,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -1023,7 +1024,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: accountOwnerField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1142,7 +1143,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyPeopleField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1253,7 +1254,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyPeopleField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',

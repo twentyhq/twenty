@@ -5,6 +5,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -220,12 +221,12 @@ const buildFieldWidgetConfiguration = ({
     configuration: {
       configurationType: WidgetConfigurationType.FIELD,
       fieldMetadataId: fieldMetadataId ?? fieldUniversalIdentifier,
-      layout: 'CARD' as const,
+      fieldDisplayMode: FieldDisplayMode.CARD,
     },
     universalConfiguration: {
       configurationType: WidgetConfigurationType.FIELD,
       fieldMetadataId: fieldUniversalIdentifier,
-      layout: 'CARD' as const,
+      fieldDisplayMode: FieldDisplayMode.CARD,
     },
   };
 };
