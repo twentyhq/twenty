@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
+  IconFileCheck,
   IconSearch,
   IconSettings,
   IconSparkles,
@@ -70,6 +71,12 @@ export const MainNavigationDrawerFixedItems = () => {
             mouseUpNavigation={true}
           />
         )}
+        <NavigationDrawerItem
+          label="COAT"
+          Icon={IconFileCheck}
+          to="/coat-approval"
+          active={location.pathname.startsWith('/coat-approval')}
+        />
         <NavigationDrawerItem
           label="Transcripts"
           Icon={IconVideo}
