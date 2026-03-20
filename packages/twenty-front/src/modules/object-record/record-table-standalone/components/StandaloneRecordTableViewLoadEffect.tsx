@@ -29,8 +29,7 @@ export const StandaloneRecordTableViewLoadEffect = ({
     viewId,
   });
 
-  const viewHasFields =
-    isDefined(view) && view.viewFields.length > 0;
+  const viewHasFields = isDefined(view) && view.viewFields.length > 0;
 
   useEffect(() => {
     if (!isDefined(view)) {

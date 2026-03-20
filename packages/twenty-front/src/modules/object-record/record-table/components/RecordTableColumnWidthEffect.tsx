@@ -26,8 +26,7 @@ export const RecordTableColumnWidthEffect = () => {
     resizedFieldMetadataIdComponentState,
   );
 
-  const { visibleRecordFields, recordTableId } =
-    useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
 
   const shouldCompactRecordTableFirstColumn = useAtomComponentStateValue(
     shouldCompactRecordTableFirstColumnComponentState,
@@ -72,30 +71,35 @@ export const RecordTableColumnWidthEffect = () => {
       lastColumnWidth +
       visibleRecordFields.length;
 
-    updateRecordTableCSSVariable(recordTableId, 
+    updateRecordTableCSSVariable(
+      recordTableId,
       RECORD_TABLE_VIRTUALIZATION_BODY_PLACEHOLDER_WIDTH_CSS_VARIABLE_NAME,
       `${totalTableBodyWidth}px`,
     );
 
-    updateRecordTableCSSVariable(recordTableId, 
+    updateRecordTableCSSVariable(
+      recordTableId,
       RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
       `${lastColumnWidth}px`,
     );
 
-    updateRecordTableCSSVariable(recordTableId, 
+    updateRecordTableCSSVariable(
+      recordTableId,
       RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
       `${lastColumnWidth}px`,
     );
 
     for (const [index, recordField] of visibleRecordFields.entries()) {
-      updateRecordTableCSSVariable(recordTableId, 
+      updateRecordTableCSSVariable(
+        recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(index),
         `${recordField.size}px`,
       );
     }
 
     if (shouldCompactRecordTableFirstColumn) {
-      updateRecordTableCSSVariable(recordTableId, 
+      updateRecordTableCSSVariable(
+        recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(0),
         `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`,
       );
@@ -103,7 +107,8 @@ export const RecordTableColumnWidthEffect = () => {
       const firstColumnWidth =
         visibleRecordFields[0]?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH;
 
-      updateRecordTableCSSVariable(recordTableId, 
+      updateRecordTableCSSVariable(
+        recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(0),
         `${firstColumnWidth}px`,
       );

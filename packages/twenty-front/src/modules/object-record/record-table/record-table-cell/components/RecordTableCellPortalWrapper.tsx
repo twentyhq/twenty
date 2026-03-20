@@ -20,8 +20,9 @@ export const RecordTableCellPortalWrapper = ({
     position.row,
   );
 
-  const tableCellAnchorElement =
-    document.body.querySelector<HTMLAnchorElement>(`#${cellId}`);
+  const tableCellAnchorElement = document.body.querySelector<HTMLAnchorElement>(
+    `#${cellId}`,
+  );
 
   if (!isDefined(tableCellAnchorElement)) {
     return null;

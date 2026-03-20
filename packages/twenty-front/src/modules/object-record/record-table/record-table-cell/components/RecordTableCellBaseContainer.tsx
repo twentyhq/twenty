@@ -77,7 +77,11 @@ export const RecordTableCellBaseContainer = ({
       fontColorSecondary={theme.font.color.secondary}
       fontColorMedium={theme.border.color.medium}
       isReadOnly={isReadOnly ?? false}
-      id={getRecordTableCellId(recordTableId, cellPosition.column, cellPosition.row)}
+      id={getRecordTableCellId(
+        recordTableId,
+        cellPosition.column,
+        cellPosition.row,
+      )}
       data-record-table-col={cellPosition.column}
       data-record-table-row={cellPosition.row}
       data-click-outside-id={

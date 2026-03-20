@@ -7,31 +7,30 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMapRecordFieldToViewFieldWithCurrentAggregateOperation =
-  () => {
-    const store = useStore();
+export const useMapRecordFieldToViewFieldWithCurrentAggregateOperation = () => {
+  const store = useStore();
 
-    const mapRecordFieldToViewFieldWithCurrentAggregateOperation = useCallback(
-      (recordField: RecordField): Omit<ViewField, 'definition'> => {
-        const viewField = mapRecordFieldToViewField(recordField);
+  const mapRecordFieldToViewFieldWithCurrentAggregateOperation = useCallback(
+    (recordField: RecordField): Omit<ViewField, 'definition'> => {
+      const viewField = mapRecordFieldToViewField(recordField);
 
-        const extendedAggregateOperation = store.get(
-          viewFieldAggregateOperationState.atomFamily({
-            viewFieldId: recordField.id,
-          }),
-        );
+      const extendedAggregateOperation = store.get(
+        viewFieldAggregateOperationState.atomFamily({
+          viewFieldId: recordField.id,
+        }),
+      );
 
-        return {
-          ...viewField,
-          aggregateOperation: isDefined(extendedAggregateOperation)
-            ? convertExtendedAggregateOperationToAggregateOperation(
-                extendedAggregateOperation,
-              )
-            : viewField.aggregateOperation,
-        };
-      },
-      [store],
-    );
+      return {
+        ...viewField,
+        aggregateOperation: isDefined(extendedAggregateOperation)
+          ? convertExtendedAggregateOperationToAggregateOperation(
+              extendedAggregateOperation,
+            )
+          : viewField.aggregateOperation,
+      };
+    },
+    [store],
+  );
 
-    return { mapRecordFieldToViewFieldWithCurrentAggregateOperation };
-  };
+  return { mapRecordFieldToViewFieldWithCurrentAggregateOperation };
+};

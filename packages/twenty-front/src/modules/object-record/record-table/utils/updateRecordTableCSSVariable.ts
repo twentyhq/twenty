@@ -6,8 +6,6 @@ export const updateRecordTableCSSVariable = (
   newValue: string,
 ) => {
   document
-    .querySelector<HTMLDivElement>(
-      `#${getRecordTableHtmlId(recordTableId)}`,
-    )
+    .querySelector<HTMLDivElement>(`#${getRecordTableHtmlId(recordTableId)}`)
     ?.style.setProperty(cssVariableName, newValue);
 };

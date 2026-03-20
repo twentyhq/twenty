@@ -34,8 +34,7 @@ export interface RecordTableEmptyProps {
 }
 
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
-  const { visibleRecordFields, recordTableId } =
-    useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
 
   const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
     isRecordTableColumnHeadersReadOnlyComponentState,
@@ -74,7 +73,8 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
 
   const leftColumnsWidth = isRecordTableColumnHeadersReadOnly
     ? 0
-    : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH + RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
+    : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH +
+      RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
 
   const emptyTableContainerComputedWidth =
     visibleRecordFieldsWidth +

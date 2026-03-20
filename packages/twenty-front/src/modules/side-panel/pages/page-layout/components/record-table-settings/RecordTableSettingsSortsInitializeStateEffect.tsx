@@ -45,12 +45,7 @@ export const RecordTableSettingsSortsInitializeStateEffect = ({
 
     setCurrentRecordSorts(recordSorts);
     setHasInitializedSorts(true);
-  }, [
-    view,
-    hasInitializedSorts,
-    stateAlreadyHasSorts,
-    setCurrentRecordSorts,
-  ]);
+  }, [view, hasInitializedSorts, stateAlreadyHasSorts, setCurrentRecordSorts]);
 
   return null;
 };

@@ -126,12 +126,14 @@ export const useTriggerInitialRecordTableDataLoad = () => {
 
         resetVirtualizedRowTreadmill();
 
-        updateRecordTableCSSVariable(recordTableId, 
+        updateRecordTableCSSVariable(
+          recordTableId,
           RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
           'hidden',
         );
 
-        updateRecordTableCSSVariable(recordTableId, 
+        updateRecordTableCSSVariable(
+          recordTableId,
           RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
           'hidden',
         );

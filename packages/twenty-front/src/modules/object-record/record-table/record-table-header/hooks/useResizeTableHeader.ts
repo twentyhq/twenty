@@ -103,7 +103,8 @@ export const useResizeTableHeader = () => {
         findById(recordField.id),
       );
 
-      updateRecordTableCSSVariable(recordTableId, 
+      updateRecordTableCSSVariable(
+        recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(recordFieldIndex),
         `${newWidth}px`,
       );
@@ -117,7 +118,8 @@ export const useResizeTableHeader = () => {
 
       const newLastColumnWidth = lastColumnWidth - newResizeOffset;
 
-      updateRecordTableCSSVariable(recordTableId, 
+      updateRecordTableCSSVariable(
+        recordTableId,
         RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
         `${newLastColumnWidth}px`,
       );
@@ -127,7 +129,8 @@ export const useResizeTableHeader = () => {
         lastColumnWidth + newResizeOffset,
       );
 
-      updateRecordTableCSSVariable(recordTableId, 
+      updateRecordTableCSSVariable(
+        recordTableId,
         RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
         `${newGroupSectionLastColumnWidth}px`,
       );
