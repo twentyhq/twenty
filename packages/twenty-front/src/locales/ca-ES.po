@@ -2699,7 +2699,7 @@ msgid "Change Password"
 msgstr "Canvia la contrasenya"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Change subdomain?"
 msgstr "Canviar el subdomini?"
 
@@ -3862,12 +3862,15 @@ msgid "Custom"
 msgstr "Personalitzat"
 
 #. js-lingui-id: XQ681Q
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Domini Personalitzat"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Custom domain updated"
 msgstr "Domini personalitzat actualitzat"
 
@@ -3904,11 +3907,6 @@ msgstr "Personalització"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
 msgid "Customize"
 msgstr ""
-
-#. js-lingui-id: CMhr4u
-#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
-msgid "Customize Domain"
-msgstr "Personalitza el Domini"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -4694,10 +4692,13 @@ msgstr "No conté"
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "Domini"
+
+#. js-lingui-id: 0nBpE2
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
+msgid "Domain already taken"
+msgstr ""
 
 #. js-lingui-id: OjtVhh
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -4714,8 +4715,9 @@ msgstr "Configuració de domini"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "Dominis"
@@ -7569,6 +7571,16 @@ msgstr "Patró cron no vàlid: {errorMessage}"
 msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
 msgstr "Valor de dia no vàlid '{newDay}'. Hauria de ser un enter més gran que 1"
 
+#. js-lingui-id: u3hwhx
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr ""
+
+#. js-lingui-id: Vxmaf0
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Please include at least one subdomain (e.g., sub.example.com)."
+msgstr ""
+
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -7590,11 +7602,6 @@ msgstr "Enllaç de verificació del correu electrònic invàlid."
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
 msgstr "Fitxer invàlid"
-
-#. js-lingui-id: QdoUFL
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid form values"
-msgstr "Valors del formulari no vàlids"
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -9272,11 +9279,6 @@ msgstr "Sense cos"
 #: src/modules/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput.tsx
 msgid "No calling code"
 msgstr ""
-
-#. js-lingui-id: OTe3RI
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "No change detected"
-msgstr "No s'ha detectat cap canvi"
 
 #. js-lingui-id: wgUPZ1
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -12892,18 +12894,30 @@ msgid "Sub-Fields"
 msgstr "Sub-camps"
 
 #. js-lingui-id: ku9TbG
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "Subdomini"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain already taken"
 msgstr "Subdomini ja ocupat"
 
+#. js-lingui-id: OlC/tU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be longer than 30 characters"
+msgstr ""
+
+#. js-lingui-id: ZETwlU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr ""
+
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain updated"
 msgstr "Subdomini actualitzat"
 
@@ -13612,6 +13626,11 @@ msgstr "Aquesta configuració només es pot configurar a través de variables d'
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This should never happen"
 msgstr "Això mai hauria de passar"
+
+#. js-lingui-id: Ryrt8E
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "This subdomain is reserved"
+msgstr ""
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -14438,6 +14457,11 @@ msgstr "Utilitza aplicacions d'autenticació i extensions de navegador com 1Pass
 msgid "Use best models only"
 msgstr ""
 
+#. js-lingui-id: oTTQsc
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr ""
+
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
@@ -15093,7 +15117,6 @@ msgstr "Fluxos de treball"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -15127,6 +15150,8 @@ msgstr "Fluxos de treball"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -15363,7 +15388,7 @@ msgid "You will lose all your mappings."
 msgstr "Perdràs tots els teus mapatges."
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Esteu a punt de canviar el subdomini de l'espai de treball. Aquesta acció farà que tots els usuaris es tanquin la sessió."
 

@@ -2699,7 +2699,7 @@ msgid "Change Password"
 msgstr "更改密碼"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Change subdomain?"
 msgstr "更換子域名？"
 
@@ -3862,12 +3862,15 @@ msgid "Custom"
 msgstr "自訂"
 
 #. js-lingui-id: XQ681Q
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "自定義域名"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Custom domain updated"
 msgstr "自訂網域已更新"
 
@@ -3904,11 +3907,6 @@ msgstr "自定義"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
 msgid "Customize"
 msgstr ""
-
-#. js-lingui-id: CMhr4u
-#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
-msgid "Customize Domain"
-msgstr "自定義域名"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -4694,10 +4692,13 @@ msgstr "不包含"
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "域名"
+
+#. js-lingui-id: 0nBpE2
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
+msgid "Domain already taken"
+msgstr ""
 
 #. js-lingui-id: OjtVhh
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -4714,8 +4715,9 @@ msgstr "域名設置"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "域名"
@@ -7569,6 +7571,16 @@ msgstr "無效的 cron 格式：{errorMessage}"
 msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
 msgstr "無效的日值「{newDay}」。應為大於 1 的整數"
 
+#. js-lingui-id: u3hwhx
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr ""
+
+#. js-lingui-id: Vxmaf0
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Please include at least one subdomain (e.g., sub.example.com)."
+msgstr ""
+
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -7590,11 +7602,6 @@ msgstr "無效的電子郵件驗證鏈接。"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
 msgstr "無效的文件"
-
-#. js-lingui-id: QdoUFL
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid form values"
-msgstr "無效的表單值"
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -9272,11 +9279,6 @@ msgstr "沒有主體"
 #: src/modules/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput.tsx
 msgid "No calling code"
 msgstr ""
-
-#. js-lingui-id: OTe3RI
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "No change detected"
-msgstr "未檢測到變更"
 
 #. js-lingui-id: wgUPZ1
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -12892,18 +12894,30 @@ msgid "Sub-Fields"
 msgstr "子欄位"
 
 #. js-lingui-id: ku9TbG
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "子域"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain already taken"
 msgstr "子域名已被佔用"
 
+#. js-lingui-id: OlC/tU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be longer than 30 characters"
+msgstr ""
+
+#. js-lingui-id: ZETwlU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr ""
+
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain updated"
 msgstr "子域已更新"
 
@@ -13612,6 +13626,11 @@ msgstr "此設置只能通過環境變量配置。"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This should never happen"
 msgstr "這不應該發生"
+
+#. js-lingui-id: Ryrt8E
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "This subdomain is reserved"
+msgstr ""
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -14438,6 +14457,11 @@ msgstr "使用 authenticator 應用和瀏覽器擴充功能，如 1Password、Au
 msgid "Use best models only"
 msgstr ""
 
+#. js-lingui-id: oTTQsc
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr ""
+
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
@@ -15093,7 +15117,6 @@ msgstr "Workflow"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -15127,6 +15150,8 @@ msgstr "Workflow"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -15363,7 +15388,7 @@ msgid "You will lose all your mappings."
 msgstr "您將失去所有的映射。"
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "您即將更改工作區子域名。此操作將會使所有用戶登出。"
 

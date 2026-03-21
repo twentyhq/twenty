@@ -2694,7 +2694,7 @@ msgid "Change Password"
 msgstr "Change Password"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Change subdomain?"
 msgstr "Change subdomain?"
 
@@ -3857,12 +3857,15 @@ msgid "Custom"
 msgstr "Custom"
 
 #. js-lingui-id: XQ681Q
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Custom Domain"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Custom domain updated"
 msgstr "Custom domain updated"
 
@@ -3899,11 +3902,6 @@ msgstr "Customization"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
 msgid "Customize"
 msgstr "Customize"
-
-#. js-lingui-id: CMhr4u
-#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
-msgid "Customize Domain"
-msgstr "Customize Domain"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -4689,10 +4687,13 @@ msgstr "Doesn't contain"
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "Domain"
+
+#. js-lingui-id: 0nBpE2
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
+msgid "Domain already taken"
+msgstr "Domain already taken"
 
 #. js-lingui-id: OjtVhh
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -4709,8 +4710,9 @@ msgstr "Domain Setup"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "Domains"
@@ -7564,6 +7566,16 @@ msgstr "Invalid cron pattern: {errorMessage}"
 msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
 msgstr "Invalid day value '{newDay}'. Should be integer greater than 1"
 
+#. js-lingui-id: u3hwhx
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+
+#. js-lingui-id: Vxmaf0
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Please include at least one subdomain (e.g., sub.example.com)."
+msgstr "Invalid domain. Please include at least one subdomain (e.g., sub.example.com)."
+
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -7585,11 +7597,6 @@ msgstr "Invalid email verification link."
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
 msgstr "Invalid File"
-
-#. js-lingui-id: QdoUFL
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid form values"
-msgstr "Invalid form values"
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -9267,11 +9274,6 @@ msgstr "No body"
 #: src/modules/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput.tsx
 msgid "No calling code"
 msgstr "No calling code"
-
-#. js-lingui-id: OTe3RI
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "No change detected"
-msgstr "No change detected"
 
 #. js-lingui-id: wgUPZ1
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -12887,18 +12889,30 @@ msgid "Sub-Fields"
 msgstr "Sub-Fields"
 
 #. js-lingui-id: ku9TbG
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "Subdomain"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain already taken"
 msgstr "Subdomain already taken"
 
+#. js-lingui-id: OlC/tU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be longer than 30 characters"
+msgstr "Subdomain can not be longer than 30 characters"
+
+#. js-lingui-id: ZETwlU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr "Subdomain can not be shorter than 3 characters"
+
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain updated"
 msgstr "Subdomain updated"
 
@@ -13609,6 +13623,11 @@ msgstr "This setting can only be configured through environment variables."
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This should never happen"
 msgstr "This should never happen"
+
+#. js-lingui-id: Ryrt8E
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "This subdomain is reserved"
+msgstr "This subdomain is reserved"
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -14435,6 +14454,11 @@ msgstr "Use authenticator apps and browser extensions like 1Password, Authy, Mic
 msgid "Use best models only"
 msgstr "Use best models only"
 
+#. js-lingui-id: oTTQsc
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
+msgstr "Use letter, number and dash only. Start and finish with a letter or a number"
+
 #. js-lingui-id: c6uZUV
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
@@ -15090,7 +15114,6 @@ msgstr "Workflows"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -15124,6 +15147,8 @@ msgstr "Workflows"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -15360,7 +15385,7 @@ msgid "You will lose all your mappings."
 msgstr "You will lose all your mappings."
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "You're about to change your workspace subdomain. This action will log out all users."
 
