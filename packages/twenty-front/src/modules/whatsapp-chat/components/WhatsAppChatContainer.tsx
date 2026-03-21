@@ -434,7 +434,6 @@ export const WhatsAppChatContainer = () => {
           type: type as 'image' | 'voice',
           mediaBase64: base64,
           mediaMimetype: file.type,
-          body: file.name,
           mediaUrl: blobUrl,
         });
       };

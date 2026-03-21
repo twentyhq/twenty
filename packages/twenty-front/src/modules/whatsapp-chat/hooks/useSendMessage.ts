@@ -96,7 +96,7 @@ export const useSendMessage = ({
         conversationId,
         sessionName,
         fromAgent: true,
-        body: body ?? (type === 'image' ? 'Photo' : 'Voice message'),
+        body: body ?? null,
         messageTimestamp: new Date().toISOString(),
         status: 'SENDING',
         hasMedia: true,

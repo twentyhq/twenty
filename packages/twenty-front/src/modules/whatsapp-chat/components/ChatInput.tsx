@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import {
+  type ClipboardEvent,
   type FocusEventHandler,
   type KeyboardEvent,
   useCallback,
@@ -15,6 +16,7 @@ import {
   IconPaperclip,
   IconSend,
   IconTrash,
+  IconX,
 } from 'twenty-ui/display';
 import { IconMic } from '@/whatsapp-chat/components/IconMic';
 
@@ -134,6 +136,40 @@ const StyledTimer = styled.span`
   min-width: 40px;
 `;
 
+const StyledPreviewRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: 8px;
+`;
+
+const StyledPreviewImage = styled.img`
+  border: 1px solid #E5E7EB;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  max-height: 80px;
+  max-width: 120px;
+  object-fit: cover;
+`;
+
+const StyledRemovePreview = styled.button`
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  margin-left: -28px;
+  margin-top: -68px;
+  width: 20px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+`;
+
 const formatDuration = (seconds: number): string => {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
@@ -160,6 +196,8 @@ export const ChatInput = ({
   const [text, setText] = useState('');
   const [recording, setRecording] = useState(false);
   const [duration, setDuration] = useState(0);
+  const [pastedFile, setPastedFile] = useState<File | null>(null);
+  const [pastedPreview, setPastedPreview] = useState<string | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -206,6 +244,14 @@ export const ChatInput = ({
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+
+  const clearPastedFile = useCallback(() => {
+    if (pastedPreview) {
+      URL.revokeObjectURL(pastedPreview);
+    }
+    setPastedFile(null);
+    setPastedPreview(null);
+  }, [pastedPreview]);
 
   const stopRecording = useCallback(() => {
     if (timerRef.current) {
@@ -309,9 +355,21 @@ export const ChatInput = ({
   }, []);
 
   const handleSend = useCallback(() => {
-    const trimmed = text.trim();
+    if (disabled) return;
 
-    if (!trimmed || disabled) return;
+    // If there's a pasted image, send it
+    if (pastedFile && onSendMedia) {
+      onSendMedia(pastedFile);
+      clearPastedFile();
+      setText('');
+      if (textAreaRef.current) {
+        textAreaRef.current.style.height = 'auto';
+      }
+      return;
+    }
+
+    const trimmed = text.trim();
+    if (!trimmed) return;
 
     onSendText(trimmed);
     setText('');
@@ -319,7 +377,7 @@ export const ChatInput = ({
     if (textAreaRef.current) {
       textAreaRef.current.style.height = 'auto';
     }
-  }, [text, disabled, onSendText]);
+  }, [text, disabled, onSendText, pastedFile, onSendMedia, clearPastedFile]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -329,6 +387,29 @@ export const ChatInput = ({
       }
     },
     [handleSend],
+  );
+
+  const handlePaste = useCallback(
+    (e: ClipboardEvent<HTMLTextAreaElement>) => {
+      if (!onSendMedia) return;
+
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          if (file) {
+            const preview = URL.createObjectURL(file);
+            setPastedFile(file);
+            setPastedPreview(preview);
+          }
+          return;
+        }
+      }
+    },
+    [onSendMedia],
   );
 
   const handleFileChange = useCallback(
@@ -347,6 +428,7 @@ export const ChatInput = ({
   );
 
   const hasText = text.trim().length > 0;
+  const hasContent = hasText || pastedFile !== null;
 
   if (recording) {
     return (
@@ -380,6 +462,14 @@ export const ChatInput = ({
 
   return (
     <StyledContainer>
+      {pastedPreview && (
+        <StyledPreviewRow>
+          <StyledPreviewImage src={pastedPreview} alt="Paste preview" />
+          <StyledRemovePreview onClick={clearPastedFile} title="Remove image">
+            <IconX size={12} />
+          </StyledRemovePreview>
+        </StyledPreviewRow>
+      )}
       <StyledInputRow>
         {onSendMedia && (
           <>
@@ -400,19 +490,20 @@ export const ChatInput = ({
         )}
         <StyledTextArea
           ref={textAreaRef}
-          placeholder="Type a message..."
+          placeholder={pastedFile ? 'Add a caption... (Enter to send)' : 'Type a message...'}
           value={text}
           onChange={(e) => {
             setText(e.target.value);
             adjustHeight();
           }}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           onFocus={handleFocus}
           onBlur={handleBlur}
           disabled={disabled}
           rows={1}
         />
-        {hasText ? (
+        {hasContent ? (
           <StyledButton
             variant="primary"
             onClick={handleSend}

@@ -59,6 +59,11 @@ const StyledFullImage = styled.img`
 `;
 
 const resolveMediaUrl = (mediaUrl: string): string => {
+  // Blob URLs (optimistic messages) — use directly
+  if (mediaUrl.startsWith('blob:')) {
+    return mediaUrl;
+  }
+
   // Rewrite WAHA internal URLs (http://localhost:3000/api/files/{session}/{hash})
   // to go through the bridge media proxy (/api/wa/media/{session}/{hash})
   const wahaMatch = mediaUrl.match(
