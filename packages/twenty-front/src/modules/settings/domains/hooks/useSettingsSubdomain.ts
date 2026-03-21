@@ -16,7 +16,7 @@ export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
 
 export const useSettingsSubdomain = () => {
   const { t } = useLingui();
-  const subdomainSchema = getSubdomainValidationSchema(t);
+  const subdomainSchema = getSubdomainValidationSchema();
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);

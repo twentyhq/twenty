@@ -13,7 +13,7 @@ import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const useSettingsCustomDomain = () => {
   const { t } = useLingui();
-  const domainSchema = getDomainValidationSchema(t);
+  const domainSchema = getDomainValidationSchema();
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);

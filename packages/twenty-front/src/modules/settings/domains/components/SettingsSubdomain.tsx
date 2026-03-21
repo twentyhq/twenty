@@ -6,7 +6,6 @@ import {
   SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID,
   useSettingsSubdomain,
 } from '@/settings/domains/hooks/useSettingsSubdomain';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';

@@ -40,6 +40,7 @@ export { QUERY_MAX_RECORDS_FROM_RELATION } from './QueryMaxRecordsFromRelation';
 export { QUOTED_STRING_REGEX } from './QuotedStringRegex';
 export { RATING_VALUES } from './RatingValues';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';
+export { RESERVED_SUBDOMAINS } from './ReservedSubdomains';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
