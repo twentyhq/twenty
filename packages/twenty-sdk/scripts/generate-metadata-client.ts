@@ -23,13 +23,12 @@ const main = async () => {
   );
 
   const serverUrl = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
-  const token = process.env.TWENTY_API_KEY;
   const clientWrapperTemplateSource = await readFile(TEMPLATE_PATH, 'utf-8');
 
   const clientService = new ClientService({
     clientWrapperTemplateSource,
     serverUrl,
-    token,
+    skipAuth: true,
   });
 
   await clientService.generateMetadataClient({ outputPath });

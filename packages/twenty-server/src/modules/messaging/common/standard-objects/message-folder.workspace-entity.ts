@@ -1,6 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
@@ -8,10 +11,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-export enum MessageFolderPendingSyncAction {
-  FOLDER_DELETION = 'FOLDER_DELETION',
-  NONE = 'NONE',
-}
+export { MessageFolderPendingSyncAction };
 
 registerEnumType(MessageFolderPendingSyncAction, {
   name: 'MessageFolderPendingSyncAction',

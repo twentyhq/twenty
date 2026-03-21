@@ -7,6 +7,7 @@ import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
+import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -15,14 +16,17 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
+  commandMenuItemId,
 }: {
   frontComponentId: string;
+  commandMenuItemId?: string;
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -44,6 +48,10 @@ export const useFrontComponentExecutionContext = ({
     enqueueWarningSnackBar,
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const setCommandMenuItemProgress = useSetAtomFamilyState(
+    commandMenuItemProgressFamilyState,
+    commandMenuItemId ?? '',
+  );
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -133,6 +141,15 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanelMenu();
     };
 
+  const updateProgress: FrontComponentHostCommunicationApi['updateProgress'] =
+    async (progress) => {
+      if (!isDefined(commandMenuItemId)) {
+        return;
+      }
+
+      setCommandMenuItemProgress(Math.max(0, Math.min(100, progress)));
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -142,6 +159,7 @@ export const useFrontComponentExecutionContext = ({
       enqueueSnackbar,
       unmountFrontComponent,
       closeSidePanel,
+      updateProgress,
     };
 
   return {

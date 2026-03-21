@@ -9,6 +9,10 @@ import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
@@ -39,13 +43,19 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
     const step = steps.find((step) => step.id === currentStepId);
 
     if (!step) {
-      throw new Error('Step not found');
+      throw new WorkflowStepExecutorException(
+        'Step not found',
+        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+      );
     }
 
     const tool = this.toolsByActionType.get(step.type);
 
     if (!tool) {
-      throw new Error(`No tool found for workflow action type: ${step.type}`);
+      throw new WorkflowStepExecutorException(
+        `No tool found for workflow action type: ${step.type}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
     }
 
     let toolInput = step.settings.input;

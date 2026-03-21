@@ -61,7 +61,6 @@
             "EMAIL_SMTP_NO_TLS": { "type": "boolean" },
             "EMAIL_FROM_ADDRESS": { "type": "string" },
             "EMAIL_FROM_NAME": { "type": "string" },
-            "EMAIL_SYSTEM_ADDRESS": { "type": "string" },
             "IS_EMAIL_VERIFICATION_REQUIRED": { "type": "boolean" },
             "EMAIL_VERIFICATION_TOKEN_EXPIRES_IN": { "type": "string" },
             "PASSWORD_RESET_TOKEN_EXPIRES_IN": { "type": "string" }

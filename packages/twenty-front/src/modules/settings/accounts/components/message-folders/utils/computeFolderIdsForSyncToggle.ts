@@ -16,9 +16,11 @@ export const computeFolderIdsForSyncToggle = ({
 
   const collectChildren = (id: string): string[] => {
     const folder = folderById.get(id);
-    const children = folder?.externalId
+    const children = folder
       ? allFolders.filter(
-          (childFolder) => childFolder.parentFolderId === folder.externalId,
+          (childFolder) =>
+            childFolder.parentFolderId === folder.externalId ||
+            childFolder.parentFolderId === folder.id,
         )
       : [];
 
@@ -38,7 +40,9 @@ export const computeFolderIdsForSyncToggle = ({
         break;
       }
 
-      const parent = folderByExternalId.get(current.parentFolderId);
+      const parent =
+        folderByExternalId.get(current.parentFolderId) ??
+        folderById.get(current.parentFolderId);
 
       if (!parent) {
         break;
@@ -63,7 +67,9 @@ export const computeFolderIdsForSyncToggle = ({
 
   for (const parent of collectParents(folderId)) {
     const children = allFolders.filter(
-      (folder) => folder.parentFolderId === parent.externalId,
+      (folder) =>
+        folder.parentFolderId === parent.externalId ||
+        folder.parentFolderId === parent.id,
     );
     const hasOtherSyncedChild = children.some(
       (child) => child.isSynced && !idsToUnsync.has(child.id),

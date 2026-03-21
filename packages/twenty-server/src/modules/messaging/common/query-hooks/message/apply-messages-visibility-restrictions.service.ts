@@ -6,9 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -18,6 +18,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class ApplyMessagesVisibilityRestrictionsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   public async applyMessagesVisibilityRestrictions(
@@ -42,12 +43,6 @@ export class ApplyMessagesVisibilityRestrictionsService {
             },
             relations: ['messageChannel'],
           });
-
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
 
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -91,15 +86,13 @@ export class ApplyMessagesVisibilityRestrictionsService {
                 userId,
               });
 
-            const connectedAccounts = await connectedAccountRepository.find({
-              select: ['id'],
-              where: {
+            const connectedAccounts =
+              await this.connectedAccountDataAccessService.find(workspaceId, {
                 messageChannels: {
                   id: In(messageChannels.map((channel) => channel.id)),
                 },
                 accountOwnerId: workspaceMember.id,
-              },
-            });
+              });
 
             if (connectedAccounts.length > 0) {
               continue;
