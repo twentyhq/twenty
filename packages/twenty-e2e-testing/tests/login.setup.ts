@@ -27,10 +27,17 @@ test('Login test', async ({ loginPage, page }) => {
       await loginPage.clickSignInButton();
       await page.waitForLoadState('networkidle');
       await expect(page.getByText(/Welcome, .+/)).not.toBeVisible();
-      await expect(page.getByText('Choose a workspace')).toBeVisible();
-      await page.getByText('Apple', {exact: true}).click();
-      await page.waitForFunction(() => window.location.href.includes('verify'));
-      await page.waitForFunction(() => !window.location.href.includes('verify'));
+      // Single-workspace instances (e.g. UAT) land directly in the app.
+      // Multi-workspace dev instances show a workspace picker first.
+      const workspacePicker = page.getByText('Choose a workspace');
+      const hasWorkspacePicker = await workspacePicker
+        .isVisible()
+        .catch(() => false);
+      if (hasWorkspacePicker) {
+        await page.getByText('Apple', {exact: true}).click();
+        await page.waitForFunction(() => window.location.href.includes('verify'));
+        await page.waitForFunction(() => !window.location.href.includes('verify'));
+      }
       process.env.LINK = page.url();
     },
   );
