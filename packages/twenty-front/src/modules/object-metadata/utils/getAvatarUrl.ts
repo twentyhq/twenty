@@ -25,6 +25,14 @@ export const getAvatarUrl = (
     );
   }
 
+  if (
+    objectNameSingular === 'accountGroup' &&
+    allowRequestsToTwentyIcons === true
+  ) {
+    const websiteUrl = (record.website as { primaryLinkUrl?: string } | undefined)?.primaryLinkUrl;
+    return getLogoUrlFromDomainName(websiteUrl ?? '');
+  }
+
   if (objectNameSingular === CoreObjectNameSingular.Person) {
     return record.avatarFile?.[0]?.url ?? '';
   }
