@@ -32,12 +32,9 @@ describe('isRecordFilterOperandExpectingValue', () => {
     },
   );
 
-  it.each(operandsExpectingValue)(
-    'should return true for %s',
-    (operand) => {
-      expect(isRecordFilterOperandExpectingValue(operand)).toBe(true);
-    },
-  );
+  it.each(operandsExpectingValue)('should return true for %s', (operand) => {
+    expect(isRecordFilterOperandExpectingValue(operand)).toBe(true);
+  });
 
   it('should cover all ViewFilterOperand values', () => {
     const allOperands = Object.values(ViewFilterOperand);

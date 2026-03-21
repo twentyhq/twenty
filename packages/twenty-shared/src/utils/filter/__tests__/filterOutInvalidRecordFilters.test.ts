@@ -40,7 +40,10 @@ describe('filterOutInvalidRecordFilters', () => {
   it('should return an empty array when all filters are invalid', () => {
     const filters = [
       { operand: ViewFilterOperand.IS, value: '' },
-      { operand: ViewFilterOperand.IS_NOT, value: undefined as unknown as string },
+      {
+        operand: ViewFilterOperand.IS_NOT,
+        value: undefined as unknown as string,
+      },
     ];
 
     expect(filterOutInvalidRecordFilters(filters)).toEqual([]);

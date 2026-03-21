@@ -16,18 +16,17 @@ describe('isRecordFilterValueValid', () => {
     it.each(operandsNotExpectingValue)(
       'should return true for %s regardless of value',
       (operand) => {
+        expect(isRecordFilterValueValid({ operand, value: '' })).toBe(true);
         expect(
-          isRecordFilterValueValid({ operand, value: '' }),
+          isRecordFilterValueValid({
+            operand,
+            value: undefined as unknown as string,
+          }),
         ).toBe(true);
-        expect(
-          isRecordFilterValueValid({ operand, value: undefined as unknown as string }),
-        ).toBe(true);
-        expect(
-          isRecordFilterValueValid({ operand, value: '[]' }),
-        ).toBe(true);
-        expect(
-          isRecordFilterValueValid({ operand, value: 'some-value' }),
-        ).toBe(true);
+        expect(isRecordFilterValueValid({ operand, value: '[]' })).toBe(true);
+        expect(isRecordFilterValueValid({ operand, value: 'some-value' })).toBe(
+          true,
+        );
       },
     );
   });
@@ -48,18 +47,16 @@ describe('isRecordFilterValueValid', () => {
     it.each(operandsExpectingValue)(
       'should return true for %s with a valid value',
       (operand) => {
-        expect(
-          isRecordFilterValueValid({ operand, value: 'some-value' }),
-        ).toBe(true);
+        expect(isRecordFilterValueValid({ operand, value: 'some-value' })).toBe(
+          true,
+        );
       },
     );
 
     it.each(operandsExpectingValue)(
       'should return false for %s with empty string',
       (operand) => {
-        expect(
-          isRecordFilterValueValid({ operand, value: '' }),
-        ).toBe(false);
+        expect(isRecordFilterValueValid({ operand, value: '' })).toBe(false);
       },
     );
 
@@ -78,9 +75,7 @@ describe('isRecordFilterValueValid', () => {
     it.each(operandsExpectingValue)(
       'should return false for %s with empty array string "[]"',
       (operand) => {
-        expect(
-          isRecordFilterValueValid({ operand, value: '[]' }),
-        ).toBe(false);
+        expect(isRecordFilterValueValid({ operand, value: '[]' })).toBe(false);
       },
     );
   });
