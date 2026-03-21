@@ -3,7 +3,6 @@ import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/const
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
-import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -43,11 +42,6 @@ export const useTriggerRecordBoardInitialQuery = () => {
   const recordBoardShouldFetchMoreInColumnFamilyCallbackState =
     useAtomComponentFamilyStateCallbackState(
       recordBoardShouldFetchMoreInColumnComponentFamilyState,
-    );
-
-  const recordBoardShouldFetchMoreCallbackState =
-    useAtomComponentStateCallbackState(
-      recordBoardShouldFetchMoreComponentState,
     );
 
   const recordIndexRecordGroupsAreInInitialLoading =
@@ -169,19 +163,6 @@ export const useTriggerRecordBoardInitialQuery = () => {
       }
     }
 
-    const anyColumnNeedsMore = recordGroupDefinitions.some(
-      (recordGroupDefinition) =>
-        store.get(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-        ),
-    );
-
-    if (anyColumnNeedsMore) {
-      store.set(recordBoardShouldFetchMoreCallbackState, true);
-    }
-
     cleanStateBeforeExit();
   }, [
     recordIndexRecordGroupsAreInInitialLoading,
@@ -196,7 +177,6 @@ export const useTriggerRecordBoardInitialQuery = () => {
     upsertRecordsInStore,
     setRecordIdsForColumn,
     recordBoardShouldFetchMoreInColumnFamilyCallbackState,
-    recordBoardShouldFetchMoreCallbackState,
   ]);
 
   return {

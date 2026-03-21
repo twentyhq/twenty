@@ -85,144 +85,133 @@ export const useTriggerRecordBoardFetchMore = () => {
 
     store.set(recordBoardIsFetchingMore, true);
 
+    const currentOffset = store.get(
+      recordBoardCurrentGroupByQueryOffsetCallbackState,
+    );
+
+    const newOffset = currentOffset + RECORD_BOARD_QUERY_PAGE_SIZE;
+
+    const recordGroupValuesThatShouldBeFetched = recordGroupDefinitions
+      .filter((recordGroupDefinition) => {
+        return store.get(
+          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+            recordGroupDefinition.id,
+          ),
+        );
+      })
+      .map((recordGroupDefinition) => recordGroupDefinition.value)
+      .filter(isDefined);
+
+    if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
+      store.set(recordBoardShouldFetchMoreCallbackState, false);
+      cleanStateBeforeExit();
+
+      return;
+    }
+
+    const recordIndexGroupsRecordsGroupByLazyQueryResult =
+      await executeRecordIndexGroupsRecordsLazyGroupBy({
+        variables: {
+          offsetForRecords: newOffset,
+          filter: {
+            ...combinedFilters,
+            [recordIndexGroupFieldMetadataItem?.name ?? '']: {
+              in: [...recordGroupValuesThatShouldBeFetched],
+            },
+          },
+        },
+      });
+
+    store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
+
+    if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
+      cleanStateBeforeExit();
+
+      return;
+    }
+
     const queryFieldName =
       getGroupByQueryResultGqlFieldName(objectMetadataItem);
+
+    const groups =
+      recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
+
+    if (!isDefined(groups)) {
+      cleanStateBeforeExit();
+
+      return;
+    }
 
     const sortedRecordGroupDefinitions = recordGroupDefinitions.toSorted(
       sortByProperty('position'),
     );
 
-    let hasMorePages = true;
-
-    while (hasMorePages) {
-      const currentOffset = store.get(
-        recordBoardCurrentGroupByQueryOffsetCallbackState,
+    for (const recordGroupDefinition of sortedRecordGroupDefinitions) {
+      const foundGroupInResult = groups.find(
+        (recordGroup: any) =>
+          (recordGroup.groupByDimensionValues[0] as string) ===
+          recordGroupDefinition.value,
       );
 
-      const newOffset = currentOffset + RECORD_BOARD_QUERY_PAGE_SIZE;
-
-      const recordGroupValuesThatShouldBeFetched = recordGroupDefinitions
-        .filter((recordGroupDefinition) => {
-          return store.get(
-            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-              recordGroupDefinition.id,
-            ),
-          );
-        })
-        .map((recordGroupDefinition) => recordGroupDefinition.value)
-        .filter(isDefined);
-
-      if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
-        hasMorePages = false;
-        break;
-      }
-
-      const recordIndexGroupsRecordsGroupByLazyQueryResult =
-        await executeRecordIndexGroupsRecordsLazyGroupBy({
-          variables: {
-            offsetForRecords: newOffset,
-            filter: {
-              ...combinedFilters,
-              [recordIndexGroupFieldMetadataItem?.name ?? '']: {
-                in: [...recordGroupValuesThatShouldBeFetched],
-              },
-            },
-          },
-        });
-
-      store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
-
-      if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
-        hasMorePages = false;
-        break;
-      }
-
-      const groups =
-        recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
-
-      if (!isDefined(groups)) {
-        hasMorePages = false;
-        break;
-      }
-
-      for (const recordGroupDefinition of sortedRecordGroupDefinitions) {
-        const foundGroupInResult = groups.find(
-          (recordGroup: any) =>
-            (recordGroup.groupByDimensionValues[0] as string) ===
-            recordGroupDefinition.value,
-        );
-
-        if (!isDefined(foundGroupInResult)) {
-          store.set(
-            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-              recordGroupDefinition.id,
-            ),
-            false,
-          );
-          continue;
-        }
-
-        const newRecords = getRecordsFromRecordConnection({
-          recordConnection: foundGroupInResult,
-        });
-
-        if (!isNonEmptyArray(newRecords)) {
-          store.set(
-            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-              recordGroupDefinition.id,
-            ),
-            false,
-          );
-          continue;
-        }
-
-        const currentRecordIds = store.get(
-          recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
-        ) as string[];
-
-        const newRecordIds = currentRecordIds.concat(
-          newRecords.map((record) => record.id),
-        );
-
+      if (!isDefined(foundGroupInResult)) {
         store.set(
-          recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
-          newRecordIds,
+          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+            recordGroupDefinition.id,
+          ),
+          false,
         );
+        continue;
+      }
 
-        upsertRecordsInStore({ partialRecords: newRecords });
+      const newRecords = getRecordsFromRecordConnection({
+        recordConnection: foundGroupInResult,
+      });
 
-        if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
-          store.set(
-            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-              recordGroupDefinition.id,
-            ),
-            false,
-          );
-        } else {
-          store.set(
-            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-              recordGroupDefinition.id,
-            ),
-            true,
-          );
-        }
+      if (!isNonEmptyArray(newRecords)) {
+        store.set(
+          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+            recordGroupDefinition.id,
+          ),
+          false,
+        );
+        continue;
+      }
 
-        await sleep(
-          RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE,
+      const currentRecordIds = store.get(
+        recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
+      ) as string[];
+
+      const newRecordIds = currentRecordIds.concat(
+        newRecords.map((record) => record.id),
+      );
+
+      store.set(
+        recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
+        newRecordIds,
+      );
+
+      upsertRecordsInStore({ partialRecords: newRecords });
+
+      if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
+        store.set(
+          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+            recordGroupDefinition.id,
+          ),
+          false,
+        );
+      } else {
+        store.set(
+          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+            recordGroupDefinition.id,
+          ),
+          true,
         );
       }
 
-      hasMorePages = recordGroupDefinitions.some(
-        (recordGroupDefinition) =>
-          store.get(
-            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-              recordGroupDefinition.id,
-            ),
-          ),
+      await sleep(
+        RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE,
       );
     }
-
-    store.set(recordBoardShouldFetchMoreCallbackState, false);
 
     cleanStateBeforeExit();
   }, [
