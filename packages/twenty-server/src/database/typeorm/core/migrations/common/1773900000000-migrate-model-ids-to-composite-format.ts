@@ -31,7 +31,7 @@ export class MigrateModelIdsToCompositeFormat1773900000000
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(_queryRunner: QueryRunner): Promise<void> {
     // No reversal needed — sentinel defaults and NULLed agent modelIds
     // are safe to leave in place.
   }

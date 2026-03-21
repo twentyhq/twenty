@@ -17,8 +17,3 @@ export const PROVIDER_ICON_CONFIG: Record<string, { Icon: IconComponent }> = {
   xai: { Icon: IconBrandXai },
   'openai-compatible': { Icon: IconProviderOpenai },
 };
-
-export type KnownProviderId = keyof typeof PROVIDER_ICON_CONFIG;
-
-export const isKnownProviderId = (id: string): id is KnownProviderId =>
-  id in PROVIDER_ICON_CONFIG;

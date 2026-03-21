@@ -130,10 +130,13 @@ export const SettingsAdminAiProviderDetail = () => {
       ? providersData.getAiProviders[providerName]
       : undefined;
 
-  const provider =
-    providerName && isDefined(providerConfig)
-      ? { id: providerName, ...providerConfig }
-      : undefined;
+  const provider = useMemo(
+    () =>
+      providerName && isDefined(providerConfig)
+        ? { id: providerName, ...providerConfig }
+        : undefined,
+    [providerName, providerConfig],
+  );
 
   const isCustomProvider = provider?.source === AI_PROVIDER_SOURCE.CUSTOM;
 

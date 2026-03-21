@@ -45,8 +45,7 @@ export const computeCostBreakdown = (
   const cachedInputTokens = safeNumber(usage.cachedInputTokens);
   const cacheCreationTokens = safeNumber(usage.cacheCreationTokens);
 
-  const isAnthropicTokenReporting =
-    model.modelFamily === ModelFamily.CLAUDE;
+  const isAnthropicTokenReporting = model.modelFamily === ModelFamily.CLAUDE;
 
   const adjustedInputTokens = isAnthropicTokenReporting
     ? rawInputTokens

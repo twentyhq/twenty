@@ -55,7 +55,10 @@ export const SettingsAdminNewAiProvider = () => {
     getModelsDevProviders: ModelsDevProvider[];
   }>(GET_MODELS_DEV_PROVIDERS);
 
-  const modelsDevProviders = modelsDevData?.getModelsDevProviders ?? [];
+  const modelsDevProviders = useMemo(
+    () => modelsDevData?.getModelsDevProviders ?? [],
+    [modelsDevData?.getModelsDevProviders],
+  );
 
   const modelsDevByIdMap = useMemo(
     () =>

@@ -102,7 +102,10 @@ export const SettingsAdminNewAiModel = () => {
     skip: !modelsDevName,
   });
 
-  const suggestions = suggestionsData?.getModelsDevSuggestions ?? [];
+  const suggestions = useMemo(
+    () => suggestionsData?.getModelsDevSuggestions ?? [],
+    [suggestionsData?.getModelsDevSuggestions],
+  );
 
   const suggestionsByModelId = useMemo(() => {
     const map = new Map<string, ModelSuggestion>();

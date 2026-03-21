@@ -54,7 +54,9 @@ export class AgentModelConfigService {
       case AI_SDK_ANTHROPIC:
         if (agent.modelConfiguration.webSearch?.enabled) {
           const anthropicProvider = model.providerName
-            ? this.sdkProviderFactory.getRawAnthropicProvider(model.providerName)
+            ? this.sdkProviderFactory.getRawAnthropicProvider(
+                model.providerName,
+              )
             : undefined;
 
           if (anthropicProvider) {
