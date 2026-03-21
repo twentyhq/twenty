@@ -19,10 +19,6 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  @Matches(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
-    message:
-      'Subdomain must be 3-30 characters, lowercase alphanumeric and hyphens only, must start and end with a letter or number',
-  })
   subdomain?: string;
 
   @Field({ nullable: true })

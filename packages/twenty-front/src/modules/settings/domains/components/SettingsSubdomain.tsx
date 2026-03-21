@@ -1,7 +1,6 @@
 import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Controller, useFormContext } from 'react-hook-form';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -15,15 +14,21 @@ const StyledDomainFormWrapper = styled.div`
   display: flex;
 `;
 
-export const SettingsSubdomain = () => {
+type SettingsSubdomainProps = {
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+};
+
+export const SettingsSubdomain = ({
+  value,
+  onChange,
+  error,
+}: SettingsSubdomainProps) => {
   const domainConfiguration = useAtomStateValue(domainConfigurationState);
   const { t } = useLingui();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  const { control } = useFormContext<{
-    subdomain: string;
-  }>();
 
   return (
     <Section>
@@ -32,26 +37,18 @@ export const SettingsSubdomain = () => {
         description={t`Set the name of your subdomain`}
       />
       <StyledDomainFormWrapper>
-        <Controller
-          name="subdomain"
-          control={control}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <>
-              <TextInput
-                value={value}
-                type="text"
-                onChange={onChange}
-                error={error?.message}
-                disabled={!!currentWorkspace?.customDomain}
-                rightAdornment={
-                  isDefined(domainConfiguration.frontDomain)
-                    ? `.${domainConfiguration.frontDomain}`
-                    : undefined
-                }
-                fullWidth
-              />
-            </>
-          )}
+        <TextInput
+          value={value}
+          type="text"
+          onChange={onChange}
+          error={error}
+          disabled={!!currentWorkspace?.customDomain}
+          rightAdornment={
+            isDefined(domainConfiguration.frontDomain)
+              ? `.${domainConfiguration.frontDomain}`
+              : undefined
+          }
+          fullWidth
         />
       </StyledDomainFormWrapper>
     </Section>

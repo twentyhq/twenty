@@ -213,6 +213,87 @@ describe('workspace permissions', () => {
             );
           });
       });
+
+      it('should return a validation error when subdomain is empty string', async () => {
+        const queryData = {
+          query: `
+        mutation updateWorkspace {
+          updateWorkspace(data: { subdomain: "" }) {
+            id
+            subdomain
+          }
+        }
+      `,
+        };
+
+        const response = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send(queryData);
+
+        expect(response.body.data).toBeNull();
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors[0].extensions.code).toBe(
+          ErrorCode.CONFLICT,
+        );
+        expect(
+          response.body.errors[0].extensions.userFriendlyMessage,
+        ).toBe('Invalid subdomain.');
+      });
+
+      it('should return a validation error when subdomain has invalid characters', async () => {
+        const queryData = {
+          query: `
+        mutation updateWorkspace {
+          updateWorkspace(data: { subdomain: "INVALID!" }) {
+            id
+            subdomain
+          }
+        }
+      `,
+        };
+
+        const response = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send(queryData);
+
+        expect(response.body.data).toBeNull();
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors[0].extensions.code).toBe(
+          ErrorCode.CONFLICT,
+        );
+        expect(
+          response.body.errors[0].extensions.userFriendlyMessage,
+        ).toBe('Invalid subdomain.');
+      });
+
+      it('should return a validation error when subdomain starts with api-', async () => {
+        const queryData = {
+          query: `
+        mutation updateWorkspace {
+          updateWorkspace(data: { subdomain: "api-workspace" }) {
+            id
+            subdomain
+          }
+        }
+      `,
+        };
+
+        const response = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send(queryData);
+
+        expect(response.body.data).toBeNull();
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.errors[0].extensions.code).toBe(
+          ErrorCode.CONFLICT,
+        );
+        expect(
+          response.body.errors[0].extensions.userFriendlyMessage,
+        ).toBe('Invalid subdomain.');
+      });
     });
 
     describe('custom domain update', () => {

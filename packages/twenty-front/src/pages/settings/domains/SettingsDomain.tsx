@@ -10,20 +10,17 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
 import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
-import { useState } from 'react';
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
@@ -40,12 +37,8 @@ export const SettingsDomain = () => {
     isCloudflareIntegrationEnabledState,
   );
 
-  const validationSchema = z
-    .object({
-      subdomain: getSubdomainValidationSchema(t),
-      customDomain: getDomainValidationSchema(t),
-    })
-    .required();
+  const subdomainSchema = getSubdomainValidationSchema(t);
+  const domainSchema = getDomainValidationSchema(t);
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
@@ -58,25 +51,50 @@ export const SettingsDomain = () => {
 
   const { openModal, closeModal } = useModal();
 
-  const form = useForm<{
-    subdomain: string;
-    customDomain: string | null;
-  }>({
-    mode: 'onSubmit',
-    delayError: 500,
-    defaultValues: {
-      subdomain: currentWorkspace?.subdomain ?? '',
-      customDomain: currentWorkspace?.customDomain ?? '',
-    },
-    resolver: zodResolver(validationSchema),
-  });
+  const [subdomain, setSubdomain] = useState(currentWorkspace?.subdomain ?? '');
+  const [customDomain, setCustomDomain] = useState<string | null>(
+    currentWorkspace?.customDomain ?? '',
+  );
+  const [subdomainError, setSubdomainError] = useState<string | undefined>();
+  const [customDomainError, setCustomDomainError] = useState<
+    string | undefined
+  >();
 
-  const subdomainValue = form.watch('subdomain');
-  const customDomainValue = form.watch('customDomain');
+  const handleSubdomainChange = (value: string) => {
+    setSubdomain(value);
 
-  const updateCustomDomain = (
-    customDomain: string | null,
-    currentWorkspace: CurrentWorkspace,
+    const result = subdomainSchema.safeParse(value);
+
+    setSubdomainError(
+      result.success ? undefined : result.error.issues[0].message,
+    );
+  };
+
+  const handleCustomDomainChange = (value: string) => {
+    setCustomDomain(value);
+
+    const result = domainSchema.safeParse(value);
+
+    setCustomDomainError(
+      result.success ? undefined : result.error.issues[0].message,
+    );
+  };
+
+  const handleCustomDomainDelete = () => {
+    setCustomDomain('');
+    setCustomDomainError(undefined);
+  };
+
+  const hasSubdomainChanged = subdomain !== currentWorkspace?.subdomain;
+  const hasCustomDomainChanged =
+    customDomain !== (currentWorkspace?.customDomain ?? '');
+  const hasChanges = hasSubdomainChanged || hasCustomDomainChanged;
+  const hasErrors = isDefined(subdomainError) || isDefined(customDomainError);
+  const isSaveDisabled = !hasChanges || hasErrors || isSubmitting;
+
+  const updateCustomDomainMutation = (
+    newCustomDomain: string | null,
+    workspace: CurrentWorkspace,
   ) => {
     if (isSubmitting) {
       return;
@@ -86,16 +104,18 @@ export const SettingsDomain = () => {
       variables: {
         input: {
           customDomain:
-            isDefined(customDomain) && customDomain.length > 0
-              ? customDomain
+            isDefined(newCustomDomain) && newCustomDomain.length > 0
+              ? newCustomDomain
               : null,
         },
       },
       onCompleted: () => {
         setCurrentWorkspace({
-          ...currentWorkspace,
+          ...workspace,
           customDomain:
-            customDomain && customDomain.length > 0 ? customDomain : null,
+            newCustomDomain && newCustomDomain.length > 0
+              ? newCustomDomain
+              : null,
         });
         enqueueSuccessSnackBar({
           message: t`Custom domain updated`,
@@ -108,10 +128,10 @@ export const SettingsDomain = () => {
           CombinedGraphQLErrors.is(error) &&
           error.errors[0]?.extensions?.code === 'CONFLICT'
         ) {
-          return form.control.setError('subdomain', {
-            type: 'manual',
-            message: t`Subdomain already taken`,
-          });
+          setSubdomainError(t`Subdomain already taken`);
+          setIsSubmitting(false);
+
+          return;
         }
         if (CombinedGraphQLErrors.is(error)) {
           enqueueErrorSnackBar({
@@ -125,9 +145,9 @@ export const SettingsDomain = () => {
     });
   };
 
-  const updateSubdomain = (
-    subdomain: string,
-    currentWorkspace: CurrentWorkspace,
+  const updateSubdomainMutation = (
+    newSubdomain: string,
+    workspace: CurrentWorkspace,
   ) => {
     if (isSubmitting) {
       return;
@@ -136,7 +156,7 @@ export const SettingsDomain = () => {
     updateWorkspace({
       variables: {
         input: {
-          subdomain,
+          subdomain: newSubdomain,
         },
       },
       onError: (error) => {
@@ -145,10 +165,10 @@ export const SettingsDomain = () => {
           error.errors[0]?.extensions?.code === 'CONFLICT'
         ) {
           closeModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
-          return form.control.setError('subdomain', {
-            type: 'manual',
-            message: t`Subdomain already taken`,
-          });
+          setSubdomainError(t`Subdomain already taken`);
+          setIsSubmitting(false);
+
+          return;
         }
         if (CombinedGraphQLErrors.is(error)) {
           enqueueErrorSnackBar({
@@ -163,12 +183,12 @@ export const SettingsDomain = () => {
         const currentUrl = new URL(window.location.href);
 
         currentUrl.hostname = new URL(
-          currentWorkspace.workspaceUrls.subdomainUrl,
-        ).hostname.replace(currentWorkspace.subdomain, subdomain);
+          workspace.workspaceUrls.subdomainUrl,
+        ).hostname.replace(workspace.subdomain, newSubdomain);
 
         setCurrentWorkspace({
-          ...currentWorkspace,
-          subdomain,
+          ...workspace,
+          subdomain: newSubdomain,
         });
 
         enqueueSuccessSnackBar({
@@ -181,81 +201,71 @@ export const SettingsDomain = () => {
     });
   };
 
-  const handleSave = async () => {
-    const isValid = await form.trigger();
-    if (!isValid) return;
-
-    const values = form.getValues();
-
-    if (
-      subdomainValue === currentWorkspace?.subdomain &&
-      customDomainValue === currentWorkspace?.customDomain
-    ) {
-      return enqueueErrorSnackBar({
-        message: t`No change detected`,
-      });
-    }
-
-    if (!isDefined(values) || !isDefined(currentWorkspace)) {
+  const handleSave = () => {
+    if (!isDefined(currentWorkspace)) {
       return enqueueErrorSnackBar({
         message: t`Invalid form values`,
       });
     }
 
-    if (
-      isDefined(values.subdomain) &&
-      values.subdomain !== currentWorkspace.subdomain
-    ) {
+    if (hasSubdomainChanged) {
       openModal(SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID);
+
       return;
     }
 
-    if (values.customDomain !== currentWorkspace.customDomain) {
-      return updateCustomDomain(values.customDomain, currentWorkspace);
+    if (hasCustomDomainChanged) {
+      return updateCustomDomainMutation(customDomain, currentWorkspace);
     }
   };
 
   return (
     <>
-      <form onSubmit={form.handleSubmit(handleSave)}>
-        {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-        <FormProvider {...form}>
-          <SubMenuTopBarContainer
-            title={t`Domain`}
-            links={[
-              {
-                children: <Trans>Workspace</Trans>,
-                href: getSettingsPath(SettingsPath.Workspace),
-              },
-              {
-                children: <Trans>Domains</Trans>,
-                href: getSettingsPath(SettingsPath.Domains),
-              },
-              { children: <Trans>Domain</Trans> },
-            ]}
-            actionButton={
-              <SaveAndCancelButtons
-                onCancel={() => navigate(SettingsPath.Domains)}
-                isSaveDisabled={isSubmitting}
-                onSave={handleSave}
-              />
-            }
-          >
-            <SettingsPageContainer>
-              <SettingsSubdomain />
-              {isCloudflareIntegrationEnabled && <SettingsCustomDomain />}
-            </SettingsPageContainer>
-          </SubMenuTopBarContainer>
-        </FormProvider>
-      </form>
+      <SubMenuTopBarContainer
+        title={t`Domain`}
+        links={[
+          {
+            children: <Trans>Workspace</Trans>,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: <Trans>Domains</Trans>,
+            href: getSettingsPath(SettingsPath.Domains),
+          },
+          { children: <Trans>Domain</Trans> },
+        ]}
+        actionButton={
+          <SaveAndCancelButtons
+            onCancel={() => navigate(SettingsPath.Domains)}
+            isSaveDisabled={isSaveDisabled}
+            isLoading={isSubmitting}
+            onSave={handleSave}
+          />
+        }
+      >
+        <SettingsPageContainer>
+          <SettingsSubdomain
+            value={subdomain}
+            onChange={handleSubdomainChange}
+            error={subdomainError}
+          />
+          {isCloudflareIntegrationEnabled && (
+            <SettingsCustomDomain
+              value={customDomain}
+              onChange={handleCustomDomainChange}
+              onDelete={handleCustomDomainDelete}
+              error={customDomainError}
+            />
+          )}
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
       <ConfirmationModal
         modalInstanceId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
         title={t`Change subdomain?`}
         subtitle={t`You're about to change your workspace subdomain. This action will log out all users.`}
         onConfirmClick={() => {
-          const values = form.getValues();
           currentWorkspace &&
-            updateSubdomain(values.subdomain, currentWorkspace);
+            updateSubdomainMutation(subdomain, currentWorkspace);
         }}
       />
     </>

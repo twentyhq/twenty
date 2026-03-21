@@ -3,7 +3,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Controller, useFormContext } from 'react-hook-form';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
@@ -37,7 +36,19 @@ const StyledRecordsWrapper = styled.div`
   }
 `;
 
-export const SettingsCustomDomain = () => {
+type SettingsCustomDomainProps = {
+  value: string | null;
+  onChange: (value: string) => void;
+  onDelete: () => void;
+  error?: string;
+};
+
+export const SettingsCustomDomain = ({
+  value,
+  onChange,
+  onDelete,
+  error,
+}: SettingsCustomDomainProps) => {
   const { customDomainRecords, isLoading } = useAtomStateValue(
     customDomainRecordsState,
   );
@@ -48,15 +59,6 @@ export const SettingsCustomDomain = () => {
 
   const { t } = useLingui();
 
-  const { control, setValue, trigger } = useFormContext<{
-    customDomain: string;
-  }>();
-
-  const deleteCustomDomain = () => {
-    setValue('customDomain', '');
-    trigger();
-  };
-
   return (
     <Section>
       <H2Title
@@ -65,19 +67,13 @@ export const SettingsCustomDomain = () => {
       />
       <CheckCustomDomainValidRecordsEffect />
       <StyledDomainFormWrapper>
-        <Controller
-          name="customDomain"
-          control={control}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <TextInput
-              value={value}
-              type="text"
-              onChange={onChange}
-              placeholder="crm.yourdomain.com"
-              error={error?.message}
-              fullWidth
-            />
-          )}
+        <TextInput
+          value={value ?? ''}
+          type="text"
+          onChange={onChange}
+          placeholder="crm.yourdomain.com"
+          error={error}
+          fullWidth
         />
         {currentWorkspace?.customDomain && (
           <StyledButtonGroupContainer>
@@ -96,7 +92,7 @@ export const SettingsCustomDomain = () => {
                 <Button
                   Icon={IconTrash}
                   variant="primary"
-                  onClick={deleteCustomDomain}
+                  onClick={onDelete}
                 />
               </StyledButtonContainer>
             </ButtonGroup>
