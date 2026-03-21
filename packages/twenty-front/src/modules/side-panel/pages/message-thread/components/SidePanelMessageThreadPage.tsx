@@ -118,6 +118,8 @@ export const SidePanelMessageThreadPage = () => {
         window.open(url, '_blank');
         break;
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
         throw new Error('Account provider not supported');
       case null:
         throw new Error('Account provider not provided');
