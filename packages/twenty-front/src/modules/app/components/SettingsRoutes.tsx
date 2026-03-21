@@ -129,9 +129,15 @@ const SettingsDomains = lazy(() =>
   })),
 );
 
-const SettingsDomain = lazy(() =>
-  import('~/pages/settings/domains/SettingsDomain').then((module) => ({
-    default: module.SettingsDomain,
+const SettingsSubdomain = lazy(() =>
+  import('~/pages/settings/domains/SettingsSubdomain').then((module) => ({
+    default: module.SettingsSubdomain,
+  })),
+);
+
+const SettingsCustomDomain = lazy(() =>
+  import('~/pages/settings/domains/SettingsCustomDomain').then((module) => ({
+    default: module.SettingsCustomDomain,
   })),
 );
 
@@ -497,7 +503,11 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-        <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
+        <Route path={SettingsPath.Subdomain} element={<SettingsSubdomain />} />
+        <Route
+          path={SettingsPath.CustomDomain}
+          element={<SettingsCustomDomain />}
+        />
         <Route
           path={SettingsPath.NewEmailingDomain}
           element={<SettingsNewEmailingDomain />}
