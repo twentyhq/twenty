@@ -195,12 +195,10 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
           SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS
         ) {
           deactivateLowDetailsDebounced();
-
-          triggerFetchPages();
         }
-      } else {
-        triggerFetchPages();
       }
+
+      triggerFetchPages();
     },
     [
       lastScrollMeasurementsCallbackState,
