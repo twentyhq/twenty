@@ -7,6 +7,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum MessageFolderExceptionCode {
   MESSAGE_FOLDER_NOT_FOUND = 'MESSAGE_FOLDER_NOT_FOUND',
   INVALID_MESSAGE_FOLDER_INPUT = 'INVALID_MESSAGE_FOLDER_INPUT',
+  MESSAGE_FOLDER_OWNERSHIP_VIOLATION = 'MESSAGE_FOLDER_OWNERSHIP_VIOLATION',
 }
 
 const getMessageFolderExceptionUserFriendlyMessage = (
@@ -17,6 +18,8 @@ const getMessageFolderExceptionUserFriendlyMessage = (
       return msg`Message folder not found.`;
     case MessageFolderExceptionCode.INVALID_MESSAGE_FOLDER_INPUT:
       return msg`Invalid message folder input.`;
+    case MessageFolderExceptionCode.MESSAGE_FOLDER_OWNERSHIP_VIOLATION:
+      return msg`You do not have access to this message folder.`;
     default:
       assertUnreachable(code);
   }

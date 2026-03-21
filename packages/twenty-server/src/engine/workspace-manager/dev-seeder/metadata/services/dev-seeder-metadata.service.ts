@@ -175,7 +175,7 @@ export class DevSeederMetadataService {
     },
   };
 
-  private getLightConfig(config: WorkspaceSeedConfig): WorkspaceSeedConfig {
+  private getLightConfig(_config: WorkspaceSeedConfig): WorkspaceSeedConfig {
     return {
       objects: [],
       fields: [],

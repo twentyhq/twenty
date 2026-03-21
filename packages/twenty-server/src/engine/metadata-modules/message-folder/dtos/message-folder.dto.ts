@@ -25,9 +25,7 @@ export class MessageFolderDTO {
   @Field(() => String, { nullable: true })
   name: string | null;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
+  @HideField()
   syncCursor: string | null;
 
   @IsBoolean()
