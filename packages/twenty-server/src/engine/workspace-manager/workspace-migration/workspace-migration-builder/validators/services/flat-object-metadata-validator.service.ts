@@ -61,11 +61,7 @@ export class FlatObjectMetadataValidatorService {
     };
 
     if (!buildOptions.isSystemBuild && existingFlatObjectMetadata.isSystem) {
-      const allowedOverrideKeys = new Set([
-        'standardOverrides',
-        'isActive',
-        'color',
-      ]);
+      const allowedOverrideKeys = new Set(['standardOverrides', 'isActive']);
       const disallowedProperties = Object.keys(flatEntityUpdate).filter(
         (property) => !allowedOverrideKeys.has(property),
       );

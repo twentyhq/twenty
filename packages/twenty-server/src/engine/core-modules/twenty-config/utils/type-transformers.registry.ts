@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsEnum,
   IsNumber,
+  IsObject,
   IsString,
 } from 'class-validator';
 
@@ -240,5 +241,75 @@ export const typeTransformers: Record<
     },
 
     getTransformers: (): PropertyDecorator[] => [],
+  },
+
+  [ConfigVariableType.JSON]: {
+    toApp: (value: unknown): Record<string, unknown> | undefined => {
+      if (value === null || value === undefined) return undefined;
+
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        return value as Record<string, unknown>;
+      }
+
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value);
+
+          if (
+            parsed !== null &&
+            typeof parsed === 'object' &&
+            !Array.isArray(parsed)
+          ) {
+            return parsed;
+          }
+
+          throw new ConfigVariableException(
+            'Expected JSON object, got non-object value',
+            ConfigVariableExceptionCode.VALIDATION_FAILED,
+          );
+        } catch (error) {
+          if (error instanceof ConfigVariableException) {
+            throw error;
+          }
+
+          throw new ConfigVariableException(
+            `Failed to parse JSON string: ${error instanceof Error ? error.message : String(error)}`,
+            ConfigVariableExceptionCode.VALIDATION_FAILED,
+          );
+        }
+      }
+
+      throw new ConfigVariableException(
+        `Expected JSON object or string, got ${typeof value}`,
+        ConfigVariableExceptionCode.VALIDATION_FAILED,
+      );
+    },
+
+    toStorage: (value: Record<string, unknown>): Record<string, unknown> => {
+      if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        throw new ConfigVariableException(
+          `Expected JSON object, got ${Array.isArray(value) ? 'array' : typeof value}`,
+          ConfigVariableExceptionCode.VALIDATION_FAILED,
+        );
+      }
+
+      return JSON.parse(JSON.stringify(value));
+    },
+
+    getValidators: (): PropertyDecorator[] => [IsObject()],
+
+    getTransformers: (): PropertyDecorator[] => [
+      Transform(({ value }) => {
+        if (typeof value === 'string') {
+          try {
+            return JSON.parse(value);
+          } catch {
+            return value;
+          }
+        }
+
+        return value;
+      }),
+    ],
   },
 };

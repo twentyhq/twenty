@@ -1,7 +1,7 @@
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
 import { FieldsWidgetGroupsDraftInitializationEffect } from '@/page-layout/widgets/fields/components/FieldsWidgetGroupsDraftInitializationEffect';
-import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,8 +21,7 @@ const StyledFieldsLayoutContainer = styled.div`
 `;
 
 export const SidePanelFieldsLayoutSubPage = () => {
-  const { pageLayoutId } =
-    usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
+  const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const temporaryFieldsConfiguration = useTemporaryFieldsConfiguration();

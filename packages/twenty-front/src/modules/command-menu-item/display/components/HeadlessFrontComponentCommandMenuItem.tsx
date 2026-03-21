@@ -1,48 +1,40 @@
-import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
-import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
+import { useMountHeadlessFrontComponent } from '@/front-components/hooks/useMountHeadlessFrontComponent';
 import { isHeadlessFrontComponentMountedFamilySelector } from '@/front-components/selectors/isHeadlessFrontComponentMountedFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useContext } from 'react';
 
-import { CommandMenuItemDisplay } from './CommandMenuItemDisplay';
+import { HeadlessCommandMenuItem } from './HeadlessCommandMenuItem';
 
 export const HeadlessFrontComponentCommandMenuItem = ({
   frontComponentId,
-  onClick,
+  commandMenuItemId,
+  recordId,
+  objectNameSingular,
 }: {
   frontComponentId: string;
-  onClick: () => void;
+  commandMenuItemId: string;
+  recordId?: string;
+  objectNameSingular?: string;
 }) => {
-  const commandMenuItemConfig = useContext(CommandConfigContext);
-
-  const { closeCommandMenu } = useCloseCommandMenu({
-    closeSidePanelOnShowPageOptionsExecution: false,
-    closeSidePanelOnCommandMenuListExecution: false,
-  });
+  const mountHeadlessFrontComponent = useMountHeadlessFrontComponent();
 
   const isMounted = useAtomFamilySelectorValue(
     isHeadlessFrontComponentMountedFamilySelector,
     frontComponentId,
   );
 
-  if (!commandMenuItemConfig) {
-    return null;
-  }
-
   const handleClick = () => {
-    if (isMounted) {
-      return;
-    }
-
-    closeCommandMenu();
-    onClick();
+    mountHeadlessFrontComponent(frontComponentId, {
+      commandMenuItemId,
+      recordId,
+      objectNameSingular,
+    });
   };
 
   return (
-    <CommandMenuItemDisplay
+    <HeadlessCommandMenuItem
+      isMounted={isMounted}
+      commandMenuItemId={commandMenuItemId}
       onClick={handleClick}
-      disabled={isMounted}
-      showDisabledLoader={isMounted}
     />
   );
 };

@@ -11,7 +11,7 @@ import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
 type ConfigVariableValueInputProps = {
   variable: ConfigVariable;
   value: ConfigVariableValue;
-  onChange: (value: string | number | boolean | string[] | null) => void;
+  onChange: (value: ConfigVariableValue) => void;
   disabled?: boolean;
 };
 

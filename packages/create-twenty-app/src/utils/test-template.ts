@@ -93,7 +93,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
 const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
 
 const assertServerIsReachable = async () => {

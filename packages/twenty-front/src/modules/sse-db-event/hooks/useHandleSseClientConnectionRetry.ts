@@ -13,7 +13,7 @@ import { useStore } from 'jotai';
 export const useHandleSseClientConnectionRetry = () => {
   const store = useStore();
   const handleSseClientConnectionRetry = useCallback(
-    async (retryCount: number, initialTokenForSseClient: string) => {
+    async (retryCount: number) => {
       const sseClient = store.get(sseClientState.atom);
 
       if (!isDefined(sseClient)) {
@@ -28,9 +28,7 @@ export const useHandleSseClientConnectionRetry = () => {
       const currentAppToken = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
 
       const shouldResetSseClient =
-        !isDefined(currentAppToken) ||
-        currentAppToken !== initialTokenForSseClient ||
-        retryCount > 10;
+        !isDefined(currentAppToken) || retryCount > 10;
 
       if (shouldResetSseClient) {
         await sleep(

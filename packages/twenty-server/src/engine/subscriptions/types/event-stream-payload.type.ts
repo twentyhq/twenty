@@ -6,8 +6,5 @@ export type EventStreamPayload = {
     queryIds: string[];
     objectRecordEvent: ObjectRecordSubscriptionEvent;
   }[];
-  metadataEventsWithQueryIds: {
-    queryIds: string[];
-    metadataEvent: MetadataEvent;
-  }[];
+  metadataEvents: MetadataEvent[];
 };

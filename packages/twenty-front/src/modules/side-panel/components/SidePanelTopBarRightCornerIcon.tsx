@@ -10,7 +10,7 @@ import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconButtonContainer = styled.div`
@@ -22,7 +22,7 @@ export const SidePanelTopBarRightCornerIcon = () => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const { openAskAIPage } = useOpenAskAIPageInSidePanel();
-  const { switchToNewChat } = useCreateNewAIChatThread();
+  const { switchToNewChat } = useSwitchToNewAIChat();
 
   if (isMobile || !isAiEnabled) {
     return null;

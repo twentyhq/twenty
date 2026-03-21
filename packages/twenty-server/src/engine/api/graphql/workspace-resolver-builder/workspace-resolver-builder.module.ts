@@ -16,6 +16,10 @@ import { workspaceResolverBuilderFactories } from './factories/factories';
     WorkspaceResolverFactory,
     WorkspaceResolverBuilderService,
   ],
-  exports: [WorkspaceResolverFactory, WorkspaceResolverBuilderService],
+  exports: [
+    ...workspaceResolverBuilderFactories,
+    WorkspaceResolverFactory,
+    WorkspaceResolverBuilderService,
+  ],
 })
 export class WorkspaceResolverBuilderModule {}

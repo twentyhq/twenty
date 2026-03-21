@@ -18,7 +18,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { SeededWorkspacesIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { seedCoreSchema } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-core-schema.util';
-import { seedFrontComponentsAndCommandMenuItems } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-front-components-and-command-menu-items.util';
 import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
 import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
@@ -44,7 +43,11 @@ export class DevSeederService {
     private readonly coreDataSource: DataSource,
   ) {}
 
-  public async seedDev(workspaceId: SeededWorkspacesIds): Promise<void> {
+  public async seedDev(
+    workspaceId: SeededWorkspacesIds,
+    options?: { light?: boolean },
+  ): Promise<void> {
+    const light = options?.light ?? false;
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
@@ -90,16 +93,19 @@ export class DevSeederService {
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
       workspaceId,
+      light,
     });
 
     await this.devSeederMetadataService.seedRelations({
       workspaceId,
+      light,
     });
 
     await this.devSeederPermissionsService.initPermissions({
       workspaceId,
       twentyStandardFlatApplication,
       workspaceCustomFlatApplication,
+      light,
     });
 
     await seedPageLayouts(
@@ -149,24 +155,8 @@ export class DevSeederService {
       schemaName: dataSourceMetadata.schema,
       workspaceId,
       featureFlags: featureFlagsMap,
+      light,
     });
-
-    await seedFrontComponentsAndCommandMenuItems({
-      dataSource: this.coreDataSource,
-      schemaName: 'core',
-      workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
-    });
-
-    const relatedCommandMenuItemAndFrontComponentCacheKeysToInvalidate = [
-      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.commandMenuItem),
-      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.frontComponent),
-    ].map(getMetadataFlatEntityMapsKey);
-
-    await this.workspaceCacheService.invalidateAndRecompute(
-      workspaceId,
-      relatedCommandMenuItemAndFrontComponentCacheKeysToInvalidate,
-    );
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
   }

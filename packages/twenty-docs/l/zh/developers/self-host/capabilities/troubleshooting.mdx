@@ -166,6 +166,10 @@ plugins: [
 
 在数据库容器中运行 `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` 以访问管理面板。
 
+#### 在运行工作流时，工作流运行失败，并提示 "Logic function execution is disabled." 将 LOGIC_FUNCTION_TYPE 设置为 LOCAL 或 LAMBDA 以启用。
+
+在生产环境中，逻辑函数默认处于禁用状态。 将 `LOGIC_FUNCTION_TYPE` 环境变量设置为 `LOCAL` 或 `LAMBDA` 以启用它们。 这可以通过环境变量或管理面板的数据库变量进行配置。 详情请参见[逻辑函数设置指南](/l/zh/developers/self-host/capabilities/setup#logic-functions-available-drivers)。
+
 ### 一键使用 Docker Compose
 
 #### 无法登录

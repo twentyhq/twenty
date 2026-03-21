@@ -35,6 +35,7 @@ import { cookieStorage } from '~/utils/cookie-storage';
 export const useAgentChat = (
   uiMessages: ExtendedUIMessage[],
   ensureThreadIdForSend: () => Promise<string | null>,
+  onStreamingComplete?: () => void,
 ) => {
   const setTokenPair = useSetAtomState(tokenPairState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
@@ -206,6 +207,8 @@ export const useAgentChat = (
         }
         return null;
       });
+
+      onStreamingComplete?.();
     },
   });
 

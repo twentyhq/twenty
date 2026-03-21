@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   DEFAULT_API_KEY_NAME,
@@ -8,7 +8,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  LogicFunctionDriver,
   type LogicFunctionExecuteResult,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
@@ -19,7 +18,7 @@ import type { FlatApplicationVariable } from 'src/engine/core-modules/applicatio
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { LOGIC_FUNCTION_DRIVER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver.constants';
+import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -49,8 +48,7 @@ export enum LogicFunctionExecutionExceptionCode {
 @Injectable()
 export class LogicFunctionExecutorService {
   constructor(
-    @Inject(LOGIC_FUNCTION_DRIVER)
-    private driver: LogicFunctionDriver,
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -84,7 +82,9 @@ export class LogicFunctionExecutorService {
       _flatLogicFunction: flatLogicFunction,
     });
 
-    const resultLogicFunction = await this.driver.execute({
+    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
+    const resultLogicFunction = await driver.execute({
       flatLogicFunction,
       flatApplication,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
@@ -106,7 +106,9 @@ export class LogicFunctionExecutorService {
   async transpile(
     params: LogicFunctionTranspileParams,
   ): Promise<LogicFunctionTranspileResult> {
-    return this.driver.transpile(params);
+    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
+    return driver.transpile(params);
   }
 
   private async throttleExecution(workspaceId: string) {

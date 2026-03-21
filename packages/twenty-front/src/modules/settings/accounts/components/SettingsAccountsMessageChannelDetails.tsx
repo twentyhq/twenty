@@ -5,8 +5,11 @@ import {
   type MessageChannelContactAutoCreationPolicy,
   type MessageFolderImportPolicy,
 } from '@/accounts/types/MessageChannel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { useMutation } from '@apollo/client/react';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
@@ -40,58 +43,49 @@ const StyledDetailsContainer = styled.div`
 export const SettingsAccountsMessageChannelDetails = ({
   messageChannel,
 }: SettingsAccountsMessageChannelDetailsProps) => {
+  const featureFlagsMap = useFeatureFlagsMap();
+  const isMigrated =
+    featureFlagsMap[FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED] ?? false;
+
   const { updateOneRecord } = useUpdateOneRecord();
+  const [updateMetadataChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
+
+  const updateChannel = (update: Record<string, unknown>) => {
+    if (isMigrated) {
+      updateMetadataChannel({
+        variables: { input: { id: messageChannel.id, update } },
+      });
+    } else {
+      updateOneRecord({
+        objectNameSingular: CoreObjectNameSingular.MessageChannel,
+        idToUpdate: messageChannel.id,
+        updateOneRecordInput: update,
+      });
+    }
+  };
 
   const handleVisibilityChange = (value: MessageChannelVisibility) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.MessageChannel,
-      idToUpdate: messageChannel.id,
-      updateOneRecordInput: {
-        visibility: value,
-      },
-    });
+    updateChannel({ visibility: value });
   };
 
   const handleContactAutoCreationChange = (
     value: MessageChannelContactAutoCreationPolicy,
   ) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.MessageChannel,
-      idToUpdate: messageChannel.id,
-      updateOneRecordInput: {
-        contactAutoCreationPolicy: value,
-      },
-    });
+    updateChannel({ contactAutoCreationPolicy: value });
   };
 
   const handleIsGroupEmailExcludedToggle = (value: boolean) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.MessageChannel,
-      idToUpdate: messageChannel.id,
-      updateOneRecordInput: {
-        excludeGroupEmails: value,
-      },
-    });
+    updateChannel({ excludeGroupEmails: value });
   };
 
   const handleIsNonProfessionalEmailExcludedToggle = (value: boolean) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.MessageChannel,
-      idToUpdate: messageChannel.id,
-      updateOneRecordInput: {
-        excludeNonProfessionalEmails: value,
-      },
-    });
+    updateChannel({ excludeNonProfessionalEmails: value });
   };
 
   const handleMessageFolderImportPolicyChange = (
     value: MessageFolderImportPolicy,
   ) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.MessageChannel,
-      idToUpdate: messageChannel.id,
-      updateOneRecordInput: { messageFolderImportPolicy: value },
-    });
+    updateChannel({ messageFolderImportPolicy: value });
   };
 
   return (

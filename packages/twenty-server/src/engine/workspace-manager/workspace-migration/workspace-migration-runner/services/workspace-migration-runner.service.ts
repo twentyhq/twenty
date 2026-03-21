@@ -97,6 +97,7 @@ export class WorkspaceMigrationRunnerService {
           'apiKeyRoleMap',
           'ORMEntityMetadatas',
           'flatRoleTargetByAgentIdMaps',
+          'graphQLResolverNameMap',
         ]),
       );
     }

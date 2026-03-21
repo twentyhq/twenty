@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AiSyncModelsDevCommand } from 'src/database/commands/ai-sync-models-dev.command';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
+import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
@@ -39,6 +41,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
   imports: [
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
+    WorkspaceExportModule,
     // Cron command dependencies
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
@@ -68,6 +71,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     StaleRegistrationCleanupModule,
   ],
   providers: [
+    AiSyncModelsDevCommand,
     DataSeedWorkspaceCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,

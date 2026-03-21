@@ -28,8 +28,6 @@ import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/fiel
 import { GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
-import { filterByRange } from 'src/modules/dashboard/chart-data/utils/filter-by-range.util';
-import { filterLineChartXValuesByRange } from 'src/modules/dashboard/chart-data/utils/filter-line-chart-x-values-by-range.util';
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
@@ -237,21 +235,12 @@ export class LineChartDataService {
         )
       : rawResults;
 
-    const rangeFilteredResults =
-      isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax)
-        ? filterByRange(
-            filteredResults,
-            configuration.rangeMin,
-            configuration.rangeMax,
-          )
-        : filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -366,22 +355,12 @@ export class LineChartDataService {
 
     const isStacked = configuration.isStacked ?? false;
 
-    const rangeFilteredResults =
-      !isStacked &&
-      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
-        ? filterByRange(
-            filteredResults,
-            configuration.rangeMin,
-            configuration.rangeMax,
-          )
-        : filteredResults;
-
     const isDescOrder =
       configuration.primaryAxisOrderBy === GraphOrderBy.FIELD_DESC;
 
     const { data: gapFilledResults, wasTruncated: dateRangeWasTruncated } =
       applyGapFilling({
-        data: rangeFilteredResults,
+        data: filteredResults,
         primaryAxisGroupByField,
         dateGranularity: configuration.primaryAxisDateGranularity,
         omitNullValues: configuration.omitNullValues ?? false,
@@ -496,23 +475,11 @@ export class LineChartDataService {
 
     const limitedSeriesIds = sortedSeriesIds.slice(0, maxSeries);
 
-    const filteredXValues =
-      isStacked &&
-      (isDefined(configuration.rangeMin) || isDefined(configuration.rangeMax))
-        ? filterLineChartXValuesByRange(
-            limitedXValues,
-            seriesMap,
-            limitedSeriesIds,
-            configuration.rangeMin,
-            configuration.rangeMax,
-          )
-        : limitedXValues;
-
     const series = limitedSeriesIds.map((seriesId) => {
       const xToYMap = seriesMap.get(seriesId) ?? new Map();
       const prefixedSeriesId = `${seriesIdPrefix}${seriesId}`;
 
-      let dataPoints = filteredXValues.map((xValue) => ({
+      let dataPoints = limitedXValues.map((xValue) => ({
         x: xValue,
         y: xToYMap.get(xValue) ?? 0,
       }));

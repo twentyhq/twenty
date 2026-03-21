@@ -224,6 +224,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       isAuditLogged: true,
       isSearchable: true,
       universalIdentifier: partial.id,
+      objectPermissionIds: [],
       viewIds: [],
       applicationId: null,
       isLabelSyncedWithName: false,
@@ -236,6 +237,13 @@ describe('computeRelationConnectQueryConfigs', () => {
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,
       duplicateCriteria: null,
+      applicationUniversalIdentifier: '',
+      fieldUniversalIdentifiers: [],
+      objectPermissionUniversalIdentifiers: [],
+      viewUniversalIdentifiers: [],
+      indexMetadataUniversalIdentifiers: [],
+      labelIdentifierFieldMetadataUniversalIdentifier: null,
+      imageIdentifierFieldMetadataUniversalIdentifier: null,
       ...partial,
     }) as FlatObjectMetadata;
 

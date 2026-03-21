@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import {
   type AllMetadataName,
   type MetadataEvent,
-  type MetadataEventWithQueryIds,
 } from '~/generated-metadata/graphql';
 
 const groupSseMetadataEventsByMetadataName = (
@@ -27,13 +26,9 @@ export const useDispatchMetadataEventsFromSseToBrowserEvents = <
   T extends Record<string, unknown>,
 >() => {
   const dispatchMetadataEventsFromSseToBrowserEvents = useCallback(
-    (metadataEventsWithQueryIds: MetadataEventWithQueryIds[]) => {
-      const sseMetadataEvents = metadataEventsWithQueryIds.map(
-        (item) => item.metadataEvent,
-      );
-
+    (metadataEvents: MetadataEvent[]) => {
       const eventsByMetadataName =
-        groupSseMetadataEventsByMetadataName(sseMetadataEvents);
+        groupSseMetadataEventsByMetadataName(metadataEvents);
 
       for (const [metadataName, events] of eventsByMetadataName) {
         const metadataOperationBrowserEvents =

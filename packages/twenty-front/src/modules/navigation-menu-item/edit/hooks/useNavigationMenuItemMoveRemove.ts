@@ -5,13 +5,13 @@ import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPosit
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/display/hooks/useWorkspaceSectionItems';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 
 export const useNavigationMenuItemMoveRemove = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
-  const items = useWorkspaceSectionItems();
+  const items = useNavigationMenuItemSectionItems();
   const visibleItemIds = new Set(items.map((item) => item.id));
 
   const moveUp = (navigationMenuItemId: string) => {

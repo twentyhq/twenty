@@ -1,11 +1,4 @@
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/side-panel/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
-import { isExistingWidgetMissingOrDifferentType } from '@/side-panel/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
 import { useCreatePageLayoutFrontComponentWidget } from '@/page-layout/hooks/useCreatePageLayoutFrontComponentWidget';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
@@ -15,6 +8,14 @@ import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportu
 import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hooks/useRemovePageLayoutWidgetAndPreservePosition';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
+import { isExistingWidgetMissingOrDifferentType } from '@/side-panel/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -36,7 +37,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SidePanelPageLayoutWidgetTypeSelect = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
+  const { pageLayoutId, recordId } = usePageLayoutIdFromContextStore();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -44,17 +45,38 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
 
   const { buildBarChartFieldSelection } = useOpportunityDefaultChartConfig();
 
-  const { createPageLayoutGraphWidget } =
-    useCreatePageLayoutGraphWidget(pageLayoutId);
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
-  const { createPageLayoutIframeWidget } =
-    useCreatePageLayoutIframeWidget(pageLayoutId);
+  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+    pageLayoutId,
+    layoutType: pageLayoutDraft.type,
+    targetRecordIdentifier: { id: recordId, targetObjectNameSingular: '' },
+  });
+
+  const { createPageLayoutGraphWidget } = useCreatePageLayoutGraphWidget({
+    pageLayoutId,
+    tabListInstanceId,
+  });
+
+  const { createPageLayoutIframeWidget } = useCreatePageLayoutIframeWidget({
+    pageLayoutId,
+    tabListInstanceId,
+  });
 
   const { createPageLayoutStandaloneRichTextWidget } =
-    useCreatePageLayoutStandaloneRichTextWidget(pageLayoutId);
+    useCreatePageLayoutStandaloneRichTextWidget({
+      pageLayoutId,
+      tabListInstanceId,
+    });
 
   const { createPageLayoutFrontComponentWidget } =
-    useCreatePageLayoutFrontComponentWidget(pageLayoutId);
+    useCreatePageLayoutFrontComponentWidget({
+      pageLayoutId,
+      tabListInstanceId,
+    });
 
   const { removePageLayoutWidgetAndPreservePosition } =
     useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
@@ -83,11 +105,6 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
       pageLayoutEditingWidgetIdComponentState,
       pageLayoutId,
     );
-
-  const pageLayoutDraft = useAtomComponentStateValue(
-    pageLayoutDraftComponentState,
-    pageLayoutId,
-  );
 
   const existingWidget = isDefined(pageLayoutEditingWidgetId)
     ? pageLayoutDraft.tabs
