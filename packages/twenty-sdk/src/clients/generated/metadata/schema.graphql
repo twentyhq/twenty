@@ -2441,39 +2441,29 @@ type ClientAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  provider: AiProvider
+  sdkPackage: String
   inputCostPerMillionTokensInCredits: Float!
   outputCostPerMillionTokensInCredits: Float!
   nativeCapabilities: NativeModelCapabilities
   deprecated: Boolean
   isRecommended: Boolean
+  providerName: String
   dataResidency: String
 }
 
 enum ModelFamily {
-  OPENAI
-  ANTHROPIC
-  GOOGLE
+  GPT
+  CLAUDE
+  GEMINI
   MISTRAL
-  XAI
-}
-
-enum AiProvider {
-  OPENAI
-  ANTHROPIC
-  BEDROCK
-  GOOGLE
-  MISTRAL
-  XAI
-  GROQ
-  OPENAI_COMPATIBLE
+  GROK
 }
 
 type AdminAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  provider: AiProvider
+  sdkPackage: String
   isAvailable: Boolean!
   isAdminEnabled: Boolean!
   deprecated: Boolean
@@ -2484,6 +2474,7 @@ type AdminAIModelConfig {
   outputCostPerMillionTokens: Float
   providerName: String
   providerLabel: String
+  name: String
   dataResidency: String
 }
 
@@ -2751,6 +2742,25 @@ type AdminPanelHealthServiceData {
   errorMessage: String
   details: String
   queues: [AdminPanelWorkerQueueHealth!]
+}
+
+type ModelsDevModelSuggestion {
+  modelId: String!
+  name: String!
+  inputCostPerMillionTokens: Float!
+  outputCostPerMillionTokens: Float!
+  cachedInputCostPerMillionTokens: Float
+  cacheCreationCostPerMillionTokens: Float
+  contextWindowTokens: Float!
+  maxOutputTokens: Float!
+  modalities: [String!]!
+  supportsReasoning: Boolean!
+}
+
+type ModelsDevProviderSuggestion {
+  id: String!
+  modelCount: Float!
+  npm: String!
 }
 
 type QueueMetricsDataPoint {
@@ -3210,6 +3220,8 @@ type Query {
   getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
   findAllApplicationRegistrations: [ApplicationRegistration!]!
   getAiProviders: JSON!
+  getModelsDevProviders: [ModelsDevProviderSuggestion!]!
+  getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
@@ -3497,7 +3509,7 @@ type Mutation {
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
   setAdminAiModelRecommended(modelId: String!, recommended: Boolean!): Boolean!
-  setAdminDefaultAiModel(role: String!, modelId: String!): Boolean!
+  setAdminDefaultAiModel(role: AiModelRole!, modelId: String!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   deleteDatabaseConfigVariable(key: String!): Boolean!
@@ -3505,8 +3517,8 @@ type Mutation {
   deleteJobs(queueName: String!, jobIds: [String!]!): DeleteJobsResponse!
   addAiProvider(providerName: String!, providerConfig: JSON!): Boolean!
   removeAiProvider(providerName: String!): Boolean!
-  testAiProviderConnection(providerName: String!): Int!
-  discoverAiModels: Int!
+  addModelToProvider(providerName: String!, modelConfig: JSON!): Boolean!
+  removeModelFromProvider(providerName: String!, modelName: String!): Boolean!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
   createPublicDomain(domain: String!): PublicDomain!
@@ -4477,6 +4489,11 @@ input ConnectionParameters {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
+}
+
+enum AiModelRole {
+  FAST
+  SMART
 }
 
 input CreateOneAppTokenInput {

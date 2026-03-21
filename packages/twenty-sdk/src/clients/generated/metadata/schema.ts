@@ -2037,25 +2037,24 @@ export interface ClientAIModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
-    provider?: AiProvider
+    sdkPackage?: Scalars['String']
     inputCostPerMillionTokensInCredits: Scalars['Float']
     outputCostPerMillionTokensInCredits: Scalars['Float']
     nativeCapabilities?: NativeModelCapabilities
     deprecated?: Scalars['Boolean']
     isRecommended?: Scalars['Boolean']
+    providerName?: Scalars['String']
     dataResidency?: Scalars['String']
     __typename: 'ClientAIModelConfig'
 }
 
-export type ModelFamily = 'OPENAI' | 'ANTHROPIC' | 'GOOGLE' | 'MISTRAL' | 'XAI'
-
-export type AiProvider = 'OPENAI' | 'ANTHROPIC' | 'BEDROCK' | 'GOOGLE' | 'MISTRAL' | 'XAI' | 'GROQ' | 'OPENAI_COMPATIBLE'
+export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
 
 export interface AdminAIModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
-    provider?: AiProvider
+    sdkPackage?: Scalars['String']
     isAvailable: Scalars['Boolean']
     isAdminEnabled: Scalars['Boolean']
     deprecated?: Scalars['Boolean']
@@ -2066,6 +2065,7 @@ export interface AdminAIModelConfig {
     outputCostPerMillionTokens?: Scalars['Float']
     providerName?: Scalars['String']
     providerLabel?: Scalars['String']
+    name?: Scalars['String']
     dataResidency?: Scalars['String']
     __typename: 'AdminAIModelConfig'
 }
@@ -2307,6 +2307,27 @@ export interface AdminPanelHealthServiceData {
     details?: Scalars['String']
     queues?: AdminPanelWorkerQueueHealth[]
     __typename: 'AdminPanelHealthServiceData'
+}
+
+export interface ModelsDevModelSuggestion {
+    modelId: Scalars['String']
+    name: Scalars['String']
+    inputCostPerMillionTokens: Scalars['Float']
+    outputCostPerMillionTokens: Scalars['Float']
+    cachedInputCostPerMillionTokens?: Scalars['Float']
+    cacheCreationCostPerMillionTokens?: Scalars['Float']
+    contextWindowTokens: Scalars['Float']
+    maxOutputTokens: Scalars['Float']
+    modalities: Scalars['String'][]
+    supportsReasoning: Scalars['Boolean']
+    __typename: 'ModelsDevModelSuggestion'
+}
+
+export interface ModelsDevProviderSuggestion {
+    id: Scalars['String']
+    modelCount: Scalars['Float']
+    npm: Scalars['String']
+    __typename: 'ModelsDevProviderSuggestion'
 }
 
 export interface QueueMetricsDataPoint {
@@ -2756,6 +2777,8 @@ export interface Query {
     getQueueJobs: QueueJobsResponse
     findAllApplicationRegistrations: ApplicationRegistration[]
     getAiProviders: Scalars['JSON']
+    getModelsDevProviders: ModelsDevProviderSuggestion[]
+    getModelsDevSuggestions: ModelsDevModelSuggestion[]
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
     getEmailingDomains: EmailingDomain[]
@@ -2959,8 +2982,8 @@ export interface Mutation {
     deleteJobs: DeleteJobsResponse
     addAiProvider: Scalars['Boolean']
     removeAiProvider: Scalars['Boolean']
-    testAiProviderConnection: Scalars['Int']
-    discoverAiModels: Scalars['Int']
+    addModelToProvider: Scalars['Boolean']
+    removeModelFromProvider: Scalars['Boolean']
     enablePostgresProxy: PostgresCredentials
     disablePostgresProxy: PostgresCredentials
     createPublicDomain: PublicDomain
@@ -2985,6 +3008,8 @@ export interface Mutation {
 }
 
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
+
+export type AiModelRole = 'FAST' | 'SMART'
 
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
@@ -5127,12 +5152,13 @@ export interface ClientAIModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
-    provider?: boolean | number
+    sdkPackage?: boolean | number
     inputCostPerMillionTokensInCredits?: boolean | number
     outputCostPerMillionTokensInCredits?: boolean | number
     nativeCapabilities?: NativeModelCapabilitiesGenqlSelection
     deprecated?: boolean | number
     isRecommended?: boolean | number
+    providerName?: boolean | number
     dataResidency?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5142,7 +5168,7 @@ export interface AdminAIModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
-    provider?: boolean | number
+    sdkPackage?: boolean | number
     isAvailable?: boolean | number
     isAdminEnabled?: boolean | number
     deprecated?: boolean | number
@@ -5153,6 +5179,7 @@ export interface AdminAIModelConfigGenqlSelection{
     outputCostPerMillionTokens?: boolean | number
     providerName?: boolean | number
     providerLabel?: boolean | number
+    name?: boolean | number
     dataResidency?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5401,6 +5428,29 @@ export interface AdminPanelHealthServiceDataGenqlSelection{
     errorMessage?: boolean | number
     details?: boolean | number
     queues?: AdminPanelWorkerQueueHealthGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ModelsDevModelSuggestionGenqlSelection{
+    modelId?: boolean | number
+    name?: boolean | number
+    inputCostPerMillionTokens?: boolean | number
+    outputCostPerMillionTokens?: boolean | number
+    cachedInputCostPerMillionTokens?: boolean | number
+    cacheCreationCostPerMillionTokens?: boolean | number
+    contextWindowTokens?: boolean | number
+    maxOutputTokens?: boolean | number
+    modalities?: boolean | number
+    supportsReasoning?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ModelsDevProviderSuggestionGenqlSelection{
+    id?: boolean | number
+    modelCount?: boolean | number
+    npm?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5909,6 +5959,8 @@ export interface QueryGenqlSelection{
     getQueueJobs?: (QueueJobsResponseGenqlSelection & { __args: {queueName: Scalars['String'], state: JobState, limit?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null)} })
     findAllApplicationRegistrations?: ApplicationRegistrationGenqlSelection
     getAiProviders?: boolean | number
+    getModelsDevProviders?: ModelsDevProviderSuggestionGenqlSelection
+    getModelsDevSuggestions?: (ModelsDevModelSuggestionGenqlSelection & { __args: {providerType: Scalars['String']} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
     getEmailingDomains?: EmailingDomainGenqlSelection
@@ -6123,7 +6175,7 @@ export interface MutationGenqlSelection{
     updateWorkspaceFeatureFlag?: { __args: {workspaceId: Scalars['UUID'], featureFlag: Scalars['String'], value: Scalars['Boolean']} }
     setAdminAiModelEnabled?: { __args: {modelId: Scalars['String'], enabled: Scalars['Boolean']} }
     setAdminAiModelRecommended?: { __args: {modelId: Scalars['String'], recommended: Scalars['Boolean']} }
-    setAdminDefaultAiModel?: { __args: {role: Scalars['String'], modelId: Scalars['String']} }
+    setAdminDefaultAiModel?: { __args: {role: AiModelRole, modelId: Scalars['String']} }
     createDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
     updateDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
     deleteDatabaseConfigVariable?: { __args: {key: Scalars['String']} }
@@ -6131,8 +6183,8 @@ export interface MutationGenqlSelection{
     deleteJobs?: (DeleteJobsResponseGenqlSelection & { __args: {queueName: Scalars['String'], jobIds: Scalars['String'][]} })
     addAiProvider?: { __args: {providerName: Scalars['String'], providerConfig: Scalars['JSON']} }
     removeAiProvider?: { __args: {providerName: Scalars['String']} }
-    testAiProviderConnection?: { __args: {providerName: Scalars['String']} }
-    discoverAiModels?: boolean | number
+    addModelToProvider?: { __args: {providerName: Scalars['String'], modelConfig: Scalars['JSON']} }
+    removeModelFromProvider?: { __args: {providerName: Scalars['String'], modelName: Scalars['String']} }
     enablePostgresProxy?: PostgresCredentialsGenqlSelection
     disablePostgresProxy?: PostgresCredentialsGenqlSelection
     createPublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String']} })
@@ -8191,6 +8243,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ModelsDevModelSuggestion_possibleTypes: string[] = ['ModelsDevModelSuggestion']
+    export const isModelsDevModelSuggestion = (obj?: { __typename?: any } | null): obj is ModelsDevModelSuggestion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isModelsDevModelSuggestion"')
+      return ModelsDevModelSuggestion_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ModelsDevProviderSuggestion_possibleTypes: string[] = ['ModelsDevProviderSuggestion']
+    export const isModelsDevProviderSuggestion = (obj?: { __typename?: any } | null): obj is ModelsDevProviderSuggestion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isModelsDevProviderSuggestion"')
+      return ModelsDevProviderSuggestion_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const QueueMetricsDataPoint_possibleTypes: string[] = ['QueueMetricsDataPoint']
     export const isQueueMetricsDataPoint = (obj?: { __typename?: any } | null): obj is QueueMetricsDataPoint => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isQueueMetricsDataPoint"')
@@ -9112,22 +9180,11 @@ export const enumAllMetadataName = {
 }
 
 export const enumModelFamily = {
-   OPENAI: 'OPENAI' as const,
-   ANTHROPIC: 'ANTHROPIC' as const,
-   GOOGLE: 'GOOGLE' as const,
+   GPT: 'GPT' as const,
+   CLAUDE: 'CLAUDE' as const,
+   GEMINI: 'GEMINI' as const,
    MISTRAL: 'MISTRAL' as const,
-   XAI: 'XAI' as const
-}
-
-export const enumAiProvider = {
-   OPENAI: 'OPENAI' as const,
-   ANTHROPIC: 'ANTHROPIC' as const,
-   BEDROCK: 'BEDROCK' as const,
-   GOOGLE: 'GOOGLE' as const,
-   MISTRAL: 'MISTRAL' as const,
-   XAI: 'XAI' as const,
-   GROQ: 'GROQ' as const,
-   OPENAI_COMPATIBLE: 'OPENAI_COMPATIBLE' as const
+   GROK: 'GROK' as const
 }
 
 export const enumSupportDriver = {
@@ -9243,6 +9300,11 @@ export const enumEventLogTable = {
 export const enumAnalyticsType = {
    PAGEVIEW: 'PAGEVIEW' as const,
    TRACK: 'TRACK' as const
+}
+
+export const enumAiModelRole = {
+   FAST: 'FAST' as const,
+   SMART: 'SMART' as const
 }
 
 export const enumWorkspaceMigrationActionType = {
