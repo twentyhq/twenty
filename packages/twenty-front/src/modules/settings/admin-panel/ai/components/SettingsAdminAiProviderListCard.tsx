@@ -19,7 +19,6 @@ const StyledLinkContainer = styled.div`
 
 type SettingsAdminAiProviderListCardProps = {
   providers: AiProviderItem[];
-  isLoading?: boolean;
   showAddButton?: boolean;
 };
 
@@ -45,22 +44,9 @@ const getProviderDescription = (provider: AiProviderItem): string => {
 
 export const SettingsAdminAiProviderListCard = ({
   providers,
-  isLoading,
   showAddButton = true,
 }: SettingsAdminAiProviderListCardProps) => {
   const navigate = useNavigate();
-
-  if (isLoading) {
-    return (
-      <SettingsListCard
-        items={[]}
-        rounded
-        isLoading
-        getItemLabel={() => ''}
-        RowRightComponent={() => null}
-      />
-    );
-  }
 
   if (providers.length === 0 && showAddButton) {
     return (

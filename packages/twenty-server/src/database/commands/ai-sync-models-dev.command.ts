@@ -15,7 +15,6 @@ import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-api.type';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 
-// Non-language model prefixes to exclude
 const EXCLUDED_MODEL_PREFIXES = [
   'text-embedding',
   'embedding',

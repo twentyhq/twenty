@@ -34,10 +34,10 @@ const formatCost = (
     return '—';
   }
 
-  const fmt = (val: number | null | undefined) =>
-    isDefined(val) ? `$${val}` : '—';
+  const formatValue = (value: number | null | undefined) =>
+    isDefined(value) ? `$${value}` : '—';
 
-  return `${fmt(input)} / ${fmt(output)}`;
+  return `${formatValue(input)} / ${formatValue(output)}`;
 };
 
 type SecondaryColumn = 'provider' | 'cost';

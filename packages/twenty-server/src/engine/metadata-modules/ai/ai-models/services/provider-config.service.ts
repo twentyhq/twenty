@@ -22,7 +22,6 @@ export class ProviderConfigService {
     const catalog = this.resolveTemplates(rawCatalog);
     const custom = this.twentyConfigService.get('AI_CUSTOM_PROVIDERS');
 
-    // Custom providers override catalog entries with the same key
     return { ...catalog, ...custom };
   }
 
@@ -37,32 +36,19 @@ export class ProviderConfigService {
   }
 
   private resolveProviderTemplates(config: AiProviderConfig): AiProviderConfig {
-    const resolved: Partial<AiProviderConfig> = {};
-    let hasChanges = false;
-
-    for (const field of ['apiKey', 'accessKeyId', 'secretAccessKey'] as const) {
-      const raw = config[field];
-
-      if (typeof raw !== 'string') {
-        continue;
-      }
-
-      const value = this.resolveTemplate(raw);
-
-      if (value !== raw) {
-        resolved[field] = value;
-        hasChanges = true;
-      }
-    }
-
-    if (!hasChanges) {
-      return config;
-    }
-
-    return { ...config, ...resolved };
+    return {
+      ...config,
+      apiKey: this.resolveTemplate(config.apiKey),
+      accessKeyId: this.resolveTemplate(config.accessKeyId),
+      secretAccessKey: this.resolveTemplate(config.secretAccessKey),
+    };
   }
 
-  private resolveTemplate(value: string): string | undefined {
+  private resolveTemplate(value?: string): string | undefined {
+    if (!value) {
+      return value;
+    }
+
     const varName = extractConfigVariableName(value);
 
     if (!varName) {

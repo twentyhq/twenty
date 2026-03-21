@@ -4,7 +4,6 @@ import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-mo
 
 export type AiProviderConfig = {
   npm: AiSdkPackage;
-  // models.dev provider identifier (e.g. 'openai', 'anthropic')
   name?: string;
   label?: string;
   apiKey?: string;

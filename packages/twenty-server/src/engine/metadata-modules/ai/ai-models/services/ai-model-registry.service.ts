@@ -5,7 +5,6 @@ import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   AgentException,
   AgentExceptionCode,
@@ -34,9 +33,7 @@ export interface RegisteredAIModel {
   sdkPackage: AiSdkPackage;
   model: LanguageModel;
   supportsReasoning?: boolean;
-  // Config key (e.g. 'openai')
   providerName?: string;
-  // models.dev identifier (e.g. 'openai')
   modelsDevName?: string;
 }
 
@@ -51,7 +48,6 @@ export class AiModelRegistryService {
   > = new Map();
 
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly providerConfigService: ProviderConfigService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly preferencesService: AiModelPreferencesService,
@@ -70,10 +66,6 @@ export class AiModelRegistryService {
     this.registerModelsFromProviders(providers);
   }
 
-  private hasCredentials(config: AiProviderConfig): boolean {
-    return !!(config.apiKey || config.accessKeyId);
-  }
-
   private registerModelsFromProviders(providers: AiProvidersConfig): void {
     for (const [providerKey, config] of Object.entries(providers)) {
       if (!config.npm) {
@@ -89,43 +81,30 @@ export class AiModelRegistryService {
         continue;
       }
 
-      const isConfigured = this.hasCredentials(config);
+      const isConfigured = !!(config.apiKey || config.accessKeyId);
 
       const sdkInstance = isConfigured
         ? this.sdkProviderFactory.createProvider(providerKey, config)
         : undefined;
 
       for (const modelDef of models) {
-        // Backward compat: custom providers stored before the rename may have rawModelId
-        const modelName =
-          modelDef.name ?? (modelDef as Record<string, unknown>).rawModelId;
-
-        if (!modelName || typeof modelName !== 'string') {
-          this.logger.warn(
-            `Skipping model in "${providerKey}" with missing name`,
-          );
-          continue;
-        }
-
-        const compositeId = buildCompositeModelId(providerKey, modelName);
-
-        const normalizedModelDef = { ...modelDef, name: modelName };
+        const compositeId = buildCompositeModelId(providerKey, modelDef.name);
 
         this.modelConfigCache.set(
           compositeId,
-          this.toAIModelConfig(compositeId, config, normalizedModelDef),
+          this.toAIModelConfig(compositeId, config, modelDef),
         );
 
         this.providerModelDefCache.set(compositeId, {
           providerName: providerKey,
-          modelDef: normalizedModelDef,
+          modelDef,
         });
 
         if (sdkInstance) {
           this.modelRegistry.set(compositeId, {
             modelId: compositeId,
             sdkPackage: config.npm,
-            model: sdkInstance.createModel(modelName),
+            model: sdkInstance.createModel(modelDef.name),
             supportsReasoning: modelDef.supportsReasoning,
             providerName: providerKey,
             modelsDevName: config.name,
@@ -341,30 +320,30 @@ export class AiModelRegistryService {
   }
 
   async setModelAdminEnabled(modelId: string, enabled: boolean): Promise<void> {
-    await this.preferencesService.setModelAdminEnabled(
-      modelId,
-      enabled,
-      this.providerModelDefCache,
-    );
+    this.validateModelInRegistry(modelId);
+    await this.preferencesService.setModelAdminEnabled(modelId, enabled);
   }
 
   async setModelRecommended(
     modelId: string,
     recommended: boolean,
   ): Promise<void> {
-    await this.preferencesService.setModelRecommended(
-      modelId,
-      recommended,
-      this.providerModelDefCache,
-    );
+    this.validateModelInRegistry(modelId);
+    await this.preferencesService.setModelRecommended(modelId, recommended);
   }
 
   async setDefaultModel(role: AiModelRole, modelId: string): Promise<void> {
-    await this.preferencesService.setDefaultModel(
-      role,
-      modelId,
-      this.providerModelDefCache,
-    );
+    this.validateModelInRegistry(modelId);
+    await this.preferencesService.setDefaultModel(role, modelId);
+  }
+
+  private validateModelInRegistry(modelId: string): void {
+    if (!this.providerModelDefCache.has(modelId)) {
+      throw new AgentException(
+        `Cannot update model "${modelId}": not found in registry`,
+        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
   }
 
   getResolvedProvidersForAdmin(): AiProvidersConfig {
@@ -379,9 +358,7 @@ export class AiModelRegistryService {
     this.buildModelRegistry();
   }
 
-  async resolveModelForAgent(
-    agent: { modelId: string } | null,
-  ): Promise<RegisteredAIModel> {
+  resolveModelForAgent(agent: { modelId: string } | null): RegisteredAIModel {
     const aiModel = this.getEffectiveModelConfig(
       agent?.modelId ?? DEFAULT_SMART_MODEL,
     );

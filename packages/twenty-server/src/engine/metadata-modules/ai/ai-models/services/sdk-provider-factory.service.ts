@@ -42,10 +42,6 @@ export class SdkProviderFactoryService {
     return instance;
   }
 
-  getProviderInstance(providerName: string): AiSdkProviderInstance | undefined {
-    return this.providerInstances.get(providerName);
-  }
-
   getRawProvider<T>(
     providerName: string,
     ...allowedPackages: string[]

@@ -27,7 +27,6 @@ export class ClientConfigService {
     private aiModelRegistryService: AiModelRegistryService,
   ) {}
 
-  // Capabilities that the AI SDK natively supports per provider
   private deriveNativeCapabilities(
     sdkPackage?: AiSdkPackage,
   ): NativeModelCapabilities | undefined {

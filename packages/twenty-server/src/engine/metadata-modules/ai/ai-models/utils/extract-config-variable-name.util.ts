@@ -1,6 +1,5 @@
 const CONFIG_VAR_TEMPLATE_REGEX = /^\{\{(\w+)\}\}$/;
 
-// Extracts variable name from a {{VAR_NAME}} template, or returns undefined
 export const extractConfigVariableName = (
   value: string | undefined,
 ): string | undefined => {
