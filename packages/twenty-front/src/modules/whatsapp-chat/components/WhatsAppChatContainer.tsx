@@ -513,6 +513,17 @@ export const WhatsAppChatContainer = () => {
 
   const handleDeleteMessage = useCallback(
     async (message: WaMessage) => {
+      // Check if this message has a real Twenty ID (not just the tempId)
+      const isTemp = !message.id || message.id === message.tempId;
+
+      if (isTemp) {
+        // Message hasn't been stored in Twenty yet — mark locally as deleted
+        if (message.tempId) {
+          updateMessageByTempId(message.tempId, { isDeleted: true });
+        }
+        return;
+      }
+
       try {
         await bridgeFetch(`/api/v1/messages/${message.id}/delete`, {
           method: 'POST',
@@ -522,7 +533,7 @@ export const WhatsAppChatContainer = () => {
         // Silently fail
       }
     },
-    [bridgeFetch, updateMessageById],
+    [bridgeFetch, updateMessageById, updateMessageByTempId],
   );
 
   const handleConversationUpdate = useCallback(

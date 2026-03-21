@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { type WaMessage } from '@/whatsapp-chat/types/WhatsAppTypes';
 
@@ -80,9 +80,20 @@ export const MessageContextMenu = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  // Adjust position if menu would overflow viewport
+  // Measure menu height dynamically and flip upward if it would overflow
+  const [menuHeight, setMenuHeight] = useState(0);
+
+  useEffect(() => {
+    if (menuRef.current) {
+      setMenuHeight(menuRef.current.getBoundingClientRect().height);
+    }
+  });
+
   const adjustedX = Math.min(position.x, window.innerWidth - 180);
-  const adjustedY = Math.min(position.y, window.innerHeight - 120);
+  const fitsBelow = position.y + (menuHeight || 200) <= window.innerHeight;
+  const adjustedY = fitsBelow
+    ? position.y
+    : Math.max(4, position.y - (menuHeight || 200));
 
   return (
     <StyledOverlay onClick={onClose} onContextMenu={(e) => e.preventDefault()}>
