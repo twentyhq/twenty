@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { isFilterOperandExpectingValue } from '@/object-record/object-filter-dropdown/utils/isFilterOperandExpectingValue';
+import { isRecordFilterValueValid } from 'twenty-shared/utils';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
@@ -128,17 +128,10 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       return false;
     }
 
-    const operand = predicate.operand as unknown as ViewFilterOperand;
-
-    if (!isFilterOperandExpectingValue(operand)) {
-      return false;
-    }
-
-    return (
-      !isDefined(predicate.value) ||
-      predicate.value === '' ||
-      predicate.value === '[]'
-    );
+    return !isRecordFilterValueValid({
+      operand: predicate.operand as unknown as ViewFilterOperand,
+      value: predicate.value ?? '',
+    });
   });
 
   const isFinishDisabled = hasInvalidPredicate;

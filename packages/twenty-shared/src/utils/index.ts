@@ -89,7 +89,10 @@ export { resolveRelativeDateTimeFilter } from './filter/dates/utils/resolveRelat
 export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/resolveRelativeDateTimeFilterStringified';
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { subUnitFromZonedDateTime } from './filter/dates/utils/subUnitFromZonedDateTime';
+export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFilters';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
+export { isRecordFilterOperandExpectingValue } from './filter/isRecordFilterOperandExpectingValue';
+export { isRecordFilterValueValid } from './filter/isRecordFilterValueValid';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,
