@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RECORD_BOARD_COLUMN_PADDING_AND_BORDER_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnPaddingAndBorderWidth';
 
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
@@ -23,8 +24,15 @@ const StyledFetchMoreTriggerDiv = styled.div<{ width: number }>`
   min-width: ${({ width }) => width}px;
 `;
 
-const ESTIMATED_BOARD_CARD_HEIGHT_BASE = 60;
-const ESTIMATED_BOARD_CARD_FIELD_ROW_HEIGHT = 28;
+// RecordCardHeaderContainer: height (24px) + padding top spacing(2) + padding bottom spacing(1)
+const BOARD_CARD_HEADER_HEIGHT = 24 + 8 + 4;
+
+// Per field row: skeleton height + RecordCardBodyContainer padding-bottom spacing(2) + StyledBodyContainer gap spacing(0.5)
+const BOARD_CARD_FIELD_ROW_HEIGHT =
+  SKELETON_LOADER_HEIGHT_SIZES.standard.s + 8 + 2;
+
+// StyledBodyContainer padding (4+4) + card border (2×1px) + StyledSkeletonCardContainer margin-bottom spacing(2)
+const BOARD_CARD_CHROME_HEIGHT = 8 + 2 + 8;
 
 export const RecordBoardFetchMoreInViewTriggerComponent = () => {
   const [recordBoardShouldFetchMore, setRecordBoardShouldFetchMore] =
@@ -42,15 +50,12 @@ export const RecordBoardFetchMoreInViewTriggerComponent = () => {
     visibleRecordFieldsComponentSelector,
   );
 
-  // Scale detection zone with card height (driven by visible field count)
-  // so the trigger fires before skeleton cards become visible to the user
-  const rootMargin = useMemo(() => {
-    const estimatedCardHeight =
-      ESTIMATED_BOARD_CARD_HEIGHT_BASE +
-      visibleRecordFields.length * ESTIMATED_BOARD_CARD_FIELD_ROW_HEIGHT;
+  const estimatedCardHeight =
+    BOARD_CARD_HEADER_HEIGHT +
+    visibleRecordFields.length * BOARD_CARD_FIELD_ROW_HEIGHT +
+    BOARD_CARD_CHROME_HEIGHT;
 
-    return `${estimatedCardHeight * RECORD_BOARD_QUERY_PAGE_SIZE * 2}px`;
-  }, [visibleRecordFields.length]);
+  const rootMargin = `${estimatedCardHeight * RECORD_BOARD_QUERY_PAGE_SIZE * 2}px`;
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
