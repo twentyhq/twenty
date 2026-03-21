@@ -5,7 +5,6 @@ const KNOWN_PROVIDER_IDS = [
   'google',
   'mistral',
   'xai',
-  'groq',
   'openai-compatible',
 ] as const;
 

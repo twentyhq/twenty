@@ -4,7 +4,6 @@ export const AI_SDK_PACKAGES = [
   '@ai-sdk/google',
   '@ai-sdk/mistral',
   '@ai-sdk/xai',
-  '@ai-sdk/groq',
   '@ai-sdk/amazon-bedrock',
   '@ai-sdk/openai-compatible',
 ] as const;

@@ -49,7 +49,6 @@ const PROVIDER_LABELS: ProviderLabels = {
   google: 'Google',
   mistral: 'Mistral',
   xai: 'xAI',
-  groq: 'Groq',
 };
 
 const API_KEY_TEMPLATES: Record<string, string> = {
@@ -58,7 +57,6 @@ const API_KEY_TEMPLATES: Record<string, string> = {
   google: '{{GOOGLE_API_KEY}}',
   mistral: '{{MISTRAL_API_KEY}}',
   xai: '{{XAI_API_KEY}}',
-  groq: '{{GROQ_API_KEY}}',
 };
 
 type LongContextCostEntry = {

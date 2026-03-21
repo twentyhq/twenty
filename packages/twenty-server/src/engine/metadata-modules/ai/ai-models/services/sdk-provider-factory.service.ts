@@ -6,7 +6,6 @@ import {
 } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { createGroq } from '@ai-sdk/groq';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createXai } from '@ai-sdk/xai';
@@ -97,8 +96,6 @@ export class SdkProviderFactoryService {
         return this.buildStandardProvider(config, createMistral);
       case '@ai-sdk/xai':
         return this.buildStandardProvider(config, createXai);
-      case '@ai-sdk/groq':
-        return this.buildStandardProvider(config, createGroq);
       case '@ai-sdk/amazon-bedrock':
         return this.buildBedrockProvider(config);
       case '@ai-sdk/openai-compatible':

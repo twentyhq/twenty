@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { groq } from '@ai-sdk/groq';
 import {
   convertToModelMessages,
   stepCountIs,
@@ -376,14 +375,6 @@ export class ChatExecutionService {
         return {
           tools: { web_search: provider.tools.webSearch() },
           callableToolNames: ['web_search'],
-        };
-      }
-      case '@ai-sdk/groq': {
-        return {
-          tools: {
-            web_search: groq.tools.browserSearch({}) as ToolSet[string],
-          },
-          callableToolNames: [],
         };
       }
       default:

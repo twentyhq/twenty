@@ -6,7 +6,6 @@ export const AI_SDK_PACKAGE_LABELS: Record<AiSdkPackage, string> = {
   '@ai-sdk/google': 'Google',
   '@ai-sdk/mistral': 'Mistral',
   '@ai-sdk/xai': 'xAI',
-  '@ai-sdk/groq': 'Groq',
   '@ai-sdk/amazon-bedrock': 'AWS Bedrock',
   '@ai-sdk/openai-compatible': 'OpenAI-Compatible',
 };

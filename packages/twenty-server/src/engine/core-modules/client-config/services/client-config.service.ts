@@ -34,7 +34,6 @@ export class ClientConfigService {
       case '@ai-sdk/openai':
       case '@ai-sdk/anthropic':
       case '@ai-sdk/amazon-bedrock':
-      case '@ai-sdk/groq':
         return { webSearch: true };
       default:
         return undefined;
