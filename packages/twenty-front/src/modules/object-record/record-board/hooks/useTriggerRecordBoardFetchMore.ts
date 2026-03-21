@@ -7,6 +7,7 @@ import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/const
 
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
+import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -66,6 +67,11 @@ export const useTriggerRecordBoardFetchMore = () => {
     recordBoardIsFetchingMoreComponentState,
   );
 
+  const recordBoardShouldFetchMoreCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardShouldFetchMoreComponentState,
+    );
+
   const triggerRecordBoardFetchMore = useCallback(async () => {
     const isAlreadyFetchingMore = store.get(recordBoardIsFetchingMore);
 
@@ -79,132 +85,144 @@ export const useTriggerRecordBoardFetchMore = () => {
 
     store.set(recordBoardIsFetchingMore, true);
 
-    const currentOffset = store.get(
-      recordBoardCurrentGroupByQueryOffsetCallbackState,
-    );
-
-    const newOffset = currentOffset + RECORD_BOARD_QUERY_PAGE_SIZE;
-
-    const recordGroupValuesThatShouldBeFetched = recordGroupDefinitions
-      .filter((recordGroupDefinition) => {
-        return store.get(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-        );
-      })
-      .map((recordGroupDefinition) => recordGroupDefinition.value)
-      .filter(isDefined);
-
-    if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
-      cleanStateBeforeExit();
-
-      return;
-    }
-
-    const recordIndexGroupsRecordsGroupByLazyQueryResult =
-      await executeRecordIndexGroupsRecordsLazyGroupBy({
-        variables: {
-          offsetForRecords: newOffset,
-          filter: {
-            ...combinedFilters,
-            [recordIndexGroupFieldMetadataItem?.name ?? '']: {
-              in: [...recordGroupValuesThatShouldBeFetched],
-            },
-          },
-        },
-      });
-
-    store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
-
-    if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
-      cleanStateBeforeExit();
-
-      return;
-    }
-
     const queryFieldName =
       getGroupByQueryResultGqlFieldName(objectMetadataItem);
-
-    const groups =
-      recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
-
-    if (!isDefined(groups)) {
-      cleanStateBeforeExit();
-
-      return;
-    }
 
     const sortedRecordGroupDefinitions = recordGroupDefinitions.toSorted(
       sortByProperty('position'),
     );
 
-    for (const recordGroupDefinition of sortedRecordGroupDefinitions) {
-      const foundGroupInResult = groups.find(
-        (recordGroup: any) =>
-          (recordGroup.groupByDimensionValues[0] as string) ===
-          recordGroupDefinition.value,
+    let hasMorePages = true;
+
+    while (hasMorePages) {
+      const currentOffset = store.get(
+        recordBoardCurrentGroupByQueryOffsetCallbackState,
       );
 
-      if (!isDefined(foundGroupInResult)) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-        continue;
+      const newOffset = currentOffset + RECORD_BOARD_QUERY_PAGE_SIZE;
+
+      const recordGroupValuesThatShouldBeFetched = recordGroupDefinitions
+        .filter((recordGroupDefinition) => {
+          return store.get(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+          );
+        })
+        .map((recordGroupDefinition) => recordGroupDefinition.value)
+        .filter(isDefined);
+
+      if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
+        hasMorePages = false;
+        break;
       }
 
-      const newRecords = getRecordsFromRecordConnection({
-        recordConnection: foundGroupInResult,
-      });
+      const recordIndexGroupsRecordsGroupByLazyQueryResult =
+        await executeRecordIndexGroupsRecordsLazyGroupBy({
+          variables: {
+            offsetForRecords: newOffset,
+            filter: {
+              ...combinedFilters,
+              [recordIndexGroupFieldMetadataItem?.name ?? '']: {
+                in: [...recordGroupValuesThatShouldBeFetched],
+              },
+            },
+          },
+        });
 
-      if (!isNonEmptyArray(newRecords)) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-        continue;
+      store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
+
+      if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
+        hasMorePages = false;
+        break;
       }
 
-      const currentRecordIds = store.get(
-        recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
-      ) as string[];
+      const groups =
+        recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
 
-      const newRecordIds = currentRecordIds.concat(
-        newRecords.map((record) => record.id),
-      );
+      if (!isDefined(groups)) {
+        hasMorePages = false;
+        break;
+      }
 
-      store.set(
-        recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
-        newRecordIds,
-      );
-
-      upsertRecordsInStore({ partialRecords: newRecords });
-
-      if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
+      for (const recordGroupDefinition of sortedRecordGroupDefinitions) {
+        const foundGroupInResult = groups.find(
+          (recordGroup: any) =>
+            (recordGroup.groupByDimensionValues[0] as string) ===
+            recordGroupDefinition.value,
         );
-      } else {
+
+        if (!isDefined(foundGroupInResult)) {
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            false,
+          );
+          continue;
+        }
+
+        const newRecords = getRecordsFromRecordConnection({
+          recordConnection: foundGroupInResult,
+        });
+
+        if (!isNonEmptyArray(newRecords)) {
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            false,
+          );
+          continue;
+        }
+
+        const currentRecordIds = store.get(
+          recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
+        ) as string[];
+
+        const newRecordIds = currentRecordIds.concat(
+          newRecords.map((record) => record.id),
+        );
+
         store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          true,
+          recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
+          newRecordIds,
+        );
+
+        upsertRecordsInStore({ partialRecords: newRecords });
+
+        if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            false,
+          );
+        } else {
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            true,
+          );
+        }
+
+        await sleep(
+          RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE,
         );
       }
 
-      await sleep(
-        RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE,
+      hasMorePages = recordGroupDefinitions.some(
+        (recordGroupDefinition) =>
+          store.get(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+          ),
       );
     }
+
+    store.set(recordBoardShouldFetchMoreCallbackState, false);
 
     cleanStateBeforeExit();
   }, [
@@ -217,6 +235,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     recordBoardIsFetchingMore,
     recordBoardCurrentGroupByQueryOffsetCallbackState,
     recordBoardShouldFetchMoreInColumnFamilyCallbackState,
+    recordBoardShouldFetchMoreCallbackState,
     combinedFilters,
     recordIndexGroupFieldMetadataItem,
   ]);
