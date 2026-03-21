@@ -8,5 +8,4 @@ export const NATIVE_AI_SDK_PROVIDER_IDS = [
   'xai',
 ] as const;
 
-export type NativeAiSdkProviderId =
-  (typeof NATIVE_AI_SDK_PROVIDER_IDS)[number];
+export type NativeAiSdkProviderId = (typeof NATIVE_AI_SDK_PROVIDER_IDS)[number];
