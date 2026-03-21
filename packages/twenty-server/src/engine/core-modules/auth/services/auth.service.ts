@@ -9,7 +9,11 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { AppPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  ConnectedAccountProvider,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -36,6 +40,7 @@ import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user
 import { type CheckUserExistDTO } from 'src/engine/core-modules/auth/dto/user-exists.dto';
 import { type WorkspaceInviteHashValidDTO } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
@@ -58,6 +63,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -98,6 +104,8 @@ export class AuthService {
     private readonly i18nService: I18nService,
     private readonly auditService: AuditService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -1031,6 +1039,13 @@ export class AuthService {
         billingCheckoutSessionState,
       });
 
+      await this.createSSOConnectedAccountIfFeatureFlagIsOn({
+        workspaceId: workspace.id,
+        userId: user.id,
+        handle: email,
+        authProvider,
+      });
+
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
         workspace.id,
@@ -1051,6 +1066,77 @@ export class AuthService {
           ),
         pathname: AppPath.Verify,
       });
+    }
+  }
+
+  async createSSOConnectedAccountIfFeatureFlagIsOn(input: {
+    workspaceId: string;
+    userId: string;
+    handle: string;
+    authProvider:
+      | AuthProviderEnum.Google
+      | AuthProviderEnum.Microsoft
+      | AuthProviderEnum.SSO;
+    oidcTokenClaims?: Record<string, unknown>;
+    connectedAccountProvider?: ConnectedAccountProvider;
+  }): Promise<void> {
+    const isConnectedAccountMigrated =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
+        input.workspaceId,
+      );
+
+    if (!isConnectedAccountMigrated) {
+      return;
+    }
+
+    const provider =
+      input.connectedAccountProvider ??
+      this.mapAuthProviderToConnectedAccountProvider(input.authProvider);
+
+    const scopes = this.getSSOScopes(input.authProvider);
+
+    await this.createSSOConnectedAccountService.createOrUpdateSSOConnectedAccount(
+      {
+        workspaceId: input.workspaceId,
+        userId: input.userId,
+        handle: input.handle,
+        provider,
+        scopes,
+        oidcTokenClaims: input.oidcTokenClaims,
+      },
+    );
+  }
+
+  private mapAuthProviderToConnectedAccountProvider(
+    authProvider:
+      | AuthProviderEnum.Google
+      | AuthProviderEnum.Microsoft
+      | AuthProviderEnum.SSO,
+  ): ConnectedAccountProvider {
+    switch (authProvider) {
+      case AuthProviderEnum.Google:
+        return ConnectedAccountProvider.GOOGLE;
+      case AuthProviderEnum.Microsoft:
+        return ConnectedAccountProvider.MICROSOFT;
+      case AuthProviderEnum.SSO:
+        return ConnectedAccountProvider.OIDC;
+    }
+  }
+
+  private getSSOScopes(
+    authProvider:
+      | AuthProviderEnum.Google
+      | AuthProviderEnum.Microsoft
+      | AuthProviderEnum.SSO,
+  ): string[] {
+    switch (authProvider) {
+      case AuthProviderEnum.Google:
+        return ['email', 'profile'];
+      case AuthProviderEnum.Microsoft:
+        return ['user.read'];
+      case AuthProviderEnum.SSO:
+        return ['openid', 'email', 'profile'];
     }
   }
 }
