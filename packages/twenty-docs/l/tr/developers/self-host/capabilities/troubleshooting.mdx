@@ -166,6 +166,10 @@ plugins: [
 
 Veritabanı konteynerinde `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` komutunu çalıştırarak yönetim paneline erişim sağlayın.
 
+#### Bir iş akışı çalıştırılırken, iş akışının çalıştırılması şu hatayla başarısız oluyor: "Mantık işlevi yürütme devre dışı. Etkinleştirmek için LOGIC_FUNCTION_TYPE değerini LOCAL veya LAMBDA olarak ayarlayın."
+
+Üretimde, mantık işlevleri varsayılan olarak devre dışıdır. Bunları etkinleştirmek için `LOGIC_FUNCTION_TYPE` ortam değişkenini `LOCAL` veya `LAMBDA` olarak ayarlayın. Bu, ortam değişkenleri aracılığıyla veya yönetici panelindeki veritabanı değişkenleri üzerinden yapılandırılabilir. Ayrıntılar için [Mantık İşlevleri kurulum kılavuzu](/l/tr/developers/self-host/capabilities/setup#logic-functions-available-drivers) bölümüne bakın.
+
 ### 1-tıklama ile Docker Compose
 
 #### Giriş Yapılamıyor

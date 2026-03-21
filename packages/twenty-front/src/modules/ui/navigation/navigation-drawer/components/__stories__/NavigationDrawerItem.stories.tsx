@@ -105,23 +105,14 @@ export const NewPill: Story = {
           args={{
             label: 'New Feature',
             Icon: IconSearch,
-            isNew: true,
+            modifier: 'new',
           }}
         />
         <Story
           args={{
-            label: 'New Feature with Count',
+            label: 'Feature with Keyboard Shortcut',
             Icon: IconSearch,
-            isNew: true,
-            count: 5,
-          }}
-        />
-        <Story
-          args={{
-            label: 'New Feature with Keyboard Shortcut',
-            Icon: IconSearch,
-            isNew: true,
-            keyboard: [getOsControlSymbol(), 'N'],
+            modifier: { keyboard: [getOsControlSymbol(), 'N'] },
           }}
         />
       </StyledContainer>
@@ -196,12 +187,6 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
     catalog: {
       dimensions: [
         {
-          name: 'danger',
-          values: [true, false],
-          props: (danger: boolean) => ({ danger }),
-          labels: (danger: boolean) => (danger ? 'Danger' : 'No Danger'),
-        },
-        {
           name: 'active',
           values: [true, false],
           props: (active: boolean) => ({ active }),
@@ -216,23 +201,19 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
         },
         {
           name: 'adornments',
-          values: [
-            'Without Adornments',
-            'Soon Pill',
-            'New Pill',
-            'Count',
-            'Keyboard Keys',
-          ],
+          values: ['Without Modifier', 'Soon', 'New', 'Keyboard Keys'],
           props: (adornmentName: string) =>
-            adornmentName === 'Soon Pill'
-              ? { soon: true }
-              : adornmentName === 'New Pill'
-                ? { isNew: true }
-                : adornmentName === 'Count'
-                  ? { count: 3 }
-                  : adornmentName === 'Keyboard Keys'
-                    ? { keyboard: [getOsControlSymbol(), 'K'] }
-                    : {},
+            adornmentName === 'Soon'
+              ? { modifier: 'soon' }
+              : adornmentName === 'New'
+                ? { modifier: 'new' }
+                : adornmentName === 'Keyboard Keys'
+                  ? {
+                      modifier: {
+                        keyboard: [getOsControlSymbol(), 'K'],
+                      },
+                    }
+                  : {},
         },
       ],
     },

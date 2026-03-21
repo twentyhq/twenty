@@ -187,11 +187,13 @@ export class WorkflowRunWorkspaceService {
     workspaceId,
     status,
     error,
+    isSystemError,
   }: {
     workflowRunId: string;
     workspaceId: string;
     status: Extract<WorkflowRunStatus, 'COMPLETED' | 'FAILED' | 'STOPPED'>;
     error?: string;
+    isSystemError?: boolean;
   }) {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
@@ -216,15 +218,25 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
+    const metricKey =
+      status === WorkflowRunStatus.COMPLETED
+        ? MetricsKeys.WorkflowRunCompleted
+        : status === WorkflowRunStatus.STOPPED
+          ? MetricsKeys.WorkflowRunStopped
+          : MetricsKeys.WorkflowRunFailed;
+
     await this.metricsService.incrementCounter({
-      key:
-        status === WorkflowRunStatus.COMPLETED
-          ? MetricsKeys.WorkflowRunCompleted
-          : status === WorkflowRunStatus.STOPPED
-            ? MetricsKeys.WorkflowRunStopped
-            : MetricsKeys.WorkflowRunFailed,
+      key: metricKey,
       eventId: workflowRunId,
     });
+
+    if (isSystemError) {
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.WorkflowRunSystemError,
+        eventId: workflowRunId,
+        debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+      });
+    }
   }
 
   @WithLock('workflowRunId')
@@ -250,7 +262,7 @@ export class WorkflowRunWorkspaceService {
         stepInfos: {
           ...workflowRunToUpdate.state?.stepInfos,
           [stepId]: {
-            ...(workflowRunToUpdate.state?.stepInfos[stepId] || {}),
+            ...workflowRunToUpdate.state?.stepInfos[stepId],
             result: stepInfo?.result,
             error: stepInfo?.error,
             status: stepInfo.status,
@@ -283,7 +295,7 @@ export class WorkflowRunWorkspaceService {
 
     for (const [stepId, info] of Object.entries(stepInfos)) {
       mergedStepInfos[stepId] = {
-        ...(existingStepInfos[stepId] || {}),
+        ...existingStepInfos[stepId],
         ...info,
       };
     }
@@ -335,7 +347,7 @@ export class WorkflowRunWorkspaceService {
       state: {
         ...workflowRunToUpdate.state,
         flow: {
-          ...(workflowRunToUpdate.state?.flow ?? {}),
+          ...workflowRunToUpdate.state?.flow,
           steps: updatedSteps,
         },
       },

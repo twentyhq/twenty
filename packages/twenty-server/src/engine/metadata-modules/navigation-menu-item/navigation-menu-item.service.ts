@@ -15,6 +15,7 @@ import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/
 import { type NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import {
   NavigationMenuItemException,
   NavigationMenuItemExceptionCode,
@@ -336,13 +337,25 @@ export class NavigationMenuItemService {
       existingUserWorkspaceId: flatNavigationMenuItemToDelete.userWorkspaceId,
     });
 
+    const flatEntitiesToDelete = [flatNavigationMenuItemToDelete];
+
+    if (flatNavigationMenuItemToDelete.type === NavigationMenuItemType.FOLDER) {
+      const userWorkspaceIdKey =
+        flatNavigationMenuItemToDelete.userWorkspaceId ?? 'null';
+      const folderChildren =
+        existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
+          userWorkspaceIdKey
+        ]?.[id] ?? [];
+      flatEntitiesToDelete.unshift(...folderChildren);
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [flatNavigationMenuItemToDelete],
+              flatEntityToDelete: flatEntitiesToDelete,
               flatEntityToUpdate: [],
             },
           },
