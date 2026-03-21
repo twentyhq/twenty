@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  inferNpmPackage,
-  MODELS_DEV_API_URL,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+import { inferAiSdkPackage } from 'twenty-shared/ai';
+
+import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-api.type';
 
 export type ModelsDevModelSuggestion = {
@@ -63,7 +62,7 @@ export class ModelsDevCatalogService {
         modelCount: Object.keys(provider.models ?? {}).filter((modelId) =>
           this.isLanguageModel(modelId),
         ).length,
-        npm: inferNpmPackage(id),
+        npm: inferAiSdkPackage(id),
       }))
       .sort((a, b) => b.modelCount - a.modelCount);
   }

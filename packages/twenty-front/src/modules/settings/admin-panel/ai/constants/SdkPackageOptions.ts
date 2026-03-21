@@ -1,10 +1,13 @@
-export const SDK_PACKAGE_OPTIONS = [
-  { value: '@ai-sdk/openai', label: 'OpenAI' },
-  { value: '@ai-sdk/anthropic', label: 'Anthropic' },
-  { value: '@ai-sdk/google', label: 'Google' },
-  { value: '@ai-sdk/mistral', label: 'Mistral' },
-  { value: '@ai-sdk/xai', label: 'xAI' },
-  { value: '@ai-sdk/groq', label: 'Groq' },
-  { value: '@ai-sdk/amazon-bedrock', label: 'AWS Bedrock' },
-  { value: '@ai-sdk/openai-compatible', label: 'OpenAI-Compatible' },
-];
+import {
+  AI_SDK_PACKAGES,
+  AI_SDK_PACKAGE_LABELS,
+  type AiSdkPackage,
+} from 'twenty-shared/ai';
+
+export const SDK_PACKAGE_OPTIONS: Array<{
+  value: AiSdkPackage;
+  label: string;
+}> = AI_SDK_PACKAGES.map((pkg) => ({
+  value: pkg,
+  label: AI_SDK_PACKAGE_LABELS[pkg],
+}));

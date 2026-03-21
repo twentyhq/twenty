@@ -9,8 +9,10 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 
+import { type KnownProviderId } from '@/settings/admin-panel/ai/utils/isKnownProviderId';
+
 export const PROVIDER_CONFIG: Record<
-  string,
+  KnownProviderId,
   { label: string; Icon: IconComponent }
 > = {
   openai: { label: 'OpenAI', Icon: IconProviderOpenai },

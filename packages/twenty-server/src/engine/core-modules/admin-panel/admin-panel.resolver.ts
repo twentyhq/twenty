@@ -10,6 +10,7 @@ import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-pan
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
+import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
 import { DeleteJobsResponseDTO } from 'src/engine/core-modules/admin-panel/dtos/delete-jobs-response.dto';
@@ -224,7 +225,7 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
   async setAdminDefaultAiModel(
-    @Args('role', { type: () => String }) role: 'smart' | 'fast',
+    @Args('role', { type: () => AiModelRole }) role: AiModelRole,
     @Args('modelId', { type: () => String }) modelId: string,
   ): Promise<boolean> {
     await this.aiModelRegistryService.setDefaultModel(role, modelId);

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 import {
   AgentException,
   AgentExceptionCode,
@@ -47,7 +48,7 @@ export class AiModelPreferencesService {
   }
 
   async setDefaultModel(
-    role: 'smart' | 'fast',
+    role: AiModelRole,
     modelId: string,
     modelDefCache: Map<
       string,
@@ -57,7 +58,8 @@ export class AiModelPreferencesService {
     this.validateModelExists(modelId, modelDefCache);
 
     const prefs = { ...this.getPreferences() };
-    const key = role === 'fast' ? 'defaultFastModels' : 'defaultSmartModels';
+    const key =
+      role === AiModelRole.FAST ? 'defaultFastModels' : 'defaultSmartModels';
 
     const current = prefs[key] ?? [];
     const filtered = current.filter((id) => id !== modelId);

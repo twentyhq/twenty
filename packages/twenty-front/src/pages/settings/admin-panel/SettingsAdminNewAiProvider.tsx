@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconPlus, Info } from 'twenty-ui/display';
@@ -12,6 +13,7 @@ import { Section } from 'twenty-ui/layout';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { PROVIDER_CONFIG } from '@/settings/admin-panel/ai/constants/ProviderConfig';
+import { isKnownProviderId } from '@/settings/admin-panel/ai/utils/isKnownProviderId';
 import { SDK_PACKAGE_OPTIONS } from '@/settings/admin-panel/ai/constants/SdkPackageOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
@@ -27,10 +29,10 @@ import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 
-type ModelsDevProvider = { id: string; modelCount: number; npm: string };
+type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
 type FormValues = {
-  npm: string;
+  npm: AiSdkPackage;
   label: string;
   apiKey: string;
   baseUrl: string;
@@ -70,14 +72,15 @@ export const SettingsAdminNewAiProvider = () => {
   const providerOptions = useMemo(
     () =>
       modelsDevProviders.map((provider) => {
-        const known = PROVIDER_CONFIG[provider.id];
-        const label = isDefined(known)
-          ? `${known.label} (${provider.modelCount} models)`
-          : `${provider.id} (${provider.modelCount} models)`;
+        const known = isKnownProviderId(provider.id)
+          ? PROVIDER_CONFIG[provider.id]
+          : undefined;
 
         return {
           value: provider.id,
-          label,
+          label: isDefined(known)
+            ? `${known.label} (${provider.modelCount} models)`
+            : `${provider.id} (${provider.modelCount} models)`,
           Icon: known?.Icon ?? getModelsDevLogoIcon(provider.id),
         };
       }),
@@ -114,11 +117,13 @@ export const SettingsAdminNewAiProvider = () => {
 
     form.setValue('npm', suggestion?.npm ?? '@ai-sdk/openai-compatible');
 
-    const known = PROVIDER_CONFIG[providerId];
     const fallbackLabel =
       providerId.charAt(0).toUpperCase() + providerId.slice(1);
+    const providerLabel = isKnownProviderId(providerId)
+      ? PROVIDER_CONFIG[providerId].label
+      : fallbackLabel;
 
-    form.setValue('label', known?.label ?? fallbackLabel);
+    form.setValue('label', providerLabel);
   };
 
   const handleCustomMode = () => {
@@ -163,7 +168,9 @@ export const SettingsAdminNewAiProvider = () => {
         values.baseUrl.trim() && {
           baseUrl: values.baseUrl.trim(),
         }),
-      ...(values.dataResidency && { dataResidency: values.dataResidency }),
+      ...(isDataResidency(values.dataResidency) && {
+        dataResidency: values.dataResidency,
+      }),
     };
 
     if (isBedrock) {

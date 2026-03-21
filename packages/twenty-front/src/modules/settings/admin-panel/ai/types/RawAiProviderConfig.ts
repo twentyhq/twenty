@@ -1,13 +1,15 @@
+import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
+
+export type AiProviderSource = 'catalog' | 'custom';
+
 export type RawAiProviderConfig = {
-  // npm package for the AI SDK driver (e.g. '@ai-sdk/openai')
-  npm: string;
-  // models.dev provider identifier (e.g. 'openai')
+  npm: AiSdkPackage;
   name?: string;
   label?: string;
-  source?: 'catalog' | 'custom';
+  source?: AiProviderSource;
   baseUrl?: string;
   region?: string;
-  dataResidency?: string;
+  dataResidency?: DataResidency;
   apiKey?: string;
   apiKeyConfigVariable?: string;
   hasAccessKey?: boolean;

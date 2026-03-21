@@ -23,7 +23,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
 import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
-import { type AdminAiModelConfig } from '~/generated-metadata/graphql';
+import {
+  AiModelRole,
+  type AdminAiModelConfig,
+} from '~/generated-metadata/graphql';
 
 export const SettingsAdminAI = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -102,7 +105,7 @@ export const SettingsAdminAI = () => {
   }));
 
   const handleDefaultModelChange = async (
-    role: 'smart' | 'fast',
+    role: AiModelRole,
     modelId: string,
   ) => {
     try {
@@ -173,7 +176,7 @@ export const SettingsAdminAI = () => {
                 dropdownId="admin-smart-model-select"
                 value={defaultSmartModelId ?? undefined}
                 onChange={(value: string) =>
-                  handleDefaultModelChange('smart', value)
+                  handleDefaultModelChange(AiModelRole.SMART, value)
                 }
                 options={availableModelOptions}
                 selectSizeVariant="small"
@@ -189,7 +192,7 @@ export const SettingsAdminAI = () => {
                 dropdownId="admin-fast-model-select"
                 value={defaultFastModelId ?? undefined}
                 onChange={(value: string) =>
-                  handleDefaultModelChange('fast', value)
+                  handleDefaultModelChange(AiModelRole.FAST, value)
                 }
                 options={availableModelOptions}
                 selectSizeVariant="small"

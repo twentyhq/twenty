@@ -11,13 +11,14 @@ import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createXai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
+import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 
 export type AiSdkProviderInstance = {
   createModel: (modelId: string) => LanguageModel;
   rawProvider: unknown;
-  sdkPackage: string;
+  sdkPackage: AiSdkPackage;
 };
 
 @Injectable()

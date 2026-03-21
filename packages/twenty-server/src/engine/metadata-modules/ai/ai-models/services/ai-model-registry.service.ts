@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModel } from 'ai';
+import { type AiSdkPackage } from 'twenty-shared/ai';
+
+import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -28,8 +31,7 @@ import {
 
 export interface RegisteredAIModel {
   modelId: string;
-  // npm package for SDK-specific behavior (e.g. '@ai-sdk/anthropic')
-  sdkPackage: string;
+  sdkPackage: AiSdkPackage;
   model: LanguageModel;
   supportsReasoning?: boolean;
   // Config key (e.g. 'openai')
@@ -193,17 +195,17 @@ export class AiModelRegistryService {
   }
 
   getDefaultSpeedModel(): RegisteredAIModel {
-    return this.getDefaultModelForRole('fast');
+    return this.getDefaultModelForRole(AiModelRole.FAST);
   }
 
   getDefaultPerformanceModel(): RegisteredAIModel {
-    return this.getDefaultModelForRole('smart');
+    return this.getDefaultModelForRole(AiModelRole.SMART);
   }
 
-  private getDefaultModelForRole(role: 'fast' | 'smart'): RegisteredAIModel {
+  private getDefaultModelForRole(role: AiModelRole): RegisteredAIModel {
     const prefs = this.preferencesService.getPreferences();
     const preferenceKey =
-      role === 'fast' ? 'defaultFastModels' : 'defaultSmartModels';
+      role === AiModelRole.FAST ? 'defaultFastModels' : 'defaultSmartModels';
 
     let model = this.getFirstAvailableModelFromList(prefs[preferenceKey] ?? []);
 
@@ -357,10 +359,7 @@ export class AiModelRegistryService {
     );
   }
 
-  async setDefaultModel(
-    role: 'smart' | 'fast',
-    modelId: string,
-  ): Promise<void> {
+  async setDefaultModel(role: AiModelRole, modelId: string): Promise<void> {
     await this.preferencesService.setDefaultModel(
       role,
       modelId,

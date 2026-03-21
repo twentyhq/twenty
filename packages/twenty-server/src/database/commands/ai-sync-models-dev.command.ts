@@ -6,9 +6,12 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import {
-  KNOWN_SDK_PROVIDERS,
-  MODELS_DEV_API_URL,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+  type AiSdkPackage,
+  NATIVE_AI_SDK_PROVIDER_IDS,
+} from 'twenty-shared/ai';
+
+import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
+import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-api.type';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 
@@ -71,7 +74,7 @@ type GeneratedModel = {
   name: string;
   label: string;
   description?: string;
-  modelFamily?: string;
+  modelFamily?: ModelFamily;
   inputCostPerMillionTokens?: number;
   outputCostPerMillionTokens?: number;
   cachedInputCostPerMillionTokens?: number;
@@ -85,7 +88,7 @@ type GeneratedModel = {
 };
 
 type GeneratedProvider = {
-  npm: string;
+  npm: AiSdkPackage;
   label: string;
   apiKey: string;
   models: GeneratedModel[];
@@ -161,7 +164,7 @@ export class AiSyncModelsDevCommand extends CommandRunner {
   ): Record<string, GeneratedProvider> {
     const result: Record<string, GeneratedProvider> = {};
 
-    for (const providerName of KNOWN_SDK_PROVIDERS) {
+    for (const providerName of NATIVE_AI_SDK_PROVIDER_IDS) {
       const providerData = data[providerName];
 
       if (!providerData) {

@@ -1,13 +1,9 @@
-import {
-  DATA_RESIDENCY_CONFIG,
-  type DataResidencyKey,
-} from '@/settings/admin-panel/ai/constants/DataResidencyConfig';
+import { isDataResidency } from 'twenty-shared/ai';
 
-const isDataResidencyKey = (key: string): key is DataResidencyKey =>
-  key in DATA_RESIDENCY_CONFIG;
+import { DATA_RESIDENCY_CONFIG } from '@/settings/admin-panel/ai/constants/DataResidencyConfig';
 
 export const getDataResidencyDisplay = (residency: string): string => {
-  if (isDataResidencyKey(residency)) {
+  if (isDataResidency(residency)) {
     const entry = DATA_RESIDENCY_CONFIG[residency];
 
     return `${entry.flag} ${entry.label}`;

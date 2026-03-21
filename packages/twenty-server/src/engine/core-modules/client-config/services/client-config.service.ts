@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -28,7 +29,7 @@ export class ClientConfigService {
 
   // Capabilities that the AI SDK natively supports per provider
   private deriveNativeCapabilities(
-    sdkPackage?: string,
+    sdkPackage?: AiSdkPackage,
   ): NativeModelCapabilities | undefined {
     switch (sdkPackage) {
       case '@ai-sdk/openai':

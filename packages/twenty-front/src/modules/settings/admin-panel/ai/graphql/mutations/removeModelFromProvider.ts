@@ -5,9 +5,6 @@ export const REMOVE_MODEL_FROM_PROVIDER = gql`
     $providerName: String!
     $modelName: String!
   ) {
-    removeModelFromProvider(
-      providerName: $providerName
-      modelName: $modelName
-    )
+    removeModelFromProvider(providerName: $providerName, modelName: $modelName)
   }
 `;

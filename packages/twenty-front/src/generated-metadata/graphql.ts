@@ -2491,6 +2491,11 @@ export type MinimalView = {
   type: ViewType;
 };
 
+export enum AiModelRole {
+  FAST = 'FAST',
+  SMART = 'SMART'
+}
+
 export enum ModelFamily {
   CLAUDE = 'CLAUDE',
   GEMINI = 'GEMINI',
@@ -3357,7 +3362,7 @@ export type MutationSetAdminAiModelRecommendedArgs = {
 
 export type MutationSetAdminDefaultAiModelArgs = {
   modelId: Scalars['String'];
-  role: Scalars['String'];
+  role: AiModelRole;
 };
 
 
@@ -7023,7 +7028,7 @@ export type SetAdminAiModelRecommendedMutationVariables = Exact<{
 export type SetAdminAiModelRecommendedMutation = { __typename?: 'Mutation', setAdminAiModelRecommended: boolean };
 
 export type SetAdminDefaultAiModelMutationVariables = Exact<{
-  role: Scalars['String'];
+  role: AiModelRole;
   modelId: Scalars['String'];
 }>;
 

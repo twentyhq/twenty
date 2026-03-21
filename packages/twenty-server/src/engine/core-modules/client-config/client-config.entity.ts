@@ -1,5 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
+import { type AiSdkPackage } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -7,6 +8,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
+import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
@@ -16,6 +18,10 @@ registerEnumType(FeatureFlagKey, {
 
 registerEnumType(ModelFamily, {
   name: 'ModelFamily',
+});
+
+registerEnumType(AiModelRole, {
+  name: 'AiModelRole',
 });
 
 @ObjectType()
@@ -39,7 +45,7 @@ export class ClientAIModelConfig {
   modelFamily?: ModelFamily;
 
   @Field(() => String, { nullable: true })
-  sdkPackage: string | null;
+  sdkPackage: AiSdkPackage | null;
 
   @Field(() => Number)
   inputCostPerMillionTokensInCredits: number;
@@ -75,7 +81,7 @@ export class AdminAIModelConfig {
   modelFamily?: ModelFamily;
 
   @Field(() => String, { nullable: true })
-  sdkPackage: string | null;
+  sdkPackage: AiSdkPackage | null;
 
   @Field(() => Boolean)
   isAvailable: boolean;

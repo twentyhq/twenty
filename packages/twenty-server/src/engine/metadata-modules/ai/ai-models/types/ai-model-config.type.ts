@@ -1,11 +1,10 @@
-import { type DataResidency } from 'src/engine/metadata-modules/ai/ai-models/types/data-residency.type';
+import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
 import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 export type AIModelConfig = {
   modelId: string;
-  // npm package for the SDK driver (e.g. '@ai-sdk/openai')
-  sdkPackage: string;
+  sdkPackage: AiSdkPackage;
   label: string;
   description: string;
   modelFamily?: ModelFamily;

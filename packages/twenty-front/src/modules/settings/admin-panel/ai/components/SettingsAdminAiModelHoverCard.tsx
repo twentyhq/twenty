@@ -13,6 +13,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
+import { type ModelFamily } from '~/generated-metadata/graphql';
 import { formatTokenCount } from '~/utils/format/formatTokenCount';
 
 const StyledNameValue = styled.span`
@@ -29,7 +30,7 @@ const StyledHoverCardWrapper = styled.div`
 
 type SettingsAdminAiModelHoverCardProps = {
   label: string;
-  modelFamily?: string | null;
+  modelFamily?: ModelFamily | null;
   providerName?: string | null;
   providerLabel: string;
   contextWindowTokens?: number | null;

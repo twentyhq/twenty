@@ -1,17 +1,7 @@
-export type DataResidencyKey =
-  | 'us'
-  | 'eu'
-  | 'global'
-  | 'uk'
-  | 'ap'
-  | 'jp'
-  | 'au'
-  | 'ca'
-  | 'de'
-  | 'fr';
+import { type DataResidency } from 'twenty-shared/ai';
 
 export const DATA_RESIDENCY_CONFIG: Record<
-  DataResidencyKey,
+  DataResidency,
   { label: string; flag: string }
 > = {
   us: { label: 'United States', flag: '🇺🇸' },

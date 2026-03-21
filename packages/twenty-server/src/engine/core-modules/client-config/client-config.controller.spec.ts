@@ -51,7 +51,7 @@ describe('ClientConfigController', () => {
             modelId: 'openai/gpt-4o' as ModelId,
             label: 'GPT-4o',
             modelFamily: ModelFamily.GPT,
-            sdkPackage: '@ai-sdk/openai',
+            sdkPackage: '@ai-sdk/openai' as const,
             inputCostPerMillionTokensInCredits: 2500000,
             outputCostPerMillionTokensInCredits: 10000000,
           },
