@@ -2037,11 +2037,12 @@ export interface ClientAIModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
+    modelFamilyLabel?: Scalars['String']
     sdkPackage?: Scalars['String']
     inputCostPerMillionTokensInCredits: Scalars['Float']
     outputCostPerMillionTokensInCredits: Scalars['Float']
     nativeCapabilities?: NativeModelCapabilities
-    deprecated?: Scalars['Boolean']
+    isDeprecated?: Scalars['Boolean']
     isRecommended?: Scalars['Boolean']
     providerName?: Scalars['String']
     dataResidency?: Scalars['String']
@@ -2054,10 +2055,11 @@ export interface AdminAIModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
+    modelFamilyLabel?: Scalars['String']
     sdkPackage?: Scalars['String']
     isAvailable: Scalars['Boolean']
     isAdminEnabled: Scalars['Boolean']
-    deprecated?: Scalars['Boolean']
+    isDeprecated?: Scalars['Boolean']
     isRecommended?: Scalars['Boolean']
     contextWindowTokens?: Scalars['Float']
     maxOutputTokens?: Scalars['Float']
@@ -5152,11 +5154,12 @@ export interface ClientAIModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
+    modelFamilyLabel?: boolean | number
     sdkPackage?: boolean | number
     inputCostPerMillionTokensInCredits?: boolean | number
     outputCostPerMillionTokensInCredits?: boolean | number
     nativeCapabilities?: NativeModelCapabilitiesGenqlSelection
-    deprecated?: boolean | number
+    isDeprecated?: boolean | number
     isRecommended?: boolean | number
     providerName?: boolean | number
     dataResidency?: boolean | number
@@ -5168,10 +5171,11 @@ export interface AdminAIModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
+    modelFamilyLabel?: boolean | number
     sdkPackage?: boolean | number
     isAvailable?: boolean | number
     isAdminEnabled?: boolean | number
-    deprecated?: boolean | number
+    isDeprecated?: boolean | number
     isRecommended?: boolean | number
     contextWindowTokens?: boolean | number
     maxOutputTokens?: boolean | number

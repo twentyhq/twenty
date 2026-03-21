@@ -26,7 +26,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
-import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
 const StyledSearchContainer = styled.div`
@@ -291,7 +290,7 @@ export const SettingsAIModelsTab = () => {
 
           <Card rounded>
             {filteredModels.map((model, index) => {
-              const familyLabel = getModelFamilyLabel(model.modelFamily ?? '');
+              const familyLabel = model.modelFamilyLabel ?? '';
               const residency = model.dataResidency
                 ? getDataResidencyDisplay(model.dataResidency)
                 : undefined;

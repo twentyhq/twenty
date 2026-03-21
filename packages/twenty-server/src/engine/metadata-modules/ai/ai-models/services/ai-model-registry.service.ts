@@ -139,7 +139,7 @@ export class AiModelRegistryService {
       maxOutputTokens: modelDef.maxOutputTokens ?? DEFAULT_MAX_OUTPUT_TOKENS,
       modalities: modelDef.modalities,
       supportsReasoning: modelDef.supportsReasoning,
-      deprecated: modelDef.deprecated,
+      isDeprecated: modelDef.isDeprecated,
     };
   }
 

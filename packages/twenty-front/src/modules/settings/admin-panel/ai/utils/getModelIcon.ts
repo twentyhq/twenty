@@ -11,12 +11,12 @@ export const getModelIcon = (
   providerName?: string | null,
 ): IconComponent => {
   if (modelFamily && isModelIconKey(modelFamily)) {
-    return MODEL_ICON_CONFIG[modelFamily].Icon;
+    return MODEL_ICON_CONFIG[modelFamily];
   }
 
   if (providerName) {
     return getProviderIcon(providerName);
   }
 
-  return MODEL_ICON_CONFIG.FALLBACK.Icon;
+  return MODEL_ICON_CONFIG.FALLBACK;
 };

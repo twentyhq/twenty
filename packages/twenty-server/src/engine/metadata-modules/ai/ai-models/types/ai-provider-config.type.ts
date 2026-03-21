@@ -4,6 +4,7 @@ import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-mo
 
 export type AiProviderConfig = {
   npm: AiSdkPackage;
+  // Optional provider display/catalog name (e.g. models.dev label). Not a model name; per-model names live on `models[].name`.
   name?: string;
   label?: string;
   apiKey?: string;

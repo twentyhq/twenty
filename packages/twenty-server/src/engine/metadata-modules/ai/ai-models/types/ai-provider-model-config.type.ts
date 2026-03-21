@@ -4,6 +4,7 @@ import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types
 export type AiModelSource = 'catalog' | 'manual';
 
 export type AiProviderModelConfig = {
+  // Bare model name passed to the AI SDK (e.g. `gpt-4o`, `claude-3-opus`), not the composite `provider/modelName` id.
   name: string;
   label: string;
   description?: string;
@@ -17,6 +18,6 @@ export type AiProviderModelConfig = {
   maxOutputTokens?: number;
   modalities?: string[];
   supportsReasoning?: boolean;
-  deprecated?: boolean;
+  isDeprecated?: boolean;
   source?: AiModelSource;
 };

@@ -1,5 +1,7 @@
 export type ModelsDevModel = {
+  // Model id as returned by models.dev (may match the record key in `ModelsDevProvider.models`).
   id: string;
+  // Human-readable model name from the catalog.
   name: string;
   family?: string;
   status?: 'deprecated' | 'beta';
@@ -17,10 +19,3 @@ export type ModelsDevModel = {
   release?: string;
   updated?: string;
 };
-
-export type ModelsDevProvider = {
-  id: string;
-  models: Record<string, ModelsDevModel>;
-};
-
-export type ModelsDevData = Record<string, ModelsDevProvider>;

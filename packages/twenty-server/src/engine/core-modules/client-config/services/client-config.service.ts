@@ -3,6 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
+import {
+  AI_SDK_ANTHROPIC,
+  AI_SDK_BEDROCK,
+  AI_SDK_OPENAI,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -17,6 +22,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { DEFAULT_FAST_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-fast-model.const';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
+import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
@@ -31,9 +37,9 @@ export class ClientConfigService {
     sdkPackage?: AiSdkPackage,
   ): NativeModelCapabilities | undefined {
     switch (sdkPackage) {
-      case '@ai-sdk/openai':
-      case '@ai-sdk/anthropic':
-      case '@ai-sdk/amazon-bedrock':
+      case AI_SDK_OPENAI:
+      case AI_SDK_ANTHROPIC:
+      case AI_SDK_BEDROCK:
         return { webSearch: true };
       default:
         return undefined;
@@ -65,10 +71,15 @@ export class ClientConfigService {
           registeredModel.modelId,
         );
 
+        const modelFamily = modelConfig?.modelFamily;
+
         return {
           modelId: registeredModel.modelId,
           label: modelConfig?.label || registeredModel.modelId,
-          modelFamily: modelConfig?.modelFamily,
+          modelFamily,
+          modelFamilyLabel: modelFamily
+            ? MODEL_FAMILY_LABELS[modelFamily]
+            : undefined,
           sdkPackage: registeredModel.sdkPackage,
           providerName: registeredModel.providerName,
           nativeCapabilities: this.deriveNativeCapabilities(
@@ -84,7 +95,7 @@ export class ClientConfigService {
                 modelConfig.outputCostPerMillionTokens,
               )
             : 0,
-          deprecated: modelConfig?.deprecated,
+          isDeprecated: modelConfig?.isDeprecated,
           isRecommended: recommendedModelIds.has(registeredModel.modelId),
           dataResidency: modelConfig?.dataResidency,
         };

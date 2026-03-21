@@ -8,6 +8,7 @@ import { Tag } from 'twenty-ui/components';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { billingState } from '@/client-config/states/billingState';
+import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
@@ -60,14 +61,13 @@ export const SettingsAdminAI = () => {
   const catalogProviders = useMemo(
     () =>
       providerItems
-        .filter((provider) => provider.source !== 'custom')
+        .filter((provider) => provider.source === AI_PROVIDER_SOURCE.CATALOG)
         .sort((a, b) => (a.label ?? a.id).localeCompare(b.label ?? b.id)),
     [providerItems],
   );
 
-  const customProviders = useMemo(
-    () => providerItems.filter((provider) => provider.source === 'custom'),
-    [providerItems],
+  const customProviders = providerItems.filter(
+    (provider) => provider.source === AI_PROVIDER_SOURCE.CUSTOM,
   );
 
   if (isLoadingProviders || isLoadingModels) {
@@ -95,7 +95,7 @@ export const SettingsAdminAI = () => {
   const defaultFastModelId = data?.getAdminAiModels?.defaultFastModelId;
 
   const enabledModels = models.filter(
-    (model) => model.isAvailable && model.isAdminEnabled && !model.deprecated,
+    (model) => model.isAvailable && model.isAdminEnabled && !model.isDeprecated,
   );
 
   const availableModelOptions = enabledModels.map((model) => ({

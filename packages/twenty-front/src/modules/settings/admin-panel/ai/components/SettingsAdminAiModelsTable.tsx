@@ -136,7 +136,7 @@ export const SettingsAdminAiModelsTable = ({
             const isChecked = model[checkedField] === true;
             const isDisabled =
               showDisabledState &&
-              (!model.isAvailable || model.deprecated === true);
+              (!model.isAvailable || model.isDeprecated === true);
 
             return (
               <div
@@ -171,7 +171,7 @@ export const SettingsAdminAiModelsTable = ({
                         }
                       />
                       <StyledModelLabel>{model.label}</StyledModelLabel>
-                      {showDisabledState && model.deprecated && (
+                      {showDisabledState && model.isDeprecated && (
                         <StyledDeprecatedSuffix>
                           · Deprecated
                         </StyledDeprecatedSuffix>

@@ -36,6 +36,7 @@ export class NativeModelCapabilities {
 @ObjectType()
 export class ClientAIModelConfig {
   @Field(() => String)
+  // Composite model id (`provider/modelName`) for this workspace; matches registry and admin APIs.
   modelId: ModelId;
 
   @Field(() => String)
@@ -43,6 +44,9 @@ export class ClientAIModelConfig {
 
   @Field(() => ModelFamily, { nullable: true })
   modelFamily?: ModelFamily;
+
+  @Field({ nullable: true })
+  modelFamilyLabel?: string;
 
   @Field(() => String, { nullable: true })
   sdkPackage: AiSdkPackage | null;
@@ -57,7 +61,7 @@ export class ClientAIModelConfig {
   nativeCapabilities?: NativeModelCapabilities;
 
   @Field(() => Boolean, { nullable: true })
-  deprecated?: boolean;
+  isDeprecated?: boolean;
 
   @Field(() => Boolean, { nullable: true })
   isRecommended?: boolean;
@@ -72,6 +76,7 @@ export class ClientAIModelConfig {
 @ObjectType()
 export class AdminAIModelConfig {
   @Field(() => String)
+  // Composite model id (`provider/modelName`) used for toggles, defaults, and registry lookups.
   modelId: string;
 
   @Field(() => String)
@@ -79,6 +84,9 @@ export class AdminAIModelConfig {
 
   @Field(() => ModelFamily, { nullable: true })
   modelFamily?: ModelFamily;
+
+  @Field({ nullable: true })
+  modelFamilyLabel?: string;
 
   @Field(() => String, { nullable: true })
   sdkPackage: AiSdkPackage | null;
@@ -90,7 +98,7 @@ export class AdminAIModelConfig {
   isAdminEnabled: boolean;
 
   @Field(() => Boolean, { nullable: true })
-  deprecated?: boolean;
+  isDeprecated?: boolean;
 
   @Field(() => Boolean, { nullable: true })
   isRecommended?: boolean;
@@ -114,6 +122,7 @@ export class AdminAIModelConfig {
   providerLabel?: string;
 
   @Field(() => String, { nullable: true })
+  // Bare SDK model name from the provider definition (`AiProviderModelConfig.name`), not the composite `modelId`.
   name?: string;
 
   @Field(() => String, { nullable: true })
@@ -126,9 +135,11 @@ export class AdminAIModelsDTO {
   models: AdminAIModelConfig[];
 
   @Field(() => String, { nullable: true })
+  // Composite model id for the default “smart” role (`provider/modelName`).
   defaultSmartModelId?: string;
 
   @Field(() => String, { nullable: true })
+  // Composite model id for the default “fast” role (`provider/modelName`).
   defaultFastModelId?: string;
 }
 

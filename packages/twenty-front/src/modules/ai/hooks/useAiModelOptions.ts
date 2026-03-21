@@ -5,7 +5,6 @@ import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getModelFamilyLabel } from '@/settings/admin-panel/ai/utils/getModelFamilyLabel';
 
 export const useAiModelOptions = (): SelectOption<string>[] => {
   const aiModels = useAtomStateValue(aiModelsState);
@@ -13,7 +12,7 @@ export const useAiModelOptions = (): SelectOption<string>[] => {
 
   return aiModels
     .filter(
-      (model) => !model.deprecated && isModelEnabled(model.modelId, model),
+      (model) => !model.isDeprecated && isModelEnabled(model.modelId, model),
     )
     .map((model) => ({
       value: model.modelId,
@@ -21,8 +20,8 @@ export const useAiModelOptions = (): SelectOption<string>[] => {
         model.modelId === DEFAULT_FAST_MODEL ||
         model.modelId === DEFAULT_SMART_MODEL
           ? model.label
-          : model.modelFamily
-            ? `${model.label} (${getModelFamilyLabel(model.modelFamily)})`
+          : model.modelFamilyLabel
+            ? `${model.label} (${model.modelFamilyLabel})`
             : model.label,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
@@ -52,7 +51,7 @@ export const useAiModelLabel = (
     return model.label;
   }
 
-  return model.modelFamily
-    ? `${model.label} (${getModelFamilyLabel(model.modelFamily)})`
+  return model.modelFamilyLabel
+    ? `${model.label} (${model.modelFamilyLabel})`
     : model.label;
 };

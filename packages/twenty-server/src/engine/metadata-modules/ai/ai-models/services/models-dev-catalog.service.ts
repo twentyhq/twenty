@@ -3,10 +3,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { inferAiSdkPackage } from 'twenty-shared/ai';
 
 import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
-import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-api.type';
+import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
 export type ModelsDevModelSuggestion = {
+  // models.dev catalog key for the model (often a bare id). Not the composite `provider/modelName` workspace id used in the registry.
   modelId: string;
+  // Display name from the catalog (`model.name`), or the catalog key when absent.
   name: string;
   inputCostPerMillionTokens: number;
   outputCostPerMillionTokens: number;

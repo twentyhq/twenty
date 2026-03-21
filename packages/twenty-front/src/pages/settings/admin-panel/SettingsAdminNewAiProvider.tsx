@@ -6,22 +6,19 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus, Info } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
-import { PROVIDER_CONFIG } from '@/settings/admin-panel/ai/constants/ProviderConfig';
-import { isKnownProviderId } from '@/settings/admin-panel/ai/utils/isKnownProviderId';
-import { SDK_PACKAGE_OPTIONS } from '@/settings/admin-panel/ai/constants/SdkPackageOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { GET_MODELS_DEV_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getModelsDevProviders';
 import { type RawAiProviderConfig } from '@/settings/admin-panel/ai/types/RawAiProviderConfig';
-import { computeProviderNameFromLabel } from '@/settings/admin-panel/ai/utils/computeProviderNameFromLabel';
-import { getModelsDevLogoIcon } from '@/settings/admin-panel/ai/utils/getModelsDevLogoIcon';
+import { slugify } from 'transliteration';
+import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -58,10 +55,7 @@ export const SettingsAdminNewAiProvider = () => {
     getModelsDevProviders: ModelsDevProvider[];
   }>(GET_MODELS_DEV_PROVIDERS);
 
-  const modelsDevProviders = useMemo(
-    () => modelsDevData?.getModelsDevProviders ?? [],
-    [modelsDevData],
-  );
+  const modelsDevProviders = modelsDevData?.getModelsDevProviders ?? [];
 
   const modelsDevByIdMap = useMemo(
     () =>
@@ -71,19 +65,11 @@ export const SettingsAdminNewAiProvider = () => {
 
   const providerOptions = useMemo(
     () =>
-      modelsDevProviders.map((provider) => {
-        const known = isKnownProviderId(provider.id)
-          ? PROVIDER_CONFIG[provider.id]
-          : undefined;
-
-        return {
-          value: provider.id,
-          label: isDefined(known)
-            ? `${known.label} (${provider.modelCount} models)`
-            : `${provider.id} (${provider.modelCount} models)`,
-          Icon: known?.Icon ?? getModelsDevLogoIcon(provider.id),
-        };
-      }),
+      modelsDevProviders.map((provider) => ({
+        value: provider.id,
+        label: `${provider.id.charAt(0).toUpperCase() + provider.id.slice(1)} (${provider.modelCount} models)`,
+        Icon: getProviderIcon(provider.id),
+      })),
     [modelsDevProviders],
   );
 
@@ -117,13 +103,10 @@ export const SettingsAdminNewAiProvider = () => {
 
     form.setValue('npm', suggestion?.npm ?? '@ai-sdk/openai-compatible');
 
-    const fallbackLabel =
-      providerId.charAt(0).toUpperCase() + providerId.slice(1);
-    const providerLabel = isKnownProviderId(providerId)
-      ? PROVIDER_CONFIG[providerId].label
-      : fallbackLabel;
-
-    form.setValue('label', providerLabel);
+    form.setValue(
+      'label',
+      providerId.charAt(0).toUpperCase() + providerId.slice(1),
+    );
   };
 
   const handleCustomMode = () => {
@@ -145,7 +128,7 @@ export const SettingsAdminNewAiProvider = () => {
       return;
     }
 
-    const providerName = computeProviderNameFromLabel(values.label);
+    const providerName = slugify(values.label, { separator: '-' });
 
     if (!providerName) {
       form.setError('label', {
@@ -286,28 +269,6 @@ export const SettingsAdminNewAiProvider = () => {
 
           {hasSelected && (
             <>
-              {isCustomMode && (
-                <Section>
-                  <H2Title
-                    title={t`SDK Package`}
-                    description={t`The AI SDK driver for this provider`}
-                  />
-                  <Controller
-                    name="npm"
-                    control={form.control}
-                    render={({ field: { onChange, value } }) => (
-                      <Select
-                        dropdownId="ai-provider-npm-select"
-                        value={value}
-                        onChange={onChange}
-                        options={SDK_PACKAGE_OPTIONS}
-                        fullWidth
-                      />
-                    )}
-                  />
-                </Section>
-              )}
-
               <Section>
                 <H2Title
                   title={t`Label`}
@@ -351,7 +312,7 @@ export const SettingsAdminNewAiProvider = () => {
                       <TextInput
                         value={value}
                         onChange={onChange}
-                        placeholder="sk-..."
+                        placeholder={t`sk-...`}
                         fullWidth
                         type="password"
                         error={error?.message}
@@ -377,7 +338,7 @@ export const SettingsAdminNewAiProvider = () => {
                       <TextInput
                         value={value}
                         onChange={onChange}
-                        placeholder="https://api.example.com/v1"
+                        placeholder={t`https://api.example.com/v1`}
                         fullWidth
                         error={error?.message}
                       />
@@ -426,7 +387,7 @@ export const SettingsAdminNewAiProvider = () => {
                         <TextInput
                           value={value}
                           onChange={onChange}
-                          placeholder="us-east-1"
+                          placeholder={t`us-east-1`}
                           fullWidth
                           error={error?.message}
                         />

@@ -12,6 +12,15 @@ import { createXai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
+import {
+  AI_SDK_ANTHROPIC,
+  AI_SDK_BEDROCK,
+  AI_SDK_GOOGLE,
+  AI_SDK_MISTRAL,
+  AI_SDK_OPENAI,
+  AI_SDK_OPENAI_COMPATIBLE,
+  AI_SDK_XAI,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 
 export type AiSdkProviderInstance = {
@@ -59,22 +68,22 @@ export class SdkProviderFactoryService {
   ): AmazonBedrockProvider | undefined {
     return this.getRawProvider<AmazonBedrockProvider>(
       providerName,
-      '@ai-sdk/amazon-bedrock',
+      AI_SDK_BEDROCK,
     );
   }
 
   getRawAnthropicProvider(providerName: string): AnthropicProvider | undefined {
     return this.getRawProvider<AnthropicProvider>(
       providerName,
-      '@ai-sdk/anthropic',
+      AI_SDK_ANTHROPIC,
     );
   }
 
   getRawOpenAIProvider(providerName: string): OpenAIProvider | undefined {
     return this.getRawProvider<OpenAIProvider>(
       providerName,
-      '@ai-sdk/openai',
-      '@ai-sdk/openai-compatible',
+      AI_SDK_OPENAI,
+      AI_SDK_OPENAI_COMPATIBLE,
     );
   }
 
@@ -86,19 +95,19 @@ export class SdkProviderFactoryService {
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
     switch (config.npm) {
-      case '@ai-sdk/openai':
+      case AI_SDK_OPENAI:
         return this.buildStandardProvider(config, createOpenAI);
-      case '@ai-sdk/anthropic':
+      case AI_SDK_ANTHROPIC:
         return this.buildStandardProvider(config, createAnthropic);
-      case '@ai-sdk/google':
+      case AI_SDK_GOOGLE:
         return this.buildStandardProvider(config, createGoogleGenerativeAI);
-      case '@ai-sdk/mistral':
+      case AI_SDK_MISTRAL:
         return this.buildStandardProvider(config, createMistral);
-      case '@ai-sdk/xai':
+      case AI_SDK_XAI:
         return this.buildStandardProvider(config, createXai);
-      case '@ai-sdk/amazon-bedrock':
+      case AI_SDK_BEDROCK:
         return this.buildBedrockProvider(config);
-      case '@ai-sdk/openai-compatible':
+      case AI_SDK_OPENAI_COMPATIBLE:
         return this.buildOpenAICompatibleProvider(config);
       default:
         throw new Error(`Unsupported SDK package: ${config.npm}`);
@@ -138,7 +147,7 @@ export class SdkProviderFactoryService {
     return {
       createModel: (modelId: string) => provider(modelId),
       rawProvider: provider,
-      sdkPackage: '@ai-sdk/amazon-bedrock',
+      sdkPackage: AI_SDK_BEDROCK,
     };
   }
 
@@ -157,7 +166,7 @@ export class SdkProviderFactoryService {
     return {
       createModel: (modelId: string) => provider(modelId),
       rawProvider: provider,
-      sdkPackage: '@ai-sdk/openai-compatible',
+      sdkPackage: AI_SDK_OPENAI_COMPATIBLE,
     };
   }
 }

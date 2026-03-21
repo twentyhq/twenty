@@ -21,16 +21,8 @@ jobs:
         with:
           ref: main
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Enable corepack
-        run: corepack enable
-
       - name: Install dependencies
-        run: yarn install --immutable
+        uses: ./.github/actions/yarn-install
 
       - name: Build dependencies
         run: npx nx build twenty-shared
@@ -40,10 +32,6 @@ jobs:
 
       - name: Run catalog sync
         run: npx nx run twenty-server:command-no-deps ai:sync-models-dev
-        env:
-          # Minimal env for the command to bootstrap NestJS
-          IS_BILLING_ENABLED: 'false'
-          CACHE_STORAGE_TYPE: 'memory'
 
       - name: Check for changes
         id: changes

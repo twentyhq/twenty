@@ -7,6 +7,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
+import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import {
   H2Title,
   type IconComponent,
@@ -124,21 +125,17 @@ export const SettingsAdminAiProviderDetail = () => {
     }
   };
 
-  const provider = useMemo(() => {
-    if (!providerName || !providersData?.getAiProviders) {
-      return undefined;
-    }
+  const providerConfig =
+    providerName && providersData?.getAiProviders
+      ? providersData.getAiProviders[providerName]
+      : undefined;
 
-    const config = providersData.getAiProviders[providerName];
+  const provider =
+    providerName && isDefined(providerConfig)
+      ? { id: providerName, ...providerConfig }
+      : undefined;
 
-    if (!isDefined(config)) {
-      return undefined;
-    }
-
-    return { id: providerName, ...config };
-  }, [providerName, providersData]);
-
-  const isCustomProvider = provider?.source === 'custom';
+  const isCustomProvider = provider?.source === AI_PROVIDER_SOURCE.CUSTOM;
 
   const providerModels = useMemo(() => {
     const allModels = modelsData?.getAdminAiModels?.models ?? [];

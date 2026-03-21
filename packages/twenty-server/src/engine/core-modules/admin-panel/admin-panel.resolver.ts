@@ -36,6 +36,7 @@ import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
+import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
@@ -173,10 +174,13 @@ export class AdminPanelResolver {
           modelId: modelConfig.modelId,
           label: modelConfig.label,
           modelFamily: modelConfig.modelFamily,
+          modelFamilyLabel: modelConfig.modelFamily
+            ? MODEL_FAMILY_LABELS[modelConfig.modelFamily]
+            : undefined,
           sdkPackage: modelConfig.sdkPackage,
           isAvailable,
           isAdminEnabled,
-          deprecated: modelConfig.deprecated ?? false,
+          isDeprecated: modelConfig.isDeprecated ?? false,
           isRecommended,
           contextWindowTokens: modelConfig.contextWindowTokens,
           maxOutputTokens: modelConfig.maxOutputTokens,
@@ -380,11 +384,11 @@ export class AdminPanelResolver {
     }
 
     const customProviders = {
-      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
 
     customProviders[providerName] = providerConfig;
-    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
 
     return true;
@@ -397,11 +401,11 @@ export class AdminPanelResolver {
     providerName: string,
   ): Promise<boolean> {
     const customProviders = {
-      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
 
     delete customProviders[providerName];
-    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
 
     return true;
@@ -429,7 +433,7 @@ export class AdminPanelResolver {
     modelConfig: AiProviderModelConfig,
   ): Promise<boolean> {
     const customProviders = {
-      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
 
     const existing = customProviders[providerName];
@@ -456,7 +460,7 @@ export class AdminPanelResolver {
       models: [...existingModels, { ...modelConfig, source: 'manual' }],
     };
 
-    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
 
     return true;
@@ -469,7 +473,7 @@ export class AdminPanelResolver {
     @Args('modelName', { type: () => String }) modelName: string,
   ): Promise<boolean> {
     const customProviders = {
-      ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
+      ...this.twentyConfigService.get('AI_PROVIDERS'),
     };
 
     const existing = customProviders[providerName];
@@ -489,7 +493,7 @@ export class AdminPanelResolver {
       ),
     };
 
-    await this.twentyConfigService.set('AI_CUSTOM_PROVIDERS', customProviders);
+    await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
     this.aiModelRegistryService.refreshRegistry();
 
     return true;

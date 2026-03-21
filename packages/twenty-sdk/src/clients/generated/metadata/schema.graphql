@@ -2441,11 +2441,12 @@ type ClientAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
+  modelFamilyLabel: String
   sdkPackage: String
   inputCostPerMillionTokensInCredits: Float!
   outputCostPerMillionTokensInCredits: Float!
   nativeCapabilities: NativeModelCapabilities
-  deprecated: Boolean
+  isDeprecated: Boolean
   isRecommended: Boolean
   providerName: String
   dataResidency: String
@@ -2463,10 +2464,11 @@ type AdminAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
+  modelFamilyLabel: String
   sdkPackage: String
   isAvailable: Boolean!
   isAdminEnabled: Boolean!
-  deprecated: Boolean
+  isDeprecated: Boolean
   isRecommended: Boolean
   contextWindowTokens: Float
   maxOutputTokens: Float

@@ -35,7 +35,7 @@ export const useWorkspaceAiModelAvailability = () => {
   };
 
   const realModels = aiModels.filter(
-    (model) => !isVirtualModel(model.modelId) && !model.deprecated,
+    (model) => !isVirtualModel(model.modelId) && !model.isDeprecated,
   );
 
   const enabledModels = realModels.filter((model) =>

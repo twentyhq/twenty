@@ -12,7 +12,7 @@ import {
 
 import { MODELS_DEV_API_URL } from 'src/engine/metadata-modules/ai/ai-models/constants/models-dev.const';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
-import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-api.type';
+import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 
 const EXCLUDED_MODEL_PREFIXES = [
@@ -81,7 +81,7 @@ type GeneratedModel = {
   maxOutputTokens?: number;
   modalities?: string[];
   supportsReasoning?: boolean;
-  deprecated?: boolean;
+  isDeprecated?: boolean;
 };
 
 type GeneratedProvider = {
@@ -219,7 +219,7 @@ export class AiSyncModelsDevCommand extends CommandRunner {
       }
 
       if (modelData.status === 'deprecated') {
-        model.deprecated = true;
+        model.isDeprecated = true;
       }
 
       qualifying.push(model);
@@ -341,16 +341,16 @@ export class AiSyncModelsDevCommand extends CommandRunner {
     let deprecatedCount = 0;
 
     for (const [providerName, provider] of Object.entries(catalog)) {
-      const deprecated = provider.models.filter(
-        (model) => model.deprecated,
+      const deprecatedModelCount = provider.models.filter(
+        (model) => model.isDeprecated,
       ).length;
-      const active = provider.models.length - deprecated;
+      const active = provider.models.length - deprecatedModelCount;
 
       this.logger.log(
-        `  ${providerName}: ${provider.models.length} models (${active} active, ${deprecated} deprecated)`,
+        `  ${providerName}: ${provider.models.length} models (${active} active, ${deprecatedModelCount} deprecated)`,
       );
       totalModels += provider.models.length;
-      deprecatedCount += deprecated;
+      deprecatedCount += deprecatedModelCount;
     }
 
     this.logger.log(

@@ -1271,11 +1271,11 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description:
-      'Additional or override AI providers, deep-merged on top of the built-in catalog (ai-providers.json). Use for custom endpoints, extra regions, or credentials set via admin panel.',
+      'AI provider configurations. Custom providers are deep-merged on top of the built-in catalog (ai-providers.json). Use for custom endpoints, extra regions, or credentials set via admin panel.',
     type: ConfigVariableType.JSON,
   })
   @IsOptional()
-  AI_CUSTOM_PROVIDERS: AiProvidersConfig = {};
+  AI_PROVIDERS: AiProvidersConfig = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

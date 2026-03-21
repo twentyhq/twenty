@@ -1,18 +1,5 @@
-import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
+import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderItem';
 
-export type AiProviderSource = 'catalog' | 'custom';
-
-export type RawAiProviderConfig = {
-  npm: AiSdkPackage;
-  name?: string;
-  label?: string;
-  source?: AiProviderSource;
-  baseUrl?: string;
-  region?: string;
-  dataResidency?: DataResidency;
-  apiKey?: string;
-  apiKeyConfigVariable?: string;
-  accessKeyId?: string;
-  secretAccessKey?: string;
-  hasAccessKey?: boolean;
-};
+// Backend stores providers as Record<providerId, RawAiProviderConfig>; the id is the
+// record key, not a field on the value. Same shape as AiProviderItem minus `id`.
+export type RawAiProviderConfig = Omit<AiProviderItem, 'id'>;

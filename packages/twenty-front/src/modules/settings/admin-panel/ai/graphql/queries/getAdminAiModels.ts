@@ -12,7 +12,7 @@ export const GET_ADMIN_AI_MODELS = gql`
         sdkPackage
         isAvailable
         isAdminEnabled
-        deprecated
+        isDeprecated
         isRecommended
         contextWindowTokens
         maxOutputTokens

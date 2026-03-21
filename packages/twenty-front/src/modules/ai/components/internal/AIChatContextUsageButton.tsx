@@ -16,7 +16,7 @@ import {
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { formatTokenCount } from '~/utils/format/formatTokenCount';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledContainer = styled.div`
   position: relative;
@@ -152,8 +152,15 @@ export const AIChatContextUsageButton = () => {
                 {formattedPercentage}%
               </StyledContextWindowValue>
               <StyledContextWindowValue>
-                {formatTokenCount(agentChatUsage.conversationSize)} /{' '}
-                {formatTokenCount(agentChatUsage.contextWindowTokens)}{' '}
+                {formatNumber(agentChatUsage.conversationSize, {
+                  abbreviate: true,
+                  decimals: 1,
+                })}{' '}
+                /{' '}
+                {formatNumber(agentChatUsage.contextWindowTokens, {
+                  abbreviate: true,
+                  decimals: 1,
+                })}{' '}
                 {t`tokens`}
               </StyledContextWindowValue>
             </StyledRow>
@@ -181,11 +188,17 @@ export const AIChatContextUsageButton = () => {
                 <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
                 <SettingsBillingLabelValueItem
                   label={t`Input tokens`}
-                  value={`${formatTokenCount(lastMessage.inputTokens)}${getCachedLabel(lastMessage)}`}
+                  value={`${formatNumber(lastMessage.inputTokens, {
+                    abbreviate: true,
+                    decimals: 1,
+                  })}${getCachedLabel(lastMessage)}`}
                 />
                 <SettingsBillingLabelValueItem
                   label={t`Output tokens`}
-                  value={formatTokenCount(lastMessage.outputTokens)}
+                  value={formatNumber(lastMessage.outputTokens, {
+                    abbreviate: true,
+                    decimals: 1,
+                  })}
                 />
                 <SettingsBillingLabelValueItem
                   label={t`Cost`}
@@ -203,11 +216,17 @@ export const AIChatContextUsageButton = () => {
             <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
             <SettingsBillingLabelValueItem
               label={t`Input tokens`}
-              value={formatTokenCount(agentChatUsage.inputTokens)}
+              value={formatNumber(agentChatUsage.inputTokens, {
+                abbreviate: true,
+                decimals: 1,
+              })}
             />
             <SettingsBillingLabelValueItem
               label={t`Output tokens`}
-              value={formatTokenCount(agentChatUsage.outputTokens)}
+              value={formatNumber(agentChatUsage.outputTokens, {
+                abbreviate: true,
+                decimals: 1,
+              })}
             />
             <SettingsBillingLabelValueItem
               label={t`Total cost`}

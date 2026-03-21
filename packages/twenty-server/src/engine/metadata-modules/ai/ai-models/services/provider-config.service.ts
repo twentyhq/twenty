@@ -20,7 +20,7 @@ export class ProviderConfigService {
     // Only resolve {{VAR}} templates in the committed catalog — never in
     // user-supplied custom providers, to prevent config variable exfiltration.
     const catalog = this.resolveTemplates(rawCatalog);
-    const custom = this.twentyConfigService.get('AI_CUSTOM_PROVIDERS');
+    const custom = this.twentyConfigService.get('AI_PROVIDERS');
 
     return { ...catalog, ...custom };
   }

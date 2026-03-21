@@ -14,7 +14,7 @@ import { SettingsAdminTableCard } from '@/settings/admin-panel/components/Settin
 import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 import { type ModelFamily } from '~/generated-metadata/graphql';
-import { formatTokenCount } from '~/utils/format/formatTokenCount';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledNameValue = styled.span`
   align-items: center;
@@ -107,7 +107,10 @@ export const SettingsAdminAiModelHoverCard = ({
           {
             Icon: IconFileText,
             label: t`Context`,
-            value: `${formatTokenCount(contextWindowTokens)} tokens`,
+            value: `${formatNumber(contextWindowTokens, {
+              abbreviate: true,
+              decimals: 1,
+            })} tokens`,
           },
         ]
       : []),
@@ -116,7 +119,10 @@ export const SettingsAdminAiModelHoverCard = ({
           {
             Icon: IconBolt,
             label: t`Max output`,
-            value: `${formatTokenCount(maxOutputTokens)} tokens`,
+            value: `${formatNumber(maxOutputTokens, {
+              abbreviate: true,
+              decimals: 1,
+            })} tokens`,
           },
         ]
       : []),

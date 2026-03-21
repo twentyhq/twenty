@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { styled } from '@linaria/react';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -27,17 +28,15 @@ import { Checkbox, Toggle } from 'twenty-ui/input';
 const StyledComboInputContainer = styled.div`
   display: flex;
   flex-direction: row;
-  > * + * {
-    margin-left: ${themeCssVariables.spacing[4]};
-  }
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const MODALITY_OPTIONS = [
-  { value: 'image', label: 'Image' },
-  { value: 'pdf', label: 'PDF' },
-  { value: 'audio', label: 'Audio' },
-  { value: 'video', label: 'Video' },
-] as const;
+  { value: 'image', label: t`Image` },
+  { value: 'pdf', label: t`PDF` },
+  { value: 'audio', label: t`Audio` },
+  { value: 'video', label: t`Video` },
+];
 
 const StyledCheckboxRow = styled.div`
   align-items: center;
@@ -89,13 +88,10 @@ export const SettingsAdminNewAiModel = () => {
   const { data: providersData } =
     useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
 
-  const provider = useMemo(() => {
-    if (!providerName || !providersData?.getAiProviders) {
-      return undefined;
-    }
-
-    return providersData.getAiProviders[providerName];
-  }, [providerName, providersData]);
+  const provider =
+    providerName && providersData?.getAiProviders
+      ? providersData.getAiProviders[providerName]
+      : undefined;
 
   const modelsDevName = provider?.name;
 
@@ -106,10 +102,7 @@ export const SettingsAdminNewAiModel = () => {
     skip: !modelsDevName,
   });
 
-  const suggestions = useMemo(
-    () => suggestionsData?.getModelsDevSuggestions ?? [],
-    [suggestionsData],
-  );
+  const suggestions = suggestionsData?.getModelsDevSuggestions ?? [];
 
   const suggestionsByModelId = useMemo(() => {
     const map = new Map<string, ModelSuggestion>();
@@ -121,14 +114,10 @@ export const SettingsAdminNewAiModel = () => {
     return map;
   }, [suggestions]);
 
-  const modelIdOptions = useMemo(
-    () =>
-      suggestions.map((suggestion) => ({
-        value: suggestion.modelId,
-        label: `${suggestion.name} (${suggestion.modelId})`,
-      })),
-    [suggestions],
-  );
+  const modelIdOptions = suggestions.map((suggestion) => ({
+    value: suggestion.modelId,
+    label: `${suggestion.name} (${suggestion.modelId})`,
+  }));
 
   const [addModelToProvider] = useMutation(ADD_MODEL_TO_PROVIDER);
 

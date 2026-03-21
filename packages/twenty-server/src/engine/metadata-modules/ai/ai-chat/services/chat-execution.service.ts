@@ -40,8 +40,13 @@ import {
   extractCodeInterpreterFiles,
   type ExtractedFile,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import {
+  AI_SDK_ANTHROPIC,
+  AI_SDK_BEDROCK,
+  AI_SDK_OPENAI,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import {
   AiModelRegistryService,
   type RegisteredAIModel,
@@ -202,9 +207,9 @@ export class ChatExecutionService {
       role: 'system',
       content: systemPrompt,
       providerOptions:
-        registeredModel.sdkPackage === '@ai-sdk/anthropic'
+        registeredModel.sdkPackage === AI_SDK_ANTHROPIC
           ? { anthropic: { cacheControl: { type: 'ephemeral' } } }
-          : registeredModel.sdkPackage === '@ai-sdk/amazon-bedrock'
+          : registeredModel.sdkPackage === AI_SDK_BEDROCK
             ? { bedrock: { cacheControl: { type: 'ephemeral' } } }
             : undefined,
     };
@@ -336,7 +341,7 @@ export class ChatExecutionService {
     }
 
     switch (model.sdkPackage) {
-      case '@ai-sdk/anthropic': {
+      case AI_SDK_ANTHROPIC: {
         const provider =
           this.sdkProviderFactory.getRawAnthropicProvider(providerName);
 
@@ -349,7 +354,7 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case '@ai-sdk/amazon-bedrock': {
+      case AI_SDK_BEDROCK: {
         const provider =
           this.sdkProviderFactory.getRawBedrockProvider(providerName);
 
@@ -364,7 +369,7 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case '@ai-sdk/openai': {
+      case AI_SDK_OPENAI: {
         const provider =
           this.sdkProviderFactory.getRawOpenAIProvider(providerName);
 

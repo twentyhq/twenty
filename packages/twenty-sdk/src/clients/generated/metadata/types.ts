@@ -4657,6 +4657,9 @@ export default {
             "modelFamily": [
                 260
             ],
+            "modelFamilyLabel": [
+                1
+            ],
             "sdkPackage": [
                 1
             ],
@@ -4669,7 +4672,7 @@ export default {
             "nativeCapabilities": [
                 258
             ],
-            "deprecated": [
+            "isDeprecated": [
                 6
             ],
             "isRecommended": [
@@ -4696,6 +4699,9 @@ export default {
             "modelFamily": [
                 260
             ],
+            "modelFamilyLabel": [
+                1
+            ],
             "sdkPackage": [
                 1
             ],
@@ -4705,7 +4711,7 @@ export default {
             "isAdminEnabled": [
                 6
             ],
-            "deprecated": [
+            "isDeprecated": [
                 6
             ],
             "isRecommended": [

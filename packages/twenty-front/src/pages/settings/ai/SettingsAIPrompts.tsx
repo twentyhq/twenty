@@ -14,7 +14,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { formatTokenCount } from '~/utils/format/formatTokenCount';
+import { formatNumber } from '~/utils/format/formatNumber';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -147,7 +147,10 @@ export const SettingsAIPrompts = () => {
   );
 
   const totalTokenCount = isDefined(preview)
-    ? t`~${formatTokenCount(preview.estimatedTokenCount)} tokens`
+    ? t`~${formatNumber(preview.estimatedTokenCount, {
+        abbreviate: true,
+        decimals: 1,
+      })} tokens`
     : '';
   const pageTitle = isDefined(preview)
     ? t`System Prompt (${totalTokenCount})`
@@ -173,7 +176,10 @@ export const SettingsAIPrompts = () => {
               description={t`Read-only — managed by Twenty`}
               adornment={
                 <StyledTokenBadge>
-                  {formatTokenCount(section.estimatedTokenCount)}
+                  {formatNumber(section.estimatedTokenCount, {
+                    abbreviate: true,
+                    decimals: 1,
+                  })}
                 </StyledTokenBadge>
               }
             />

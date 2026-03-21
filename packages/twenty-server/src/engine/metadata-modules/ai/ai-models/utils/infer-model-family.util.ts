@@ -23,12 +23,6 @@ export const inferModelFamily = (
   providerName: string,
   modelName?: string,
 ): ModelFamily | undefined => {
-  const fromName = NAME_TO_MODEL_FAMILY[providerName];
-
-  if (fromName) {
-    return fromName;
-  }
-
   if (modelName) {
     for (const [pattern, family] of MODEL_ID_FAMILY_PATTERNS) {
       if (pattern.test(modelName)) {
@@ -37,5 +31,5 @@ export const inferModelFamily = (
     }
   }
 
-  return undefined;
+  return NAME_TO_MODEL_FAMILY[providerName];
 };

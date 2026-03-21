@@ -55,7 +55,7 @@ describe('Default AI Providers (ai-providers.json)', () => {
     EXPECTED_PROVIDERS.forEach((providerName) => {
       const config = DEFAULT_PROVIDERS[providerName];
       const hasActiveModel = (config?.models ?? []).some(
-        (model) => !model.deprecated,
+        (model) => !model.isDeprecated,
       );
 
       expect(hasActiveModel).toBe(true);

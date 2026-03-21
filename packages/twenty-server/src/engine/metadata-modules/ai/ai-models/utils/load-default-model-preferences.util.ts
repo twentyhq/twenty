@@ -1,3 +1,5 @@
+// TODO: derive default model preferences dynamically from the catalog
+// instead of hardcoding model IDs that become stale as models evolve
 import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 
 const DEFAULT_FAST_MODELS = [

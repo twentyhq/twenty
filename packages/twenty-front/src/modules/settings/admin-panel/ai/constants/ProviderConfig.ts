@@ -8,17 +8,17 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 
-import { type KnownProviderId } from '@/settings/admin-panel/ai/utils/isKnownProviderId';
-
-export const PROVIDER_CONFIG: Record<
-  KnownProviderId,
-  { label: string; Icon: IconComponent }
-> = {
-  openai: { label: 'OpenAI', Icon: IconProviderOpenai },
-  anthropic: { label: 'Anthropic', Icon: IconBrandAnthropic },
-  bedrock: { label: 'AWS Bedrock', Icon: IconRobot },
-  google: { label: 'Google', Icon: IconGoogle },
-  mistral: { label: 'Mistral', Icon: IconBrandMistral },
-  xai: { label: 'xAI', Icon: IconBrandXai },
-  'openai-compatible': { label: 'OpenAI-Compatible', Icon: IconProviderOpenai },
+export const PROVIDER_ICON_CONFIG: Record<string, { Icon: IconComponent }> = {
+  openai: { Icon: IconProviderOpenai },
+  anthropic: { Icon: IconBrandAnthropic },
+  bedrock: { Icon: IconRobot },
+  google: { Icon: IconGoogle },
+  mistral: { Icon: IconBrandMistral },
+  xai: { Icon: IconBrandXai },
+  'openai-compatible': { Icon: IconProviderOpenai },
 };
+
+export type KnownProviderId = keyof typeof PROVIDER_ICON_CONFIG;
+
+export const isKnownProviderId = (id: string): id is KnownProviderId =>
+  id in PROVIDER_ICON_CONFIG;

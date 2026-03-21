@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { type AmazonBedrockProvider } from '@ai-sdk/amazon-bedrock';
-import { type AnthropicProvider } from '@ai-sdk/anthropic';
-import { type OpenAIProvider } from '@ai-sdk/openai';
 import { ProviderOptions } from '@ai-sdk/provider-utils';
 import { ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
+import {
+  AI_SDK_ANTHROPIC,
+  AI_SDK_BEDROCK,
+  AI_SDK_OPENAI,
+  AI_SDK_XAI,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import {
   AiModelRegistryService,
   RegisteredAIModel,
@@ -26,11 +29,11 @@ export class AgentModelConfigService {
     agent: FlatAgentWithRoleId,
   ): ProviderOptions {
     switch (model.sdkPackage) {
-      case '@ai-sdk/xai':
+      case AI_SDK_XAI:
         return this.getXaiProviderOptions(agent);
-      case '@ai-sdk/anthropic':
+      case AI_SDK_ANTHROPIC:
         return this.getAnthropicProviderOptions(model);
-      case '@ai-sdk/amazon-bedrock':
+      case AI_SDK_BEDROCK:
         return this.getBedrockProviderOptions(model);
       default:
         return {};
@@ -48,18 +51,22 @@ export class AgentModelConfigService {
     }
 
     switch (model.sdkPackage) {
-      case '@ai-sdk/anthropic':
+      case AI_SDK_ANTHROPIC:
         if (agent.modelConfiguration.webSearch?.enabled) {
-          const anthropicProvider = this.getAnthropicProviderForModel(model);
+          const anthropicProvider = model.providerName
+            ? this.sdkProviderFactory.getRawAnthropicProvider(model.providerName)
+            : undefined;
 
           if (anthropicProvider) {
             tools.web_search = anthropicProvider.tools.webSearch_20250305();
           }
         }
         break;
-      case '@ai-sdk/amazon-bedrock': {
+      case AI_SDK_BEDROCK: {
         if (agent.modelConfiguration.webSearch?.enabled) {
-          const bedrockProvider = this.getBedrockProviderForModel(model);
+          const bedrockProvider = model.providerName
+            ? this.sdkProviderFactory.getRawBedrockProvider(model.providerName)
+            : undefined;
 
           if (bedrockProvider) {
             tools.web_search =
@@ -68,9 +75,11 @@ export class AgentModelConfigService {
         }
         break;
       }
-      case '@ai-sdk/openai':
+      case AI_SDK_OPENAI:
         if (agent.modelConfiguration.webSearch?.enabled) {
-          const openaiProvider = this.getOpenAIProviderForModel(model);
+          const openaiProvider = model.providerName
+            ? this.sdkProviderFactory.getRawOpenAIProvider(model.providerName)
+            : undefined;
 
           if (openaiProvider) {
             tools.web_search = openaiProvider.tools.webSearch();
@@ -80,36 +89,6 @@ export class AgentModelConfigService {
     }
 
     return tools;
-  }
-
-  private getAnthropicProviderForModel(
-    model: RegisteredAIModel,
-  ): AnthropicProvider | undefined {
-    if (!model.providerName) {
-      return undefined;
-    }
-
-    return this.sdkProviderFactory.getRawAnthropicProvider(model.providerName);
-  }
-
-  private getBedrockProviderForModel(
-    model: RegisteredAIModel,
-  ): AmazonBedrockProvider | undefined {
-    if (!model.providerName) {
-      return undefined;
-    }
-
-    return this.sdkProviderFactory.getRawBedrockProvider(model.providerName);
-  }
-
-  private getOpenAIProviderForModel(
-    model: RegisteredAIModel,
-  ): OpenAIProvider | undefined {
-    if (!model.providerName) {
-      return undefined;
-    }
-
-    return this.sdkProviderFactory.getRawOpenAIProvider(model.providerName);
   }
 
   private getXaiProviderOptions(agent: FlatAgentWithRoleId): ProviderOptions {
