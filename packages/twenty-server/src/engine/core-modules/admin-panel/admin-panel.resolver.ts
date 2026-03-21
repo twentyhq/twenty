@@ -375,6 +375,10 @@ export class AdminPanelResolver {
     @Args('providerConfig', { type: () => GraphQLJSON })
     providerConfig: AiProviderConfig,
   ): Promise<boolean> {
+    if (!/^[a-zA-Z0-9_-]+$/.test(providerName)) {
+      throw new UserInputError('Invalid provider name');
+    }
+
     const customProviders = {
       ...this.twentyConfigService.get('AI_CUSTOM_PROVIDERS'),
     };

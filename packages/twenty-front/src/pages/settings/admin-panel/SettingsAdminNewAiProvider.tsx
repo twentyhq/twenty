@@ -183,6 +183,13 @@ export const SettingsAdminNewAiProvider = () => {
         return;
       }
       config.region = values.region.trim();
+
+      if (values.accessKeyId.trim()) {
+        config.accessKeyId = values.accessKeyId.trim();
+      }
+      if (values.secretAccessKey.trim()) {
+        config.secretAccessKey = values.secretAccessKey.trim();
+      }
     }
 
     if (!isBedrock && !isOpenAICompatible && !values.apiKey.trim()) {

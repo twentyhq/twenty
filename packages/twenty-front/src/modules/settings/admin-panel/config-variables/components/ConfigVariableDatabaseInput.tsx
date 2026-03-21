@@ -196,16 +196,18 @@ export const ConfigVariableDatabaseInput = ({
           textAreaId={`${label}-json`}
           label={label}
           value={
-            value !== null && value !== undefined
-              ? JSON.stringify(value, null, 2)
-              : ''
+            typeof value === 'string'
+              ? value
+              : value !== null && value !== undefined
+                ? JSON.stringify(value, null, 2)
+                : ''
           }
           onChange={(text) => {
             try {
               const parsed = JSON.parse(text);
               onChange(parsed as Record<string, unknown>);
             } catch {
-              // Keep raw text until valid JSON
+              onChange(text as unknown as ConfigVariableValue);
             }
           }}
           disabled={disabled}

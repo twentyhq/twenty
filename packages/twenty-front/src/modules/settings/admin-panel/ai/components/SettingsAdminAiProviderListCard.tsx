@@ -34,7 +34,7 @@ const getProviderDescription = (provider: AiProviderItem): string => {
   }
 
   if (provider.apiKey) {
-    parts.push(provider.apiKey);
+    parts.push(t`API key configured`);
   } else if (provider.hasAccessKey) {
     parts.push(t`IAM credentials`);
   }

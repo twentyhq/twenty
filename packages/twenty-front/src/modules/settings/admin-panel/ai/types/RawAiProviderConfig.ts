@@ -12,5 +12,7 @@ export type RawAiProviderConfig = {
   dataResidency?: DataResidency;
   apiKey?: string;
   apiKeyConfigVariable?: string;
+  accessKeyId?: string;
+  secretAccessKey?: string;
   hasAccessKey?: boolean;
 };

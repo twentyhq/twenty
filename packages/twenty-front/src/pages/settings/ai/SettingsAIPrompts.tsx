@@ -147,7 +147,7 @@ export const SettingsAIPrompts = () => {
   );
 
   const totalTokenCount = isDefined(preview)
-    ? `~${formatTokenCount(preview.estimatedTokenCount)} tokens`
+    ? t`~${formatTokenCount(preview.estimatedTokenCount)} tokens`
     : '';
   const pageTitle = isDefined(preview)
     ? t`System Prompt (${totalTokenCount})`
