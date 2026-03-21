@@ -51,7 +51,6 @@ export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelect
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
 export { extractFolderPathFilenameAndTypeOrThrow } from './files/extractFolderPathFilenameAndTypeOrThrow.util';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
-export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';
 export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';
 export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';
 export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGqlOperationFilterForEmails';

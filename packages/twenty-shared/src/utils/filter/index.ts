@@ -1,5 +1,4 @@
 export * from './checkIfShouldComputeEmptinessFilter';
-export * from './checkIfShouldSkipFiltering';
 export * from './filterOutInvalidRecordFilters';
 export * from './compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';
 export * from './compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';

@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { isRecordFilterValueValid } from 'twenty-shared/utils';
+import { mapRLSOperandToRecordFilterOperand } from '@/object-record/record-filter/utils/mapToRecordFilterOperand';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
@@ -12,8 +12,12 @@ import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useSearchParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsPath, type ViewFilterOperand } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import {
+  getSettingsPath,
+  isDefined,
+  isRecordFilterValueValid,
+} from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -129,7 +133,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     }
 
     return !isRecordFilterValueValid({
-      operand: predicate.operand as unknown as ViewFilterOperand,
+      operand: mapRLSOperandToRecordFilterOperand(predicate.operand),
       value: predicate.value ?? '',
     });
   });
