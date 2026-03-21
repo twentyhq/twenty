@@ -6,11 +6,11 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsSubdomain } from '~/pages/settings/domains/SettingsSubdomain';
+import { SettingsSubdomainPage } from '~/pages/settings/domains/SettingsSubdomainPage';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Domains/SettingsSubdomain',
-  component: SettingsSubdomain,
+  component: SettingsSubdomainPage,
   decorators: [PageDecorator],
   args: { routePath: '/settings/domains/subdomain' },
   parameters: {
@@ -20,6 +20,6 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsSubdomain>;
+export type Story = StoryObj<typeof SettingsSubdomainPage>;
 
 export const Default: Story = {};

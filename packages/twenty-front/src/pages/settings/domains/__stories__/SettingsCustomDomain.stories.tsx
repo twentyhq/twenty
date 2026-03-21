@@ -6,11 +6,11 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsCustomDomain } from '~/pages/settings/domains/SettingsCustomDomain';
+import { SettingsCustomDomainPage } from '~/pages/settings/domains/SettingsCustomDomainPage';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Domains/SettingsCustomDomain',
-  component: SettingsCustomDomain,
+  component: SettingsCustomDomainPage,
   decorators: [PageDecorator],
   args: { routePath: '/settings/domains/custom-domain' },
   parameters: {
@@ -20,6 +20,6 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsCustomDomain>;
+export type Story = StoryObj<typeof SettingsCustomDomainPage>;
 
 export const Default: Story = {};

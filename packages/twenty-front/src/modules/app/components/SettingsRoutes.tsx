@@ -129,16 +129,18 @@ const SettingsDomains = lazy(() =>
   })),
 );
 
-const SettingsSubdomain = lazy(() =>
-  import('~/pages/settings/domains/SettingsSubdomain').then((module) => ({
-    default: module.SettingsSubdomain,
+const SettingsSubdomainPage = lazy(() =>
+  import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
+    default: module.SettingsSubdomainPage,
   })),
 );
 
-const SettingsCustomDomain = lazy(() =>
-  import('~/pages/settings/domains/SettingsCustomDomain').then((module) => ({
-    default: module.SettingsCustomDomain,
-  })),
+const SettingsCustomDomainPage = lazy(() =>
+  import('~/pages/settings/domains/SettingsCustomDomainPage').then(
+    (module) => ({
+      default: module.SettingsCustomDomainPage,
+    }),
+  ),
 );
 
 const SettingsApiWebhooks = lazy(() =>
@@ -503,10 +505,13 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-        <Route path={SettingsPath.Subdomain} element={<SettingsSubdomain />} />
+        <Route
+          path={SettingsPath.Subdomain}
+          element={<SettingsSubdomainPage />}
+        />
         <Route
           path={SettingsPath.CustomDomain}
-          element={<SettingsCustomDomain />}
+          element={<SettingsCustomDomainPage />}
         />
         <Route
           path={SettingsPath.NewEmailingDomain}
