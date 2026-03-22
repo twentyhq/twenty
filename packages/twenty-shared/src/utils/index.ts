@@ -51,7 +51,6 @@ export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelect
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
 export { extractFolderPathFilenameAndTypeOrThrow } from './files/extractFolderPathFilenameAndTypeOrThrow.util';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
-export { checkIfShouldSkipFiltering } from './filter/checkIfShouldSkipFiltering';
 export { computeGqlOperationFilterForEmails } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForEmails';
 export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-operation-filter/for-composite-field/computeGqlOperationFilterForLinks';
 export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGqlOperationFilterForEmails';
@@ -89,7 +88,10 @@ export { resolveRelativeDateTimeFilter } from './filter/dates/utils/resolveRelat
 export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/resolveRelativeDateTimeFilterStringified';
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { subUnitFromZonedDateTime } from './filter/dates/utils/subUnitFromZonedDateTime';
+export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFilters';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
+export { isRecordFilterOperandExpectingValue } from './filter/isRecordFilterOperandExpectingValue';
+export { isRecordFilterValueValid } from './filter/isRecordFilterValueValid';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,
