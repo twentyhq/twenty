@@ -26,7 +26,9 @@ import {
   FeatureFlagGuard,
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 
+@MetadataResolver()
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @UsePipes(ResolverValidationPipe)
 export class UsageResolver {
