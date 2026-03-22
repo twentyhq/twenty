@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import {
+  FieldDisplayMode,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -28,7 +29,7 @@ export const createDefaultFieldWidget = ({
       __typename: 'FieldConfiguration',
       configurationType: WidgetConfigurationType.FIELD,
       fieldMetadataId,
-      layout: 'CARD',
+      fieldDisplayMode: FieldDisplayMode.CARD,
     },
     gridPosition: {
       __typename: 'GridPosition',
