@@ -16,6 +16,7 @@ import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMembe
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type AuthTokenPair } from '~/generated-metadata/graphql';
 import { logDebug } from '~/utils/logDebug';
+import { retryWithBackoff } from '~/utils/retryWithBackoff';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
@@ -42,6 +43,9 @@ const logger = loggerLink(() => 'Twenty');
 // UNAUTHENTICATED errors from /graphql and /metadata clients
 // deduplicate into a single renewal request.
 let renewalPromise: Promise<void> | null = null;
+
+const TOKEN_RENEWAL_MAX_RETRIES = 3;
+const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
 
 export interface Options {
   uri: string;
@@ -156,27 +160,35 @@ export class ApolloFactory implements ApolloManager {
         },
       });
 
+      const attemptTokenRenewal = async (): Promise<void> => {
+        const graphqlUri = `${REACT_APP_SERVER_BASE_URL}/metadata`;
+
+        const tokens = await retryWithBackoff(
+          () => renewToken(graphqlUri, getTokenPair()),
+          {
+            maxRetries: TOKEN_RENEWAL_MAX_RETRIES,
+            baseDelayMs: TOKEN_RENEWAL_RETRY_DELAY_MS,
+            shouldRetry: (error) =>
+              !CombinedGraphQLErrors.is(error) && isDefined(getTokenPair()),
+          },
+        );
+
+        if (isDefined(tokens)) {
+          onTokenPairChange?.(tokens);
+          cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
+        }
+      };
+
       const handleTokenRenewal = (
         operation: ApolloLink.Operation,
         forward: ApolloLink.ForwardFunction,
       ) => {
         if (!renewalPromise) {
-          // Always renew through /metadata since the RenewToken is only exposed there
-          const graphqlUri = `${REACT_APP_SERVER_BASE_URL}/metadata`;
-
-          renewalPromise = renewToken(graphqlUri, getTokenPair())
-            .then((tokens) => {
-              if (isDefined(tokens)) {
-                // oxlint-disable-next-line no-console
-                console.log('setTokenPair from handleTokenRenewal');
-                onTokenPairChange?.(tokens);
-                cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
-              }
-            })
+          renewalPromise = attemptTokenRenewal()
             .catch(() => {
               // oxlint-disable-next-line no-console
               console.log(
-                'Failed to renew token, triggering unauthenticated error from handleTokenRenewal',
+                'Failed to renew token after retries, triggering unauthenticated error',
               );
               onUnauthenticatedError?.();
             })

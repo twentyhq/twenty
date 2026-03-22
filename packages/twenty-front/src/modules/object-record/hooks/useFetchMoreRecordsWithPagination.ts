@@ -8,7 +8,7 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -60,7 +60,7 @@ type UseFindManyRecordsStateParams<
       TFetchVars
     >,
   ): Promise<ApolloClient.QueryResult<TFetchData>>;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const useFetchMoreRecordsWithPagination = <

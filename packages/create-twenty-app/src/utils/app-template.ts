@@ -610,8 +610,9 @@ const createPackageJson = async ({
   const devDependencies: Record<string, string> = {
     typescript: '^5.9.3',
     '@types/node': '^24.7.2',
-    '@types/react': '^18.2.0',
-    react: '^18.2.0',
+    '@types/react': '^19.0.0',
+    react: '^19.0.0',
+    'react-dom': '^19.0.0',
     oxlint: '^0.16.0',
     'twenty-sdk': createTwentyAppPackageJson.version,
   };

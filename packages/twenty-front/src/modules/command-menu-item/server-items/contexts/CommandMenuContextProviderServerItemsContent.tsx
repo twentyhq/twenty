@@ -2,7 +2,7 @@ import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCommandMenuItemFrontComponentCommands } from '@/command-menu-item/server-items/hooks/useCommandMenuItemFrontComponentCommands';
+import { useCommandMenuItemsFromBackend } from '@/command-menu-item/server-items/hooks/useCommandMenuItemsFromBackend';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
 type CommandMenuContextProviderServerItemsContentProps = {
@@ -21,8 +21,9 @@ export const CommandMenuContextProviderServerItemsContent = ({
 }: CommandMenuContextProviderServerItemsContentProps & {
   commandMenuContextApi: CommandMenuContextApi;
 }) => {
-  const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentCommands(commandMenuContextApi);
+  const commandMenuItems = useCommandMenuItemsFromBackend(
+    commandMenuContextApi,
+  );
 
   return (
     <CommandMenuContext.Provider
@@ -30,7 +31,7 @@ export const CommandMenuContextProviderServerItemsContent = ({
         isInSidePanel,
         displayType,
         containerType,
-        commandMenuItems: commandMenuItemFrontComponentActions,
+        commandMenuItems,
       }}
     >
       {children}

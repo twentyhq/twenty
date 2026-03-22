@@ -24,7 +24,7 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -46,7 +46,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -279,7 +279,7 @@ export const WithNumberChart: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -366,7 +366,7 @@ export const WithGaugeChart: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -457,7 +457,7 @@ export const WithBarChart: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -551,7 +551,7 @@ export const SmallWidget: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -649,7 +649,7 @@ export const MediumWidget: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -747,7 +747,7 @@ export const LargeWidget: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -841,7 +841,7 @@ export const WideWidget: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -939,7 +939,7 @@ export const TallWidget: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(widget);
@@ -1033,7 +1033,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
@@ -1053,7 +1053,7 @@ export const WithManyToOneRelationFieldWidget: Story = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       false,
@@ -1152,7 +1152,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
@@ -1172,7 +1172,7 @@ export const WithOneToManyRelationFieldWidget: Story = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       false,
@@ -1263,7 +1263,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
@@ -1283,7 +1283,7 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       false,
@@ -1401,7 +1401,7 @@ export const OnMobile: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
@@ -1499,7 +1499,7 @@ export const InSidePanel: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     const pageLayoutData = createPageLayoutWithWidget(
@@ -1658,7 +1658,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
 
@@ -1795,7 +1795,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       pageLayoutData,
     );
     jotaiStore.set(
-      isPageLayoutInEditModeComponentState.atomFamily({
+      isDashboardInEditModeComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       isInEditMode,

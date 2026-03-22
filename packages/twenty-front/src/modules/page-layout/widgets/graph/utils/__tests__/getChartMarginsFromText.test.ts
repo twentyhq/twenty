@@ -24,6 +24,42 @@ describe('getChartMarginsFromText', () => {
     expect(result.right).toBe(18);
   });
 
+  it('clamps right margin when rightTickLabels are very long', () => {
+    const longLabel = 'X'.repeat(200);
+
+    const result = getChartMarginsFromText({
+      tickFontSize: 12,
+      legendFontSize: 12,
+      bottomTickLabels: ['a'],
+      leftTickLabels: ['b'],
+      rightTickLabels: [longLabel],
+      xAxisLabel: 'x',
+      yAxisLabel: 'y',
+      tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
+      bottomLegendOffset: 0,
+    });
+
+    expect(result.right).toBe(TEXT_MARGIN_LIMITS.max.right);
+  });
+
+  it('increases right margin when rightTickLabels are provided', () => {
+    const topRightBase = Math.ceil(12 * 1.5);
+
+    const result = getChartMarginsFromText({
+      tickFontSize: 12,
+      legendFontSize: 12,
+      bottomTickLabels: ['a'],
+      leftTickLabels: ['b'],
+      rightTickLabels: ['$10,000'],
+      xAxisLabel: 'x',
+      yAxisLabel: 'y',
+      tickRotation: COMMON_CHART_CONSTANTS.NO_ROTATION_ANGLE,
+      bottomLegendOffset: 0,
+    });
+
+    expect(result.right).toBeGreaterThan(topRightBase);
+  });
+
   it('uses bottom legend offset when it exceeds tick and label blocks', () => {
     const bottomLegendOffset = 100;
     const result = getChartMarginsFromText({

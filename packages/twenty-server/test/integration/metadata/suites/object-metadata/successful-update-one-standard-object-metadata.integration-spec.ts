@@ -46,6 +46,12 @@ const successfulUpdateTestsUseCase: UpdateOneStandardObjectMetadataTestingContex
         labelPlural: 'Businesses',
       },
     },
+    {
+      title: 'when updating color',
+      context: {
+        color: 'red',
+      },
+    },
   ];
 
 const allTestsUseCases = [...successfulUpdateTestsUseCase];
@@ -67,6 +73,7 @@ describe('Standard object metadata update should succeed', () => {
         namePlural
         labelSingular
         labelPlural
+        color
         description
         icon
         isActive
@@ -121,6 +128,7 @@ describe('Standard object metadata update should succeed', () => {
           namePlural
           labelSingular
           labelPlural
+          color
           description
           icon
           isActive
@@ -128,6 +136,7 @@ describe('Standard object metadata update should succeed', () => {
           standardOverrides {
             labelSingular
             labelPlural
+            color
             description
             icon
           }

@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   IconBox,
   OverflowingTextWithTooltip,
@@ -14,7 +14,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;
   objectMetadataItems: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'icon' | 'labelSingular' | 'labelPlural' | 'isCustom' | 'isRemote'
   >[];
   pluralizeLabel?: boolean;
@@ -55,7 +55,7 @@ const StyledSeparator = styled.div`
 
 type SettingsDataModelObjectPreviewItemProps = {
   objectMetadataItem: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'icon' | 'labelSingular' | 'labelPlural' | 'isCustom' | 'isRemote'
   >;
   pluralizeLabel: boolean;

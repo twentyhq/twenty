@@ -1,9 +1,9 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export const getRelationObjectMetadataNameSingular = ({
   field,
 }: {
-  field: ObjectMetadataItem['fields'][0];
+  field: EnrichedObjectMetadataItem['fields'][0];
 }): string | undefined => {
   return field.relation?.targetObjectMetadata.nameSingular;
 };

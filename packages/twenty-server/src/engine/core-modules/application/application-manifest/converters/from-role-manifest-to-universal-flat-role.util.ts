@@ -30,6 +30,8 @@ export const fromRoleManifestToUniversalFlatRole = ({
     canBeAssignedToAgents: roleManifest.canBeAssignedToAgents ?? true,
     canBeAssignedToApiKeys: roleManifest.canBeAssignedToApiKeys ?? true,
     roleTargetUniversalIdentifiers: [],
+    objectPermissionUniversalIdentifiers: [],
+    permissionFlagUniversalIdentifiers: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     createdAt: now,

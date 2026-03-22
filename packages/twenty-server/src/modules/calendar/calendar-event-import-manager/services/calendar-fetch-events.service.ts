@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -29,6 +28,7 @@ export class CalendarFetchEventsService {
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
@@ -69,17 +69,10 @@ export class CalendarFetchEventsService {
           refreshToken,
         };
 
-        if (!isDefined(calendarChannel.syncCursor)) {
-          throw new CalendarEventImportDriverException(
-            'Sync cursor is required',
-            CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-          );
-        }
-
         const getCalendarEventsResponse =
           await this.getCalendarEventsService.getCalendarEvents(
             connectedAccountWithFreshTokens,
-            calendarChannel.syncCursor,
+            calendarChannel.syncCursor || undefined,
           );
 
         const hasFullEvents = getCalendarEventsResponse.fullEvents;
@@ -90,14 +83,9 @@ export class CalendarFetchEventsService {
         const calendarEventIds = getCalendarEventsResponse.calendarEventIds;
         const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
 
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-          );
-
         if (!calendarEvents || calendarEvents?.length === 0) {
-          await calendarChannelRepository.update(
+          await this.calendarChannelDataAccessService.update(
+            workspaceId,
             {
               id: calendarChannel.id,
             },
@@ -112,7 +100,8 @@ export class CalendarFetchEventsService {
           );
         }
 
-        await calendarChannelRepository.update(
+        await this.calendarChannelDataAccessService.update(
+          workspaceId,
           {
             id: calendarChannel.id,
           },

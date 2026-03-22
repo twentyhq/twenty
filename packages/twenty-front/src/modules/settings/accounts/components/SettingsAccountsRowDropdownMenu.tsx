@@ -1,12 +1,16 @@
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CalendarChannelSyncStage } from '@/accounts/types/CalendarChannel';
 import { MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
 import {
   CoreObjectNameSingular,
   ConnectedAccountProvider,
+  FeatureFlagKey,
   SettingsPath,
 } from 'twenty-shared/types';
+
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
+
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -27,6 +31,8 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -45,9 +51,17 @@ export const SettingsAccountsRowDropdownMenu = ({
   const navigate = useNavigateSettings();
   const { closeDropdown } = useCloseDropdown();
 
+  const featureFlagsMap = useFeatureFlagsMap();
+  const isMigrated =
+    featureFlagsMap[FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED] ?? false;
+
+  const apolloClient = useApolloClient();
   const { destroyOneRecord } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
+  const [deleteConnectedAccountMutation] = useMutation(
+    DELETE_CONNECTED_ACCOUNT,
+  );
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
   const hasPendingConfiguration =
@@ -61,7 +75,14 @@ export const SettingsAccountsRowDropdownMenu = ({
     );
 
   const deleteAccount = async () => {
-    await destroyOneRecord(account.id);
+    if (isMigrated) {
+      await deleteConnectedAccountMutation({
+        variables: { id: account.id },
+      });
+      await apolloClient.refetchQueries({ include: 'active' });
+    } else {
+      await destroyOneRecord(account.id);
+    }
   };
 
   return (

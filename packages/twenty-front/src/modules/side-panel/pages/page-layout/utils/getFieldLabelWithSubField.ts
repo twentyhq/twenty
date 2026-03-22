@@ -1,6 +1,6 @@
 import { getRelationFieldLabel } from '@/side-panel/pages/page-layout/utils/getRelationFieldLabel';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
@@ -16,7 +16,7 @@ export const getFieldLabelWithSubField = ({
 }: {
   field: FieldMetadataItem | undefined;
   subFieldName?: CompositeFieldSubFieldName | string;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }): string => {
   if (!isDefined(field?.label)) {
     return t`Field`;

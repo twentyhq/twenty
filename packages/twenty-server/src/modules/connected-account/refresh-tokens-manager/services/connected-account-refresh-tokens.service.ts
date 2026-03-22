@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
@@ -30,6 +31,7 @@ export class ConnectedAccountRefreshTokensService {
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   async refreshAndSaveTokens(
@@ -78,13 +80,8 @@ export class ConnectedAccountRefreshTokensService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const connectedAccountRepository =
-        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-          workspaceId,
-          'connectedAccount',
-        );
-
-      await connectedAccountRepository.update(
+      await this.connectedAccountDataAccessService.update(
+        workspaceId,
         { id: connectedAccount.id },
         {
           ...connectedAccountTokens,
@@ -117,6 +114,8 @@ export class ConnectedAccountRefreshTokensService {
         );
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
         return true;
       default:
         return assertUnreachable(
@@ -142,8 +141,10 @@ export class ConnectedAccountRefreshTokensService {
             refreshToken,
           );
         case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        case ConnectedAccountProvider.OIDC:
+        case ConnectedAccountProvider.SAML:
           throw new ConnectedAccountRefreshAccessTokenException(
-            `Token refresh is not supported for IMAP provider for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+            `Token refresh is not supported for ${connectedAccount.provider} provider for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
             ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
           );
         default:

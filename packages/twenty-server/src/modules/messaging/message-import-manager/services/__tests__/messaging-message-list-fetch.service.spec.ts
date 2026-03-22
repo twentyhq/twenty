@@ -24,6 +24,7 @@ import { MessagingMessageListFetchService } from 'src/modules/messaging/message-
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 
 describe('MessagingMessageListFetchService', () => {
   let messagingMessageListFetchService: MessagingMessageListFetchService;
@@ -227,6 +228,12 @@ describe('MessagingMessageListFetchService', () => {
                 return mockMessageFolderRepository;
               }
             }),
+          },
+        },
+        {
+          provide: MessageChannelDataAccessService,
+          useValue: {
+            findOne: jest.fn().mockResolvedValue(undefined),
           },
         },
         {

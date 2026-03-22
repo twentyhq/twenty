@@ -40,7 +40,9 @@ export const SettingsAdminConfigVariablesRow = ({
           ? variable.value
             ? 'true'
             : 'false'
-          : variable.value;
+          : typeof variable.value === 'object' && variable.value !== null
+            ? JSON.stringify(variable.value)
+            : variable.value;
 
   return (
     <StyledTableRowContainer>

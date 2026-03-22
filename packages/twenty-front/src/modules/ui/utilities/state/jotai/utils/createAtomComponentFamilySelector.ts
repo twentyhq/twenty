@@ -1,4 +1,5 @@
 import { atom, type Atom } from 'jotai';
+import { selectAtom } from 'jotai/utils';
 
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
@@ -12,12 +13,14 @@ export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
   key,
   get,
   componentInstanceContext,
+  areEqual,
 }: {
   key: string;
   get: (
     key: ComponentFamilyStateKey<FamilyKey>,
   ) => (callbacks: SelectorGetter) => ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
+  areEqual?: (previous: ValueType, next: ValueType) => boolean;
 }): ComponentFamilySelector<ValueType, FamilyKey> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
@@ -47,10 +50,14 @@ export const createAtomComponentFamilySelector = <ValueType, FamilyKey>({
       return getForKey({ get: getHelper });
     });
 
-    derivedAtom.debugLabel = `${key}__${cacheKey}`;
-    atomCache.set(cacheKey, derivedAtom);
+    const finalAtom = isDefined(areEqual)
+      ? selectAtom(derivedAtom, (value) => value, areEqual)
+      : derivedAtom;
 
-    return derivedAtom;
+    finalAtom.debugLabel = `${key}__${cacheKey}`;
+    atomCache.set(cacheKey, finalAtom);
+
+    return finalAtom;
   };
 
   return {

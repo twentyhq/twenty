@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildSortsForChartFieldOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartFieldOrderBy';
 import { buildSortsForChartValueOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartValueOrderBy';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
@@ -19,7 +19,7 @@ type BuildSortsFromChartConfigParams = {
     | BarChartConfiguration
     | LineChartConfiguration
     | PieChartConfiguration;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const buildSortsFromChartConfig = ({

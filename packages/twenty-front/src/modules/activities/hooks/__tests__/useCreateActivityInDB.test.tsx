@@ -9,7 +9,7 @@ import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generat
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockedTasks = mockedTaskRecords.map((record) =>
@@ -38,7 +38,7 @@ const operationSignature = createOneActivityOperationSignatureFactory({
 
 const createOneTaskMutation = generateCreateOneRecordMutation({
   objectMetadataItem: taskMetadataItem,
-  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
   recordGqlFields: operationSignature.fields,
   objectPermissionsByObjectMetadataId: {},
 });

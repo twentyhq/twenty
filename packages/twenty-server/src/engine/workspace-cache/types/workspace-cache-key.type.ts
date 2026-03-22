@@ -1,11 +1,12 @@
 import {
-  type ObjectsPermissionsByRoleId,
   type FeatureFlagKey,
+  type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { type EntityMetadata } from 'typeorm';
 
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -32,6 +33,8 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatApplicationMaps: 'flat-maps:flatApplicationMaps',
   flatRoleMaps: 'flat-maps:role',
   flatRoleTargetMaps: 'flat-maps:role-target',
+  flatPermissionFlagMaps: 'flat-maps:permission-flag',
+  flatObjectPermissionMaps: 'flat-maps:object-permission',
   ORMEntityMetadatas: 'orm:entity-metadatas',
   flatAgentMaps: 'flat-maps:agent',
   flatSkillMaps: 'flat-maps:skill',
@@ -49,6 +52,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatWebhookMaps: 'flat-maps:webhook',
   flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
   applicationVariableMaps: 'cache:application-variable',
+  graphQLResolverNameMap: 'direct-execution:graphql-resolver-name-map',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 export type AdditionalCacheDataMaps = {
@@ -63,6 +67,7 @@ export type AdditionalCacheDataMaps = {
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   applicationVariableMaps: ApplicationVariableCacheMaps;
+  graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &

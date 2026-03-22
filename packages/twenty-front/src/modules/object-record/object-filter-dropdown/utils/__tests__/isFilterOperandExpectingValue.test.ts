@@ -1,8 +1,8 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 
-import { isFilterOperandExpectingValue } from '@/object-record/object-filter-dropdown/utils/isFilterOperandExpectingValue';
+import { isRecordFilterOperandExpectingValue } from 'twenty-shared/utils';
 
-describe('isFilterOperandExpectingValue', () => {
+describe('isRecordFilterOperandExpectingValue', () => {
   const testCases = [
     { operand: ViewFilterOperand.CONTAINS, expectedResult: true },
     { operand: ViewFilterOperand.DOES_NOT_CONTAIN, expectedResult: true },
@@ -24,7 +24,7 @@ describe('isFilterOperandExpectingValue', () => {
 
   testCases.forEach(({ operand, expectedResult }) => {
     it(`should return ${expectedResult} for ViewFilterOperand.${operand}`, () => {
-      expect(isFilterOperandExpectingValue(operand)).toBe(expectedResult);
+      expect(isRecordFilterOperandExpectingValue(operand)).toBe(expectedResult);
     });
   });
 });

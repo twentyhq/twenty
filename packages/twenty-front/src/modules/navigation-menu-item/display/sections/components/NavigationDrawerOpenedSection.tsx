@@ -3,14 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useWorkspaceNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuItems';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
-
-const WORKFLOW_OBJECTS_IN_SIDEBAR = [
-  CoreObjectNameSingular.Workflow,
-  CoreObjectNameSingular.WorkflowRun,
-  CoreObjectNameSingular.WorkflowVersion,
-];
 
 export const NavigationDrawerOpenedSection = () => {
   const { t } = useLingui();
@@ -19,8 +12,7 @@ export const NavigationDrawerOpenedSection = () => {
   const filteredActiveNonSystemObjectMetadataItems =
     activeObjectMetadataItems.filter((item) => !item.isRemote);
 
-  const { workspaceNavigationMenuItemsObjectMetadataItems } =
-    useWorkspaceNavigationMenuItems();
+  const { objectMetadataIdsInWorkspaceNav } = useWorkspaceNavigationMenuItems();
 
   const {
     objectNamePlural: currentObjectNamePlural,
@@ -41,18 +33,12 @@ export const NavigationDrawerOpenedSection = () => {
     return;
   }
 
-  const isWorkflowObjectInSidebar = WORKFLOW_OBJECTS_IN_SIDEBAR.includes(
-    objectMetadataItem.nameSingular as CoreObjectNameSingular,
+  const isObjectAlreadyInNavbar = objectMetadataIdsInWorkspaceNav.has(
+    objectMetadataItem.id,
   );
 
-  const shouldDisplayObjectInOpenedSection =
-    !isWorkflowObjectInSidebar &&
-    !workspaceNavigationMenuItemsObjectMetadataItems
-      .map((item) => item.id)
-      .includes(objectMetadataItem.id);
-
   return (
-    shouldDisplayObjectInOpenedSection && (
+    !isObjectAlreadyInNavbar && (
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Opened`}
         objectMetadataItems={[objectMetadataItem]}

@@ -1,10 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getSettingsObjectFieldType = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   fieldMetadataItem: FieldMetadataItem,
 ) => {
   const variant = objectMetadataItem.isCustom ? 'identifier' : 'field-type';

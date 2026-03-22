@@ -2,6 +2,7 @@ import { useMutation } from '@apollo/client/react';
 import { DeleteOneObjectMetadataItemDocument } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -15,6 +16,7 @@ export const useDeleteOneObjectMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { removeFromDraft, applyChanges } = useMetadataStore();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: string,
@@ -29,6 +31,9 @@ export const useDeleteOneObjectMetadataItem = () => {
           idToDelete,
         },
       });
+
+      removeFromDraft({ key: 'objectMetadataItems', itemIds: [idToDelete] });
+      applyChanges();
 
       return {
         status: 'successful',

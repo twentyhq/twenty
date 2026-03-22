@@ -16,11 +16,13 @@ import { ViewFilterOperand } from 'twenty-shared/types';
 type UseHandleToggleTrashColumnFilterProps = {
   objectNameSingular: string;
   viewBarId: string;
+  recordFiltersInstanceId?: string;
 };
 
 export const useHandleToggleTrashColumnFilter = ({
   viewBarId,
   objectNameSingular,
+  recordFiltersInstanceId,
 }: UseHandleToggleTrashColumnFilterProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -35,7 +37,7 @@ export const useHandleToggleTrashColumnFilter = ({
       viewBarId,
     );
 
-  const { upsertRecordFilter } = useUpsertRecordFilter();
+  const { upsertRecordFilter } = useUpsertRecordFilter(recordFiltersInstanceId);
 
   const handleToggleTrashColumnFilter = useCallback(() => {
     const trashFieldMetadata = objectMetadataItem.fields.find(

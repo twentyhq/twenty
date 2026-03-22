@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,7 +7,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 export const filterAndSortNavigationMenuItems = (
   navigationMenuItems: NavigationMenuItem[],
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
-  objectMetadataItems: Pick<ObjectMetadataItem, 'id'>[],
+  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id'>[],
 ): NavigationMenuItem[] => {
   return navigationMenuItems
     .filter((item) => {

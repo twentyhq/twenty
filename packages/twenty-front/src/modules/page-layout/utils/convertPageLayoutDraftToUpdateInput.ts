@@ -49,6 +49,7 @@ export const convertPageLayoutDraftToUpdateInput = (
       id: tab.id,
       title: tab.title,
       position: tab.position,
+      layoutMode: tab.layoutMode,
       widgets: tab.widgets
         .filter((widget) => !isDynamicRelationWidget(widget))
         .map((widget, widgetIndex) => ({

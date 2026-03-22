@@ -1,11 +1,16 @@
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
+import {
+  type LocalInstanceResult,
+  setupLocalInstance,
+} from '@/utils/setup-local-instance';
 import { tryGitInit } from '@/utils/try-git-init';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
+import { execSync } from 'node:child_process';
 import * as path from 'path';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,6 +27,7 @@ type CreateAppOptions = {
   name?: string;
   displayName?: string;
   description?: string;
+  skipLocalInstance?: boolean;
 };
 
 export class CreateAppCommand {
@@ -40,6 +46,7 @@ export class CreateAppCommand {
 
       await fs.ensureDir(appDirectory);
 
+      console.log(chalk.gray('  Scaffolding project files...'));
       await copyBaseApplicationProject({
         appName,
         appDisplayName,
@@ -48,11 +55,24 @@ export class CreateAppCommand {
         exampleOptions,
       });
 
+      console.log(chalk.gray('  Installing dependencies...'));
       await install(appDirectory);
 
+      console.log(chalk.gray('  Initializing git repository...'));
       await tryGitInit(appDirectory);
 
-      this.logSuccess(appDirectory);
+      let localResult: LocalInstanceResult = { running: false };
+
+      if (!options.skipLocalInstance) {
+        // Auto-detect a running server first
+        localResult = await setupLocalInstance(appDirectory);
+
+        if (localResult.running && localResult.serverUrl) {
+          await this.connectToLocal(appDirectory, localResult.serverUrl);
+        }
+      }
+
+      this.logSuccess(appDirectory, localResult);
     } catch (error) {
       console.error(
         chalk.red('Initialization failed:'),
@@ -173,22 +193,55 @@ export class CreateAppCommand {
     appDirectory: string;
     appName: string;
   }): void {
-    console.log(chalk.blue('🎯 Creating Twenty Application'));
-    console.log(chalk.gray(`📁 Directory: ${appDirectory}`));
-    console.log(chalk.gray(`📝 Name: ${appName}`));
+    console.log(chalk.blue('Creating Twenty Application'));
+    console.log(chalk.gray(`  Directory: ${appDirectory}`));
+    console.log(chalk.gray(`  Name: ${appName}`));
     console.log('');
   }
 
-  private logSuccess(appDirectory: string): void {
+  private async connectToLocal(
+    appDirectory: string,
+    serverUrl: string,
+  ): Promise<void> {
+    try {
+      execSync(
+        `npx nx run twenty-sdk:start -- remote add ${serverUrl} --as local`,
+        {
+          cwd: appDirectory,
+          stdio: 'inherit',
+        },
+      );
+      console.log(chalk.green('Authenticated with local Twenty instance.'));
+    } catch {
+      console.log(
+        chalk.yellow(
+          'Authentication skipped. Run `npx nx run twenty-sdk:start -- remote add --local` manually.',
+        ),
+      );
+    }
+  }
+
+  private logSuccess(
+    appDirectory: string,
+    localResult: LocalInstanceResult,
+  ): void {
     const dirName = appDirectory.split('/').reverse()[0] ?? '';
 
-    console.log(chalk.green('✅ Application created!'));
+    console.log(chalk.green('Application created!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(chalk.gray(`  cd ${dirName}`));
+
+    if (!localResult.running) {
+      console.log(
+        chalk.gray(
+          '  yarn twenty remote add --local  # Authenticate with Twenty',
+        ),
+      );
+    }
+
     console.log(
-      chalk.gray('  yarn twenty auth:login  # Authenticate with Twenty'),
+      chalk.gray('  yarn twenty dev                  # Start dev mode'),
     );
-    console.log(chalk.gray('  yarn twenty app:dev     # Start dev mode'));
   }
 }

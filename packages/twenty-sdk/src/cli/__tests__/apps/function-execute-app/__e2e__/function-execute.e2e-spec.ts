@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
 
-import { appBuild } from '@/cli/public-operations/app-build';
-import { appUninstall } from '@/cli/public-operations/app-uninstall';
-import { functionExecute } from '@/cli/public-operations/function-execute';
+import { appBuild } from '@/cli/operations/build';
+import { appUninstall } from '@/cli/operations/uninstall';
+import { functionExecute } from '@/cli/operations/execute';
 import { FUNCTION_EXECUTE_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 
 const ADD_NUMBERS_UNIVERSAL_IDENTIFIER = 'f9e5589c-e951-4d99-85db-0a305ab53502';

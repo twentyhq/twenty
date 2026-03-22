@@ -1,19 +1,19 @@
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { normalizeGQLField } from '~/utils/normalizeGQLField';
 
-const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
+const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
   (item) => item.nameSingular === 'person',
 );
 
 if (!personObjectMetadataItem) {
-  throw new Error('ObjectMetadataItem not found');
+  throw new Error('Object metadata not found');
 }
 
 describe('mapFieldMetadataToGraphQLQuery', () => {
   it('should return fieldName if simpleValue', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       gqlField: 'id',
       fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'id',
@@ -24,7 +24,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   });
   it('should return fieldName if composite', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       gqlField: 'name',
       fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'name',
@@ -42,7 +42,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
 
   it('should return non relation subFields if relation', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       gqlField: 'company',
       fieldMetadata: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
@@ -100,7 +100,7 @@ idealCustomerProfile
 
   it('should return only return relation subFields that are in recordGqlFields', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: generatedMockObjectMetadataItems,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       relationRecordGqlFields: {
         accountOwner: { id: true, name: true },
         people: true,

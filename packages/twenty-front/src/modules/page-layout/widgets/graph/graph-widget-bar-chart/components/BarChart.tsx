@@ -1,7 +1,7 @@
 import { BarChartLayers } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/BarChartLayers';
+import { useBarChartLayout } from '@/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useBarChartLayout';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useBarChartTheme';
 import { useMemoizedBarPositions } from '@/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useMemoizedBarPositions';
-import { useBarChartLayout } from '@/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useBarChartLayout';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSlice';
@@ -30,12 +30,14 @@ type BarChartProps = {
   layout: BarChartLayout;
   groupMode: 'grouped' | 'stacked';
   effectiveValueRange: { minimum: number; maximum: number };
+  hasExplicitRangeBounds: boolean;
   formatOptions: GraphValueFormatOptions;
   axisConfig?: {
     xAxisLabel?: string;
     yAxisLabel?: string;
     showGrid?: boolean;
   };
+  rightTickLabels?: string[];
   dataLabelsConfig?: {
     show: boolean;
     omitNullValues: boolean;
@@ -65,8 +67,10 @@ export const BarChart = ({
   layout,
   groupMode,
   effectiveValueRange,
+  hasExplicitRangeBounds,
   formatOptions,
   axisConfig,
+  rightTickLabels,
   dataLabelsConfig,
   hoveredSliceIndexValue,
   onSliceHover,
@@ -102,11 +106,13 @@ export const BarChart = ({
     chartWidth,
     data,
     effectiveValueRange,
+    hasExplicitRangeBounds,
     formatOptions,
     groupMode,
     indexBy,
     keys,
     layout,
+    rightTickLabels,
   });
 
   const isVerticalLayout = layout === BarChartLayout.VERTICAL;

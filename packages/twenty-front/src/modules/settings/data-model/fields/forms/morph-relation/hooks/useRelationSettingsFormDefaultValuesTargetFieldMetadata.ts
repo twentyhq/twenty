@@ -1,6 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
@@ -16,7 +16,7 @@ export const useRelationSettingsFormDefaultValuesTargetFieldMetadata = ({
     'type' | 'morphRelations' | 'relation'
   >;
   objectMetadataItem?: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'id' | 'namePlural' | 'nameSingular' | 'icon'
   >;
   relationType: RelationType;
