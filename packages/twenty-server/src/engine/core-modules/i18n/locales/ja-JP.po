@@ -657,11 +657,6 @@ msgstr "ワークスペースのカスタムアプリケーションで作成さ
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "削除できません。まずラベル識別子フィールドを更新してください"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "非アクティブなワークフローバージョンは無効化できません"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

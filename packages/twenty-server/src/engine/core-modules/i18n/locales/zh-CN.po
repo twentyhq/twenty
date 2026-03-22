@@ -657,11 +657,6 @@ msgstr "无法删除非由工作区自定义应用创建的唯一索引"
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "无法删除，请先更新标签标识字段"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "无法禁用非活动工作流程版本"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

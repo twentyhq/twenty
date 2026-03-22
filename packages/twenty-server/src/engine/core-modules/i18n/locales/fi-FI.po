@@ -657,11 +657,6 @@ msgstr "Yksilöivää indeksiä, jota työtilan mukautettu sovellus ei ole luonu
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Ei voi poistaa, päivitä ensin tunnistekentän arvo"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Ei voi poistaa käytöstä ei-aktiivista työnkulkuversiota"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

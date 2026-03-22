@@ -657,11 +657,6 @@ msgstr "Kan ikke slette et unikt indeks, som ikke er oprettet af arbejdsområdet
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kan ikke slette, opdater venligst etiketidentifikatoren først"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Kan ikke deaktivere ikke-aktive arbejdsprocesversion"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

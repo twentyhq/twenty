@@ -657,11 +657,6 @@ msgstr "Nu se poate șterge indexul unic care nu a fost creat de aplicația pers
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nu se poate șterge, vă rugăm actualizați mai întâi câmpul identificatorului etichetei"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Nu se poate dezactiva o versiune neactivă de flux de lucru"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

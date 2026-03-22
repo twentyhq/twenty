@@ -657,11 +657,6 @@ msgstr "Nem törölhető olyan egyedi index, amelyet nem a munkaterület egyedi 
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nem törölhető, először frissítse a címkeazonosító mezőt"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Nem lehet letiltani nem aktív munkafolyamat verziót"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

@@ -657,11 +657,6 @@ msgstr "Није могуће избрисати јединствени инде
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Није могуће избрисати, прво ажурирајте поље за идентификатор етикете"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Не може се онемогућити неактивна верзија ток рада"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
