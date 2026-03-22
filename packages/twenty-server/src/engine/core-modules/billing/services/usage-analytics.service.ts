@@ -38,9 +38,7 @@ const BREAKDOWN_QUERY_LIMIT = 50;
 export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
-  async getUsageByUser(
-    params: PeriodParams,
-  ): Promise<UsageBreakdownItem[]> {
+  async getUsageByUser(params: PeriodParams): Promise<UsageBreakdownItem[]> {
     return this.queryBreakdown({
       ...params,
       groupByField: 'userWorkspaceId',
@@ -149,13 +147,15 @@ export class UsageAnalyticsService {
       ORDER BY date ASC
     `;
 
-    const rows =
-      await this.clickHouseService.select<UsageTimeSeriesPoint>(query, {
+    const rows = await this.clickHouseService.select<UsageTimeSeriesPoint>(
+      query,
+      {
         workspaceId,
         periodStart: formatDateForClickHouse(periodStart),
         periodEnd: formatDateForClickHouse(periodEnd),
         ...(extraParams ?? {}),
-      });
+      },
+    );
 
     return this.mapToDisplayCredits(rows);
   }
