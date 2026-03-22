@@ -44,7 +44,8 @@ export class NavigationMenuItemResolver {
   @UseGuards(NoPermissionGuard)
   async navigationMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.findAll({
       workspaceId: workspace.id,
@@ -69,7 +70,8 @@ export class NavigationMenuItemResolver {
   async createNavigationMenuItem(
     @Args('input') input: CreateNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
@@ -87,7 +89,8 @@ export class NavigationMenuItemResolver {
   async updateNavigationMenuItem(
     @Args('input') input: UpdateOneNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {
@@ -105,7 +108,8 @@ export class NavigationMenuItemResolver {
   async deleteNavigationMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Context() context: { req: { application?: ApplicationEntity } },
   ): Promise<NavigationMenuItemDTO> {

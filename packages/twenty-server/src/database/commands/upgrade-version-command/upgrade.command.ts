@@ -35,7 +35,9 @@ import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/comm
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
+import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
+import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
 import { IdentifyObjectPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-object-permission-metadata.command';
 import { IdentifyPermissionFlagMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-permission-flag-metadata.command';
 import { MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-object-permission-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -100,6 +102,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly backfillNavigationMenuItemTypeCommand: BackfillNavigationMenuItemTypeCommand,
     protected readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
+    protected readonly deleteOrphanNavigationMenuItemsCommand: DeleteOrphanNavigationMenuItemsCommand,
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
     protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
     protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
@@ -107,6 +110,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.21 Commands
     protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
     protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
+    protected readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
   ) {
     super(
       workspaceRepository,
@@ -162,10 +166,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         .makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this.backfillNavigationMenuItemTypeCommand,
       this.migrateRichTextToTextCommand,
+      this.deleteOrphanNavigationMenuItemsCommand,
       this.backfillCommandMenuItemsCommand,
       this.backfillPageLayoutsCommand,
       this.seedCliApplicationRegistrationCommand,
       this.migrateMessagingInfrastructureToMetadataCommand,
+      this.backfillSelectFieldOptionIdsCommand,
     ];
 
     const commands_1210: VersionCommands = [

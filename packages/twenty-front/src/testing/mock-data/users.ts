@@ -89,8 +89,6 @@ export const mockCurrentWorkspace = {
   fastModel: DEFAULT_FAST_MODEL,
   smartModel: DEFAULT_SMART_MODEL,
   routerModel: 'auto',
-  autoEnableNewAiModels: true,
-  disabledAiModelIds: [],
   enabledAiModelIds: [],
   useRecommendedModels: true,
   currentBillingSubscription: {

@@ -157,7 +157,9 @@ plugins: [
 
 Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` in database container to get access to admin panel.
 
+#### When running workflow, workflow run fails with "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
 
+In production, logic functions are disabled by default. Set the `LOGIC_FUNCTION_TYPE` environment variable to `LOCAL` or `LAMBDA` to enable them. This can be configured via environment variables or through the admin panel database variables. See the [Logic Functions setup guide](/developers/self-host/capabilities/setup#logic-functions-available-drivers) for details.
 
 ### 1-click Docker compose
 

@@ -21,6 +21,7 @@ export type OIDCRequest = Omit<
     firstName?: string | null;
     lastName?: string | null;
     workspaceInviteHash?: string;
+    oidcTokenClaims?: Record<string, unknown>;
   };
 };
 
@@ -110,6 +111,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
         identityProviderId: state.identityProviderId,
         ...(userinfo.given_name ? { firstName: userinfo.given_name } : {}),
         ...(userinfo.family_name ? { lastName: userinfo.family_name } : {}),
+        oidcTokenClaims: tokenset.claims() as Record<string, unknown>,
       });
     } catch (err) {
       done(err);

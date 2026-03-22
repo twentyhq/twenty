@@ -58,7 +58,8 @@ export class EventStreamResolver {
     @Args('eventStreamId') eventStreamId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
@@ -124,7 +125,8 @@ export class EventStreamResolver {
     @Args('input') input: AddQuerySubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
@@ -168,7 +170,8 @@ export class EventStreamResolver {
     @Args('input') input: RemoveQueryFromEventStreamInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);

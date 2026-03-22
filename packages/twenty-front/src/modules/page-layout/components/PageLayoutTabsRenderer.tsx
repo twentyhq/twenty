@@ -172,6 +172,7 @@ export const PageLayoutTabsRenderer = () => {
             <PageLayoutTabList
               tabs={sortedTabs}
               behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
+              isInSidePanel={isInSidePanel}
               componentInstanceId={tabListInstanceId}
               onAddTab={handleAddTab}
               isReorderEnabled={canEnableTabEditing}

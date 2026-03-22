@@ -1,1 +1,7 @@
-export type ConfigVariableValue = string | number | boolean | string[] | null;
+export type ConfigVariableValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | Record<string, unknown>
+  | null;

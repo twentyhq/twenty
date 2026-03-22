@@ -7,6 +7,7 @@ import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/cale
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
 import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel.resolver';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     AuthModule,
     PermissionsModule,
     FeatureFlagModule,
+    ConnectedAccountMetadataModule,
   ],
   providers: [
     CalendarChannelMetadataService,

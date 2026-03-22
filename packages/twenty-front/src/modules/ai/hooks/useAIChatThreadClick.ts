@@ -1,7 +1,4 @@
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
@@ -41,8 +38,7 @@ export const useAIChatThreadClick = (
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
-    const previousDraftKey =
-      currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+    const previousDraftKey = currentAIChatThread;
     const isSameThread = thread.id === currentAIChatThread;
 
     setAgentChatDraftsByThreadId((prev) => ({

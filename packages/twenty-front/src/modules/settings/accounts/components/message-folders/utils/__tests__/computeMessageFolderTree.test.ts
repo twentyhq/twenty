@@ -146,4 +146,25 @@ describe('computeMessageFolderTree', () => {
     expect(result[0].children[0].folder.name).toBe('Clients');
     expect(result[0].children[1].folder.name).toBe('Projects');
   });
+
+  it('should resolve parent-child when parentFolderId references parent id instead of externalId', () => {
+    const parent = createFolder(
+      '20202020-aaaa-bbbb-cccc-000000000001',
+      'custom folder',
+      null,
+      'Label_5900090362003645629',
+    );
+    const child = createFolder(
+      '20202020-aaaa-bbbb-cccc-000000000002',
+      'child folder',
+      '20202020-aaaa-bbbb-cccc-000000000001',
+      'Label_7713410187110265162',
+    );
+    const result = computeMessageFolderTree([parent, child]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].folder.name).toBe('custom folder');
+    expect(result[0].children).toHaveLength(1);
+    expect(result[0].children[0].folder.name).toBe('child folder');
+  });
 });

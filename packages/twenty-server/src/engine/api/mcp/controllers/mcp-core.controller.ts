@@ -48,7 +48,8 @@ export class McpCoreController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.mcpProtocolService.handleMCPCoreQuery(body, {
