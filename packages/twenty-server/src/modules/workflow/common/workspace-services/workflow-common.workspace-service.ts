@@ -273,24 +273,24 @@ export class WorkflowCommonWorkspaceService {
         { shouldBypassPermissionChecks: true },
       );
 
-    const dataSource =
+    const workspaceDataSource =
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const workspaceQueryRunner = dataSource.createQueryRunner();
-    const coreQueryRunner = this.coreDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await workspaceQueryRunner.connect();
-    await coreQueryRunner.connect();
-    await workspaceQueryRunner.startTransaction();
-    await coreQueryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
+      const workspaceEntityManager =
+        workspaceDataSource.createEntityManager(queryRunner);
+
       const workflow = await workflowRepository.findOne(
         {
           where: { id: workflowId },
           withDeleted: true,
         },
-        workspaceQueryRunner.manager,
+        workspaceEntityManager,
       );
 
       if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
@@ -304,7 +304,7 @@ export class WorkflowCommonWorkspaceService {
         await workflowRepository.update(
           workflowId,
           { statuses: newStatuses },
-          workspaceQueryRunner.manager,
+          workspaceEntityManager,
         );
       }
 
@@ -313,7 +313,7 @@ export class WorkflowCommonWorkspaceService {
           where: { workflowId },
           withDeleted: true,
         },
-        workspaceQueryRunner.manager,
+        workspaceEntityManager,
       );
 
       for (const workflowVersion of workflowVersions) {
@@ -321,38 +321,33 @@ export class WorkflowCommonWorkspaceService {
           await workflowVersionRepository.update(
             workflowVersion.id,
             { status: WorkflowVersionStatus.DEACTIVATED },
-            workspaceQueryRunner.manager,
+            workspaceEntityManager,
           );
 
           await this.cleanupCommandMenuItemForVersion(
             workflowVersion.id,
             workspaceId,
-            coreQueryRunner,
+            queryRunner,
           );
         }
       }
 
-      await coreQueryRunner.commitTransaction();
-      await workspaceQueryRunner.commitTransaction();
+      await queryRunner.commitTransaction();
     } catch (error) {
-      if (coreQueryRunner.isTransactionActive) {
-        await coreQueryRunner.rollbackTransaction();
-      }
-      if (workspaceQueryRunner.isTransactionActive) {
-        await workspaceQueryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
       }
 
       throw error;
     } finally {
-      await coreQueryRunner.release();
-      await workspaceQueryRunner.release();
+      await queryRunner.release();
     }
   }
 
   private async cleanupCommandMenuItemForVersion(
     workflowVersionId: string,
     workspaceId: string,
-    coreQueryRunner?: QueryRunner,
+    queryRunner?: QueryRunner,
   ) {
     const isCommandMenuItemEnabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -374,7 +369,7 @@ export class WorkflowCommonWorkspaceService {
       await this.commandMenuItemService.delete(
         existingCommandMenuItem.id,
         workspaceId,
-        coreQueryRunner,
+        queryRunner,
       );
     }
   }
