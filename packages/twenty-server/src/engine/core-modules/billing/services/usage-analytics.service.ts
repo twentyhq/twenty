@@ -46,16 +46,6 @@ export class UsageAnalyticsService {
     });
   }
 
-  async getUsageByResource(
-    params: PeriodParams,
-  ): Promise<UsageBreakdownItem[]> {
-    return this.queryBreakdown({
-      ...params,
-      groupByField: 'resourceId',
-      extraWhere: "AND resourceId != ''",
-    });
-  }
-
   async getUsageByOperationType(
     params: PeriodParams & { userWorkspaceId?: string },
   ): Promise<UsageBreakdownItem[]> {

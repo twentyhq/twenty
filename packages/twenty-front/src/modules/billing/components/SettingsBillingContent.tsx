@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsBillingAnalyticsSection } from '@/billing/components/SettingsBillingAnalyticsSection';
+import { SettingsUsageAnalyticsSection } from '@/usage/components/SettingsUsageAnalyticsSection';
 import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBillingSubscriptionInfo';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -92,7 +92,7 @@ export const SettingsBillingContent = () => {
         )}
       {isUsageAnalyticsEnabled && (
         <>
-          <SettingsBillingAnalyticsSection />
+          <SettingsUsageAnalyticsSection />
           <Section>
             <H2Title
               title={t`Usage`}

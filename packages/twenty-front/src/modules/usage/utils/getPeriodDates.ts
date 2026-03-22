@@ -1,4 +1,4 @@
-import { type PeriodPreset } from '@/billing/utils/PeriodPreset';
+import { type PeriodPreset } from '@/usage/utils/PeriodPreset';
 
 const PERIOD_DAYS: Record<PeriodPreset, number> = {
   '7d': 7,

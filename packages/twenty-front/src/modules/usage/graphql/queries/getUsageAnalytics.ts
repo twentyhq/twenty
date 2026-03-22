@@ -8,11 +8,6 @@ export const GET_USAGE_ANALYTICS = gql`
         label
         creditsUsed
       }
-      usageByResource {
-        key
-        label
-        creditsUsed
-      }
       usageByOperationType {
         key
         creditsUsed

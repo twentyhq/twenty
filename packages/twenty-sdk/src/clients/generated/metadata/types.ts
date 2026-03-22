@@ -2891,9 +2891,6 @@ export default {
             "usageByUser": [
                 135
             ],
-            "usageByResource": [
-                135
-            ],
             "usageByOperationType": [
                 135
             ],

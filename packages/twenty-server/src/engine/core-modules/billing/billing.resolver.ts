@@ -62,7 +62,6 @@ import {
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -82,8 +81,6 @@ export class BillingResolver {
     private readonly permissionsService: PermissionsService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
   ) {}
 
   @Query(() => BillingSessionDTO)
@@ -360,30 +357,22 @@ export class BillingResolver {
       periodEnd,
     };
 
-    const [usageByUser, usageByResource, usageByOperationType, timeSeries] =
-      await Promise.all([
-        this.usageAnalyticsService.getUsageByUser(periodParams),
-        this.usageAnalyticsService.getUsageByResource(periodParams),
-        this.usageAnalyticsService.getUsageByOperationType({
-          ...periodParams,
-          userWorkspaceId: input?.userWorkspaceId ?? undefined,
-        }),
-        this.usageAnalyticsService.getUsageTimeSeries(periodParams),
-      ]);
+    const [usageByUser, usageByOperationType, timeSeries] = await Promise.all([
+      this.usageAnalyticsService.getUsageByUser(periodParams),
+      this.usageAnalyticsService.getUsageByOperationType({
+        ...periodParams,
+        userWorkspaceId: input?.userWorkspaceId ?? undefined,
+      }),
+      this.usageAnalyticsService.getUsageTimeSeries(periodParams),
+    ]);
 
     const resolvedUsageByUser = await this.resolveBreakdownKeys(
       usageByUser,
       (ids) => this.resolveUserNames(ids, workspace.id),
     );
 
-    const resolvedUsageByResource = await this.resolveBreakdownKeys(
-      usageByResource,
-      (ids) => this.resolveResourceNames(ids, workspace.id),
-    );
-
     const result: UsageAnalyticsDTO = {
       usageByUser: resolvedUsageByUser,
-      usageByResource: resolvedUsageByResource,
       usageByOperationType,
       timeSeries,
       periodStart,
@@ -546,25 +535,4 @@ export class BillingResolver {
     return nameMap;
   }
 
-  private async resolveResourceNames(
-    resourceIds: string[],
-    workspaceId: string,
-  ): Promise<Map<string, string>> {
-    const nameMap = new Map<string, string>();
-
-    if (resourceIds.length === 0) {
-      return nameMap;
-    }
-
-    const agents = await this.agentRepository.find({
-      where: { id: In(resourceIds), workspaceId },
-      select: { id: true, label: true },
-    });
-
-    for (const agent of agents) {
-      nameMap.set(agent.id, agent.label);
-    }
-
-    return nameMap;
-  }
 }

@@ -1,27 +1,21 @@
-import { BillingChartTooltip } from '@/billing/components/BillingChartTooltip';
-import {
-  StyledBillingLineChartContainer,
-  StyledBillingPieChartContainer,
-} from '@/billing/components/BillingChartContainers';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import { getOperationTypeLabel } from '@/billing/utils/getOperationTypeLabel';
-import { getPeriodDates } from '@/billing/utils/getPeriodDates';
-import { getPeriodOptions } from '@/billing/utils/getPeriodOptions';
-import { type PeriodPreset } from '@/billing/utils/PeriodPreset';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
-import { useLineChartTheme } from '@/page-layout/widgets/graph/graph-widget-line-chart/hooks/useLineChartTheme';
+import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graph-widget-line-chart/components/GraphWidgetLineChart';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { getOperationTypeLabel } from '@/usage/utils/getOperationTypeLabel';
+import { getPeriodDates } from '@/usage/utils/getPeriodDates';
+import { getPeriodOptions } from '@/usage/utils/getPeriodOptions';
+import { type PeriodPreset } from '@/usage/utils/PeriodPreset';
+import { UsagePieChart } from '@/usage/components/UsagePieChart';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { ResponsiveLine } from '@nivo/line';
-import { ResponsivePie } from '@nivo/pie';
 import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
@@ -57,12 +51,16 @@ const StyledUserCredits = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+const StyledLineChartContainer = styled.div`
+  height: 200px;
+  width: 100%;
+`;
+
 export const SettingsUsageUserDetail = () => {
   const { t: tLingui } = useLingui();
   const { userWorkspaceId } = useParams<{ userWorkspaceId: string }>();
   const { theme } = useContext(ThemeContext);
   const { formatNumber } = useNumberFormat();
-  const lineChartTheme = useLineChartTheme();
   const colorRegistry = createGraphColorRegistry(theme.color);
 
   const [dailyPeriod, setDailyPeriod] = useState<PeriodPreset>('30d');
@@ -124,9 +122,10 @@ export const SettingsUsageUserDetail = () => {
     color: getColorSchemeByIndex(colorRegistry, index).solid,
   }));
 
-  const lineData = [
+  const lineData: LineChartSeriesWithColor[] = [
     {
       id: 'credits',
+      label: t`Credits`,
       data: userDailyUsage.map((point) => ({
         x: formatDate(point.date, 'MMM d'),
         y: point.creditsUsed,
@@ -238,50 +237,15 @@ export const SettingsUsageUserDetail = () => {
               }
             />
             <SubscriptionInfoContainer>
-              <StyledBillingLineChartContainer>
-                <ResponsiveLine
+              <StyledLineChartContainer>
+                <GraphWidgetLineChart
+                  id="user-daily-line-chart"
                   data={lineData}
-                  margin={{ top: 10, right: 20, bottom: 30, left: 50 }}
-                  xScale={{ type: 'point' }}
-                  yScale={{
-                    type: 'linear',
-                    min: 0,
-                    max: 'auto',
-                  }}
-                  curve="monotoneX"
-                  lineWidth={2}
-                  colors={[theme.color.blue]}
-                  enablePoints={true}
-                  pointSize={6}
-                  pointColor={theme.background.primary}
-                  pointBorderWidth={2}
-                  pointBorderColor={theme.color.blue}
-                  enableArea={true}
-                  areaOpacity={0.1}
-                  enableGridX={false}
-                  enableGridY={true}
-                  axisBottom={{
-                    tickSize: 0,
-                    tickPadding: 8,
-                    tickRotation: userDailyUsage.length > 14 ? -45 : 0,
-                  }}
-                  axisLeft={{
-                    tickSize: 0,
-                    tickPadding: 8,
-                    tickValues: 5,
-                  }}
-                  animate
-                  motionConfig={CHART_MOTION_CONFIG}
-                  theme={lineChartTheme}
-                  enableSlices="x"
-                  sliceTooltip={({ slice }) => (
-                    <BillingChartTooltip
-                      label={String(slice.points[0]?.data.xFormatted)}
-                      value={t`${formatNumber(Number(slice.points[0]?.data.yFormatted))} credits`}
-                    />
-                  )}
+                  colorMode="automaticPalette"
+                  showLegend={false}
+                  enableArea
                 />
-              </StyledBillingLineChartContainer>
+              </StyledLineChartContainer>
             </SubscriptionInfoContainer>
           </Section>
         )}
@@ -303,31 +267,7 @@ export const SettingsUsageUserDetail = () => {
               }
             />
             <SubscriptionInfoContainer>
-              <StyledBillingPieChartContainer>
-                <ResponsivePie
-                  data={pieData}
-                  margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
-                  innerRadius={0.6}
-                  padAngle={0.5}
-                  cornerRadius={2}
-                  colors={pieData.map((item) => item.color)}
-                  enableArcLabels={false}
-                  enableArcLinkLabels={true}
-                  arcLinkLabelsSkipAngle={10}
-                  arcLinkLabelsTextColor={theme.font.color.secondary}
-                  arcLinkLabelsColor={{ from: 'color' }}
-                  arcLinkLabelsDiagonalLength={10}
-                  arcLinkLabelsStraightLength={10}
-                  animate
-                  motionConfig={CHART_MOTION_CONFIG}
-                  tooltip={({ datum }) => (
-                    <BillingChartTooltip
-                      label={String(datum.id)}
-                      value={t`${formatNumber(datum.value)} credits`}
-                    />
-                  )}
-                />
-              </StyledBillingPieChartContainer>
+              <UsagePieChart data={pieData} />
             </SubscriptionInfoContainer>
           </Section>
         )}

@@ -44,7 +44,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -68,7 +67,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       WorkspaceEntity,
       UserWorkspaceEntity,
       FeatureFlagEntity,
-      AgentEntity,
     ]),
     DataSourceModule,
     MetricsModule,
