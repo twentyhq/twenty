@@ -17,7 +17,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { SidePanelPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('mocked-uuid'),
@@ -41,7 +41,7 @@ jest.mock(
 );
 
 const personMockObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
+  getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === 'person',
   )!;
 

@@ -13,7 +13,7 @@ import {
   WorkspaceActivationStatus,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
@@ -74,10 +74,9 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       useRecommendedModels: true,
     });
 
-    const companyObjectMetadata =
-      generateTestEnrichedObjectMetadataItemsMock.find(
-        (item) => item.nameSingular === 'company',
-      );
+    const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
+      (item) => item.nameSingular === 'company',
+    );
 
     const { result } = renderHook(
       (objectMetadataItem: EnrichedObjectMetadataItem) => {

@@ -25,7 +25,7 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
@@ -34,7 +34,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
   decorators: [
     (Story) => {
       const companyObjectMetadataItem =
-        generateTestEnrichedObjectMetadataItemsMock.find(
+        getTestEnrichedObjectMetadataItemsMock().find(
           (item) => item.nameSingular === CoreObjectNameSingular.Company,
         )!;
       const instanceId = companyObjectMetadataItem.id;

@@ -14,7 +14,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const FIND_MANY_COMPANIES = gql`
   query FindManyCompanies(
@@ -99,7 +99,7 @@ const FIND_MANY_COMPANIES = gql`
 `;
 
 const companyMockObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
+  getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === 'company',
   );
 

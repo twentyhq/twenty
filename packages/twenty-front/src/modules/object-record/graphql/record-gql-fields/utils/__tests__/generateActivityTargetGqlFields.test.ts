@@ -1,12 +1,12 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 describe('generateActivityTargetGqlFields', () => {
   describe('snapshot tests', () => {
     it('should match snapshot for Note with loadRelations="activity"', () => {
       const result = generateActivityTargetGqlFields({
-        objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         activityObjectNameSingular: CoreObjectNameSingular.Note,
         loadRelations: 'activity',
       });
@@ -16,7 +16,7 @@ describe('generateActivityTargetGqlFields', () => {
 
     it('should match snapshot for Note with loadRelations="both"', () => {
       const result = generateActivityTargetGqlFields({
-        objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         activityObjectNameSingular: CoreObjectNameSingular.Note,
         loadRelations: 'both',
       });
@@ -26,7 +26,7 @@ describe('generateActivityTargetGqlFields', () => {
 
     it('should match snapshot for Note with loadRelations="relations"', () => {
       const result = generateActivityTargetGqlFields({
-        objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         activityObjectNameSingular: CoreObjectNameSingular.Note,
         loadRelations: 'relations',
       });
@@ -36,7 +36,7 @@ describe('generateActivityTargetGqlFields', () => {
 
     it('should match snapshot for Task with loadRelations="activity"', () => {
       const result = generateActivityTargetGqlFields({
-        objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         activityObjectNameSingular: CoreObjectNameSingular.Task,
         loadRelations: 'activity',
       });
@@ -46,7 +46,7 @@ describe('generateActivityTargetGqlFields', () => {
 
     it('should match snapshot for Task with loadRelations="both"', () => {
       const result = generateActivityTargetGqlFields({
-        objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         activityObjectNameSingular: CoreObjectNameSingular.Task,
         loadRelations: 'both',
       });
@@ -56,7 +56,7 @@ describe('generateActivityTargetGqlFields', () => {
 
     it('should match snapshot for Task with loadRelations="relations"', () => {
       const result = generateActivityTargetGqlFields({
-        objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         activityObjectNameSingular: CoreObjectNameSingular.Task,
         loadRelations: 'relations',
       });

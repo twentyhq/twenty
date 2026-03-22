@@ -8,7 +8,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { InMemoryCache } from '@apollo/client';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -36,7 +36,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         city: 'Paris',
@@ -59,7 +59,7 @@ describe('computeOptimisticRecordFromInput', () => {
     };
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         city: 'Paris',
@@ -85,7 +85,7 @@ describe('computeOptimisticRecordFromInput', () => {
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         id: '20202020-058c-4591-a7d7-50a75af6d1e6',
@@ -115,7 +115,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         companyId: '123',
@@ -148,12 +148,12 @@ describe('computeOptimisticRecordFromInput', () => {
     };
     const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
       objectMetadataItem,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       record: companyRecord,
       depth: 1,
     });
     updateRecordFromCache({
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem,
       cache,
       record: companyRecord,
@@ -163,7 +163,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         companyId: '123',
@@ -203,10 +203,10 @@ describe('computeOptimisticRecordFromInput', () => {
       depth: 1,
       objectMetadataItem,
       record: companyRecord,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
     });
     updateRecordFromCache({
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem,
       cache,
       record: companyRecord,
@@ -216,7 +216,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         companyId: '123',
@@ -237,7 +237,7 @@ describe('computeOptimisticRecordFromInput', () => {
 
     const result = computeOptimisticRecordFromInput({
       currentWorkspaceMember,
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordInput: {
         companyId: null,
@@ -259,7 +259,7 @@ describe('computeOptimisticRecordFromInput', () => {
     expect(() =>
       computeOptimisticRecordFromInput({
         currentWorkspaceMember,
-        objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+        objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
         objectMetadataItem: personObjectMetadataItem,
         recordInput: {
           unknwon: 'unknown',

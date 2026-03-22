@@ -20,7 +20,7 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const instanceId = 'entity-options-instance';
@@ -34,7 +34,7 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       useEffect(() => {
         setTestObjectMetadataItemsInMetadataStore(
           jotaiStore,
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
         );
       }, []);
 
@@ -73,7 +73,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
   decorators: [
     (Story) => {
       const companyObjectMetadataItem =
-        generateTestEnrichedObjectMetadataItemsMock.find(
+        getTestEnrichedObjectMetadataItemsMock().find(
           (item) => item.nameSingular === 'company',
         )!;
 

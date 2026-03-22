@@ -34,7 +34,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const RelationFieldValueSetterEffect = () => {
   const setRecordStore = useSetAtomFamilyState(
@@ -73,7 +73,7 @@ const RelationFieldValueSetterEffect = () => {
 
     const { flatObjects, flatFields, flatIndexes } =
       splitCompositeObjectMetadataItems(
-        generateTestEnrichedObjectMetadataItemsMock,
+        getTestEnrichedObjectMetadataItemsMock(),
       );
 
     replaceDraft('objectMetadataItems', flatObjects);

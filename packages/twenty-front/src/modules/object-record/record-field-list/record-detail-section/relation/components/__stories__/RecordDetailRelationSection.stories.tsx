@@ -17,10 +17,10 @@ import { SidePanelDecorator } from '~/testing/decorators/SidePanelDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockedCompanyObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
+  getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === 'company',
   );
 

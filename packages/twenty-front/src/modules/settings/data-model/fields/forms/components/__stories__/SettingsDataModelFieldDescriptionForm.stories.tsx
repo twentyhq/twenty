@@ -4,7 +4,7 @@ import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorato
 
 import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldDescriptionForm';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const meta: Meta<typeof SettingsDataModelFieldDescriptionForm> = {
   title: 'Modules/Settings/DataModel/SettingsDataModelFieldDescriptionForm',
@@ -26,7 +26,7 @@ type Story = StoryObj<typeof SettingsDataModelFieldDescriptionForm>;
 export const Default: Story = {};
 
 const mockedPersonObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
+  getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.namePlural === 'person',
   );
 

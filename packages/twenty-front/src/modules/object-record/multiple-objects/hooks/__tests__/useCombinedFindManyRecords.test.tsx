@@ -8,7 +8,7 @@ import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hoo
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 jest.mock(
   '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery',
@@ -125,7 +125,7 @@ const renderUseCombinedFindManyRecordsHook = async ({
 
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
-    generateTestEnrichedObjectMetadataItemsMock,
+    getTestEnrichedObjectMetadataItemsMock(),
   );
 
   const { result } = renderHook(

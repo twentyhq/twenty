@@ -5,11 +5,11 @@ import {
   type RecordFilterValueDependencies,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 describe('computeContextStoreFilters', () => {
   const personObjectMetadataItem =
-    generateTestEnrichedObjectMetadataItemsMock.find(
+    getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     )!;
 

@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 
 const peopleMock = [...mockedPersonRecords];
@@ -10,13 +10,13 @@ describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
     // Given
     const objectMetadataItems: EnrichedObjectMetadataItem[] =
-      generateTestEnrichedObjectMetadataItemsMock;
+      getTestEnrichedObjectMetadataItemsMock();
     const objectMetadataItem:
       | Pick<
           EnrichedObjectMetadataItem,
           'fields' | 'namePlural' | 'nameSingular'
         >
-      | undefined = generateTestEnrichedObjectMetadataItemsMock.find(
+      | undefined = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     );
 
@@ -55,13 +55,13 @@ describe('getRecordNodeFromRecord', () => {
   it('does not compute relation records cache references when `computeReferences` is false', () => {
     // Given
     const objectMetadataItems: EnrichedObjectMetadataItem[] =
-      generateTestEnrichedObjectMetadataItemsMock;
+      getTestEnrichedObjectMetadataItemsMock();
     const objectMetadataItem:
       | Pick<
           EnrichedObjectMetadataItem,
           'fields' | 'namePlural' | 'nameSingular'
         >
-      | undefined = generateTestEnrichedObjectMetadataItemsMock.find(
+      | undefined = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     );
 

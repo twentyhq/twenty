@@ -15,7 +15,7 @@ import {
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 type MockedUser = Pick<
   User,
@@ -201,7 +201,7 @@ export const mockedUserData: MockedUser = {
       PermissionFlagType.CONNECTED_ACCOUNTS,
     ],
     twoFactorAuthenticationMethodSummary: [],
-    objectsPermissions: generateTestEnrichedObjectMetadataItemsMock.map(
+    objectsPermissions: getTestEnrichedObjectMetadataItemsMock().map(
       (item) => ({
         objectMetadataId: item.id,
         canReadObjectRecords: true,
@@ -229,7 +229,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectsPermissions: generateTestEnrichedObjectMetadataItemsMock
+    objectsPermissions: getTestEnrichedObjectMetadataItemsMock()
       .filter(
         (objectMetadata) =>
           objectMetadata.nameSingular !== 'task' &&
@@ -267,7 +267,7 @@ export const mockedOnboardingUserData = (
     currentWorkspace: mockCurrentWorkspace,
     currentUserWorkspace: {
       permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-      objectPermissions: generateTestEnrichedObjectMetadataItemsMock.map(
+      objectPermissions: getTestEnrichedObjectMetadataItemsMock().map(
         (item) => ({
           objectMetadataId: item.id,
           canReadObjectRecords: true,

@@ -11,7 +11,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { isDefined } from 'twenty-shared/utils';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mocks = [
   {
@@ -30,7 +30,7 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => {
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
-    generateTestEnrichedObjectMetadataItemsMock,
+    getTestEnrichedObjectMetadataItemsMock(),
   );
 
   return (
@@ -67,10 +67,9 @@ describe('useFilteredObjectMetadataItems', () => {
   });
 
   it('should findObjectMetadataItemById', async () => {
-    const peopleObjectMetadata =
-      generateTestEnrichedObjectMetadataItemsMock.find(
-        (item) => item.namePlural === 'people',
-      );
+    const peopleObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
+      (item) => item.namePlural === 'people',
+    );
 
     if (!isDefined(peopleObjectMetadata)) {
       throw new Error('People object metadata not found');

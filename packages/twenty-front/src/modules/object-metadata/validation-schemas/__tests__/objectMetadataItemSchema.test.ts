@@ -1,12 +1,12 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 
 describe('objectMetadataItemSchema', () => {
   it('validates a valid object metadata item', () => {
     // Given
     const validObjectMetadataItem =
-      generateTestEnrichedObjectMetadataItemsMock.find(
+      getTestEnrichedObjectMetadataItemsMock().find(
         (item) => item.nameSingular === 'company',
       );
 
@@ -20,7 +20,7 @@ describe('objectMetadataItemSchema', () => {
   it('fails for an invalid object metadata item that has null labelIdentifier', () => {
     // Given
     const validObjectMetadataItem =
-      generateTestEnrichedObjectMetadataItemsMock.find(
+      getTestEnrichedObjectMetadataItemsMock().find(
         (item) => item.nameSingular === 'company',
       );
     expect(validObjectMetadataItem).not.toBeUndefined();

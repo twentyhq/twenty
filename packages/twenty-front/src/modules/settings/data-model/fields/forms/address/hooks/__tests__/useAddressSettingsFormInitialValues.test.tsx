@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 
 jest.mock('react-hook-form', () => ({
@@ -17,7 +17,7 @@ const mockUseFormContext = useFormContext as jest.MockedFunction<
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
-  objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
 });
 
 describe('useAddressSettingsFormInitialValues', () => {
@@ -126,7 +126,7 @@ describe('useAddressSettingsFormInitialValues', () => {
 
   it('should return configured subFields when they exist', () => {
     const newGeneratedMockObjectMetadataItems = addNewAddressToMetadataItems(
-      generateTestEnrichedObjectMetadataItemsMock,
+      getTestEnrichedObjectMetadataItemsMock(),
       'new-field',
       ['addressStreet1', 'addressCity', 'addressCountry'],
     );
@@ -182,7 +182,7 @@ describe('useAddressSettingsFormInitialValues', () => {
     const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
       apolloMocks: [],
       objectMetadataItems: addNewAddressToMetadataItems(
-        generateTestEnrichedObjectMetadataItemsMock,
+        getTestEnrichedObjectMetadataItemsMock(),
         'new-field',
         ['addressStreet1', 'addressCity'],
       ),
@@ -205,11 +205,11 @@ describe('useAddressSettingsFormInitialValues', () => {
 });
 
 const addNewAddressToMetadataItems = (
-  generateTestEnrichedObjectMetadataItemsMock: EnrichedObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   fieldNameId: string,
   subFields: string[],
 ) => {
-  return generateTestEnrichedObjectMetadataItemsMock
+  return objectMetadataItems
     .filter((item) => item.nameSingular === 'company')
     .map((item) => {
       const fields = item.fields;

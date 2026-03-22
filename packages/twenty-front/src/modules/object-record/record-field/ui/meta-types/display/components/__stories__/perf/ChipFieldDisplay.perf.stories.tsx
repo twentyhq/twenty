@@ -12,7 +12,7 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/ChipFieldDisplay',
@@ -22,7 +22,7 @@ const meta: Meta = {
       const instanceId = 'child-field-display-scope';
 
       const companyObjectMetadataItem =
-        generateTestEnrichedObjectMetadataItemsMock.find(
+        getTestEnrichedObjectMetadataItemsMock().find(
           (item) => item.nameSingular === CoreObjectNameSingular.Company,
         )!;
 

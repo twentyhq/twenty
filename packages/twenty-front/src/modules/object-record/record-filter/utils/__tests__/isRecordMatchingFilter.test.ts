@@ -1,6 +1,6 @@
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 import { type Company } from '@/companies/types/Company';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
@@ -12,7 +12,7 @@ const companiesMock = mockedCompanyRecords.map((record) =>
 );
 
 const companyMockObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
+  getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === 'company',
   )!;
 

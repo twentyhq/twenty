@@ -15,7 +15,7 @@ export const useGetObjectRecordIdentifierByNameSingular = (
 
     if (!objectMetadataItem) {
       throw new Error(
-        `EnrichedObjectMetadataItem not found for objectNameSingular: ${objectNameSingular}`,
+        `Object metadata not found for objectNameSingular: ${objectNameSingular}`,
       );
     }
 

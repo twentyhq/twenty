@@ -1,20 +1,19 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
 
-const personObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
-    (item) => item.nameSingular === 'person',
-  );
+const personObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
+  (item) => item.nameSingular === 'person',
+);
 
 if (!personObjectMetadataItem) {
-  throw new Error('EnrichedObjectMetadataItem not found');
+  throw new Error('Object metadata not found');
 }
 
 describe('mapObjectMetadataToGraphQLQuery', () => {
   it('should query only specified recordGqlFields', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordGqlFields: {
         company: true,
@@ -134,7 +133,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
 
   it('should load only specified operation fields nested', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
-      objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
       objectMetadataItem: personObjectMetadataItem,
       recordGqlFields: { company: { id: true }, id: true, name: true },
       objectPermissionsByObjectMetadataId: {

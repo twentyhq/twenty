@@ -8,15 +8,14 @@ import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFi
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewOpenRecordIn, ViewVisibility } from '~/generated-metadata/graphql';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
 describe('mapRecordFilterGroupToViewFilterGroup', () => {
-  const mockObjectMetadataItem =
-    generateTestEnrichedObjectMetadataItemsMock.find(
-      (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
-    );
+  const mockObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
+    (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
+  );
 
   if (!isDefined(mockObjectMetadataItem)) {
     throw new Error(

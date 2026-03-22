@@ -1,6 +1,6 @@
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 
 describe('getTriggerDefaultDefinition', () => {
@@ -20,13 +20,13 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems:
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
       name: 'Record is created',
       settings: {
-        eventName: `${generateTestEnrichedObjectMetadataItemsMock[0].nameSingular}.created`,
+        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.created`,
         outputSchema: {},
       },
       position: {
@@ -42,13 +42,13 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems:
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
       name: 'Record is updated',
       settings: {
-        eventName: `${generateTestEnrichedObjectMetadataItemsMock[0].nameSingular}.updated`,
+        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.updated`,
         outputSchema: {},
       },
       position: {
@@ -64,13 +64,13 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems:
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
       name: 'Record is deleted',
       settings: {
-        eventName: `${generateTestEnrichedObjectMetadataItemsMock[0].nameSingular}.deleted`,
+        eventName: `${getTestEnrichedObjectMetadataItemsMock()[0].nameSingular}.deleted`,
         outputSchema: {},
       },
       position: {
@@ -86,7 +86,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'Launch manually',
         type: 'MANUAL',
         activeNonSystemObjectMetadataItems:
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
       }),
     ).toStrictEqual({
       type: 'MANUAL',
@@ -114,7 +114,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'On a schedule',
         type: 'CRON',
         activeNonSystemObjectMetadataItems:
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
       }),
     ).toStrictEqual({
       type: 'CRON',
@@ -137,7 +137,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'Webhook',
         type: 'WEBHOOK',
         activeNonSystemObjectMetadataItems:
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
       }),
     ).toStrictEqual({
       type: 'WEBHOOK',
@@ -160,7 +160,7 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'unknown' as any,
         activeNonSystemObjectMetadataItems:
-          generateTestEnrichedObjectMetadataItemsMock,
+          getTestEnrichedObjectMetadataItemsMock(),
       });
     }).toThrow('Unknown type: unknown');
   });

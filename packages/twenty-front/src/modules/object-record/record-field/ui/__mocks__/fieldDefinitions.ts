@@ -11,7 +11,7 @@ import {
   FieldTextMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 export const fieldMetadataId = 'fieldMetadataId';
 
@@ -25,7 +25,7 @@ export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {
 };
 
 const mockedPersonObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
+  getTestEnrichedObjectMetadataItemsMock().find(
     ({ nameSingular }) => nameSingular === 'person',
   );
 
@@ -89,7 +89,7 @@ export const ratingFieldDefinition: FieldDefinition<FieldRatingMetadata> = {
 };
 
 const mockedCompanyObjectMetadataItem =
-  generateTestEnrichedObjectMetadataItemsMock.find(
+  getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === 'company',
   );
 

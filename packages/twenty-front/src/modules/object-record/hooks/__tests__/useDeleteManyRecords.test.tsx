@@ -17,7 +17,7 @@ import { InMemoryCache } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const getDefaultMocks = (
@@ -43,7 +43,7 @@ const mockRefetchAggregateQueries = jest.fn();
   refetchAggregateQueries: mockRefetchAggregateQueries,
 });
 const objectMetadataItem = getMockObjectMetadataItemOrThrow('person');
-const objectMetadataItems = generateTestEnrichedObjectMetadataItemsMock;
+const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 const expectedCachedRecordsWithDeletedAt = personRecords.map(
   (personRecord) => ({
     ...personRecord,
@@ -120,7 +120,7 @@ describe('useDeleteManyRecords', () => {
           objectMetadataItems,
           record,
           recordGqlFields: generateDepthRecordGqlFieldsFromRecord({
-            objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
+            objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
             objectMetadataItem,
             record,
             depth: 1,

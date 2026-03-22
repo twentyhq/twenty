@@ -3,7 +3,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 export const JestObjectMetadataItemSetter = ({
   children,
@@ -17,7 +17,7 @@ export const JestObjectMetadataItemSetter = ({
 
   useEffect(() => {
     const items =
-      objectMetadataItems ?? generateTestEnrichedObjectMetadataItemsMock;
+      objectMetadataItems ?? getTestEnrichedObjectMetadataItemsMock();
     const { flatObjects, flatFields, flatIndexes } =
       splitCompositeObjectMetadataItems(items);
 
