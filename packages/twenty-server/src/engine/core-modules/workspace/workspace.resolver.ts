@@ -221,20 +221,6 @@ export class WorkspaceResolver {
     return workspace.smartModel;
   }
 
-  @ResolveField(() => Boolean, { nullable: false })
-  async autoEnableNewAiModels(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return workspace.autoEnableNewAiModels;
-  }
-
-  @ResolveField(() => [String], { nullable: true })
-  async disabledAiModelIds(
-    @Parent() workspace: WorkspaceEntity,
-  ): Promise<string[]> {
-    return workspace.disabledAiModelIds;
-  }
-
   @ResolveField(() => [String], { nullable: true })
   async enabledAiModelIds(
     @Parent() workspace: WorkspaceEntity,
@@ -362,7 +348,8 @@ export class WorkspaceResolver {
   @ResolveField(() => [ViewDTO])
   async views(
     @Parent() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO[]> {
     return this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
   }

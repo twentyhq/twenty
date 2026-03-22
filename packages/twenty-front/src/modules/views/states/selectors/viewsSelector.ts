@@ -1,4 +1,5 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type FlatViewFieldGroup } from '@/metadata-store/types/FlatViewFieldGroup';
@@ -8,11 +9,21 @@ import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
+import { resolveViewNamePlaceholders } from '@/views/utils/resolveViewNamePlaceholders';
 
 export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
   key: 'viewsSelector',
   get: ({ get }) => {
     const flatViews = get(metadataStoreState, 'views').current as FlatView[];
+    const flatObjectMetadataItems = get(
+      metadataStoreState,
+      'objectMetadataItems',
+    ).current as FlatObjectMetadataItem[];
+
+    const objectMetadataItemsById = new Map(
+      flatObjectMetadataItems.map((item) => [item.id, item]),
+    );
+
     const flatViewFields = get(metadataStoreState, 'viewFields')
       .current as FlatViewField[];
     const flatViewFilters = get(metadataStoreState, 'viewFilters')
@@ -75,6 +86,10 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
 
     return flatViews.map((view) => ({
       ...view,
+      name: resolveViewNamePlaceholders(
+        view.name,
+        objectMetadataItemsById.get(view.objectMetadataId),
+      ),
       viewFields: viewFieldsByViewId.get(view.id) ?? [],
       viewFilters: viewFiltersByViewId.get(view.id) ?? [],
       viewSorts: viewSortsByViewId.get(view.id) ?? [],

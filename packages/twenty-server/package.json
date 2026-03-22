@@ -18,7 +18,6 @@
     "@ai-sdk/amazon-bedrock": "^3.0.83",
     "@ai-sdk/anthropic": "^3.0.46",
     "@ai-sdk/google": "^3.0.30",
-    "@ai-sdk/groq": "^3.0.24",
     "@ai-sdk/mistral": "^3.0.20",
     "@ai-sdk/openai": "^3.0.30",
     "@ai-sdk/provider-utils": "^4.0.15",

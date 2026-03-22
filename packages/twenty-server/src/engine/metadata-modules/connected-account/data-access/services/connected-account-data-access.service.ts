@@ -79,9 +79,15 @@ export class ConnectedAccountDataAccessService {
     const coreData: Record<string, unknown> = { ...rest };
 
     if (handleAliases !== undefined) {
-      coreData.handleAliases = isNonEmptyString(handleAliases)
-        ? handleAliases.split(',').map((alias: string) => alias.trim())
-        : null;
+      if (Array.isArray(handleAliases)) {
+        coreData.handleAliases = handleAliases;
+      } else if (isNonEmptyString(handleAliases)) {
+        coreData.handleAliases = handleAliases
+          .split(',')
+          .map((alias: string) => alias.trim());
+      } else {
+        coreData.handleAliases = null;
+      }
     }
 
     if (accountOwnerId !== undefined) {

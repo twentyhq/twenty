@@ -167,6 +167,10 @@ plugins: [
 
 Esegui `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` nel container del database per accedere al pannello di amministrazione.
 
+#### Durante l'esecuzione di un workflow, l'esecuzione del workflow non riesce con "L'esecuzione delle funzioni logiche è disabilitata. Imposta LOGIC_FUNCTION_TYPE su LOCAL o LAMBDA per abilitarle."
+
+In produzione, le funzioni logiche sono disabilitate per impostazione predefinita. Imposta la variabile d'ambiente `LOGIC_FUNCTION_TYPE` su `LOCAL` o `LAMBDA` per abilitarle. Questo può essere configurato tramite variabili d'ambiente o tramite le variabili del database del pannello di amministrazione. Consulta la [guida alla configurazione delle funzioni logiche](/l/it/developers/self-host/capabilities/setup#logic-functions-available-drivers) per dettagli.
+
 ### Composizione Docker a un clic
 
 #### Impossibile connettersi

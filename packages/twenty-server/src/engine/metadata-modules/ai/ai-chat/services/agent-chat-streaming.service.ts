@@ -20,7 +20,7 @@ import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';

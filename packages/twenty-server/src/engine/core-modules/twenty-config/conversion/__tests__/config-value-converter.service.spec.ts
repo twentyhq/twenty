@@ -25,6 +25,7 @@ jest.mock(
       string: createMockTransformer(),
       array: createMockTransformer(),
       enum: createMockTransformer(),
+      json: createMockTransformer(),
     };
 
     return {
@@ -59,6 +60,12 @@ const typeTransformers = typeTransformersModule.typeTransformers as {
     getTransformers: jest.Mock;
   };
   enum: {
+    toApp: jest.Mock;
+    toStorage: jest.Mock;
+    getValidators: jest.Mock;
+    getTransformers: jest.Mock;
+  };
+  json: {
     toApp: jest.Mock;
     toStorage: jest.Mock;
     getValidators: jest.Mock;

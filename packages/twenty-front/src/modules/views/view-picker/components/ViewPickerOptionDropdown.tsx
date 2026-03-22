@@ -1,6 +1,5 @@
 import { useCreateNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useCreateNavigationMenuItem';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -55,15 +54,15 @@ export const ViewPickerOptionDropdown = ({
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const { createNavigationMenuItem } = useCreateNavigationMenuItem();
-  const { currentWorkspaceMemberId } = useNavigationMenuItemsData();
-  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { navigationMenuItems, currentWorkspaceMemberId } =
+    useNavigationMenuItemsData();
 
   // Users with VIEWS permission can edit all views
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
   const canEditView =
     hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
 
-  const isFavorite = navigationMenuItemsSorted.some(
+  const isFavorite = navigationMenuItems.some(
     (item) =>
       item.viewId === view.id &&
       item.userWorkspaceId === currentWorkspaceMemberId,
