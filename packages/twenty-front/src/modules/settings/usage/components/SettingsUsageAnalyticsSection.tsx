@@ -13,7 +13,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getOperationTypeLabel } from '@/settings/usage/utils/getOperationTypeLabel';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
-import { type PeriodPreset } from '@/settings/usage/utils/PeriodPreset';
+import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 import { UsagePieChart } from '@/settings/usage/components/UsagePieChart';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';

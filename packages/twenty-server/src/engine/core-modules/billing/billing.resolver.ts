@@ -534,5 +534,4 @@ export class BillingResolver {
 
     return nameMap;
   }
-
 }

@@ -11,7 +11,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { getOperationTypeLabel } from '@/settings/usage/utils/getOperationTypeLabel';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
-import { type PeriodPreset } from '@/settings/usage/utils/PeriodPreset';
+import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 import { UsagePieChart } from '@/settings/usage/components/UsagePieChart';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';

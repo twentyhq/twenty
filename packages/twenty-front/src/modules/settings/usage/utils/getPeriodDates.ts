@@ -1,4 +1,4 @@
-import { type PeriodPreset } from '@/settings/usage/utils/PeriodPreset';
+import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 
 const PERIOD_DAYS: Record<PeriodPreset, number> = {
   '7d': 7,

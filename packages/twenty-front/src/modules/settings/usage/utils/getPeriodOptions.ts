@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 
-import { type PeriodPreset } from '@/settings/usage/utils/PeriodPreset';
+import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 
 export const getPeriodOptions = (): {
   value: PeriodPreset;
