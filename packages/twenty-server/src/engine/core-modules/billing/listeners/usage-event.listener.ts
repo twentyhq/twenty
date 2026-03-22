@@ -28,6 +28,11 @@ export class UsageEventListener {
       return;
     }
 
+    this.usageEventWriterService.writeToClickHouse(
+      payload.workspaceId,
+      payload.events,
+    );
+
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
@@ -40,7 +45,7 @@ export class UsageEventListener {
       return;
     }
 
-    await this.usageEventWriterService.writeAndBill({
+    await this.usageEventWriterService.billUsage({
       workspaceId: payload.workspaceId,
       usageEvents: payload.events,
     });

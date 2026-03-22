@@ -4,10 +4,11 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
+import { STRIPE_BILLING_METER_EVENT_NAME } from 'src/engine/core-modules/billing/stripe/constants/stripe-billing-meter-event-name.constant';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
+import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
+import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class StripeBillingAlertService {
@@ -35,7 +36,7 @@ export class StripeBillingAlertService {
   ): Promise<void> {
     const meter = (await this.stripeBillingMeterService.getAllMeters()).find(
       (meterItem) => {
-        return meterItem.event_name === 'WORKFLOW_NODE_RUN';
+        return meterItem.event_name === STRIPE_BILLING_METER_EVENT_NAME;
       },
     );
 

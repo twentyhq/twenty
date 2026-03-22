@@ -5,16 +5,15 @@ import {
 } from '@/billing/components/BillingChartContainers';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import {
-  type PeriodPreset,
-  getChartColors,
-  getOperationTypeLabel,
-  getPeriodDates,
-  getPeriodOptions,
-} from '@/billing/utils/billingAnalyticsUtils';
+import { getOperationTypeLabel } from '@/billing/utils/getOperationTypeLabel';
+import { getPeriodDates } from '@/billing/utils/getPeriodDates';
+import { getPeriodOptions } from '@/billing/utils/getPeriodOptions';
+import { type PeriodPreset } from '@/billing/utils/PeriodPreset';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graph-widget-line-chart/hooks/useLineChartTheme';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
 import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -24,7 +23,7 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsivePie } from '@nivo/pie';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar, H2Title, IconChevronRight } from 'twenty-ui/display';
@@ -85,17 +84,14 @@ export const SettingsBillingAnalyticsSection = () => {
   const [resourcePeriod, setResourcePeriod] = useState<PeriodPreset>('30d');
   const [userSearchTerm, setUserSearchTerm] = useState('');
 
-  const chartColors = getChartColors(theme);
+  const colorRegistry = createGraphColorRegistry(theme.color);
   const lineChartTheme = useLineChartTheme();
   const periodOptions = getPeriodOptions();
 
-  const typeDates = useMemo(() => getPeriodDates(typePeriod), [typePeriod]);
-  const dailyDates = useMemo(() => getPeriodDates(dailyPeriod), [dailyPeriod]);
-  const userDates = useMemo(() => getPeriodDates(userPeriod), [userPeriod]);
-  const resourceDates = useMemo(
-    () => getPeriodDates(resourcePeriod),
-    [resourcePeriod],
-  );
+  const typeDates = getPeriodDates(typePeriod);
+  const dailyDates = getPeriodDates(dailyPeriod);
+  const userDates = getPeriodDates(userPeriod);
+  const resourceDates = getPeriodDates(resourcePeriod);
 
   const { data: typeData, loading: typeLoading } = useQuery(
     GetUsageAnalyticsDocument,
@@ -160,7 +156,7 @@ export const SettingsBillingAnalyticsSection = () => {
   const pieData = usageByOperationType.map((item, index) => ({
     id: getOperationTypeLabel(item.key),
     value: item.creditsUsed,
-    color: chartColors[index % chartColors.length],
+    color: getColorSchemeByIndex(colorRegistry, index).solid,
   }));
 
   const lineData = [
@@ -196,7 +192,7 @@ export const SettingsBillingAnalyticsSection = () => {
         <Section>
           <H2Title
             title={t`Usage by Type`}
-            description={`${formatNumber(totalCredits)} ${t`credits`}`}
+            description={t`${formatNumber(totalCredits)} credits`}
             adornment={
               <Select
                 dropdownId="usage-type-period"
@@ -229,7 +225,7 @@ export const SettingsBillingAnalyticsSection = () => {
                 tooltip={({ datum }) => (
                   <BillingChartTooltip
                     label={String(datum.id)}
-                    value={`${formatNumber(datum.value)} ${t`credits`}`}
+                    value={t`${formatNumber(datum.value)} credits`}
                   />
                 )}
               />
@@ -281,15 +277,6 @@ export const SettingsBillingAnalyticsSection = () => {
                   tickSize: 0,
                   tickPadding: 8,
                   tickRotation: timeSeries.length > 14 ? -45 : 0,
-                  tickValues:
-                    timeSeries.length > 10
-                      ? lineData[0].data
-                          .filter(
-                            (_, index) =>
-                              index % Math.ceil(timeSeries.length / 7) === 0,
-                          )
-                          .map((point) => point.x)
-                      : undefined,
                 }}
                 axisLeft={{
                   tickSize: 0,
@@ -303,7 +290,7 @@ export const SettingsBillingAnalyticsSection = () => {
                 sliceTooltip={({ slice }) => (
                   <BillingChartTooltip
                     label={String(slice.points[0]?.data.xFormatted)}
-                    value={`${formatNumber(Number(slice.points[0]?.data.yFormatted))} ${t`credits`}`}
+                    value={t`${formatNumber(Number(slice.points[0]?.data.yFormatted))} credits`}
                   />
                 )}
               />
@@ -408,12 +395,12 @@ export const SettingsBillingAnalyticsSection = () => {
                   <StyledBarLabel>
                     <StyledLabelText>{item.label ?? item.key}</StyledLabelText>
                     <StyledValueText>
-                      {formatNumber(item.creditsUsed)} {t`credits`}
+                      {t`${formatNumber(item.creditsUsed)} credits`}
                     </StyledValueText>
                   </StyledBarLabel>
                   <ProgressBar
                     value={percentage < 3 && percentage > 0 ? 3 : percentage}
-                    barColor={chartColors[index % chartColors.length]}
+                    barColor={getColorSchemeByIndex(colorRegistry, index).solid}
                     backgroundColor={theme.background.tertiary}
                     withBorderRadius
                   />

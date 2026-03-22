@@ -4,12 +4,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import type Stripe from 'stripe';
 
+import { STRIPE_BILLING_METER_EVENT_NAME } from 'src/engine/core-modules/billing/stripe/constants/stripe-billing-meter-event-name.constant';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-// Stripe meter event name — kept as a constant since Stripe only has one meter
-const STRIPE_METER_EVENT_NAME = 'WORKFLOW_NODE_RUN';
 
 @Injectable()
 export class StripeBillingMeterEventService {
@@ -50,7 +48,7 @@ export class StripeBillingMeterEventService {
     }
 
     await this.stripe.billing.meterEvents.create({
-      event_name: STRIPE_METER_EVENT_NAME,
+      event_name: STRIPE_BILLING_METER_EVENT_NAME,
       payload,
     });
   }

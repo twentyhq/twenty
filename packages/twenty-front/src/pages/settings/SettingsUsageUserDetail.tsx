@@ -5,16 +5,15 @@ import {
 } from '@/billing/components/BillingChartContainers';
 import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import {
-  type PeriodPreset,
-  getChartColors,
-  getOperationTypeLabel,
-  getPeriodDates,
-  getPeriodOptions,
-} from '@/billing/utils/billingAnalyticsUtils';
+import { getOperationTypeLabel } from '@/billing/utils/getOperationTypeLabel';
+import { getPeriodDates } from '@/billing/utils/getPeriodDates';
+import { getPeriodOptions } from '@/billing/utils/getPeriodOptions';
+import { type PeriodPreset } from '@/billing/utils/PeriodPreset';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graph-widget-line-chart/hooks/useLineChartTheme';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -23,7 +22,7 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { ResponsiveLine } from '@nivo/line';
 import { ResponsivePie } from '@nivo/pie';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -64,15 +63,15 @@ export const SettingsUsageUserDetail = () => {
   const { theme } = useContext(ThemeContext);
   const { formatNumber } = useNumberFormat();
   const lineChartTheme = useLineChartTheme();
-  const chartColors = getChartColors(theme);
+  const colorRegistry = createGraphColorRegistry(theme.color);
 
   const [dailyPeriod, setDailyPeriod] = useState<PeriodPreset>('30d');
   const [typePeriod, setTypePeriod] = useState<PeriodPreset>('30d');
 
   const periodOptions = getPeriodOptions();
 
-  const dailyDates = useMemo(() => getPeriodDates(dailyPeriod), [dailyPeriod]);
-  const typeDates = useMemo(() => getPeriodDates(typePeriod), [typePeriod]);
+  const dailyDates = getPeriodDates(dailyPeriod);
+  const typeDates = getPeriodDates(typePeriod);
 
   const { data: dailyData, loading: dailyLoading } = useQuery(
     GetUsageAnalyticsDocument,
@@ -122,7 +121,7 @@ export const SettingsUsageUserDetail = () => {
   const pieData = usageByOperationType.map((item, index) => ({
     id: getOperationTypeLabel(item.key),
     value: item.creditsUsed,
-    color: chartColors[index % chartColors.length],
+    color: getColorSchemeByIndex(colorRegistry, index).solid,
   }));
 
   const lineData = [
@@ -206,7 +205,7 @@ export const SettingsUsageUserDetail = () => {
           <StyledUserInfo>
             <StyledUserName>{displayName}</StyledUserName>
             <StyledUserCredits>
-              {formatNumber(totalCredits)} {t`credits used`}
+              {t`${formatNumber(totalCredits)} credits used`}
             </StyledUserCredits>
           </StyledUserInfo>
         </StyledUserHeader>
@@ -265,16 +264,6 @@ export const SettingsUsageUserDetail = () => {
                     tickSize: 0,
                     tickPadding: 8,
                     tickRotation: userDailyUsage.length > 14 ? -45 : 0,
-                    tickValues:
-                      userDailyUsage.length > 10
-                        ? lineData[0].data
-                            .filter(
-                              (_, index) =>
-                                index % Math.ceil(userDailyUsage.length / 7) ===
-                                0,
-                            )
-                            .map((point) => point.x)
-                        : undefined,
                   }}
                   axisLeft={{
                     tickSize: 0,
@@ -288,7 +277,7 @@ export const SettingsUsageUserDetail = () => {
                   sliceTooltip={({ slice }) => (
                     <BillingChartTooltip
                       label={String(slice.points[0]?.data.xFormatted)}
-                      value={`${formatNumber(Number(slice.points[0]?.data.yFormatted))} ${t`credits`}`}
+                      value={t`${formatNumber(Number(slice.points[0]?.data.yFormatted))} credits`}
                     />
                   )}
                 />
@@ -301,7 +290,7 @@ export const SettingsUsageUserDetail = () => {
           <Section>
             <H2Title
               title={t`Usage by Type`}
-              description={`${formatNumber(totalCredits)} ${t`credits`}`}
+              description={t`${formatNumber(totalCredits)} credits`}
               adornment={
                 <Select
                   dropdownId="user-type-period"
@@ -334,7 +323,7 @@ export const SettingsUsageUserDetail = () => {
                   tooltip={({ datum }) => (
                     <BillingChartTooltip
                       label={String(datum.id)}
-                      value={`${formatNumber(datum.value)} ${t`credits`}`}
+                      value={t`${formatNumber(datum.value)} credits`}
                     />
                   )}
                 />

@@ -18,25 +18,20 @@ export class UsageEventWriterService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async writeAndBill({
+  async billUsage({
     workspaceId,
     usageEvents,
   }: {
     workspaceId: string;
     usageEvents: UsageEvent[];
   }): Promise<void> {
-    this.writeToClickHouse(workspaceId, usageEvents);
-
     await this.billingUsageService.billUsage({
       workspaceId,
       usageEvents,
     });
   }
 
-  private writeToClickHouse(
-    workspaceId: string,
-    usageEvents: UsageEvent[],
-  ): void {
+  writeToClickHouse(workspaceId: string, usageEvents: UsageEvent[]): void {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return;
     }

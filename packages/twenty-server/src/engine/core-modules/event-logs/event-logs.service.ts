@@ -56,7 +56,7 @@ const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
   [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
   [EventLogTable.PAGEVIEW]: 'pageview',
   [EventLogTable.OBJECT_EVENT]: 'objectEvent',
-  [EventLogTable.BILLING_EVENT]: 'usageEvent',
+  [EventLogTable.USAGE_EVENT]: 'usageEvent',
 };
 
 @Injectable()
@@ -81,7 +81,7 @@ export class EventLogsService {
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
     const tableName = CLICKHOUSE_TABLE_NAMES[input.table];
     const eventFieldName =
-      input.table === EventLogTable.BILLING_EVENT
+      input.table === EventLogTable.USAGE_EVENT
         ? 'resourceType'
         : input.table === EventLogTable.PAGEVIEW
           ? 'name'
@@ -196,8 +196,12 @@ export class EventLogsService {
       params.eventTypePattern = `%${filters.eventType.toLowerCase()}%`;
     }
 
+    // TODO: Legacy event tables (workspaceEvent, pageview, objectEvent) use
+    // userId because some actions are logged out. Usage events use
+    // userWorkspaceId directly which is more relevant in a workspace context.
+    // Consider migrating all event tables to userWorkspaceId for consistency.
     if (isDefined(filters.userWorkspaceId)) {
-      if (table === EventLogTable.BILLING_EVENT) {
+      if (table === EventLogTable.USAGE_EVENT) {
         whereClauses.push('"userWorkspaceId" = {userWorkspaceId:String}');
         params.userWorkspaceId = filters.userWorkspaceId;
       } else {
@@ -248,7 +252,7 @@ export class EventLogsService {
     records: ClickHouseEventRecord[] | ClickHouseUsageEventRecord[],
     table: EventLogTable,
   ): EventLogRecord[] {
-    if (table === EventLogTable.BILLING_EVENT) {
+    if (table === EventLogTable.USAGE_EVENT) {
       return (records as ClickHouseUsageEventRecord[]).map((record) => ({
         event: record.resourceType ?? '',
         timestamp: new Date(record.timestamp),

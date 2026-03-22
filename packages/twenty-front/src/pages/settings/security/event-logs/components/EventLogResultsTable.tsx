@@ -79,8 +79,13 @@ const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
   },
 ];
 
-const BILLING_EVENT_COLUMNS: ColumnConfig[] = [
-  { id: 'event', label: msg`Event Type`, minWidth: 100, defaultWidth: 160 },
+const USAGE_EVENT_COLUMNS: ColumnConfig[] = [
+  {
+    id: 'event',
+    label: msg`Resource Type`,
+    minWidth: 100,
+    defaultWidth: 130,
+  },
   {
     id: 'timestamp',
     label: msg`Timestamp`,
@@ -179,8 +184,8 @@ export const EventLogResultsTable = ({
   const baseColumns =
     selectedTable === EventLogTable.OBJECT_EVENT
       ? OBJECT_EVENT_COLUMNS
-      : selectedTable === EventLogTable.BILLING_EVENT
-        ? BILLING_EVENT_COLUMNS
+      : selectedTable === EventLogTable.USAGE_EVENT
+        ? USAGE_EVENT_COLUMNS
         : DEFAULT_COLUMNS;
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>

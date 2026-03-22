@@ -3342,7 +3342,7 @@ enum EventLogTable {
   WORKSPACE_EVENT
   PAGEVIEW
   OBJECT_EVENT
-  BILLING_EVENT
+  USAGE_EVENT
 }
 
 input EventLogFiltersInput {

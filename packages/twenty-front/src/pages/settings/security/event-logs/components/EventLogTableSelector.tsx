@@ -28,8 +28,8 @@ export const EventLogTableSelector = ({
       label: t`Object Events`,
     },
     {
-      value: EventLogTable.BILLING_EVENT,
-      label: t`Billing Events`,
+      value: EventLogTable.USAGE_EVENT,
+      label: t`Usage Events`,
     },
   ];
 

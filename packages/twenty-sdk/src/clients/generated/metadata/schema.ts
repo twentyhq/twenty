@@ -2832,7 +2832,7 @@ export type SortDirection = 'ASC' | 'DESC'
 /** Sort Nulls Options */
 export type SortNulls = 'NULLS_FIRST' | 'NULLS_LAST'
 
-export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'BILLING_EVENT'
+export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -9400,7 +9400,7 @@ export const enumEventLogTable = {
    WORKSPACE_EVENT: 'WORKSPACE_EVENT' as const,
    PAGEVIEW: 'PAGEVIEW' as const,
    OBJECT_EVENT: 'OBJECT_EVENT' as const,
-   BILLING_EVENT: 'BILLING_EVENT' as const
+   USAGE_EVENT: 'USAGE_EVENT' as const
 }
 
 export const enumAnalyticsType = {
