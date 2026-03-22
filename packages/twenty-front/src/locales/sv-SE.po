@@ -1125,6 +1125,7 @@ msgid "Add view"
 msgstr "Lägg till vy"
 
 #. js-lingui-id: 8sZiWP
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Add widget"
 msgstr "Lägg till widget"
@@ -6558,6 +6559,7 @@ msgstr "fält"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getFieldLabelWithSubField.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 msgid "Field"
 msgstr "Fält"
 
@@ -6615,6 +6617,11 @@ msgstr "Fältkonflikter"
 #: src/testing/mock-data/tableData.ts
 msgid "Fields Count"
 msgstr "Antal fält"
+
+#. js-lingui-id: EI7W0X
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Fields group"
+msgstr ""
 
 #. js-lingui-id: 5UU7Q6
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -7129,6 +7136,11 @@ msgstr "Gruppera"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Group by"
 msgstr "Gruppera efter"
+
+#. js-lingui-id: tyyaxS
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Group multiple fields from this record"
+msgstr ""
 
 #. js-lingui-id: WcF1uL
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -9087,6 +9099,11 @@ msgstr "Fler åtgärder"
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
 msgid "More options"
 msgstr "Fler alternativ"
+
+#. js-lingui-id: 2MjaQ8
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "More widgets"
+msgstr ""
 
 #. js-lingui-id: SOHptZ
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -12941,6 +12958,11 @@ msgstr "Registrera dig"
 #. js-lingui-id: BZdVGR
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Single edit"
+msgstr ""
+
+#. js-lingui-id: RGk8YF
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Single field with smart formats"
 msgstr ""
 
 #. js-lingui-id: 5v3IHX
