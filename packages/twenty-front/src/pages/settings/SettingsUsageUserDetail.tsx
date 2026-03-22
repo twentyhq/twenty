@@ -1,5 +1,5 @@
-import { SettingsBillingLabelValueItem } from '@/billing/components/internal/SettingsBillingLabelValueItem';
-import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
+import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
+import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graph-widget-line-chart/components/GraphWidgetLineChart';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
@@ -8,11 +8,11 @@ import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColo
 import { Select } from '@/ui/input/components/Select';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { getOperationTypeLabel } from '@/usage/utils/getOperationTypeLabel';
-import { getPeriodDates } from '@/usage/utils/getPeriodDates';
-import { getPeriodOptions } from '@/usage/utils/getPeriodOptions';
-import { type PeriodPreset } from '@/usage/utils/PeriodPreset';
-import { UsagePieChart } from '@/usage/components/UsagePieChart';
+import { getOperationTypeLabel } from '@/settings/usage/utils/getOperationTypeLabel';
+import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
+import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
+import { type PeriodPreset } from '@/settings/usage/utils/PeriodPreset';
+import { UsagePieChart } from '@/settings/usage/components/UsagePieChart';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
