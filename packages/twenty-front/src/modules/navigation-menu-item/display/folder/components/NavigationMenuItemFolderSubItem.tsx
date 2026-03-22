@@ -5,7 +5,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
@@ -28,7 +28,7 @@ type NavigationMenuItemFolderSubItemProps = {
   onClick?: () => void;
   onNavigationMenuItemClick?: (params: {
     item: NavigationMenuItem;
-    objectMetadataItem?: ObjectMetadataItem;
+    objectMetadataItem?: EnrichedObjectMetadataItem;
   }) => void;
   selectedNavigationMenuItemId?: string | null;
 };

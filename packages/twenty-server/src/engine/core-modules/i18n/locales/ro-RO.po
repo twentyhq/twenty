@@ -657,11 +657,6 @@ msgstr "Nu se poate șterge indexul unic care nu a fost creat de aplicația pers
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nu se poate șterge, vă rugăm actualizați mai întâi câmpul identificatorului etichetei"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Nu se poate dezactiva o versiune neactivă de flux de lucru"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
@@ -5324,6 +5319,26 @@ msgstr "Nu puteți seta permisiuni pe obiecte de sistem, deoarece sunt gestionat
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Nu vă puteți actualiza propriul rol."
+
+#. js-lingui-id: p6uSBj
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "You do not have access to this calendar channel."
+msgstr ""
+
+#. js-lingui-id: FUPyWG
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+msgid "You do not have access to this connected account."
+msgstr ""
+
+#. js-lingui-id: R5GUVK
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "You do not have access to this message channel."
+msgstr ""
+
+#. js-lingui-id: dmOWfL
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "You do not have access to this message folder."
+msgstr ""
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts

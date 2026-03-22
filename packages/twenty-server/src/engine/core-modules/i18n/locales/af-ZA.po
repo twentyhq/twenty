@@ -657,11 +657,6 @@ msgstr "Kan nie 'n unieke indeks verwyder wat nie deur die werkruimte se pasgema
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kan nie uitvee nie, asseblief werk eers die etiketidentifiseerdersveld by"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Kan nie nie-aktiewe werkvloeiontwikke se weergawe deaktiveer nie"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
@@ -5324,6 +5319,26 @@ msgstr "Jy kan nie toestemmings op stelselobjekte instel nie omdat dit deur die 
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Jy kan nie jou eie rol opdateer nie."
+
+#. js-lingui-id: p6uSBj
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "You do not have access to this calendar channel."
+msgstr ""
+
+#. js-lingui-id: FUPyWG
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+msgid "You do not have access to this connected account."
+msgstr ""
+
+#. js-lingui-id: R5GUVK
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "You do not have access to this message channel."
+msgstr ""
+
+#. js-lingui-id: dmOWfL
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "You do not have access to this message folder."
+msgstr ""
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts

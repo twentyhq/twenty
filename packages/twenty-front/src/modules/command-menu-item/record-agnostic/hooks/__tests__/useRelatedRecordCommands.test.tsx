@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { renderHook } from '@testing-library/react';
 import { useRelatedRecordCommands } from '@/command-menu-item/record-agnostic/hooks/useRelatedRecordCommands';
 
@@ -34,7 +34,7 @@ describe('useRelatedRecordCommands', () => {
       fields: [],
       readableFields: [],
       updatableFields: [],
-    } as unknown as ObjectMetadataItem;
+    } as unknown as EnrichedObjectMetadataItem;
 
     const { result } = renderHook(() =>
       useRelatedRecordCommands({
@@ -48,7 +48,8 @@ describe('useRelatedRecordCommands', () => {
   });
 
   it('should return empty object when objectMetadataItem is undefined', () => {
-    const objectMetadataItem = undefined as unknown as ObjectMetadataItem;
+    const objectMetadataItem =
+      undefined as unknown as EnrichedObjectMetadataItem;
 
     const { result } = renderHook(() =>
       useRelatedRecordCommands({
@@ -92,7 +93,7 @@ describe('useRelatedRecordCommands', () => {
       fields,
       readableFields: fields,
       updatableFields: fields,
-    } as unknown as ObjectMetadataItem;
+    } as unknown as EnrichedObjectMetadataItem;
 
     const { result } = renderHook(() =>
       useRelatedRecordCommands({
@@ -142,7 +143,7 @@ describe('useRelatedRecordCommands', () => {
       fields,
       readableFields: fields,
       updatableFields: fields,
-    } as unknown as ObjectMetadataItem;
+    } as unknown as EnrichedObjectMetadataItem;
 
     const { result } = renderHook(() =>
       useRelatedRecordCommands({
@@ -188,7 +189,7 @@ describe('useRelatedRecordCommands', () => {
       fields,
       readableFields: fields,
       updatableFields: fields,
-    } as unknown as ObjectMetadataItem;
+    } as unknown as EnrichedObjectMetadataItem;
 
     const { result } = renderHook(() =>
       useRelatedRecordCommands({
@@ -234,7 +235,7 @@ describe('useRelatedRecordCommands', () => {
       fields,
       readableFields: fields,
       updatableFields: fields,
-    } as unknown as ObjectMetadataItem;
+    } as unknown as EnrichedObjectMetadataItem;
 
     const { result } = renderHook(() =>
       useRelatedRecordCommands({

@@ -22,6 +22,7 @@ export const getChartMarginsFromText = ({
   legendFontSize,
   bottomTickLabels,
   leftTickLabels,
+  rightTickLabels,
   xAxisLabel,
   yAxisLabel,
   tickRotation,
@@ -31,6 +32,7 @@ export const getChartMarginsFromText = ({
   legendFontSize?: number;
   bottomTickLabels?: string[];
   leftTickLabels?: string[];
+  rightTickLabels?: string[];
   xAxisLabel?: string;
   yAxisLabel?: string;
   tickRotation: number;
@@ -40,6 +42,7 @@ export const getChartMarginsFromText = ({
 
   const bottomMaxLabelLength = getMaxLabelLength(bottomTickLabels);
   const leftMaxLabelLength = getMaxLabelLength(leftTickLabels);
+  const rightMaxLabelLength = getMaxLabelLength(rightTickLabels);
 
   const tickPaddingExtra = xAxisLabel ? TEXT_MARGIN_EXTRAS.tickPaddingExtra : 0;
   const bottomTickHeight =
@@ -92,6 +95,17 @@ export const getChartMarginsFromText = ({
     TEXT_MARGIN_LIMITS.max.left,
   );
 
+  const rightTickWidth =
+    rightMaxLabelLength > 0
+      ? estimateLabelWidth(rightMaxLabelLength, tickFontSize)
+      : 0;
+  const rightTicksBlock =
+    rightTickWidth > 0
+      ? rightTickWidth +
+        COMMON_CHART_CONSTANTS.TICK_PADDING +
+        TEXT_MARGIN_EXTRAS.rightTickExtra
+      : 0;
+
   const topRightBase = Math.ceil(tickFontSize * 1.5);
 
   return {
@@ -101,7 +115,7 @@ export const getChartMarginsFromText = ({
       TEXT_MARGIN_LIMITS.max.top,
     ),
     right: clamp(
-      topRightBase,
+      Math.max(topRightBase, rightTicksBlock),
       TEXT_MARGIN_LIMITS.min.right,
       TEXT_MARGIN_LIMITS.max.right,
     ),

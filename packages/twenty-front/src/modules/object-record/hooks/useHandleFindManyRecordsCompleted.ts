@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
@@ -14,7 +14,7 @@ export const useHandleFindManyRecordsCompleted = <T>({
   objectMetadataItem,
 }: {
   queryIdentifier: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   onCompleted?: OnFindManyRecordsCompleted<T>;
 }) => {
   const store = useStore();

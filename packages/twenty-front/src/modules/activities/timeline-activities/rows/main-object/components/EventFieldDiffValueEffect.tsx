@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +14,7 @@ export const EventFieldDiffValueEffect = ({
 }: {
   diffArtificialRecordStoreId: string;
   diffRecord: Record<string, any> | undefined;
-  mainObjectMetadataItem: ObjectMetadataItem;
+  mainObjectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
 }) => {
   const setRecordStore = useSetAtomFamilyState(

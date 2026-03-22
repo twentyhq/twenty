@@ -657,11 +657,6 @@ msgstr "Det går inte att ta bort ett unikt index som inte har skapats av arbets
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kan inte ta bort, uppdatera etikettidentifieringsfältet först"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Kan inte inaktivera icke-aktiva arbetsflödesversioner"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
@@ -5330,6 +5325,26 @@ msgstr "Du kan inte ställa in behörigheter på systemobjekt eftersom de hanter
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Du kan inte uppdatera din egen roll."
+
+#. js-lingui-id: p6uSBj
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "You do not have access to this calendar channel."
+msgstr ""
+
+#. js-lingui-id: FUPyWG
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+msgid "You do not have access to this connected account."
+msgstr ""
+
+#. js-lingui-id: R5GUVK
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "You do not have access to this message channel."
+msgstr ""
+
+#. js-lingui-id: dmOWfL
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "You do not have access to this message folder."
+msgstr ""
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts

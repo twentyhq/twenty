@@ -2,7 +2,7 @@ import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/Ch
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -15,8 +15,8 @@ import {
 const shouldHideDateGranularityBasedOnFieldType = (
   fieldMetadataId: string | undefined | null,
   subFieldName: string | undefined | null,
-  objectMetadataItem: ObjectMetadataItem,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItem: EnrichedObjectMetadataItem,
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): boolean => {
   if (!isDefined(fieldMetadataId)) {
     return true;
@@ -46,8 +46,8 @@ export const shouldHideChartSetting = (
   objectMetadataId: string,
   isGroupByEnabled: boolean,
   configuration?: ChartConfiguration,
-  objectMetadataItem?: ObjectMetadataItem,
-  objectMetadataItems?: ObjectMetadataItem[],
+  objectMetadataItem?: EnrichedObjectMetadataItem,
+  objectMetadataItems?: EnrichedObjectMetadataItem[],
 ): boolean => {
   const hasNoObjectMetadata = !isNonEmptyString(objectMetadataId);
   const dependsOnSource = item?.dependsOn?.includes(

@@ -57,6 +57,10 @@ import {
   MESSAGE_CHANNEL_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
 import {
+  MESSAGE_FOLDER_DATA_SEED_COLUMNS,
+  MESSAGE_FOLDER_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-folder-data-seeds.constant';
+import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
@@ -117,6 +121,7 @@ import {
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
+import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-command-menu-items';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -194,8 +199,13 @@ const getRecordSeedsBatches = (
     },
   ];
 
-  // Batch 4: Depends on person/company or independent
+  // Batch 4: Depends on person/company/messageChannel or independent
   const batch4: RecordSeedConfig[] = [
+    {
+      tableName: 'messageFolder',
+      pgColumns: MESSAGE_FOLDER_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_FOLDER_DATA_SEEDS,
+    },
     {
       tableName: 'opportunity',
       pgColumns: OPPORTUNITY_DATA_SEED_COLUMNS,
@@ -353,6 +363,8 @@ export class DevSeederDataService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
+
+        await prefillWorkflowCommandMenuItems(entityManager, workspaceId);
       },
     );
   }

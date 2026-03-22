@@ -79,12 +79,14 @@ export class ClientService {
     clientWrapperTemplateSource?: string;
     serverUrl?: string;
     token?: string;
+    skipAuth?: boolean;
   }) {
     this.clientWrapperTemplateSource =
       options?.clientWrapperTemplateSource ?? twentyClientTemplateSource;
     this.apiService = new ApiService({
       disableInterceptors: true,
       serverUrl: options?.serverUrl,
+      skipAuth: true,
       token: options?.token,
     });
   }

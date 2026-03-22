@@ -28,5 +28,10 @@ export const ActivateWorkflowSingleRecordCommand = () => {
     });
   };
 
-  return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+  return (
+    <HeadlessEngineCommandWrapperEffect
+      execute={handleExecute}
+      ready={isDefined(workflowWithCurrentVersion)}
+    />
+  );
 };

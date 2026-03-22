@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   type WorkflowAction,
   type WorkflowTrigger,
@@ -21,9 +21,9 @@ const PERSISTED_OUTPUT_SCHEMA_TYPES = [
 ];
 
 const findObjectMetadataItemByName = (
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   objectName: string,
-): ObjectMetadataItem | undefined => {
+): EnrichedObjectMetadataItem | undefined => {
   return objectMetadataItems.find((item) => item.nameSingular === objectName);
 };
 
@@ -57,7 +57,7 @@ export const computeStepOutputSchema = ({
   objectMetadataItems,
 }: {
   step: WorkflowTrigger | WorkflowAction;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 }): OutputSchemaV2 | undefined => {
   const stepType = step.type;
 

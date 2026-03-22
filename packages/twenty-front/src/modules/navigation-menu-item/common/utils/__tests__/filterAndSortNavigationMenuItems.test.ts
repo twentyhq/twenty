@@ -1,19 +1,19 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 describe('filterAndSortNavigationMenuItems', () => {
-  const mockObjectMetadataItem: ObjectMetadataItem = {
+  const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
     id: 'metadata-id',
     nameSingular: 'person',
     namePlural: 'people',
     labelPlural: 'People',
     icon: 'IconUser',
-  } as ObjectMetadataItem;
+  } as EnrichedObjectMetadataItem;
 
   const mockView: Pick<View, 'id' | 'objectMetadataId' | 'key'> = {
     id: 'view-id',

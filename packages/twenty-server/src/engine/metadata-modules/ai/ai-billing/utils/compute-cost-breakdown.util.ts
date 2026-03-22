@@ -1,7 +1,5 @@
-import {
-  type AIModelConfig,
-  ModelFamily,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 export type TokenUsageInput = {
   inputTokens?: number;
@@ -47,17 +45,17 @@ export const computeCostBreakdown = (
   const cachedInputTokens = safeNumber(usage.cachedInputTokens);
   const cacheCreationTokens = safeNumber(usage.cacheCreationTokens);
 
-  const isAnthropicFamily = model.modelFamily === ModelFamily.ANTHROPIC;
+  const isAnthropicTokenReporting = model.modelFamily === ModelFamily.CLAUDE;
 
-  const adjustedInputTokens = isAnthropicFamily
+  const adjustedInputTokens = isAnthropicTokenReporting
     ? rawInputTokens
     : Math.max(0, rawInputTokens - cachedInputTokens);
 
-  const adjustedOutputTokens = isAnthropicFamily
+  const adjustedOutputTokens = isAnthropicTokenReporting
     ? rawOutputTokens
     : Math.max(0, rawOutputTokens - reasoningTokens);
 
-  const totalInputTokens = isAnthropicFamily
+  const totalInputTokens = isAnthropicTokenReporting
     ? rawInputTokens + cachedInputTokens + cacheCreationTokens
     : rawInputTokens + cacheCreationTokens;
 

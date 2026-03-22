@@ -1,13 +1,13 @@
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 import { isDefined } from 'twenty-shared/utils';
 
 type FindActivityTargetsOperationSignatureFactory = {
   objectNameSingular: CoreObjectNameSingular.Note | CoreObjectNameSingular.Task;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 };
 
 export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSignatureFactory<

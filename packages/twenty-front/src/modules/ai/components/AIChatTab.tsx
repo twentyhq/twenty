@@ -28,7 +28,7 @@ export const AIChatTab = () => {
   const threadIdCreatedFromDraft = useAtomStateValue(
     threadIdCreatedFromDraftState,
   );
-  const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const draftKey = currentAIChatThread;
   const editorSectionKey =
     draftKey !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY &&
     draftKey === threadIdCreatedFromDraft
