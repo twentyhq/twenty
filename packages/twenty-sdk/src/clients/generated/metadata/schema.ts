@@ -2688,6 +2688,12 @@ export interface Query {
     getPageLayoutTab: PageLayoutTab
     getPageLayouts: PageLayout[]
     getPageLayout?: PageLayout
+    getViews: View[]
+    getView?: View
+    getViewSorts: ViewSort[]
+    getViewSort?: ViewSort
+    getViewFieldGroups: ViewFieldGroup[]
+    getViewFieldGroup?: ViewFieldGroup
     findOneLogicFunction: LogicFunction
     findManyLogicFunctions: LogicFunction[]
     getAvailablePackages: Scalars['JSON']
@@ -2701,12 +2707,6 @@ export interface Query {
     objects: ObjectConnection
     getViewFields: ViewField[]
     getViewField?: ViewField
-    getViews: View[]
-    getView?: View
-    getViewSorts: ViewSort[]
-    getViewSort?: ViewSort
-    getViewFieldGroups: ViewFieldGroup[]
-    getViewFieldGroup?: ViewFieldGroup
     index: Index
     indexMetadatas: IndexConnection
     findManyAgents: Agent[]
@@ -2827,6 +2827,20 @@ export interface Mutation {
     updatePageLayout: PageLayout
     destroyPageLayout: Scalars['Boolean']
     updatePageLayoutWithTabsAndWidgets: PageLayout
+    createView: View
+    updateView: View
+    deleteView: Scalars['Boolean']
+    destroyView: Scalars['Boolean']
+    createViewSort: ViewSort
+    updateViewSort: ViewSort
+    deleteViewSort: Scalars['Boolean']
+    destroyViewSort: Scalars['Boolean']
+    updateViewFieldGroup: ViewFieldGroup
+    createViewFieldGroup: ViewFieldGroup
+    createManyViewFieldGroups: ViewFieldGroup[]
+    deleteViewFieldGroup: ViewFieldGroup
+    destroyViewFieldGroup: ViewFieldGroup
+    upsertFieldsWidget: View
     deleteOneLogicFunction: LogicFunction
     createOneLogicFunction: LogicFunction
     executeOneLogicFunction: LogicFunctionExecutionResult
@@ -2845,20 +2859,6 @@ export interface Mutation {
     createManyViewFields: ViewField[]
     deleteViewField: ViewField
     destroyViewField: ViewField
-    createView: View
-    updateView: View
-    deleteView: Scalars['Boolean']
-    destroyView: Scalars['Boolean']
-    createViewSort: ViewSort
-    updateViewSort: ViewSort
-    deleteViewSort: Scalars['Boolean']
-    destroyViewSort: Scalars['Boolean']
-    updateViewFieldGroup: ViewFieldGroup
-    createViewFieldGroup: ViewFieldGroup
-    createManyViewFieldGroups: ViewFieldGroup[]
-    deleteViewFieldGroup: ViewFieldGroup
-    destroyViewFieldGroup: ViewFieldGroup
-    upsertFieldsWidget: View
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
@@ -5848,6 +5848,12 @@ export interface QueryGenqlSelection{
     getPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
     getPageLayouts?: (PageLayoutGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), pageLayoutType?: (PageLayoutType | null)} })
     getPageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
+    getViews?: (ViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
+    getView?: (ViewGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewSorts?: (ViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getViewSort?: (ViewSortGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewFieldGroups?: (ViewFieldGroupGenqlSelection & { __args: {viewId: Scalars['String']} })
+    getViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
     findManyLogicFunctions?: LogicFunctionGenqlSelection
     getAvailablePackages?: { __args: {input: LogicFunctionIdInput} }
@@ -5867,12 +5873,6 @@ export interface QueryGenqlSelection{
     filter: ObjectFilter} })
     getViewFields?: (ViewFieldGenqlSelection & { __args: {viewId: Scalars['String']} })
     getViewField?: (ViewFieldGenqlSelection & { __args: {id: Scalars['String']} })
-    getViews?: (ViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
-    getView?: (ViewGenqlSelection & { __args: {id: Scalars['String']} })
-    getViewSorts?: (ViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
-    getViewSort?: (ViewSortGenqlSelection & { __args: {id: Scalars['String']} })
-    getViewFieldGroups?: (ViewFieldGroupGenqlSelection & { __args: {viewId: Scalars['String']} })
-    getViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {id: Scalars['String']} })
     index?: (IndexGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -6030,6 +6030,20 @@ export interface MutationGenqlSelection{
     updatePageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutInput} })
     destroyPageLayout?: { __args: {id: Scalars['String']} }
     updatePageLayoutWithTabsAndWidgets?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWithTabsInput} })
+    createView?: (ViewGenqlSelection & { __args: {input: CreateViewInput} })
+    updateView?: (ViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
+    deleteView?: { __args: {id: Scalars['String']} }
+    destroyView?: { __args: {id: Scalars['String']} }
+    createViewSort?: (ViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
+    updateViewSort?: (ViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
+    deleteViewSort?: { __args: {input: DeleteViewSortInput} }
+    destroyViewSort?: { __args: {input: DestroyViewSortInput} }
+    updateViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: UpdateViewFieldGroupInput} })
+    createViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: CreateViewFieldGroupInput} })
+    createManyViewFieldGroups?: (ViewFieldGroupGenqlSelection & { __args: {inputs: CreateViewFieldGroupInput[]} })
+    deleteViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DeleteViewFieldGroupInput} })
+    destroyViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DestroyViewFieldGroupInput} })
+    upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     deleteOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
     createOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: CreateLogicFunctionFromSourceInput} })
     executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
@@ -6048,20 +6062,6 @@ export interface MutationGenqlSelection{
     createManyViewFields?: (ViewFieldGenqlSelection & { __args: {inputs: CreateViewFieldInput[]} })
     deleteViewField?: (ViewFieldGenqlSelection & { __args: {input: DeleteViewFieldInput} })
     destroyViewField?: (ViewFieldGenqlSelection & { __args: {input: DestroyViewFieldInput} })
-    createView?: (ViewGenqlSelection & { __args: {input: CreateViewInput} })
-    updateView?: (ViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
-    deleteView?: { __args: {id: Scalars['String']} }
-    destroyView?: { __args: {id: Scalars['String']} }
-    createViewSort?: (ViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
-    updateViewSort?: (ViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
-    deleteViewSort?: { __args: {input: DeleteViewSortInput} }
-    destroyViewSort?: { __args: {input: DestroyViewSortInput} }
-    updateViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: UpdateViewFieldGroupInput} })
-    createViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: CreateViewFieldGroupInput} })
-    createManyViewFieldGroups?: (ViewFieldGroupGenqlSelection & { __args: {inputs: CreateViewFieldGroupInput[]} })
-    deleteViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DeleteViewFieldGroupInput} })
-    destroyViewFieldGroup?: (ViewFieldGroupGenqlSelection & { __args: {input: DestroyViewFieldGroupInput} })
-    upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
@@ -6247,6 +6247,60 @@ export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title:
 
 export interface UpdatePageLayoutWidgetWithIdInput {id: Scalars['UUID'],pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
 
+export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
+
+export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null)}
+
+export interface CreateViewSortInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],direction?: (ViewSortDirection | null),viewId: Scalars['UUID']}
+
+export interface UpdateViewSortInput {
+/** The id of the view sort to update */
+id: Scalars['UUID'],
+/** The view sort to update */
+update: UpdateViewSortInputUpdates}
+
+export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null)}
+
+export interface DeleteViewSortInput {
+/** The id of the view sort to delete. */
+id: Scalars['UUID']}
+
+export interface DestroyViewSortInput {
+/** The id of the view sort to destroy. */
+id: Scalars['UUID']}
+
+export interface UpdateViewFieldGroupInput {
+/** The id of the view field group to update */
+id: Scalars['UUID'],
+/** The view field group to update */
+update: UpdateViewFieldGroupInputUpdates}
+
+export interface UpdateViewFieldGroupInputUpdates {name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isVisible?: (Scalars['Boolean'] | null),deletedAt?: (Scalars['String'] | null)}
+
+export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],viewId: Scalars['UUID'],position?: (Scalars['Float'] | null),isVisible?: (Scalars['Boolean'] | null)}
+
+export interface DeleteViewFieldGroupInput {
+/** The id of the view field group to delete. */
+id: Scalars['UUID']}
+
+export interface DestroyViewFieldGroupInput {
+/** The id of the view field group to destroy. */
+id: Scalars['UUID']}
+
+export interface UpsertFieldsWidgetInput {
+/** The id of the fields widget whose groups and fields to upsert */
+widgetId: Scalars['UUID'],
+/** The groups (with nested fields) to upsert. Mutually exclusive with "fields". */
+groups?: (UpsertFieldsWidgetGroupInput[] | null),
+/** The ungrouped fields to upsert. When provided, all existing groups are deleted and fields are detached from groups. Mutually exclusive with "groups". */
+fields?: (UpsertFieldsWidgetFieldInput[] | null)}
+
+export interface UpsertFieldsWidgetGroupInput {id: Scalars['UUID'],name: Scalars['String'],position: Scalars['Float'],isVisible: Scalars['Boolean'],fields: UpsertFieldsWidgetFieldInput[]}
+
+export interface UpsertFieldsWidgetFieldInput {
+/** The id of the view field */
+viewFieldId: Scalars['UUID'],isVisible: Scalars['Boolean'],position: Scalars['Float']}
+
 export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolInputSchema?: (Scalars['JSON'] | null),isTool?: (Scalars['Boolean'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 
 export interface ExecuteOneLogicFunctionInput {
@@ -6310,60 +6364,6 @@ id: Scalars['UUID']}
 export interface DestroyViewFieldInput {
 /** The id of the view field to destroy. */
 id: Scalars['UUID']}
-
-export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
-
-export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null)}
-
-export interface CreateViewSortInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],direction?: (ViewSortDirection | null),viewId: Scalars['UUID']}
-
-export interface UpdateViewSortInput {
-/** The id of the view sort to update */
-id: Scalars['UUID'],
-/** The view sort to update */
-update: UpdateViewSortInputUpdates}
-
-export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null)}
-
-export interface DeleteViewSortInput {
-/** The id of the view sort to delete. */
-id: Scalars['UUID']}
-
-export interface DestroyViewSortInput {
-/** The id of the view sort to destroy. */
-id: Scalars['UUID']}
-
-export interface UpdateViewFieldGroupInput {
-/** The id of the view field group to update */
-id: Scalars['UUID'],
-/** The view field group to update */
-update: UpdateViewFieldGroupInputUpdates}
-
-export interface UpdateViewFieldGroupInputUpdates {name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isVisible?: (Scalars['Boolean'] | null),deletedAt?: (Scalars['String'] | null)}
-
-export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],viewId: Scalars['UUID'],position?: (Scalars['Float'] | null),isVisible?: (Scalars['Boolean'] | null)}
-
-export interface DeleteViewFieldGroupInput {
-/** The id of the view field group to delete. */
-id: Scalars['UUID']}
-
-export interface DestroyViewFieldGroupInput {
-/** The id of the view field group to destroy. */
-id: Scalars['UUID']}
-
-export interface UpsertFieldsWidgetInput {
-/** The id of the fields widget whose groups and fields to upsert */
-widgetId: Scalars['UUID'],
-/** The groups (with nested fields) to upsert. Mutually exclusive with "fields". */
-groups?: (UpsertFieldsWidgetGroupInput[] | null),
-/** The ungrouped fields to upsert. When provided, all existing groups are deleted and fields are detached from groups. Mutually exclusive with "groups". */
-fields?: (UpsertFieldsWidgetFieldInput[] | null)}
-
-export interface UpsertFieldsWidgetGroupInput {id: Scalars['UUID'],name: Scalars['String'],position: Scalars['Float'],isVisible: Scalars['Boolean'],fields: UpsertFieldsWidgetFieldInput[]}
-
-export interface UpsertFieldsWidgetFieldInput {
-/** The id of the view field */
-viewFieldId: Scalars['UUID'],isVisible: Scalars['Boolean'],position: Scalars['Float']}
 
 export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
 

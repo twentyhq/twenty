@@ -6105,6 +6105,62 @@ export default {
                     ]
                 }
             ],
+            "getViews": [
+                60,
+                {
+                    "objectMetadataId": [
+                        1
+                    ],
+                    "viewTypes": [
+                        61,
+                        "[ViewType!]"
+                    ]
+                }
+            ],
+            "getView": [
+                60,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "getViewSorts": [
+                57,
+                {
+                    "viewId": [
+                        1
+                    ]
+                }
+            ],
+            "getViewSort": [
+                57,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "getViewFieldGroups": [
+                59,
+                {
+                    "viewId": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "getViewFieldGroup": [
+                59,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "findOneLogicFunction": [
                 32,
                 {
@@ -6195,62 +6251,6 @@ export default {
             ],
             "getViewField": [
                 50,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "getViews": [
-                60,
-                {
-                    "objectMetadataId": [
-                        1
-                    ],
-                    "viewTypes": [
-                        61,
-                        "[ViewType!]"
-                    ]
-                }
-            ],
-            "getView": [
-                60,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "getViewSorts": [
-                57,
-                {
-                    "viewId": [
-                        1
-                    ]
-                }
-            ],
-            "getViewSort": [
-                57,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "getViewFieldGroups": [
-                59,
-                {
-                    "viewId": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "getViewFieldGroup": [
-                59,
                 {
                     "id": [
                         1,
@@ -7288,173 +7288,11 @@ export default {
                     ]
                 }
             ],
-            "deleteOneLogicFunction": [
-                32,
-                {
-                    "input": [
-                        341,
-                        "LogicFunctionIdInput!"
-                    ]
-                }
-            ],
-            "createOneLogicFunction": [
-                32,
-                {
-                    "input": [
-                        377,
-                        "CreateLogicFunctionFromSourceInput!"
-                    ]
-                }
-            ],
-            "executeOneLogicFunction": [
-                216,
-                {
-                    "input": [
-                        378,
-                        "ExecuteOneLogicFunctionInput!"
-                    ]
-                }
-            ],
-            "updateOneLogicFunction": [
-                6,
-                {
-                    "input": [
-                        379,
-                        "UpdateLogicFunctionFromSourceInput!"
-                    ]
-                }
-            ],
-            "createCommandMenuItem": [
-                224,
-                {
-                    "input": [
-                        381,
-                        "CreateCommandMenuItemInput!"
-                    ]
-                }
-            ],
-            "updateCommandMenuItem": [
-                224,
-                {
-                    "input": [
-                        382,
-                        "UpdateCommandMenuItemInput!"
-                    ]
-                }
-            ],
-            "deleteCommandMenuItem": [
-                224,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createFrontComponent": [
-                223,
-                {
-                    "input": [
-                        383,
-                        "CreateFrontComponentInput!"
-                    ]
-                }
-            ],
-            "updateFrontComponent": [
-                223,
-                {
-                    "input": [
-                        384,
-                        "UpdateFrontComponentInput!"
-                    ]
-                }
-            ],
-            "deleteFrontComponent": [
-                223,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createOneObject": [
-                46,
-                {
-                    "input": [
-                        386,
-                        "CreateOneObjectInput!"
-                    ]
-                }
-            ],
-            "deleteOneObject": [
-                46,
-                {
-                    "input": [
-                        388,
-                        "DeleteOneObjectInput!"
-                    ]
-                }
-            ],
-            "updateOneObject": [
-                46,
-                {
-                    "input": [
-                        389,
-                        "UpdateOneObjectInput!"
-                    ]
-                }
-            ],
-            "updateViewField": [
-                50,
-                {
-                    "input": [
-                        391,
-                        "UpdateViewFieldInput!"
-                    ]
-                }
-            ],
-            "createViewField": [
-                50,
-                {
-                    "input": [
-                        393,
-                        "CreateViewFieldInput!"
-                    ]
-                }
-            ],
-            "createManyViewFields": [
-                50,
-                {
-                    "inputs": [
-                        393,
-                        "[CreateViewFieldInput!]!"
-                    ]
-                }
-            ],
-            "deleteViewField": [
-                50,
-                {
-                    "input": [
-                        394,
-                        "DeleteViewFieldInput!"
-                    ]
-                }
-            ],
-            "destroyViewField": [
-                50,
-                {
-                    "input": [
-                        395,
-                        "DestroyViewFieldInput!"
-                    ]
-                }
-            ],
             "createView": [
                 60,
                 {
                     "input": [
-                        396,
+                        377,
                         "CreateViewInput!"
                     ]
                 }
@@ -7467,7 +7305,7 @@ export default {
                         "String!"
                     ],
                     "input": [
-                        397,
+                        378,
                         "UpdateViewInput!"
                     ]
                 }
@@ -7494,7 +7332,7 @@ export default {
                 57,
                 {
                     "input": [
-                        398,
+                        379,
                         "CreateViewSortInput!"
                     ]
                 }
@@ -7503,7 +7341,7 @@ export default {
                 57,
                 {
                     "input": [
-                        399,
+                        380,
                         "UpdateViewSortInput!"
                     ]
                 }
@@ -7512,7 +7350,7 @@ export default {
                 6,
                 {
                     "input": [
-                        401,
+                        382,
                         "DeleteViewSortInput!"
                     ]
                 }
@@ -7521,7 +7359,7 @@ export default {
                 6,
                 {
                     "input": [
-                        402,
+                        383,
                         "DestroyViewSortInput!"
                     ]
                 }
@@ -7530,7 +7368,7 @@ export default {
                 59,
                 {
                     "input": [
-                        403,
+                        384,
                         "UpdateViewFieldGroupInput!"
                     ]
                 }
@@ -7539,7 +7377,7 @@ export default {
                 59,
                 {
                     "input": [
-                        405,
+                        386,
                         "CreateViewFieldGroupInput!"
                     ]
                 }
@@ -7548,7 +7386,7 @@ export default {
                 59,
                 {
                     "inputs": [
-                        405,
+                        386,
                         "[CreateViewFieldGroupInput!]!"
                     ]
                 }
@@ -7557,7 +7395,7 @@ export default {
                 59,
                 {
                     "input": [
-                        406,
+                        387,
                         "DeleteViewFieldGroupInput!"
                     ]
                 }
@@ -7566,7 +7404,7 @@ export default {
                 59,
                 {
                     "input": [
-                        407,
+                        388,
                         "DestroyViewFieldGroupInput!"
                     ]
                 }
@@ -7575,8 +7413,170 @@ export default {
                 60,
                 {
                     "input": [
-                        408,
+                        389,
                         "UpsertFieldsWidgetInput!"
+                    ]
+                }
+            ],
+            "deleteOneLogicFunction": [
+                32,
+                {
+                    "input": [
+                        341,
+                        "LogicFunctionIdInput!"
+                    ]
+                }
+            ],
+            "createOneLogicFunction": [
+                32,
+                {
+                    "input": [
+                        392,
+                        "CreateLogicFunctionFromSourceInput!"
+                    ]
+                }
+            ],
+            "executeOneLogicFunction": [
+                216,
+                {
+                    "input": [
+                        393,
+                        "ExecuteOneLogicFunctionInput!"
+                    ]
+                }
+            ],
+            "updateOneLogicFunction": [
+                6,
+                {
+                    "input": [
+                        394,
+                        "UpdateLogicFunctionFromSourceInput!"
+                    ]
+                }
+            ],
+            "createCommandMenuItem": [
+                224,
+                {
+                    "input": [
+                        396,
+                        "CreateCommandMenuItemInput!"
+                    ]
+                }
+            ],
+            "updateCommandMenuItem": [
+                224,
+                {
+                    "input": [
+                        397,
+                        "UpdateCommandMenuItemInput!"
+                    ]
+                }
+            ],
+            "deleteCommandMenuItem": [
+                224,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createFrontComponent": [
+                223,
+                {
+                    "input": [
+                        398,
+                        "CreateFrontComponentInput!"
+                    ]
+                }
+            ],
+            "updateFrontComponent": [
+                223,
+                {
+                    "input": [
+                        399,
+                        "UpdateFrontComponentInput!"
+                    ]
+                }
+            ],
+            "deleteFrontComponent": [
+                223,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createOneObject": [
+                46,
+                {
+                    "input": [
+                        401,
+                        "CreateOneObjectInput!"
+                    ]
+                }
+            ],
+            "deleteOneObject": [
+                46,
+                {
+                    "input": [
+                        403,
+                        "DeleteOneObjectInput!"
+                    ]
+                }
+            ],
+            "updateOneObject": [
+                46,
+                {
+                    "input": [
+                        404,
+                        "UpdateOneObjectInput!"
+                    ]
+                }
+            ],
+            "updateViewField": [
+                50,
+                {
+                    "input": [
+                        406,
+                        "UpdateViewFieldInput!"
+                    ]
+                }
+            ],
+            "createViewField": [
+                50,
+                {
+                    "input": [
+                        408,
+                        "CreateViewFieldInput!"
+                    ]
+                }
+            ],
+            "createManyViewFields": [
+                50,
+                {
+                    "inputs": [
+                        408,
+                        "[CreateViewFieldInput!]!"
+                    ]
+                }
+            ],
+            "deleteViewField": [
+                50,
+                {
+                    "input": [
+                        409,
+                        "DeleteViewFieldInput!"
+                    ]
+                }
+            ],
+            "destroyViewField": [
+                50,
+                {
+                    "input": [
+                        410,
+                        "DestroyViewFieldInput!"
                     ]
                 }
             ],
@@ -9379,6 +9379,276 @@ export default {
                 1
             ]
         },
+        "CreateViewInput": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "objectMetadataId": [
+                3
+            ],
+            "type": [
+                61
+            ],
+            "key": [
+                62
+            ],
+            "icon": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "isCompact": [
+                6
+            ],
+            "shouldHideEmptyGroups": [
+                6
+            ],
+            "openRecordIn": [
+                63
+            ],
+            "kanbanAggregateOperation": [
+                51
+            ],
+            "kanbanAggregateOperationFieldMetadataId": [
+                3
+            ],
+            "anyFieldFilterValue": [
+                1
+            ],
+            "calendarLayout": [
+                64
+            ],
+            "calendarFieldMetadataId": [
+                3
+            ],
+            "mainGroupByFieldMetadataId": [
+                3
+            ],
+            "visibility": [
+                65
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewInput": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "type": [
+                61
+            ],
+            "icon": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "isCompact": [
+                6
+            ],
+            "openRecordIn": [
+                63
+            ],
+            "kanbanAggregateOperation": [
+                51
+            ],
+            "kanbanAggregateOperationFieldMetadataId": [
+                3
+            ],
+            "anyFieldFilterValue": [
+                1
+            ],
+            "calendarLayout": [
+                64
+            ],
+            "calendarFieldMetadataId": [
+                3
+            ],
+            "visibility": [
+                65
+            ],
+            "mainGroupByFieldMetadataId": [
+                3
+            ],
+            "shouldHideEmptyGroups": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateViewSortInput": {
+            "id": [
+                3
+            ],
+            "fieldMetadataId": [
+                3
+            ],
+            "direction": [
+                58
+            ],
+            "viewId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewSortInput": {
+            "id": [
+                3
+            ],
+            "update": [
+                381
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewSortInputUpdates": {
+            "direction": [
+                58
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteViewSortInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DestroyViewSortInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewFieldGroupInput": {
+            "id": [
+                3
+            ],
+            "update": [
+                385
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateViewFieldGroupInputUpdates": {
+            "name": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "isVisible": [
+                6
+            ],
+            "deletedAt": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateViewFieldGroupInput": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "viewId": [
+                3
+            ],
+            "position": [
+                11
+            ],
+            "isVisible": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DeleteViewFieldGroupInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "DestroyViewFieldGroupInput": {
+            "id": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpsertFieldsWidgetInput": {
+            "widgetId": [
+                3
+            ],
+            "groups": [
+                390
+            ],
+            "fields": [
+                391
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpsertFieldsWidgetGroupInput": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "isVisible": [
+                6
+            ],
+            "fields": [
+                391
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpsertFieldsWidgetFieldInput": {
+            "viewFieldId": [
+                3
+            ],
+            "isVisible": [
+                6
+            ],
+            "position": [
+                11
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "CreateLogicFunctionFromSourceInput": {
             "id": [
                 3
@@ -9433,7 +9703,7 @@ export default {
                 3
             ],
             "update": [
-                380
+                395
             ],
             "__typename": [
                 1
@@ -9584,7 +9854,7 @@ export default {
                 3
             ],
             "update": [
-                385
+                400
             ],
             "__typename": [
                 1
@@ -9603,7 +9873,7 @@ export default {
         },
         "CreateOneObjectInput": {
             "object": [
-                387
+                402
             ],
             "__typename": [
                 1
@@ -9663,7 +9933,7 @@ export default {
         },
         "UpdateOneObjectInput": {
             "update": [
-                390
+                405
             ],
             "id": [
                 3
@@ -9718,7 +9988,7 @@ export default {
                 3
             ],
             "update": [
-                392
+                407
             ],
             "__typename": [
                 1
@@ -9784,276 +10054,6 @@ export default {
         "DestroyViewFieldInput": {
             "id": [
                 3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateViewInput": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "objectMetadataId": [
-                3
-            ],
-            "type": [
-                61
-            ],
-            "key": [
-                62
-            ],
-            "icon": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "isCompact": [
-                6
-            ],
-            "shouldHideEmptyGroups": [
-                6
-            ],
-            "openRecordIn": [
-                63
-            ],
-            "kanbanAggregateOperation": [
-                51
-            ],
-            "kanbanAggregateOperationFieldMetadataId": [
-                3
-            ],
-            "anyFieldFilterValue": [
-                1
-            ],
-            "calendarLayout": [
-                64
-            ],
-            "calendarFieldMetadataId": [
-                3
-            ],
-            "mainGroupByFieldMetadataId": [
-                3
-            ],
-            "visibility": [
-                65
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewInput": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "type": [
-                61
-            ],
-            "icon": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "isCompact": [
-                6
-            ],
-            "openRecordIn": [
-                63
-            ],
-            "kanbanAggregateOperation": [
-                51
-            ],
-            "kanbanAggregateOperationFieldMetadataId": [
-                3
-            ],
-            "anyFieldFilterValue": [
-                1
-            ],
-            "calendarLayout": [
-                64
-            ],
-            "calendarFieldMetadataId": [
-                3
-            ],
-            "visibility": [
-                65
-            ],
-            "mainGroupByFieldMetadataId": [
-                3
-            ],
-            "shouldHideEmptyGroups": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateViewSortInput": {
-            "id": [
-                3
-            ],
-            "fieldMetadataId": [
-                3
-            ],
-            "direction": [
-                58
-            ],
-            "viewId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewSortInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                400
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewSortInputUpdates": {
-            "direction": [
-                58
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteViewSortInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DestroyViewSortInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewFieldGroupInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                404
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateViewFieldGroupInputUpdates": {
-            "name": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "isVisible": [
-                6
-            ],
-            "deletedAt": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateViewFieldGroupInput": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "viewId": [
-                3
-            ],
-            "position": [
-                11
-            ],
-            "isVisible": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DeleteViewFieldGroupInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "DestroyViewFieldGroupInput": {
-            "id": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpsertFieldsWidgetInput": {
-            "widgetId": [
-                3
-            ],
-            "groups": [
-                409
-            ],
-            "fields": [
-                410
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpsertFieldsWidgetGroupInput": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "isVisible": [
-                6
-            ],
-            "fields": [
-                410
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpsertFieldsWidgetFieldInput": {
-            "viewFieldId": [
-                3
-            ],
-            "isVisible": [
-                6
-            ],
-            "position": [
-                11
             ],
             "__typename": [
                 1

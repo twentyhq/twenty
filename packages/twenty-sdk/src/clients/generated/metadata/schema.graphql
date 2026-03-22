@@ -3095,6 +3095,12 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
+  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
+  getView(id: String!): View
+  getViewSorts(viewId: String): [ViewSort!]!
+  getViewSort(id: String!): ViewSort
+  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
+  getViewFieldGroup(id: String!): ViewFieldGroup
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
@@ -3117,12 +3123,6 @@ type Query {
   ): ObjectConnection!
   getViewFields(viewId: String!): [ViewField!]!
   getViewField(id: String!): ViewField
-  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
-  getView(id: String!): View
-  getViewSorts(viewId: String): [ViewSort!]!
-  getViewSort(id: String!): ViewSort
-  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
-  getViewFieldGroup(id: String!): ViewFieldGroup
   index(
     """The id of the record to find."""
     id: UUID!
@@ -3362,6 +3362,20 @@ type Mutation {
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
+  createView(input: CreateViewInput!): View!
+  updateView(id: String!, input: UpdateViewInput!): View!
+  deleteView(id: String!): Boolean!
+  destroyView(id: String!): Boolean!
+  createViewSort(input: CreateViewSortInput!): ViewSort!
+  updateViewSort(input: UpdateViewSortInput!): ViewSort!
+  deleteViewSort(input: DeleteViewSortInput!): Boolean!
+  destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  updateViewFieldGroup(input: UpdateViewFieldGroupInput!): ViewFieldGroup!
+  createViewFieldGroup(input: CreateViewFieldGroupInput!): ViewFieldGroup!
+  createManyViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [ViewFieldGroup!]!
+  deleteViewFieldGroup(input: DeleteViewFieldGroupInput!): ViewFieldGroup!
+  destroyViewFieldGroup(input: DestroyViewFieldGroupInput!): ViewFieldGroup!
+  upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
   deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
@@ -3380,20 +3394,6 @@ type Mutation {
   createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
   deleteViewField(input: DeleteViewFieldInput!): ViewField!
   destroyViewField(input: DestroyViewFieldInput!): ViewField!
-  createView(input: CreateViewInput!): View!
-  updateView(id: String!, input: UpdateViewInput!): View!
-  deleteView(id: String!): Boolean!
-  destroyView(id: String!): Boolean!
-  createViewSort(input: CreateViewSortInput!): ViewSort!
-  updateViewSort(input: UpdateViewSortInput!): ViewSort!
-  deleteViewSort(input: DeleteViewSortInput!): Boolean!
-  destroyViewSort(input: DestroyViewSortInput!): Boolean!
-  updateViewFieldGroup(input: UpdateViewFieldGroupInput!): ViewFieldGroup!
-  createViewFieldGroup(input: CreateViewFieldGroupInput!): ViewFieldGroup!
-  createManyViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [ViewFieldGroup!]!
-  deleteViewFieldGroup(input: DeleteViewFieldGroupInput!): ViewFieldGroup!
-  destroyViewFieldGroup(input: DestroyViewFieldGroupInput!): ViewFieldGroup!
-  upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3675,6 +3675,136 @@ input UpdatePageLayoutWidgetWithIdInput {
   conditionalDisplay: JSON
 }
 
+input CreateViewInput {
+  id: UUID
+  name: String!
+  objectMetadataId: UUID!
+  type: ViewType = TABLE
+  key: ViewKey
+  icon: String!
+  position: Float = 0
+  isCompact: Boolean = false
+  shouldHideEmptyGroups: Boolean = false
+  openRecordIn: ViewOpenRecordIn = SIDE_PANEL
+  kanbanAggregateOperation: AggregateOperations
+  kanbanAggregateOperationFieldMetadataId: UUID
+  anyFieldFilterValue: String
+  calendarLayout: ViewCalendarLayout
+  calendarFieldMetadataId: UUID
+  mainGroupByFieldMetadataId: UUID
+  visibility: ViewVisibility
+}
+
+input UpdateViewInput {
+  id: UUID
+  name: String
+  type: ViewType
+  icon: String
+  position: Float
+  isCompact: Boolean
+  openRecordIn: ViewOpenRecordIn
+  kanbanAggregateOperation: AggregateOperations
+  kanbanAggregateOperationFieldMetadataId: UUID
+  anyFieldFilterValue: String
+  calendarLayout: ViewCalendarLayout
+  calendarFieldMetadataId: UUID
+  visibility: ViewVisibility
+  mainGroupByFieldMetadataId: UUID
+  shouldHideEmptyGroups: Boolean
+}
+
+input CreateViewSortInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  direction: ViewSortDirection = ASC
+  viewId: UUID!
+}
+
+input UpdateViewSortInput {
+  """The id of the view sort to update"""
+  id: UUID!
+
+  """The view sort to update"""
+  update: UpdateViewSortInputUpdates!
+}
+
+input UpdateViewSortInputUpdates {
+  direction: ViewSortDirection
+}
+
+input DeleteViewSortInput {
+  """The id of the view sort to delete."""
+  id: UUID!
+}
+
+input DestroyViewSortInput {
+  """The id of the view sort to destroy."""
+  id: UUID!
+}
+
+input UpdateViewFieldGroupInput {
+  """The id of the view field group to update"""
+  id: UUID!
+
+  """The view field group to update"""
+  update: UpdateViewFieldGroupInputUpdates!
+}
+
+input UpdateViewFieldGroupInputUpdates {
+  name: String
+  position: Float
+  isVisible: Boolean
+  deletedAt: String
+}
+
+input CreateViewFieldGroupInput {
+  id: UUID
+  name: String!
+  viewId: UUID!
+  position: Float = 0
+  isVisible: Boolean = true
+}
+
+input DeleteViewFieldGroupInput {
+  """The id of the view field group to delete."""
+  id: UUID!
+}
+
+input DestroyViewFieldGroupInput {
+  """The id of the view field group to destroy."""
+  id: UUID!
+}
+
+input UpsertFieldsWidgetInput {
+  """The id of the fields widget whose groups and fields to upsert"""
+  widgetId: UUID!
+
+  """
+  The groups (with nested fields) to upsert. Mutually exclusive with "fields".
+  """
+  groups: [UpsertFieldsWidgetGroupInput!]
+
+  """
+  The ungrouped fields to upsert. When provided, all existing groups are deleted and fields are detached from groups. Mutually exclusive with "groups".
+  """
+  fields: [UpsertFieldsWidgetFieldInput!]
+}
+
+input UpsertFieldsWidgetGroupInput {
+  id: UUID!
+  name: String!
+  position: Float!
+  isVisible: Boolean!
+  fields: [UpsertFieldsWidgetFieldInput!]!
+}
+
+input UpsertFieldsWidgetFieldInput {
+  """The id of the view field"""
+  viewFieldId: UUID!
+  isVisible: Boolean!
+  position: Float!
+}
+
 input CreateLogicFunctionFromSourceInput {
   id: UUID
   universalIdentifier: UUID
@@ -3853,136 +3983,6 @@ input DeleteViewFieldInput {
 input DestroyViewFieldInput {
   """The id of the view field to destroy."""
   id: UUID!
-}
-
-input CreateViewInput {
-  id: UUID
-  name: String!
-  objectMetadataId: UUID!
-  type: ViewType = TABLE
-  key: ViewKey
-  icon: String!
-  position: Float = 0
-  isCompact: Boolean = false
-  shouldHideEmptyGroups: Boolean = false
-  openRecordIn: ViewOpenRecordIn = SIDE_PANEL
-  kanbanAggregateOperation: AggregateOperations
-  kanbanAggregateOperationFieldMetadataId: UUID
-  anyFieldFilterValue: String
-  calendarLayout: ViewCalendarLayout
-  calendarFieldMetadataId: UUID
-  mainGroupByFieldMetadataId: UUID
-  visibility: ViewVisibility
-}
-
-input UpdateViewInput {
-  id: UUID
-  name: String
-  type: ViewType
-  icon: String
-  position: Float
-  isCompact: Boolean
-  openRecordIn: ViewOpenRecordIn
-  kanbanAggregateOperation: AggregateOperations
-  kanbanAggregateOperationFieldMetadataId: UUID
-  anyFieldFilterValue: String
-  calendarLayout: ViewCalendarLayout
-  calendarFieldMetadataId: UUID
-  visibility: ViewVisibility
-  mainGroupByFieldMetadataId: UUID
-  shouldHideEmptyGroups: Boolean
-}
-
-input CreateViewSortInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  direction: ViewSortDirection = ASC
-  viewId: UUID!
-}
-
-input UpdateViewSortInput {
-  """The id of the view sort to update"""
-  id: UUID!
-
-  """The view sort to update"""
-  update: UpdateViewSortInputUpdates!
-}
-
-input UpdateViewSortInputUpdates {
-  direction: ViewSortDirection
-}
-
-input DeleteViewSortInput {
-  """The id of the view sort to delete."""
-  id: UUID!
-}
-
-input DestroyViewSortInput {
-  """The id of the view sort to destroy."""
-  id: UUID!
-}
-
-input UpdateViewFieldGroupInput {
-  """The id of the view field group to update"""
-  id: UUID!
-
-  """The view field group to update"""
-  update: UpdateViewFieldGroupInputUpdates!
-}
-
-input UpdateViewFieldGroupInputUpdates {
-  name: String
-  position: Float
-  isVisible: Boolean
-  deletedAt: String
-}
-
-input CreateViewFieldGroupInput {
-  id: UUID
-  name: String!
-  viewId: UUID!
-  position: Float = 0
-  isVisible: Boolean = true
-}
-
-input DeleteViewFieldGroupInput {
-  """The id of the view field group to delete."""
-  id: UUID!
-}
-
-input DestroyViewFieldGroupInput {
-  """The id of the view field group to destroy."""
-  id: UUID!
-}
-
-input UpsertFieldsWidgetInput {
-  """The id of the fields widget whose groups and fields to upsert"""
-  widgetId: UUID!
-
-  """
-  The groups (with nested fields) to upsert. Mutually exclusive with "fields".
-  """
-  groups: [UpsertFieldsWidgetGroupInput!]
-
-  """
-  The ungrouped fields to upsert. When provided, all existing groups are deleted and fields are detached from groups. Mutually exclusive with "groups".
-  """
-  fields: [UpsertFieldsWidgetFieldInput!]
-}
-
-input UpsertFieldsWidgetGroupInput {
-  id: UUID!
-  name: String!
-  position: Float!
-  isVisible: Boolean!
-  fields: [UpsertFieldsWidgetFieldInput!]!
-}
-
-input UpsertFieldsWidgetFieldInput {
-  """The id of the view field"""
-  viewFieldId: UUID!
-  isVisible: Boolean!
-  position: Float!
 }
 
 input CreateAgentInput {
