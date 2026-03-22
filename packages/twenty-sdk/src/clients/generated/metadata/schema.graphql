@@ -1392,31 +1392,6 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
-type UsageBreakdownItem {
-  key: String!
-  label: String
-  creditsUsed: Float!
-}
-
-type UsageTimeSeries {
-  date: String!
-  creditsUsed: Float!
-}
-
-type UsageUserDaily {
-  userWorkspaceId: String!
-  dailyUsage: [UsageTimeSeries!]!
-}
-
-type UsageAnalytics {
-  usageByUser: [UsageBreakdownItem!]!
-  usageByOperationType: [UsageBreakdownItem!]!
-  timeSeries: [UsageTimeSeries!]!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  userDailyUsage: UsageUserDaily
-}
-
 type EnterpriseLicenseInfoDTO {
   isValid: Boolean!
   licensee: String
@@ -2935,6 +2910,31 @@ type MarketplaceApp {
   isFeatured: Boolean!
 }
 
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
+}
+
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
+
 type PublicDomain {
   id: UUID!
   domain: String!
@@ -3165,7 +3165,6 @@ type Query {
   billingPortalSession(returnUrlPath: String): BillingSession!
   listPlans: [BillingPlan!]!
   getMeteredProductsUsage: [BillingMeteredProductUsage!]!
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
@@ -3258,6 +3257,7 @@ type Query {
   findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
 }
 
 input LogicFunctionIdInput {
@@ -3268,12 +3268,6 @@ input LogicFunctionIdInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
-}
-
-input UsageAnalyticsInput {
-  periodStart: DateTime
-  periodEnd: DateTime
-  userWorkspaceId: String
 }
 
 input GetApiKeyInput {
@@ -3370,6 +3364,12 @@ input LineChartDataInput {
 input BarChartDataInput {
   objectMetadataId: UUID!
   configuration: JSON!
+}
+
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
 }
 
 type Mutation {

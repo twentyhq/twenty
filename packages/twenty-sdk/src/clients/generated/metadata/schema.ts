@@ -1112,35 +1112,6 @@ export interface BillingUpdate {
     __typename: 'BillingUpdate'
 }
 
-export interface UsageBreakdownItem {
-    key: Scalars['String']
-    label?: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageBreakdownItem'
-}
-
-export interface UsageTimeSeries {
-    date: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageTimeSeries'
-}
-
-export interface UsageUserDaily {
-    userWorkspaceId: Scalars['String']
-    dailyUsage: UsageTimeSeries[]
-    __typename: 'UsageUserDaily'
-}
-
-export interface UsageAnalytics {
-    usageByUser: UsageBreakdownItem[]
-    usageByOperationType: UsageBreakdownItem[]
-    timeSeries: UsageTimeSeries[]
-    periodStart: Scalars['DateTime']
-    periodEnd: Scalars['DateTime']
-    userDailyUsage?: UsageUserDaily
-    __typename: 'UsageAnalytics'
-}
-
 export interface EnterpriseLicenseInfoDTO {
     isValid: Scalars['Boolean']
     licensee?: Scalars['String']
@@ -2515,6 +2486,35 @@ export interface MarketplaceApp {
     __typename: 'MarketplaceApp'
 }
 
+export interface UsageBreakdownItem {
+    key: Scalars['String']
+    label?: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageBreakdownItem'
+}
+
+export interface UsageTimeSeries {
+    date: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageTimeSeries'
+}
+
+export interface UsageUserDaily {
+    userWorkspaceId: Scalars['String']
+    dailyUsage: UsageTimeSeries[]
+    __typename: 'UsageUserDaily'
+}
+
+export interface UsageAnalytics {
+    usageByUser: UsageBreakdownItem[]
+    usageByOperationType: UsageBreakdownItem[]
+    timeSeries: UsageTimeSeries[]
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    userDailyUsage?: UsageUserDaily
+    __typename: 'UsageAnalytics'
+}
+
 export interface PublicDomain {
     id: Scalars['UUID']
     domain: Scalars['String']
@@ -2743,7 +2743,6 @@ export interface Query {
     billingPortalSession: BillingSession
     listPlans: BillingPlan[]
     getMeteredProductsUsage: BillingMeteredProductUsage[]
-    getUsageAnalytics: UsageAnalytics
     enterprisePortalSession?: Scalars['String']
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
@@ -2818,6 +2817,7 @@ export interface Query {
     findOneMarketplaceApp: MarketplaceApp
     findManyApplications: Application[]
     findOneApplication: Application
+    getUsageAnalytics: UsageAnalytics
     __typename: 'Query'
 }
 
@@ -4211,39 +4211,6 @@ export interface BillingUpdateGenqlSelection{
     currentBillingSubscription?: BillingSubscriptionGenqlSelection
     /** All billing subscriptions */
     billingSubscriptions?: BillingSubscriptionGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageBreakdownItemGenqlSelection{
-    key?: boolean | number
-    label?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageTimeSeriesGenqlSelection{
-    date?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageUserDailyGenqlSelection{
-    userWorkspaceId?: boolean | number
-    dailyUsage?: UsageTimeSeriesGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageAnalyticsGenqlSelection{
-    usageByUser?: UsageBreakdownItemGenqlSelection
-    usageByOperationType?: UsageBreakdownItemGenqlSelection
-    timeSeries?: UsageTimeSeriesGenqlSelection
-    periodStart?: boolean | number
-    periodEnd?: boolean | number
-    userDailyUsage?: UsageUserDailyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5690,6 +5657,39 @@ export interface MarketplaceAppGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageBreakdownItemGenqlSelection{
+    key?: boolean | number
+    label?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageTimeSeriesGenqlSelection{
+    date?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageUserDailyGenqlSelection{
+    userWorkspaceId?: boolean | number
+    dailyUsage?: UsageTimeSeriesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageAnalyticsGenqlSelection{
+    usageByUser?: UsageBreakdownItemGenqlSelection
+    usageByOperationType?: UsageBreakdownItemGenqlSelection
+    timeSeries?: UsageTimeSeriesGenqlSelection
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    userDailyUsage?: UsageUserDailyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicDomainGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
@@ -5949,7 +5949,6 @@ export interface QueryGenqlSelection{
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getMeteredProductsUsage?: BillingMeteredProductUsageGenqlSelection
-    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
@@ -6036,6 +6035,7 @@ export interface QueryGenqlSelection{
     findOneMarketplaceApp?: (MarketplaceAppGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findManyApplications?: ApplicationGenqlSelection
     findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
+    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6047,8 +6047,6 @@ id: Scalars['ID']}
 export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
-
-export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null)}
 
 export interface GetApiKeyInput {id: Scalars['UUID']}
 
@@ -6071,6 +6069,8 @@ export interface PieChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface LineChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
 
 export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
+
+export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null)}
 
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
@@ -7289,38 +7289,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
-    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
-      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
-    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
-      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
-    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
-      return UsageUserDaily_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
-    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
-      return UsageAnalytics_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
     export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
@@ -8485,6 +8453,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isMarketplaceApp = (obj?: { __typename?: any } | null): obj is MarketplaceApp => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceApp"')
       return MarketplaceApp_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
+    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
+      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
+    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
+      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
+    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
+      return UsageUserDaily_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
+    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
+      return UsageAnalytics_possibleTypes.includes(obj.__typename)
     }
     
 
