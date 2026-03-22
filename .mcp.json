@@ -2,8 +2,8 @@
   "mcpServers": {
     "postgres": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres", "${PG_DATABASE_URL}"],
+      "command": "bash",
+      "args": ["-c", "source packages/twenty-server/.env && npx -y @modelcontextprotocol/server-postgres \"$PG_DATABASE_URL\""],
       "env": {}
     },
     "playwright": {

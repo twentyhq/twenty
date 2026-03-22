@@ -20,6 +20,9 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
+import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import { loadDefaultModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
@@ -1212,168 +1215,76 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description:
-      'Comma-separated list of AI model IDs for speed-optimized operations, in priority order. The first available model will be used.',
+    isSensitive: true,
+    description: 'API key for OpenAI models (GPT, o-series)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  DEFAULT_AI_SPEED_MODEL_ID =
-    'gpt-5-mini,claude-haiku-4-5-20251001,gemini-3-flash-preview,grok-4-1-fast-reasoning,mistral-large-latest';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description:
-      'Comma-separated list of AI model IDs for performance-optimized operations, in priority order. The first available model will be used.',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  DEFAULT_AI_PERFORMANCE_MODEL_ID =
-    'gpt-5.2,claude-sonnet-4-6,gemini-3.1-pro-preview,grok-4,mistral-large-latest';
+  OPENAI_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for OpenAI integration',
+    description: 'API key for Anthropic models (Claude)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  OPENAI_API_KEY: string;
+  ANTHROPIC_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for Anthropic integration',
+    description: 'API key for Google AI models (Gemini)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  ANTHROPIC_API_KEY: string;
+  GOOGLE_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description: 'Base URL for OpenAI-compatible LLM provider (e.g., Ollama)',
+    isSensitive: true,
+    description: 'API key for xAI models (Grok)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  @IsUrl({ require_tld: false, require_protocol: true })
-  OPENAI_COMPATIBLE_BASE_URL: string;
+  XAI_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description:
-      'Model names for OpenAI-compatible LLM provider (comma-separated, e.g., "llama3.1, mistral, codellama")',
+    isSensitive: true,
+    description: 'API key for Groq inference',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  OPENAI_COMPATIBLE_MODEL_NAMES: string;
+  GROQ_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Mistral models',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MISTRAL_API_KEY?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description:
-      'API key for OpenAI-compatible LLM provider (optional for providers like Ollama)',
-    type: ConfigVariableType.STRING,
+      'AI provider configurations. Custom providers are deep-merged on top of the built-in catalog (ai-providers.json). Use for custom endpoints, extra regions, or credentials set via admin panel.',
+    type: ConfigVariableType.JSON,
   })
   @IsOptional()
-  OPENAI_COMPATIBLE_API_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'API key for xAI integration',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  XAI_API_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'API key for Groq integration',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  GROQ_API_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'API key for Google AI (Gemini) integration',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  GOOGLE_API_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'API key for Mistral AI integration',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  MISTRAL_API_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'AWS region for Bedrock integration (e.g., us-east-1)',
-    type: ConfigVariableType.STRING,
-  })
-  @IsAWSRegion()
-  @IsOptional()
-  AWS_BEDROCK_REGION: AwsRegion;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'AWS access key ID for Bedrock authentication',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  AWS_BEDROCK_ACCESS_KEY_ID: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'AWS secret access key for Bedrock authentication',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  AWS_BEDROCK_SECRET_ACCESS_KEY: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    isSensitive: true,
-    description: 'AWS session token for Bedrock (for IAM role-based auth)',
-    type: ConfigVariableType.STRING,
-  })
-  @IsOptional()
-  AWS_BEDROCK_SESSION_TOKEN: string;
+  AI_PROVIDERS: AiProvidersConfig = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'When true, newly added models are automatically available to all workspaces',
-    type: ConfigVariableType.BOOLEAN,
+      'AI model admin preferences: disabled models, recommended models, and default fast/smart model lists. Managed via admin panel or env.',
+    type: ConfigVariableType.JSON,
   })
   @IsOptional()
-  AI_AUTO_ENABLE_NEW_MODELS = true;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description:
-      'Model IDs to disable (used when AI_AUTO_ENABLE_NEW_MODELS is true)',
-    type: ConfigVariableType.ARRAY,
-  })
-  @IsOptional()
-  AI_DISABLED_MODEL_IDS: string[] = [];
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description:
-      'Model IDs to enable (used when AI_AUTO_ENABLE_NEW_MODELS is false)',
-    type: ConfigVariableType.ARRAY,
-  })
-  @IsOptional()
-  AI_ENABLED_MODEL_IDS: string[] = [];
+  AI_MODEL_PREFERENCES: AiModelPreferences = loadDefaultModelPreferences();
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

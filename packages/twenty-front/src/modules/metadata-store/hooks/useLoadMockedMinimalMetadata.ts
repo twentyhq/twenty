@@ -1,5 +1,5 @@
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
+import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { useCallback } from 'react';
 
@@ -9,21 +9,27 @@ export const useLoadMockedMinimalMetadata = () => {
   const { replaceDraft, applyChanges, resetMetadataStore } = useMetadataStore();
 
   const loadMockedMinimalMetadata = useCallback(async () => {
-    resetMetadataStore();
     const [
-      { generatedMockObjectMetadataItems },
+      { mockedStandardObjectMetadataQueryResult },
       { mockedViews },
       { mockedNavigationMenuItems },
     ] = await Promise.all([
-      import('~/testing/utils/generatedMockObjectMetadataItems'),
+      import(
+        '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata'
+      ),
       import('~/testing/mock-data/generated/metadata/views/mock-views-data'),
       import(
         '~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data'
       ),
     ]);
 
+    // Reset after async imports so reset + replaceDraft + applyChanges
+    // run in the same synchronous block (React 18 batches them into one render),
+    // avoiding a window where the store appears empty to subscribers.
+    resetMetadataStore();
+
     const { flatObjects, flatFields, flatIndexes } =
-      splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
+      splitObjectMetadataGqlResponse(mockedStandardObjectMetadataQueryResult);
 
     replaceDraft('objectMetadataItems', flatObjects, MOCKED_COLLECTION_HASH);
     replaceDraft('fieldMetadataItems', flatFields, MOCKED_COLLECTION_HASH);

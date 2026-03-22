@@ -2,7 +2,7 @@ import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/Ch
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { shouldHideChartSetting } from '@/side-panel/pages/page-layout/utils/shouldHideChartSetting';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { IconChartBar } from 'twenty-ui/display';
@@ -205,7 +205,7 @@ describe('shouldHideChartSetting', () => {
       isNumberInput: false,
     };
 
-    const mockObjectMetadataItem: ObjectMetadataItem = {
+    const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
       id: 'object-id',
       nameSingular: 'opportunity',
       namePlural: 'opportunities',
@@ -461,7 +461,7 @@ describe('shouldHideChartSetting', () => {
       });
 
       it('should show when group by field is a relation date subfield', () => {
-        const objectMetadataItemWithRelation: ObjectMetadataItem = {
+        const objectMetadataItemWithRelation: EnrichedObjectMetadataItem = {
           ...mockObjectMetadataItem,
           fields: [...mockObjectMetadataItem.fields, relationField],
         } as any;
@@ -503,7 +503,7 @@ describe('shouldHideChartSetting', () => {
       isNumberInput: false,
     };
 
-    const mockObjectMetadataItem: ObjectMetadataItem = {
+    const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
       id: 'object-id',
       nameSingular: 'opportunity',
       namePlural: 'opportunities',

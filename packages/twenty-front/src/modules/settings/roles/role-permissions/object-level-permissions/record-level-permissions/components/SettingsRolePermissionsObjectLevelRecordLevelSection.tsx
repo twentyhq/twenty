@@ -6,7 +6,7 @@ import { H2Title, IconArrowUp, IconLock } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 
 import { billingState } from '@/client-config/states/billingState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -37,7 +37,7 @@ const StyledPillContainer = styled.span`
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelSectionProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   roleId: string;
   hasOrganizationPlan: boolean;
 };

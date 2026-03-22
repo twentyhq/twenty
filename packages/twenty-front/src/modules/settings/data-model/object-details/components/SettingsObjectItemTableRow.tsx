@@ -3,7 +3,7 @@ import { type ReactNode, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -18,7 +18,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   link?: string;
   totalObjectCount: number;
 };

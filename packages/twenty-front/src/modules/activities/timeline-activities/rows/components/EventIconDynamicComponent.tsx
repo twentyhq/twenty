@@ -1,5 +1,5 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   IconCirclePlus,
   IconEditCircle,
@@ -13,7 +13,7 @@ export const EventIconDynamicComponent = ({
   linkedObjectMetadataItem,
 }: {
   event: TimelineActivity;
-  linkedObjectMetadataItem: ObjectMetadataItem | null;
+  linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
 }) => {
   const { getIcon } = useIcons();
   const [, eventAction] = event.name.split('.');

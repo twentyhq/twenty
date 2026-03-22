@@ -1,7 +1,7 @@
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
@@ -32,7 +32,7 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
       objectMetadataItem,
     }: {
       objectRecordEvents: ObjectRecordEvent[];
-      objectMetadataItem: ObjectMetadataItem;
+      objectMetadataItem: EnrichedObjectMetadataItem;
     }) => {
       const deleteEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.DELETED;

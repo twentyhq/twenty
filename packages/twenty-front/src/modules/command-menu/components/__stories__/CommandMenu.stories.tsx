@@ -269,7 +269,9 @@ export const SubPageNavigation: Story = {
     const backButton = await canvas.findByRole('button', { name: 'Go back' });
     await userEvent.click(backButton);
 
-    expect(await canvas.findByText('Object')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.getByText('Object')).toBeVisible();
+    });
   },
   decorators: [
     (Story) => {

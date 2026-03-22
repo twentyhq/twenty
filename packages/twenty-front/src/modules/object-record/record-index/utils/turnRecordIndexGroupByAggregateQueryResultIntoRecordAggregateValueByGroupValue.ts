@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordAggregateValueByRecordGroupValue } from '@/object-record/record-index/types/RecordAggregateValueByRecordGroupValue';
 import { type RecordIndexGroupByQueryResult } from '@/object-record/record-index/types/RecordIndexGroupByQueryResult';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
@@ -7,7 +7,7 @@ type TurnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupVa
   {
     queryResult: RecordIndexGroupByQueryResult;
     recordAggregateGqlField: string;
-    objectMetadataItem: ObjectMetadataItem;
+    objectMetadataItem: EnrichedObjectMetadataItem;
   };
 
 export const turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue =

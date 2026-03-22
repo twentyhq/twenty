@@ -652,11 +652,6 @@ msgstr "Cannot delete unique index that have not been created by the workspace c
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Cannot delete, please update the label identifier field first"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Cannot disable non-active workflow version"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

@@ -7,7 +7,7 @@ import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/
 import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import { useRunWorkflowRecordCommands } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const CommandMenuContextProviderDefault = ({
@@ -17,7 +17,7 @@ export const CommandMenuContextProviderDefault = ({
   containerType,
   children,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   isInSidePanel: CommandMenuContextType['isInSidePanel'];
   displayType: CommandMenuContextType['displayType'];
   containerType: CommandMenuContextType['containerType'];

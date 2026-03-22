@@ -1,8 +1,8 @@
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export const generateActivityTargetMorphFieldKeys = (
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   isMorphRelation: boolean,
 ) => {
   const targetableObjectMetadataItems = objectMetadataItems.filter(

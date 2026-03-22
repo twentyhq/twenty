@@ -1,12 +1,12 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { isDefined } from 'twenty-shared/utils';
 
 export type GenerateDepthRecordGqlFields = {
   objectMetadataItems: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     | 'id'
     | 'nameSingular'
     | 'namePlural'

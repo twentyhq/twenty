@@ -657,11 +657,6 @@ msgstr "Impossibile eliminare un indice univoco non creato dall'applicazione per
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Impossibile eliminare, aggiornare prima il campo identificatore dell'etichetta"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Impossibile disabilitare la versione di flusso di lavoro non attiva"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
@@ -29,7 +29,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
   recordIndexGroupAggregateOperation,
 }: {
   skip?: boolean;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   groupByFieldMetadataItem: FieldMetadataItem;
   recordIndexGroupAggregateFieldMetadataItem: Nullable<FieldMetadataItem>;
   recordIndexGroupAggregateOperation: ExtendedAggregateOperations;

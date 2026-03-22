@@ -657,11 +657,6 @@ msgstr "Benzersiz indeks, çalışma alanının özel uygulaması tarafından ol
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Silinemiyor, lütfen önce etiket tanımlayıcı alanını güncelleyin."
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Aktif olmayan iş akışı sürümü devre dışı bırakılamaz."
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

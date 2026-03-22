@@ -96,8 +96,6 @@ export default defineConfig(({ mode }) => {
             '**/testing/cache/**',
             '**/*.test.{ts,tsx}',
             '**/*.spec.{ts,tsx}',
-            '**/*.stories.{ts,tsx}',
-            '**/__stories__/**',
             '**/__tests__/**',
             '**/__mocks__/**',
             '**/types/**',

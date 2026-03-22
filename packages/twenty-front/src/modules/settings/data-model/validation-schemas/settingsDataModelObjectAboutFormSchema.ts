@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { t } from '@lingui/core/macro';
 import { type ZodType, z } from 'zod';
 import { type ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
@@ -7,7 +7,7 @@ import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStrin
 
 type ZodTypeSettingsDataModelFormFields = ZodType<
   Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     | 'labelSingular'
     | 'labelPlural'
     | 'description'
@@ -34,7 +34,7 @@ export const settingsDataModelObjectAboutFormSchema =
       const nameAreDifferent =
         nameSingular.toLowerCase() !== namePlural.toLowerCase();
       if (!nameAreDifferent) {
-        const nameFields: ReadonlyKeysArray<ObjectMetadataItem> = [
+        const nameFields: ReadonlyKeysArray<EnrichedObjectMetadataItem> = [
           'nameSingular',
           'namePlural',
         ];

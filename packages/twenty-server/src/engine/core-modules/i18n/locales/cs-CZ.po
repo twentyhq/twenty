@@ -657,11 +657,6 @@ msgstr "Nelze odstranit jedinečný index, který nebyl vytvořen vlastní aplik
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nelze smazat, nejprve aktualizujte pole s identifikátorem štítku"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Nelze deaktivovat neaktivní verzi pracovního postupu"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

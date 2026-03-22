@@ -46,6 +46,7 @@ import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrati
 import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
+import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -109,6 +110,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
     protected readonly backfillFieldWidgetsCommand: BackfillFieldWidgetsCommand,
     protected readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
+    protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
   ) {
     super(
       workspaceRepository,
@@ -171,6 +173,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateMessagingInfrastructureToMetadataCommand,
       this.backfillFieldWidgetsCommand,
       this.backfillSelectFieldOptionIdsCommand,
+      this.updateStandardIndexViewNamesCommand,
     ];
 
     this.allCommands = {

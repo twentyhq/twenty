@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 
@@ -6,7 +6,7 @@ export const getFieldMetadataFromGqlField = ({
   objectMetadataItem,
   gqlField,
 }: {
-  objectMetadataItem: Pick<ObjectMetadataItem, 'fields'>;
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
   gqlField: string;
 }) => {
   return (

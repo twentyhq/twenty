@@ -657,11 +657,6 @@ msgstr "Eindeutiger Index, der nicht von der benutzerdefinierten Arbeitsbereichs
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kann nicht löschen, bitte zuerst das Label-ID-Feld aktualisieren"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Nicht-aktive Workflow-Version kann nicht deaktiviert werden"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

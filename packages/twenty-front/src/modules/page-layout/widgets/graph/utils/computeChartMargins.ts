@@ -4,6 +4,7 @@ import { getChartMarginsFromText } from '@/page-layout/widgets/graph/utils/getCh
 type ChartMarginInputs = {
   bottomTickLabels?: string[];
   leftTickLabels?: string[];
+  rightTickLabels?: string[];
 };
 
 type ComputeChartMarginsParams<TTickConfig, TValueTickResult> = {
@@ -76,6 +77,7 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
     legendFontSize,
     bottomTickLabels: provisionalMarginInputs.bottomTickLabels,
     leftTickLabels: provisionalMarginInputs.leftTickLabels,
+    rightTickLabels: provisionalMarginInputs.rightTickLabels,
     xAxisLabel,
     yAxisLabel,
     tickRotation: getTickRotation(provisionalTickConfiguration),
@@ -98,6 +100,7 @@ export const computeChartMargins = <TTickConfig, TValueTickResult>({
     legendFontSize,
     bottomTickLabels: marginInputs.bottomTickLabels,
     leftTickLabels: marginInputs.leftTickLabels,
+    rightTickLabels: marginInputs.rightTickLabels,
     xAxisLabel,
     yAxisLabel,
     tickRotation: getTickRotation(tickConfiguration),

@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
@@ -17,7 +17,7 @@ export const useCreateDefaultViewForObject = () => {
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
 
   const createDefaultViewForObject = useCallback(
-    async (objectMetadataItem: ObjectMetadataItem) => {
+    async (objectMetadataItem: EnrichedObjectMetadataItem) => {
       if (pendingViewCreations.has(objectMetadataItem.id)) {
         return;
       }

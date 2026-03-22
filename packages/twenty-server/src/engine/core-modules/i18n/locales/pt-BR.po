@@ -657,11 +657,6 @@ msgstr "Não é possível excluir um índice único que não tenha sido criado p
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Não é possível excluir, atualize primeiro o campo identificador do rótulo"
 
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "Não é possível desativar versão de fluxo de trabalho inativa"
-
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."

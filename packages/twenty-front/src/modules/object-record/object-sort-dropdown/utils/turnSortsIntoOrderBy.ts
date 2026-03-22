@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import {
   type OrderBy,
@@ -20,9 +20,9 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const turnSortsIntoOrderBy = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   sorts: RecordSort[],
-  objectMetadataItems: ObjectMetadataItem[] = [],
+  objectMetadataItems: EnrichedObjectMetadataItem[] = [],
 ): RecordGqlOperationOrderBy => {
   const fields = objectMetadataItem?.fields ?? [];
 
