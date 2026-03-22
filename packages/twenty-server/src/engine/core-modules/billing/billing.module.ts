@@ -16,11 +16,11 @@ import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/b
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
-import { BillingFeatureUsedListener } from 'src/engine/core-modules/billing/listeners/billing-feature-used.listener';
+import { UsageEventListener } from 'src/engine/core-modules/billing/listeners/usage-event.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
-import { BillingAnalyticsService } from 'src/engine/core-modules/billing/services/billing-analytics.service';
+import { UsageAnalyticsService } from 'src/engine/core-modules/billing/services/usage-analytics.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
-import { BillingEventWriterService } from 'src/engine/core-modules/billing/services/billing-event-writer.service';
+import { UsageEventWriterService } from 'src/engine/core-modules/billing/services/usage-event-writer.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
@@ -85,7 +85,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingResolver,
     BillingPlanService,
     BillingWorkspaceMemberListener,
-    BillingFeatureUsedListener,
+    UsageEventListener,
     BillingService,
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,
@@ -96,8 +96,8 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingCreditRolloverService,
     MeteredCreditService,
     BillingGaugeService,
-    BillingEventWriterService,
-    BillingAnalyticsService,
+    UsageEventWriterService,
+    UsageAnalyticsService,
   ],
   exports: [
     BillingSubscriptionService,

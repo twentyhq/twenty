@@ -6,13 +6,13 @@ import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
 
-export type BillingUsageBreakdownItem = {
+export type UsageBreakdownItem = {
   key: string;
   label?: string;
   creditsUsed: number;
 };
 
-export type BillingUsageTimeSeriesPoint = {
+export type UsageTimeSeriesPoint = {
   date: string;
   creditsUsed: number;
 };
@@ -26,7 +26,8 @@ type PeriodParams = {
 const ALLOWED_GROUP_BY_FIELDS = [
   'userWorkspaceId',
   'resourceId',
-  'executionType',
+  'operationType',
+  'resourceType',
 ] as const;
 
 type GroupByField = (typeof ALLOWED_GROUP_BY_FIELDS)[number];
@@ -34,12 +35,12 @@ type GroupByField = (typeof ALLOWED_GROUP_BY_FIELDS)[number];
 const BREAKDOWN_QUERY_LIMIT = 50;
 
 @Injectable()
-export class BillingAnalyticsService {
+export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
   async getUsageByUser(
     params: PeriodParams,
-  ): Promise<BillingUsageBreakdownItem[]> {
+  ): Promise<UsageBreakdownItem[]> {
     return this.queryBreakdown({
       ...params,
       groupByField: 'userWorkspaceId',
@@ -49,7 +50,7 @@ export class BillingAnalyticsService {
 
   async getUsageByResource(
     params: PeriodParams,
-  ): Promise<BillingUsageBreakdownItem[]> {
+  ): Promise<UsageBreakdownItem[]> {
     return this.queryBreakdown({
       ...params,
       groupByField: 'resourceId',
@@ -57,12 +58,12 @@ export class BillingAnalyticsService {
     });
   }
 
-  async getUsageByExecutionType(
+  async getUsageByOperationType(
     params: PeriodParams & { userWorkspaceId?: string },
-  ): Promise<BillingUsageBreakdownItem[]> {
+  ): Promise<UsageBreakdownItem[]> {
     return this.queryBreakdown({
       ...params,
-      groupByField: 'executionType',
+      groupByField: 'operationType',
       ...(params.userWorkspaceId && {
         extraWhere: 'AND userWorkspaceId = {userWorkspaceId:String}',
         extraParams: { userWorkspaceId: params.userWorkspaceId },
@@ -72,7 +73,7 @@ export class BillingAnalyticsService {
 
   async getUsageByUserTimeSeries(
     params: PeriodParams & { userWorkspaceId: string },
-  ): Promise<BillingUsageTimeSeriesPoint[]> {
+  ): Promise<UsageTimeSeriesPoint[]> {
     return this.queryTimeSeries({
       ...params,
       extraWhere: 'AND userWorkspaceId = {userWorkspaceId:String}',
@@ -82,7 +83,7 @@ export class BillingAnalyticsService {
 
   async getUsageTimeSeries(
     params: PeriodParams,
-  ): Promise<BillingUsageTimeSeriesPoint[]> {
+  ): Promise<UsageTimeSeriesPoint[]> {
     return this.queryTimeSeries(params);
   }
 
@@ -97,12 +98,12 @@ export class BillingAnalyticsService {
     groupByField: GroupByField;
     extraWhere?: string;
     extraParams?: Record<string, unknown>;
-  }): Promise<BillingUsageBreakdownItem[]> {
+  }): Promise<UsageBreakdownItem[]> {
     const query = `
       SELECT
         ${groupByField} AS key,
         sum(creditsUsed) AS creditsUsed
-      FROM billingEvent
+      FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
@@ -112,7 +113,7 @@ export class BillingAnalyticsService {
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const rows = await this.clickHouseService.select<BillingUsageBreakdownItem>(
+    const rows = await this.clickHouseService.select<UsageBreakdownItem>(
       query,
       {
         workspaceId,
@@ -134,12 +135,12 @@ export class BillingAnalyticsService {
   }: PeriodParams & {
     extraWhere?: string;
     extraParams?: Record<string, unknown>;
-  }): Promise<BillingUsageTimeSeriesPoint[]> {
+  }): Promise<UsageTimeSeriesPoint[]> {
     const query = `
       SELECT
         formatDateTime(timestamp, '%Y-%m-%d') AS date,
         sum(creditsUsed) AS creditsUsed
-      FROM billingEvent
+      FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
@@ -149,7 +150,7 @@ export class BillingAnalyticsService {
     `;
 
     const rows =
-      await this.clickHouseService.select<BillingUsageTimeSeriesPoint>(query, {
+      await this.clickHouseService.select<UsageTimeSeriesPoint>(query, {
         workspaceId,
         periodStart: formatDateForClickHouse(periodStart),
         periodEnd: formatDateForClickHouse(periodEnd),

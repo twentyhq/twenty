@@ -2,8 +2,8 @@
 
 import { Field, Float, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('BillingUsageTimeSeries')
-export class BillingUsageTimeSeriesDTO {
+@ObjectType('UsageTimeSeries')
+export class UsageTimeSeriesDTO {
   @Field(() => String)
   date: string;
 

@@ -1,15 +1,17 @@
-CREATE TABLE IF NOT EXISTS billingEvent
+CREATE TABLE IF NOT EXISTS usageEvent
 (
     `timestamp`          DateTime64(3) NOT NULL,
     `workspaceId`        String NOT NULL,
     `userWorkspaceId`    String DEFAULT '',
-    `eventType`          LowCardinality(String) NOT NULL,
-    `executionType`      LowCardinality(String) NOT NULL,
+    `resourceType`       LowCardinality(String) NOT NULL,
+    `operationType`      LowCardinality(String) NOT NULL,
+    `quantity`           Float64 NOT NULL DEFAULT 0,
+    `unit`               LowCardinality(String) NOT NULL DEFAULT 'CREDIT',
     `creditsUsed`        Float64 NOT NULL DEFAULT 0,
     `resourceId`         String DEFAULT '',
     `resourceContext`    String DEFAULT '',
     `metadata`           JSON
 )
     ENGINE = MergeTree
-    ORDER BY (workspaceId, timestamp, executionType, userWorkspaceId, resourceId)
+    ORDER BY (workspaceId, timestamp, resourceType, operationType, userWorkspaceId, resourceId)
     TTL timestamp + INTERVAL 3 YEAR DELETE;

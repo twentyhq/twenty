@@ -36,11 +36,13 @@ type ClickHouseEventRecord = {
   isCustom?: boolean;
 };
 
-type ClickHouseBillingEventRecord = {
+type ClickHouseUsageEventRecord = {
   timestamp: string;
   userWorkspaceId?: string;
-  eventType?: string;
-  executionType?: string;
+  resourceType?: string;
+  operationType?: string;
+  quantity?: number;
+  unit?: string;
   creditsUsed?: number;
   resourceId?: string;
   resourceContext?: string;
@@ -54,7 +56,7 @@ const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
   [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
   [EventLogTable.PAGEVIEW]: 'pageview',
   [EventLogTable.OBJECT_EVENT]: 'objectEvent',
-  [EventLogTable.BILLING_EVENT]: 'billingEvent',
+  [EventLogTable.BILLING_EVENT]: 'usageEvent',
 };
 
 @Injectable()
@@ -80,7 +82,7 @@ export class EventLogsService {
     const tableName = CLICKHOUSE_TABLE_NAMES[input.table];
     const eventFieldName =
       input.table === EventLogTable.BILLING_EVENT
-        ? 'eventType'
+        ? 'resourceType'
         : input.table === EventLogTable.PAGEVIEW
           ? 'name'
           : 'event';
@@ -243,16 +245,18 @@ export class EventLogsService {
   }
 
   private normalizeRecords(
-    records: ClickHouseEventRecord[] | ClickHouseBillingEventRecord[],
+    records: ClickHouseEventRecord[] | ClickHouseUsageEventRecord[],
     table: EventLogTable,
   ): EventLogRecord[] {
     if (table === EventLogTable.BILLING_EVENT) {
-      return (records as ClickHouseBillingEventRecord[]).map((record) => ({
-        event: record.eventType ?? '',
+      return (records as ClickHouseUsageEventRecord[]).map((record) => ({
+        event: record.resourceType ?? '',
         timestamp: new Date(record.timestamp),
         userId: record.userWorkspaceId,
         properties: {
-          executionType: record.executionType,
+          operationType: record.operationType,
+          quantity: record.quantity,
+          unit: record.unit,
           creditsUsed: record.creditsUsed,
           resourceId: record.resourceId,
           resourceContext: record.resourceContext,

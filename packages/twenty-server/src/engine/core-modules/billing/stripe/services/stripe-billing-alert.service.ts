@@ -8,7 +8,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
-import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 
 @Injectable()
 export class StripeBillingAlertService {
@@ -36,7 +35,7 @@ export class StripeBillingAlertService {
   ): Promise<void> {
     const meter = (await this.stripeBillingMeterService.getAllMeters()).find(
       (meterItem) => {
-        return meterItem.event_name === BillingMeterEventName.WORKFLOW_NODE_RUN;
+        return meterItem.event_name === 'WORKFLOW_NODE_RUN';
       },
     );
 

@@ -4,13 +4,13 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
-export class BillingEventWriterService {
-  private readonly logger = new Logger(BillingEventWriterService.name);
+export class UsageEventWriterService {
+  private readonly logger = new Logger(UsageEventWriterService.name);
 
   constructor(
     private readonly clickHouseService: ClickHouseService,
@@ -20,23 +20,22 @@ export class BillingEventWriterService {
 
   async writeAndBill({
     workspaceId,
-    billingEvents,
+    usageEvents,
   }: {
     workspaceId: string;
-    billingEvents: BillingUsageEvent[];
+    usageEvents: UsageEvent[];
   }): Promise<void> {
-    // Best-effort ClickHouse write — never blocks Stripe billing
-    this.writeToClickHouse(workspaceId, billingEvents);
+    this.writeToClickHouse(workspaceId, usageEvents);
 
     await this.billingUsageService.billUsage({
       workspaceId,
-      billingEvents,
+      usageEvents,
     });
   }
 
   private writeToClickHouse(
     workspaceId: string,
-    billingEvents: BillingUsageEvent[],
+    usageEvents: UsageEvent[],
   ): void {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return;
@@ -44,20 +43,22 @@ export class BillingEventWriterService {
 
     const now = formatDateForClickHouse(new Date());
 
-    const rows = billingEvents.map((event) => ({
+    const rows = usageEvents.map((usageEvent) => ({
       timestamp: now,
       workspaceId,
-      userWorkspaceId: event.userWorkspaceId ?? '',
-      eventType: event.eventName,
-      executionType: event.dimensions?.execution_type ?? '',
-      creditsUsed: event.value,
-      resourceId: event.dimensions?.resource_id ?? '',
-      resourceContext: event.dimensions?.execution_context_1 ?? '',
+      userWorkspaceId: usageEvent.userWorkspaceId ?? '',
+      resourceType: usageEvent.resourceType,
+      operationType: usageEvent.operationType,
+      quantity: usageEvent.quantity,
+      unit: usageEvent.unit,
+      creditsUsed: usageEvent.creditsUsed,
+      resourceId: usageEvent.resourceId ?? '',
+      resourceContext: usageEvent.resourceContext ?? '',
       metadata: '{}',
     }));
 
-    this.clickHouseService.insert('billingEvent', rows).catch((error) => {
-      this.logger.error('Failed to write billing events to ClickHouse', error);
+    this.clickHouseService.insert('usageEvent', rows).catch((error) => {
+      this.logger.error('Failed to write usage events to ClickHouse', error);
     });
   }
 }

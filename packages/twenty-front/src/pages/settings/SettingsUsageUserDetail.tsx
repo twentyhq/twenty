@@ -8,7 +8,7 @@ import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfo
 import {
   type PeriodPreset,
   getChartColors,
-  getExecutionTypeLabel,
+  getOperationTypeLabel,
   getPeriodDates,
   getPeriodOptions,
 } from '@/billing/utils/billingAnalyticsUtils';
@@ -32,7 +32,7 @@ import { Avatar, H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
-import { GetBillingAnalyticsDocument } from '~/generated-metadata/graphql';
+import { GetUsageAnalyticsDocument } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
 
 const StyledUserHeader = styled.div`
@@ -75,7 +75,7 @@ export const SettingsUsageUserDetail = () => {
   const typeDates = useMemo(() => getPeriodDates(typePeriod), [typePeriod]);
 
   const { data: dailyData, loading: dailyLoading } = useQuery(
-    GetBillingAnalyticsDocument,
+    GetUsageAnalyticsDocument,
     {
       variables: {
         input: {
@@ -88,7 +88,7 @@ export const SettingsUsageUserDetail = () => {
   );
 
   const { data: typeData, loading: typeLoading } = useQuery(
-    GetBillingAnalyticsDocument,
+    GetUsageAnalyticsDocument,
     {
       variables: {
         input: {
@@ -100,11 +100,11 @@ export const SettingsUsageUserDetail = () => {
     },
   );
 
-  const dailyAnalytics = dailyData?.getBillingAnalytics;
-  const typeAnalytics = typeData?.getBillingAnalytics;
+  const dailyAnalytics = dailyData?.getUsageAnalytics;
+  const typeAnalytics = typeData?.getUsageAnalytics;
 
   const userDailyUsage = dailyAnalytics?.userDailyUsage?.dailyUsage ?? [];
-  const usageByExecutionType = typeAnalytics?.usageByExecutionType ?? [];
+  const usageByOperationType = typeAnalytics?.usageByOperationType ?? [];
 
   const userName =
     dailyAnalytics?.usageByUser?.find((item) => item.key === userWorkspaceId)
@@ -112,15 +112,15 @@ export const SettingsUsageUserDetail = () => {
     typeAnalytics?.usageByUser?.find((item) => item.key === userWorkspaceId)
       ?.label;
 
-  const totalCredits = usageByExecutionType.reduce(
+  const totalCredits = usageByOperationType.reduce(
     (sum, item) => sum + item.creditsUsed,
     0,
   );
 
   const displayName = userName ?? userWorkspaceId ?? '';
 
-  const pieData = usageByExecutionType.map((item, index) => ({
-    id: getExecutionTypeLabel(item.key),
+  const pieData = usageByOperationType.map((item, index) => ({
+    id: getOperationTypeLabel(item.key),
     value: item.creditsUsed,
     color: chartColors[index % chartColors.length],
   }));
@@ -297,7 +297,7 @@ export const SettingsUsageUserDetail = () => {
           </Section>
         )}
 
-        {usageByExecutionType.length > 0 && (
+        {usageByOperationType.length > 0 && (
           <Section>
             <H2Title
               title={t`Usage by Type`}

@@ -3,7 +3,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class BillingAnalyticsInput {
+export class UsageAnalyticsInput {
   @Field(() => Date, { nullable: true })
   periodStart?: Date;
 

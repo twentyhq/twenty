@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_BILLING_ANALYTICS = gql`
-  query GetBillingAnalytics($input: BillingAnalyticsInput) {
-    getBillingAnalytics(input: $input) {
+export const GET_USAGE_ANALYTICS = gql`
+  query GetUsageAnalytics($input: UsageAnalyticsInput) {
+    getUsageAnalytics(input: $input) {
       usageByUser {
         key
         label
@@ -13,7 +13,7 @@ export const GET_BILLING_ANALYTICS = gql`
         label
         creditsUsed
       }
-      usageByExecutionType {
+      usageByOperationType {
         key
         creditsUsed
       }

@@ -5,24 +5,24 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
-import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
-import { BillingEventWriterService } from 'src/engine/core-modules/billing/services/billing-event-writer.service';
+import { USAGE_RECORDED } from 'src/engine/core-modules/billing/constants/usage-recorded.constant';
+import { UsageEventWriterService } from 'src/engine/core-modules/billing/services/usage-event-writer.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
+import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 @Injectable()
-export class BillingFeatureUsedListener {
+export class UsageEventListener {
   constructor(
     private readonly billingUsageService: BillingUsageService,
-    private readonly billingEventWriterService: BillingEventWriterService,
+    private readonly usageEventWriterService: UsageEventWriterService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  @OnCustomBatchEvent(BILLING_FEATURE_USED)
-  async handleBillingFeatureUsedEvent(
-    payload: CustomWorkspaceEventBatch<BillingUsageEvent>,
+  @OnCustomBatchEvent(USAGE_RECORDED)
+  async handleUsageRecordedEvent(
+    payload: CustomWorkspaceEventBatch<UsageEvent>,
   ) {
     if (!isDefined(payload.workspaceId)) {
       return;
@@ -40,9 +40,9 @@ export class BillingFeatureUsedListener {
       return;
     }
 
-    await this.billingEventWriterService.writeAndBill({
+    await this.usageEventWriterService.writeAndBill({
       workspaceId: payload.workspaceId,
-      billingEvents: payload.events,
+      usageEvents: payload.events,
     });
   }
 }

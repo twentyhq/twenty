@@ -8,7 +8,7 @@ import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfo
 import {
   type PeriodPreset,
   getChartColors,
-  getExecutionTypeLabel,
+  getOperationTypeLabel,
   getPeriodDates,
   getPeriodOptions,
 } from '@/billing/utils/billingAnalyticsUtils';
@@ -33,7 +33,7 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
-import { GetBillingAnalyticsDocument } from '~/generated-metadata/graphql';
+import { GetUsageAnalyticsDocument } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -98,31 +98,31 @@ export const SettingsBillingAnalyticsSection = () => {
   );
 
   const { data: typeData, loading: typeLoading } = useQuery(
-    GetBillingAnalyticsDocument,
+    GetUsageAnalyticsDocument,
     { variables: { input: typeDates } },
   );
 
   const { data: dailyData, loading: dailyLoading } = useQuery(
-    GetBillingAnalyticsDocument,
+    GetUsageAnalyticsDocument,
     { variables: { input: dailyDates } },
   );
 
   const { data: userData, loading: userLoading } = useQuery(
-    GetBillingAnalyticsDocument,
+    GetUsageAnalyticsDocument,
     { variables: { input: userDates } },
   );
 
   const { data: resourceData, loading: resourceLoading } = useQuery(
-    GetBillingAnalyticsDocument,
+    GetUsageAnalyticsDocument,
     { variables: { input: resourceDates } },
   );
 
-  const typeAnalytics = typeData?.getBillingAnalytics;
-  const dailyAnalytics = dailyData?.getBillingAnalytics;
-  const userAnalytics = userData?.getBillingAnalytics;
-  const resourceAnalytics = resourceData?.getBillingAnalytics;
+  const typeAnalytics = typeData?.getUsageAnalytics;
+  const dailyAnalytics = dailyData?.getUsageAnalytics;
+  const userAnalytics = userData?.getUsageAnalytics;
+  const resourceAnalytics = resourceData?.getUsageAnalytics;
 
-  const usageByExecutionType = typeAnalytics?.usageByExecutionType ?? [];
+  const usageByOperationType = typeAnalytics?.usageByOperationType ?? [];
   const timeSeries = dailyAnalytics?.timeSeries ?? [];
   const usageByUser = userAnalytics?.usageByUser ?? [];
   const usageByResource = resourceAnalytics?.usageByResource ?? [];
@@ -135,12 +135,12 @@ export const SettingsBillingAnalyticsSection = () => {
   }
 
   const hasAnyData =
-    usageByExecutionType.length > 0 ||
+    usageByOperationType.length > 0 ||
     timeSeries.length > 0 ||
     usageByUser.length > 0 ||
     usageByResource.length > 0;
 
-  const totalCredits = usageByExecutionType.reduce(
+  const totalCredits = usageByOperationType.reduce(
     (sum, item) => sum + item.creditsUsed,
     0,
   );
@@ -157,8 +157,8 @@ export const SettingsBillingAnalyticsSection = () => {
     return name.includes(search);
   });
 
-  const pieData = usageByExecutionType.map((item, index) => ({
-    id: getExecutionTypeLabel(item.key),
+  const pieData = usageByOperationType.map((item, index) => ({
+    id: getOperationTypeLabel(item.key),
     value: item.creditsUsed,
     color: chartColors[index % chartColors.length],
   }));
@@ -192,7 +192,7 @@ export const SettingsBillingAnalyticsSection = () => {
 
   return (
     <>
-      {usageByExecutionType.length > 0 && (
+      {usageByOperationType.length > 0 && (
         <Section>
           <H2Title
             title={t`Usage by Type`}

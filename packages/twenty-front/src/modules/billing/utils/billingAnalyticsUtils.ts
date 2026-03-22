@@ -8,13 +8,13 @@ const PERIOD_DAYS: Record<PeriodPreset, number> = {
   '90d': 90,
 };
 
-export const getExecutionTypeLabel = (key: string): string => {
+export const getOperationTypeLabel = (key: string): string => {
   switch (key) {
-    case 'ai_token':
+    case 'AI_TOKEN':
       return t`AI Chat`;
-    case 'workflow_execution':
+    case 'WORKFLOW_EXECUTION':
       return t`Workflow Execution`;
-    case 'code_execution':
+    case 'CODE_EXECUTION':
       return t`Code Execution`;
     default:
       return key;

@@ -19,13 +19,13 @@ import { BillingMeteredProductUsageDTO } from 'src/engine/core-modules/billing/d
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
 import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-session.dto';
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
-import { BillingAnalyticsDTO } from 'src/engine/core-modules/billing/dtos/billing-analytics.dto';
-import { BillingAnalyticsInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-analytics.input';
+import { UsageAnalyticsDTO } from 'src/engine/core-modules/billing/dtos/usage-analytics.dto';
+import { UsageAnalyticsInput } from 'src/engine/core-modules/billing/dtos/inputs/usage-analytics.input';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import {
-  type BillingUsageBreakdownItem,
-  BillingAnalyticsService,
-} from 'src/engine/core-modules/billing/services/billing-analytics.service';
+  type UsageBreakdownItem,
+  UsageAnalyticsService,
+} from 'src/engine/core-modules/billing/services/usage-analytics.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -78,7 +78,7 @@ export class BillingResolver {
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly billingAnalyticsService: BillingAnalyticsService,
+    private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly permissionsService: PermissionsService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
@@ -337,17 +337,17 @@ export class BillingResolver {
     }));
   }
 
-  @Query(() => BillingAnalyticsDTO)
+  @Query(() => UsageAnalyticsDTO)
   @UseGuards(
     WorkspaceAuthGuard,
     FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
   @RequireFeatureFlag(FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED)
-  async getBillingAnalytics(
+  async getUsageAnalytics(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Args('input', { nullable: true }) input?: BillingAnalyticsInput,
-  ): Promise<BillingAnalyticsDTO> {
+    @Args('input', { nullable: true }) input?: UsageAnalyticsInput,
+  ): Promise<UsageAnalyticsDTO> {
     const { defaultPeriodStart, defaultPeriodEnd } =
       await this.getDefaultAnalyticsPeriod(workspace.id);
 
@@ -360,15 +360,15 @@ export class BillingResolver {
       periodEnd,
     };
 
-    const [usageByUser, usageByResource, usageByExecutionType, timeSeries] =
+    const [usageByUser, usageByResource, usageByOperationType, timeSeries] =
       await Promise.all([
-        this.billingAnalyticsService.getUsageByUser(periodParams),
-        this.billingAnalyticsService.getUsageByResource(periodParams),
-        this.billingAnalyticsService.getUsageByExecutionType({
+        this.usageAnalyticsService.getUsageByUser(periodParams),
+        this.usageAnalyticsService.getUsageByResource(periodParams),
+        this.usageAnalyticsService.getUsageByOperationType({
           ...periodParams,
           userWorkspaceId: input?.userWorkspaceId ?? undefined,
         }),
-        this.billingAnalyticsService.getUsageTimeSeries(periodParams),
+        this.usageAnalyticsService.getUsageTimeSeries(periodParams),
       ]);
 
     const resolvedUsageByUser = await this.resolveBreakdownKeys(
@@ -381,10 +381,10 @@ export class BillingResolver {
       (ids) => this.resolveResourceNames(ids, workspace.id),
     );
 
-    const result: BillingAnalyticsDTO = {
+    const result: UsageAnalyticsDTO = {
       usageByUser: resolvedUsageByUser,
       usageByResource: resolvedUsageByResource,
-      usageByExecutionType,
+      usageByOperationType,
       timeSeries,
       periodStart,
       periodEnd,
@@ -398,7 +398,7 @@ export class BillingResolver {
 
       if (isDefined(userWorkspace)) {
         const dailyUsage =
-          await this.billingAnalyticsService.getUsageByUserTimeSeries({
+          await this.usageAnalyticsService.getUsageByUserTimeSeries({
             ...periodParams,
             userWorkspaceId: input.userWorkspaceId,
           });
@@ -497,9 +497,9 @@ export class BillingResolver {
   }
 
   private async resolveBreakdownKeys(
-    items: BillingUsageBreakdownItem[],
+    items: UsageBreakdownItem[],
     resolveNames: (ids: string[]) => Promise<Map<string, string>>,
-  ): Promise<BillingUsageBreakdownItem[]> {
+  ): Promise<UsageBreakdownItem[]> {
     if (items.length === 0) {
       return items;
     }
