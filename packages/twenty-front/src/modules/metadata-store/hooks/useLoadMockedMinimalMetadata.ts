@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 const MOCKED_COLLECTION_HASH = 'mocked';
 
 export const useLoadMockedMinimalMetadata = () => {
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges, resetMetadataStore } = useMetadataStore();
 
   const loadMockedMinimalMetadata = useCallback(async () => {
     const [
@@ -22,6 +22,11 @@ export const useLoadMockedMinimalMetadata = () => {
         '~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data'
       ),
     ]);
+
+    // Reset after async imports so reset + replaceDraft + applyChanges
+    // run in the same synchronous block (React 18 batches them into one render),
+    // avoiding a window where the store appears empty to subscribers.
+    resetMetadataStore();
 
     const { flatObjects, flatFields, flatIndexes } =
       splitObjectMetadataGqlResponse(mockedStandardObjectMetadataQueryResult);
@@ -63,7 +68,7 @@ export const useLoadMockedMinimalMetadata = () => {
     );
 
     applyChanges();
-  }, [replaceDraft, applyChanges]);
+  }, [replaceDraft, applyChanges, resetMetadataStore]);
 
   return { loadMockedMinimalMetadata };
 };
