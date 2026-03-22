@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
-import { DataSource, type QueryRunner } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -53,8 +50,6 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
   ) {}
 
   async runWorkflowVersion({
@@ -203,31 +198,34 @@ export class WorkflowTriggerWorkspaceService {
       );
     }
 
+    await this.createOrUpdateCommandMenuItem(
+      workflow,
+      workflowVersion,
+      workspaceId,
+    );
+
     const workspaceDataSource =
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const queryRunner = workspaceDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const workspaceEntityManager =
-        workspaceDataSource.createEntityManager(queryRunner);
-
       if (workflow.lastPublishedVersionId !== workflowVersion.id) {
         if (workflow.lastPublishedVersionId) {
           await workflowVersionRepository.update(
             { id: workflow.lastPublishedVersionId },
             { status: WorkflowVersionStatus.ARCHIVED },
-            workspaceEntityManager,
+            queryRunner.manager,
           );
         }
 
         await workflowRepository.update(
           { id: workflow.id },
           { lastPublishedVersionId: workflowVersion.id },
-          workspaceEntityManager,
+          queryRunner.manager,
         );
       }
 
@@ -238,7 +236,7 @@ export class WorkflowTriggerWorkspaceService {
             status: WorkflowVersionStatus.ACTIVE,
           },
         },
-        workspaceEntityManager,
+        queryRunner.manager,
       );
 
       if (activeWorkflowVersions.length > 0) {
@@ -254,12 +252,11 @@ export class WorkflowTriggerWorkspaceService {
       await workflowVersionRepository.update(
         { id: workflowVersion.id },
         { status: WorkflowVersionStatus.ACTIVE },
-        workspaceEntityManager,
+        queryRunner.manager,
       );
 
-      await this.enableTrigger(workflow, workflowVersion, workspaceId, {
-        entityManager: workspaceEntityManager,
-        queryRunner,
+      await this.enableAutomatedTrigger(workflowVersion, workspaceId, {
+        entityManager: queryRunner.manager,
       });
 
       await queryRunner.commitTransaction();
@@ -298,27 +295,25 @@ export class WorkflowTriggerWorkspaceService {
       return;
     }
 
+    await this.deleteCommandMenuItem(workflowVersion, workspaceId);
+
     const workspaceDataSource =
       await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const queryRunner = workspaceDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const workspaceEntityManager =
-        workspaceDataSource.createEntityManager(queryRunner);
-
       await workflowVersionRepository.update(
         { id: workflowVersion.id },
         { status: WorkflowVersionStatus.DEACTIVATED },
-        workspaceEntityManager,
+        queryRunner.manager,
       );
 
-      await this.disableTrigger(workflowVersion, workspaceId, {
-        entityManager: workspaceEntityManager,
-        queryRunner,
+      await this.disableAutomatedTrigger(workflowVersion, workspaceId, {
+        entityManager: queryRunner.manager,
       });
 
       await queryRunner.commitTransaction();
@@ -384,76 +379,116 @@ export class WorkflowTriggerWorkspaceService {
     return { availabilityType, availabilityObjectMetadataId };
   }
 
-  private async enableTrigger(
+  private async createOrUpdateCommandMenuItem(
     workflow: WorkflowWorkspaceEntity,
+    workflowVersion: WorkflowVersionWorkspaceEntity,
+    workspaceId: string,
+  ) {
+    assertWorkflowVersionTriggerIsDefined(workflowVersion);
+
+    if (workflowVersion.trigger.type !== WorkflowTriggerType.MANUAL) {
+      return;
+    }
+
+    const isCommandMenuItemEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+        workspaceId,
+      );
+
+    if (!isCommandMenuItemEnabled) {
+      return;
+    }
+
+    const trigger = workflowVersion.trigger as WorkflowManualTrigger;
+
+    const { availabilityType, availabilityObjectMetadataId } =
+      await this.resolveManualTriggerAvailability(trigger, workspaceId);
+
+    const label = isNonEmptyString(workflow.name)
+      ? workflow.name
+      : 'Manual Trigger';
+
+    const existingCommandMenuItem =
+      await this.commandMenuItemService.findByWorkflowVersionId(
+        workflowVersion.id,
+        workspaceId,
+      );
+
+    if (existingCommandMenuItem) {
+      await this.commandMenuItemService.update(
+        {
+          id: existingCommandMenuItem.id,
+          label,
+          shortLabel: label,
+          icon: trigger.settings.icon,
+          isPinned: trigger.settings.isPinned,
+          availabilityType,
+          availabilityObjectMetadataId,
+        },
+        workspaceId,
+      );
+    } else {
+      await this.commandMenuItemService.create(
+        {
+          workflowVersionId: workflowVersion.id,
+          label,
+          shortLabel: label,
+          icon: trigger.settings.icon,
+          isPinned: trigger.settings.isPinned,
+          availabilityType,
+          availabilityObjectMetadataId,
+        },
+        workspaceId,
+      );
+    }
+  }
+
+  private async deleteCommandMenuItem(
+    workflowVersion: WorkflowVersionWorkspaceEntity,
+    workspaceId: string,
+  ) {
+    assertWorkflowVersionTriggerIsDefined(workflowVersion);
+
+    if (workflowVersion.trigger.type !== WorkflowTriggerType.MANUAL) {
+      return;
+    }
+
+    const isCommandMenuItemEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+        workspaceId,
+      );
+
+    if (!isCommandMenuItemEnabled) {
+      return;
+    }
+
+    const existingCommandMenuItem =
+      await this.commandMenuItemService.findByWorkflowVersionId(
+        workflowVersion.id,
+        workspaceId,
+      );
+
+    if (existingCommandMenuItem) {
+      await this.commandMenuItemService.delete(
+        existingCommandMenuItem.id,
+        workspaceId,
+      );
+    }
+  }
+
+  private async enableAutomatedTrigger(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
     transactionContext?: {
       entityManager: WorkspaceEntityManager;
-      queryRunner: QueryRunner;
     },
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
     switch (workflowVersion.trigger.type) {
-      case WorkflowTriggerType.MANUAL: {
-        const isCommandMenuItemEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-            workspaceId,
-          );
-
-        if (!isCommandMenuItemEnabled) {
-          return;
-        }
-
-        const trigger = workflowVersion.trigger as WorkflowManualTrigger;
-
-        const { availabilityType, availabilityObjectMetadataId } =
-          await this.resolveManualTriggerAvailability(trigger, workspaceId);
-
-        const label = isNonEmptyString(workflow.name)
-          ? workflow.name
-          : 'Manual Trigger';
-
-        const existingCommandMenuItem =
-          await this.commandMenuItemService.findByWorkflowVersionId(
-            workflowVersion.id,
-            workspaceId,
-          );
-
-        if (existingCommandMenuItem) {
-          await this.commandMenuItemService.update(
-            {
-              id: existingCommandMenuItem.id,
-              label,
-              shortLabel: label,
-              icon: trigger.settings.icon,
-              isPinned: trigger.settings.isPinned,
-              availabilityType,
-              availabilityObjectMetadataId,
-            },
-            workspaceId,
-            transactionContext?.queryRunner,
-          );
-        } else {
-          await this.commandMenuItemService.create(
-            {
-              workflowVersionId: workflowVersion.id,
-              label,
-              shortLabel: label,
-              icon: trigger.settings.icon,
-              isPinned: trigger.settings.isPinned,
-              availabilityType,
-              availabilityObjectMetadataId,
-            },
-            workspaceId,
-            transactionContext?.queryRunner,
-          );
-        }
-
-        return;
-      }
+      case WorkflowTriggerType.MANUAL:
       case WorkflowTriggerType.WEBHOOK:
         return;
       case WorkflowTriggerType.DATABASE_EVENT: {
@@ -488,12 +523,11 @@ export class WorkflowTriggerWorkspaceService {
     }
   }
 
-  private async disableTrigger(
+  private async disableAutomatedTrigger(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
     transactionContext?: {
       entityManager: WorkspaceEntityManager;
-      queryRunner: QueryRunner;
     },
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
@@ -508,33 +542,7 @@ export class WorkflowTriggerWorkspaceService {
         });
 
         return;
-      case WorkflowTriggerType.MANUAL: {
-        const isCommandMenuItemEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-            workspaceId,
-          );
-
-        if (!isCommandMenuItemEnabled) {
-          return;
-        }
-
-        const existingCommandMenuItem =
-          await this.commandMenuItemService.findByWorkflowVersionId(
-            workflowVersion.id,
-            workspaceId,
-          );
-
-        if (existingCommandMenuItem) {
-          await this.commandMenuItemService.delete(
-            existingCommandMenuItem.id,
-            workspaceId,
-            transactionContext?.queryRunner,
-          );
-        }
-
-        return;
-      }
+      case WorkflowTriggerType.MANUAL:
       case WorkflowTriggerType.WEBHOOK:
         return;
       default:
