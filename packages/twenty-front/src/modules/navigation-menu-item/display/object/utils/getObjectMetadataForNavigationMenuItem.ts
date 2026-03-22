@@ -1,7 +1,7 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -10,9 +10,9 @@ export const getObjectMetadataForNavigationMenuItem = (
     NavigationMenuItem,
     'type' | 'viewId' | 'targetObjectMetadataId'
   >,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   views: Pick<View, 'id' | 'objectMetadataId'>[],
-): ObjectMetadataItem | null => {
+): EnrichedObjectMetadataItem | null => {
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
     return null;
   }

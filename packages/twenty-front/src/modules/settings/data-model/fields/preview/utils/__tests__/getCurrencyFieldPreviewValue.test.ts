@@ -1,15 +1,16 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 import { getCurrencyFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue';
 import { CurrencyCode } from 'twenty-shared/constants';
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  generateTestEnrichedObjectMetadataItemsMock.find(
+    (item) => item.nameSingular === 'company',
+  );
 
 const mockedOpportunityObjectMetadataItem =
-  generatedMockObjectMetadataItems.find(
+  generateTestEnrichedObjectMetadataItemsMock.find(
     (item) => item.nameSingular === 'opportunity',
   );
 

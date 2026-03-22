@@ -3,7 +3,7 @@ import { type Object as GeneratedObject } from '~/generated-metadata/graphql';
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { type FieldMetadataItem } from './FieldMetadataItem';
 
-export type ObjectMetadataItem = Omit<
+export type EnrichedObjectMetadataItem = Omit<
   GeneratedObject,
   | '__typename'
   | 'applicationId'

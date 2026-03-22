@@ -1,13 +1,14 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getMultiSelectFieldPreviewValue';
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  generateTestEnrichedObjectMetadataItemsMock.find(
+    (item) => item.nameSingular === 'company',
+  );
 
 const mockedOpportunityObjectMetadataItem =
-  generatedMockObjectMetadataItems.find(
+  generateTestEnrichedObjectMetadataItemsMock.find(
     (item) => item.nameSingular === 'opportunity',
   );
 

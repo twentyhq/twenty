@@ -1,15 +1,17 @@
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  generateTestEnrichedObjectMetadataItemsMock.find(
+    (item) => item.nameSingular === 'company',
+  );
 
-const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'person',
-);
+const mockedPersonObjectMetadataItem =
+  generateTestEnrichedObjectMetadataItemsMock.find(
+    (item) => item.nameSingular === 'person',
+  );
 
 describe('getFieldPreviewValue', () => {
   it("returns the field's defaultValue from metadata if it exists", () => {

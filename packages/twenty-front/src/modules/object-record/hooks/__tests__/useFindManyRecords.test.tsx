@@ -5,11 +5,11 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 setTestObjectMetadataItemsInMetadataStore(
   jotaiStore,
-  generatedMockObjectMetadataItems,
+  generateTestEnrichedObjectMetadataItemsMock,
 );
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

@@ -1,12 +1,8 @@
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type FlatIndexMetadataItem } from '@/metadata-store/types/FlatIndexMetadataItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-
-export type ObjectMetadataItemWithRelated = Omit<
-  ObjectMetadataItem,
-  'readableFields' | 'updatableFields'
->;
+import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
+import { type ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 
 type SplitResult = {
   flatObjects: FlatObjectMetadataItem[];
@@ -14,33 +10,39 @@ type SplitResult = {
   flatIndexes: FlatIndexMetadataItem[];
 };
 
-export const splitObjectMetadataItemWithRelated = (
-  objectMetadataItemsWithRelated: ObjectMetadataItemWithRelated[],
+export const splitObjectMetadataGqlResponse = (
+  pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined,
 ): SplitResult => {
+  const compositeObjects = mapPaginatedObjectMetadataItemsToObjectMetadataItems(
+    {
+      pagedObjectMetadataItems,
+    },
+  );
+
   const flatObjects: FlatObjectMetadataItem[] = [];
   const flatFields: FlatFieldMetadataItem[] = [];
   const flatIndexes: FlatIndexMetadataItem[] = [];
 
-  for (const objectMetadataItemWithRelated of objectMetadataItemsWithRelated) {
+  for (const compositeObject of compositeObjects) {
     const {
       fields = [],
       indexMetadatas = [],
       ...objectProperties
-    } = objectMetadataItemWithRelated;
+    } = compositeObject;
 
     flatObjects.push(objectProperties);
 
     for (const field of fields) {
       flatFields.push({
         ...field,
-        objectMetadataId: objectMetadataItemWithRelated.id,
+        objectMetadataId: compositeObject.id,
       });
     }
 
     for (const index of indexMetadatas) {
       flatIndexes.push({
         ...index,
-        objectMetadataId: objectMetadataItemWithRelated.id,
+        objectMetadataId: compositeObject.id,
       });
     }
   }

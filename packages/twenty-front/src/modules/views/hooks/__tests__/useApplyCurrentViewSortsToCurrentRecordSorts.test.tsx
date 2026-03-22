@@ -15,15 +15,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
 describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
-  );
+  const mockObjectMetadataItem =
+    generateTestEnrichedObjectMetadataItemsMock.find(
+      (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
+    );
 
   if (!isDefined(mockObjectMetadataItem)) {
     throw new Error(

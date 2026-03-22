@@ -1,7 +1,7 @@
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { generateMockRecord } from '~/testing/utils/generateMockRecord';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 export const generateMockRecordNode = ({
@@ -23,12 +23,12 @@ export const generateMockRecordNode = ({
   return getRecordNodeFromRecord({
     record,
     objectMetadataItem,
-    objectMetadataItems: generatedMockObjectMetadataItems,
+    objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
     computeReferences,
     recordGqlFields: withDepthOneRelation
       ? generateDepthRecordGqlFieldsFromObject({
           objectMetadataItem,
-          objectMetadataItems: generatedMockObjectMetadataItems,
+          objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
           depth: 1,
         })
       : undefined,

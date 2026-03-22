@@ -1,5 +1,5 @@
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
+import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { useCallback } from 'react';
 
@@ -11,11 +11,13 @@ export const useLoadMockedMinimalMetadata = () => {
   const loadMockedMinimalMetadata = useCallback(async () => {
     resetMetadataStore();
     const [
-      { generatedMockObjectMetadataItemsWithRelated },
+      { mockedStandardObjectMetadataQueryResult },
       { mockedViews },
       { mockedNavigationMenuItems },
     ] = await Promise.all([
-      import('~/testing/utils/generatedMockObjectMetadataItemsWithRelated'),
+      import(
+        '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata'
+      ),
       import('~/testing/mock-data/generated/metadata/views/mock-views-data'),
       import(
         '~/testing/mock-data/generated/metadata/navigation-menu-items/mock-navigation-menu-items-data'
@@ -23,9 +25,7 @@ export const useLoadMockedMinimalMetadata = () => {
     ]);
 
     const { flatObjects, flatFields, flatIndexes } =
-      splitObjectMetadataItemWithRelated(
-        generatedMockObjectMetadataItemsWithRelated,
-      );
+      splitObjectMetadataGqlResponse(mockedStandardObjectMetadataQueryResult);
 
     replaceDraft('objectMetadataItems', flatObjects, MOCKED_COLLECTION_HASH);
     replaceDraft('fieldMetadataItems', flatFields, MOCKED_COLLECTION_HASH);

@@ -6,11 +6,12 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  generateTestEnrichedObjectMetadataItemsMock.find(
+    (item) => item.nameSingular === 'company',
+  );
 
 const StyledContainer = styled.div`
   flex: 1;

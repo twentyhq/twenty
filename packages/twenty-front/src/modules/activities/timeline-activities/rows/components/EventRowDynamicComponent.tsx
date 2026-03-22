@@ -6,14 +6,14 @@ import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-o
 import { EventRowMessage } from '@/activities/timeline-activities/rows/message/components/EventRowMessage';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export interface EventRowDynamicComponentProps {
   labelIdentifierValue: string;
   event: TimelineActivity;
-  mainObjectMetadataItem: ObjectMetadataItem;
-  linkedObjectMetadataItem: ObjectMetadataItem | null;
+  mainObjectMetadataItem: EnrichedObjectMetadataItem;
+  linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
   authorFullName: string;
   createdAt?: string;
 }

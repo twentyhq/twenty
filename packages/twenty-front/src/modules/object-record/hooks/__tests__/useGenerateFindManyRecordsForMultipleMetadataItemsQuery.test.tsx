@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JestObjectMetadataItemSetter>{children}</JestObjectMetadataItemSetter>
@@ -14,7 +14,7 @@ describe('useGenerateFindManyRecordsForMultipleMetadataItemsQuery', () => {
     const { result } = renderHook(
       () => {
         return useGenerateCombinedFindManyRecordsQuery({
-          operationSignatures: generatedMockObjectMetadataItems
+          operationSignatures: generateTestEnrichedObjectMetadataItemsMock
             .slice(0, 2)
             .map((item) => ({
               objectNameSingular: item.nameSingular,

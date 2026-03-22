@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 import { type ViewSortEssential } from '@/views/types/ViewSortEssential';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,9 +14,10 @@ import { useApplyViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyVie
 const mockObjectMetadataItemNameSingular = 'company';
 
 describe('useApplyViewSortsToCurrentRecordSorts', () => {
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
-  );
+  const mockObjectMetadataItem =
+    generateTestEnrichedObjectMetadataItemsMock.find(
+      (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
+    );
 
   if (!isDefined(mockObjectMetadataItem)) {
     throw new Error(

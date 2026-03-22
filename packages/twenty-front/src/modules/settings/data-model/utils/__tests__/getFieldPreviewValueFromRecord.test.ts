@@ -1,14 +1,16 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 import { getFieldPreviewValueFromRecord } from '@/settings/data-model/utils/getFieldPreviewValueFromRecord';
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  generateTestEnrichedObjectMetadataItemsMock.find(
+    (item) => item.nameSingular === 'company',
+  );
 
-const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'person',
-);
+const mockedPersonObjectMetadataItem =
+  generateTestEnrichedObjectMetadataItemsMock.find(
+    (item) => item.nameSingular === 'person',
+  );
 
 describe('getFieldPreviewValueFromRecord', () => {
   describe('RELATION field', () => {

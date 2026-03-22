@@ -13,7 +13,7 @@ import {
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { generateMockRecordNode } from '~/testing/utils/generateMockRecordNode';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const messageMetadataItem = getMockObjectMetadataItemOrThrow('message');
@@ -27,14 +27,14 @@ const messageOperationSignature =
 
 const findManyMessagesQuery = generateFindManyRecordsQuery({
   objectMetadataItem: messageMetadataItem,
-  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
   recordGqlFields: messageOperationSignature.fields,
   objectPermissionsByObjectMetadataId: {},
 });
 
 const findManyMessageParticipantsQuery = generateFindManyRecordsQuery({
   objectMetadataItem: messageParticipantMetadataItem,
-  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectMetadataItems: generateTestEnrichedObjectMetadataItemsMock,
   recordGqlFields: {
     id: true,
     role: true,

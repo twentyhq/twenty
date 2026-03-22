@@ -1,11 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 export const getMockObjectMetadataItemOrThrow = (
   nameSingular: string,
-): ObjectMetadataItem => {
-  const objectMetadataItem = generatedMockObjectMetadataItems.find(
+): EnrichedObjectMetadataItem => {
+  const objectMetadataItem = generateTestEnrichedObjectMetadataItemsMock.find(
     (item) => item.nameSingular === nameSingular,
   );
 

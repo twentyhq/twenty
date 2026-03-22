@@ -9,7 +9,7 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -34,7 +34,7 @@ export const useActivityTargetsForTargetableObjects = ({
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
   limit: number;
 }) => {
-  const objectMetadataItems = useAtomStateValue<ObjectMetadataItem[]>(
+  const objectMetadataItems = useAtomStateValue<EnrichedObjectMetadataItem[]>(
     objectMetadataItemsSelector,
   );
   const isNoteTargetMigrated = useIsFeatureEnabled(

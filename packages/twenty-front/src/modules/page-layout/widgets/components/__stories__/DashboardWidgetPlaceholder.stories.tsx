@@ -16,7 +16,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 const mockPageLayout: PageLayout = {
   id: 'page-layout-1',
@@ -35,7 +35,7 @@ const meta: Meta<typeof DashboardWidgetPlaceholder> = {
     (Story) => {
       setTestObjectMetadataItemsInMetadataStore(
         jotaiStore,
-        generatedMockObjectMetadataItems,
+        generateTestEnrichedObjectMetadataItemsMock,
       );
       jotaiStore.set(isMinimalMetadataReadyState.atom, true);
       jotaiStore.set(

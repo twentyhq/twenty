@@ -15,7 +15,7 @@ import {
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 type MockedUser = Pick<
   User,
@@ -201,16 +201,18 @@ export const mockedUserData: MockedUser = {
       PermissionFlagType.CONNECTED_ACCOUNTS,
     ],
     twoFactorAuthenticationMethodSummary: [],
-    objectsPermissions: generatedMockObjectMetadataItems.map((item) => ({
-      objectMetadataId: item.id,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: true,
-      restrictedFields: {},
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
-    })),
+    objectsPermissions: generateTestEnrichedObjectMetadataItemsMock.map(
+      (item) => ({
+        objectMetadataId: item.id,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+        restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
+      }),
+    ),
   },
   locale: 'en',
   workspaces: [{ workspace: mockCurrentWorkspace }],
@@ -227,7 +229,7 @@ export const mockedLimitedPermissionsUserData: MockedUser = {
   ...mockedUserData,
   currentUserWorkspace: {
     ...mockedUserData.currentUserWorkspace,
-    objectsPermissions: generatedMockObjectMetadataItems
+    objectsPermissions: generateTestEnrichedObjectMetadataItemsMock
       .filter(
         (objectMetadata) =>
           objectMetadata.nameSingular !== 'task' &&
@@ -265,16 +267,18 @@ export const mockedOnboardingUserData = (
     currentWorkspace: mockCurrentWorkspace,
     currentUserWorkspace: {
       permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-      objectPermissions: generatedMockObjectMetadataItems.map((item) => ({
-        objectMetadataId: item.id,
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: true,
-        canDestroyObjectRecords: true,
-        restrictedFields: {},
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
-      })),
+      objectPermissions: generateTestEnrichedObjectMetadataItemsMock.map(
+        (item) => ({
+          objectMetadataId: item.id,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        }),
+      ),
     },
     locale: 'en',
     workspaces: [{ workspace: mockCurrentWorkspace }],

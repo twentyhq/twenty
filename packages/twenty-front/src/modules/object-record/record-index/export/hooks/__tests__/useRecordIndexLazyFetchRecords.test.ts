@@ -9,7 +9,7 @@ import {
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { ViewType } from '@/views/types/ViewType';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 const mockPerson = {
   __typename: 'Person',
@@ -77,7 +77,7 @@ jest.mock('@/object-record/hooks/useLazyFetchAllRecords', () => ({
 
 describe('useRecordData', () => {
   const recordIndexId = 'people';
-  const objectMetadataItem = generatedMockObjectMetadataItems.find(
+  const objectMetadataItem = generateTestEnrichedObjectMetadataItemsMock.find(
     (item) => item.nameSingular === 'person',
   );
   let mockFetchAllRecords: jest.Mock;

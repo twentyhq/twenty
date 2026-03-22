@@ -1,5 +1,5 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -96,7 +96,7 @@ export const PageLayoutTabsRenderer = () => {
   );
 
   const isSystemObject =
-    (metadataStore.current as ObjectMetadataItem[]).find(
+    (metadataStore.current as EnrichedObjectMetadataItem[]).find(
       (item) =>
         item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
     )?.isSystem ?? false;

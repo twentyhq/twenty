@@ -1,9 +1,9 @@
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { generateTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/generateTestEnrichedObjectMetadataItemsMock';
 
 describe('isObjectMetadataAvailableForRelation', () => {
   it('should work as expected', () => {
-    const objectMetadataItem = generatedMockObjectMetadataItems.find(
+    const objectMetadataItem = generateTestEnrichedObjectMetadataItemsMock.find(
       (item) => item.nameSingular === 'person',
     )!;
 

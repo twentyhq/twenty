@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
@@ -11,7 +11,7 @@ import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/
 import { getSettingsObjectFieldType } from '~/pages/settings/data-model/utils/getSettingsObjectFieldType';
 
 export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
   const getRelationMetadata = useGetRelationMetadata();
 
