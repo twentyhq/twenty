@@ -24,8 +24,6 @@ export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
 
   const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
 
-  const isMetadataAlreadyLoaded = objectMetadataItems.length > 0;
-
   useEffect(() => {
     setCurrentWorkspaceMember(
       getRecordFromRecordNode<WorkspaceMember>({
@@ -34,16 +32,12 @@ export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
     );
     setCurrentUser(mockedUserData);
     setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
-
-    if (!isMetadataAlreadyLoaded) {
-      loadMockedMinimalMetadata();
-    }
+    loadMockedMinimalMetadata();
   }, [
     setCurrentUser,
     setCurrentWorkspaceMember,
     setCurrentUserWorkspace,
     loadMockedMinimalMetadata,
-    isMetadataAlreadyLoaded,
   ]);
 
   return (
