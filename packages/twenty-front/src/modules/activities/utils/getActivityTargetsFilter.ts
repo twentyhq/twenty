@@ -1,7 +1,7 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getActivityTargetsFilter = ({
@@ -14,7 +14,7 @@ export const getActivityTargetsFilter = ({
   activityObjectNameSingular:
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   isMorphRelation?: boolean;
 }) => {
   const activityTargetObjectNameSingular =

@@ -1,0 +1,121 @@
+---
+title: Resposta automática a e-mails de entrada
+description: Crie um fluxo de trabalho que use IA para fazer a triagem dos e-mails de entrada e enviar respostas encadeadas automaticamente.
+---
+
+Responda a e-mails de entrada em segundos — não em horas. Este fluxo de trabalho usa um Agente de IA para filtrar o ruído (boletins informativos, spam, respostas automáticas) e redigir uma resposta personalizada para mensagens reais e, em seguida, enviá-la como uma resposta encadeada dentro da conversa original.
+
+## Como funciona o encadeamento de e-mails
+
+Cada e-mail contém um cabeçalho oculto `Message-ID` — uma impressão digital única atribuída pelo servidor de e-mail do remetente. Quando você responde a um e-mail, seu cliente de e-mail define um cabeçalho `In-Reply-To` que faz referência a essa impressão digital. É assim que o Gmail, o Outlook e todos os outros clientes agrupam as mensagens em conversas.
+
+No Twenty, essa impressão digital é armazenada como `headerMessageId` no objeto Message. Seu fluxo de trabalho obtém isso e o passa para o campo In-Reply-To da ação Enviar e-mail.
+
+## Criando o fluxo de trabalho
+
+### Etapa 1: Criar um novo fluxo de trabalho
+
+Vá para **Configurações -> Fluxos de trabalho** e clique em **+ Novo fluxo de trabalho**.
+
+### Etapa 2: Acionar com mensagens recebidas
+
+Escolha **When a Record is Created** e selecione **Messages**.
+
+Sempre que um e-mail chega ao Twenty, isto é acionado.
+
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+
+### Etapa 3: Procurar quem enviou
+
+Adicione uma ação **Pesquisar Registros**.
+
+O endereço do remetente não está na própria mensagem — está no registro relacionado Message Participant.
+
+| Campo      | Valor                          |
+| ---------- | ------------------------------ |
+| **Objeto** | Participantes da Mensagem      |
+| **Filtro** | Message **é** `{{trigger.id}}` |
+| **Filtro** | Função **é** From              |
+| **Limite** | 1                              |
+
+Isso fornece o e-mail do remetente em `handle` e o nome dele em `displayName`.
+
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+
+### Etapa 4: Triagem por IA e rascunho de resposta
+
+Adicione uma ação **Agente de IA**. Esta única etapa faz duas coisas: decide se o e-mail merece uma resposta e, se sim, redige uma.
+
+Use um prompt como:
+
+```
+You are an email triage assistant for a sales team. Read the following
+inbound email and decide if it deserves a reply.
+
+Subject: {{trigger.subject}}
+Body: {{trigger.text}}
+From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
+
+If this email is spam, a newsletter, an automated notification, or
+otherwise does not need a human reply, respond with exactly: SKIP
+
+Otherwise, write a short, professional reply (3-4 sentences max) that:
+- Acknowledges their specific message
+- Lets them know someone from the team will follow up shortly
+- Is warm but not overly casual
+
+Respond with only the reply text, no subject line or greeting prefix.
+```
+
+O Agente de IA produz sua resposta em um campo `response` ao qual as próximas etapas podem se referir.
+
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+
+### Etapa 5: Ramificar com base na decisão da IA
+
+Adicione uma ação **If/Else** para verificar se a IA decidiu responder ou pular.
+
+| Campo              | Valor                                              |
+| ------------------ | -------------------------------------------------- |
+| **Condição**       | A `response` do Agente de IA **não contém** `SKIP` |
+| **Se verdadeiro**  | Continuar para Enviar e-mail                       |
+| **Caso contrário** | Não fazer nada (o fluxo de trabalho termina)       |
+
+Spam, boletins informativos e mensagens geradas automaticamente são descartados. Todo o restante segue para a próxima etapa.
+
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+
+### Etapa 6: Enviar uma resposta encadeada
+
+Adicione uma ação **Enviar e-mail** no ramo "se verdadeiro". Clique em **Opções avançadas** e depois em **Adicionar In-Reply-To**.
+
+| Campo           | Valor                                  |
+| --------------- | -------------------------------------- |
+| **Para**        | `{{Find Sender.first.handle}}`         |
+| **Assunto**     | `Re: {{trigger.subject}}`              |
+| **Corpo**       | `{{AI Triage & Draft Reply.response}}` |
+| **In-Reply-To** | `{{trigger.headerMessageId}}`          |
+
+O campo In-Reply-To é o que faz disso uma resposta em vez de uma nova conversa. O destinatário a vê encadeada sob o e-mail original no Gmail, Outlook ou qualquer outro cliente.
+
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+
+<Tip>
+**In-Reply-To** espera um `message.headerMessageId` do acionador — é a impressão digital única do e-mail, não um endereço do destinatário. Se você deixá-lo vazio, o e-mail ainda será enviado, apenas como uma mensagem independente.
+</Tip>
+
+<Warning>
+O Gmail usa a linha de assunto para agrupar mensagens em conversas. O assunto **deve** começar com `Re:` (incluindo os dois-pontos e o espaço) para que o Gmail exiba a resposta dentro da conversa original. Sem isso, a resposta aparecerá como uma conversa separada — mesmo que o cabeçalho In-Reply-To esteja definido corretamente.
+</Warning>
+
+### Etapa 7: Testar e ativar
+
+Clique em **Test** e, em seguida, verifique seu cliente de e-mail. A resposta deve aparecer aninhada sob a mensagem original.
+
+Ative quando estiver satisfeito com isso.
+
+## Ideias para desenvolver
+
+* **Responder apenas a VIPs** — adicione um ramo que verifique o domínio do remetente ou se ele existe como um Contato no Twenty
+* **Roteie por intenção** — use prompts separados do Agente de IA para lidar com consultas de vendas de forma diferente de solicitações de suporte
+* **Enriquecer antes de responder** — adicione uma etapa Pesquisar Registros para trazer a empresa do remetente ou o histórico de negócios para o prompt de IA, obtendo respostas mais personalizadas

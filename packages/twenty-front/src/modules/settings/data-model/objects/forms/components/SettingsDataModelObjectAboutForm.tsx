@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
@@ -29,9 +29,9 @@ import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/util
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
-  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   onNewDirtyField?: () => void;
-  conflictingObjectMetadataItem?: ObjectMetadataItem;
+  conflictingObjectMetadataItem?: EnrichedObjectMetadataItem;
 };
 
 const StyledInputsContainer = styled.div`
@@ -299,7 +299,7 @@ export const SettingsDataModelObjectAboutForm = ({
               {
                 label: t`API Name (Singular)`,
                 fieldName:
-                  'nameSingular' as const satisfies StringKeyOf<ObjectMetadataItem>,
+                  'nameSingular' as const satisfies StringKeyOf<EnrichedObjectMetadataItem>,
                 placeholder: `listing`,
                 defaultValue: objectMetadataItem?.nameSingular ?? '',
                 disableEdition:
@@ -309,7 +309,7 @@ export const SettingsDataModelObjectAboutForm = ({
               {
                 label: t`API Name (Plural)`,
                 fieldName:
-                  'namePlural' as const satisfies StringKeyOf<ObjectMetadataItem>,
+                  'namePlural' as const satisfies StringKeyOf<EnrichedObjectMetadataItem>,
                 placeholder: `listings`,
                 defaultValue: objectMetadataItem?.namePlural ?? '',
                 disableEdition:

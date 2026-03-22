@@ -90,8 +90,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     fastModel: PermissionFlagType.WORKSPACE,
     smartModel: PermissionFlagType.WORKSPACE,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
-    autoEnableNewAiModels: PermissionFlagType.AI_SETTINGS,
-    disabledAiModelIds: PermissionFlagType.AI_SETTINGS,
     enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
     useRecommendedModels: PermissionFlagType.AI_SETTINGS,
   };
@@ -150,7 +148,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
+    if (
+      isDefined(payload.subdomain) &&
+      workspace.subdomain !== payload.subdomain
+    ) {
       await this.subdomainManagerService.validateSubdomainOrThrow(
         payload.subdomain,
       );
@@ -229,18 +230,12 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       isDefined(payload.smartModel) || isDefined(payload.fastModel);
     const isChangingAvailability =
       payload.useRecommendedModels !== undefined ||
-      payload.autoEnableNewAiModels !== undefined ||
-      payload.disabledAiModelIds !== undefined ||
       payload.enabledAiModelIds !== undefined;
 
     if (isChangingModels || isChangingAvailability) {
       const effectiveWorkspace = {
         useRecommendedModels:
           payload.useRecommendedModels ?? workspace.useRecommendedModels,
-        autoEnableNewAiModels:
-          payload.autoEnableNewAiModels ?? workspace.autoEnableNewAiModels,
-        disabledAiModelIds:
-          payload.disabledAiModelIds ?? workspace.disabledAiModelIds,
         enabledAiModelIds:
           payload.enabledAiModelIds ?? workspace.enabledAiModelIds,
       };
@@ -258,7 +253,13 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           );
         }
 
-        if (!isModelAllowedByWorkspace(modelId, effectiveWorkspace)) {
+        if (
+          !isModelAllowedByWorkspace(
+            modelId,
+            effectiveWorkspace,
+            this.aiModelRegistryService.getRecommendedModelIds(),
+          )
+        ) {
           throw new WorkspaceException(
             'Selected model is not available in this workspace',
             WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,

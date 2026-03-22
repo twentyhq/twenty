@@ -16,6 +16,7 @@ export const useConfigVariableForm = (variable?: ConfigVariable) => {
       z.number(),
       z.boolean(),
       z.array(z.string()),
+      z.record(z.string(), z.unknown()),
       z.null(),
     ]),
   });
@@ -39,7 +40,10 @@ export const useConfigVariableForm = (variable?: ConfigVariable) => {
     ((typeof currentValue === 'string' && currentValue.trim() !== '') ||
       typeof currentValue === 'boolean' ||
       typeof currentValue === 'number' ||
-      (Array.isArray(currentValue) && currentValue.length > 0))
+      (Array.isArray(currentValue) && currentValue.length > 0) ||
+      (typeof currentValue === 'object' &&
+        currentValue !== null &&
+        !Array.isArray(currentValue)))
   );
 
   return {

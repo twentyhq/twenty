@@ -5,7 +5,7 @@ import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   SubscriptionInterval,
@@ -13,7 +13,7 @@ import {
   WorkspaceActivationStatus,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
@@ -70,18 +70,16 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       eventLogRetentionDays: 365 * 3,
       fastModel: DEFAULT_FAST_MODEL,
       smartModel: DEFAULT_SMART_MODEL,
-      autoEnableNewAiModels: true,
-      disabledAiModelIds: [],
       enabledAiModelIds: [],
       useRecommendedModels: true,
     });
 
-    const companyObjectMetadata = generatedMockObjectMetadataItems.find(
+    const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'company',
     );
 
     const { result } = renderHook(
-      (objectMetadataItem: ObjectMetadataItem) => {
+      (objectMetadataItem: EnrichedObjectMetadataItem) => {
         return useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
       },
       {

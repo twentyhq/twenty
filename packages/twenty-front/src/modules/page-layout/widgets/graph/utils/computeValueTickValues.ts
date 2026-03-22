@@ -25,10 +25,12 @@ export const computeValueTickValues = ({
   minimum,
   maximum,
   tickCount,
+  preserveDomainBounds = false,
 }: {
   minimum: number;
   maximum: number;
   tickCount: number;
+  preserveDomainBounds?: boolean;
 }): {
   tickValues: number[];
   domain: { min: number; max: number };
@@ -48,6 +50,42 @@ export const computeValueTickValues = ({
   if (niceStepInterval === 0) {
     return {
       tickValues: [minimum, maximum],
+      domain: { min: minimum, max: maximum },
+    };
+  }
+
+  if (preserveDomainBounds) {
+    if (minimum > maximum) {
+      return {
+        tickValues: [minimum],
+        domain: { min: minimum, max: minimum },
+      };
+    }
+
+    const tickValues: number[] = [Number(minimum.toFixed(12))];
+    const firstInteriorTick =
+      Math.ceil(minimum / niceStepInterval) * niceStepInterval;
+
+    for (
+      let tickValue = firstInteriorTick;
+      tickValue <= maximum + niceStepInterval / 2;
+      tickValue += niceStepInterval
+    ) {
+      const roundedTickValue = Number(tickValue.toFixed(12));
+
+      if (roundedTickValue > minimum && roundedTickValue < maximum) {
+        tickValues.push(roundedTickValue);
+      }
+    }
+
+    const roundedMaximum = Number(maximum.toFixed(12));
+
+    if (tickValues[tickValues.length - 1] !== roundedMaximum) {
+      tickValues.push(roundedMaximum);
+    }
+
+    return {
+      tickValues,
       domain: { min: minimum, max: maximum },
     };
   }

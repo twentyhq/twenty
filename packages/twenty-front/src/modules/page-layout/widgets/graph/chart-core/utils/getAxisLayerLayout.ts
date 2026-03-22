@@ -104,7 +104,9 @@ export const getAxisLayerLayout = ({
     -margins.left + axisConfig.leftAxisLegendOffsetPadding;
 
   const valueRange = valueDomain.max - valueDomain.min;
-  const shouldRenderZeroLine = hasNegativeValues && valueRange !== 0;
+  const zeroIsWithinDomain =
+    valueDomain.min < 0 && valueDomain.max > 0 && valueRange !== 0;
+  const shouldRenderZeroLine = hasNegativeValues && zeroIsWithinDomain;
   const zeroPosition = shouldRenderZeroLine
     ? isVertical
       ? innerHeight - ((0 - valueDomain.min) / valueRange) * innerHeight

@@ -1,6 +1,6 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export type FlatObjectMetadataItem = Omit<
-  ObjectMetadataItem,
+  EnrichedObjectMetadataItem,
   'fields' | 'readableFields' | 'updatableFields' | 'indexMetadatas'
 >;

@@ -1,17 +1,17 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type GetAvailableObjectMetadataForNewSidebarItemProps = {
-  objectMetadataItems: ObjectMetadataItem[];
-  activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  activeNonSystemObjectMetadataItems: EnrichedObjectMetadataItem[];
   objectMetadataIdsWithIndexView: Set<string>;
   objectMetadataIdsWithDisplayableViews: Set<string>;
 };
 
 type GetAvailableObjectMetadataForNewSidebarItemResult = {
-  availableObjectMetadataItems: ObjectMetadataItem[];
-  availableSystemObjectMetadataItems: ObjectMetadataItem[];
-  objectMetadataItemsWithViews: ObjectMetadataItem[];
-  availableSystemObjectMetadataItemsForView: ObjectMetadataItem[];
+  availableObjectMetadataItems: EnrichedObjectMetadataItem[];
+  availableSystemObjectMetadataItems: EnrichedObjectMetadataItem[];
+  objectMetadataItemsWithViews: EnrichedObjectMetadataItem[];
+  availableSystemObjectMetadataItemsForView: EnrichedObjectMetadataItem[];
 };
 
 export const getAvailableObjectMetadataForNewSidebarItem = ({

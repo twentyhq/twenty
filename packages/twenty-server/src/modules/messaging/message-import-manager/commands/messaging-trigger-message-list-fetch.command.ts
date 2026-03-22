@@ -5,16 +5,14 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
-import {
-  MessageChannelSyncStage,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 type MessagingTriggerMessageListFetchCommandOptions = {
   workspaceId: string;
@@ -33,6 +31,7 @@ export class MessagingTriggerMessageListFetchCommand extends CommandRunner {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
@@ -52,23 +51,14 @@ export class MessagingTriggerMessageListFetchCommand extends CommandRunner {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
-
-      const whereCondition: Record<string, unknown> = {
-        isSyncEnabled: true,
-        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-      };
-
-      if (messageChannelId) {
-        whereCondition.id = messageChannelId;
-      }
-
-      const messageChannels =
-        await messageChannelRepository.find(whereCondition);
+      const messageChannels = await this.messageChannelDataAccessService.find(
+        workspaceId,
+        {
+          isSyncEnabled: true,
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+          ...(messageChannelId ? { id: messageChannelId } : {}),
+        },
+      );
 
       if (messageChannels.length === 0) {
         this.logger.warn(
@@ -83,10 +73,14 @@ export class MessagingTriggerMessageListFetchCommand extends CommandRunner {
       );
 
       for (const messageChannel of messageChannels) {
-        await messageChannelRepository.update(messageChannel.id, {
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
-          syncStageStartedAt: new Date().toISOString(),
-        });
+        await this.messageChannelDataAccessService.update(
+          workspaceId,
+          { id: messageChannel.id },
+          {
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+            syncStageStartedAt: new Date().toISOString(),
+          },
+        );
 
         await this.messageQueueService.add<MessagingMessageListFetchJobData>(
           MessagingMessageListFetchJob.name,

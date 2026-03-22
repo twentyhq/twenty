@@ -1,4 +1,4 @@
-import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
+import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks/useRecordIndexTableLazyQuery';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -20,7 +20,7 @@ import { useEffect } from 'react';
 export const RecordTableVirtualizedInitialDataLoadEffect = () => {
   const { recordTableId, objectNameSingular } = useRecordTableContextOrThrow();
 
-  const { queryIdentifier } = useRecordIndexTableFetchMore(objectNameSingular);
+  const { queryIdentifier } = useRecordIndexTableLazyQuery(objectNameSingular);
 
   const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
     useAtomComponentState(lastRecordTableQueryIdentifierComponentState);

@@ -1,13 +1,13 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 export const useGetDefaultFieldMetadataItemForFilter = () => {
   const store = useStore();
   const getDefaultFieldMetadataItemForFilter = useCallback(
-    (objectMetadataItem: ObjectMetadataItem) => {
+    (objectMetadataItem: EnrichedObjectMetadataItem) => {
       const availableFieldMetadataItemsForFilter = store.get(
         availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
           objectMetadataItemId: objectMetadataItem.id,

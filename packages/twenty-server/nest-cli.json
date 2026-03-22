@@ -51,6 +51,10 @@
       {
         "include": "engine/workspace-manager/dev-seeder/data/sample-files/**",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/metadata-modules/ai/ai-models/ai-providers.json",
+        "outDir": "dist"
       }
     ]
   },

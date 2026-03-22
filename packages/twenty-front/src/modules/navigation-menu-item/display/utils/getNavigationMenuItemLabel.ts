@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -8,7 +8,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 export const getNavigationMenuItemLabel = (
   item: NavigationMenuItem,
   objectMetadataItems: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'id' | 'labelPlural' | 'nameSingular'
   >[],
   views: Pick<View, 'id' | 'name' | 'objectMetadataId' | 'key'>[],

@@ -37,7 +37,8 @@ export class SearchResolver {
   @Query(() => SearchResultConnectionDTO)
   async search(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
     @Args()
     {

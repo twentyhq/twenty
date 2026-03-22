@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
@@ -8,7 +8,7 @@ export const getMorphRelationFromFieldMetadataAndGqlField = ({
   fieldMetadata,
   gqlField,
 }: {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   fieldMetadata: Pick<FieldMorphRelationMetadata, 'morphRelations'>;
   gqlField: string;
 }) => {

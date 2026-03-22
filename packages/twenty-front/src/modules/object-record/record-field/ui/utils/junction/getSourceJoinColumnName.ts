@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
@@ -7,7 +7,7 @@ import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 type GetSourceJoinColumnNameArgs = {
   sourceField: Pick<FieldMetadataItem, 'type' | 'morphRelations' | 'settings'>;
   sourceObjectMetadata: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'id' | 'nameSingular' | 'namePlural'
   >;
 };

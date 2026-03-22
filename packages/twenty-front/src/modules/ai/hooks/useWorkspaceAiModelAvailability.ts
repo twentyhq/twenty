@@ -17,8 +17,6 @@ export const useWorkspaceAiModelAvailability = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const useRecommendedModels = currentWorkspace?.useRecommendedModels ?? true;
-  const autoEnableNewAiModels = currentWorkspace?.autoEnableNewAiModels ?? true;
-  const disabledAiModelIds = currentWorkspace?.disabledAiModelIds ?? [];
   const enabledAiModelIds = currentWorkspace?.enabledAiModelIds ?? [];
 
   const isModelEnabled = (
@@ -33,13 +31,11 @@ export const useWorkspaceAiModelAvailability = () => {
       return model?.isRecommended === true;
     }
 
-    return autoEnableNewAiModels
-      ? !disabledAiModelIds.includes(modelId)
-      : enabledAiModelIds.includes(modelId);
+    return enabledAiModelIds.includes(modelId);
   };
 
   const realModels = aiModels.filter(
-    (model) => !isVirtualModel(model.modelId) && !model.deprecated,
+    (model) => !isVirtualModel(model.modelId) && !model.isDeprecated,
   );
 
   const enabledModels = realModels.filter((model) =>
@@ -57,8 +53,6 @@ export const useWorkspaceAiModelAvailability = () => {
     realModels,
     allModelsWithAvailability,
     useRecommendedModels,
-    autoEnableNewAiModels,
-    disabledAiModelIds,
     enabledAiModelIds,
   };
 };

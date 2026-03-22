@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
@@ -9,7 +9,7 @@ import {
 import { type FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
-  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   objectPermissions: ObjectPermissions;
   recordFilters?: RecordFilter[];
   isShowPage?: boolean;
