@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AGENT_CHAT_UNKNOWN_THREAD_ID } from '@/ai/constants/AgentChatUnknownThreadId';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
@@ -22,7 +23,9 @@ export const AgentChatMessagesFetchEffect = () => {
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
 
   const isNewThread = useMemo(
-    () => currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+    () =>
+      currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ||
+      currentAIChatThread === AGENT_CHAT_UNKNOWN_THREAD_ID,
     [currentAIChatThread],
   );
 
