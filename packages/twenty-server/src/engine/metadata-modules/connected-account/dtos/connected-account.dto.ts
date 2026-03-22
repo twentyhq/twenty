@@ -8,7 +8,6 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -29,14 +28,10 @@ export class ConnectedAccountDTO {
   @Field()
   provider: string;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
+  @HideField()
   accessToken: string | null;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
+  @HideField()
   refreshToken: string | null;
 
   @IsDateString()
@@ -59,8 +54,7 @@ export class ConnectedAccountDTO {
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
 
-  @IsOptional()
-  @Field(() => GraphQLJSON, { nullable: true })
+  @HideField()
   connectionParameters: Record<string, unknown> | null;
 
   @IsDateString()
@@ -68,8 +62,7 @@ export class ConnectedAccountDTO {
   @Field(() => Date, { nullable: true })
   lastSignedInAt: Date | null;
 
-  @IsOptional()
-  @Field(() => GraphQLJSON, { nullable: true })
+  @HideField()
   oidcTokenClaims: Record<string, unknown> | null;
 
   @IsUUID()

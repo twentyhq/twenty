@@ -96,10 +96,55 @@ export class MessageChannelDataAccessService {
           )
         : await this.toCoreWhere(workspaceId, where);
 
-      return this.coreRepository.findOne({
+      const requestedRelations =
+        (options.relations as string[] | undefined)?.slice() ?? [];
+
+      const needsConnectedAccount =
+        requestedRelations.includes('connectedAccount');
+
+      const needsMessageFolders = requestedRelations.includes('messageFolders');
+
+      const coreRelations = requestedRelations.filter(
+        (r) => r !== 'connectedAccount' && r !== 'messageFolders',
+      );
+
+      const result = await this.coreRepository.findOne({
         ...options,
         where: coreWhere,
-      } as FindOneOptions<MessageChannelEntity>) as unknown as Promise<MessageChannelWorkspaceEntity | null>;
+        relations: coreRelations,
+      } as FindOneOptions<MessageChannelEntity>);
+
+      if (!result) {
+        return null;
+      }
+
+      const workspaceResult =
+        result as unknown as MessageChannelWorkspaceEntity;
+
+      if (needsConnectedAccount) {
+        const connectedAccount =
+          await this.connectedAccountDataAccessService.findOne(workspaceId, {
+            where: { id: result.connectedAccountId },
+          });
+
+        if (connectedAccount) {
+          workspaceResult.connectedAccount = connectedAccount;
+        }
+      }
+
+      if (needsMessageFolders) {
+        const workspaceRepository =
+          await this.getWorkspaceRepository(workspaceId);
+
+        const workspaceChannel = await workspaceRepository.findOne({
+          where: { id: result.id },
+          relations: ['messageFolders'],
+        });
+
+        workspaceResult.messageFolders = workspaceChannel?.messageFolders ?? [];
+      }
+
+      return workspaceResult;
     }
 
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);

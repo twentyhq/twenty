@@ -86,8 +86,8 @@ export const SidePanelMessageThreadPage = () => {
 
   const canReply = useMemo(() => {
     return (
-      connectedAccountHandle &&
-      connectedAccountProvider &&
+      isDefined(connectedAccountHandle) &&
+      isDefined(connectedAccountProvider) &&
       ALLOWED_REPLY_PROVIDERS.includes(connectedAccountProvider) &&
       (connectedAccountProvider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
         isDefined(connectedAccountConnectionParameters?.SMTP)) &&
@@ -103,7 +103,7 @@ export const SidePanelMessageThreadPage = () => {
   ]);
 
   const handleReplyClick = () => {
-    if (!isDefined(canReply)) {
+    if (!canReply) {
       return;
     }
 
@@ -118,9 +118,10 @@ export const SidePanelMessageThreadPage = () => {
         window.open(url, '_blank');
         break;
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-        throw new Error('Account provider not supported');
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
       case null:
-        throw new Error('Account provider not provided');
+        return;
       default:
         assertUnreachable(connectedAccountProvider);
     }
@@ -166,14 +167,14 @@ export const SidePanelMessageThreadPage = () => {
           </>
         )}
       </StyledContainer>
-      {isDefined(canReply) && !messageChannelLoading && (
+      {!messageChannelLoading && (
         <StyledButtonContainer>
           <Button
             size="small"
             onClick={handleReplyClick}
             title={t`Reply`}
             Icon={IconArrowBackUp}
-            disabled={!isDefined(canReply)}
+            disabled={!canReply}
           />
         </StyledButtonContainer>
       )}

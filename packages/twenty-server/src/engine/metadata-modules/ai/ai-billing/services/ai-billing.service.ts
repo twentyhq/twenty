@@ -7,7 +7,7 @@ import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/bil
 import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
-import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -17,8 +17,8 @@ export type BillingUsageInput = {
 };
 
 @Injectable()
-export class AIBillingService {
-  private readonly logger = new Logger(AIBillingService.name);
+export class AiBillingService {
+  private readonly logger = new Logger(AiBillingService.name);
 
   constructor(
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -27,11 +27,6 @@ export class AIBillingService {
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
     const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
-
-    if (!model) {
-      throw new Error(`AI model with id ${modelId} not found`);
-    }
-
     const { usage, cacheCreationTokens = 0 } = billingInput;
 
     const breakdown = computeCostBreakdown(model, {

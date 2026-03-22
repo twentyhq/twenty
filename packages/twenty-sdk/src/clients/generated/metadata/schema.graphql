@@ -796,8 +796,6 @@ type Workspace {
   fastModel: String!
   smartModel: String!
   aiAdditionalInstructions: String
-  autoEnableNewAiModels: Boolean!
-  disabledAiModelIds: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean!
   routerModel: String!
@@ -2215,7 +2213,6 @@ type CalendarChannel {
   isContactAutoCreationEnabled: Boolean!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   isSyncEnabled: Boolean!
-  syncCursor: String
   syncedAt: DateTime
   syncStageStartedAt: DateTime
   throttleFailureCount: Float!
@@ -2259,15 +2256,11 @@ type ConnectedAccountDTO {
   id: UUID!
   handle: String!
   provider: String!
-  accessToken: String
-  refreshToken: String
   lastCredentialsRefreshedAt: DateTime
   authFailedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
-  connectionParameters: JSON
   lastSignedInAt: DateTime
-  oidcTokenClaims: JSON
   userWorkspaceId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -2285,7 +2278,6 @@ type MessageChannel {
   excludeGroupEmails: Boolean!
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
   isSyncEnabled: Boolean!
-  syncCursor: String
   syncedAt: DateTime
   syncStatus: MessageChannelSyncStatus!
   syncStage: MessageChannelSyncStage!
@@ -2347,7 +2339,6 @@ enum MessageChannelSyncStage {
 type MessageFolder {
   id: UUID!
   name: String
-  syncCursor: String
   isSentFolder: Boolean!
   isSynced: Boolean!
   parentFolderId: UUID
@@ -2450,48 +2441,49 @@ type ClientAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  inferenceProvider: InferenceProvider!
+  modelFamilyLabel: String
+  sdkPackage: String
   inputCostPerMillionTokensInCredits: Float!
   outputCostPerMillionTokensInCredits: Float!
   nativeCapabilities: NativeModelCapabilities
-  deprecated: Boolean
+  isDeprecated: Boolean
   isRecommended: Boolean
+  providerName: String
+  dataResidency: String
 }
 
 enum ModelFamily {
-  OPENAI
-  ANTHROPIC
-  GOOGLE
+  GPT
+  CLAUDE
+  GEMINI
   MISTRAL
-  XAI
-}
-
-enum InferenceProvider {
-  NONE
-  OPENAI
-  ANTHROPIC
-  BEDROCK
-  GOOGLE
-  MISTRAL
-  OPENAI_COMPATIBLE
-  XAI
-  GROQ
+  GROK
 }
 
 type AdminAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  inferenceProvider: InferenceProvider!
+  modelFamilyLabel: String
+  sdkPackage: String
   isAvailable: Boolean!
   isAdminEnabled: Boolean!
-  deprecated: Boolean
+  isDeprecated: Boolean
   isRecommended: Boolean
+  contextWindowTokens: Float
+  maxOutputTokens: Float
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
+  providerName: String
+  providerLabel: String
+  name: String
+  dataResidency: String
 }
 
 type AdminAIModels {
-  autoEnableNewModels: Boolean!
   models: [AdminAIModelConfig!]!
+  defaultSmartModelId: String
+  defaultFastModelId: String
 }
 
 type Billing {
@@ -2594,6 +2586,7 @@ enum ConfigVariableType {
   ARRAY
   STRING
   ENUM
+  JSON
 }
 
 type ConfigVariablesGroupData {
@@ -2751,6 +2744,25 @@ type AdminPanelHealthServiceData {
   errorMessage: String
   details: String
   queues: [AdminPanelWorkerQueueHealth!]
+}
+
+type ModelsDevModelSuggestion {
+  modelId: String!
+  name: String!
+  inputCostPerMillionTokens: Float!
+  outputCostPerMillionTokens: Float!
+  cachedInputCostPerMillionTokens: Float
+  cacheCreationCostPerMillionTokens: Float
+  contextWindowTokens: Float!
+  maxOutputTokens: Float!
+  modalities: [String!]!
+  supportsReasoning: Boolean!
+}
+
+type ModelsDevProviderSuggestion {
+  id: String!
+  modelCount: Float!
+  npm: String!
 }
 
 type QueueMetricsDataPoint {
@@ -3169,14 +3181,11 @@ type Query {
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
-  messageFolders(messageChannelId: UUID): [MessageFolder!]!
-  messageFolder(id: UUID!): MessageFolder
-  calendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
-  calendarChannel(id: UUID!): CalendarChannel
-  messageChannels(connectedAccountId: UUID): [MessageChannel!]!
-  messageChannel(id: UUID!): MessageChannel
+  myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
+  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  myConnectedAccounts: [ConnectedAccountDTO!]!
   connectedAccounts: [ConnectedAccountDTO!]!
-  connectedAccount(id: UUID!): ConnectedAccountDTO
+  myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
@@ -3212,6 +3221,9 @@ type Query {
   getDatabaseConfigVariable(key: String!): ConfigVariable!
   getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
   findAllApplicationRegistrations: [ApplicationRegistration!]!
+  getAiProviders: JSON!
+  getModelsDevProviders: [ModelsDevProviderSuggestion!]!
+  getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
@@ -3474,18 +3486,11 @@ type Mutation {
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
-  createMessageFolder(input: CreateMessageFolderInput!): MessageFolder!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
-  deleteMessageFolder(id: UUID!): MessageFolder!
-  createCalendarChannel(input: CreateCalendarChannelInput!): CalendarChannel!
-  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
-  deleteCalendarChannel(id: UUID!): CalendarChannel!
-  createMessageChannel(input: CreateMessageChannelInput!): MessageChannel!
+  updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
-  deleteMessageChannel(id: UUID!): MessageChannel!
-  createConnectedAccount(input: CreateConnectedAccountInput!): ConnectedAccountDTO!
-  updateConnectedAccount(input: UpdateConnectedAccountInput!): ConnectedAccountDTO!
   deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
+  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
@@ -3505,11 +3510,17 @@ type Mutation {
   userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
+  setAdminAiModelRecommended(modelId: String!, recommended: Boolean!): Boolean!
+  setAdminDefaultAiModel(role: AiModelRole!, modelId: String!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   deleteDatabaseConfigVariable(key: String!): Boolean!
   retryJobs(queueName: String!, jobIds: [String!]!): RetryJobsResponse!
   deleteJobs(queueName: String!, jobIds: [String!]!): DeleteJobsResponse!
+  addAiProvider(providerName: String!, providerConfig: JSON!): Boolean!
+  removeAiProvider(providerName: String!): Boolean!
+  addModelToProvider(providerName: String!, modelConfig: JSON!): Boolean!
+  removeModelFromProvider(providerName: String!, modelName: String!): Boolean!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
   createPublicDomain(domain: String!): PublicDomain!
@@ -4299,8 +4310,6 @@ input UpdateWorkspaceInput {
   smartModel: String
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
-  autoEnableNewAiModels: Boolean
-  disabledAiModelIds: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean
 }
@@ -4382,66 +4391,18 @@ input EditSsoInput {
   status: SSOIdentityProviderStatus!
 }
 
-input CreateMessageFolderInput {
-  id: UUID
-  name: String
-  isSentFolder: Boolean!
-  isSynced: Boolean!
-  externalId: String
-  pendingSyncAction: MessageFolderPendingSyncAction!
-  messageChannelId: UUID!
-  parentFolderId: UUID
-}
-
 input UpdateMessageFolderInput {
   id: UUID!
   update: UpdateMessageFolderInputUpdates!
 }
 
 input UpdateMessageFolderInputUpdates {
-  name: String
-  syncCursor: String
   isSynced: Boolean
-  pendingSyncAction: MessageFolderPendingSyncAction
 }
 
-input CreateCalendarChannelInput {
-  id: UUID
-  handle: String!
-  visibility: CalendarChannelVisibility!
-  syncStage: CalendarChannelSyncStage!
-  connectedAccountId: UUID!
-  isContactAutoCreationEnabled: Boolean!
-  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
-  isSyncEnabled: Boolean!
-}
-
-input UpdateCalendarChannelInput {
-  id: UUID!
-  update: UpdateCalendarChannelInputUpdates!
-}
-
-input UpdateCalendarChannelInputUpdates {
-  visibility: CalendarChannelVisibility
-  isContactAutoCreationEnabled: Boolean
-  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
-  isSyncEnabled: Boolean
-}
-
-input CreateMessageChannelInput {
-  id: UUID
-  handle: String!
-  visibility: MessageChannelVisibility!
-  type: MessageChannelType!
-  syncStage: MessageChannelSyncStage!
-  connectedAccountId: UUID!
-  isContactAutoCreationEnabled: Boolean!
-  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
-  messageFolderImportPolicy: MessageFolderImportPolicy!
-  excludeNonProfessionalEmails: Boolean!
-  excludeGroupEmails: Boolean!
-  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
-  isSyncEnabled: Boolean!
+input UpdateMessageFoldersInput {
+  ids: [UUID!]!
+  update: UpdateMessageFolderInputUpdates!
 }
 
 input UpdateMessageChannelInput {
@@ -4459,26 +4420,16 @@ input UpdateMessageChannelInputUpdates {
   excludeGroupEmails: Boolean
 }
 
-input CreateConnectedAccountInput {
-  id: UUID
-  handle: String!
-  provider: String!
-  accessToken: String
-  refreshToken: String
-  scopes: [String!]
-  userWorkspaceId: UUID!
-}
-
-input UpdateConnectedAccountInput {
+input UpdateCalendarChannelInput {
   id: UUID!
-  update: UpdateConnectedAccountInputUpdates!
+  update: UpdateCalendarChannelInputUpdates!
 }
 
-input UpdateConnectedAccountInputUpdates {
-  accessToken: String
-  refreshToken: String
-  handleAliases: [String!]
-  scopes: [String!]
+input UpdateCalendarChannelInputUpdates {
+  visibility: CalendarChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
+  isSyncEnabled: Boolean
 }
 
 input CreateWebhookInput {
@@ -4540,6 +4491,11 @@ input ConnectionParameters {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
+}
+
+enum AiModelRole {
+  FAST
+  SMART
 }
 
 input CreateOneAppTokenInput {

@@ -49,17 +49,19 @@ export class CalendarChannelEntity extends WorkspaceRelatedEntity {
   })
   visibility: CalendarChannelVisibility;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
   isContactAutoCreationEnabled: boolean;
 
   @Column({
     type: 'enum',
     enum: CalendarChannelContactAutoCreationPolicy,
     nullable: false,
+    default:
+      CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT_AND_ORGANIZER,
   })
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
   isSyncEnabled: boolean;
 
   @Column({ type: 'varchar', nullable: true })

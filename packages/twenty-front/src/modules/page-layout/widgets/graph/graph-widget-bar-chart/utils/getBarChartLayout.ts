@@ -31,6 +31,8 @@ type GetBarChartLayoutParams = {
   formatOptions: GraphValueFormatOptions;
   effectiveMinimumValue: number;
   effectiveMaximumValue: number;
+  hasExplicitRangeBounds?: boolean;
+  rightTickLabels?: string[];
 };
 
 type BarChartLayoutResult = {
@@ -127,6 +129,8 @@ export const getBarChartLayout = ({
   formatOptions,
   effectiveMinimumValue,
   effectiveMaximumValue,
+  hasExplicitRangeBounds = false,
+  rightTickLabels = [],
 }: GetBarChartLayoutParams): BarChartLayoutResult => {
   const { tickFontSize, legendFontSize } = resolveAxisFontSizes(axisTheme);
 
@@ -152,6 +156,7 @@ export const getBarChartLayout = ({
           minimum: effectiveMinimumValue,
           maximum: effectiveMaximumValue,
           tickCount: currentTickConfiguration.numberOfValueTicks,
+          preserveDomainBounds: hasExplicitRangeBounds,
         }),
       getTickRotation: (currentTickConfiguration) =>
         currentTickConfiguration.bottomAxisTickRotation,
@@ -161,13 +166,19 @@ export const getBarChartLayout = ({
           tickFontSize,
           tickRotation: parameters.tickConfiguration.bottomAxisTickRotation,
         }),
-      resolveMarginInputs: (currentTickConfiguration, tickResult) =>
-        resolveMarginInputs({
+      resolveMarginInputs: (currentTickConfiguration, tickResult) => {
+        const marginInputs = resolveMarginInputs({
           tickConfiguration: currentTickConfiguration,
           tickResult,
           layout,
           formatOptions,
-        }),
+        });
+
+        return {
+          ...marginInputs,
+          rightTickLabels,
+        };
+      },
     });
 
   const { tickValues: valueTickValues, domain: valueDomain } = valueTickResult;

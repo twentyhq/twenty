@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { validate as uuidValidate } from 'uuid';
 import {
   type FindOneOptions,
   type FindOptionsWhere,
@@ -30,6 +31,31 @@ export class MessageFolderDataAccessService {
       FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
       workspaceId,
     );
+  }
+
+  // Workspace stores parentFolderId as an externalId (text),
+  // core stores it as a uuid FK. Resolve during dual-write.
+  private async toCore(
+    workspaceId: string,
+    data: Partial<MessageFolderWorkspaceEntity>,
+  ): Promise<Record<string, unknown>> {
+    const coreData: Record<string, unknown> = { ...data, workspaceId };
+    const parentFolderId = coreData.parentFolderId as string | null;
+
+    if (parentFolderId && !uuidValidate(parentFolderId)) {
+      const parentFolder = await this.coreRepository.findOne({
+        where: {
+          workspaceId,
+          messageChannelId: coreData.messageChannelId as string,
+          externalId: parentFolderId,
+        },
+        select: ['id'],
+      });
+
+      coreData.parentFolderId = parentFolder?.id ?? null;
+    }
+
+    return coreData;
   }
 
   async getWorkspaceRepository(workspaceId: string) {
@@ -94,10 +120,11 @@ export class MessageFolderDataAccessService {
 
     if (await this.isMigrated(workspaceId)) {
       try {
-        await this.coreRepository.save({
-          ...data,
-          workspaceId,
-        } as unknown as MessageFolderEntity);
+        const coreData = await this.toCore(workspaceId, data);
+
+        await this.coreRepository.save(
+          coreData as unknown as MessageFolderEntity,
+        );
       } catch (error) {
         this.logger.error(
           `Failed to dual-write messageFolder to core: ${error}`,

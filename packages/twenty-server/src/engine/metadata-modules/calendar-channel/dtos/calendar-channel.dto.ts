@@ -59,9 +59,7 @@ export class CalendarChannelDTO {
   @Field()
   isSyncEnabled: boolean;
 
-  @IsString()
-  @IsOptional()
-  @Field(() => String, { nullable: true })
+  @HideField()
   syncCursor: string | null;
 
   @IsDateString()

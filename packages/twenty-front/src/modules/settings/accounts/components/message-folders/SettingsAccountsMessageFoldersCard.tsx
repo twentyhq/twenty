@@ -1,13 +1,10 @@
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersSkeletonLoader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersSkeletonLoader';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
 import { computeFolderIdsForSyncToggle } from '@/settings/accounts/components/message-folders/utils/computeFolderIdsForSyncToggle';
 import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { useMyMessageFolders } from '@/settings/accounts/hooks/useMyMessageFolders';
 import { useUpdateMessageFoldersSyncStatus } from '@/settings/accounts/hooks/useUpdateMessageFoldersSyncStatus';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -75,19 +72,9 @@ export const SettingsAccountsMessageFoldersCard = () => {
   const { updateMessageFoldersSyncStatus } =
     useUpdateMessageFoldersSyncStatus();
 
-  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-    depth: 1,
-    shouldOnlyLoadRelationIdentifiers: false,
-  });
-
-  const { record: messageChannel, loading } = useFindOneRecord<MessageChannel>({
-    objectNameSingular: CoreObjectNameSingular.MessageChannel,
-    objectRecordId: settingsAccountsSelectedMessageChannel?.id,
-    recordGqlFields,
-  });
-
-  const { messageFolders = [] } = messageChannel ?? {};
+  const { messageFolders, loading } = useMyMessageFolders(
+    settingsAccountsSelectedMessageChannel?.id,
+  );
 
   const filteredMessageFolders = useMemo(() => {
     return messageFolders.filter((folder) =>
