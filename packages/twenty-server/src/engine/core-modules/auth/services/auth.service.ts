@@ -75,6 +75,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -1086,7 +1087,11 @@ export class AuthService {
         input.workspaceId,
       );
 
-    if (!isConnectedAccountMigrated) {
+    const willBeEnabledByDefault = DEFAULT_FEATURE_FLAGS.includes(
+      FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
+    );
+
+    if (!isConnectedAccountMigrated && !willBeEnabledByDefault) {
       return;
     }
 
