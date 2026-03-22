@@ -90,7 +90,7 @@ export class UsageAnalyticsService {
     const query = `
       SELECT
         ${groupByField} AS key,
-        sum(creditsUsed) AS creditsUsed
+        sum(creditsUsedMicro) AS creditsUsed
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
@@ -127,7 +127,7 @@ export class UsageAnalyticsService {
     const query = `
       SELECT
         formatDateTime(timestamp, '%Y-%m-%d') AS date,
-        sum(creditsUsed) AS creditsUsed
+        sum(creditsUsedMicro) AS creditsUsed
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}

@@ -341,7 +341,7 @@ describe('AiBillingService', () => {
           {
             resourceType: UsageResourceType.AI,
             operationType: UsageOperationType.AI_TOKEN,
-            creditsUsed: 7500,
+            creditsUsedMicro: 7500,
             quantity: 1500,
             unit: UsageUnit.TOKEN,
             resourceId: 'agent-id-123',

@@ -83,9 +83,9 @@ export const SettingsUsageAnalyticsSection = () => {
   const timeSeries = dailyAnalytics?.timeSeries ?? [];
   const usageByUser = userAnalytics?.usageByUser ?? [];
 
-  const allLoading = typeLoading && dailyLoading && userLoading;
+  const anyLoading = typeLoading || dailyLoading || userLoading;
 
-  if (allLoading) {
+  if (anyLoading) {
     return null;
   }
 

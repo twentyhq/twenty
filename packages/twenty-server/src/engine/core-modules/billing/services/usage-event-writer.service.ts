@@ -46,7 +46,7 @@ export class UsageEventWriterService {
       operationType: usageEvent.operationType,
       quantity: usageEvent.quantity,
       unit: usageEvent.unit,
-      creditsUsed: usageEvent.creditsUsed,
+      creditsUsedMicro: usageEvent.creditsUsedMicro,
       resourceId: usageEvent.resourceId ?? '',
       resourceContext: usageEvent.resourceContext ?? '',
       metadata: '{}',

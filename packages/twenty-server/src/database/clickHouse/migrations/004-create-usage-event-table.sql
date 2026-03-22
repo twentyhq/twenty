@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS usageEvent
     `operationType`      LowCardinality(String) NOT NULL,
     `quantity`           Float64 NOT NULL DEFAULT 0,
     `unit`               LowCardinality(String) NOT NULL DEFAULT 'CREDIT',
-    `creditsUsed`        Float64 NOT NULL DEFAULT 0,
+    `creditsUsedMicro`   Int64 NOT NULL DEFAULT 0,
     `resourceId`         String DEFAULT '',
     `resourceContext`    String DEFAULT '',
     `metadata`           JSON

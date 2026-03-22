@@ -43,7 +43,7 @@ type ClickHouseUsageEventRecord = {
   operationType?: string;
   quantity?: number;
   unit?: string;
-  creditsUsed?: number;
+  creditsUsedMicro?: number;
   resourceId?: string;
   resourceContext?: string;
   metadata?: Record<string, unknown>;
@@ -261,7 +261,7 @@ export class EventLogsService {
           operationType: record.operationType,
           quantity: record.quantity,
           unit: record.unit,
-          creditsUsed: record.creditsUsed,
+          creditsUsedMicro: record.creditsUsedMicro,
           resourceId: record.resourceId,
           resourceContext: record.resourceContext,
           ...(record.metadata ?? {}),

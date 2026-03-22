@@ -7,7 +7,7 @@ import { type UsageUnit } from 'src/engine/core-modules/billing/enums/usage-unit
 export type UsageEvent = {
   resourceType: UsageResourceType;
   operationType: UsageOperationType;
-  creditsUsed: number;
+  creditsUsedMicro: number;
   quantity: number;
   unit: UsageUnit;
   resourceId?: string | null;

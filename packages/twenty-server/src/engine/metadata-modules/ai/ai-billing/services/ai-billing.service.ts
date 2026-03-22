@@ -59,17 +59,18 @@ export class AiBillingService {
     userWorkspaceId?: string | null,
   ): void {
     const costInDollars = this.calculateCost(modelId, billingInput);
-    const creditsUsed = Math.round(
+    const creditsUsedMicro = Math.round(
       convertDollarsToBillingCredits(costInDollars),
     );
 
     const totalTokens =
       (billingInput.usage.inputTokens ?? 0) +
-      (billingInput.usage.outputTokens ?? 0);
+      (billingInput.usage.outputTokens ?? 0) +
+      (billingInput.cacheCreationTokens ?? 0);
 
     this.emitAiTokenUsageEvent(
       workspaceId,
-      creditsUsed,
+      creditsUsedMicro,
       totalTokens,
       modelId,
       agentId,
@@ -79,7 +80,7 @@ export class AiBillingService {
 
   private emitAiTokenUsageEvent(
     workspaceId: string,
-    creditsUsed: number,
+    creditsUsedMicro: number,
     totalTokens: number,
     modelId: ModelId,
     agentId?: string | null,
@@ -91,7 +92,7 @@ export class AiBillingService {
         {
           resourceType: UsageResourceType.AI,
           operationType: UsageOperationType.AI_TOKEN,
-          creditsUsed,
+          creditsUsedMicro,
           quantity: totalTokens,
           unit: UsageUnit.TOKEN,
           resourceId: agentId || null,

@@ -197,7 +197,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsed: 1,
+            creditsUsedMicro: 1,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
@@ -654,7 +654,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsed: 1,
+            creditsUsedMicro: 1,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',

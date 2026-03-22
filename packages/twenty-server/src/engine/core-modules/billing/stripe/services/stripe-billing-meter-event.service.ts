@@ -34,7 +34,7 @@ export class StripeBillingMeterEventService {
     stripeCustomerId: string;
   }) {
     const payload: Record<string, string> = {
-      value: usageEvent.creditsUsed.toString(),
+      value: usageEvent.creditsUsedMicro.toString(),
       stripe_customer_id: stripeCustomerId,
       execution_type: usageEvent.operationType.toLowerCase(),
     };

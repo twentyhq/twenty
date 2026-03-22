@@ -345,8 +345,10 @@ export class BillingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input', { nullable: true }) input?: UsageAnalyticsInput,
   ): Promise<UsageAnalyticsDTO> {
-    const { defaultPeriodStart, defaultPeriodEnd } =
-      await this.getDefaultAnalyticsPeriod(workspace.id);
+    const defaultPeriodEnd = new Date();
+    const defaultPeriodStart = new Date();
+
+    defaultPeriodStart.setDate(defaultPeriodStart.getDate() - 30);
 
     const periodStart = input?.periodStart ?? defaultPeriodStart;
     const periodEnd = input?.periodEnd ?? defaultPeriodEnd;
@@ -422,29 +424,6 @@ export class BillingResolver {
           { workspaceId: workspace.id },
         ),
     };
-  }
-
-  private async getDefaultAnalyticsPeriod(
-    workspaceId: string,
-  ): Promise<{ defaultPeriodStart: Date; defaultPeriodEnd: Date }> {
-    if (this.billingService.isBillingEnabled()) {
-      const subscription =
-        await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-          { workspaceId },
-        );
-
-      return {
-        defaultPeriodStart: subscription.currentPeriodStart,
-        defaultPeriodEnd: subscription.currentPeriodEnd,
-      };
-    }
-
-    const defaultPeriodEnd = new Date();
-    const defaultPeriodStart = new Date();
-
-    defaultPeriodStart.setDate(defaultPeriodStart.getDate() - 30);
-
-    return { defaultPeriodStart, defaultPeriodEnd };
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

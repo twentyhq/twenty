@@ -134,7 +134,7 @@ export const SettingsUsageUserDetail = () => {
   ];
 
   const isInitialLoading =
-    dailyLoading && typeLoading && !dailyData && !typeData;
+    (dailyLoading || typeLoading) && !dailyData && !typeData;
 
   const breadcrumbLinks = [
     {
