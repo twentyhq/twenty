@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,7 +7,7 @@ export const getRecordFilterFieldMetadataItem = ({
   objectMetadataItems,
 }: {
   recordFilter: RecordFilter;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 }) => {
   const allFieldMetadataItems = objectMetadataItems.flatMap(
     (objectMetadataItem) => objectMetadataItem.fields,

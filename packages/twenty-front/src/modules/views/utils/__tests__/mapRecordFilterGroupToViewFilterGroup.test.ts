@@ -8,12 +8,12 @@ import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFi
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewOpenRecordIn, ViewVisibility } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
 describe('mapRecordFilterGroupToViewFilterGroup', () => {
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  const mockObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
   );
 

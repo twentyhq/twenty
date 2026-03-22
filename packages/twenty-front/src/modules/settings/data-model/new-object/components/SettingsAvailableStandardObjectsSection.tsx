@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -13,7 +13,7 @@ import {
 } from './SettingsAvailableStandardObjectItemTableRow';
 
 type SettingsAvailableStandardObjectsSectionProps = {
-  objectItems: ObjectMetadataItem[];
+  objectItems: EnrichedObjectMetadataItem[];
   onChange: (selectedIds: Record<string, boolean>) => void;
   selectedIds: Record<string, boolean>;
 };

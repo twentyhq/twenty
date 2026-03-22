@@ -13,7 +13,7 @@ import { LoadedDecorator } from '~/testing/decorators/LoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -58,7 +58,7 @@ const meta: Meta<typeof NavigationDrawer> = {
       useEffect(() => {
         setTestObjectMetadataItemsInMetadataStore(
           jotaiStore,
-          generatedMockObjectMetadataItems,
+          getTestEnrichedObjectMetadataItemsMock(),
         );
         setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       }, [setCurrentWorkspaceMember]);

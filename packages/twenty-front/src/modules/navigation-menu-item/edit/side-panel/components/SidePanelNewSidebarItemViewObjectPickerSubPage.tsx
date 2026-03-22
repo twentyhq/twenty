@@ -2,7 +2,7 @@ import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/u
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { SidePanelNewSidebarItemViewObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
@@ -46,7 +46,9 @@ export const SidePanelNewSidebarItemViewObjectPickerSubPage = () => {
     objectMetadataIdsWithDisplayableViews,
   });
 
-  const handleSelectObject = (objectMetadataItem: ObjectMetadataItem) => {
+  const handleSelectObject = (
+    objectMetadataItem: EnrichedObjectMetadataItem,
+  ) => {
     setSelectedObjectMetadataIdForViewFlow(objectMetadataItem.id);
     navigateToSidePanelSubPage(
       SidePanelSubPages.NewSidebarItemViewPicker,

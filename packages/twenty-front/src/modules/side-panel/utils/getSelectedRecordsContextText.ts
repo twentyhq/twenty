@@ -1,9 +1,9 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const getSelectedRecordsContextText = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   records: ObjectRecord[],
   totalCount: number,
   allowRequestsToTwentyIcons: boolean,

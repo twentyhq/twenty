@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { type Node, type NodeProps } from '@xyflow/react';
 import { Link } from 'react-router-dom';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectFieldRow } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewField';
@@ -17,7 +17,10 @@ import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
+type SettingsDataModelOverviewObjectNode = Node<
+  EnrichedObjectMetadataItem,
+  'object'
+>;
 type SettingsDataModelOverviewObjectProps =
   NodeProps<SettingsDataModelOverviewObjectNode>;
 

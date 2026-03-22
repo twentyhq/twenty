@@ -3,7 +3,7 @@ import { IconSettings } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -13,13 +13,15 @@ import { SidePanelObjectPickerItem } from '@/navigation-menu-item/edit/side-pane
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelObjectPickerSubViewProps = {
-  objects: ObjectMetadataItem[];
+  objects: EnrichedObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
   onOpenSystemPicker: () => void;
   isViewItem: boolean;
-  onSelectObjectForViewEdit?: (objectMetadataItem: ObjectMetadataItem) => void;
-  onChangeObject: (objectMetadataItem: ObjectMetadataItem) => void;
+  onSelectObjectForViewEdit?: (
+    objectMetadataItem: EnrichedObjectMetadataItem,
+  ) => void;
+  onChangeObject: (objectMetadataItem: EnrichedObjectMetadataItem) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   emptyNoResultsText?: string;
   disableDrag?: boolean;

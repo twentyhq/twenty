@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -20,7 +20,7 @@ export const WorkflowFieldsMultiSelect = ({
 }: {
   label: string;
   placeholder: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   handleFieldsChange: (field: FieldMultiSelectValue | string) => void;
   readonly: boolean;
   defaultFields: string[] | undefined | null;

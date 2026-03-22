@@ -1,6 +1,6 @@
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetActivityTargetFieldNameForObjectArgs = {
@@ -8,7 +8,7 @@ type GetActivityTargetFieldNameForObjectArgs = {
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
   targetObjectMetadataId: string;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   isMorphRelation?: boolean;
 };
 
