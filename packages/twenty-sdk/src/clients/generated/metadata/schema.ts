@@ -874,8 +874,14 @@ export interface EmailsConfiguration {
 
 export interface FieldConfiguration {
     configurationType: WidgetConfigurationType
+    fieldMetadataId: Scalars['String']
+    fieldDisplayMode: FieldDisplayMode
     __typename: 'FieldConfiguration'
 }
+
+
+/** Display mode for field configuration widgets */
+export type FieldDisplayMode = 'CARD' | 'FIELD' | 'VIEW'
 
 export interface FieldRichTextConfiguration {
     configurationType: WidgetConfigurationType
@@ -3933,6 +3939,8 @@ export interface EmailsConfigurationGenqlSelection{
 
 export interface FieldConfigurationGenqlSelection{
     configurationType?: boolean | number
+    fieldMetadataId?: boolean | number
+    fieldDisplayMode?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8888,6 +8896,12 @@ export const enumBarChartGroupMode = {
 export const enumBarChartLayout = {
    VERTICAL: 'VERTICAL' as const,
    HORIZONTAL: 'HORIZONTAL' as const
+}
+
+export const enumFieldDisplayMode = {
+   CARD: 'CARD' as const,
+   FIELD: 'FIELD' as const,
+   VIEW: 'VIEW' as const
 }
 
 export const enumPageLayoutType = {

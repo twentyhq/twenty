@@ -1156,6 +1156,15 @@ type EmailsConfiguration {
 
 type FieldConfiguration {
   configurationType: WidgetConfigurationType!
+  fieldMetadataId: String!
+  fieldDisplayMode: FieldDisplayMode!
+}
+
+"""Display mode for field configuration widgets"""
+enum FieldDisplayMode {
+  CARD
+  FIELD
+  VIEW
 }
 
 type FieldRichTextConfiguration {
