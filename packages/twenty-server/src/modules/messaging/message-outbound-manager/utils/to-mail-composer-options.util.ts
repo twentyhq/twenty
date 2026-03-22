@@ -21,5 +21,11 @@ export const toMailComposerOptions = (
           })),
         }
       : {}),
+    ...(sendMessageInput.inReplyTo
+      ? {
+          inReplyTo: sendMessageInput.inReplyTo,
+          references: sendMessageInput.inReplyTo,
+        }
+      : {}),
   };
 };

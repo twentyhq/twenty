@@ -4,7 +4,7 @@ import { CommandMenuContextProviderWorkflowObjects } from '@/command-menu-item/c
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,7 +17,7 @@ export const CommandMenuContextProviderLegacy = ({
   objectMetadataItemOverride,
 }: Omit<CommandMenuContextType, 'commandMenuItems'> & {
   children: React.ReactNode;
-  objectMetadataItemOverride?: ObjectMetadataItem;
+  objectMetadataItemOverride?: EnrichedObjectMetadataItem;
 }) => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,

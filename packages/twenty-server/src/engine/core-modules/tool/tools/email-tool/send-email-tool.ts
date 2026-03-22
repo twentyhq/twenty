@@ -88,6 +88,7 @@ export class SendEmailTool implements Tool {
         body: data.plainTextBody,
         html: data.sanitizedHtmlBody,
         attachments: data.attachments,
+        inReplyTo: data.inReplyTo,
       },
       data.connectedAccount,
     );

@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
+import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -34,7 +34,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const RelationFieldValueSetterEffect = () => {
   const setRecordStore = useSetAtomFamilyState(
@@ -72,7 +72,9 @@ const RelationFieldValueSetterEffect = () => {
     );
 
     const { flatObjects, flatFields, flatIndexes } =
-      splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
+      splitCompositeObjectMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+      );
 
     replaceDraft('objectMetadataItems', flatObjects);
     replaceDraft('fieldMetadataItems', flatFields);

@@ -29,7 +29,7 @@ import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils
 import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
 import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -106,7 +106,7 @@ export const WorkspaceSection = () => {
 
   const openViewOrRecordEditPanelAndNavigate = (
     item: NavigationMenuItemClickParams['item'],
-    objectMetadataItem: ObjectMetadataItem | null | undefined,
+    objectMetadataItem: EnrichedObjectMetadataItem | null | undefined,
   ) => {
     if (objectMetadataItem) {
       const label =
@@ -151,7 +151,7 @@ export const WorkspaceSection = () => {
   };
 
   const handleActiveObjectMetadataItemClick = (
-    objectMetadataItem: ObjectMetadataItem,
+    objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => {
     enterLayoutCustomizationMode();

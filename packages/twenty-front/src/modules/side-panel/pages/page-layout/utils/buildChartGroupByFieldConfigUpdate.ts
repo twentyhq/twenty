@@ -2,7 +2,7 @@ import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/Ch
 import { getChartDefaultOrderByForFieldType } from '@/side-panel/pages/page-layout/utils/getChartDefaultOrderByForFieldType';
 import { isFieldOrRelationNestedFieldDateKind } from '@/side-panel/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataArrayKind } from 'twenty-shared/utils';
 import { BarChartGroupMode, GraphOrderBy } from '~/generated-metadata/graphql';
@@ -13,8 +13,8 @@ type BuildChartGroupByFieldConfigUpdateArgs<T extends ChartConfiguration> = {
   subFieldNameKey: keyof T;
   fieldId: string | null;
   subFieldName: string | null;
-  objectMetadataItem?: ObjectMetadataItem;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItem?: EnrichedObjectMetadataItem;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 };
 
 export const buildChartGroupByFieldConfigUpdate = <

@@ -72,33 +72,39 @@ export const useMyConnectedAccounts = () => {
       return [];
     }
 
-    return metadataData.myConnectedAccounts.map(
-      (account: MetadataConnectedAccount) =>
-        ({
-          id: account.id,
-          handle: account.handle,
-          provider: account.provider,
-          accessToken: '',
-          refreshToken: '',
-          accountOwnerId: account.userWorkspaceId,
-          lastSyncHistoryId: '',
-          authFailedAt: account.authFailedAt
-            ? new Date(account.authFailedAt)
-            : null,
-          messageChannels: messageChannels.filter(
-            (channel) =>
-              (channel as unknown as { connectedAccountId: string })
-                .connectedAccountId === account.id,
-          ),
-          calendarChannels: calendarChannels.filter(
-            (channel) =>
-              (channel as unknown as { connectedAccountId: string })
-                .connectedAccountId === account.id,
-          ),
-          scopes: account.scopes,
-          __typename: 'ConnectedAccount',
-        }) as ConnectedAccount,
-    );
+    return metadataData.myConnectedAccounts
+      .map(
+        (account: MetadataConnectedAccount) =>
+          ({
+            id: account.id,
+            handle: account.handle,
+            provider: account.provider,
+            accessToken: '',
+            refreshToken: '',
+            accountOwnerId: account.userWorkspaceId,
+            lastSyncHistoryId: '',
+            authFailedAt: account.authFailedAt
+              ? new Date(account.authFailedAt)
+              : null,
+            messageChannels: messageChannels.filter(
+              (channel) =>
+                'connectedAccountId' in channel &&
+                channel.connectedAccountId === account.id,
+            ),
+            calendarChannels: calendarChannels.filter(
+              (channel) =>
+                'connectedAccountId' in channel &&
+                channel.connectedAccountId === account.id,
+            ),
+            scopes: account.scopes,
+            __typename: 'ConnectedAccount',
+          }) as ConnectedAccount,
+      )
+      .filter(
+        (account) =>
+          account.messageChannels.length > 0 ||
+          account.calendarChannels.length > 0,
+      );
   }, [
     isMigrated,
     workspaceAccounts,

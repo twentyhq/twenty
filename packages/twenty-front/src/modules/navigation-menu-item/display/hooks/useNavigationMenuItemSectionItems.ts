@@ -6,7 +6,7 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/d
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
@@ -18,7 +18,7 @@ import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 
 export type NavigationMenuItemClickParams = {
   item: NavigationMenuItem;
-  objectMetadataItem?: ObjectMetadataItem | null;
+  objectMetadataItem?: EnrichedObjectMetadataItem | null;
 };
 
 export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {

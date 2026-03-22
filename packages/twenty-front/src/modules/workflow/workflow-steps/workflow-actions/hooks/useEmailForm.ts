@@ -28,6 +28,7 @@ export const useEmailForm = ({
       subject: action.settings.input.subject ?? '',
       body: action.settings.input.body ?? '',
       files: action.settings.input.files ?? [],
+      inReplyTo: action.settings.input.inReplyTo ?? '',
     };
   });
 
@@ -46,6 +47,7 @@ export const useEmailForm = ({
           subject: formData.subject,
           body: formData.body,
           files: formData.files,
+          inReplyTo: formData.inReplyTo,
         },
       },
     });

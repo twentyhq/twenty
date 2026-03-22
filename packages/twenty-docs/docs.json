@@ -175,7 +175,8 @@
                           "user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -621,7 +622,8 @@
                           "l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/fr/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/fr/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/fr/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/fr/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -1067,7 +1069,8 @@
                           "l/ar/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ar/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ar/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/ar/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/ar/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -1513,7 +1516,8 @@
                           "l/cs/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/cs/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/cs/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/cs/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -1959,7 +1963,8 @@
                           "l/de/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/de/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/de/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/de/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/de/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/de/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -2405,7 +2410,8 @@
                           "l/es/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/es/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/es/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/es/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/es/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/es/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -2851,7 +2857,8 @@
                           "l/it/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/it/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/it/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/it/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/it/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -3297,7 +3304,8 @@
                           "l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/ja/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -3743,7 +3751,8 @@
                           "l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ko/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ko/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/ko/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/ko/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -4189,7 +4198,8 @@
                           "l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/pt/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/pt/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/pt/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/pt/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -4635,7 +4645,8 @@
                           "l/ro/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ro/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ro/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/ro/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/ro/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -5081,7 +5092,8 @@
                           "l/ru/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/ru/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/ru/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/ru/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/ru/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -5527,7 +5539,8 @@
                           "l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/tr/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/tr/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/tr/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/tr/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {
@@ -5973,7 +5986,8 @@
                           "l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/display-related-record-data",
                           "l/zh/user-guide/workflows/how-tos/crm-automations/closed-won-automations",
-                          "l/zh/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities"
+                          "l/zh/user-guide/workflows/how-tos/crm-automations/detect-stale-opportunities",
+                          "l/zh/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails"
                         ]
                       },
                       {

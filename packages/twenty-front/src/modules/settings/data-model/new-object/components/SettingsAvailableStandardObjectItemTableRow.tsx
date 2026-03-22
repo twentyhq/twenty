@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Checkbox } from 'twenty-ui/input';
@@ -13,7 +13,7 @@ export const AVAILABLE_STANDARD_OBJECTS_GRID_TEMPLATE_COLUMNS =
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;
-  objectItem: ObjectMetadataItem;
+  objectItem: EnrichedObjectMetadataItem;
   onClick?: () => void;
 };
 

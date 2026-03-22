@@ -932,6 +932,11 @@ msgstr "Add filter rule"
 msgid "Add first filter"
 msgstr "Add first filter"
 
+#. js-lingui-id: 7K4Hxr
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Add In-Reply-To"
+msgstr "Add In-Reply-To"
+
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
@@ -5542,6 +5547,11 @@ msgstr "Enter limit"
 msgid "Enter link"
 msgstr "Enter link"
 
+#. js-lingui-id: KR7n/y
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Enter Message-ID to reply to"
+msgstr "Enter Message-ID to reply to"
+
 #. js-lingui-id: O0qPMN
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number between 0 and 23"
@@ -7555,6 +7565,11 @@ msgstr "Importing Data ..."
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "In {dateDiff}"
 msgstr "In {dateDiff}"
+
+#. js-lingui-id: hVockd
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "In-Reply-To"
+msgstr "In-Reply-To"
 
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx

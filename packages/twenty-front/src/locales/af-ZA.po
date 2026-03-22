@@ -937,6 +937,11 @@ msgstr "Voeg filterreël by"
 msgid "Add first filter"
 msgstr "Voeg eerste filter by"
 
+#. js-lingui-id: 7K4Hxr
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Add In-Reply-To"
+msgstr ""
+
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
@@ -5547,6 +5552,11 @@ msgstr ""
 msgid "Enter link"
 msgstr "Tik skakel in"
 
+#. js-lingui-id: KR7n/y
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Enter Message-ID to reply to"
+msgstr ""
+
 #. js-lingui-id: O0qPMN
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number between 0 and 23"
@@ -7560,6 +7570,11 @@ msgstr "Bezig met invoer van data ..."
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "In {dateDiff}"
 msgstr "In {dateDiff}"
+
+#. js-lingui-id: hVockd
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "In-Reply-To"
+msgstr ""
 
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx

@@ -5,12 +5,13 @@ import {
   type RecordFilterValueDependencies,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 describe('computeContextStoreFilters', () => {
-  const personObjectMetadataItem = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'person',
-  )!;
+  const personObjectMetadataItem =
+    getTestEnrichedObjectMetadataItemsMock().find(
+      (item) => item.nameSingular === 'person',
+    )!;
 
   const mockFilterValueDependencies: RecordFilterValueDependencies = {
     currentWorkspaceMemberId: '32219445-f587-4c40-b2b1-6d3205ed96da',
