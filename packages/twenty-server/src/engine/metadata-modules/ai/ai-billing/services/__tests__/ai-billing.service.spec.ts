@@ -1,9 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { USAGE_RECORDED } from 'src/engine/core-modules/billing/constants/usage-recorded.constant';
-import { UsageOperationType } from 'src/engine/core-modules/billing/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/billing/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/billing/enums/usage-unit.enum';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';

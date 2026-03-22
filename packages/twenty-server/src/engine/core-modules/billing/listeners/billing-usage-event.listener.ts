@@ -5,18 +5,16 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
-import { USAGE_RECORDED } from 'src/engine/core-modules/billing/constants/usage-recorded.constant';
-import { UsageEventWriterService } from 'src/engine/core-modules/billing/services/usage-event-writer.service';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 @Injectable()
-export class UsageEventListener {
+export class BillingUsageEventListener {
   constructor(
     private readonly billingUsageService: BillingUsageService,
-    private readonly usageEventWriterService: UsageEventWriterService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -27,11 +25,6 @@ export class UsageEventListener {
     if (!isDefined(payload.workspaceId)) {
       return;
     }
-
-    this.usageEventWriterService.writeToClickHouse(
-      payload.workspaceId,
-      payload.events,
-    );
 
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
@@ -45,7 +38,7 @@ export class UsageEventListener {
       return;
     }
 
-    await this.usageEventWriterService.billUsage({
+    await this.billingUsageService.billUsage({
       workspaceId: payload.workspaceId,
       usageEvents: payload.events,
     });

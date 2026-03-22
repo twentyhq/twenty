@@ -2,11 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
 
-import { USAGE_RECORDED } from 'src/engine/core-modules/billing/constants/usage-recorded.constant';
-import { UsageOperationType } from 'src/engine/core-modules/billing/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/billing/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/billing/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';

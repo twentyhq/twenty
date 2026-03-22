@@ -4,8 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -14,22 +13,8 @@ export class UsageEventWriterService {
 
   constructor(
     private readonly clickHouseService: ClickHouseService,
-    private readonly billingUsageService: BillingUsageService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
-
-  async billUsage({
-    workspaceId,
-    usageEvents,
-  }: {
-    workspaceId: string;
-    usageEvents: UsageEvent[];
-  }): Promise<void> {
-    await this.billingUsageService.billUsage({
-      workspaceId,
-      usageEvents,
-    });
-  }
 
   writeToClickHouse(workspaceId: string, usageEvents: UsageEvent[]): void {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {

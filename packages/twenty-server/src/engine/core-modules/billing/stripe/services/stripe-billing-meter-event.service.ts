@@ -6,7 +6,7 @@ import type Stripe from 'stripe';
 
 import { STRIPE_BILLING_METER_EVENT_NAME } from 'src/engine/core-modules/billing/stripe/constants/stripe-billing-meter-event-name.constant';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()

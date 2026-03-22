@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 export type UsageBreakdownItem = {
   key: string;
@@ -15,6 +15,16 @@ export type UsageBreakdownItem = {
 export type UsageTimeSeriesPoint = {
   date: string;
   creditsUsed: number;
+};
+
+type BreakdownRowMicro = {
+  key: string;
+  creditsUsedMicro: number;
+};
+
+type TimeSeriesRowMicro = {
+  date: string;
+  creditsUsedMicro: number;
 };
 
 type PeriodParams = {
@@ -90,28 +100,28 @@ export class UsageAnalyticsService {
     const query = `
       SELECT
         ${groupByField} AS key,
-        sum(creditsUsedMicro) AS creditsUsed
+        sum(creditsUsedMicro) AS creditsUsedMicro
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
         ${extraWhere}
       GROUP BY ${groupByField}
-      ORDER BY creditsUsed DESC
+      ORDER BY creditsUsedMicro DESC
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const rows = await this.clickHouseService.select<UsageBreakdownItem>(
-      query,
-      {
-        workspaceId,
-        periodStart: formatDateForClickHouse(periodStart),
-        periodEnd: formatDateForClickHouse(periodEnd),
-        ...(extraParams ?? {}),
-      },
-    );
+    const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
+      workspaceId,
+      periodStart: formatDateForClickHouse(periodStart),
+      periodEnd: formatDateForClickHouse(periodEnd),
+      ...(extraParams ?? {}),
+    });
 
-    return this.mapToDisplayCredits(rows);
+    return rows.map((row) => ({
+      key: row.key,
+      creditsUsed: toDisplayCredits(row.creditsUsedMicro),
+    }));
   }
 
   private async queryTimeSeries({
@@ -127,7 +137,7 @@ export class UsageAnalyticsService {
     const query = `
       SELECT
         formatDateTime(timestamp, '%Y-%m-%d') AS date,
-        sum(creditsUsedMicro) AS creditsUsed
+        sum(creditsUsedMicro) AS creditsUsedMicro
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
         AND timestamp >= {periodStart:String}
@@ -137,7 +147,7 @@ export class UsageAnalyticsService {
       ORDER BY date ASC
     `;
 
-    const rows = await this.clickHouseService.select<UsageTimeSeriesPoint>(
+    const rows = await this.clickHouseService.select<TimeSeriesRowMicro>(
       query,
       {
         workspaceId,
@@ -147,15 +157,9 @@ export class UsageAnalyticsService {
       },
     );
 
-    return this.mapToDisplayCredits(rows);
-  }
-
-  private mapToDisplayCredits<T extends { creditsUsed: number }>(
-    rows: T[],
-  ): T[] {
     return rows.map((row) => ({
-      ...row,
-      creditsUsed: toDisplayCredits(row.creditsUsed),
+      date: row.date,
+      creditsUsed: toDisplayCredits(row.creditsUsedMicro),
     }));
   }
 }

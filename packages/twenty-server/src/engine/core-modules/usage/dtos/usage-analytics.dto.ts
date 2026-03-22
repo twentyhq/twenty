@@ -2,9 +2,9 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { UsageBreakdownItemDTO } from 'src/engine/core-modules/billing/dtos/usage-breakdown-item.dto';
-import { UsageTimeSeriesDTO } from 'src/engine/core-modules/billing/dtos/usage-time-series.dto';
-import { UsageUserDailyDTO } from 'src/engine/core-modules/billing/dtos/usage-user-daily.dto';
+import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
+import { UsageTimeSeriesDTO } from 'src/engine/core-modules/usage/dtos/usage-time-series.dto';
+import { UsageUserDailyDTO } from 'src/engine/core-modules/usage/dtos/usage-user-daily.dto';
 
 @ObjectType('UsageAnalytics')
 export class UsageAnalyticsDTO {

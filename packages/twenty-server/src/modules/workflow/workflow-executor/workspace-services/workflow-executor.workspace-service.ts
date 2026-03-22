@@ -10,13 +10,13 @@ import {
 } from 'twenty-shared/workflow';
 
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
-import { USAGE_RECORDED } from 'src/engine/core-modules/billing/constants/usage-recorded.constant';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { UsageOperationType } from 'src/engine/core-modules/billing/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/billing/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/billing/enums/usage-unit.enum';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { type UsageEvent } from 'src/engine/core-modules/billing/types/usage-event.type';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

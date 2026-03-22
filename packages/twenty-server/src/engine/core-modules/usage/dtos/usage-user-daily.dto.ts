@@ -2,7 +2,7 @@
 
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { UsageTimeSeriesDTO } from 'src/engine/core-modules/billing/dtos/usage-time-series.dto';
+import { UsageTimeSeriesDTO } from 'src/engine/core-modules/usage/dtos/usage-time-series.dto';
 
 @ObjectType('UsageUserDaily')
 export class UsageUserDailyDTO {
