@@ -88,13 +88,13 @@ export const useMyConnectedAccounts = () => {
               : null,
             messageChannels: messageChannels.filter(
               (channel) =>
-                (channel as unknown as { connectedAccountId: string })
-                  .connectedAccountId === account.id,
+                'connectedAccountId' in channel &&
+                channel.connectedAccountId === account.id,
             ),
             calendarChannels: calendarChannels.filter(
               (channel) =>
-                (channel as unknown as { connectedAccountId: string })
-                  .connectedAccountId === account.id,
+                'connectedAccountId' in channel &&
+                channel.connectedAccountId === account.id,
             ),
             scopes: account.scopes,
             __typename: 'ConnectedAccount',

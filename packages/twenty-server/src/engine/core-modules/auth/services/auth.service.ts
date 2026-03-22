@@ -1099,7 +1099,7 @@ export class AuthService {
       input.connectedAccountProvider ??
       this.mapAuthProviderToConnectedAccountProvider(input.authProvider);
 
-    const scopes = this.getSSOScopes(input.authProvider);
+    const scopes = this.getSSOScopes(provider);
 
     await this.createSSOConnectedAccountService.createOrUpdateSSOConnectedAccount(
       {
@@ -1126,22 +1126,29 @@ export class AuthService {
         return ConnectedAccountProvider.MICROSOFT;
       case AuthProviderEnum.SSO:
         return ConnectedAccountProvider.OIDC;
+      default:
+        throw new Error(
+          `Unsupported auth provider: ${authProvider satisfies never}`,
+        );
     }
   }
 
-  private getSSOScopes(
-    authProvider:
-      | AuthProviderEnum.Google
-      | AuthProviderEnum.Microsoft
-      | AuthProviderEnum.SSO,
-  ): string[] {
-    switch (authProvider) {
-      case AuthProviderEnum.Google:
+  private getSSOScopes(provider: ConnectedAccountProvider): string[] {
+    switch (provider) {
+      case ConnectedAccountProvider.GOOGLE:
         return ['email', 'profile'];
-      case AuthProviderEnum.Microsoft:
+      case ConnectedAccountProvider.MICROSOFT:
         return ['user.read'];
-      case AuthProviderEnum.SSO:
+      case ConnectedAccountProvider.OIDC:
         return ['openid', 'email', 'profile'];
+      case ConnectedAccountProvider.SAML:
+        return [];
+      case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        return [];
+      default:
+        throw new Error(
+          `Unsupported connected account provider: ${provider satisfies never}`,
+        );
     }
   }
 }

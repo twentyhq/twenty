@@ -338,5 +338,85 @@ describe('ConnectedAccountRefreshTokensService', () => {
 
       expect(result).toBe(true);
     });
+
+    it('should return true for OIDC provider regardless of lastCredentialsRefreshedAt', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.OIDC,
+        lastCredentialsRefreshedAt: null,
+      } as ConnectedAccountWorkspaceEntity;
+
+      const result = await service.isAccessTokenStillValid(connectedAccount);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true for SAML provider regardless of lastCredentialsRefreshedAt', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.SAML,
+        lastCredentialsRefreshedAt: null,
+      } as ConnectedAccountWorkspaceEntity;
+
+      const result = await service.isAccessTokenStillValid(connectedAccount);
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('refreshAndSaveTokens - OIDC/SAML', () => {
+    it('should reuse existing tokens for OIDC without attempting a refresh', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.OIDC,
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+        lastCredentialsRefreshedAt: null,
+      } as unknown as ConnectedAccountWorkspaceEntity;
+
+      const result = await service.refreshAndSaveTokens(
+        connectedAccount,
+        mockWorkspaceId,
+      );
+
+      expect(result).toEqual({
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+      });
+      expect(
+        googleAPIRefreshAccessTokenService.refreshTokens,
+      ).not.toHaveBeenCalled();
+      expect(
+        microsoftAPIRefreshAccessTokenService.refreshTokens,
+      ).not.toHaveBeenCalled();
+      expect(connectedAccountDataAccessService.update).not.toHaveBeenCalled();
+    });
+
+    it('should reuse existing tokens for SAML without attempting a refresh', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.SAML,
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+        lastCredentialsRefreshedAt: null,
+      } as unknown as ConnectedAccountWorkspaceEntity;
+
+      const result = await service.refreshAndSaveTokens(
+        connectedAccount,
+        mockWorkspaceId,
+      );
+
+      expect(result).toEqual({
+        accessToken: mockAccessToken,
+        refreshToken: mockRefreshToken,
+      });
+      expect(
+        googleAPIRefreshAccessTokenService.refreshTokens,
+      ).not.toHaveBeenCalled();
+      expect(
+        microsoftAPIRefreshAccessTokenService.refreshTokens,
+      ).not.toHaveBeenCalled();
+      expect(connectedAccountDataAccessService.update).not.toHaveBeenCalled();
+    });
   });
 });

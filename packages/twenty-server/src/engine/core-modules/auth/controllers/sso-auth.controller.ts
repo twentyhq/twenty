@@ -243,7 +243,7 @@ export class SSOAuthController {
       await this.authService.createSSOConnectedAccountIfFeatureFlagIsOn({
         workspaceId: workspace.id,
         userId: user.id,
-        handle: payload.email,
+        handle: payload.email.toLowerCase(),
         authProvider: AuthProviderEnum.SSO,
         oidcTokenClaims: ssoContext.oidcTokenClaims,
         connectedAccountProvider: ssoContext.connectedAccountProvider,

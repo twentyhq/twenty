@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-export type CreateSSOConnectedAccountInput = {
+type CreateSSOConnectedAccountParams = {
   workspaceId: string;
   userId: string;
   handle: string;
@@ -28,10 +28,10 @@ export class CreateSSOConnectedAccountService {
   ) {}
 
   async createOrUpdateSSOConnectedAccount(
-    input: CreateSSOConnectedAccountInput,
+    params: CreateSSOConnectedAccountParams,
   ): Promise<void> {
     const { workspaceId, userId, handle, provider, scopes, oidcTokenClaims } =
-      input;
+      params;
 
     const userWorkspace = await this.userWorkspaceRepository.findOneBy({
       userId,
@@ -48,6 +48,7 @@ export class CreateSSOConnectedAccountService {
 
     const existing = await this.connectedAccountRepository.findOneBy({
       handle,
+      provider,
       userWorkspaceId: userWorkspace.id,
       workspaceId,
     });
@@ -55,6 +56,8 @@ export class CreateSSOConnectedAccountService {
     if (existing) {
       await this.connectedAccountRepository.update(existing.id, {
         lastSignedInAt: new Date(),
+        provider,
+        scopes,
         ...(oidcTokenClaims !== undefined
           ? { oidcTokenClaims: oidcTokenClaims as object }
           : {}),
