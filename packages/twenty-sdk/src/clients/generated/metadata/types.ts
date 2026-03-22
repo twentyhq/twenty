@@ -6135,6 +6135,30 @@ export default {
                     ]
                 }
             ],
+            "commandMenuItems": [
+                224
+            ],
+            "commandMenuItem": [
+                224,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "frontComponents": [
+                223
+            ],
+            "frontComponent": [
+                223,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "objectRecordCounts": [
                 167
             ],
@@ -6253,30 +6277,6 @@ export default {
                     "filter": [
                         48,
                         "IndexFilter!"
-                    ]
-                }
-            ],
-            "commandMenuItems": [
-                224
-            ],
-            "commandMenuItem": [
-                224,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "frontComponents": [
-                223
-            ],
-            "frontComponent": [
-                223,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
                     ]
                 }
             ],
@@ -7324,11 +7324,65 @@ export default {
                     ]
                 }
             ],
+            "createCommandMenuItem": [
+                224,
+                {
+                    "input": [
+                        381,
+                        "CreateCommandMenuItemInput!"
+                    ]
+                }
+            ],
+            "updateCommandMenuItem": [
+                224,
+                {
+                    "input": [
+                        382,
+                        "UpdateCommandMenuItemInput!"
+                    ]
+                }
+            ],
+            "deleteCommandMenuItem": [
+                224,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "createFrontComponent": [
+                223,
+                {
+                    "input": [
+                        383,
+                        "CreateFrontComponentInput!"
+                    ]
+                }
+            ],
+            "updateFrontComponent": [
+                223,
+                {
+                    "input": [
+                        384,
+                        "UpdateFrontComponentInput!"
+                    ]
+                }
+            ],
+            "deleteFrontComponent": [
+                223,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "createOneObject": [
                 46,
                 {
                     "input": [
-                        381,
+                        386,
                         "CreateOneObjectInput!"
                     ]
                 }
@@ -7337,7 +7391,7 @@ export default {
                 46,
                 {
                     "input": [
-                        383,
+                        388,
                         "DeleteOneObjectInput!"
                     ]
                 }
@@ -7346,7 +7400,7 @@ export default {
                 46,
                 {
                     "input": [
-                        384,
+                        389,
                         "UpdateOneObjectInput!"
                     ]
                 }
@@ -7355,7 +7409,7 @@ export default {
                 50,
                 {
                     "input": [
-                        386,
+                        391,
                         "UpdateViewFieldInput!"
                     ]
                 }
@@ -7364,7 +7418,7 @@ export default {
                 50,
                 {
                     "input": [
-                        388,
+                        393,
                         "CreateViewFieldInput!"
                     ]
                 }
@@ -7373,7 +7427,7 @@ export default {
                 50,
                 {
                     "inputs": [
-                        388,
+                        393,
                         "[CreateViewFieldInput!]!"
                     ]
                 }
@@ -7382,7 +7436,7 @@ export default {
                 50,
                 {
                     "input": [
-                        389,
+                        394,
                         "DeleteViewFieldInput!"
                     ]
                 }
@@ -7391,7 +7445,7 @@ export default {
                 50,
                 {
                     "input": [
-                        390,
+                        395,
                         "DestroyViewFieldInput!"
                     ]
                 }
@@ -7400,7 +7454,7 @@ export default {
                 60,
                 {
                     "input": [
-                        391,
+                        396,
                         "CreateViewInput!"
                     ]
                 }
@@ -7413,7 +7467,7 @@ export default {
                         "String!"
                     ],
                     "input": [
-                        392,
+                        397,
                         "UpdateViewInput!"
                     ]
                 }
@@ -7440,7 +7494,7 @@ export default {
                 57,
                 {
                     "input": [
-                        393,
+                        398,
                         "CreateViewSortInput!"
                     ]
                 }
@@ -7449,7 +7503,7 @@ export default {
                 57,
                 {
                     "input": [
-                        394,
+                        399,
                         "UpdateViewSortInput!"
                     ]
                 }
@@ -7458,7 +7512,7 @@ export default {
                 6,
                 {
                     "input": [
-                        396,
+                        401,
                         "DeleteViewSortInput!"
                     ]
                 }
@@ -7467,7 +7521,7 @@ export default {
                 6,
                 {
                     "input": [
-                        397,
+                        402,
                         "DestroyViewSortInput!"
                     ]
                 }
@@ -7476,7 +7530,7 @@ export default {
                 59,
                 {
                     "input": [
-                        398,
+                        403,
                         "UpdateViewFieldGroupInput!"
                     ]
                 }
@@ -7485,7 +7539,7 @@ export default {
                 59,
                 {
                     "input": [
-                        400,
+                        405,
                         "CreateViewFieldGroupInput!"
                     ]
                 }
@@ -7494,7 +7548,7 @@ export default {
                 59,
                 {
                     "inputs": [
-                        400,
+                        405,
                         "[CreateViewFieldGroupInput!]!"
                     ]
                 }
@@ -7503,7 +7557,7 @@ export default {
                 59,
                 {
                     "input": [
-                        401,
+                        406,
                         "DeleteViewFieldGroupInput!"
                     ]
                 }
@@ -7512,7 +7566,7 @@ export default {
                 59,
                 {
                     "input": [
-                        402,
+                        407,
                         "DestroyViewFieldGroupInput!"
                     ]
                 }
@@ -7521,62 +7575,8 @@ export default {
                 60,
                 {
                     "input": [
-                        403,
-                        "UpsertFieldsWidgetInput!"
-                    ]
-                }
-            ],
-            "createCommandMenuItem": [
-                224,
-                {
-                    "input": [
-                        406,
-                        "CreateCommandMenuItemInput!"
-                    ]
-                }
-            ],
-            "updateCommandMenuItem": [
-                224,
-                {
-                    "input": [
-                        407,
-                        "UpdateCommandMenuItemInput!"
-                    ]
-                }
-            ],
-            "deleteCommandMenuItem": [
-                224,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "createFrontComponent": [
-                223,
-                {
-                    "input": [
                         408,
-                        "CreateFrontComponentInput!"
-                    ]
-                }
-            ],
-            "updateFrontComponent": [
-                223,
-                {
-                    "input": [
-                        409,
-                        "UpdateFrontComponentInput!"
-                    ]
-                }
-            ],
-            "deleteFrontComponent": [
-                223,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
+                        "UpsertFieldsWidgetInput!"
                     ]
                 }
             ],
@@ -9477,9 +9477,133 @@ export default {
                 1
             ]
         },
+        "CreateCommandMenuItemInput": {
+            "workflowVersionId": [
+                3
+            ],
+            "frontComponentId": [
+                3
+            ],
+            "engineComponentKey": [
+                225
+            ],
+            "label": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "shortLabel": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "isPinned": [
+                6
+            ],
+            "availabilityType": [
+                226
+            ],
+            "hotKeys": [
+                1
+            ],
+            "conditionalAvailabilityExpression": [
+                1
+            ],
+            "availabilityObjectMetadataId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateCommandMenuItemInput": {
+            "id": [
+                3
+            ],
+            "label": [
+                1
+            ],
+            "icon": [
+                1
+            ],
+            "shortLabel": [
+                1
+            ],
+            "position": [
+                11
+            ],
+            "isPinned": [
+                6
+            ],
+            "availabilityType": [
+                226
+            ],
+            "availabilityObjectMetadataId": [
+                3
+            ],
+            "engineComponentKey": [
+                225
+            ],
+            "hotKeys": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "CreateFrontComponentInput": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "sourceComponentPath": [
+                1
+            ],
+            "builtComponentPath": [
+                1
+            ],
+            "componentName": [
+                1
+            ],
+            "builtComponentChecksum": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateFrontComponentInput": {
+            "id": [
+                3
+            ],
+            "update": [
+                385
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateFrontComponentInputUpdates": {
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "CreateOneObjectInput": {
             "object": [
-                382
+                387
             ],
             "__typename": [
                 1
@@ -9539,7 +9663,7 @@ export default {
         },
         "UpdateOneObjectInput": {
             "update": [
-                385
+                390
             ],
             "id": [
                 3
@@ -9594,7 +9718,7 @@ export default {
                 3
             ],
             "update": [
-                387
+                392
             ],
             "__typename": [
                 1
@@ -9793,7 +9917,7 @@ export default {
                 3
             ],
             "update": [
-                395
+                400
             ],
             "__typename": [
                 1
@@ -9828,7 +9952,7 @@ export default {
                 3
             ],
             "update": [
-                399
+                404
             ],
             "__typename": [
                 1
@@ -9892,10 +10016,10 @@ export default {
                 3
             ],
             "groups": [
-                404
+                409
             ],
             "fields": [
-                405
+                410
             ],
             "__typename": [
                 1
@@ -9915,7 +10039,7 @@ export default {
                 6
             ],
             "fields": [
-                405
+                410
             ],
             "__typename": [
                 1
@@ -9930,130 +10054,6 @@ export default {
             ],
             "position": [
                 11
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateCommandMenuItemInput": {
-            "workflowVersionId": [
-                3
-            ],
-            "frontComponentId": [
-                3
-            ],
-            "engineComponentKey": [
-                225
-            ],
-            "label": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "shortLabel": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "isPinned": [
-                6
-            ],
-            "availabilityType": [
-                226
-            ],
-            "hotKeys": [
-                1
-            ],
-            "conditionalAvailabilityExpression": [
-                1
-            ],
-            "availabilityObjectMetadataId": [
-                3
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateCommandMenuItemInput": {
-            "id": [
-                3
-            ],
-            "label": [
-                1
-            ],
-            "icon": [
-                1
-            ],
-            "shortLabel": [
-                1
-            ],
-            "position": [
-                11
-            ],
-            "isPinned": [
-                6
-            ],
-            "availabilityType": [
-                226
-            ],
-            "availabilityObjectMetadataId": [
-                3
-            ],
-            "engineComponentKey": [
-                225
-            ],
-            "hotKeys": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CreateFrontComponentInput": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "sourceComponentPath": [
-                1
-            ],
-            "builtComponentPath": [
-                1
-            ],
-            "componentName": [
-                1
-            ],
-            "builtComponentChecksum": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateFrontComponentInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                410
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateFrontComponentInputUpdates": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
             ],
             "__typename": [
                 1
