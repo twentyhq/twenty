@@ -7,46 +7,46 @@ Răspunde la e-mailurile primite în câteva secunde — nu în ore. Acest flux 
 
 ## Cum funcționează firele de e-mail
 
-Fiecare e-mail are un antet ascuns `Message-ID` — o amprentă unică atribuită de serverul de e-mail al expeditorului. When you reply to an email, your mail client sets an `In-Reply-To` header referencing that fingerprint. That's how Gmail, Outlook, and every other client groups messages into threads.
+Fiecare e-mail are un antet ascuns `Message-ID` — o amprentă unică atribuită de serverul de e-mail al expeditorului. Când răspundeți la un e-mail, clientul dvs. de e-mail setează un antet `In-Reply-To` care face referire la acea amprentă. Astfel, Gmail, Outlook și orice alt client grupează mesajele în fire de discuție.
 
-In Twenty, that fingerprint is stored as `headerMessageId` on the Message object. Your workflow grabs it and passes it into the Send Email action's In-Reply-To field.
+În Twenty, acea amprentă este stocată ca `headerMessageId` pe obiectul Message. Fluxul dvs. de lucru o preia și o transmite în câmpul In-Reply-To al acțiunii Send Email.
 
-## Building the workflow
+## Construirea fluxului de lucru
 
-### Step 1: Create a new workflow
+### Pasul 1: Creați un flux de lucru nou
 
-Head to **Settings -> Workflows** and click **+ New Workflow**.
+Accesați **Settings -> Workflows** și faceți clic pe **+ New Workflow**.
 
-### Step 2: Trigger on incoming messages
+### Pasul 2: Declanșare la mesajele primite
 
-Pick **When a Record is Created** and choose **Messages**.
+Alegeți **When a Record is Created** și selectați **Messages**.
 
-Every time an email lands in Twenty, this fires.
+De fiecare dată când un e-mail ajunge în Twenty, aceasta se declanșează.
 
 <img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
 
-### Step 3: Look up who sent it
+### Pasul 3: Căutați cine l-a trimis
 
-Add a **Search Records** action.
+Adăugați o acțiune **Search Records**.
 
-The sender's address isn't on the message itself — it's on the related Message Participant record.
+Adresa expeditorului nu este în mesajul propriu-zis — se găsește în înregistrarea asociată Message Participant.
 
-| Câmp       | Valoare                         |
-| ---------- | ------------------------------- |
-| **Obiect** | Participanți la mesaj           |
-| **Filtru** | Message **is** `{{trigger.id}}` |
-| **Filtru** | Role **is** From                |
-| **Limită** | 1                               |
+| Câmp       | Valoare                           |
+| ---------- | --------------------------------- |
+| **Obiect** | Participanți la mesaj             |
+| **Filtru** | Mesajul **este** `{{trigger.id}}` |
+| **Filtru** | Rolul **este** From               |
+| **Limită** | 1                                 |
 
-This gives you the sender's email in `handle` and their name in `displayName`.
+Aceasta vă oferă e-mailul expeditorului în `handle` și numele acestuia în `displayName`.
 
 <img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
 
-### Step 4: AI triage and draft reply
+### Pasul 4: Triere cu AI și redactarea răspunsului
 
-Add an **AI Agent** action. This single step does two things: decides whether the email deserves a reply, and if so, writes one.
+Adăugați o acțiune **AI Agent**. Acest singur pas face două lucruri: decide dacă e-mailul merită un răspuns și, dacă da, redactează unul.
 
-Use a prompt like:
+Folosiți un prompt de tipul:
 
 ```
 You are an email triage assistant for a sales team. Read the following
@@ -67,27 +67,27 @@ Otherwise, write a short, professional reply (3-4 sentences max) that:
 Respond with only the reply text, no subject line or greeting prefix.
 ```
 
-The AI Agent outputs its response in a `response` field that the next steps can reference.
+AI Agent produce răspunsul în câmpul `response`, la care pot face referire pașii următori.
 
 <img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
 
-### Step 5: Branch on the AI decision
+### Pasul 5: Ramificați în funcție de decizia AI
 
-Add an **If/Else** action to check whether the AI decided to reply or skip.
+Adăugați o acțiune **If/Else** pentru a verifica dacă AI a decis să răspundă sau să o omită.
 
-| Câmp         | Valoare                                         |
-| ------------ | ----------------------------------------------- |
-| **Condiție** | AI Agent `response` **does not contain** `SKIP` |
-| **If true**  | Continue to Send Email                          |
-| **Else**     | Do nothing (workflow ends)                      |
+| Câmp                   | Valoare                                      |
+| ---------------------- | -------------------------------------------- |
+| **Condiție**           | AI Agent `response` **nu conține** `SKIP`    |
+| **Dacă este adevărat** | Continuați la Send Email                     |
+| **Altfel**             | Nu faceți nimic (fluxul de lucru se încheie) |
 
-Spam, newsletters, and auto-generated messages get dropped. Everything else moves to the next step.
+Spam-ul, buletinele informative și mesajele generate automat sunt ignorate. Tot restul trece la pasul următor.
 
 <img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
 
-### Step 6: Send a threaded reply
+### Pasul 6: Trimiteți un răspuns în același fir
 
-Add a **Send Email** action on the "if true" branch. Click **Advanced options**, then **Add In-Reply-To**.
+Adăugați o acțiune **Send Email** pe ramura "if true". Faceți clic pe **Advanced options**, apoi pe **Add In-Reply-To**.
 
 | Câmp            | Valoare                                |
 | --------------- | -------------------------------------- |
@@ -96,26 +96,26 @@ Add a **Send Email** action on the "if true" branch. Click **Advanced options**,
 | **Body**        | `{{AI Triage & Draft Reply.response}}` |
 | **In-Reply-To** | `{{trigger.headerMessageId}}`          |
 
-The In-Reply-To field is what makes this a reply instead of a new conversation. The recipient sees it threaded under the original email in Gmail, Outlook, or any other client.
+Câmpul In-Reply-To este cel care face ca acesta să fie un răspuns, nu o conversație nouă. Destinatarul îl vede afișat în fir sub e-mailul original în Gmail, Outlook sau orice alt client.
 
 <img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
 
 <Tip>
-**In-Reply-To** expects a `message.headerMessageId` from the trigger — it's the email's unique fingerprint, not a recipient address. If you leave it empty, the email still sends, just as a standalone message.
+**In-Reply-To** necesită un `message.headerMessageId` din declanșator — este amprenta unică a e-mailului, nu o adresă a destinatarului. Dacă îl lăsați necompletat, e-mailul se trimite în continuare, doar ca un mesaj independent.
 </Tip>
 
 <Warning>
-Gmail uses the subject line to group messages into threads. The subject **must** start with `Re:` (including the colon and space) for Gmail to display the reply inside the original thread. Without it, the reply will appear as a separate conversation — even if the In-Reply-To header is set correctly.
+Gmail folosește subiectul pentru a grupa mesajele în fire de discuție. Subiectul **trebuie** să înceapă cu `Re:` (inclusiv două puncte și spațiu) pentru ca Gmail să afișeze răspunsul în cadrul firului original. Fără acesta, răspunsul va apărea ca o conversație separată — chiar dacă antetul In-Reply-To este setat corect.
 </Warning>
 
-### Step 7: Test and activate
+### Pasul 7: Testați și activați
 
-Hit **Test**, then check your email client. The reply should appear nested under the original message.
+Apăsați **Test**, apoi verificați clientul de e-mail. Răspunsul ar trebui să apară sub mesajul original.
 
-Activate when you're happy with it.
+Activați când sunteți mulțumit(ă) de rezultat.
 
-## Ideas to build on
+## Idei pe care să le dezvoltați
 
-* **Only reply to VIPs** — add a branch that checks the sender's domain or whether they exist as a Contact in Twenty
-* **Route by intent** — use separate AI Agent prompts to handle sales inquiries differently from support requests
-* **Enrich before replying** — add a Search Records step to pull the sender's company or deal history into the AI prompt for more personalized replies
+* **Răspundeți doar VIP-urilor** — adăugați o ramură care verifică domeniul expeditorului sau dacă acesta există ca Contact în Twenty
+* **Dirijați în funcție de intenție** — folosiți prompturi AI Agent separate pentru a trata diferit solicitările de vânzări față de cererile de asistență
+* **Îmbogățiți înainte de a răspunde** — adăugați un pas Search Records pentru a include compania expeditorului sau istoricul tranzacțiilor în promptul AI, pentru răspunsuri mai personalizate

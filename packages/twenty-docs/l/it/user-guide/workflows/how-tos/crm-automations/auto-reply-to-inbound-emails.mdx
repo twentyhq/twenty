@@ -1,35 +1,35 @@
 ---
-title: Risposta automatica alle email in arrivo},{
-description: Crea un workflow che utilizza l'IA per smistare le email in arrivo e inviare automaticamente risposte in thread.
+title: Risposta automatica alle email in arrivo
+description: Crea un flusso di lavoro che utilizza l'IA per smistare le email in arrivo e inviare automaticamente risposte in thread.
 ---
 
-Rispondi alle email in arrivo in pochi secondi — non ore. Questo workflow utilizza un Agente IA per filtrare il rumore (newsletter, spam, risposte automatiche) e redigere una risposta personalizzata ai messaggi reali, quindi la invia come risposta in thread all'interno della conversazione originale.
+Rispondi alle email in arrivo in pochi secondi — non ore. Questo flusso di lavoro utilizza un agente IA per filtrare il rumore (newsletter, spam, risposte automatiche) e redigere una risposta personalizzata ai messaggi reali, quindi la invia come risposta in thread all'interno della conversazione originale.
 
 ## Come funziona il threading delle email
 
-Ogni email include un'intestazione nascosta `Message-ID` — un'impronta univoca assegnata dal server di posta del mittente. When you reply to an email, your mail client sets an `In-Reply-To` header referencing that fingerprint. That's how Gmail, Outlook, and every other client groups messages into threads.
+Ogni email include un'intestazione nascosta `Message-ID` — un'impronta univoca assegnata dal server di posta del mittente. Quando rispondi a un'email, il tuo client di posta imposta un'intestazione `In-Reply-To` che fa riferimento a quell'impronta. È così che Gmail, Outlook e tutti gli altri client raggruppano i messaggi nei thread.
 
-In Twenty, that fingerprint is stored as `headerMessageId` on the Message object. Your workflow grabs it and passes it into the Send Email action's In-Reply-To field.
+In Twenty, quell'impronta è memorizzata come `headerMessageId` sull'oggetto Message. Il tuo flusso di lavoro la recupera e la passa al campo In-Reply-To dell'azione Send Email.
 
-## Building the workflow
+## Creazione del flusso di lavoro
 
-### Step 1: Create a new workflow
+### Passaggio 1: Crea un nuovo flusso di lavoro
 
-Head to **Settings -> Workflows** and click **+ New Workflow**.
+Vai a **Impostazioni -> Flussi di lavoro** e fai clic su **+ New Workflow**.
 
-### Step 2: Trigger on incoming messages
+### Passaggio 2: Imposta il trigger sui messaggi in arrivo
 
-Pick **When a Record is Created** and choose **Messages**.
+Scegli **When a Record is Created** e seleziona **Messages**.
 
-Every time an email lands in Twenty, this fires.
+Ogni volta che un'email arriva in Twenty, questo si attiva.
 
 <img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
 
-### Step 3: Look up who sent it
+### Passaggio 3: Cerca chi l'ha inviato
 
-Add a **Search Records** action.
+Aggiungi un'azione **Search Records**.
 
-The sender's address isn't on the message itself — it's on the related Message Participant record.
+L'indirizzo del mittente non è presente sul messaggio stesso — si trova nel record Message Participant correlato.
 
 | Campo       | Valore                          |
 | ----------- | ------------------------------- |
@@ -38,15 +38,15 @@ The sender's address isn't on the message itself — it's on the related Message
 | **Filtro**  | Role **is** From                |
 | **Limite**  | 1                               |
 
-This gives you the sender's email in `handle` and their name in `displayName`.
+Questo ti fornisce l'email del mittente in `handle` e il suo nome in `displayName`.
 
 <img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
 
-### Step 4: AI triage and draft reply
+### Passaggio 4: Triage con AI e bozza di risposta
 
-Add an **AI Agent** action. This single step does two things: decides whether the email deserves a reply, and if so, writes one.
+Aggiungi un'azione **AI Agent**. Questo singolo passaggio fa due cose: decide se l'email merita una risposta e, in tal caso, ne scrive una.
 
-Use a prompt like:
+Usa un prompt come:
 
 ```
 You are an email triage assistant for a sales team. Read the following
@@ -67,27 +67,27 @@ Otherwise, write a short, professional reply (3-4 sentences max) that:
 Respond with only the reply text, no subject line or greeting prefix.
 ```
 
-The AI Agent outputs its response in a `response` field that the next steps can reference.
+AI Agent produce la sua risposta in un campo `response` a cui i passaggi successivi possono fare riferimento.
 
 <img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
 
-### Step 5: Branch on the AI decision
+### Passaggio 5: Ramifica in base alla decisione dell'AI
 
-Add an **If/Else** action to check whether the AI decided to reply or skip.
+Aggiungi un'azione **If/Else** per verificare se l'AI ha deciso di rispondere o saltare.
 
 | Campo          | Valore                                          |
 | -------------- | ----------------------------------------------- |
 | **Condizione** | AI Agent `response` **does not contain** `SKIP` |
-| **If true**    | Continue to Send Email                          |
-| **Else**       | Do nothing (workflow ends)                      |
+| **Se vero**    | Continua con Send Email                         |
+| **Altrimenti** | Non fare nulla (il flusso di lavoro termina)    |
 
-Spam, newsletters, and auto-generated messages get dropped. Everything else moves to the next step.
+Spam, newsletter e messaggi generati automaticamente vengono scartati. Tutto il resto passa al passaggio successivo.
 
 <img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
 
-### Step 6: Send a threaded reply
+### Passaggio 6: Invia una risposta nello stesso thread
 
-Add a **Send Email** action on the "if true" branch. Click **Advanced options**, then **Add In-Reply-To**.
+Aggiungi un'azione **Send Email** nel ramo "if true". Fai clic su **Advanced options**, quindi su **Add In-Reply-To**.
 
 | Campo           | Valore                                 |
 | --------------- | -------------------------------------- |
@@ -96,26 +96,26 @@ Add a **Send Email** action on the "if true" branch. Click **Advanced options**,
 | **Corpo**       | `{{AI Triage & Draft Reply.response}}` |
 | **In-Reply-To** | `{{trigger.headerMessageId}}`          |
 
-The In-Reply-To field is what makes this a reply instead of a new conversation. The recipient sees it threaded under the original email in Gmail, Outlook, or any other client.
+Il campo In-Reply-To è ciò che rende questo un messaggio di risposta invece di una nuova conversazione. Il destinatario lo vede nel thread sotto l'email originale in Gmail, Outlook o qualsiasi altro client.
 
 <img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
 
 <Tip>
-**In-Reply-To** expects a `message.headerMessageId` from the trigger — it's the email's unique fingerprint, not a recipient address. If you leave it empty, the email still sends, just as a standalone message.
+**In-Reply-To** si aspetta un `message.headerMessageId` dal trigger — è l'impronta univoca dell'email, non un indirizzo del destinatario. Se lo lasci vuoto, l'email viene comunque inviata, solo come messaggio autonomo.
 </Tip>
 
 <Warning>
-Gmail uses the subject line to group messages into threads. The subject **must** start with `Re:` (including the colon and space) for Gmail to display the reply inside the original thread. Without it, the reply will appear as a separate conversation — even if the In-Reply-To header is set correctly.
+Gmail usa l'oggetto per raggruppare i messaggi nei thread. L'oggetto **deve** iniziare con `Re:` (inclusi i due punti e lo spazio) affinché Gmail visualizzi la risposta all'interno del thread originale. Senza di esso, la risposta apparirà come una conversazione separata — anche se l'intestazione In-Reply-To è impostata correttamente.
 </Warning>
 
-### Step 7: Test and activate
+### Passaggio 7: Testa e attiva
 
-Hit **Test**, then check your email client. The reply should appear nested under the original message.
+Fai clic su **Test**, quindi controlla il tuo client di posta. La risposta dovrebbe comparire annidata sotto il messaggio originale.
 
-Activate when you're happy with it.
+Attivalo quando sei soddisfatto.
 
-## Ideas to build on
+## Idee per sviluppare ulteriormente
 
-* **Only reply to VIPs** — add a branch that checks the sender's domain or whether they exist as a Contact in Twenty
-* **Route by intent** — use separate AI Agent prompts to handle sales inquiries differently from support requests
-* **Enrich before replying** — add a Search Records step to pull the sender's company or deal history into the AI prompt for more personalized replies
+* **Rispondi solo ai VIP** — aggiungi un ramo che controlli il dominio del mittente o se esiste come Contatto in Twenty
+* **Instrada in base all'intento** — usa prompt distinti di AI Agent per gestire le richieste commerciali in modo diverso rispetto a quelle di supporto
+* **Arricchisci prima di rispondere** — aggiungi un passaggio Search Records per inserire nel prompt dell'AI l'azienda del mittente o la cronologia delle trattative per risposte più personalizzate
