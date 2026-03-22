@@ -3,7 +3,7 @@ import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object'
 
 export default defineField({
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  universalIdentifier: '2c503a0d-36c9-49ec-b82f-4fafe0eb6f47',
+  universalIdentifier: '770d32c2-cf12-4ab2-b66d-73f92dc239b5',
   type: FieldType.NUMBER,
   name: 'priority',
   label: 'Priority',

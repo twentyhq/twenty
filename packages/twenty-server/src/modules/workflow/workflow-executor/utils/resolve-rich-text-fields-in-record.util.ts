@@ -16,7 +16,7 @@ export const resolveRichTextFieldsInRecord = (
     flatEntityIds: flatObjectMetadata.fieldIds,
     flatEntityMaps: flatFieldMetadataMaps,
   })
-    .filter((field) => field?.type === FieldMetadataType.RICH_TEXT_V2)
+    .filter((field) => field?.type === FieldMetadataType.RICH_TEXT)
     .map((field) => field?.name)
     .filter(isDefined);
 

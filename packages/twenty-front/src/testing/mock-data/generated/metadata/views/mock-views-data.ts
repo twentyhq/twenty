@@ -1,11 +1,11 @@
 /* oxlint-disable */
 // @ts-nocheck
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 
 // This file was automatically generated — do not edit manually.
 
 // prettier-ignore
-export const mockedCoreViews: CoreViewWithRelations[] =
+export const mockedViews: ViewWithRelations[] =
 [
   {
     "id": "9a77f9a8-f1ea-438d-a4da-91ac585054b7",

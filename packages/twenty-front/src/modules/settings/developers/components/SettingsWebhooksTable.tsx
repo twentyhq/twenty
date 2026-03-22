@@ -8,7 +8,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useGetWebhooksQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetWebhooksDocument } from '~/generated-metadata/graphql';
 
 const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -17,7 +18,7 @@ const StyledTableBodyContainer = styled.div`
 `;
 
 export const SettingsWebhooksTable = () => {
-  const { data: webhooksData } = useGetWebhooksQuery();
+  const { data: webhooksData } = useQuery(GetWebhooksDocument);
 
   const webhooks = webhooksData?.webhooks;
 

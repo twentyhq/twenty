@@ -14,6 +14,7 @@ describe('getTabsByDisplayMode', () => {
     title: `Tab ${id}`,
     position: 0,
     widgets: [],
+    isOverridden: false,
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
   });
@@ -440,6 +441,26 @@ describe('getTabsByDisplayMode', () => {
       expect(resultBothTrue).toEqual(resultOnlySidePanel);
       expect(resultBothTrue.tabsToRenderInTabList).toEqual(tabs);
       expect(resultBothTrue.pinnedLeftTab).toBeUndefined();
+    });
+  });
+
+  describe('pinned tab selection by position', () => {
+    it('should pin the tab with the lowest position regardless of array order', () => {
+      const tab1 = { ...createMockTab('tab-1'), position: 2 };
+      const tab2 = { ...createMockTab('tab-2'), position: 0 };
+      const tab3 = { ...createMockTab('tab-3'), position: 1 };
+
+      const result = getTabsByDisplayMode({
+        tabs: [tab1, tab2, tab3],
+        pageLayoutType: PageLayoutType.RECORD_PAGE,
+        isMobile: false,
+        isInSidePanel: false,
+      });
+
+      expect(result.pinnedLeftTab?.id).toBe('tab-2');
+      expect(result.tabsToRenderInTabList).toHaveLength(2);
+      expect(result.tabsToRenderInTabList[0].id).toBe('tab-3');
+      expect(result.tabsToRenderInTabList[1].id).toBe('tab-1');
     });
   });
 });

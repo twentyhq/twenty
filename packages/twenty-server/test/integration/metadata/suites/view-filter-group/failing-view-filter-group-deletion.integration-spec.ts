@@ -1,5 +1,5 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { deleteOneCoreViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/delete-one-core-view-filter-group.util';
+import { deleteOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/delete-one-view-filter-group.util';
 import { v4 } from 'uuid';
 import {
   eachTestingContextFilter,
@@ -24,7 +24,7 @@ describe('View Filter Group deletion should fail', () => {
   it.each(eachTestingContextFilter(failingViewFilterGroupDeletionTestCases))(
     '$title',
     async ({ context }) => {
-      const { errors } = await deleteOneCoreViewFilterGroup({
+      const { errors } = await deleteOneViewFilterGroup({
         id: context.id,
         expectToFail: true,
       });

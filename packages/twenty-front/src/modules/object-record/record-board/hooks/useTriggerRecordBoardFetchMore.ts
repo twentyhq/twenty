@@ -7,6 +7,7 @@ import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/const
 
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
+import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -66,6 +67,11 @@ export const useTriggerRecordBoardFetchMore = () => {
     recordBoardIsFetchingMoreComponentState,
   );
 
+  const recordBoardShouldFetchMoreCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardShouldFetchMoreComponentState,
+    );
+
   const triggerRecordBoardFetchMore = useCallback(async () => {
     const isAlreadyFetchingMore = store.get(recordBoardIsFetchingMore);
 
@@ -97,6 +103,7 @@ export const useTriggerRecordBoardFetchMore = () => {
       .filter(isDefined);
 
     if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
+      store.set(recordBoardShouldFetchMoreCallbackState, false);
       cleanStateBeforeExit();
 
       return;
@@ -217,6 +224,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     recordBoardIsFetchingMore,
     recordBoardCurrentGroupByQueryOffsetCallbackState,
     recordBoardShouldFetchMoreInColumnFamilyCallbackState,
+    recordBoardShouldFetchMoreCallbackState,
     combinedFilters,
     recordIndexGroupFieldMetadataItem,
   ]);

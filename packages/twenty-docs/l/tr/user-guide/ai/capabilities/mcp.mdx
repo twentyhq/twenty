@@ -1,0 +1,142 @@
+---
+title: MCP Sunucusu
+description: Model Context Protocol kullanarak yapay zeka asistanlarını Twenty çalışma alanınıza bağlayın.
+---
+
+<Warning>
+MCP şu anda **alfa** aşamasındadır ve yalnızca bazı çalışma alanlarında kullanılabilir. Çalışma alanınızda henüz etkinleştirilmemiş olabilir.
+</Warning>
+
+Twenty, yapay zeka asistanlarının — Claude Desktop, Claude Code, Cursor, ChatGPT ve diğerlerinin — doğal dil aracılığıyla CRM verilerinizi okuması ve yazması için bir [MCP](https://modelcontextprotocol.io/) sunucusu sunar.
+
+MCP uç noktası olarak **çalışma alanı URL'nizi** (Twenty'ye erişmek için kullandığınız URL) kullanın. Twenty Cloud'da, çalışma alanı URL'niz `https://{mycompany}.twenty.com` ya da özel bir alan adı olabilir. Sunucu şu adreste kullanılabilir:
+
+| Ortam                        | MCP Uç Noktası                                                               |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| **Bulut**                    | `https://{your-workspace-url}/mcp` (örn. `https://mycompany.twenty.com/mcp`) |
+| **Kendi Kendine Barındırma** | `https://{your-domain}/mcp`                                                  |
+
+## Kimlik Doğrulama Yöntemleri
+
+MCP istemcinizi kimlik doğrulamak için iki yolunuz var: **OAuth** (önerilir) veya **API Anahtarı**.
+
+### Seçenek A — OAuth (Önerilir)
+
+OAuth ile, MCP istemciniz oturum açmanız için bir tarayıcı penceresi açar. Gizli bilgiler yapılandırma dosyalarında saklanmaz ve belirteçler otomatik olarak yenilenir.
+
+<Note>
+OAuth, [MCP Yetkilendirme belirtimi](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)ni destekleyen bir MCP istemcisi gerektirir. Claude Desktop, Claude Code, Cursor ve ChatGPT bunu destekler.
+</Note>
+
+Bunu MCP istemci yapılandırmanıza ekleyin; `{your-workspace-url}` öğesini çalışma alanınızın ana makine adıyla değiştirin (örn. `mycompany.twenty.com`):
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp"
+    }
+  }
+}
+```
+
+Hepsi bu — API anahtarı gerekmez. İstemci ilk kez bağlandığında şunları yapacaktır:
+
+1. Twenty'nin OAuth üst verilerini `/.well-known/oauth-protected-resource` ve `/.well-known/oauth-authorization-server` üzerinden keşfeder
+2. Dinamik istemci kaydı (RFC 7591) yoluyla kendisini bir OAuth istemcisi olarak kaydeder
+3. Erişimi yetkilendirmek için tarayıcınızı açar
+4. Belirteçleri alır ve MCP sunucusuna bağlanır
+
+Sonraki bağlantılar, depolanan belirteçleri yeniden kullanır ve bunları otomatik olarak yeniler.
+
+### Seçenek B — API Anahtarı
+
+MCP istemciniz OAuth'u desteklemiyorsa veya statik kimlik bilgilerini tercih ediyorsanız, `Authorization` üstbilgisinde bir API anahtarı gönderin:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+API anahtarınız çalışma alanı verilerine erişim sağlar. Sürüm kontrolünün ve paylaşılan dotfile'ların dışında tutun.
+</Warning>
+
+Bir API anahtarı oluşturmak için **Settings > APIs & Webhooks > + Create key** bölümüne gidin. Ayrıntılar için [API'ler](/l/tr/developers/extend/api#create-an-api-key) bölümüne bakın.
+
+## Hızlı Başlangıç
+
+### 1. Yapılandırmayı kopyalayın
+
+Twenty içinde **Settings > AI > More > MCP Server** bölümüne gidin. Kimlik doğrulama yöntemini (OAuth veya API Anahtarı) seçin, JSON parçacığını kopyalayın (çalışma alanı URL'nizi zaten kullanacaktır) ve MCP istemcinizin yapılandırma dosyasına yapıştırın.
+
+| İstemci            | Yapılandırma dosyasının konumu                                                                                                                                                                   |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) veya `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                                           |
+| **Claude Code**    | `~/.claude.json` (kullanıcı) veya `.mcp.json` (proje)                                                                                                                                            |
+| **Cursor**         | Projenizde `.cursor/mcp.json` veya genel olarak `~/.cursor/mcp.json`                                                                                                                             |
+| **ChatGPT**        | Developer Mode'u **Settings > Apps & Connectors > Advanced settings** içinde açın, ardından MCP sunucusunu eklemek için **Settings > Apps & Connectors** içindeki **Create** seçeneğini kullanın |
+
+### 2. Bağlan
+
+MCP istemcinizi yeniden başlatın (veya yapılandırmayı yeniden yükleyin). OAuth kullanıyorsanız, erişimi yetkilendirmek için Twenty'ye yönlendirileceksiniz. API anahtarı kullanıyorsanız, bağlantı anında kurulur.
+
+### 3. Kullanmaya başlayın
+
+Yapay zeka asistanınızdan CRM'inizle etkileşime geçmesini isteyin:
+
+* *"Bana en son oluşturulan 5 şirketi göster"*
+* *"Acme Corp'ta Jane Doe adlı yeni bir kişi oluştur"*
+* *"10.000 $'dan fazla değere sahip tüm açık fırsatları bul"*
+
+## Kullanılabilir Araçlar
+
+Bağlandıktan sonra, MCP sunucusu Twenty API'sini yansıtan araçlar sunar. Önerilen iş akışı:
+
+1. **`get_tool_catalog`** — mevcut tüm araçları keşfedin
+2. **`learn_tools`** — belirli araçların girdi şemasını alın
+3. **`execute_tool`** — bir aracı çalıştırın
+
+Araç adlarını hatırlamanıza gerek yok. Yapay zeka asistanınıza neler yapabileceğini sorun; `get_tool_catalog` çağrısını otomatik olarak yapacaktır.
+
+## İzinler
+
+MCP bağlantıları, kimliği doğrulanmış kullanıcının (OAuth) izinlerini veya API anahtarına atanan rolü devralır. MCP sunucusunun neler yapabileceğini kısıtlamak için:
+
+* **OAuth**: Kullanıcının çalışma alanı rolü geçerlidir.
+* **API Anahtarı**: **Settings > Roles** altında API anahtarına bir rol atayın. Bkz. [İzinler](/l/tr/user-guide/permissions-access/capabilities/permissions).
+
+## Öz Barındırmalı Yapılandırma
+
+Öz barındırmalı kurulumlarda `{your-workspace-url}` değerini sunucunuzun URL'siyle değiştirin. Ortamınızdaki `SERVER_URL` değerinin Twenty örneğinizin genel URL'siyle eşleştiğinden emin olun — bu, OAuth keşif üst verilerini oluşturmak için kullanılır.
+
+```bash
+SERVER_URL=https://twenty.yourcompany.com
+```
+
+MCP uç noktası, OAuth uç noktaları ve keşif üst verilerinin tümü bu değerden türetilir.
+
+## Sorun Giderme
+
+**"Unauthorized" veya 401 hataları**
+
+* OAuth: MCP istemcinizde depolanan belirteçleri temizleyip yeniden bağlanarak yeniden yetkilendirin.
+* API Anahtarı: anahtarın geçerli olduğunu ve süresinin dolmadığını doğrulayın. Gerekirse yeniden oluşturun.
+
+**OAuth akışı bir tarayıcı açmıyor**
+
+* MCP istemcinizin MCP Yetkilendirmeyi desteklediğinden emin olun. Desteklemiyorsa API Anahtarı yöntemine geri dönün.
+
+**Bağlantı zaman aşımı**
+
+* MCP uç noktası URL'sine makinenizden erişilebildiğini doğrulayın. Öz barındırmalı kurulumlar için, sunucunun çalıştığını ve `SERVER_URL` değerinin doğru ayarlandığını kontrol edin.

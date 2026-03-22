@@ -3,8 +3,8 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import gql from 'graphql-tag';
-import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const defaultResponseData = {
   pageInfo: {
@@ -121,7 +121,7 @@ const mock: MockedResponse = {
   })),
 };
 
-const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [mock],
   componentInstanceId: 'recordIndexId',
   contextStoreTargetedRecordsRule: {
@@ -133,7 +133,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
 
 describe('useLazyFetchAllRecords', () => {
   const objectNameSingular = 'person';
-  const objectMetadataItem = generatedMockObjectMetadataItems.find(
+  const objectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === objectNameSingular,
   );
   if (!objectMetadataItem) {

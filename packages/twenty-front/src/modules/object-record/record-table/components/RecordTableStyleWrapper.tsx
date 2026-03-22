@@ -35,16 +35,17 @@ export const getRecordTableColumnWidthInlineStyles = (
   visibleRecordFields: RecordField[],
 ): Record<string, string> => {
   const style: Record<string, string> = {};
+
   for (let i = 0; i < visibleRecordFields.length; i++) {
     style[`--record-table-column-field-${i}`] =
       `${visibleRecordFields[i].size}px`;
   }
+
   return style;
 };
 
 const StyledTable = styled.div<{
   isDragging?: boolean;
-  hasRecordGroups: boolean;
 }>`
   & > * {
     pointer-events: ${({ isDragging }) =>
@@ -52,23 +53,13 @@ const StyledTable = styled.div<{
   }
 
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   position: relative;
 
   width: 100%;
 
-  div.header-cell {
-    position: sticky;
-    top: 0;
-
-    ${VerticalScrollBoxShadowCSS}
-  }
-
   div.header-cell:nth-of-type(n + 5) {
-    z-index: ${({ hasRecordGroups }) =>
-      hasRecordGroups
-        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsNormal
-        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsNormal};
+    z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsNormal};
   }
 
   div.header-cell:nth-of-type(1) {
@@ -76,34 +67,30 @@ const StyledTable = styled.div<{
 
     left: 0px;
 
-    z-index: ${({ hasRecordGroups }) =>
-      hasRecordGroups
-        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
-        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
+    position: sticky;
+
+    z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
   div.header-cell:nth-of-type(2) {
     background-color: ${themeCssVariables.background.primary};
+
     left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    position: sticky;
 
     top: 0;
 
-    z-index: ${({ hasRecordGroups }) =>
-      hasRecordGroups
-        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
-        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
+    z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
   div.header-cell:nth-of-type(3) {
     background-color: ${themeCssVariables.background.primary};
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+    position: sticky;
 
     right: 0;
 
-    z-index: ${({ hasRecordGroups }) =>
-      hasRecordGroups
-        ? TABLE_Z_INDEX.headerColumns.withGroups.headerColumnsSticky
-        : TABLE_Z_INDEX.headerColumns.withoutGroups.headerColumnsSticky};
+    z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }
@@ -111,19 +98,13 @@ const StyledTable = styled.div<{
   div.table-cell:nth-of-type(1) {
     left: 0px;
     position: sticky;
-    z-index: ${({ hasRecordGroups }) =>
-      hasRecordGroups
-        ? TABLE_Z_INDEX.cell.withGroups.sticky
-        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
+    z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell:nth-of-type(2) {
     left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     position: sticky;
-    z-index: ${({ hasRecordGroups }) =>
-      hasRecordGroups
-        ? TABLE_Z_INDEX.cell.withGroups.sticky
-        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
+    z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell-0-0 {
@@ -136,10 +117,7 @@ const StyledTable = styled.div<{
   div.table-cell:nth-of-type(3) {
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
     position: sticky;
-    z-index: ${({ hasRecordGroups }) =>
-      hasRecordGroups
-        ? TABLE_Z_INDEX.cell.withGroups.sticky
-        : TABLE_Z_INDEX.cell.withoutGroups.sticky};
+    z-index: ${TABLE_Z_INDEX.cell.sticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }

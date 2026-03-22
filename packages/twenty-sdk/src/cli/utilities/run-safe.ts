@@ -1,4 +1,4 @@
-import { type CommandResult } from '@/cli/public-operations/types';
+import { type CommandResult } from '@/cli/types';
 
 export const runSafe = async <T>(
   operation: () => Promise<CommandResult<T>>,

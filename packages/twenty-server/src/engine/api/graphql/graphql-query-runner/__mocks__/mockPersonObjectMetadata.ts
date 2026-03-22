@@ -135,6 +135,7 @@ export const mockPersonFlatObjectMetadata = (
 ): FlatObjectMetadata => ({
   id: objectMetadataId,
   icon: 'Icon123',
+  color: null,
   nameSingular: 'person',
   namePlural: 'people',
   labelSingular: 'Person',
@@ -152,6 +153,7 @@ export const mockPersonFlatObjectMetadata = (
   workspaceId,
   universalIdentifier: objectMetadataId,
   indexMetadataIds: [],
+  objectPermissionIds: [],
   fieldIds: mockFieldMetadatas.map((field) => field.id),
   viewIds: [],
   applicationId: 'test-application-id',
@@ -167,6 +169,7 @@ export const mockPersonFlatObjectMetadata = (
     (field) => field.universalIdentifier,
   ),
   viewUniversalIdentifiers: [],
+  objectPermissionUniversalIdentifiers: [],
   indexMetadataUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
   imageIdentifierFieldMetadataUniversalIdentifier: null,

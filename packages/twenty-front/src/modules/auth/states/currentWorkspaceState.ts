@@ -27,6 +27,8 @@ export type CurrentWorkspace = Pick<
   | 'isPasswordAuthBypassEnabled'
   | 'isCustomDomainEnabled'
   | 'hasValidEnterpriseKey'
+  | 'hasValidSignedEnterpriseKey'
+  | 'hasValidEnterpriseValidityToken'
   | 'subdomain'
   | 'customDomain'
   | 'workspaceUrls'
@@ -38,8 +40,6 @@ export type CurrentWorkspace = Pick<
   | 'smartModel'
   | 'aiAdditionalInstructions'
   | 'editableProfileFields'
-  | 'autoEnableNewAiModels'
-  | 'disabledAiModelIds'
   | 'enabledAiModelIds'
   | 'useRecommendedModels'
 > & {

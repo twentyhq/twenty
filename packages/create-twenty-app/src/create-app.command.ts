@@ -1,12 +1,18 @@
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
+import {
+  type LocalInstanceResult,
+  setupLocalInstance,
+} from '@/utils/setup-local-instance';
 import { tryGitInit } from '@/utils/try-git-init';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
+import { execSync } from 'node:child_process';
 import * as path from 'path';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type ExampleOptions,
@@ -15,16 +21,24 @@ import {
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 
+type CreateAppOptions = {
+  directory?: string;
+  mode?: ScaffoldingMode;
+  name?: string;
+  displayName?: string;
+  description?: string;
+  skipLocalInstance?: boolean;
+};
+
 export class CreateAppCommand {
-  async execute(
-    directory?: string,
-    mode: ScaffoldingMode = 'exhaustive',
-  ): Promise<void> {
+  async execute(options: CreateAppOptions = {}): Promise<void> {
     try {
       const { appName, appDisplayName, appDirectory, appDescription } =
-        await this.getAppInfos(directory);
+        await this.getAppInfos(options);
 
-      const exampleOptions = this.resolveExampleOptions(mode);
+      const exampleOptions = this.resolveExampleOptions(
+        options.mode ?? 'exhaustive',
+      );
 
       await this.validateDirectory(appDirectory);
 
@@ -32,6 +46,7 @@ export class CreateAppCommand {
 
       await fs.ensureDir(appDirectory);
 
+      console.log(chalk.gray('  Scaffolding project files...'));
       await copyBaseApplicationProject({
         appName,
         appDisplayName,
@@ -40,11 +55,24 @@ export class CreateAppCommand {
         exampleOptions,
       });
 
+      console.log(chalk.gray('  Installing dependencies...'));
       await install(appDirectory);
 
+      console.log(chalk.gray('  Initializing git repository...'));
       await tryGitInit(appDirectory);
 
-      this.logSuccess(appDirectory);
+      let localResult: LocalInstanceResult = { running: false };
+
+      if (!options.skipLocalInstance) {
+        // Auto-detect a running server first
+        localResult = await setupLocalInstance(appDirectory);
+
+        if (localResult.running && localResult.serverUrl) {
+          await this.connectToLocal(appDirectory, localResult.serverUrl);
+        }
+      }
+
+      this.logSuccess(appDirectory, localResult);
     } catch (error) {
       console.error(
         chalk.red('Initialization failed:'),
@@ -54,19 +82,25 @@ export class CreateAppCommand {
     }
   }
 
-  private async getAppInfos(directory?: string): Promise<{
+  private async getAppInfos(options: CreateAppOptions): Promise<{
     appName: string;
     appDisplayName: string;
     appDescription: string;
     appDirectory: string;
   }> {
+    const { directory } = options;
+
+    const hasName = isDefined(options.name) || isDefined(directory);
+    const hasDisplayName = isDefined(options.displayName);
+    const hasDescription = isDefined(options.description);
+
     const { name, displayName, description } = await inquirer.prompt([
       {
         type: 'input',
         name: 'name',
         message: 'Application name:',
-        when: () => !directory,
-        default: 'my-awesome-app',
+        when: () => !hasName,
+        default: 'my-twenty-app',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
           return true;
@@ -76,25 +110,33 @@ export class CreateAppCommand {
         type: 'input',
         name: 'displayName',
         message: 'Application display name:',
-        default: (answers: any) => {
-          return convertToLabel(answers?.name ?? directory);
+        when: () => !hasDisplayName,
+        default: (answers: { name?: string }) => {
+          return convertToLabel(
+            answers?.name ?? options.name ?? directory ?? '',
+          );
         },
       },
       {
         type: 'input',
         name: 'description',
         message: 'Application description (optional):',
+        when: () => !hasDescription,
         default: '',
       },
     ]);
 
-    const computedName = name ?? directory;
+    const appName = (
+      options.name ??
+      name ??
+      directory ??
+      'my-twenty-app'
+    ).trim();
 
-    const appName = computedName.trim();
+    const appDisplayName =
+      (options.displayName ?? displayName)?.trim() || convertToLabel(appName);
 
-    const appDisplayName = displayName.trim();
-
-    const appDescription = description.trim();
+    const appDescription = (options.description ?? description ?? '').trim();
 
     const appDirectory = directory
       ? path.join(CURRENT_EXECUTION_DIRECTORY, directory)
@@ -113,6 +155,7 @@ export class CreateAppCommand {
         includeExampleView: false,
         includeExampleNavigationMenuItem: false,
         includeExampleSkill: false,
+        includeExampleAgent: false,
         includeExampleIntegrationTest: false,
       };
     }
@@ -126,6 +169,7 @@ export class CreateAppCommand {
       includeExampleNavigationMenuItem: true,
       includeExampleSkill: true,
       includeExampleIntegrationTest: true,
+      includeExampleAgent: true,
     };
   }
 
@@ -149,22 +193,55 @@ export class CreateAppCommand {
     appDirectory: string;
     appName: string;
   }): void {
-    console.log(chalk.blue('🎯 Creating Twenty Application'));
-    console.log(chalk.gray(`📁 Directory: ${appDirectory}`));
-    console.log(chalk.gray(`📝 Name: ${appName}`));
+    console.log(chalk.blue('Creating Twenty Application'));
+    console.log(chalk.gray(`  Directory: ${appDirectory}`));
+    console.log(chalk.gray(`  Name: ${appName}`));
     console.log('');
   }
 
-  private logSuccess(appDirectory: string): void {
+  private async connectToLocal(
+    appDirectory: string,
+    serverUrl: string,
+  ): Promise<void> {
+    try {
+      execSync(
+        `npx nx run twenty-sdk:start -- remote add ${serverUrl} --as local`,
+        {
+          cwd: appDirectory,
+          stdio: 'inherit',
+        },
+      );
+      console.log(chalk.green('Authenticated with local Twenty instance.'));
+    } catch {
+      console.log(
+        chalk.yellow(
+          'Authentication skipped. Run `npx nx run twenty-sdk:start -- remote add --local` manually.',
+        ),
+      );
+    }
+  }
+
+  private logSuccess(
+    appDirectory: string,
+    localResult: LocalInstanceResult,
+  ): void {
     const dirName = appDirectory.split('/').reverse()[0] ?? '';
 
-    console.log(chalk.green('✅ Application created!'));
+    console.log(chalk.green('Application created!'));
     console.log('');
     console.log(chalk.blue('Next steps:'));
     console.log(chalk.gray(`  cd ${dirName}`));
+
+    if (!localResult.running) {
+      console.log(
+        chalk.gray(
+          '  yarn twenty remote add --local  # Authenticate with Twenty',
+        ),
+      );
+    }
+
     console.log(
-      chalk.gray('  yarn twenty auth:login  # Authenticate with Twenty'),
+      chalk.gray('  yarn twenty dev                  # Start dev mode'),
     );
-    console.log(chalk.gray('  yarn twenty app:dev     # Start dev mode'));
   }
 }

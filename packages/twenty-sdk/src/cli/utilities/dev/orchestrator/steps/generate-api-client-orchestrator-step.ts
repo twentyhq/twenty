@@ -34,9 +34,9 @@ export class GenerateApiClientOrchestratorStep {
     try {
       const config = await this.configService.getConfig();
 
-      await this.clientService.generate({
+      await this.clientService.generateCoreClient({
         appPath: input.appPath,
-        authToken: config.applicationAccessToken,
+        authToken: config.accessToken,
       });
 
       step.status = 'done';

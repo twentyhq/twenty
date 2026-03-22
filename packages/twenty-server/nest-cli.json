@@ -33,12 +33,28 @@
         "outDir": "dist/assets"
       },
       {
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/yarn-install/index.mjs",
+        "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/builder/index.mjs",
+        "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "database/clickHouse/migrations/*.sql",
         "outDir": "dist"
       },
       {
         "include": "engine/workspace-manager/dev-seeder/data/sample-files/**",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/metadata-modules/ai/ai-models/ai-providers.json",
+        "outDir": "dist"
       }
     ]
   },

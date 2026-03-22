@@ -3,12 +3,11 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
-import { RecordTableDraggableTrFirstRowOfGroup } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTrFirstRowOfGroup';
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -18,14 +17,12 @@ type RecordTableRowProps = {
   recordId: string;
   rowIndexForFocus: number;
   rowIndexForDrag: number;
-  isFirstRowOfGroup: boolean;
 };
 
 export const RecordTableRow = ({
   recordId,
   rowIndexForFocus,
   rowIndexForDrag,
-  isFirstRowOfGroup,
 }: RecordTableRowProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -33,30 +30,13 @@ export const RecordTableRow = ({
     isRecordTableRowFocusedComponentFamilyState,
     rowIndexForFocus,
   );
+
   const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
     recordTableId,
   );
 
-  return isFirstRowOfGroup ? (
-    <RecordTableDraggableTrFirstRowOfGroup
-      recordId={recordId}
-      draggableIndex={rowIndexForDrag}
-      focusIndex={rowIndexForFocus}
-    >
-      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
-        <>
-          <RecordTableRowHotkeyEffect />
-          <RecordTableRowArrowKeysEffect />
-        </>
-      )}
-      <RecordTableCellDragAndDrop />
-      <RecordTableCellCheckbox />
-      <RecordTableFieldsCells />
-      <RecordTablePlusButtonCellPlaceholder />
-      <RecordTableLastEmptyCell />
-    </RecordTableDraggableTrFirstRowOfGroup>
-  ) : (
+  return (
     <RecordTableDraggableTr
       recordId={recordId}
       draggableIndex={rowIndexForDrag}

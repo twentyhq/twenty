@@ -1,22 +1,65 @@
 import { useCallback } from 'react';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
+import { sidePanelSubPageStackComponentState } from '@/side-panel/states/sidePanelSubPageStackComponentState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSidePanelHistory = () => {
   const store = useStore();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
+  const cleanupCurrentPage = useCallback(() => {
+    const currentNavigationStack = store.get(
+      sidePanelNavigationStackState.atom,
+    );
+
+    const currentMorphItems = store.get(
+      sidePanelNavigationMorphItemsByPageState.atom,
+    );
+
+    if (currentNavigationStack.length > 0) {
+      const removedItem = currentNavigationStack.at(-1);
+
+      if (isDefined(removedItem)) {
+        const newMorphItems = new Map(currentMorphItems);
+        newMorphItems.delete(removedItem.pageId);
+        store.set(sidePanelNavigationMorphItemsByPageState.atom, newMorphItems);
+
+        store.set(
+          sidePanelSubPageStackComponentState.atomFamily({
+            instanceId: removedItem.pageId,
+          }),
+          [],
+        );
+
+        const morphItems = currentMorphItems.get(removedItem.pageId);
+        if (isNonEmptyArray(morphItems)) {
+          store.set(
+            activeTabIdComponentState.atomFamily({
+              instanceId: getShowPageTabListComponentId({
+                pageId: removedItem.pageId,
+                targetObjectId: morphItems[0].recordId,
+              }),
+            }),
+            null,
+          );
+        }
+      }
+    }
+  }, [store]);
+
   const goBackFromSidePanel = useCallback(() => {
+    cleanupCurrentPage();
+
     const currentNavigationStack = store.get(
       sidePanelNavigationStackState.atom,
     );
@@ -39,35 +82,30 @@ export const useSidePanelHistory = () => {
 
     store.set(sidePanelNavigationStackState.atom, newNavigationStack);
 
-    const currentMorphItems = store.get(
-      sidePanelNavigationMorphItemsByPageState.atom,
+    store.set(hasUserSelectedSidePanelListItemState.atom, false);
+  }, [cleanupCurrentPage, closeSidePanelMenu, store]);
+
+  const goBackOneSubPageOrMainPage = useCallback(() => {
+    const currentPageInfo = store.get(sidePanelPageInfoState.atom);
+
+    const subPageStack = store.get(
+      sidePanelSubPageStackComponentState.atomFamily({
+        instanceId: currentPageInfo.instanceId,
+      }),
     );
 
-    if (currentNavigationStack.length > 0) {
-      const removedItem = currentNavigationStack.at(-1);
-
-      if (isDefined(removedItem)) {
-        const newMorphItems = new Map(currentMorphItems);
-        newMorphItems.delete(removedItem.pageId);
-        store.set(sidePanelNavigationMorphItemsByPageState.atom, newMorphItems);
-
-        const morphItems = currentMorphItems.get(removedItem.pageId);
-        if (isNonEmptyArray(morphItems)) {
-          store.set(
-            activeTabIdComponentState.atomFamily({
-              instanceId: getShowPageTabListComponentId({
-                pageId: removedItem.pageId,
-                targetObjectId: morphItems[0].recordId,
-              }),
-            }),
-            null,
-          );
-        }
-      }
+    if (isNonEmptyArray(subPageStack)) {
+      store.set(
+        sidePanelSubPageStackComponentState.atomFamily({
+          instanceId: currentPageInfo.instanceId,
+        }),
+        subPageStack.slice(0, -1),
+      );
+      return;
     }
 
-    store.set(hasUserSelectedSidePanelListItemState.atom, false);
-  }, [closeSidePanelMenu, store]);
+    goBackFromSidePanel();
+  }, [goBackFromSidePanel, store]);
 
   const navigateSidePanelHistory = useCallback(
     (pageIndex: number) => {
@@ -100,6 +138,13 @@ export const useSidePanelHistory = () => {
       for (const [pageId, morphItems] of currentMorphItems.entries()) {
         if (!newNavigationStack.some((item) => item.pageId === pageId)) {
           store.set(
+            sidePanelSubPageStackComponentState.atomFamily({
+              instanceId: pageId,
+            }),
+            [],
+          );
+
+          store.set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
@@ -126,6 +171,7 @@ export const useSidePanelHistory = () => {
 
   return {
     goBackFromSidePanel,
+    goBackOneSubPageOrMainPage,
     navigateSidePanelHistory,
   };
 };

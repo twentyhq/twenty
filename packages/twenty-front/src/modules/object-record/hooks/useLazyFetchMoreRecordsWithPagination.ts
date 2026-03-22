@@ -1,16 +1,14 @@
 import {
-  type ApolloError,
-  type ApolloQueryResult,
-  type FetchMoreQueryOptions,
+  type ApolloClient,
+  type ErrorLike,
+  type ObservableQuery,
   type OperationVariables,
   type WatchQueryFetchPolicy,
 } from '@apollo/client';
-import { type Unmasked } from '@apollo/client/masking';
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -29,7 +27,7 @@ import {
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
@@ -48,22 +46,19 @@ type UseFindManyRecordsStateParams<
   'skip' | 'recordGqlFields' | 'fetchPolicy' | 'onCompleted'
 > & {
   data: RecordGqlOperationFindManyResult | undefined;
-  error: ApolloError | undefined;
+  error: ErrorLike | undefined;
   fetchMore<
     TFetchData = TData,
     TFetchVars extends OperationVariables = OperationVariables,
   >(
-    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
-      updateQuery?: (
-        previousQueryResult: TData,
-        options: {
-          fetchMoreResult: Unmasked<TFetchData>;
-          variables: TFetchVars;
-        },
-      ) => TData;
-    },
-  ): Promise<ApolloQueryResult<TFetchData>>;
-  objectMetadataItem: ObjectMetadataItem;
+    fetchMoreOptions: ObservableQuery.FetchMoreOptions<
+      TData,
+      OperationVariables,
+      TFetchData,
+      TFetchVars
+    >,
+  ): Promise<ApolloClient.QueryResult<TFetchData>>;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const useLazyFetchMoreRecordsWithPagination = <
@@ -168,7 +163,8 @@ export const useLazyFetchMoreRecordsWithPagination = <
             records: getRecordsFromRecordConnection({
               recordConnection: {
                 edges:
-                  fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges,
+                  fetchMoreDataResult?.[objectMetadataItem.namePlural]?.edges ??
+                  [],
                 pageInfo:
                   fetchMoreDataResult?.[objectMetadataItem.namePlural]
                     ?.pageInfo,
@@ -176,8 +172,8 @@ export const useLazyFetchMoreRecordsWithPagination = <
             }) as T[],
           };
         } catch (error) {
-          handleFindManyRecordsError(error as ApolloError);
-          return { error: error as ApolloError };
+          handleFindManyRecordsError(error as ErrorLike);
+          return { error: error as ErrorLike };
         }
       }
     },

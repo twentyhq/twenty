@@ -19,6 +19,7 @@ import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
 import { glob } from 'tinyglobby';
 import {
+  type AgentManifest,
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
@@ -68,6 +69,7 @@ export const buildManifest = async (
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
+  const agents: AgentManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -82,6 +84,7 @@ export const buildManifest = async (
   const fieldsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
+  const agentsFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -182,6 +185,16 @@ export const buildManifest = async (
         skills.push(extract.config);
         errors.push(...extract.errors);
         skillsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.Agents: {
+        const extract = await extractManifestFromFile<AgentManifest>({
+          appPath,
+          filePath,
+        });
+        agents.push(extract.config);
+        errors.push(...extract.errors);
+        agentsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.LogicFunctions: {
@@ -355,20 +368,27 @@ export const buildManifest = async (
     };
   }
 
+  const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>
+    a.universalIdentifier.localeCompare(b.universalIdentifier);
+
+  const byPath = <T extends { filePath: string }>(a: T, b: T) =>
+    a.filePath.localeCompare(b.filePath);
+
   const manifest = !application
     ? null
     : {
         application,
-        objects,
-        fields,
-        roles,
-        skills,
-        logicFunctions,
-        frontComponents,
-        publicAssets,
-        views,
-        navigationMenuItems,
-        pageLayouts,
+        objects: objects.sort(byId),
+        fields: fields.sort(byId),
+        roles: roles.sort(byId),
+        skills: skills.sort(byId),
+        agents: agents.sort(byId),
+        logicFunctions: logicFunctions.sort(byId),
+        frontComponents: frontComponents.sort(byId),
+        publicAssets: publicAssets.sort(byPath),
+        views: views.sort(byId),
+        navigationMenuItems: navigationMenuItems.sort(byId),
+        pageLayouts: pageLayouts.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -377,6 +397,7 @@ export const buildManifest = async (
     fields: fieldsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
+    agents: agentsFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,

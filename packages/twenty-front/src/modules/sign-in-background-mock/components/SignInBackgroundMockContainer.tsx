@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
@@ -29,7 +29,7 @@ export const SignInBackgroundMockContainer = () => {
   const recordIndexId = 'sign-up-mock-record-table-id';
   const viewBarId = 'companies-mock';
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -85,7 +85,7 @@ export const SignInBackgroundMockContainer = () => {
                 recordTableId={recordIndexId}
                 viewId={viewBarId}
               />
-              <ActionMenuComponentInstanceContext.Provider
+              <CommandMenuComponentInstanceContext.Provider
                 value={{ instanceId: recordIndexId }}
               >
                 {isDefined(objectMetadataItem) && (
@@ -93,6 +93,7 @@ export const SignInBackgroundMockContainer = () => {
                     <ViewBar
                       viewBarId={viewBarId}
                       optionsDropdownButton={<></>}
+                      isReadOnly
                     />
 
                     <RecordTableWithWrappers
@@ -103,7 +104,7 @@ export const SignInBackgroundMockContainer = () => {
                     />
                   </>
                 )}
-              </ActionMenuComponentInstanceContext.Provider>
+              </CommandMenuComponentInstanceContext.Provider>
             </ContextStoreComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>
         </ViewComponentInstanceContext.Provider>

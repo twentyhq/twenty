@@ -7,6 +7,7 @@ import {
 import {
   computeRecordGqlOperationFilter,
   isDefined,
+  isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
 
@@ -93,6 +94,17 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         };
       })
       .filter(isDefined);
+
+    if (workflowActionInput.filter?.recordFilters) {
+      for (const filter of workflowActionInput.filter.recordFilters) {
+        if (!isRecordFilterValueValid(filter)) {
+          throw new WorkflowStepExecutorException(
+            `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
+            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+          );
+        }
+      }
+    }
 
     const gqlOperationFilter =
       workflowActionInput.filter?.recordFilters &&

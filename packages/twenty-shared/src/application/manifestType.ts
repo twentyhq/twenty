@@ -1,3 +1,4 @@
+import { type AgentManifest } from './agentManifestType';
 import { type ApplicationManifest } from './applicationType';
 import { type AssetManifest } from './assetManifestType';
 import { type FieldManifest } from './fieldManifestType';
@@ -18,6 +19,7 @@ export type Manifest = {
   frontComponents: FrontComponentManifest[];
   roles: RoleManifest[];
   skills: SkillManifest[];
+  agents: AgentManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];

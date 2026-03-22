@@ -2,16 +2,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
-import { AIBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import {
-  InferenceProvider,
-  ModelFamily,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-types.const';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-describe('AIBillingService', () => {
-  let service: AIBillingService;
+describe('AiBillingService', () => {
+  let service: AiBillingService;
   let mockWorkspaceEventEmitter: jest.Mocked<WorkspaceEventEmitter>;
   let mockAiModelRegistryService: jest.Mocked<
     Pick<AiModelRegistryService, 'getEffectiveModelConfig'>
@@ -20,8 +17,8 @@ describe('AIBillingService', () => {
   const openaiModelConfig = {
     modelId: 'gpt-4o',
     label: 'GPT-4o',
-    modelFamily: ModelFamily.OPENAI,
-    inferenceProvider: InferenceProvider.OPENAI,
+    modelFamily: ModelFamily.GPT,
+    sdkPackage: '@ai-sdk/openai',
     inputCostPerMillionTokens: 2.5,
     outputCostPerMillionTokens: 10.0,
     cachedInputCostPerMillionTokens: 1.25,
@@ -30,8 +27,8 @@ describe('AIBillingService', () => {
   const anthropicModelConfig = {
     modelId: 'claude-sonnet-4-5-20250929',
     label: 'Claude Sonnet 4.5',
-    modelFamily: ModelFamily.ANTHROPIC,
-    inferenceProvider: InferenceProvider.ANTHROPIC,
+    modelFamily: ModelFamily.CLAUDE,
+    sdkPackage: '@ai-sdk/anthropic',
     inputCostPerMillionTokens: 3.0,
     outputCostPerMillionTokens: 15.0,
     cachedInputCostPerMillionTokens: 0.3,
@@ -65,7 +62,7 @@ describe('AIBillingService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AIBillingService,
+        AiBillingService,
         {
           provide: WorkspaceEventEmitter,
           useValue: mockEventEmitterMethods,
@@ -77,7 +74,7 @@ describe('AIBillingService', () => {
       ],
     }).compile();
 
-    service = module.get<AIBillingService>(AIBillingService);
+    service = module.get<AiBillingService>(AiBillingService);
     mockWorkspaceEventEmitter = module.get(WorkspaceEventEmitter);
     mockAiModelRegistryService = module.get(AiModelRegistryService);
   });

@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { type RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
@@ -26,7 +25,6 @@ export const useAggregateRecordsQuery = ({
     objectNameSingular,
   });
 
-  const apolloCoreClient = useApolloCoreClient();
   const availableAggregations = useMemo(
     () =>
       getAvailableAggregationsFromObjectFields(
@@ -35,32 +33,37 @@ export const useAggregateRecordsQuery = ({
     [objectMetadataItem.readableFields],
   );
 
-  const recordGqlFields: RecordGqlFields = {};
-  const gqlFieldToFieldMap: GqlFieldToFieldMap = {};
+  const { recordGqlFields, gqlFieldToFieldMap } = useMemo(() => {
+    const fields: RecordGqlFields = {};
+    const fieldMap: GqlFieldToFieldMap = {};
 
-  Object.entries(recordGqlFieldsAggregate).forEach(
-    ([fieldName, aggregateOperations]) => {
-      aggregateOperations.forEach((aggregateOperation) => {
-        const fieldToQuery =
-          availableAggregations[fieldName]?.[aggregateOperation];
+    Object.entries(recordGqlFieldsAggregate).forEach(
+      ([fieldName, aggregateOperations]) => {
+        aggregateOperations.forEach((aggregateOperation) => {
+          const fieldToQuery =
+            availableAggregations[fieldName]?.[aggregateOperation];
 
-        if (!isDefined(fieldToQuery)) {
-          return;
-        }
-        gqlFieldToFieldMap[fieldToQuery] = [fieldName, aggregateOperation];
+          if (!isDefined(fieldToQuery)) {
+            return;
+          }
+          fieldMap[fieldToQuery] = [fieldName, aggregateOperation];
 
-        recordGqlFields[fieldToQuery] = true;
-      });
-    },
-    {
-      client: apolloCoreClient,
-    },
+          fields[fieldToQuery] = true;
+        });
+      },
+    );
+
+    return { recordGqlFields: fields, gqlFieldToFieldMap: fieldMap };
+  }, [availableAggregations, recordGqlFieldsAggregate]);
+
+  const aggregateQuery = useMemo(
+    () =>
+      generateAggregateQuery({
+        objectMetadataItem,
+        recordGqlFields,
+      }),
+    [objectMetadataItem, recordGqlFields],
   );
-
-  const aggregateQuery = generateAggregateQuery({
-    objectMetadataItem,
-    recordGqlFields,
-  });
 
   return {
     aggregateQuery,

@@ -35,6 +35,8 @@ describe('ClientConfigService', () => {
           provide: AiModelRegistryService,
           useValue: {
             getAdminFilteredModels: jest.fn().mockReturnValue([]),
+            getRecommendedModelIds: jest.fn().mockReturnValue(new Set()),
+            getModelConfig: jest.fn().mockReturnValue(undefined),
           },
         },
       ],
@@ -77,7 +79,6 @@ describe('ClientConfigService', () => {
             SENTRY_FRONT_DSN: 'https://sentry.example.com',
             CAPTCHA_DRIVER: CaptchaDriverType.GOOGLE_RECAPTCHA,
             CAPTCHA_SITE_KEY: 'site-key-123',
-            CHROME_EXTENSION_ID: 'extension-123',
             MUTATION_MAXIMUM_AFFECTED_RECORDS: 1000,
             IS_ATTACHMENT_PREVIEW_ENABLED: true,
             ANALYTICS_ENABLED: true,
@@ -145,7 +146,6 @@ describe('ClientConfigService', () => {
           provider: 'GOOGLE_RECAPTCHA',
           siteKey: 'site-key-123',
         },
-        chromeExtensionId: 'extension-123',
         api: {
           mutationMaximumAffectedRecords: 1000,
         },

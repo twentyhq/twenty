@@ -1,18 +1,19 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
-import { type ActionConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
+import { type ConfirmationModalCaller } from 'twenty-shared/types';
+import { type CommandConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
 
-// Must match ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME in twenty-front
-const ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
-  'action-menu-confirmation-modal-result';
+// Must match COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME in twenty-front
+const COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
+  'command-menu-item-confirmation-modal-result';
 
-type ActionMenuConfirmationModalResultBrowserEventDetail = {
-  frontComponentId: string;
-  confirmationResult: ActionConfirmationModalResult;
+type CommandMenuItemConfirmationModalResultBrowserEventDetail = {
+  caller: ConfirmationModalCaller;
+  confirmationResult: CommandConfirmationModalResult;
 };
 
 type FrontComponentWorkerEffectProps = {
@@ -67,21 +68,25 @@ export const FrontComponentWorkerEffect = ({
       exports: frontComponentHostCommunicationApi,
     });
 
-    const handleActionMenuConfirmationModalResultBrowserEvent = (
-      event: CustomEvent<ActionMenuConfirmationModalResultBrowserEventDetail>,
+    const handleCommandMenuItemConfirmationModalResultBrowserEvent = (
+      event: CustomEvent<CommandMenuItemConfirmationModalResultBrowserEventDetail>,
     ) => {
-      const actionMenuConfirmationModalResultBrowserEventDetail = event.detail;
+      const commandMenuItemConfirmationModalResultBrowserEventDetail =
+        event.detail;
+
+      const caller =
+        commandMenuItemConfirmationModalResultBrowserEventDetail.caller;
 
       if (
-        actionMenuConfirmationModalResultBrowserEventDetail.frontComponentId !==
-        frontComponentId
+        caller.type !== 'frontComponent' ||
+        caller.frontComponentId !== frontComponentId
       ) {
         return;
       }
 
       thread.imports
         .onConfirmationModalResult(
-          actionMenuConfirmationModalResultBrowserEventDetail.confirmationResult,
+          commandMenuItemConfirmationModalResultBrowserEventDetail.confirmationResult,
         )
         .catch((error: Error) => {
           setError(error);
@@ -89,8 +94,8 @@ export const FrontComponentWorkerEffect = ({
     };
 
     window.addEventListener(
-      ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
-      handleActionMenuConfirmationModalResultBrowserEvent as EventListener,
+      COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+      handleCommandMenuItemConfirmationModalResultBrowserEvent as EventListener,
     );
 
     setThread(thread);
@@ -110,8 +115,8 @@ export const FrontComponentWorkerEffect = ({
 
     return () => {
       window.removeEventListener(
-        ACTION_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
-        handleActionMenuConfirmationModalResultBrowserEvent as EventListener,
+        COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
+        handleCommandMenuItemConfirmationModalResultBrowserEvent as EventListener,
       );
       setThread(null);
       worker.terminate();

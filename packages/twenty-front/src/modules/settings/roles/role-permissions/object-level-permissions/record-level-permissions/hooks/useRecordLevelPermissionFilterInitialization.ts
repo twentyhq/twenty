@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import {
@@ -15,7 +15,7 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 
 type UseRecordLevelPermissionFilterInitializationProps = {
   roleId: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   settingsDraftRole: RoleWithPartialMembers;
   filterableFieldMetadataItems: FieldMetadataItem[];
   setCurrentRecordFilters: (filters: RecordFilter[]) => void;

@@ -24,7 +24,7 @@ export default defineField({
   universalIdentifier: '${universalIdentifier}',
   name: '${data.name}',
   label: '${data.label}',
-  type: FieldMetadataType.${data.type},
+  type: FieldType.${data.type},
   objectUniversalIdentifier: '${data.objectUniversalIdentifier}',${descriptionLine}
 });
 `;

@@ -37,10 +37,13 @@ export const useEmailThreadInSidePanel = () => {
     recordGqlFields: {
       id: true,
     },
-    onCompleted: (record) => {
-      upsertRecordsInStore({ partialRecords: [record] });
-    },
   });
+
+  useEffect(() => {
+    if (thread) {
+      upsertRecordsInStore({ partialRecords: [thread] });
+    }
+  }, [thread, upsertRecordsInStore]);
 
   const FETCH_ALL_MESSAGES_OPERATION_SIGNATURE =
     fetchAllThreadMessagesOperationSignatureFactory({

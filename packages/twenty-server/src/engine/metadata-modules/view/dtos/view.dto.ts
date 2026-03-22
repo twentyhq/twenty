@@ -24,7 +24,7 @@ registerEnumType(ViewKey, { name: 'ViewKey' });
 registerEnumType(ViewCalendarLayout, { name: 'ViewCalendarLayout' });
 registerEnumType(ViewVisibility, { name: 'ViewVisibility' });
 
-@ObjectType('CoreView')
+@ObjectType('View')
 export class ViewDTO {
   @IDField(() => UUIDScalarType)
   id: string;

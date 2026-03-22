@@ -147,6 +147,119 @@ describe('SecureHttpClientService', () => {
     });
   });
 
+  describe('protocol validation interceptor', () => {
+    it('should allow http URLs when safe mode is on', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient();
+
+      const interceptorHandlers = (
+        client.interceptors.request as unknown as {
+          handlers: Array<{ fulfilled: Function }>;
+        }
+      ).handlers;
+
+      const protocolInterceptor = interceptorHandlers[0].fulfilled;
+
+      expect(() =>
+        protocolInterceptor({ url: 'http://example.com/api' }),
+      ).not.toThrow();
+    });
+
+    it('should allow https URLs when safe mode is on', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient();
+
+      const interceptorHandlers = (
+        client.interceptors.request as unknown as {
+          handlers: Array<{ fulfilled: Function }>;
+        }
+      ).handlers;
+
+      const protocolInterceptor = interceptorHandlers[0].fulfilled;
+
+      expect(() =>
+        protocolInterceptor({ url: 'https://example.com/api' }),
+      ).not.toThrow();
+    });
+
+    it('should reject ftp URLs when safe mode is on', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient();
+
+      const interceptorHandlers = (
+        client.interceptors.request as unknown as {
+          handlers: Array<{ fulfilled: Function }>;
+        }
+      ).handlers;
+
+      const protocolInterceptor = interceptorHandlers[0].fulfilled;
+
+      expect(() =>
+        protocolInterceptor({ url: 'ftp://internal-server/data' }),
+      ).toThrow('Protocol ftp: is not allowed');
+    });
+
+    it('should reject file URLs when safe mode is on', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient();
+
+      const interceptorHandlers = (
+        client.interceptors.request as unknown as {
+          handlers: Array<{ fulfilled: Function }>;
+        }
+      ).handlers;
+
+      const protocolInterceptor = interceptorHandlers[0].fulfilled;
+
+      expect(() => protocolInterceptor({ url: 'file:///etc/passwd' })).toThrow(
+        'Protocol file: is not allowed',
+      );
+    });
+
+    it('should reject non-http baseURL when url is empty string', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+      const client = service.getHttpClient();
+
+      const interceptorHandlers = (
+        client.interceptors.request as unknown as {
+          handlers: Array<{ fulfilled: Function }>;
+        }
+      ).handlers;
+
+      const protocolInterceptor = interceptorHandlers[0].fulfilled;
+
+      expect(() =>
+        protocolInterceptor({
+          url: '',
+          baseURL: 'ftp://internal-server/data',
+        }),
+      ).toThrow('Protocol ftp: is not allowed');
+    });
+
+    it('should not add protocol interceptor when safe mode is off', () => {
+      const service = new SecureHttpClientService(createMockConfigService());
+      const client = service.getHttpClient();
+
+      const interceptorHandlers = (
+        client.interceptors.request as unknown as {
+          handlers: Array<{ fulfilled: Function }>;
+        }
+      ).handlers;
+
+      expect(interceptorHandlers.length).toBe(0);
+    });
+  });
+
   describe('logging interceptor', () => {
     it('should add a request interceptor when context is provided', () => {
       const service = new SecureHttpClientService(createMockConfigService());

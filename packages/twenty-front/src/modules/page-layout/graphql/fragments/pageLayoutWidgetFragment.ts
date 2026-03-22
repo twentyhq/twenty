@@ -6,9 +6,11 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     title
     type
     objectMetadataId
+    isOverridden
     createdAt
     updatedAt
     deletedAt
+    conditionalDisplay
     gridPosition {
       column
       columnSpan
@@ -166,10 +168,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on FieldsConfiguration {
         configurationType
         viewId
-        newFieldDefaultConfiguration {
-          isVisible
-          viewFieldGroupId
-        }
+        newFieldDefaultVisibility
+        shouldAllowUserToSeeHiddenFields
       }
       ... on FilesConfiguration {
         configurationType

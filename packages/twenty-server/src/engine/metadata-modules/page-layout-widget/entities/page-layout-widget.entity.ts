@@ -23,8 +23,14 @@ import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetConfigurationTypeSettings } from 'src/engine/metadata-modules/page-layout-widget/types/page-layout-widget-configuration.type';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+
+export type PageLayoutWidgetOverrides = {
+  title?: string;
+  position?: PageLayoutWidgetPosition | null;
+  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+};
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
 @ObjectType('PageLayoutWidget')
@@ -38,7 +44,7 @@ export class PageLayoutWidgetEntity<
     TWidgetConfigurationType extends
       WidgetConfigurationType = WidgetConfigurationType,
   >
-  extends SyncableEntity
+  extends OverridableEntity<PageLayoutWidgetOverrides>
   implements Required<PageLayoutWidgetEntity>
 {
   @PrimaryGeneratedColumn('uuid')

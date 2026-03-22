@@ -1,7 +1,7 @@
-import { Action } from '@/action-menu/actions/components/Action';
-import { ActionLink } from '@/action-menu/actions/components/ActionLink';
-import { ActionScope } from '@/action-menu/actions/types/ActionScope';
-import { ActionType } from '@/action-menu/actions/types/ActionType';
+import { Command } from '@/command-menu-item/display/components/Command';
+import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -15,7 +15,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useMemo } from 'react';
 import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
-import { useSearchQuery } from '~/generated/graphql';
+import { useQuery } from '@apollo/client/react';
+import { SearchDocument } from '~/generated/graphql';
 
 export const useSidePanelSearchRecords = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
@@ -38,7 +39,7 @@ export const useSidePanelSearchRecords = () => {
       .map((objectMetadataItem) => objectMetadataItem.nameSingular);
   }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
 
-  const { data: searchData, loading } = useSearchQuery({
+  const { data: searchData, loading } = useQuery(SearchDocument, {
     client: coreClient,
     variables: {
       searchInput: deferredSidePanelSearch ?? '',
@@ -56,8 +57,8 @@ export const useSidePanelSearchRecords = () => {
     return (searchData?.search.edges.map((edge) => edge.node) ?? []).map(
       (searchRecord, index) => {
         const baseAction = {
-          type: ActionType.Navigation,
-          scope: ActionScope.Global,
+          type: CommandMenuItemType.Navigation,
+          scope: CommandMenuItemScope.Global,
           key: searchRecord.recordId,
           label: searchRecord.label,
           position: index,
@@ -89,7 +90,7 @@ export const useSidePanelSearchRecords = () => {
           return {
             ...baseAction,
             component: (
-              <Action
+              <Command
                 onClick={() => {
                   searchRecord.objectNameSingular === 'task'
                     ? openRecordInSidePanel({
@@ -101,7 +102,7 @@ export const useSidePanelSearchRecords = () => {
                         objectNameSingular: CoreObjectNameSingular.Note,
                       });
                 }}
-                closeSidePanelOnCommandMenuListActionExecution={false}
+                closeSidePanelOnCommandMenuListExecution={false}
               />
             ),
           };
@@ -110,7 +111,7 @@ export const useSidePanelSearchRecords = () => {
         return {
           ...baseAction,
           component: (
-            <ActionLink
+            <CommandLink
               to={AppPath.RecordShowPage}
               params={{
                 objectNameSingular: searchRecord.objectNameSingular,

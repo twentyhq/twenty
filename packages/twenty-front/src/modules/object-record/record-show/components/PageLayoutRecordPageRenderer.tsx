@@ -1,5 +1,5 @@
-import { RecordShowSidePanelActionMenu } from '@/action-menu/components/RecordShowSidePanelActionMenu';
-import { RecordShowSidePanelOpenRecordButton } from '@/action-menu/components/RecordShowSidePanelOpenRecordButton';
+import { RecordPageSidePanelCommandMenu } from '@/command-menu-item/components/RecordPageSidePanelCommandMenu';
+import { RecordShowSidePanelOpenRecordButton } from '@/command-menu-item/components/RecordShowSidePanelOpenRecordButton';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
@@ -33,8 +33,6 @@ const StyledContentContainer = styled.div<{ isInSidePanel: boolean }>`
   background: ${themeCssVariables.background.primary};
   flex: 1;
   overflow-y: auto;
-  padding-bottom: ${({ isInSidePanel }) =>
-    isInSidePanel ? themeCssVariables.spacing[16] : 0};
 `;
 
 export const PageLayoutRecordPageRenderer = ({
@@ -103,7 +101,7 @@ export const PageLayoutRecordPageRenderer = ({
         {isInSidePanel && (
           <SidePanelFooter
             actions={[
-              <RecordShowSidePanelActionMenu />,
+              <RecordPageSidePanelCommandMenu />,
               <RecordShowSidePanelOpenRecordButton
                 objectNameSingular={
                   targetRecordIdentifier.targetObjectNameSingular

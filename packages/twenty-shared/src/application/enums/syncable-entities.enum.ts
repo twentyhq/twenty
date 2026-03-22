@@ -5,6 +5,7 @@ export enum SyncableEntity {
   FrontComponent = 'frontComponent',
   Role = 'role',
   Skill = 'skill',
+  Agent = 'agent',
   View = 'view',
   NavigationMenuItem = 'navigationMenuItem',
   PageLayout = 'pageLayout',

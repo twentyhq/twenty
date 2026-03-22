@@ -1,6 +1,6 @@
 import { type CommandMenuItemManifest } from 'twenty-shared/application';
 
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 const AVAILABILITY_TYPE_MAP: Record<
@@ -9,6 +9,7 @@ const AVAILABILITY_TYPE_MAP: Record<
 > = {
   GLOBAL: CommandMenuItemAvailabilityType.GLOBAL,
   RECORD_SELECTION: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  FALLBACK: CommandMenuItemAvailabilityType.FALLBACK,
 };
 
 export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
@@ -24,7 +25,7 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     universalIdentifier: commandMenuItemManifest.universalIdentifier,
     applicationUniversalIdentifier,
     label: commandMenuItemManifest.label,
-    shortLabel: null,
+    shortLabel: commandMenuItemManifest.shortLabel ?? null,
     position: 0,
     icon: commandMenuItemManifest.icon ?? null,
     isPinned: commandMenuItemManifest.isPinned ?? false,
@@ -37,6 +38,8 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:
       commandMenuItemManifest.availabilityObjectUniversalIdentifier ?? null,
+    engineComponentKey: null,
+    hotKeys: null,
     workflowVersionId: null,
     createdAt: now,
     updatedAt: now,

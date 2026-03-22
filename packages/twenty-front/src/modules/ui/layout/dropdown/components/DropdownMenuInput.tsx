@@ -9,8 +9,8 @@ import 'react-phone-number-input/style.css';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { isDefined } from 'twenty-shared/utils';
-import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{
   withRightComponent?: boolean;
@@ -35,6 +35,7 @@ const StyledInput = styled.input<{
   height: 32px;
   outline: none;
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${({ withRightComponent }) =>
     withRightComponent ? '32px' : '0'};
   position: relative;

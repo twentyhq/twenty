@@ -1,8 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 
 @Injectable()
@@ -15,29 +16,43 @@ export class McpToolExecutorService {
     const toolName = params.name as keyof typeof toolSet;
     const tool = toolSet[toolName];
 
-    if (isDefined(tool) && isDefined(tool.execute)) {
+    if (!isDefined(tool) || !isDefined(tool.execute)) {
+      return wrapJsonRpcResponse(id, {
+        error: {
+          code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
+          message: `Unknown tool: ${String(params.name)}`,
+        },
+      });
+    }
+
+    try {
+      const result = await tool.execute(params.arguments, {
+        toolCallId: '1',
+        messages: [],
+      });
+
+      return wrapJsonRpcResponse(id, {
+        result: {
+          content: [{ type: 'text', text: JSON.stringify(result) }],
+          isError: false,
+        },
+      });
+    } catch (executionError) {
       return wrapJsonRpcResponse(id, {
         result: {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(
-                await tool.execute(params.arguments, {
-                  toolCallId: '1',
-                  messages: [],
-                }),
-              ),
+              text:
+                executionError instanceof Error
+                  ? executionError.message
+                  : 'Tool execution failed',
             },
           ],
-          isError: false,
+          isError: true,
         },
       });
     }
-
-    throw new HttpException(
-      `Tool '${params.name}' not found`,
-      HttpStatus.NOT_FOUND,
-    );
   }
 
   handleToolsListing(id: string | number, toolSet: ToolSet) {
@@ -63,12 +78,7 @@ export class McpToolExecutorService {
 
     return wrapJsonRpcResponse(id, {
       result: {
-        capabilities: {
-          tools: { listChanged: false },
-        },
         tools: toolsArray,
-        resources: [],
-        prompts: [],
       },
     });
   }

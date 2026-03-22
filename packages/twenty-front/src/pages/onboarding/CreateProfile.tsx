@@ -11,6 +11,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
@@ -20,7 +21,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -74,6 +75,9 @@ export const CreateProfile = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentUser = useSetAtomState(currentUserState);
+  const setCurrentWorkspaceMembers = useSetAtomState(
+    currentWorkspaceMembersState,
+  );
   const { updateOneRecord } = useUpdateOneRecord();
 
   // Form
@@ -128,6 +132,20 @@ export const CreateProfile = () => {
           return current;
         });
 
+        setCurrentWorkspaceMembers((members) =>
+          members.map((member) =>
+            member.id === currentWorkspaceMember?.id
+              ? {
+                  ...member,
+                  name: {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                  },
+                }
+              : member,
+          ),
+        );
+
         setCurrentUser((current) => {
           if (isDefined(current)) {
             return {
@@ -142,7 +160,7 @@ export const CreateProfile = () => {
         setNextOnboardingStatus();
       } catch (error: any) {
         enqueueErrorSnackBar({
-          apolloError: error instanceof ApolloError ? error : undefined,
+          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
         });
       }
     },
@@ -151,6 +169,7 @@ export const CreateProfile = () => {
       setNextOnboardingStatus,
       enqueueErrorSnackBar,
       setCurrentWorkspaceMember,
+      setCurrentWorkspaceMembers,
       setCurrentUser,
       updateOneRecord,
     ],

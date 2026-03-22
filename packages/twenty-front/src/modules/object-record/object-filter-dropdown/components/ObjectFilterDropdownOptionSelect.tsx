@@ -22,8 +22,9 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '';
 
@@ -58,9 +59,10 @@ export const ObjectFilterDropdownOptionSelect = ({
   const selectedOptions = useMemo(
     () =>
       isNonEmptyString(objectFilterDropdownCurrentRecordFilter?.value)
-        ? (JSON.parse(
-            objectFilterDropdownCurrentRecordFilter.value,
-          ) as string[]) // TODO: replace by a safe parse
+        ? (z
+            .array(z.string())
+            .safeParse(parseJson(objectFilterDropdownCurrentRecordFilter.value))
+            .data ?? [])
         : [],
     [objectFilterDropdownCurrentRecordFilter?.value],
   );

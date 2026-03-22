@@ -6,7 +6,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 export const RecordBoardColumnDropdownMenu = () => {
   const recordGroupActions = useRecordGroupActions({
-    viewType: ViewType.Kanban,
+    viewType: ViewType.KANBAN,
   });
 
   return (

@@ -3,7 +3,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
@@ -23,7 +23,7 @@ export const usePerformCombinedFindManyRecords = () => {
 
   const generateCombinedFindManyRecordsQuery = (
     operationSignatures: RecordGqlOperationSignature[],
-    objectMetadataItemsValue: ObjectMetadataItem[],
+    objectMetadataItemsValue: EnrichedObjectMetadataItem[],
   ) => {
     const filterPerMetadataItemArray = operationSignatures
       .map(
@@ -113,7 +113,7 @@ export const usePerformCombinedFindManyRecords = () => {
     client: customClient,
   }: {
     operationSignatures: RecordGqlOperationSignature[];
-    client?: ApolloClient<object>;
+    client?: ApolloClient;
   }) => {
     const apolloClient = customClient || apolloCoreClient;
 
@@ -126,7 +126,7 @@ export const usePerformCombinedFindManyRecords = () => {
       operationSignatures,
     });
 
-    const { data, loading } =
+    const { data } =
       await apolloClient.query<CombinedFindManyRecordsQueryResult>({
         query: findManyQuery ?? EMPTY_QUERY,
         variables: queryVariables,
@@ -143,7 +143,6 @@ export const usePerformCombinedFindManyRecords = () => {
 
     return {
       result: resultWithoutConnection,
-      loading,
     };
   };
 

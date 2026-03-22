@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 
-import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -37,7 +37,7 @@ export const RecordShowPage = () => {
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
       >
-        <ActionMenuComponentInstanceContext.Provider
+        <CommandMenuComponentInstanceContext.Provider
           value={{ instanceId: recordShowComponentInstanceId }}
         >
           <PageContainer>
@@ -49,7 +49,7 @@ export const RecordShowPage = () => {
               objectNameSingular={objectNameSingular}
               objectRecordId={objectRecordId}
             >
-              <RecordShowActionMenu />
+              <RecordShowCommandMenu />
               <PageHeaderToggleSidePanelButton />
             </RecordShowPageHeader>
             <MainContainerLayoutWithSidePanel>
@@ -72,7 +72,7 @@ export const RecordShowPage = () => {
               </TimelineActivityContext.Provider>
             </MainContainerLayoutWithSidePanel>
           </PageContainer>
-        </ActionMenuComponentInstanceContext.Provider>
+        </CommandMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );

@@ -11,8 +11,8 @@ export const updateViewSortOperationFactory = ({
   data?: object;
 }) => ({
   query: gql`
-    mutation UpdateCoreViewSort($input: UpdateViewSortInput!) {
-      updateCoreViewSort(input: $input) {
+    mutation UpdateViewSort($input: UpdateViewSortInput!) {
+      updateViewSort(input: $input) {
         ${gqlFields}
       }
     }

@@ -5,10 +5,11 @@ import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-vari
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useMutation } from '@apollo/client/react';
 import {
-  useCreateDatabaseConfigVariableMutation,
-  useDeleteDatabaseConfigVariableMutation,
-  useUpdateDatabaseConfigVariableMutation,
+  CreateDatabaseConfigVariableDocument,
+  DeleteDatabaseConfigVariableDocument,
+  UpdateDatabaseConfigVariableDocument,
 } from '~/generated-metadata/graphql';
 
 export const useConfigVariableActions = (variableName: string) => {
@@ -16,12 +17,15 @@ export const useConfigVariableActions = (variableName: string) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { refetch: refetchClientConfig } = useClientConfig();
 
-  const [updateDatabaseConfigVariable] =
-    useUpdateDatabaseConfigVariableMutation();
-  const [createDatabaseConfigVariable] =
-    useCreateDatabaseConfigVariableMutation();
-  const [deleteDatabaseConfigVariable] =
-    useDeleteDatabaseConfigVariableMutation();
+  const [updateDatabaseConfigVariable] = useMutation(
+    UpdateDatabaseConfigVariableDocument,
+  );
+  const [createDatabaseConfigVariable] = useMutation(
+    CreateDatabaseConfigVariableDocument,
+  );
+  const [deleteDatabaseConfigVariable] = useMutation(
+    DeleteDatabaseConfigVariableDocument,
+  );
 
   const handleUpdateVariable = async (
     value: ConfigVariableValue,

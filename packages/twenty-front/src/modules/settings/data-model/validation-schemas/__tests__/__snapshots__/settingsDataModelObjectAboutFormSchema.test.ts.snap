@@ -34,20 +34,6 @@ exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty stri
       "labelPlural"
     ],
     "message": "Too small: expected string to have >=1 characters"
-  },
-  {
-    "code": "custom",
-    "message": "Singular and plural labels must be different",
-    "path": [
-      "labelPlural"
-    ]
-  },
-  {
-    "code": "custom",
-    "message": "Singular and plural labels must be different",
-    "path": [
-      "labelSingular"
-    ]
   }
 ]]
 `;
@@ -92,20 +78,20 @@ exports[`settingsDataModelObjectAboutFormSchema fails when required fields are m
 ]]
 `;
 
-exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural labels are the same 1`] = `
+exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural labels are the same and names are the same 1`] = `
 [ZodError: [
   {
     "code": "custom",
-    "message": "Singular and plural labels must be different",
+    "message": "Singular and plural names must be different",
     "path": [
-      "labelPlural"
+      "nameSingular"
     ]
   },
   {
     "code": "custom",
-    "message": "Singular and plural labels must be different",
+    "message": "Singular and plural names must be different",
     "path": [
-      "labelSingular"
+      "namePlural"
     ]
   }
 ]]

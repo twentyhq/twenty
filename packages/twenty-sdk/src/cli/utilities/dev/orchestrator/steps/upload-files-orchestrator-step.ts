@@ -7,19 +7,11 @@ import { copy, ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import crypto from 'crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'path';
-import {
-  OUTPUT_DIR,
-  GENERATED_DIR,
-  API_CLIENT_DIR,
-} from 'twenty-shared/application';
+import { CLIENTS_GENERATED_DIR } from '@/cli/constants/clients-dir';
+import { OUTPUT_DIR, API_CLIENT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
-const API_CLIENT_FILES = [
-  'core/types.ts',
-  'core/schema.ts',
-  'metadata/types.ts',
-  'metadata/schema.ts',
-];
+const API_CLIENT_FILES = ['core/types.ts', 'core/schema.ts'];
 
 export type UploadFilesOrchestratorStepOutput = {
   fileUploader: FileUploader | null;
@@ -73,11 +65,14 @@ export class UploadFilesOrchestratorStep {
       return;
     }
 
+    step.status = 'in_progress';
+
     this.state.addEvent({
       message: `Uploading ${builtPath}`,
       status: 'info',
     });
     this.state.updateEntityStatus(sourcePath, 'uploading');
+    this.notify();
 
     const uploadPromise = step.output.fileUploader
       .uploadFile({ builtPath, fileFolder })
@@ -103,6 +98,11 @@ export class UploadFilesOrchestratorStep {
       })
       .finally(() => {
         step.output.activeUploads.delete(uploadPromise);
+
+        if (step.output.activeUploads.size === 0) {
+          step.status = 'done';
+          this.notify();
+        }
       });
 
     step.output.activeUploads.add(uploadPromise);
@@ -124,7 +124,7 @@ export class UploadFilesOrchestratorStep {
       appPath,
       'node_modules',
       'twenty-sdk',
-      GENERATED_DIR,
+      CLIENTS_GENERATED_DIR,
     );
 
     if (!(await pathExists(generatedDir))) {

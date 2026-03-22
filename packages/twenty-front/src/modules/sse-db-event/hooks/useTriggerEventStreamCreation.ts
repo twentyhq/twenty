@@ -14,11 +14,11 @@ import { captureException } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { print, type ExecutionResult } from 'graphql';
 
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
-import { useStore } from 'jotai';
 
 export const useTriggerEventStreamCreation = () => {
   const store = useStore();
@@ -79,7 +79,7 @@ export const useTriggerEventStreamCreation = () => {
             onEventSubscription: EventSubscription;
           }>,
         ) => {
-          if (isDefined(value?.errors)) {
+          if (isDefined(value?.errors) && Array.isArray(value.errors)) {
             captureException(
               new Error(`SSE subscription error: ${value.errors[0]?.message}`),
             );
@@ -98,8 +98,7 @@ export const useTriggerEventStreamCreation = () => {
           const objectRecordEventsWithQueryIds =
             eventSubscription?.objectRecordEventsWithQueryIds ?? [];
 
-          const metadataEventsWithQueryIds =
-            eventSubscription?.metadataEventsWithQueryIds ?? [];
+          const metadataEvents = eventSubscription?.metadataEvents ?? [];
 
           const objectRecordEvents = objectRecordEventsWithQueryIds.map(
             (item) => item.objectRecordEvent,
@@ -113,9 +112,7 @@ export const useTriggerEventStreamCreation = () => {
             objectRecordEventsWithQueryIds,
           );
 
-          dispatchMetadataEventsFromSseToBrowserEvents(
-            metadataEventsWithQueryIds,
-          );
+          dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
         },
         error: (error) => {
           captureException(error);
@@ -169,6 +166,11 @@ export const useTriggerEventStreamCreation = () => {
                 dispatchObjectRecordEventsFromSseToBrowserEvents(
                   objectRecordEventsWithQueryIds,
                 );
+
+                const metadataEvents =
+                  result?.data?.onEventSubscription?.metadataEvents ?? [];
+
+                dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
               }
             }
           } catch (error) {

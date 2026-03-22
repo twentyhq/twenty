@@ -26,6 +26,7 @@ const GENERATE_CALENDAR_CHANNEL_IDS = (): Record<string, string> => {
   CHANNEL_IDS['TIM'] = '20202020-a40f-4faf-bb9f-c6f9945b8203';
   CHANNEL_IDS['JONY'] = '20202020-a40f-4faf-bb9f-c6f9945b8204';
   CHANNEL_IDS['PHIL'] = '20202020-a40f-4faf-bb9f-c6f9945b8205';
+  CHANNEL_IDS['JANE'] = '20202020-a40f-4faf-bb9f-c6f9945b8208';
   CHANNEL_IDS['COMPANY_MAIN'] = '20202020-a40f-4faf-bb9f-c6f9945b8206';
   CHANNEL_IDS['TEAM_CALENDAR'] = '20202020-a40f-4faf-bb9f-c6f9945b8207';
 
@@ -56,6 +57,14 @@ export const CALENDAR_CHANNEL_DATA_SEEDS: CalendarChannelDataSeed[] = [
     connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.PHIL,
     handle: 'phil@apple.dev',
     visibility: CalendarChannelVisibility.METADATA,
+    isContactAutoCreationEnabled: true,
+    isSyncEnabled: true,
+  },
+  {
+    id: CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
+    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+    handle: 'jane.austen@apple.dev',
+    visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     isContactAutoCreationEnabled: true,
     isSyncEnabled: true,
   },

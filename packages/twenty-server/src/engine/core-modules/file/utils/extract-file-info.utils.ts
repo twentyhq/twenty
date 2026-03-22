@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import FileType, { type MimeType } from 'file-type';
+import { FileTypeParser, supportedMimeTypes } from 'file-type';
 import { lookup } from 'mrmime';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,6 +9,7 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
+import { detectPdf } from '@file-type/pdf';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 
 export const extractFileInfo = async ({
@@ -20,8 +21,12 @@ export const extractFileInfo = async ({
 }) => {
   const { ext: declaredExt } = buildFileInfo(filename);
 
+  const fileParser = new FileTypeParser({
+    customDetectors: [detectPdf],
+  });
+
   const { ext: detectedExt, mime: detectedMime } =
-    (await FileType.fromBuffer(file)) ?? {};
+    (await fileParser.fromBuffer(file)) ?? {};
 
   if (isDefined(detectedExt) && isDefined(detectedMime)) {
     return {
@@ -39,7 +44,7 @@ export const extractFileInfo = async ({
 
     if (
       mimeTypeFromExtension &&
-      FileType.mimeTypes.has(mimeTypeFromExtension as MimeType)
+      supportedMimeTypes.has(mimeTypeFromExtension)
     ) {
       throw new FileStorageException(
         `File content does not match its extension. The file has extension '${ext}' (expected mime type: ${mimeTypeFromExtension}), but the file content could not be detected as this type. The file may be corrupted, have the wrong extension, or be a security risk.`,

@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   type WorkflowTrigger,
   type WorkflowTriggerType,
@@ -15,7 +15,7 @@ export const getTriggerDefaultDefinition = ({
 }: {
   defaultLabel: string;
   type: WorkflowTriggerType;
-  activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
+  activeNonSystemObjectMetadataItems: EnrichedObjectMetadataItem[];
 }): WorkflowTrigger => {
   if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(

@@ -1,8 +1,9 @@
 import {
   defineFrontComponent,
+  none,
   numberOfSelectedRecords,
   objectPermissions,
-  selectedRecord,
+  selectedRecords,
 } from '@/sdk';
 
 const MyComponent = () => null;
@@ -15,7 +16,7 @@ export default defineFrontComponent({
     label: 'Complex Soft Delete',
     conditionalAvailabilityExpression:
       objectPermissions.canSoftDeleteObjectRecords &&
-      !selectedRecord.isRemote &&
+      none(selectedRecords, 'isRemote') &&
       numberOfSelectedRecords > 0,
   },
 });

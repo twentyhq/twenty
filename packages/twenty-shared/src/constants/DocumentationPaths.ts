@@ -45,11 +45,12 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_CONTRIBUTE_CAPABILITIES_LOCAL_SETUP:
     '/developers/contribute/capabilities/local-setup',
   DEVELOPERS_CONTRIBUTE_CONTRIBUTE: '/developers/contribute/contribute',
-  DEVELOPERS_EXTEND_CAPABILITIES_APIS: '/developers/extend/capabilities/apis',
-  DEVELOPERS_EXTEND_CAPABILITIES_APPS: '/developers/extend/capabilities/apps',
-  DEVELOPERS_EXTEND_CAPABILITIES_WEBHOOKS:
-    '/developers/extend/capabilities/webhooks',
-  DEVELOPERS_EXTEND_EXTEND: '/developers/extend/extend',
+  DEVELOPERS_EXTEND_API: '/developers/extend/api',
+  DEVELOPERS_EXTEND_APPS_BUILDING: '/developers/extend/apps/building',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED:
+    '/developers/extend/apps/getting-started',
+  DEVELOPERS_EXTEND_APPS_PUBLISHING: '/developers/extend/apps/publishing',
+  DEVELOPERS_EXTEND_WEBHOOKS: '/developers/extend/webhooks',
   DEVELOPERS_INTRODUCTION: '/developers/introduction',
   DEVELOPERS_SELF_HOST_CAPABILITIES_CLOUD_PROVIDERS:
     '/developers/self-host/capabilities/cloud-providers',
@@ -271,6 +272,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty',
   USER_GUIDE_WORKFLOWS_HOW_TOS_CONNECT_TO_OTHER_TOOLS_SET_UP_A_WEBHOOK_TRIGGER:
     '/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger',
+  USER_GUIDE_WORKFLOWS_HOW_TOS_CRM_AUTOMATIONS_AUTO_REPLY_TO_INBOUND_EMAILS:
+    '/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails',
   USER_GUIDE_WORKFLOWS_HOW_TOS_CRM_AUTOMATIONS_CLOSED_WON_AUTOMATIONS:
     '/user-guide/workflows/how-tos/crm-automations/closed-won-automations',
   USER_GUIDE_WORKFLOWS_HOW_TOS_CRM_AUTOMATIONS_DETECT_STALE_OPPORTUNITIES:

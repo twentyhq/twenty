@@ -297,46 +297,60 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
 </Warning>
 
-## 逻辑函数
+## 逻辑函数与代码解释器
 
-Twenty 支持用于工作流和自定义逻辑的逻辑函数。 执行环境通过 `SERVERLESS_TYPE` 环境变量进行配置。
+Twenty 支持用于工作流的逻辑函数，以及用于 AI 数据分析的代码解释器。 二者都会运行用户提供的代码，并要求进行显式配置以确保安全。
+
+### 安全默认设置
+
+**在生产环境（NODE_ENV=production）：** 逻辑函数和代码解释器的默认设置为**禁用**。 如需这些功能，必须通过 `LOGIC_FUNCTION_TYPE` 和 `CODE_INTERPRETER_TYPE` 显式启用它们。
+
+**在开发环境（NODE_ENV=development）：** 为方便在本地运行，二者默认均为**LOCAL**。
 
 <Warning>
-\*\*安全提示：\*\*本地驱动（`SERVERLESS_TYPE=LOCAL`）在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，我们强烈建议使用 `SERVERLESS_TYPE=LAMBDA` 或 `SERVERLESS_TYPE=DISABLED`。
+**安全提示：** 本地驱动（`LOGIC_FUNCTION_TYPE=LOCAL` 或 `CODE_INTERPRETER_TYPE=LOCAL`）会在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，请使用 `LOGIC_FUNCTION_TYPE=LAMBDA` 或 `CODE_INTERPRETER_TYPE=E2B`（使用沙盒），或将它们保持禁用。
 </Warning>
 
-### 可用驱动
+### 逻辑函数 - 可用驱动程序
 
-| 驱动     | 环境变量                       | 用例             | 安全级别     |
-| ------ | -------------------------- | -------------- | -------- |
-| 禁用     | `SERVERLESS_TYPE=DISABLED` | 完全禁用逻辑函数       | 不适用      |
-| 本地     | `SERVERLESS_TYPE=LOCAL`    | 开发和可信环境        | 低（无沙箱）   |
-| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 生产环境（处理不受信任代码） | 高（硬件级隔离） |
+| 驱动     | 环境变量                           | 用例             | 安全级别     |
+| ------ | ------------------------------ | -------------- | -------- |
+| 禁用     | `LOGIC_FUNCTION_TYPE=DISABLED` | 完全禁用逻辑函数       | 不适用      |
+| 本地     | `LOGIC_FUNCTION_TYPE=LOCAL`    | 开发和可信环境        | 低（无沙箱）   |
+| Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA`   | 生产环境（处理不受信任代码） | 高（硬件级隔离） |
 
-### 推荐配置
+### 逻辑函数 - 推荐配置
 
 **用于开发：**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **用于生产（AWS）：**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **要禁用逻辑函数：**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### 代码解释器 - 可用驱动程序
+
+| 驱动  | 环境变量                             | 用例          | 安全级别    |
+| --- | -------------------------------- | ----------- | ------- |
+| 禁用  | `CODE_INTERPRETER_TYPE=DISABLED` | 禁用 AI 代码执行  | 不适用     |
+| 本地  | `CODE_INTERPRETER_TYPE=LOCAL`    | 仅限开发环境      | 低（无沙箱）  |
+| E2B | `CODE_INTERPRETER_TYPE=E_2_B`    | 生产环境（沙盒化执行） | 高（隔离沙盒） |
+
 <Note>
-使用 `SERVERLESS_TYPE=DISABLED` 时，任何尝试执行逻辑函数的操作都会返回错误。 如果你想在不启用逻辑函数能力的情况下运行 Twenty，这将很有用。
+当使用 `LOGIC_FUNCTION_TYPE=DISABLED` 或 `CODE_INTERPRETER_TYPE=DISABLED` 时，任何执行尝试都会返回错误。 如果你想在不启用这些功能的情况下运行 Twenty，这将很有用。
 </Note>

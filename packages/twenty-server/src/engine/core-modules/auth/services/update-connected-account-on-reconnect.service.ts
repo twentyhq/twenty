@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type UpdateConnectedAccountOnReconnectInput = {
   workspaceId: string;
@@ -11,7 +11,6 @@ export type UpdateConnectedAccountOnReconnectInput = {
   accessToken: string;
   refreshToken: string;
   scopes: string[];
-  connectedAccount: ConnectedAccountWorkspaceEntity;
   manager: WorkspaceEntityManager;
 };
 
@@ -19,6 +18,7 @@ export type UpdateConnectedAccountOnReconnectInput = {
 export class UpdateConnectedAccountOnReconnectService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   async updateConnectedAccountOnReconnect(
@@ -30,19 +30,13 @@ export class UpdateConnectedAccountOnReconnectService {
       accessToken,
       refreshToken,
       scopes,
-      manager,
     } = input;
 
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const connectedAccountRepository =
-        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-          workspaceId,
-          'connectedAccount',
-        );
-
-      await connectedAccountRepository.update(
+      await this.connectedAccountDataAccessService.update(
+        workspaceId,
         {
           id: connectedAccountId,
         },
@@ -52,7 +46,6 @@ export class UpdateConnectedAccountOnReconnectService {
           scopes,
           authFailedAt: null,
         },
-        manager,
       );
     }, authContext);
   }

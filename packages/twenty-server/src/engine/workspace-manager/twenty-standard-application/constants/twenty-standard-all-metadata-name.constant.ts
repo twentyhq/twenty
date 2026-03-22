@@ -16,4 +16,5 @@ export const TWENTY_STANDARD_ALL_METADATA_NAME = [
   'pageLayout',
   'pageLayoutTab',
   'pageLayoutWidget',
+  'commandMenuItem',
 ] as const satisfies AllMetadataName[];

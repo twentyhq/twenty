@@ -13,14 +13,14 @@ export const RecordTableCellDisplayMode = ({
   const { recordId, isRecordFieldReadOnly: isReadOnly } =
     useContext(FieldContext);
 
-  const { onActionMenuDropdownOpened } = useRecordTableBodyContextOrThrow();
+  const { onCommandMenuDropdownOpened } = useRecordTableBodyContextOrThrow();
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const handleActionMenuDropdown = (event: React.MouseEvent) => {
-    onActionMenuDropdownOpened(event, recordId);
+  const handleCommandMenuDropdown = (event: React.MouseEvent) => {
+    onCommandMenuDropdownOpened(event, recordId);
   };
 
   const handleClick = (event: React.MouseEvent) => {
@@ -32,7 +32,7 @@ export const RecordTableCellDisplayMode = ({
 
   return (
     <RecordTableCellDisplayContainer
-      onContextMenu={handleActionMenuDropdown}
+      onContextMenu={handleCommandMenuDropdown}
       onClick={handleClick}
     >
       {children}

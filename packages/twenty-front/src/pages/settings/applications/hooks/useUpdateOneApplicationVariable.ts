@@ -1,7 +1,8 @@
-import { useUpdateOneApplicationVariableMutation } from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { UpdateOneApplicationVariableDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateOneApplicationVariable = () => {
-  const [mutate] = useUpdateOneApplicationVariableMutation();
+  const [mutate] = useMutation(UpdateOneApplicationVariableDocument);
 
   const updateOneApplicationVariable = async ({
     key,

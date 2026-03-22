@@ -1,14 +1,10 @@
-import {
-  type ApolloClient,
-  type NormalizedCacheObject,
-  useApolloClient,
-} from '@apollo/client';
+import { type ApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client/react';
 import { type MockedResponse } from '@apollo/client/testing';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, within } from 'storybook/test';
 
-import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { generateGroupByAggregateQuery } from '@/object-record/record-aggregate/utils/generateGroupByAggregateQuery';
@@ -19,6 +15,7 @@ import {
   AxisNameDisplay,
   type BarChartConfiguration,
   BarChartLayout,
+  FindOnePageLayoutDocument,
   GraphOrderBy,
   PageLayoutType,
   type PageLayoutWidget,
@@ -71,6 +68,7 @@ const mixedGraphsPageLayoutMocks = {
       title: 'Mixed Graphs',
       position: 0,
       pageLayoutId: 'mixed-graphs-layout',
+      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -95,6 +93,7 @@ const mixedGraphsPageLayoutMocks = {
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
           },
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -120,6 +119,7 @@ const mixedGraphsPageLayoutMocks = {
             aggregateFieldMetadataId: idField.id,
             displayDataLabel: false,
           },
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -146,6 +146,7 @@ const mixedGraphsPageLayoutMocks = {
             groupByFieldMetadataId: createdAtField.id,
             orderBy: GraphOrderBy.VALUE_DESC,
           },
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -175,6 +176,7 @@ const mixedGraphsPageLayoutMocks = {
             axisNameDisplay: AxisNameDisplay.BOTH,
             displayDataLabel: false,
           } satisfies BarChartConfiguration,
+          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
@@ -192,7 +194,7 @@ const barChartGroupByQuery = generateGroupByAggregateQuery({
 const graphqlMocks: MockedResponse[] = [
   {
     request: {
-      query: FIND_ONE_PAGE_LAYOUT,
+      query: FindOnePageLayoutDocument,
       variables: {
         id: 'mixed-graphs-layout',
       },
@@ -254,7 +256,7 @@ const CoreClientProviderWrapper = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const apolloClient = useApolloClient() as ApolloClient<NormalizedCacheObject>;
+  const apolloClient = useApolloClient() as ApolloClient;
 
   return (
     <ApolloCoreClientContext.Provider value={apolloClient}>

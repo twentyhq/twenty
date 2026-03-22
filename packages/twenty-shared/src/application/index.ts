@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export type { AgentManifest } from './agentManifestType';
 export type { ApplicationManifest } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';

@@ -1,7 +1,7 @@
 import { defineSkill } from 'twenty-sdk';
 
 export const EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER =
-  '4f00dd76-c07b-4d55-a43a-7f17e7f6440a';
+  'd0940029-9d3c-40be-903a-52d65393028f';
 
 export default defineSkill({
   universalIdentifier: EXAMPLE_SKILL_UNIVERSAL_IDENTIFIER,

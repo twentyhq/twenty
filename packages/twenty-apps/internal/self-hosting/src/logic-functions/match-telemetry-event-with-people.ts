@@ -5,8 +5,14 @@ import {
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk';
 import { SELF_HOSTING_USER_NAME_SINGULAR } from 'src/objects/selfHostingUser.object';
-import { type SelfHostingUser } from 'twenty-sdk/generated/core';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+type SelfHostingUser = {
+  id: string;
+  email?: { primaryEmail?: string };
+  name?: { firstName?: string; lastName?: string };
+  personId?: string;
+};
 
 const handler = async (
   params: DatabaseEventPayload<

@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 
 import { AIChatThreadGroup } from '@/ai/components/AIChatThreadGroup';
-import { AIChatThreadsListEffect } from '@/ai/components/AIChatThreadsListEffect';
+import { AIChatThreadsListFocusEffect } from '@/ai/components/AIChatThreadsListFocusEffect';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { t } from '@lingui/core/macro';
@@ -36,15 +36,15 @@ const StyledButtonsContainer = styled.div`
 `;
 
 export const AIChatThreadsList = () => {
-  const { createChatThread } = useCreateNewAIChatThread();
+  const { switchToNewChat } = useSwitchToNewAIChat();
 
   const focusId = 'threads-list';
 
   useHotkeysOnFocusedElement({
     keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    callback: () => createChatThread(),
+    callback: () => switchToNewChat(),
     focusId,
-    dependencies: [createChatThread],
+    dependencies: [switchToNewChat],
   });
 
   const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
@@ -57,7 +57,7 @@ export const AIChatThreadsList = () => {
 
   return (
     <>
-      <AIChatThreadsListEffect focusId={focusId} />
+      <AIChatThreadsListFocusEffect focusId={focusId} />
       <StyledContainer>
         <StyledThreadsContainer>
           {Object.entries(groupedThreads).map(([title, threadsInGroup]) => (
@@ -77,7 +77,7 @@ export const AIChatThreadsList = () => {
             accent="blue"
             size="medium"
             title={t`New chat`}
-            onClick={() => createChatThread()}
+            onClick={() => switchToNewChat()}
             hotkeys={[getOsControlSymbol(), '⏎']}
           />
         </StyledButtonsContainer>

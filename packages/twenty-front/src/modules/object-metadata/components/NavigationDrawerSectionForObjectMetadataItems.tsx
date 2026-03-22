@@ -1,6 +1,6 @@
-import { NavigationDrawerItemForObjectMetadataItem } from '@/object-metadata/components/NavigationDrawerItemForObjectMetadataItem';
+import { NavigationDrawerItemForObjectMetadataItem } from '@/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -26,13 +26,14 @@ const ORDERED_LAST_STANDARD_OBJECTS: string[] = [
 type NavigationDrawerSectionForObjectMetadataItemsProps = {
   sectionTitle: string;
   isRemote: boolean;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   rightIcon?: React.ReactNode;
-  isEditMode?: boolean;
   selectedObjectMetadataItemId?: string | null;
-  onObjectMetadataItemClick?: (objectMetadataItem: ObjectMetadataItem) => void;
+  onObjectMetadataItemClick?: (
+    objectMetadataItem: EnrichedObjectMetadataItem,
+  ) => void;
   onActiveObjectMetadataItemClick?: (
-    objectMetadataItem: ObjectMetadataItem,
+    objectMetadataItem: EnrichedObjectMetadataItem,
   ) => void;
 };
 
@@ -41,7 +42,6 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   isRemote,
   objectMetadataItems,
   rightIcon,
-  isEditMode = false,
   selectedObjectMetadataItemId = null,
   onObjectMetadataItemClick,
   onActiveObjectMetadataItemClick,
@@ -119,6 +119,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             label={sectionTitle}
             onClick={() => toggleNavigationSection()}
             rightIcon={rightIcon}
+            isOpen={isNavigationSectionOpen}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
         {isNavigationSectionOpen &&
@@ -127,7 +128,6 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
               <NavigationDrawerItemForObjectMetadataItem
                 key={`navigation-drawer-item-${objectMetadataItem.id}`}
                 objectMetadataItem={objectMetadataItem}
-                isEditMode={isEditMode}
                 isSelectedInEditMode={
                   selectedObjectMetadataItemId === objectMetadataItem.id
                 }

@@ -14,6 +14,8 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
+import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -21,10 +23,7 @@ import {
   MessageChannelSyncStage,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageFolderPendingSyncAction,
-  type MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 const ONGOING_SYNC_STAGES = [
@@ -41,6 +40,8 @@ export class MessageChannelUpdateOnePreQueryHook
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
+    private readonly messageFolderDataAccessService: MessageFolderDataAccessService,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
 
@@ -57,15 +58,10 @@ export class MessageChannelUpdateOnePreQueryHook
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspace.id,
-            'messageChannel',
-          );
-
-        const messageChannel = await messageChannelRepository.findOne({
-          where: { id: payload.id },
-        });
+        const messageChannel =
+          await this.messageChannelDataAccessService.findOne(workspace.id, {
+            where: { id: payload.id },
+          });
 
         if (!isDefined(messageChannel)) {
           throw new WorkspaceQueryRunnerException(
@@ -77,29 +73,27 @@ export class MessageChannelUpdateOnePreQueryHook
           );
         }
 
+        const messageChannelWorkspace =
+          messageChannel as unknown as MessageChannelWorkspaceEntity;
+
         const isSyncOngoing = ONGOING_SYNC_STAGES.includes(
-          messageChannel.syncStage,
+          messageChannelWorkspace.syncStage,
         );
 
-        const messageFolderRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
-            workspace.id,
-            'messageFolder',
-          );
+        const messageFoldersWithPendingAction =
+          await this.messageFolderDataAccessService.find(workspace.id, {
+            messageChannelId: messageChannel.id,
+            pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
+          });
 
         const messageFoldersWithPendingActionCount =
-          await messageFolderRepository.count({
-            where: {
-              messageChannelId: messageChannel.id,
-              pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
-            },
-          });
+          messageFoldersWithPendingAction.length;
 
         const hasPendingFolderActions =
           messageFoldersWithPendingActionCount > 0;
 
         const hasPendingGroupEmailsAction =
-          messageChannel.pendingGroupEmailsAction !==
+          messageChannelWorkspace.pendingGroupEmailsAction !==
           MessageChannelPendingGroupEmailsAction.NONE;
 
         if (
@@ -116,12 +110,12 @@ export class MessageChannelUpdateOnePreQueryHook
         }
 
         const hasCompletedConfiguration =
-          messageChannel.syncStage !==
+          messageChannelWorkspace.syncStage !==
           MessageChannelSyncStage.PENDING_CONFIGURATION;
 
         if (!hasCompletedConfiguration) {
           this.logger.log(
-            `MessageChannelId: ${messageChannel.id} - Skipping pending action for message channel in PENDING_CONFIGURATION state`,
+            `MessageChannelId: ${messageChannelWorkspace.id} - Skipping pending action for message channel in PENDING_CONFIGURATION state`,
           );
 
           return payload;
@@ -129,11 +123,12 @@ export class MessageChannelUpdateOnePreQueryHook
 
         const excludeGroupEmailsChanged =
           isDefined(payload.data.excludeGroupEmails) &&
-          payload.data.excludeGroupEmails !== messageChannel.excludeGroupEmails;
+          payload.data.excludeGroupEmails !==
+            messageChannelWorkspace.excludeGroupEmails;
 
         if (excludeGroupEmailsChanged) {
           await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
-            messageChannel,
+            messageChannelWorkspace,
             workspace.id,
             payload.data.excludeGroupEmails
               ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION

@@ -1,7 +1,7 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
@@ -13,7 +13,7 @@ import {
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   gqlField: string;
   fieldMetadata: Pick<
     FieldMetadataItem,
@@ -310,7 +310,7 @@ ${mapObjectMetadataToGraphQLQuery({
     }`;
   }
 
-  if (fieldType === FieldMetadataType.RICH_TEXT_V2) {
+  if (fieldType === FieldMetadataType.RICH_TEXT) {
     return `${gqlField}
 {
   blocknote

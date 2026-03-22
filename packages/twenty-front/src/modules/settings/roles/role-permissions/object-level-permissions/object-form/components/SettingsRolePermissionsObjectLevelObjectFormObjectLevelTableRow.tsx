@@ -19,6 +19,7 @@ const StyledPermissionContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
 `;
 
 const StyledPermissionLabel = styled.span`
@@ -30,6 +31,7 @@ const StyledOverrideInfo = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  white-space: nowrap;
 `;
 
 type OverridableCheckboxType = 'no_cta' | 'default' | 'override';
@@ -126,6 +128,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
 
     return (
       <TableRow
+        gridAutoColumns="1fr 48px"
         onClick={handleCheckboxChange}
         cursor={!isEditable ? 'default' : 'pointer'}
       >

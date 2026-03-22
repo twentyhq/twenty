@@ -18,7 +18,7 @@ export const computeLastRecordTableColumnWidth = ({
     visibleRecordFields: recordFields,
   });
 
-  const widthOfBorders = recordFields.length;
+  const widthOfBorders = recordFields.length + 1;
 
   const fixedColumnsWidth =
     RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +

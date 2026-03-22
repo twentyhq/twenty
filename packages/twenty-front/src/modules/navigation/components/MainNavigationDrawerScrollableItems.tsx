@@ -1,24 +1,26 @@
-import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
+import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
+import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
+
+import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 
-import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher = lazy(() =>
+const FavoritesSectionDispatcher = lazy(() =>
   import(
-    '@/navigation-menu-item/components/CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher'
+    '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher'
   ).then((module) => ({
-    default: module.CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher,
+    default: module.FavoritesSectionDispatcher,
   })),
 );
 
-const WorkspaceNavigationMenuItemsDispatcher = lazy(() =>
+const WorkspaceSectionDispatcher = lazy(() =>
   import(
-    '@/navigation-menu-item/components/WorkspaceNavigationMenuItemsDispatcher'
+    '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher'
   ).then((module) => ({
-    default: module.WorkspaceNavigationMenuItemsDispatcher,
+    default: module.WorkspaceSectionDispatcher,
   })),
 );
 
@@ -32,11 +34,9 @@ export const MainNavigationDrawerScrollableItems = () => {
   return (
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
-      <Suspense fallback={null}>
-        <CurrentWorkspaceMemberNavigationMenuItemFoldersDispatcher />
-      </Suspense>
-      <Suspense fallback={null}>
-        <WorkspaceNavigationMenuItemsDispatcher />
+      <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
+        <FavoritesSectionDispatcher />
+        <WorkspaceSectionDispatcher />
       </Suspense>
       <RemoteNavigationDrawerSection />
       <NavigationDrawerOtherSection />

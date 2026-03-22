@@ -1,19 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { CODE_INTERPRETER_DRIVER } from './code-interpreter.constants';
-
+import { CodeInterpreterDriverFactory } from 'src/engine/core-modules/code-interpreter/code-interpreter-driver.factory';
 import {
   type CodeExecutionResult,
   type CodeInterpreterDriver,
   type ExecutionContext,
   type InputFile,
   type StreamCallbacks,
-} from './drivers/interfaces/code-interpreter-driver.interface';
+} from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
 
 @Injectable()
 export class CodeInterpreterService implements CodeInterpreterDriver {
   constructor(
-    @Inject(CODE_INTERPRETER_DRIVER) private driver: CodeInterpreterDriver,
+    private readonly codeInterpreterDriverFactory: CodeInterpreterDriverFactory,
   ) {}
 
   execute(
@@ -22,6 +21,8 @@ export class CodeInterpreterService implements CodeInterpreterDriver {
     context?: ExecutionContext,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
-    return this.driver.execute(code, files, context, callbacks);
+    const driver = this.codeInterpreterDriverFactory.getCurrentDriver();
+
+    return driver.execute(code, files, context, callbacks);
   }
 }

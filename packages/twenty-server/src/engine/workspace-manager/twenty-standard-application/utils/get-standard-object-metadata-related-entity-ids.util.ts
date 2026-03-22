@@ -39,8 +39,14 @@ const computeStandardViewObjectIds = <O extends AllStandardObjectName>({
     return undefined;
   }
 
-  // @ts-expect-error ignore
-  const viewDefinitions = objectDefinition.views;
+  const viewDefinitions = objectDefinition.views as Record<
+    string,
+    {
+      viewFields: Record<string, unknown>;
+      viewGroups?: Record<string, unknown>;
+      viewFieldGroups?: Record<string, unknown>;
+    }
+  >;
   const viewNames = Object.keys(
     viewDefinitions,
   ) as AllStandardObjectViewName<O>[];
@@ -48,8 +54,7 @@ const computeStandardViewObjectIds = <O extends AllStandardObjectName>({
   const viewIds = {} as StandardObjectViewIds<O>;
 
   for (const viewName of viewNames) {
-    const viewDefinition =
-      viewDefinitions[viewName as keyof typeof viewDefinitions];
+    const viewDefinition = viewDefinitions[viewName as string];
 
     const viewFieldNames = Object.keys(viewDefinition.viewFields);
     const viewFieldIds = {} as Record<

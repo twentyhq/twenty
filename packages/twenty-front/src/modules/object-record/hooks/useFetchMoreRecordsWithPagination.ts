@@ -1,16 +1,14 @@
 import {
-  type ApolloError,
-  type ApolloQueryResult,
-  type FetchMoreQueryOptions,
+  type ApolloClient,
+  type ErrorLike,
+  type ObservableQuery,
   type OperationVariables,
   type WatchQueryFetchPolicy,
 } from '@apollo/client';
-import { type Unmasked } from '@apollo/client/masking';
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -31,7 +29,7 @@ import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamily
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
@@ -50,22 +48,19 @@ type UseFindManyRecordsStateParams<
   'skip' | 'recordGqlFields' | 'fetchPolicy'
 > & {
   data: RecordGqlOperationFindManyResult | undefined;
-  error: ApolloError | undefined;
+  error: ErrorLike | undefined;
   fetchMore<
     TFetchData = TData,
     TFetchVars extends OperationVariables = OperationVariables,
   >(
-    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
-      updateQuery?: (
-        previousQueryResult: TData,
-        options: {
-          fetchMoreResult: Unmasked<TFetchData>;
-          variables: TFetchVars;
-        },
-      ) => TData;
-    },
-  ): Promise<ApolloQueryResult<TFetchData>>;
-  objectMetadataItem: ObjectMetadataItem;
+    fetchMoreOptions: ObservableQuery.FetchMoreOptions<
+      TData,
+      OperationVariables,
+      TFetchData,
+      TFetchVars
+    >,
+  ): Promise<ApolloClient.QueryResult<TFetchData>>;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const useFetchMoreRecordsWithPagination = <
@@ -190,8 +185,8 @@ export const useFetchMoreRecordsWithPagination = <
           data: fetchMoreDataResult?.[objectMetadataItem.namePlural],
         };
       } catch (error) {
-        handleFindManyRecordsError(error as ApolloError);
-        return { error: error as ApolloError };
+        handleFindManyRecordsError(error as ErrorLike);
+        return { error: error as ErrorLike };
       } finally {
         setIsFetchingMoreRecords(false);
       }

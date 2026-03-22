@@ -2,14 +2,16 @@
 
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useMutation } from '@apollo/client/react';
 import {
   type EditSsoIdentityProviderMutationVariables,
-  useEditSsoIdentityProviderMutation,
+  EditSsoIdentityProviderDocument,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateSSOIdentityProvider = () => {
-  const [editSsoIdentityProviderMutation] =
-    useEditSsoIdentityProviderMutation();
+  const [editSsoIdentityProviderMutation] = useMutation(
+    EditSsoIdentityProviderDocument,
+  );
 
   const setSSOIdentitiesProviders = useSetAtomState(
     SSOIdentitiesProvidersState,

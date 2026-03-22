@@ -1,6 +1,7 @@
 import { Field, Float, InputType } from '@nestjs/graphql';
 
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 @InputType()
 export class UpdatePageLayoutTabInput {
@@ -13,4 +14,14 @@ export class UpdatePageLayoutTabInput {
   @IsNumber()
   @IsOptional()
   position?: number;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  icon?: string | null;
+
+  @Field(() => PageLayoutTabLayoutMode, { nullable: true })
+  @IsEnum(PageLayoutTabLayoutMode)
+  @IsOptional()
+  layoutMode?: PageLayoutTabLayoutMode;
 }

@@ -145,8 +145,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<CreateManyQueryArgs>> {
-    const { authContext, flatObjectMetadata, flatFieldMetadataMaps } =
-      queryRunnerContext;
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = queryRunnerContext;
 
     return {
       ...args,
@@ -155,6 +159,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         authContext,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
       }),
     };
   }

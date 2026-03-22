@@ -56,16 +56,20 @@ export class ViewController {
   async findMany(
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
     const views = objectMetadataId
-      ? await this.viewService.findByObjectMetadataId(
+      ? await this.viewService.findByObjectMetadataIdWithRelations(
           workspace.id,
           objectMetadataId,
           userWorkspaceId,
         )
-      : await this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
+      : await this.viewService.findByWorkspaceIdWithRelations(
+          workspace.id,
+          userWorkspaceId,
+        );
 
     return this.processViewsWithTemplates(views, workspace.id, locale);
   }
@@ -77,7 +81,7 @@ export class ViewController {
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.findById(id, workspace.id);
+    const view = await this.viewService.findByIdWithRelations(id, workspace.id);
 
     if (!isDefined(view)) {
       throw new ViewException(
@@ -131,7 +135,8 @@ export class ViewController {
     @Body() input: UpdateViewInput,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const updatedView = await this.viewService.updateOne({
       updateViewInput: {

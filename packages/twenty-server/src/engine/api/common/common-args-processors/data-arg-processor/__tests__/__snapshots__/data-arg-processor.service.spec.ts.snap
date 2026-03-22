@@ -172,13 +172,11 @@ exports[`DataArgProcessorService failing inputs validation RELATION should throw
 
 exports[`DataArgProcessorService failing inputs validation RELATION should throw for invalid input #5: "non-uuid" 1`] = `"Invalid UUID value 'non-uuid' for field "manyToOneRelationFieldId""`;
 
-exports[`DataArgProcessorService failing inputs validation RICH_TEXT should throw for invalid input #1: "test" 1`] = `"richTextField RICH_TEXT-typed field does not support write operations"`;
+exports[`DataArgProcessorService failing inputs validation RICH_TEXT should throw for invalid input #1: "not-a-rich-text" 1`] = `"Invalid rich text v2 value 'not-a-rich-text' for field "richTextField" - Should be an object"`;
 
-exports[`DataArgProcessorService failing inputs validation RICH_TEXT_V2 should throw for invalid input #1: "not-a-rich-text" 1`] = `"Invalid rich text v2 value 'not-a-rich-text' for field "richTextV2Field" - Should be an object"`;
+exports[`DataArgProcessorService failing inputs validation RICH_TEXT should throw for invalid input #2: 1 1`] = `"Invalid rich text v2 value 1 for field "richTextField" - Should be an object"`;
 
-exports[`DataArgProcessorService failing inputs validation RICH_TEXT_V2 should throw for invalid input #2: 1 1`] = `"Invalid rich text v2 value 1 for field "richTextV2Field" - Should be an object"`;
-
-exports[`DataArgProcessorService failing inputs validation RICH_TEXT_V2 should throw for invalid input #3: true 1`] = `"Invalid rich text v2 value true for field "richTextV2Field" - Should be an object"`;
+exports[`DataArgProcessorService failing inputs validation RICH_TEXT should throw for invalid input #3: true 1`] = `"Invalid rich text v2 value true for field "richTextField" - Should be an object"`;
 
 exports[`DataArgProcessorService failing inputs validation SELECT should throw for invalid input #1: "not-a-select-option" 1`] = `"Invalid value 'not-a-select-option' for field "selectField""`;
 

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconHelpCircle, IconSettings } from 'twenty-ui/display';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
@@ -54,24 +55,29 @@ export const NavigationDrawerOtherSection = () => {
         <NavigationDrawerSectionTitle
           label={t`Other`}
           onClick={toggleNavigationSection}
+          isOpen={isNavigationSectionOpen}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      {isNavigationSectionOpen && (
-        <>
-          <NavigationDrawerItem
-            label={t`Settings`}
-            Icon={IconSettings}
-            onClick={handleSettingsClick}
-          />
-          <NavigationDrawerItem
-            label={t`Documentation`}
-            to={getDocumentationUrl({
-              locale: currentWorkspaceMember?.locale,
-            })}
-            Icon={IconHelpCircle}
-          />
-        </>
-      )}
+      <AnimatedExpandableContainer
+        isExpanded={isNavigationSectionOpen}
+        dimension="height"
+        mode="fit-content"
+        containAnimation
+        initial={false}
+      >
+        <NavigationDrawerItem
+          label={t`Settings`}
+          Icon={IconSettings}
+          onClick={handleSettingsClick}
+        />
+        <NavigationDrawerItem
+          label={t`Documentation`}
+          to={getDocumentationUrl({
+            locale: currentWorkspaceMember?.locale,
+          })}
+          Icon={IconHelpCircle}
+        />
+      </AnimatedExpandableContainer>
     </NavigationDrawerSection>
   );
 };

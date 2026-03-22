@@ -2,7 +2,7 @@ import {
   type GridPosition,
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
-  type RichTextV2Body,
+  type RichTextBody,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -10,7 +10,7 @@ import {
 export const createDefaultStandaloneRichTextWidget = (
   id: string,
   pageLayoutTabId: string,
-  body: RichTextV2Body,
+  body: RichTextBody,
   gridPosition: GridPosition,
   objectMetadataId?: string | null,
 ): PageLayoutWidget => {
@@ -34,6 +34,7 @@ export const createDefaultStandaloneRichTextWidget = (
       columnSpan: gridPosition.columnSpan,
     },
     objectMetadataId: objectMetadataId ?? null,
+    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

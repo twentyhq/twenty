@@ -108,6 +108,7 @@ export const WidgetActionFieldEdit = () => {
     isDisplayModeFixHeight: false,
     isRecordFieldReadOnly: isRecordFieldReadOnly({
       isRecordReadOnly,
+      isSystemObject: objectMetadataItem.isSystem,
       objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
         objectPermissionsByObjectMetadataId,
         objectMetadataId: objectMetadataItem.id,
@@ -115,6 +116,7 @@ export const WidgetActionFieldEdit = () => {
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
         isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+        isCustom: fieldMetadataItem.isCustom ?? false,
       },
     }),
     anchorId: recordFieldInputInstanceId,

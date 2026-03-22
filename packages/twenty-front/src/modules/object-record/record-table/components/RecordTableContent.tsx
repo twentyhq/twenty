@@ -15,12 +15,12 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { styled } from '@linaria/react';
-import { useCallback, useMemo, useRef, useState } from 'react';
 import { useStore } from 'jotai';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -142,7 +142,6 @@ export const RecordTableContent = ({
         id={RECORD_TABLE_HTML_ID}
         onMouseMove={handleDelegatedMouseMove}
         onMouseLeave={handleMouseLeave}
-        hasRecordGroups={hasRecordGroups}
       >
         <RecordTableHeader />
         {hasRecordGroups ? (

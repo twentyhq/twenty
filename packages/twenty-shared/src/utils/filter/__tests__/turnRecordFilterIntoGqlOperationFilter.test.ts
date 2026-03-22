@@ -2,8 +2,8 @@ import {
   FieldMetadataType,
   ViewFilterOperand as RecordFilterOperand,
 } from '@/types';
-import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { type RecordFilter } from '@/utils';
+import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
 const fields = [
   { id: 'f-text', name: 'name', type: FieldMetadataType.TEXT, label: 'Name' },
@@ -709,18 +709,114 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
   });
 
   describe('ACTOR filter', () => {
-    it('should handle CONTAINS operand', () => {
+    it('should handle CONTAINS with a value matching a source - includes source in filter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter(
           'f-actor',
           RecordFilterOperand.CONTAINS,
-          'Admin',
+          'api',
         ),
         fieldMetadataItems: fields,
       });
 
-      expect(result).toBeDefined();
+      expect(result).toEqual({
+        or: [
+          {
+            actor: {
+              name: { ilike: '%api%' },
+            },
+          },
+          {
+            actor: {
+              source: { in: ['API'] },
+            },
+          },
+        ],
+      });
+    });
+
+    it('should handle CONTAINS with no matching source - no empty {} or [] in filter', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-actor',
+          RecordFilterOperand.CONTAINS,
+          'xyz123',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        or: [
+          {
+            actor: {
+              name: { ilike: '%xyz123%' },
+            },
+          },
+        ],
+      });
+      const json = JSON.stringify(result);
+      expect(json).not.toContain('[]');
+      expect(json).not.toContain('{}');
+    });
+
+    it('should handle DOES_NOT_CONTAIN with a value matching a source - includes not source in filter', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-actor',
+          RecordFilterOperand.DOES_NOT_CONTAIN,
+          'api',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        and: [
+          {
+            not: {
+              actor: {
+                name: { ilike: '%api%' },
+              },
+            },
+          },
+          {
+            not: {
+              actor: {
+                source: { in: ['API'] },
+              },
+            },
+          },
+        ],
+      });
+    });
+
+    it('should handle DOES_NOT_CONTAIN with no matching source - no empty {} or [] in filter', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-actor',
+          RecordFilterOperand.DOES_NOT_CONTAIN,
+          'xyz123',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toEqual({
+        and: [
+          {
+            not: {
+              actor: {
+                name: { ilike: '%xyz123%' },
+              },
+            },
+          },
+        ],
+      });
+      const json = JSON.stringify(result);
+      expect(json).not.toContain('[]');
+      expect(json).not.toContain('{}');
     });
   });
 

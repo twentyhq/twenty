@@ -6,11 +6,11 @@ import {
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-core-view-field.util';
-import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
-import { findCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/find-core-view-fields.util';
-import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
+import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
+import { deleteOneViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-view-field.util';
+import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
+import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
+import { updateOneViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-view-field.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -35,8 +35,8 @@ describe('View Field Resolver - Successful object metadata identifier update sid
     });
 
     const {
-      data: { getCoreViewFields },
-    } = await findCoreViewFields({
+      data: { getViewFields },
+    } = await findViewFields({
       viewId: testViewId,
       expectToFail: false,
       gqlFields: `
@@ -45,7 +45,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
         viewId
       `,
     });
-    const testLabelIdentifierViewFieldId = getCoreViewFields[0].id;
+    const testLabelIdentifierViewFieldId = getViewFields[0].id;
 
     testSetup = {
       testFieldMetadataId,
@@ -62,8 +62,8 @@ describe('View Field Resolver - Successful object metadata identifier update sid
   it('should create a view field on label identifier object metadata update if it does not exist on view', async () => {
     const { testFieldMetadataId, testViewId } = testSetup;
     const {
-      data: { getCoreViewFields },
-    } = await findCoreViewFields({
+      data: { getViewFields },
+    } = await findViewFields({
       viewId: testViewId,
       expectToFail: false,
       gqlFields: `
@@ -73,7 +73,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       `,
     });
 
-    expect(getCoreViewFields).toMatchObject<
+    expect(getViewFields).toMatchObject<
       Pick<FlatViewField, 'id' | 'fieldMetadataId' | 'viewId'>[]
     >([
       {
@@ -85,7 +85,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
   });
 
   it('Should not allow deleting a label identifier view field', async () => {
-    const { errors } = await deleteOneCoreViewField({
+    const { errors } = await deleteOneViewField({
       input: { id: testSetup.testLabelIdentifierViewFieldId },
       expectToFail: true,
     });
@@ -96,7 +96,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
   });
 
   it('Should not allow destroying a label identifier view field', async () => {
-    const { errors } = await destroyOneCoreViewField({
+    const { errors } = await destroyOneViewField({
       input: { id: testSetup.testLabelIdentifierViewFieldId },
       expectToFail: true,
     });
@@ -107,7 +107,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
   });
 
   it('Should not allow updating a label identifier view field visibility to false', async () => {
-    const { errors } = await updateOneCoreViewField({
+    const { errors } = await updateOneViewField({
       input: {
         id: testSetup.testLabelIdentifierViewFieldId,
         update: { isVisible: false },
@@ -142,7 +142,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
         `,
     });
 
-    const { errors } = await createOneCoreViewField({
+    const { errors } = await createOneViewField({
       input: {
         fieldMetadataId: fieldMetadataId,
         viewId: testSetup.testViewId,
@@ -178,7 +178,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
         `,
     });
 
-    await createOneCoreViewField({
+    await createOneViewField({
       input: {
         fieldMetadataId: fieldMetadataId,
         viewId: testSetup.testViewId,
@@ -187,7 +187,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       expectToFail: false,
     });
 
-    const { errors } = await updateOneCoreViewField({
+    const { errors } = await updateOneViewField({
       input: {
         id: testSetup.testLabelIdentifierViewFieldId,
         update: {
@@ -224,7 +224,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
         `,
     });
 
-    await createOneCoreViewField({
+    await createOneViewField({
       input: {
         fieldMetadataId: fieldMetadataId,
         viewId: testSetup.testViewId,
@@ -233,7 +233,7 @@ describe('View Field Resolver - Successful object metadata identifier update sid
       expectToFail: false,
     });
 
-    await updateOneCoreViewField({
+    await updateOneViewField({
       input: {
         id: testSetup.testLabelIdentifierViewFieldId,
         update: {

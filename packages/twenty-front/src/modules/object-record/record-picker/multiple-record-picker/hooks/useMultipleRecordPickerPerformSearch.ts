@@ -1,6 +1,6 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
@@ -40,7 +40,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
     }: {
       multipleRecordPickerInstanceId: string;
       forceSearchFilter?: string;
-      forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
+      forceSearchableObjectMetadataItems?: EnrichedObjectMetadataItem[];
       forcePickableMorphItems?: RecordPickerPickableMorphItem[];
       loadMore?: boolean;
     }) => {
@@ -380,9 +380,9 @@ const performSearchQueries = async ({
   limit = MULTIPLE_RECORD_PICKER_PAGE_SIZE,
   after = null,
 }: {
-  client: ApolloClient<object>;
+  client: ApolloClient;
   searchFilter: string;
-  searchableObjectMetadataItems: ObjectMetadataItem[];
+  searchableObjectMetadataItems: EnrichedObjectMetadataItem[];
   pickedRecordIds: string[];
   limit?: number;
   after?: string | null;
@@ -410,9 +410,17 @@ const performSearchQueries = async ({
         after,
       },
     });
+    const typedData = data as {
+      search: {
+        edges: SearchResultEdge[];
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      };
+    };
     return {
-      records: data.search.edges.map((edge: SearchResultEdge) => edge.node),
-      pageInfo: data.search.pageInfo,
+      records: typedData.search.edges.map(
+        (edge: SearchResultEdge) => edge.node,
+      ),
+      pageInfo: typedData.search.pageInfo,
     };
   };
 

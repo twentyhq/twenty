@@ -3,19 +3,18 @@ import { useEffect } from 'react';
 import { expect, within } from 'storybook/test';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SettingsPath } from 'twenty-shared/types';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
+import { LoadedDecorator } from '~/testing/decorators/LoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -51,15 +50,15 @@ const meta: Meta<typeof NavigationDrawer> = {
     ComponentWithRouterDecorator,
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
-    PrefetchLoadedDecorator,
+    LoadedDecorator,
     (Story) => {
       const setCurrentWorkspaceMember = useSetAtomState(
         currentWorkspaceMemberState,
       );
       useEffect(() => {
-        jotaiStore.set(
-          objectMetadataItemsState.atom,
-          generatedMockObjectMetadataItems,
+        setTestObjectMetadataItemsInMetadataStore(
+          jotaiStore,
+          getTestEnrichedObjectMetadataItemsMock(),
         );
         setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       }, [setCurrentWorkspaceMember]);
@@ -87,27 +86,20 @@ export const Default: Story = {
             label="Notifications"
             to="/inbox"
             Icon={IconBell}
-            soon={true}
+            modifier="soon"
           />
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            keyboard={[`${getOsControlSymbol()}`, 'K']}
+            modifier={{ keyboard: [`${getOsControlSymbol()}`, 'K'] }}
           />
           <NavigationDrawerItem
             label="Settings"
             to="/settings/profile"
             Icon={IconSettings}
           />
-          <NavigationDrawerItem
-            label="Tasks"
-            to="/tasks"
-            Icon={IconCheckbox}
-            count={2}
-          />
+          <NavigationDrawerItem label="Tasks" to="/tasks" Icon={IconCheckbox} />
         </NavigationDrawerSection>
-
-        <CurrentWorkspaceMemberFavoritesFolders />
 
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Workspace" />

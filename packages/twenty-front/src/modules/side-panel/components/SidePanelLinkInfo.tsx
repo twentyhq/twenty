@@ -1,14 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconLink } from 'twenty-ui/display';
+import { IconLink, IconWorld } from 'twenty-ui/display';
 
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/hooks/useUpdateLinkInDraft';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/components/NavigationMenuItemStyleIcon';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { useUpdateLinkInDraft } from '@/navigation-menu-item/hooks/useUpdateLinkInDraft';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -24,7 +24,7 @@ export const SidePanelLinkInfo = () => {
   const selectedNavigationMenuItemInEditMode = useAtomStateValue(
     selectedNavigationMenuItemInEditModeState,
   );
-  const items = useWorkspaceSectionItems();
+  const items = useNavigationMenuItemSectionItems();
   const { updateLinkInDraft } = useUpdateLinkInDraft();
 
   const defaultLabel = t`Link label`;
@@ -33,7 +33,7 @@ export const SidePanelLinkInfo = () => {
   const selectedItem = selectedNavigationMenuItemInEditMode
     ? items.find(
         (item) =>
-          item.itemType === NavigationMenuItemType.LINK &&
+          item.type === NavigationMenuItemType.LINK &&
           item.id === selectedNavigationMenuItemInEditMode,
       )
     : undefined;
@@ -59,8 +59,10 @@ export const SidePanelLinkInfo = () => {
   return (
     <SidePanelPageInfoLayout
       icon={
-        <NavigationMenuItemStyleIcon
-          Icon={IconLink}
+        <LinkIconWithLinkOverlay
+          link={selectedItem.link}
+          LinkIcon={IconLink}
+          DefaultIcon={IconWorld}
           color={selectedItem.color}
         />
       }

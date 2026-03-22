@@ -60,6 +60,9 @@ export class ObjectMetadataEntity
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  color: string | null;
+
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: JsonbProperty<ObjectStandardOverridesDTO> | null;
 

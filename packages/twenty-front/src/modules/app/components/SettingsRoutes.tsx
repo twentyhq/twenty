@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -128,10 +129,18 @@ const SettingsDomains = lazy(() =>
   })),
 );
 
-const SettingsDomain = lazy(() =>
-  import('~/pages/settings/domains/SettingsDomain').then((module) => ({
-    default: module.SettingsDomain,
+const SettingsSubdomainPage = lazy(() =>
+  import('~/pages/settings/domains/SettingsSubdomainPage').then((module) => ({
+    default: module.SettingsSubdomainPage,
   })),
+);
+
+const SettingsCustomDomainPage = lazy(() =>
+  import('~/pages/settings/domains/SettingsCustomDomainPage').then(
+    (module) => ({
+      default: module.SettingsCustomDomainPage,
+    }),
+  ),
 );
 
 const SettingsApiWebhooks = lazy(() =>
@@ -371,6 +380,30 @@ const SettingsAdminConfigVariableDetails = lazy(() =>
   })),
 );
 
+const SettingsAdminNewAiProvider = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminNewAiProvider').then(
+    (module) => ({
+      default: module.SettingsAdminNewAiProvider,
+    }),
+  ),
+);
+
+const SettingsAdminAiProviderDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminAiProviderDetail').then(
+    (module) => ({
+      default: module.SettingsAdminAiProviderDetail,
+    }),
+  ),
+);
+
+const SettingsAdminNewAiModel = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminNewAiModel').then(
+    (module) => ({
+      default: module.SettingsAdminNewAiModel,
+    }),
+  ),
+);
+
 const SettingsUpdates = lazy(() =>
   import('~/pages/settings/updates/SettingsUpdates').then((module) => ({
     default: module.SettingsUpdates,
@@ -496,7 +529,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-        <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
+        <Route
+          path={SettingsPath.Subdomain}
+          element={<SettingsSubdomainPage />}
+        />
+        <Route
+          path={SettingsPath.CustomDomain}
+          element={<SettingsCustomDomainPage />}
+        />
         <Route
           path={SettingsPath.NewEmailingDomain}
           element={<SettingsNewEmailingDomain />}
@@ -663,6 +703,15 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <>
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
           <Route
+            path={SettingsPath.Enterprise}
+            element={
+              <Navigate
+                to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+                replace
+              />
+            }
+          />
+          <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
           />
@@ -674,6 +723,18 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelConfigVariableDetails}
             element={<SettingsAdminConfigVariableDetails />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelNewAiProvider}
+            element={<SettingsAdminNewAiProvider />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelNewAiModel}
+            element={<SettingsAdminNewAiModel />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelAiProviderDetail}
+            element={<SettingsAdminAiProviderDetail />}
           />
         </>
       )}

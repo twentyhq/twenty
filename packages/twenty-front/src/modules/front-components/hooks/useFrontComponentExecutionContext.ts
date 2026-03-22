@@ -5,24 +5,28 @@ import {
 } from 'twenty-sdk/front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
-import { useActionMenuConfirmationModal } from '@/action-menu/confirmation-modal/hooks/useActionMenuConfirmationModal';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
+import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
+  commandMenuItemId,
 }: {
   frontComponentId: string;
+  commandMenuItemId?: string;
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -32,7 +36,7 @@ export const useFrontComponentExecutionContext = ({
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
   });
-  const { openConfirmationModal } = useActionMenuConfirmationModal();
+  const { openConfirmationModal } = useCommandMenuConfirmationModal();
   const { navigateSidePanel } = useNavigateSidePanel();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
@@ -44,6 +48,10 @@ export const useFrontComponentExecutionContext = ({
     enqueueWarningSnackBar,
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const setCommandMenuItemProgress = useSetAtomFamilyState(
+    commandMenuItemProgressFamilyState,
+    commandMenuItemId ?? '',
+  );
 
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
@@ -72,10 +80,10 @@ export const useFrontComponentExecutionContext = ({
       }
     };
 
-  const openActionConfirmationModal: FrontComponentHostCommunicationApi['openActionConfirmationModal'] =
+  const openCommandConfirmationModal: FrontComponentHostCommunicationApi['openCommandConfirmationModal'] =
     async ({ title, subtitle, confirmButtonText, confirmButtonAccent }) => {
       openConfirmationModal({
-        frontComponentId,
+        caller: { type: 'frontComponent', frontComponentId },
         title,
         subtitle,
         confirmButtonText,
@@ -133,15 +141,25 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanelMenu();
     };
 
+  const updateProgress: FrontComponentHostCommunicationApi['updateProgress'] =
+    async (progress) => {
+      if (!isDefined(commandMenuItemId)) {
+        return;
+      }
+
+      setCommandMenuItemProgress(Math.max(0, Math.min(100, progress)));
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
       requestAccessTokenRefresh,
       openSidePanelPage,
-      openActionConfirmationModal,
+      openCommandConfirmationModal,
       enqueueSnackbar,
       unmountFrontComponent,
       closeSidePanel,
+      updateProgress,
     };
 
   return {

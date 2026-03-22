@@ -1,20 +1,20 @@
 import { type Reference } from '@apollo/client';
-import {
-  type ReadFieldFunction,
-  type ToReferenceFunction,
-} from '@apollo/client/cache/core/types/common';
+import { type FieldFunctionOptions } from '@apollo/client/cache';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+type ReadFieldFunction = FieldFunctionOptions['readField'];
+type ToReferenceFunction = FieldFunctionOptions['toReference'];
+
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 
 import { processGroupByConnectionWithRecords } from '@/apollo/optimistic-effect/group-by/utils/processGroupByConnectionWithRecords';
 
 describe('processGroupByConnectionWithRecords', () => {
-  const mockObjectMetadataItem: ObjectMetadataItem = {
+  const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
     nameSingular: 'person',
     namePlural: 'people',
-  } as ObjectMetadataItem;
+  } as EnrichedObjectMetadataItem;
 
   const mockRecord: RecordGqlNode = {
     __typename: 'Person',

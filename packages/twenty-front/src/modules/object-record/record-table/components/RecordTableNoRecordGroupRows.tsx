@@ -5,7 +5,14 @@ import { RecordTableVirtualizedDebugHelper } from '@/object-record/record-table/
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
 import { getContiguousIncrementalValues } from 'twenty-shared/utils';
+
+const StyledNoRecordGroupContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
 
 export const RecordTableNoRecordGroupRows = () => {
   const totalNumberOfRecordsToVirtualize =
@@ -21,7 +28,7 @@ export const RecordTableNoRecordGroupRows = () => {
   const virtualRowIndices = getContiguousIncrementalValues(numberOfRows);
 
   return (
-    <>
+    <StyledNoRecordGroupContainer>
       <RecordTableVirtualizedBodyPlaceholder />
       {virtualRowIndices.map((virtualRowIndex) => {
         return (
@@ -33,6 +40,6 @@ export const RecordTableNoRecordGroupRows = () => {
       })}
       <RecordTableNoRecordGroupAddNew />
       <RecordTableVirtualizedDebugHelper />
-    </>
+    </StyledNoRecordGroupContainer>
   );
 };

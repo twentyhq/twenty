@@ -7,6 +7,7 @@ export const relativeDateFilterUnitSchema = z.enum([
   'DAY',
   'WEEK',
   'MONTH',
+  'QUARTER',
   'YEAR',
 ]);
 

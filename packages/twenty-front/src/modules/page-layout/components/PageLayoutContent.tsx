@@ -4,19 +4,16 @@ import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayou
 import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
 
 export const PageLayoutContent = () => {
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const { tabId } = usePageLayoutContentContext();
 
@@ -39,15 +36,17 @@ export const PageLayoutContent = () => {
   }
 
   if (isVerticalList) {
-    return isPageLayoutInEditMode ? (
-      <PageLayoutVerticalListEditor
-        widgets={activeTab.widgets}
-        onReorder={reorderWidgets}
-        isReorderEnabled={!isRecordPageLayout}
-      />
-    ) : (
-      <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
-    );
+    if (!isRecordPageLayout && isPageLayoutInEditMode) {
+      return (
+        <PageLayoutVerticalListEditor
+          widgets={activeTab.widgets}
+          onReorder={reorderWidgets}
+          isReorderEnabled={true}
+        />
+      );
+    }
+
+    return <PageLayoutVerticalListViewer widgets={activeTab.widgets} />;
   }
 
   return <PageLayoutGridLayout tabId={tabId} />;

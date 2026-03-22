@@ -2,7 +2,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { destroyOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-core-view-filter.util';
+import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorNotFoundResponse,
@@ -91,7 +91,7 @@ describe('View Filter REST API', () => {
   afterEach(async () => {
     if (!testViewFilterId) return;
 
-    await destroyOneCoreViewFilter({
+    await destroyOneViewFilter({
       input: {
         id: testViewFilterId,
       },

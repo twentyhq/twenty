@@ -10,7 +10,7 @@ import {
 } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
@@ -27,11 +27,11 @@ import {
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type TriggerUpdateRelationsOptimisticEffectArgs = {
-  cache: ApolloCache<unknown>;
-  sourceObjectMetadataItem: ObjectMetadataItem;
+  cache: ApolloCache;
+  sourceObjectMetadataItem: EnrichedObjectMetadataItem;
   currentSourceRecord: RecordGqlNode | null;
   updatedSourceRecord: RecordGqlNode | null;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }
@@ -104,9 +104,9 @@ const triggerUpdateRelationOptimisticEffect = ({
   fieldMetadataItemOnSourceRecord: FieldMetadataItem;
   updatedSourceRecord: RecordGqlNode | null;
   currentSourceRecord: RecordGqlNode | null;
-  objectMetadataItems: ObjectMetadataItem[];
-  sourceObjectMetadataItem: ObjectMetadataItem;
-  cache: ApolloCache<unknown>;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  sourceObjectMetadataItem: EnrichedObjectMetadataItem;
+  cache: ApolloCache;
   isDeletion: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
@@ -260,9 +260,9 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   fieldMetadataItemOnSourceRecord: FieldMetadataItem;
   updatedSourceRecord: RecordGqlNode | null;
   currentSourceRecord: RecordGqlNode | null;
-  objectMetadataItems: ObjectMetadataItem[];
-  sourceObjectMetadataItem: ObjectMetadataItem;
-  cache: ApolloCache<unknown>;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  sourceObjectMetadataItem: EnrichedObjectMetadataItem;
+  cache: ApolloCache;
   isDeletion: boolean;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<

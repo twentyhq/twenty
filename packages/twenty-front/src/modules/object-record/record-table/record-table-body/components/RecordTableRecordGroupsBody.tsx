@@ -26,7 +26,7 @@ export const RecordTableRecordGroupsBody = () => {
 
   const visibleRecordGroupIds = useAtomComponentFamilySelectorValue(
     visibleRecordGroupIdsComponentFamilySelector,
-    ViewType.Table,
+    ViewType.TABLE,
   );
 
   if (isRecordTableInitialLoading && allRecordIds.length === 0) {

@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
 type FieldWidgetDisplayProps = {
   fieldDefinition: FieldDefinition<any>;
   fieldMetadataItem: FieldMetadataItem;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   recordId: string;
   isInSidePanel: boolean;
 };
@@ -89,6 +89,7 @@ export const FieldWidgetDisplay = ({
                 isDisplayModeFixHeight: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
+                  isSystemObject: objectMetadataItem.isSystem,
                   objectPermissions:
                     getObjectPermissionsFromMapByObjectMetadataId({
                       objectPermissionsByObjectMetadataId,
@@ -97,6 +98,7 @@ export const FieldWidgetDisplay = ({
                   fieldMetadataItem: {
                     id: fieldMetadataItem.id,
                     isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                    isCustom: fieldMetadataItem.isCustom ?? false,
                   },
                 }),
                 onMouseEnter: handleMouseEnter,

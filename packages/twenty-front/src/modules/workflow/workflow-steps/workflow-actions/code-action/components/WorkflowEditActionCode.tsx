@@ -8,7 +8,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
@@ -434,7 +434,7 @@ export const WorkflowEditActionCode = ({
             additionalActions={
               activeTabId === WorkflowLogicFunctionTabId.TEST
                 ? [
-                    <CmdEnterActionButton
+                    <WorkflowStepCmdEnterButton
                       title={t`Test`}
                       onClick={handleTestFunction}
                       disabled={isExecuting}

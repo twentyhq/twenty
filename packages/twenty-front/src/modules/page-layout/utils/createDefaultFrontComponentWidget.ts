@@ -34,6 +34,7 @@ export const createDefaultFrontComponentWidget = (
       columnSpan: gridPosition.columnSpan,
     },
     objectMetadataId: null,
+    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

@@ -61,8 +61,6 @@ type PositionFieldMetadata = FieldMetadataEntity<FieldMetadataType.POSITION>;
 
 type RawJsonFieldMetadata = FieldMetadataEntity<FieldMetadataType.RAW_JSON>;
 
-type RichTextFieldMetadata = FieldMetadataEntity<FieldMetadataType.RICH_TEXT>;
-
 type ActorFieldMetadata = FieldMetadataEntity<FieldMetadataType.ACTOR>;
 
 type ArrayFieldMetadata = FieldMetadataEntity<FieldMetadataType.ARRAY>;
@@ -93,7 +91,6 @@ type RelationAssertions = [
   Expect<HasAllProperties<MultiSelectFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<PositionFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedRelationRecord>>,
-  Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedRelationRecord>>,
@@ -124,7 +121,6 @@ type SettingsAssertions = [
   Expect<HasAllProperties<MultiSelectFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<PositionFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedSettings>>,
@@ -373,16 +369,6 @@ type DefaultValueAssertions = [
   >,
   Expect<
     HasAllProperties<
-      RichTextFieldMetadata,
-      {
-        defaultValue: JsonbProperty<
-          FieldMetadataDefaultValueMapping[FieldMetadataType.RICH_TEXT]
-        >;
-      }
-    >
-  >,
-  Expect<
-    HasAllProperties<
       ActorFieldMetadata,
       {
         defaultValue: JsonbProperty<
@@ -484,7 +470,6 @@ type OptionsAssertions = [
   Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<PositionFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedOptions>>,
-  Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedOptions>>,
   Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedOptions>>,

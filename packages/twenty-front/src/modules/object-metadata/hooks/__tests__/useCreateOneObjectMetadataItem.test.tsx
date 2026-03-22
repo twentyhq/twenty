@@ -4,6 +4,7 @@ import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreat
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import {
+  findManyNavigationMenuItemsQuery,
   findManyViewsQuery,
   query,
   responseData,
@@ -53,21 +54,24 @@ const mocks = [
   {
     request: {
       query: findManyViewsQuery,
+      variables: {
+        objectMetadataId: responseData.id,
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        getViews: [],
+      },
+    })),
+  },
+  {
+    request: {
+      query: findManyNavigationMenuItemsQuery,
       variables: {},
     },
     result: jest.fn(() => ({
       data: {
-        views: {
-          __typename: 'ViewConnection',
-          totalCount: 0,
-          pageInfo: {
-            __typename: 'PageInfo',
-            hasNextPage: false,
-            startCursor: '',
-            endCursor: '',
-          },
-          edges: [],
-        },
+        navigationMenuItems: [],
       },
     })),
   },

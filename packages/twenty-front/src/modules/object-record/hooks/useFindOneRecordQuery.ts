@@ -1,7 +1,8 @@
 import gql from 'graphql-tag';
+import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
@@ -21,11 +22,12 @@ export const useFindOneRecordQuery = ({
     objectNameSingular,
   });
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const findOneRecordQuery = gql`
+  const findOneRecordQuery = useMemo(
+    () => gql`
       query FindOne${capitalize(
         objectMetadataItem.nameSingular,
       )}($objectRecordId: UUID!) {
@@ -50,7 +52,15 @@ export const useFindOneRecordQuery = ({
           objectPermissionsByObjectMetadataId,
         })}
       },
-  `;
+  `,
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGqlFields,
+      withSoftDeleted,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
 
   return {
     findOneRecordQuery,

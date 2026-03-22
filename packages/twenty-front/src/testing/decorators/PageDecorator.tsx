@@ -1,4 +1,4 @@
-import { ApolloProvider } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 import { loadDevMessages } from '@apollo/client/dev';
 import { type Decorator } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
@@ -14,17 +14,18 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MetadataGater } from '@/metadata-store/components/MetadataGater';
-import { MetadataProviderInitialEffects } from '@/metadata-store/effect-components/MetadataProviderInitialEffects';
-import { IsAppMetadataReadyEffect } from '@/metadata-store/effect-components/IsAppMetadataReadyEffect';
+import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
+import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
+import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
+import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
@@ -73,8 +74,10 @@ const ApolloStorybookDevLogEffect = () => {
 await dynamicActivate(SOURCE_LOCALE);
 
 const Providers = () => {
+  const [store] = useState(() => jotaiStore);
+
   return (
-    <JotaiProvider store={jotaiStore}>
+    <JotaiProvider store={store}>
       <SnackBarComponentInstanceContext.Provider
         value={{ instanceId: 'snack-bar-manager' }}
       >
@@ -83,27 +86,26 @@ const Providers = () => {
             <ApolloStorybookDevLogEffect />
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
-              <MetadataProviderInitialEffects />
-              <IsAppMetadataReadyEffect />
+              <UserMetadataProviderInitialEffect />
+              <MinimalMetadataLoadEffect />
+              <IsMinimalMetadataReadyEffect />
               <WorkspaceProviderEffect />
-              <MetadataGater>
+              <MinimalMetadataGater>
                 <ApolloCoreClientMockedProvider>
                   <PreComputedChipGeneratorsProvider>
                     <FullHeightStorybookLayout>
                       <HelmetProvider>
                         <IconsProvider>
-                          <PrefetchDataProvider>
-                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                              <Outlet />
-                            </RecordComponentInstanceContextsWrapper>
-                          </PrefetchDataProvider>
+                          <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
+                            <Outlet />
+                          </RecordComponentInstanceContextsWrapper>
                         </IconsProvider>
                       </HelmetProvider>
                     </FullHeightStorybookLayout>
                   </PreComputedChipGeneratorsProvider>
                   <MainContextStoreProvider />
                 </ApolloCoreClientMockedProvider>
-              </MetadataGater>
+              </MinimalMetadataGater>
             </ClientConfigProvider>
           </I18nProvider>
         </ApolloProvider>

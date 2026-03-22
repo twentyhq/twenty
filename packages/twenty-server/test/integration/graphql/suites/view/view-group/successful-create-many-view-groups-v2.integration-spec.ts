@@ -3,10 +3,10 @@ import { createOneSelectFieldMetadataForIntegrationTests } from 'test/integratio
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { createManyCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/create-many-core-view-groups.util';
-import { deleteOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/delete-one-core-view-group.util';
-import { destroyOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-core-view-group.util';
-import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { createManyViewGroups } from 'test/integration/metadata/suites/view-group/utils/create-many-view-groups.util';
+import { deleteOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/delete-one-view-group.util';
+import { destroyOneViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-view-group.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -110,9 +110,9 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
 
     const {
       data: {
-        createCoreView: { id: testViewId },
+        createView: { id: testViewId },
       },
-    } = await createOneCoreView({
+    } = await createOneView({
       input: {
         icon: 'icon123',
         objectMetadataId,
@@ -150,16 +150,16 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
     for (const viewGroupId of createdViewGroupIds) {
       if (isDefined(viewGroupId)) {
         const {
-          data: { deleteCoreViewGroup },
-        } = await deleteOneCoreViewGroup({
+          data: { deleteViewGroup },
+        } = await deleteOneViewGroup({
           expectToFail: false,
           input: {
             id: viewGroupId,
           },
         });
 
-        expect(deleteCoreViewGroup.deletedAt).not.toBeNull();
-        await destroyOneCoreViewGroup({
+        expect(deleteViewGroup.deletedAt).not.toBeNull();
+        await destroyOneViewGroup({
           expectToFail: false,
           input: {
             id: viewGroupId,
@@ -193,9 +193,9 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
     ];
 
     const {
-      data: { createManyCoreViewGroups: createdViewGroups },
+      data: { createManyViewGroups: createdViewGroups },
       errors,
-    } = await createManyCoreViewGroups({
+    } = await createManyViewGroups({
       inputs,
       expectToFail: false,
     });
@@ -227,9 +227,9 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
     ];
 
     const {
-      data: { createManyCoreViewGroups: createdViewGroups },
+      data: { createManyViewGroups: createdViewGroups },
       errors,
-    } = await createManyCoreViewGroups({
+    } = await createManyViewGroups({
       inputs,
       expectToFail: false,
     });
@@ -254,9 +254,9 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
     const inputs: CreateViewGroupInput[] = [];
 
     const {
-      data: { createManyCoreViewGroups: createdViewGroups },
+      data: { createManyViewGroups: createdViewGroups },
       errors,
-    } = await createManyCoreViewGroups({
+    } = await createManyViewGroups({
       inputs,
       expectToFail: false,
     });

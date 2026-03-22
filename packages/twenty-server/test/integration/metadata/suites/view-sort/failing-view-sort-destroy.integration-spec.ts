@@ -4,7 +4,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { destroyOneCoreViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-core-view-sort.util';
+import { destroyOneViewSort } from 'test/integration/metadata/suites/view-sort/utils/destroy-one-view-sort.util';
 
 type TestContext = {
   id: string;
@@ -23,7 +23,7 @@ describe('View Sort destroy should fail', () => {
   it.each(eachTestingContextFilter(failingViewSortDestroyTestCases))(
     '$title',
     async ({ context }) => {
-      const { errors } = await destroyOneCoreViewSort({
+      const { errors } = await destroyOneViewSort({
         input: { id: context.id },
         expectToFail: true,
       });

@@ -11,7 +11,8 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconMail, Status } from 'twenty-ui/display';
-import { useGetEmailingDomainsQuery } from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
 import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
@@ -28,7 +29,7 @@ export const SettingsEmailingDomains = () => {
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const navigate = useNavigate();
 
-  const { data, loading: isLoading } = useGetEmailingDomainsQuery();
+  const { data, loading: isLoading } = useQuery(GetEmailingDomainsDocument);
   const emailingDomains = data?.getEmailingDomains ?? [];
 
   const getItemDescription = (createdAt: string) => {

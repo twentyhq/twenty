@@ -12,7 +12,7 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 
 type RecordTableContextProviderProps = {
   viewBarId: string;
@@ -47,7 +47,7 @@ export const RecordTableContextProvider = ({
     recordIndexOpenRecordInState,
   );
   const triggerEvent =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
+    recordIndexOpenRecordIn === ViewOpenRecordIn.SIDE_PANEL
       ? 'CLICK'
       : 'MOUSE_DOWN';
 

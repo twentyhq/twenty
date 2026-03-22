@@ -3,7 +3,7 @@ import {
   type DatabaseEventPayload,
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-sdk/clients';
 
 type CompanyRecord = {
   id: string;

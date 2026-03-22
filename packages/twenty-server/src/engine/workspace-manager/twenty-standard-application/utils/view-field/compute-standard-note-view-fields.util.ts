@@ -83,6 +83,19 @@ export const computeStandardNoteViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
+    noteRecordPageFieldsNoteTargets: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'noteTargets',
+        fieldName: 'noteTargets',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
     noteRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'note',

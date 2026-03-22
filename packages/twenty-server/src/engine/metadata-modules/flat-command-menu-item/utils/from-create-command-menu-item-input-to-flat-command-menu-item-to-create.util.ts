@@ -7,7 +7,7 @@ import {
   CommandMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -32,10 +32,19 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const hasFrontComponentId = isDefined(
     createCommandMenuItemInput.frontComponentId,
   );
+  const hasEngineComponentKey = isDefined(
+    createCommandMenuItemInput.engineComponentKey,
+  );
 
-  if (hasWorkflowVersionId === hasFrontComponentId) {
+  const sourceCount = [
+    hasWorkflowVersionId,
+    hasFrontComponentId,
+    hasEngineComponentKey,
+  ].filter(Boolean).length;
+
+  if (sourceCount !== 1) {
     throw new CommandMenuItemException(
-      'Exactly one of workflowVersionId or frontComponentId is required',
+      'Exactly one of workflowVersionId, frontComponentId or engineComponentKey is required',
       CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED,
     );
   }
@@ -62,11 +71,13 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     workflowVersionId: createCommandMenuItemInput.workflowVersionId ?? null,
     frontComponentId: createCommandMenuItemInput.frontComponentId ?? null,
     frontComponentUniversalIdentifier,
+    engineComponentKey: createCommandMenuItemInput.engineComponentKey ?? null,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
     shortLabel: createCommandMenuItemInput.shortLabel ?? null,
     position: createCommandMenuItemInput.position ?? 0,
     isPinned: createCommandMenuItemInput.isPinned ?? false,
+    hotKeys: createCommandMenuItemInput.hotKeys ?? null,
     availabilityType:
       createCommandMenuItemInput.availabilityType ??
       CommandMenuItemAvailabilityType.GLOBAL,

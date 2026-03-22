@@ -11,7 +11,6 @@ export const mapRecordFilterGroupToViewFilterGroup = ({
   view: Pick<View, 'id'>;
 }): ViewFilterGroup => {
   return {
-    __typename: 'ViewFilterGroup',
     id: recordFilterGroup.id,
     logicalOperator:
       mapRecordFilterGroupLogicalOperatorToViewFilterGroupLogicalOperator({

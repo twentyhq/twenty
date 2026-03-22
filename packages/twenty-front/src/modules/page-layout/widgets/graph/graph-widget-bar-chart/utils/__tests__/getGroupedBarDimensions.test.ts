@@ -59,4 +59,44 @@ describe('getGroupedBarDimensions', () => {
       height: 19,
     });
   });
+
+  it('clamps vertical bar when value exceeds axis length', () => {
+    const ctx = createContext({ isVertical: true });
+    const layout = computeGroupedBarLayout(ctx, 2);
+
+    const dimensions = getGroupedBarDimensions({
+      ctx,
+      layout,
+      categoryStart: 10,
+      keyIndex: 1,
+      value: 150,
+    });
+
+    expect(dimensions).toEqual({
+      x: 31,
+      y: 0,
+      width: 19,
+      height: 100,
+    });
+  });
+
+  it('clamps horizontal bar when value exceeds axis length', () => {
+    const ctx = createContext({ isVertical: false });
+    const layout = computeGroupedBarLayout(ctx, 2);
+
+    const dimensions = getGroupedBarDimensions({
+      ctx,
+      layout,
+      categoryStart: 10,
+      keyIndex: 0,
+      value: 150,
+    });
+
+    expect(dimensions).toEqual({
+      x: 0,
+      y: 10,
+      width: 100,
+      height: 19,
+    });
+  });
 });
