@@ -5,7 +5,6 @@ import { V1_17_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { V1_18_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-18/1-18-upgrade-version-command.module';
 import { V1_19_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-19/1-19-upgrade-version-command.module';
 import { V1_20_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-20/1-20-upgrade-version-command.module';
-import { V1_21_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-21/1-21-upgrade-version-command.module';
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -17,7 +16,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     V1_18_UpgradeVersionCommandModule,
     V1_19_UpgradeVersionCommandModule,
     V1_20_UpgradeVersionCommandModule,
-    V1_21_UpgradeVersionCommandModule,
     DataSourceModule,
   ],
   providers: [UpgradeCommand],

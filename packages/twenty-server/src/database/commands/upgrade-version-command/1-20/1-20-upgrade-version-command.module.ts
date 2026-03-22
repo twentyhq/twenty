@@ -13,6 +13,7 @@ import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrati
 import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
+import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -64,6 +65,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
+    UpdateStandardIndexViewNamesCommand,
   ],
   exports: [
     IdentifyPermissionFlagMetadataCommand,
@@ -78,6 +80,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
+    UpdateStandardIndexViewNamesCommand,
   ],
 })
 export class V1_20_UpgradeVersionCommandModule {}

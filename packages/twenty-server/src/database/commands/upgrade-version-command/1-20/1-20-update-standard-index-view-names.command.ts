@@ -10,7 +10,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
-  name: 'upgrade:1-21:update-standard-index-view-names',
+  name: 'upgrade:1-20:update-standard-index-view-names',
   description:
     'Update standard index view names to use translatable template placeholders',
 })
