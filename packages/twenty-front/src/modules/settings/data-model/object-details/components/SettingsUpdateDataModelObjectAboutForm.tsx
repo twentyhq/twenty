@@ -96,7 +96,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
       });
     } else {
-      formConfig.reset(formConfig.getValues());
+      formConfig.reset(formValues, { keepDirtyValues: true });
     }
 
     navigate(SettingsPath.ObjectDetail, {
