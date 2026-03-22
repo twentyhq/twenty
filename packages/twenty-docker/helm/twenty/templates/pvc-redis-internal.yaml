@@ -1,4 +1,4 @@
-{{- if and .Values.redisInternal.enabled (not .Values.redisInternal.persistence.existingClaim) }}
+{{- if and .Values.redisInternal.enabled .Values.redisInternal.persistence.enabled (not .Values.redisInternal.persistence.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

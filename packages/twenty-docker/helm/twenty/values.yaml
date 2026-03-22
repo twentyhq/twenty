@@ -52,7 +52,14 @@ server:
     SIGN_IN_PREFILLED: "false"
     ACCESS_TOKEN_EXPIRES_IN: "7d"
     LOGIN_TOKEN_EXPIRES_IN: "1h"
-  additionalEnv: { }
+  extraEnv: []
+  # - name: EMAIL_DRIVER
+  #   value: smtp
+  # - name: SMTP_PASSWORD
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: smtp-creds
+  #       key: password
 
   service:
     type: ClusterIP
@@ -106,7 +113,7 @@ worker:
       cpu: 1000m
       memory: 2048Mi
 
-  additionalEnv: { }
+  extraEnv: []
 
 # PostgreSQL
 db:
