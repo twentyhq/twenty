@@ -19,6 +19,7 @@ import { useIcons } from 'twenty-ui/display';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
+  EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
 const resolveScope = (
@@ -129,14 +130,32 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
         return;
       }
 
+      // OMNIA-CUSTOM: Resolve object-specific labels and blue CTA for create button
+      const isCreateNewRecord =
+        item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD;
+      const objectLabel = isCreateNewRecord
+        ? commandMenuContextApi.objectMetadataItem?.labelSingular
+        : undefined;
+      const resolvedLabel =
+        isCreateNewRecord && objectLabel
+          ? `Create ${objectLabel}`
+          : label;
+      const resolvedShortLabel =
+        isCreateNewRecord && objectLabel
+          ? `Create ${objectLabel}`
+          : shortLabel;
+
       return {
         type: resolveType(item),
         key: `command-menu-item-${item.id}`,
         scope,
-        label,
-        shortLabel,
+        label: resolvedLabel,
+        shortLabel: resolvedShortLabel,
         position: item.position,
         isPinned,
+        isPrimaryCTA: isCreateNewRecord || undefined,
+        accent: isCreateNewRecord ? ('blue' as const) : undefined,
+        buttonVariant: isCreateNewRecord ? ('primary' as const) : undefined,
         Icon,
         hotKeys: item.hotKeys,
         shouldBeRegistered: () =>

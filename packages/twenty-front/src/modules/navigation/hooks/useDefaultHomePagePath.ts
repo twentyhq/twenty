@@ -111,11 +111,17 @@ export const useDefaultHomePagePath = () => {
       }
     }
 
-    // Ultimate fallback: first readable object (shouldn't normally hit this)
-    const fallback =
-      readableAlphaSortedActiveNonSystemObjectMetadataItems[0];
-    return fallback
-      ? { objectMetadataItem: fallback, view: getFirstView(fallback.id) }
+    // Ultimate fallback: prefer "person" (Leads), then first readable object.
+    // This covers the initial render when nav items haven't loaded yet.
+    const preferredFallback =
+      readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      ) ?? readableAlphaSortedActiveNonSystemObjectMetadataItems[0];
+    return preferredFallback
+      ? {
+          objectMetadataItem: preferredFallback,
+          view: getFirstView(preferredFallback.id),
+        }
       : null;
   }, [
     allNavigationMenuItems,
