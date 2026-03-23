@@ -8,11 +8,13 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
@@ -25,9 +27,17 @@ export const PageLayoutInitializationQueryEffect = ({
   const [pageLayoutIsInitialized, setPageLayoutIsInitialized] =
     useAtomComponentState(pageLayoutIsInitializedComponentState);
 
-  const basePageLayout = useBasePageLayout(pageLayoutId);
+  const featureFlags = useFeatureFlagsMap();
+  const isRecordPageLayoutEditingEnabled =
+    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
 
-  const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
+  const basePageLayout = useBasePageLayout(pageLayoutId);
+  const pageLayoutWithRelationWidgets =
+    usePageLayoutWithRelationWidgets(basePageLayout);
+
+  const pageLayout = isRecordPageLayoutEditingEnabled
+    ? basePageLayout
+    : pageLayoutWithRelationWidgets;
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -45,6 +55,8 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
+      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
+
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -59,12 +71,17 @@ export const PageLayoutInitializationQueryEffect = ({
         type: layout.type,
         objectMetadataId: layout.objectMetadataId,
         tabs: layout.tabs,
+        defaultTabToFocusOnMobileAndSidePanelId:
+          layout.defaultTabToFocusOnMobileAndSidePanelId,
       });
 
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      setIsPageLayoutInEditMode(isPageLayoutEmpty(layout));
+      if (!isRecordPageLayout) {
+        const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
+        setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
+      }
     },
     [
       pageLayoutCurrentLayoutsComponentCallbackState,

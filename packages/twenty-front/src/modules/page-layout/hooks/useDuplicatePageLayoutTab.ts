@@ -1,14 +1,12 @@
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { SidePanelPages } from 'twenty-shared/types';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { generateDuplicatedTimestamps } from '@/page-layout/utils/generateDuplicatedTimestamps';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -16,10 +14,17 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
+export const useDuplicatePageLayoutTab = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -37,7 +42,6 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
   const store = useStore();
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
   const setActiveTabId = useSetAtomComponentState(
     activeTabIdComponentState,
     tabListInstanceId,
@@ -128,13 +132,13 @@ export const useDuplicatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
       setActiveTabId(newTabId);
 
-      setPageLayoutTabSettingsOpenTabId(newTabId);
-
       navigatePageLayoutSidePanel({
         sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         pageTitle: newTab.title,
         focusTitleInput: true,
       });
+
+      setPageLayoutTabSettingsOpenTabId(newTabId);
 
       return newTabId;
     },

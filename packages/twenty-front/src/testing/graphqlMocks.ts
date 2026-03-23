@@ -15,7 +15,7 @@ import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/public
 import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
-import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
+import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { isDefined } from 'twenty-shared/utils';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
@@ -205,6 +205,11 @@ export const graphqlMocks = {
     metadataGraphql.query('FindManyNavigationMenuItems', () => {
       return HttpResponse.json({
         data: { navigationMenuItems: mockedNavigationMenuItems },
+      });
+    }),
+    metadataGraphql.query('FindManyCommandMenuItems', () => {
+      return HttpResponse.json({
+        data: { commandMenuItems: [] },
       });
     }),
     graphql.query('SearchPeople', () => {

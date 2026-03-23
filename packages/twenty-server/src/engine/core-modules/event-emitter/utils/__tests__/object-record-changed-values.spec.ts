@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -6,6 +8,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 const mockObjectMetadata: FlatObjectMetadata = {
   id: '1',
   icon: 'Icon123',
+  color: null,
   nameSingular: 'Object',
   namePlural: 'Objects',
   labelSingular: 'Object',
@@ -20,6 +23,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   isAuditLogged: true,
   isSearchable: true,
   indexMetadataIds: [],
+  objectPermissionIds: [],
   fieldIds: [],
   viewIds: [],
   applicationId: 'test-application-id',
@@ -35,6 +39,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   duplicateCriteria: null,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: [],
+  objectPermissionUniversalIdentifiers: [],
   viewUniversalIdentifiers: [],
   indexMetadataUniversalIdentifiers: [],
   labelIdentifierFieldMetadataUniversalIdentifier: null,
@@ -142,5 +147,54 @@ describe('objectRecordChangedValues', () => {
     );
 
     expect(result).toEqual(expectedChanges);
+  });
+
+  it('ignores changes to POSITION fields', () => {
+    const positionFieldId = 'position-field-id';
+    const positionUniversalId = 'position-universal-id';
+
+    const objectMetadataWithPosition: FlatObjectMetadata = {
+      ...mockObjectMetadata,
+      fieldIds: [positionFieldId],
+    };
+
+    const flatFieldMetadataMapsWithPosition: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          [positionUniversalId]: {
+            id: positionFieldId,
+            name: 'position',
+            type: FieldMetadataType.POSITION,
+            universalIdentifier: positionUniversalId,
+          } as FlatFieldMetadata,
+        },
+        universalIdentifierById: {
+          [positionFieldId]: positionUniversalId,
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+    const oldRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516n',
+      position: 1,
+      name: 'Original',
+    };
+    const newRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516n',
+      position: 5,
+      name: 'Updated',
+    };
+
+    const result = objectRecordChangedValues(
+      oldRecord,
+      newRecord,
+      objectMetadataWithPosition,
+      flatFieldMetadataMapsWithPosition,
+    );
+
+    expect(result).toEqual({
+      name: { before: 'Original', after: 'Updated' },
+    });
+    expect(result).not.toHaveProperty('position');
   });
 });

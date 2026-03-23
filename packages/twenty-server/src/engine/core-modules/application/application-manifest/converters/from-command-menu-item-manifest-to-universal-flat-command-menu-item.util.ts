@@ -25,7 +25,7 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     universalIdentifier: commandMenuItemManifest.universalIdentifier,
     applicationUniversalIdentifier,
     label: commandMenuItemManifest.label,
-    shortLabel: null,
+    shortLabel: commandMenuItemManifest.shortLabel ?? null,
     position: 0,
     icon: commandMenuItemManifest.icon ?? null,
     isPinned: commandMenuItemManifest.isPinned ?? false,
@@ -39,6 +39,7 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     availabilityObjectMetadataUniversalIdentifier:
       commandMenuItemManifest.availabilityObjectUniversalIdentifier ?? null,
     engineComponentKey: null,
+    hotKeys: null,
     workflowVersionId: null,
     createdAt: now,
     updatedAt: now,

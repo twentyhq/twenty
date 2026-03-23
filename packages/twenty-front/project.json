@@ -292,6 +292,7 @@
     },
     "lingui:extract": {
       "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "lingui extract --overwrite --clean"
@@ -299,6 +300,7 @@
     },
     "lingui:compile": {
       "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "lingui compile --typescript"

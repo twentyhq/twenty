@@ -31,8 +31,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "conditionalAvailabilityExpression",
       "availabilityObjectMetadataUniversalIdentifier",
       "engineComponentKey",
+      "hotKeys",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "hotKeys",
+    ],
   },
   "fieldMetadata": {
     "propertiesToCompare": [
@@ -107,6 +110,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "navigationMenuItem": {
     "propertiesToCompare": [
+      "type",
       "position",
       "folderUniversalIdentifier",
       "name",
@@ -118,6 +122,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "objectMetadata": {
     "propertiesToCompare": [
+      "color",
       "description",
       "icon",
       "isActive",
@@ -132,6 +137,17 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToStringify": [
       "standardOverrides",
     ],
+  },
+  "objectPermission": {
+    "propertiesToCompare": [
+      "roleUniversalIdentifier",
+      "objectMetadataUniversalIdentifier",
+      "canReadObjectRecords",
+      "canUpdateObjectRecords",
+      "canSoftDeleteObjectRecords",
+      "canDestroyObjectRecords",
+    ],
+    "propertiesToStringify": [],
   },
   "pageLayout": {
     "propertiesToCompare": [
@@ -174,6 +190,13 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "conditionalDisplay",
       "overrides",
     ],
+  },
+  "permissionFlag": {
+    "propertiesToCompare": [
+      "flag",
+      "roleUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
   },
   "role": {
     "propertiesToCompare": [

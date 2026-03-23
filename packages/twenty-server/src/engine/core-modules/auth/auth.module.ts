@@ -20,6 +20,7 @@ import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.s
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -59,6 +60,10 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
+import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/data-access/message-channel-data-access.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -96,6 +101,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       UserWorkspaceEntity,
       TwoFactorAuthenticationMethodEntity,
       ObjectMetadataEntity,
+      ConnectedAccountEntity,
     ]),
     UserWorkspaceModule,
     WorkspaceModule,
@@ -104,6 +110,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
+    CalendarChannelDataAccessModule,
+    ConnectedAccountDataAccessModule,
+    MessageChannelDataAccessModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
@@ -154,6 +163,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateConnectedAccountService,
+    CreateSSOConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,

@@ -1,6 +1,6 @@
 import { type ExportConfig } from '@/object-record/record-index/export/types/ExportConfig';
 import { useExportableRelationFields } from '@/object-record/record-index/export/hooks/useExportableRelationFields';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ModalHeader } from 'twenty-ui/layout';
@@ -19,7 +19,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ExportRelationFieldConfigModalProps = {
   modalId: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   visibleFieldNames: string[];
   onExport: (config: ExportConfig) => void;
 };

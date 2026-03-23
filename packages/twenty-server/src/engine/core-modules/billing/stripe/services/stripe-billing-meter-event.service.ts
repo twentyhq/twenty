@@ -4,9 +4,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import type Stripe from 'stripe';
 
-import { type BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { STRIPE_BILLING_METER_EVENT_NAME } from 'src/engine/core-modules/billing/stripe/constants/stripe-billing-meter-event-name.constant';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
-import { type BillingDimensions } from 'src/engine/core-modules/billing/types/billing-dimensions.type';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -27,35 +27,28 @@ export class StripeBillingMeterEventService {
   }
 
   async sendBillingMeterEvent({
-    eventName,
-    value,
+    usageEvent,
     stripeCustomerId,
-    dimensions,
   }: {
-    eventName: BillingMeterEventName;
-    value: number;
+    usageEvent: UsageEvent;
     stripeCustomerId: string;
-    dimensions?: BillingDimensions;
   }) {
     const payload: Record<string, string> = {
-      value: value.toString(),
+      value: usageEvent.creditsUsedMicro.toString(),
       stripe_customer_id: stripeCustomerId,
+      execution_type: usageEvent.operationType.toLowerCase(),
     };
 
-    if (dimensions) {
-      payload.execution_type = dimensions.execution_type;
+    if (usageEvent.resourceId) {
+      payload.resource_id = usageEvent.resourceId;
+    }
 
-      if (dimensions.resource_id !== undefined) {
-        payload.resource_id = dimensions.resource_id || 'none';
-      }
-
-      if (dimensions.execution_context_1 !== undefined) {
-        payload.execution_context_1 = dimensions.execution_context_1 || 'none';
-      }
+    if (usageEvent.resourceContext) {
+      payload.execution_context_1 = usageEvent.resourceContext;
     }
 
     await this.stripe.billing.meterEvents.create({
-      event_name: eventName,
+      event_name: STRIPE_BILLING_METER_EVENT_NAME,
       payload,
     });
   }

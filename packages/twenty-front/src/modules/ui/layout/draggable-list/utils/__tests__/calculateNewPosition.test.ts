@@ -66,11 +66,10 @@ describe('calculateNewPosition', () => {
         items,
       });
 
-      expect(result).toBe(Math.round(30 + (20 - 30) / 2));
       expect(result).toBe(25);
     });
 
-    it('should round fractional midpoints', () => {
+    it('should return fractional midpoints for adjacent positions', () => {
       const items = createItems([1, 2, 5]);
 
       const result = calculateNewPosition({
@@ -79,8 +78,7 @@ describe('calculateNewPosition', () => {
         items,
       });
 
-      expect(result).toBe(Math.round(5 + (2 - 5) / 2));
-      expect(result).toBe(4);
+      expect(result).toBe(3.5);
     });
   });
 
@@ -94,11 +92,10 @@ describe('calculateNewPosition', () => {
         items,
       });
 
-      expect(result).toBe(Math.round(20 - (20 - 10) / 2));
       expect(result).toBe(15);
     });
 
-    it('should round fractional midpoints', () => {
+    it('should return fractional midpoints for adjacent positions', () => {
       const items = createItems([1, 4, 10]);
 
       const result = calculateNewPosition({
@@ -107,8 +104,21 @@ describe('calculateNewPosition', () => {
         items,
       });
 
-      expect(result).toBe(Math.round(4 - (4 - 1) / 2));
-      expect(result).toBe(3);
+      expect(result).toBe(2.5);
+    });
+
+    it('should produce unique position for sequential integers', () => {
+      const items = createItems([1, 2]);
+
+      const result = calculateNewPosition({
+        destinationIndex: 1,
+        sourceIndex: 2,
+        items,
+      });
+
+      expect(result).toBe(1.5);
+      expect(result).not.toBe(items[0].position);
+      expect(result).not.toBe(items[1].position);
     });
 
     it('should handle destinationIndex equal to sourceIndex', () => {

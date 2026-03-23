@@ -17,7 +17,7 @@ import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/typ
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/modelConfiguration';
 import { AgentResponseFormatJson } from 'src/engine/metadata-modules/ai/ai-agent/validators/agent-response-format-json.validator';
 import { AgentResponseFormatText } from 'src/engine/metadata-modules/ai/ai-agent/validators/agent-response-format-text.validator';
-import { ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
 @InputType()
 export class CreateAgentInput {

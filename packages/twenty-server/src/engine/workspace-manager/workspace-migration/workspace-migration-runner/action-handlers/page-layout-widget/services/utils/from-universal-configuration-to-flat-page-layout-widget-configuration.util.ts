@@ -311,8 +311,19 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FIELD: {
+      const { fieldMetadataId: fieldMetadataUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      const fieldMetadataId = resolveFieldMetadataIdOrThrow({
+        fieldMetadataUniversalIdentifier,
+        flatFieldMetadataMaps,
+      });
+
+      return { ...rest, fieldMetadataId };
+    }
+
     case WidgetConfigurationType.VIEW:
-    case WidgetConfigurationType.FIELD:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
     case WidgetConfigurationType.NOTES:

@@ -16,6 +16,7 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     shortLabel
     position
     isPinned
+    hotKeys
     conditionalAvailabilityExpression
     availabilityType
     availabilityObjectMetadataId

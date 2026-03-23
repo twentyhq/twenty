@@ -19,25 +19,35 @@ describe('getNavigationMenuItemBaseFile', () => {
     expect(result).toContain('position: 0');
   });
 
-  it('should include viewUniversalIdentifier when provided', () => {
+  it('should include viewUniversalIdentifier when type is VIEW', () => {
     const result = getNavigationMenuItemBaseFile({
       name: 'linked-item',
+      type: 'VIEW',
       viewUniversalIdentifier: 'view-uuid-123',
     });
 
+    expect(result).toContain("type: 'VIEW'");
     expect(result).toContain("viewUniversalIdentifier: 'view-uuid-123'");
-    expect(result).not.toContain('// Link to a view:');
   });
 
-  it('should include commented link options when viewUniversalIdentifier is not provided', () => {
+  it('should default to VIEW type when no type is provided', () => {
     const result = getNavigationMenuItemBaseFile({
       name: 'unlinked-item',
     });
 
-    expect(result).toContain('// Link to a view:');
+    expect(result).toContain("type: 'VIEW'");
     expect(result).toContain('// viewUniversalIdentifier:');
-    expect(result).toContain('// targetObjectUniversalIdentifier:');
-    expect(result).toContain('// link:');
+  });
+
+  it('should include targetObjectUniversalIdentifier when type is OBJECT', () => {
+    const result = getNavigationMenuItemBaseFile({
+      name: 'object-item',
+      type: 'OBJECT',
+      targetObjectUniversalIdentifier: 'obj-uuid-123',
+    });
+
+    expect(result).toContain("type: 'OBJECT'");
+    expect(result).toContain("targetObjectUniversalIdentifier: 'obj-uuid-123'");
   });
 
   it('should generate unique UUID when not provided', () => {

@@ -5,18 +5,19 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ApplyCalendarEventsVisibilityRestrictionsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   public async applyCalendarEventsVisibilityRestrictions(
@@ -41,12 +42,6 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
             },
             relations: ['calendarChannel'],
           });
-
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
 
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -84,15 +79,13 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
                 userId: userId,
               });
 
-            const connectedAccounts = await connectedAccountRepository.find({
-              select: ['id'],
-              where: {
+            const connectedAccounts =
+              await this.connectedAccountDataAccessService.find(workspaceId, {
                 calendarChannels: {
                   id: In(calendarChannels.map((channel) => channel.id)),
                 },
                 accountOwnerId: workspaceMember.id,
-              },
-            });
+              });
 
             if (connectedAccounts.length > 0) {
               continue;

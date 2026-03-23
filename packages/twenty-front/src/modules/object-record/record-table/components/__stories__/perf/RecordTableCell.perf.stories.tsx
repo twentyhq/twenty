@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
+import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -34,7 +34,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const RelationFieldValueSetterEffect = () => {
   const setRecordStore = useSetAtomFamilyState(
@@ -53,7 +53,7 @@ const RelationFieldValueSetterEffect = () => {
     'recordTableId',
   );
 
-  const { updateDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useMetadataStore();
 
   useEffect(() => {
     setRecordStore(mockPerformance.entityValue);
@@ -72,16 +72,18 @@ const RelationFieldValueSetterEffect = () => {
     );
 
     const { flatObjects, flatFields, flatIndexes } =
-      splitObjectMetadataItemWithRelated(generatedMockObjectMetadataItems);
+      splitCompositeObjectMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+      );
 
-    updateDraft('objectMetadataItems', flatObjects);
-    updateDraft('fieldMetadataItems', flatFields);
-    updateDraft('indexMetadataItems', flatIndexes);
+    replaceDraft('objectMetadataItems', flatObjects);
+    replaceDraft('fieldMetadataItems', flatFields);
+    replaceDraft('indexMetadataItems', flatIndexes);
     applyChanges();
   }, [
     setRecordStore,
     setRelationRecordStore,
-    updateDraft,
+    replaceDraft,
     applyChanges,
     setCurrentRecordFields,
   ]);

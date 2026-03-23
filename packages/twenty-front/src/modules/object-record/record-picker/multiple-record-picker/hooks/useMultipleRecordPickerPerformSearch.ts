@@ -1,6 +1,6 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { multipleRecordPickerAdditionalFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerAdditionalFilterComponentState';
@@ -49,7 +49,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
     }: {
       multipleRecordPickerInstanceId: string;
       forceSearchFilter?: string;
-      forceSearchableObjectMetadataItems?: ObjectMetadataItem[];
+      forceSearchableObjectMetadataItems?: EnrichedObjectMetadataItem[];
       forcePickableMorphItems?: RecordPickerPickableMorphItem[];
       forceExcludedRecordIds?: string[];
       forceAdditionalFilter?: ObjectRecordFilterInput;
@@ -433,7 +433,7 @@ const performSearchQueries = async ({
 }: {
   client: ApolloClient;
   searchFilter: string;
-  searchableObjectMetadataItems: ObjectMetadataItem[];
+  searchableObjectMetadataItems: EnrichedObjectMetadataItem[];
   pickedRecordIds: string[];
   excludedRecordIds?: string[];
   limit?: number;

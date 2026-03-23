@@ -1,20 +1,21 @@
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type MessageDescriptor } from '@lingui/core';
+import { type Nullable } from 'twenty-shared/types';
 import { type ButtonAccent, type ButtonVariant } from 'twenty-ui/input';
 
 export const resolveCreateRecordActionLabels = <
   TAction extends {
     key: string;
-    label: string | MessageDescriptor;
-    shortLabel?: string | MessageDescriptor;
+    label: Nullable<string | MessageDescriptor>;
+    shortLabel?: Nullable<string | MessageDescriptor>;
     accent?: ButtonAccent;
     buttonVariant?: ButtonVariant;
     isPrimaryCTA?: boolean;
   },
 >(
   actions: TAction[],
-  objectMetadataItem?: Pick<ObjectMetadataItem, 'labelSingular'>,
+  objectMetadataItem?: Pick<EnrichedObjectMetadataItem, 'labelSingular'>,
 ): TAction[] => {
   if (!objectMetadataItem) {
     return actions;

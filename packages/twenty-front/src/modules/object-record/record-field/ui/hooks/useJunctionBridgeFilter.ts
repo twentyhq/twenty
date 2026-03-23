@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem as ObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { detectJunctionBridge } from '@/object-record/record-field/ui/utils/junction/detectJunctionBridge';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';

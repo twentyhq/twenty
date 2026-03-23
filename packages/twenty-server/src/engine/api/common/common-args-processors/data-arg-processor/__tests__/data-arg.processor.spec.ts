@@ -148,6 +148,7 @@ describe('DataArgProcessorService', () => {
                 authContext: createMockAuthContext(),
                 flatObjectMetadata,
                 flatFieldMetadataMaps,
+                flatObjectMetadataMaps: {} as any,
               }),
             ).rejects.toThrowErrorMatchingSnapshot();
           });
@@ -185,6 +186,7 @@ describe('DataArgProcessorService', () => {
               authContext: createMockAuthContext(),
               flatObjectMetadata,
               flatFieldMetadataMaps,
+              flatObjectMetadataMaps: {} as any,
             });
 
             expect(result).toBeDefined();

@@ -45,7 +45,6 @@ export default defineConfig({
     include: ['src/**/*.integration-test.ts'],
     setupFiles: ['src/__tests__/setup-test.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:3000',
       TWENTY_API_KEY:
         '${SEED_API_KEY}',
     },
@@ -94,7 +93,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
 const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
 
 const assertServerIsReachable = async () => {
@@ -120,12 +119,13 @@ beforeAll(async () => {
   fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
 
   const configFile = {
-    profiles: {
-      default: {
+    remotes: {
+      local: {
         apiUrl: process.env.TWENTY_API_URL,
         apiKey: process.env.TWENTY_API_KEY,
       },
     },
+    defaultRemote: 'local',
   };
 
   fs.writeFileSync(

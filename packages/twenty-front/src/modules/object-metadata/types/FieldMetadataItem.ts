@@ -37,4 +37,5 @@ export type FieldMetadataItem = Omit<
     | null;
   isLabelSyncedWithName?: boolean | null;
   morphId?: string | null;
+  requiredCondition?: any;
 };

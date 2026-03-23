@@ -1,6 +1,8 @@
+import { type ConfirmationModalCaller } from 'twenty-shared/types';
+
 export type CommandMenuConfirmationModalResult = 'confirm' | 'cancel';
 
 export type CommandMenuConfirmationModalResultBrowserEventDetail = {
-  frontComponentId: string;
+  caller: ConfirmationModalCaller;
   confirmationResult: CommandMenuConfirmationModalResult;
 };

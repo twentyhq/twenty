@@ -28,10 +28,12 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'My Customs',
         description: 'Custom Description',
         icon: 'custom-icon',
+        color: 'blue',
         isCustom: true,
         standardOverrides: undefined,
       } satisfies Pick<
         ObjectMetadataDTO,
+        | 'color'
         | 'labelPlural'
         | 'labelSingular'
         | 'description'
@@ -56,10 +58,12 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'My Customs',
         description: 'Custom Description',
         icon: 'custom-icon',
+        color: 'blue',
         isCustom: true,
         standardOverrides: undefined,
       } satisfies Pick<
         ObjectMetadataDTO,
+        | 'color'
         | 'labelPlural'
         | 'labelSingular'
         | 'description'
@@ -84,10 +88,12 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'My Customs',
         description: 'Custom Description',
         icon: 'custom-icon',
+        color: 'blue',
         isCustom: true,
         standardOverrides: undefined,
       } satisfies Pick<
         ObjectMetadataDTO,
+        | 'color'
         | 'labelPlural'
         | 'labelSingular'
         | 'description'
@@ -104,6 +110,36 @@ describe('resolveObjectMetadataStandardOverride', () => {
       );
 
       expect(result).toBe('custom-icon');
+    });
+
+    it('should return the object value for custom color object', () => {
+      const objectMetadata = {
+        labelSingular: 'My Custom',
+        labelPlural: 'My Customs',
+        description: 'Custom Description',
+        icon: 'custom-icon',
+        color: 'green',
+        isCustom: true,
+        standardOverrides: undefined,
+      } satisfies Pick<
+        ObjectMetadataDTO,
+        | 'color'
+        | 'labelPlural'
+        | 'labelSingular'
+        | 'description'
+        | 'icon'
+        | 'isCustom'
+        | 'standardOverrides'
+      >;
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'color',
+        SOURCE_LOCALE,
+        mockI18n,
+      );
+
+      expect(result).toBe('green');
     });
   });
 
@@ -128,6 +164,55 @@ describe('resolveObjectMetadataStandardOverride', () => {
       );
 
       expect(result).toBe('override-icon');
+    });
+  });
+
+  describe('Standard objects - Color overrides', () => {
+    it('should return override color when available for standard object', () => {
+      const objectMetadata = {
+        labelSingular: 'Company',
+        labelPlural: 'Companies',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        color: 'blue',
+        isCustom: false,
+        standardOverrides: {
+          color: 'red',
+        },
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'color',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('red');
+    });
+
+    it('should return base color when no override exists for standard object', () => {
+      const objectMetadata = {
+        labelSingular: 'Company',
+        labelPlural: 'Companies',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        color: 'blue',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      mockGenerateMessageId.mockReturnValue('generated-message-id');
+      mockI18n._.mockReturnValue('generated-message-id');
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'color',
+        SOURCE_LOCALE,
+        mockI18n,
+      );
+
+      expect(result).toBe('blue');
     });
   });
 
@@ -319,7 +404,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
       ).toBe('overridden-icon');
     });
 
-    it('should not use direct override for non-SOURCE_LOCALE', () => {
+    it('should use direct override for non-SOURCE_LOCALE', () => {
       const objectMetadata = {
         labelSingular: 'Standard Label',
         labelPlural: 'Standard Labels',
@@ -332,9 +417,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         },
       };
 
-      mockGenerateMessageId.mockReturnValue('generated-message-id');
-      mockI18n._.mockReturnValue('generated-message-id');
-
       const result = resolveObjectMetadataStandardOverride(
         objectMetadata,
         'labelSingular',
@@ -342,7 +424,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
         mockI18n,
       );
 
-      expect(result).toBe('Standard Label');
+      expect(result).toBe('Overridden Label');
     });
 
     it('should not use undefined override for SOURCE_LOCALE', () => {

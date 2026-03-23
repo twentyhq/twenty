@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 
@@ -9,11 +9,14 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useBuildRecordInputFromFilters = ({
   objectMetadataItem,
+  instanceId,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  instanceId?: string;
 }) => {
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
+    instanceId,
   );
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

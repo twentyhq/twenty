@@ -7,7 +7,6 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFrontComponentWidget } from '@/page-layout/utils/createDefaultFrontComponentWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -19,9 +18,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { WidgetType } from '~/generated-metadata/graphql';
 
-export const useCreatePageLayoutFrontComponentWidget = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const useCreatePageLayoutFrontComponentWidget = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
@@ -29,7 +32,7 @@ export const useCreatePageLayoutFrontComponentWidget = (
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    getTabListInstanceIdFromPageLayoutId(pageLayoutId),
+    tabListInstanceId,
   );
 
   const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(

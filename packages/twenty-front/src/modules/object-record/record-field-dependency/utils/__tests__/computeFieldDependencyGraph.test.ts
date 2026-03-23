@@ -1,5 +1,5 @@
 import { computeFieldDependencyGraph } from '@/object-record/record-field-dependency/utils/computeFieldDependencyGraph';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem as ObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RelationType } from '~/generated-metadata/graphql';
 

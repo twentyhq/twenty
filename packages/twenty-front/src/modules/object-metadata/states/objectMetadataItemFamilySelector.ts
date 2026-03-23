@@ -1,5 +1,5 @@
 import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 type ObjectMetadataItemSelector = {
@@ -8,7 +8,7 @@ type ObjectMetadataItemSelector = {
 };
 
 export const objectMetadataItemFamilySelector = createAtomFamilySelector<
-  ObjectMetadataItem | null,
+  EnrichedObjectMetadataItem | null,
   ObjectMetadataItemSelector
 >({
   key: 'objectMetadataItemFamilySelector',

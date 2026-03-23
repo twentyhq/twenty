@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent';
@@ -10,7 +10,7 @@ type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderProps =
   {
     roleId: string;
     scope: RowLevelPermissionPredicateScope;
-    objectMetadataItem: ObjectMetadataItem;
+    objectMetadataItem: EnrichedObjectMetadataItem;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder =

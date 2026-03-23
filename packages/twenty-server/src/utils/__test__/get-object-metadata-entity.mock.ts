@@ -28,6 +28,7 @@ export const getMockObjectMetadataEntity = (
     fieldPermissions: [],
     fields: [],
     icon: null,
+    color: null,
     imageIdentifierFieldMetadataId: null,
     labelIdentifierFieldMetadataId: null,
     indexMetadatas: [],

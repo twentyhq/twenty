@@ -32,6 +32,8 @@ export const useLoadMinimalMetadata = () => {
 
     const staleEntityKeys: MetadataEntityKey[] = [];
 
+    const entityKeysWithServerHash = new Set<MetadataEntityKey>();
+
     if (isDefined(collectionHashes)) {
       for (const { collectionName, hash } of collectionHashes) {
         const entityKey = mapAllMetadataNameToEntityKey(collectionName);
@@ -39,6 +41,8 @@ export const useLoadMinimalMetadata = () => {
         if (!isDefined(entityKey)) {
           continue;
         }
+
+        entityKeysWithServerHash.add(entityKey);
 
         const entry = store.get(metadataStoreState.atomFamily(entityKey));
 
@@ -53,27 +57,11 @@ export const useLoadMinimalMetadata = () => {
       }
     }
 
-    // OMNIA-CUSTOM: Treat missing hashes as stale when local store is empty.
-    // After a Redis flush, the server returns collectionHashes only for cached
-    // entities. Entities never fetched server-side (navigationMenuItems, etc.)
-    // have no hash, so the frontend never marks them stale — causing them to
-    // remain empty forever. This loop detects entity keys absent from the
-    // server response that have no local data and marks them for fetching.
-    const returnedEntityKeys = new Set(
-      (collectionHashes ?? [])
-        .map(({ collectionName }) =>
-          mapAllMetadataNameToEntityKey(collectionName),
-        )
-        .filter(isDefined),
-    );
-
     for (const entityKey of ALL_METADATA_ENTITY_KEYS) {
-      if (returnedEntityKeys.has(entityKey)) {
-        continue;
-      }
-      const entry = store.get(metadataStoreState.atomFamily(entityKey));
-
-      if (entry.status === 'empty') {
+      if (
+        !entityKeysWithServerHash.has(entityKey) &&
+        !staleEntityKeys.includes(entityKey)
+      ) {
         staleEntityKeys.push(entityKey);
       }
     }

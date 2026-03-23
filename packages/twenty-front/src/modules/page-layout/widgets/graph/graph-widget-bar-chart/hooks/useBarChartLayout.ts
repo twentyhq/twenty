@@ -21,11 +21,13 @@ type UseBarChartLayoutParams = {
   chartWidth: number;
   data: BarChartDatum[];
   effectiveValueRange: { minimum: number; maximum: number };
+  hasExplicitRangeBounds: boolean;
   formatOptions: GraphValueFormatOptions;
   groupMode: 'grouped' | 'stacked';
   indexBy: string;
   keys: string[];
   layout: BarChartLayout;
+  rightTickLabels?: string[];
 };
 
 type UseBarChartLayoutResult = {
@@ -52,11 +54,13 @@ export const useBarChartLayout = ({
   chartWidth,
   data,
   effectiveValueRange,
+  hasExplicitRangeBounds,
   formatOptions,
   groupMode,
   indexBy,
   keys,
   layout,
+  rightTickLabels,
 }: UseBarChartLayoutParams): UseBarChartLayoutResult => {
   const { tickFontSize, legendFontSize } = resolveAxisFontSizes(axisTheme);
 
@@ -73,9 +77,11 @@ export const useBarChartLayout = ({
     data,
     effectiveMaximumValue: effectiveValueRange.maximum,
     effectiveMinimumValue: effectiveValueRange.minimum,
+    hasExplicitRangeBounds,
     formatOptions,
     indexBy,
     layout,
+    rightTickLabels,
     xAxisLabel: axisConfig?.xAxisLabel,
     yAxisLabel: axisConfig?.yAxisLabel,
   });

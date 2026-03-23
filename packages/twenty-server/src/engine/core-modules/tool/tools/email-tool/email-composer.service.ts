@@ -20,11 +20,12 @@ import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-to
 import { EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool.type';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @Injectable()
@@ -33,6 +34,7 @@ export class EmailComposerService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
@@ -54,20 +56,15 @@ export class EmailComposerService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        const connectedAccount = await connectedAccountRepository.findOne({
-          where: { id: connectedAccountId },
-          relations: {
-            messageChannels: {
-              messageFolders: true,
+        const connectedAccount =
+          await this.connectedAccountDataAccessService.findOne(workspaceId, {
+            where: { id: connectedAccountId },
+            relations: {
+              messageChannels: {
+                messageFolders: true,
+              },
             },
-          },
-        });
+          });
 
         if (!isDefined(connectedAccount)) {
           throw new EmailToolException(
@@ -76,7 +73,7 @@ export class EmailComposerService {
           );
         }
 
-        return connectedAccount;
+        return connectedAccount as unknown as ConnectedAccountWorkspaceEntity;
       },
       authContext,
     );
@@ -89,12 +86,8 @@ export class EmailComposerService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-        const allAccounts = await connectedAccountRepository.find();
+        const allAccounts =
+          await this.connectedAccountDataAccessService.find(workspaceId);
 
         if (!allAccounts || allAccounts.length === 0) {
           throw new EmailToolException(
@@ -198,7 +191,7 @@ export class EmailComposerService {
     const attachments: MessageAttachment[] = [];
 
     for (const fileMetadata of files) {
-      const stream = await this.fileService.getFileStreamById({
+      const { stream } = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
         fileFolder: FileFolder.Workflow,
@@ -221,7 +214,7 @@ export class EmailComposerService {
     context: ToolExecutionContext,
   ): Promise<EmailComposerResult> {
     const { workspaceId } = context;
-    const { subject, body, files } = parameters;
+    const { subject, body, files, inReplyTo } = parameters;
     let { connectedAccountId } = parameters;
 
     let recipients: { to: string[]; cc: string[]; bcc: string[] };
@@ -291,7 +284,7 @@ export class EmailComposerService {
       ...connectedAccount,
       accessToken,
       refreshToken,
-    };
+    } as unknown as ConnectedAccountWorkspaceEntity;
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
@@ -316,6 +309,7 @@ export class EmailComposerService {
         sanitizedHtmlBody,
         attachments,
         connectedAccount: connectedAccountWithFreshTokens,
+        inReplyTo,
       },
     };
   }

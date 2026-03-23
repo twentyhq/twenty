@@ -3,6 +3,7 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
@@ -18,6 +19,16 @@ import {
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
+const toIsoStringOrNull = (
+  value: string | Date | null | undefined,
+): string | null => {
+  if (value == null) {
+    return null;
+  }
+
+  return value instanceof Date ? value.toISOString() : value;
+};
+
 export type MessagingMessageListFetchJobData = {
   messageChannelId: string;
   workspaceId: string;
@@ -32,6 +43,7 @@ export class MessagingMessageListFetchJob {
     private readonly messagingMessageListFetchService: MessagingMessageListFetchService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
@@ -49,18 +61,15 @@ export class MessagingMessageListFetchJob {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
-
-      const messageChannel = await messageChannelRepository.findOne({
-        where: {
-          id: messageChannelId,
+      const messageChannel = await this.messageChannelDataAccessService.findOne(
+        workspaceId,
+        {
+          where: {
+            id: messageChannelId,
+          },
+          relations: ['connectedAccount', 'messageFolders'],
         },
-        relations: ['connectedAccount', 'messageFolders'],
-      });
+      );
 
       if (!messageChannel) {
         await this.messagingMonitoringService.track({
@@ -82,9 +91,9 @@ export class MessagingMessageListFetchJob {
       try {
         if (
           isThrottled(
-            messageChannel.syncStageStartedAt,
+            toIsoStringOrNull(messageChannel.syncStageStartedAt),
             messageChannel.throttleFailureCount,
-            messageChannel.throttleRetryAfter,
+            toIsoStringOrNull(messageChannel.throttleRetryAfter),
           )
         ) {
           await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
@@ -104,7 +113,7 @@ export class MessagingMessageListFetchJob {
         });
 
         await this.messagingMessageListFetchService.processMessageListFetch(
-          messageChannel,
+          messageChannel as unknown as MessageChannelWorkspaceEntity,
           workspaceId,
         );
 
@@ -118,7 +127,7 @@ export class MessagingMessageListFetchJob {
         await this.messageImportErrorHandlerService.handleDriverException(
           error,
           MessageImportSyncStep.MESSAGE_LIST_FETCH,
-          messageChannel,
+          messageChannel as unknown as MessageChannelWorkspaceEntity,
           workspaceId,
         );
       }

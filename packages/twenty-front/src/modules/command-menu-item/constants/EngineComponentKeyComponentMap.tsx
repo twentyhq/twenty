@@ -24,9 +24,7 @@ import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/record/s
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
-import { CancelRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/CancelRecordPageLayoutSingleRecordCommand';
 import { EditRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/EditRecordPageLayoutSingleRecordCommand';
-import { SaveRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/SaveRecordPageLayoutSingleRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
 import { StopWorkflowRunSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-runs/components/StopWorkflowRunSingleRecordCommand';
@@ -96,9 +94,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION]: (
     <UseAsDraftWorkflowVersionSingleRecordCommand />
   ),
-  [EngineComponentKey.SAVE_RECORD_PAGE_LAYOUT]: (
-    <SaveRecordPageLayoutSingleRecordCommand />
-  ),
   [EngineComponentKey.SAVE_DASHBOARD_LAYOUT]: (
     <SaveDashboardSingleRecordCommand />
   ),
@@ -135,9 +130,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT]: (
     <EditRecordPageLayoutSingleRecordCommand />
-  ),
-  [EngineComponentKey.CANCEL_RECORD_PAGE_LAYOUT]: (
-    <CancelRecordPageLayoutSingleRecordCommand />
   ),
   [EngineComponentKey.EDIT_DASHBOARD_LAYOUT]: (
     <EditDashboardSingleRecordCommand />

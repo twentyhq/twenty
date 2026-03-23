@@ -4,7 +4,7 @@ import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -18,9 +18,9 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type useAddNewRecordAndOpenSidePanelProps = {
   fieldMetadataItem: FieldMetadataItem;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   relationObjectMetadataNameSingular: string;
-  relationObjectMetadataItem: ObjectMetadataItem;
+  relationObjectMetadataItem: EnrichedObjectMetadataItem;
   relationFieldMetadataItem: FieldMetadataItem;
   recordId: string;
 };

@@ -36,7 +36,7 @@ import {
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
@@ -305,7 +305,7 @@ export const WithViewFieldGroups: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setTestViewsInMetadataStore(jotaiStore, [view]);
@@ -391,7 +391,7 @@ export const WithInlineViewFields: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setTestViewsInMetadataStore(jotaiStore, [view]);
@@ -475,7 +475,7 @@ export const Empty: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setTestViewsInMetadataStore(jotaiStore, [view]);

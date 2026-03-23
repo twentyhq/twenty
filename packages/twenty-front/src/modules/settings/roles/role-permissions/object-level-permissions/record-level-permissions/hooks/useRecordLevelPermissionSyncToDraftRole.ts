@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect } from 'react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import {
@@ -16,7 +16,7 @@ import { type RowLevelPermissionPredicateScope } from '~/generated-metadata/grap
 type UseRecordLevelPermissionSyncToDraftRoleProps = {
   roleId: string;
   scope: RowLevelPermissionPredicateScope;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   currentRecordFilters: RecordFilter[];
   currentRecordFilterGroups: RecordFilterGroup[];
   hasInitialized: boolean;

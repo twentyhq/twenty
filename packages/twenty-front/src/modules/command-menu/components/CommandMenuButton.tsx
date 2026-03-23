@@ -1,7 +1,9 @@
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { styled } from '@linaria/react';
-import { i18n, type MessageDescriptor } from '@lingui/core';
-import { isString } from '@sniptt/guards';
+import { type MessageDescriptor } from '@lingui/core';
 import { type MouseEvent } from 'react';
+import { type Nullable } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   type IconComponent,
@@ -23,8 +25,8 @@ const StyledWrapper = styled.div`
 export type CommandMenuButtonProps = {
   command: {
     key: string;
-    label: string | MessageDescriptor;
-    shortLabel?: string | MessageDescriptor;
+    label: Nullable<string | MessageDescriptor>;
+    shortLabel?: Nullable<string | MessageDescriptor>;
     Icon: IconComponent;
     accent?: ButtonAccent;
     buttonVariant?: ButtonVariant;
@@ -32,25 +34,20 @@ export type CommandMenuButtonProps = {
   };
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
-};
-
-const getCommandMenuButtonLabel = (
-  label: string | MessageDescriptor,
-): string => {
-  return isString(label) ? label : i18n._(label);
+  disabled?: boolean;
 };
 
 export const CommandMenuButton = ({
   command,
   onClick,
   to,
+  disabled = false,
 }: CommandMenuButtonProps) => {
-  const resolvedLabel = getCommandMenuButtonLabel(command.label);
+  const resolvedLabel = getCommandMenuItemLabel(command.label);
 
-  const resolvedShortLabel =
-    command.shortLabel === undefined
-      ? undefined
-      : getCommandMenuButtonLabel(command.shortLabel);
+  const resolvedShortLabel = isDefined(command.shortLabel)
+    ? getCommandMenuItemLabel(command.shortLabel)
+    : undefined;
 
   const buttonAccent =
     command.accent ?? (command.isPrimaryCTA ? 'blue' : 'default');
@@ -66,6 +63,7 @@ export const CommandMenuButton = ({
           accent={buttonAccent}
           to={to}
           onClick={onClick}
+          disabled={disabled}
           title={resolvedShortLabel}
           ariaLabel={resolvedLabel}
         />
@@ -78,6 +76,7 @@ export const CommandMenuButton = ({
             accent={buttonAccent}
             to={to}
             onClick={onClick}
+            disabled={disabled}
             ariaLabel={resolvedLabel}
           />
           <StyledWrapper>

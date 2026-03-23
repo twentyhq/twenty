@@ -21,19 +21,51 @@ Os aplicativos permitem criar e gerenciar personalizações do Twenty **como có
 ## Pré-requisitos
 
 * Node.js 24+ e Yarn 4
-* Um espaço de trabalho do Twenty e uma chave de API (crie uma em https://app.twenty.com/settings/api-webhooks)
+* Docker (para o servidor de desenvolvimento local do Twenty)
 
 ## Primeiros passos
 
-Crie um novo aplicativo usando o gerador oficial, depois autentique-se e comece a desenvolver:
+Crie um novo app usando o gerador oficial de estrutura. Ele pode iniciar automaticamente uma instância local do Twenty para você:
 
 ```bash filename="Terminal"
-# Criar a estrutura de um novo app (inclui todos os exemplos por padrão)
+# Criar a estrutura de um novo app — a CLI oferecerá iniciar um servidor local do Twenty
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Iniciar modo de desenvolvimento: sincroniza automaticamente as alterações locais com seu workspace
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### Gerenciamento do Servidor Local
+
+O SDK inclui comandos para gerenciar um servidor de desenvolvimento local do Twenty (imagem Docker all-in-one com PostgreSQL, Redis, servidor e worker):
+
+```bash filename="Terminal"
+# Iniciar o servidor local (faz pull da imagem se necessário)
+yarn twenty server start
+
+# Verificar o status do servidor
+yarn twenty server status
+
+# Transmitir os logs do servidor
+yarn twenty server logs
+
+# Parar o servidor
+yarn twenty server stop
+
+# Redefinir todos os dados e começar do zero
+yarn twenty server reset
+```
+
+O servidor local já vem pré-configurado com um espaço de trabalho e um usuário (`tim@apple.dev` / `tim@apple.dev`), para que você possa começar a desenvolver imediatamente, sem qualquer configuração manual.
+
+### Autenticação
+
+Conecte seu aplicativo ao servidor local usando OAuth:
+
+```bash filename="Terminal"
+# Authenticate via OAuth (opens browser)
+yarn twenty remote add --local
 ```
 
 O gerador de estrutura oferece suporte a dois modos para controlar quais arquivos de exemplo são incluídos:

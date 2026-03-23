@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
-import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
@@ -62,7 +62,7 @@ export const useDefaultHomePagePath = () => {
   // truth for valid landing pages, instead of alphabetical metadata sort.
   // This prevents admins from landing on objects that are active in metadata
   // but not present in their sidebar (e.g. Companies).
-  const allNavigationMenuItems = useAtomStateValue(navigationMenuItemsState);
+  const allNavigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
 
   // Build the set of objectMetadataIds that appear in the workspace sidebar
   // (items without userWorkspaceId are workspace-level, not user-pinned).

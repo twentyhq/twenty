@@ -46,10 +46,12 @@ export class DevSeederPermissionsService {
     twentyStandardFlatApplication,
     workspaceCustomFlatApplication,
     workspaceId,
+    light = false,
   }: {
     workspaceId: string;
     twentyStandardFlatApplication: FlatApplication;
     workspaceCustomFlatApplication: FlatApplication;
+    light?: boolean;
   }) {
     const adminRole = await this.roleRepository.findOne({
       where: {
@@ -80,35 +82,49 @@ export class DevSeederPermissionsService {
     let guestUserWorkspaceId: string | undefined;
 
     if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
-      adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
-      limitedUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
-      memberUserWorkspaceIds = [
-        USER_WORKSPACE_DATA_SEED_IDS.JONY,
-        ...Object.values(RANDOM_USER_WORKSPACE_IDS),
-      ];
-      guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
+      if (light) {
+        // In light mode, Tim is admin (prefilled login user needs full
+        // access for SDK development). No demo permission roles needed.
+        adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
+        memberUserWorkspaceIds = [
+          USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+          ...Object.values(RANDOM_USER_WORKSPACE_IDS),
+        ];
+      } else {
+        adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
+        limitedUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM;
+        guestUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.PHIL;
+        memberUserWorkspaceIds = [
+          USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          ...Object.values(RANDOM_USER_WORKSPACE_IDS),
+        ];
 
-      const guestRole = await this.roleService.createGuestRole({
-        workspaceId,
-        ownerFlatApplication: workspaceCustomFlatApplication,
-      });
+        const guestRole = await this.roleService.createGuestRole({
+          workspaceId,
+          ownerFlatApplication: workspaceCustomFlatApplication,
+        });
 
-      await this.userRoleService.assignRoleToManyUserWorkspace({
-        workspaceId,
-        userWorkspaceIds: [guestUserWorkspaceId],
-        roleId: guestRole.id,
-      });
+        await this.userRoleService.assignRoleToManyUserWorkspace({
+          workspaceId,
+          userWorkspaceIds: [guestUserWorkspaceId],
+          roleId: guestRole.id,
+        });
 
-      const limitedRole = await this.createLimitedRoleForSeedWorkspace({
-        workspaceId,
-        ownerFlatApplication: workspaceCustomFlatApplication,
-      });
+        // The limited role restricts access to Pet and Rocket objects,
+        // which are only created in full (non-light) mode
+        const limitedRole = await this.createLimitedRoleForSeedWorkspace({
+          workspaceId,
+          ownerFlatApplication: workspaceCustomFlatApplication,
+        });
 
-      await this.userRoleService.assignRoleToManyUserWorkspace({
-        workspaceId,
-        userWorkspaceIds: [limitedUserWorkspaceId],
-        roleId: limitedRole.id,
-      });
+        await this.userRoleService.assignRoleToManyUserWorkspace({
+          workspaceId,
+          userWorkspaceIds: [limitedUserWorkspaceId],
+          roleId: limitedRole.id,
+        });
+      }
     } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
       adminUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.TIM_ACME;
       memberUserWorkspaceIds = [

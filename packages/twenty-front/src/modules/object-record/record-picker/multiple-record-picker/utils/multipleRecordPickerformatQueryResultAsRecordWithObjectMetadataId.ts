@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type CombinedFindManyRecordsQueryResult } from '@/object-record/multiple-objects/types/CombinedFindManyRecordsQueryResult';
 import { multiRecordPickerFormatSearchResults } from '@/object-record/record-picker/multiple-record-picker/utils/multiRecordPickerFormatSearchResults';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,7 +8,7 @@ export const multipleRecordPickerformatQueryResultAsRecordsWithObjectMetadataId 
     objectMetadataItems,
     searchQueryResult,
   }: {
-    objectMetadataItems: ObjectMetadataItem[];
+    objectMetadataItems: EnrichedObjectMetadataItem[];
     searchQueryResult: CombinedFindManyRecordsQueryResult;
   }) => {
     const formattedSearchQueryResult =

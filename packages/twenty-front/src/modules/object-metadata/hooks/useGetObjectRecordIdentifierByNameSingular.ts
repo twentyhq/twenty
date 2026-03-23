@@ -1,4 +1,4 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
@@ -6,7 +6,7 @@ import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordI
 export const useGetObjectRecordIdentifierByNameSingular = (
   allowRequestsToTwentyIcons: boolean,
 ) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   return (record: any, objectNameSingular: string): ObjectRecordIdentifier => {
     const objectMetadataItem = objectMetadataItems.find(
@@ -15,7 +15,7 @@ export const useGetObjectRecordIdentifierByNameSingular = (
 
     if (!objectMetadataItem) {
       throw new Error(
-        `ObjectMetadataItem not found for objectNameSingular: ${objectNameSingular}`,
+        `Object metadata not found for objectNameSingular: ${objectNameSingular}`,
       );
     }
 

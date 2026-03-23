@@ -4,7 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedBarChartConfiguration';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import {
   AggregateOperations,
@@ -18,7 +18,7 @@ import {
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const mockObjectMetadataItem: ObjectMetadataItem = {
+const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   id: 'obj-1',
   nameSingular: 'company',
   namePlural: 'companies',
@@ -58,7 +58,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
       ],
     },
   ],
-} as ObjectMetadataItem;
+} as EnrichedObjectMetadataItem;
 
 const buildBarChartConfiguration = (
   overrides: Partial<TypedBarChartConfiguration>,

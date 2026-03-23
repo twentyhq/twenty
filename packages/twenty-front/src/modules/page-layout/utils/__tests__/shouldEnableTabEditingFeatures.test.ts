@@ -7,8 +7,24 @@ describe('shouldEnableTabEditingFeatures', () => {
     expect(result).toBe(true);
   });
 
-  it('should return false for RECORD_PAGE layout type', () => {
+  it('should return false for RECORD_PAGE layout type without flag', () => {
     const result = shouldEnableTabEditingFeatures(PageLayoutType.RECORD_PAGE);
+    expect(result).toBe(false);
+  });
+
+  it('should return true for RECORD_PAGE layout type with flag enabled', () => {
+    const result = shouldEnableTabEditingFeatures(
+      PageLayoutType.RECORD_PAGE,
+      true,
+    );
+    expect(result).toBe(true);
+  });
+
+  it('should return false for RECORD_PAGE layout type with flag disabled', () => {
+    const result = shouldEnableTabEditingFeatures(
+      PageLayoutType.RECORD_PAGE,
+      false,
+    );
     expect(result).toBe(false);
   });
 
@@ -17,19 +33,28 @@ describe('shouldEnableTabEditingFeatures', () => {
     expect(result).toBe(false);
   });
 
+  it('should return false for RECORD_INDEX layout type even with flag', () => {
+    const result = shouldEnableTabEditingFeatures(
+      PageLayoutType.RECORD_INDEX,
+      true,
+    );
+    expect(result).toBe(false);
+  });
+
   describe('behavior validation', () => {
-    it('should enable tab editing features only for dashboards', () => {
-      // Dashboards should allow adding tabs and opening settings on click
+    it('should enable tab editing features only for dashboards and record pages with flag', () => {
       expect(shouldEnableTabEditingFeatures(PageLayoutType.DASHBOARD)).toBe(
         true,
       );
 
-      // Record pages should NOT allow adding tabs or opening settings on click
       expect(shouldEnableTabEditingFeatures(PageLayoutType.RECORD_PAGE)).toBe(
         false,
       );
 
-      // Record index pages should NOT allow adding tabs or opening settings on click
+      expect(
+        shouldEnableTabEditingFeatures(PageLayoutType.RECORD_PAGE, true),
+      ).toBe(true);
+
       expect(shouldEnableTabEditingFeatures(PageLayoutType.RECORD_INDEX)).toBe(
         false,
       );

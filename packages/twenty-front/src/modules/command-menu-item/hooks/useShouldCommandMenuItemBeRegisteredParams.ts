@@ -7,9 +7,9 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/hooks/useNavigationMenuItemsData';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
@@ -26,7 +26,7 @@ import type { FeatureFlagKey } from '~/generated-metadata/graphql';
 export const useShouldCommandMenuItemBeRegisteredParams = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
 }): ShouldBeRegisteredFunctionParams => {
   const store = useStore();
   const { navigationMenuItems } = useNavigationMenuItemsData();

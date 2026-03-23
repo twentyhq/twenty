@@ -40,6 +40,7 @@ const GENERATE_MESSAGE_CHANNEL_IDS = (): Record<string, string> => {
   CHANNEL_IDS['TIM'] = '20202020-9b80-4c2c-a597-383db48de1d6';
   CHANNEL_IDS['JONY'] = '20202020-5ffe-4b32-814a-983d5e4911cd';
   CHANNEL_IDS['PHIL'] = '20202020-e2f1-49b5-85d2-5d3a3386990c';
+  CHANNEL_IDS['JANE'] = '20202020-8c4d-4e71-a672-2e6a8c9f1b3d';
   CHANNEL_IDS['SUPPORT'] = '20202020-e2f1-49b5-85d2-5d3a3386990d';
   CHANNEL_IDS['SALES'] = '20202020-e2f1-49b5-85d2-5d3a3386990e';
 
@@ -84,6 +85,19 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     type: MessageChannelType.EMAIL,
     connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.PHIL,
     handle: 'phil.schiler@apple.dev',
+    isSyncEnabled: true,
+    visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+    syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+  },
+  {
+    id: MESSAGE_CHANNEL_DATA_SEED_IDS.JANE,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: null,
+    isContactAutoCreationEnabled: true,
+    type: MessageChannelType.EMAIL,
+    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+    handle: 'jane.austen@apple.dev',
     isSyncEnabled: true,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
     syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,

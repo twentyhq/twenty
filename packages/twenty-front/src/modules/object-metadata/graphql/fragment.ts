@@ -8,6 +8,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
     namePlural
     labelSingular
     labelPlural
+    color
     description
     icon
     isCustom

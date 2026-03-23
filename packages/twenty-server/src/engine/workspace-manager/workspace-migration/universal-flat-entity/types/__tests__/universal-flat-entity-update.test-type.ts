@@ -26,6 +26,7 @@ type Assertions = [
     Equal<
       keyof UniversalFlatEntityUpdate<'objectMetadata'>,
       | 'icon'
+      | 'color'
       | 'description'
       | 'isActive'
       | 'standardOverrides'

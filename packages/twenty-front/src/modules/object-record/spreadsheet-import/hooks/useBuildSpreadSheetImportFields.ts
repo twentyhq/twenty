@@ -1,6 +1,6 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions';
@@ -28,7 +28,7 @@ import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const useBuildSpreadsheetImportFields = () => {
   const { getIcon } = useIcons();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const buildSpreadsheetImportFields = (
     fieldMetadataItems: FieldMetadataItem[],
@@ -292,7 +292,7 @@ export const useBuildSpreadsheetImportFields = () => {
     if (isManyToOneRelation && isDefined(targetObjectMetadataItem)) {
       const uniqueConstraintFields = getUniqueConstraintsFields<
         FieldMetadataItem,
-        ObjectMetadataItem
+        EnrichedObjectMetadataItem
       >(targetObjectMetadataItem);
 
       const connectFieldIds = new Set<string>();

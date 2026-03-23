@@ -1,7 +1,8 @@
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type MessageDescriptor } from '@lingui/core';
+import { type Nullable } from 'twenty-shared/types';
 
 // Maps "Go to" action keys to the object they navigate to
 const GO_TO_ACTION_OBJECT_MAP: Record<string, CoreObjectNameSingular> = {
@@ -22,13 +23,13 @@ const GO_TO_ACTION_OBJECT_MAP: Record<string, CoreObjectNameSingular> = {
 export const resolveGoToActionLabels = <
   TAction extends {
     key: string;
-    label: string | MessageDescriptor;
-    shortLabel?: string | MessageDescriptor;
+    label: Nullable<string | MessageDescriptor>;
+    shortLabel?: Nullable<string | MessageDescriptor>;
   },
 >(
   actions: TAction[],
   objectMetadataItems: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'nameSingular' | 'labelPlural' | 'isActive'
   >[],
 ): TAction[] => {

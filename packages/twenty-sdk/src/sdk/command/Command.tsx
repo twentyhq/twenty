@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import {
-  enqueueSnackbar,
-  getFrontComponentCommandErrorDedupeKey,
   unmountFrontComponent,
   useFrontComponentId,
 } from '../front-component-api';
@@ -24,20 +22,9 @@ export const Command = ({ execute }: CommandProps) => {
     setHasExecuted(true);
 
     const run = async () => {
-      try {
-        await execute();
-      } catch (error) {
-        if (error instanceof Error) {
-          await enqueueSnackbar({
-            message: 'Command failed',
-            detailedMessage: error.message,
-            variant: 'error',
-            dedupeKey: getFrontComponentCommandErrorDedupeKey(frontComponentId),
-          });
-        }
-      } finally {
-        await unmountFrontComponent();
-      }
+      await execute();
+
+      await unmountFrontComponent();
     };
 
     run();

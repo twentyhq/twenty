@@ -60,9 +60,7 @@ export const Default: Story = {
 
     expect(
       await canvas.findByText(
-        getCommandMenuItemLabel(
-          addToFavoritesCommandMenuItem?.shortLabel ?? '',
-        ),
+        getCommandMenuItemLabel(addToFavoritesCommandMenuItem?.shortLabel),
       ),
     ).toBeVisible();
   },

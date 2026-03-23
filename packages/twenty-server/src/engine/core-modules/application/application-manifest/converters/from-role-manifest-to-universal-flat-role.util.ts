@@ -32,6 +32,8 @@ export const fromRoleManifestToUniversalFlatRole = ({
     canBeAssignedToApiKeys: roleManifest.canBeAssignedToApiKeys ?? true,
     editWindowMinutes: null,
     roleTargetUniversalIdentifiers: [],
+    objectPermissionUniversalIdentifiers: [],
+    permissionFlagUniversalIdentifiers: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],
     rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     createdAt: now,
