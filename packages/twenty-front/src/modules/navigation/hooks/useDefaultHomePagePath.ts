@@ -1,6 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
+import { navigationMenuItemsState } from '@/navigation-menu-item/states/navigationMenuItemsState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
@@ -57,26 +58,72 @@ export const useDefaultHomePagePath = () => {
     [views],
   );
 
+  // OMNIA-CUSTOM: Use workspace sidebar navigation items as the source of
+  // truth for valid landing pages, instead of alphabetical metadata sort.
+  // This prevents admins from landing on objects that are active in metadata
+  // but not present in their sidebar (e.g. Companies).
+  const allNavigationMenuItems = useAtomStateValue(navigationMenuItemsState);
+
+  // Build the set of objectMetadataIds that appear in the workspace sidebar
+  // (items without userWorkspaceId are workspace-level, not user-pinned).
+  const sidebarObjectMetadataIds = useMemo(() => {
+    const workspaceItems = allNavigationMenuItems.filter(
+      (item) => !isDefined(item.userWorkspaceId),
+    );
+
+    const ids: string[] = [];
+    for (const item of workspaceItems) {
+      if (isDefined(item.viewId)) {
+        const view = views.find((v) => v.id === item.viewId);
+        if (view) ids.push(view.objectMetadataId);
+      } else if (isDefined(item.targetObjectMetadataId)) {
+        ids.push(item.targetObjectMetadataId);
+      }
+    }
+    return ids;
+  }, [allNavigationMenuItems, views]);
+
+  // For the default landing page, find the first root-level workspace nav
+  // item (sorted by position) that resolves to a readable object.
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
-    // OMNIA-CUSTOM: Prefer "person" (Leads) as the default landing page for
-    // all users. Without this, alphabetical sort lands admins on "company"
-    // which is deactivated in our workspace.
-    const preferredItem =
-      readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
-        (item) => item.nameSingular === 'person',
-      );
+    const rootWorkspaceItems = allNavigationMenuItems
+      .filter(
+        (item) =>
+          !isDefined(item.userWorkspaceId) && !isDefined(item.folderId),
+      )
+      .sort((a, b) => a.position - b.position);
 
-    const targetItem =
-      preferredItem ?? readableAlphaSortedActiveNonSystemObjectMetadataItems[0];
+    for (const navItem of rootWorkspaceItems) {
+      let objectMetadataId: string | undefined;
 
-    if (!isDefined(targetItem)) {
-      return null;
+      if (isDefined(navItem.viewId)) {
+        const view = views.find((v) => v.id === navItem.viewId);
+        if (view) objectMetadataId = view.objectMetadataId;
+      } else if (isDefined(navItem.targetObjectMetadataId)) {
+        objectMetadataId = navItem.targetObjectMetadataId;
+      }
+
+      if (isDefined(objectMetadataId)) {
+        const item = getActiveObjectMetadataItemMatchingId(objectMetadataId);
+        if (isDefined(item)) {
+          return { objectMetadataItem: item, view: getFirstView(item.id) };
+        }
+      }
     }
 
-    const view = getFirstView(targetItem.id);
-
-    return { objectMetadataItem: targetItem, view };
-  }, [getFirstView, readableAlphaSortedActiveNonSystemObjectMetadataItems]);
+    // Ultimate fallback: first readable object (shouldn't normally hit this)
+    const fallback =
+      readableAlphaSortedActiveNonSystemObjectMetadataItems[0];
+    return fallback
+      ? { objectMetadataItem: fallback, view: getFirstView(fallback.id) }
+      : null;
+  }, [
+    allNavigationMenuItems,
+    views,
+    getActiveObjectMetadataItemMatchingId,
+    getFirstView,
+    readableAlphaSortedActiveNonSystemObjectMetadataItems,
+  ]);
 
   const getDefaultObjectPathInfo = useCallback(() => {
     // Only use last-visited storage for admins; members always land on Leads (People)
@@ -91,7 +138,11 @@ export const useDefaultHomePagePath = () => {
         ? getActiveObjectMetadataItemMatchingId(lastVisitedObjectMetadataItemId)
         : undefined;
 
-      if (isDefined(lastVisitedObjectMetadataItem)) {
+      // Only honour last-visited if the object is in the workspace sidebar
+      if (
+        isDefined(lastVisitedObjectMetadataItem) &&
+        sidebarObjectMetadataIds.includes(lastVisitedObjectMetadataItem.id)
+      ) {
         return {
           view: getFirstView(lastVisitedObjectMetadataItemId),
           objectMetadataItem: lastVisitedObjectMetadataItem,
@@ -105,6 +156,7 @@ export const useDefaultHomePagePath = () => {
     getActiveObjectMetadataItemMatchingId,
     getFirstView,
     isAdmin,
+    sidebarObjectMetadataIds,
     store,
   ]);
 

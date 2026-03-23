@@ -141,11 +141,15 @@ check_file_not_contains \
   "Invite user option should be removed from workspace menu"
 
 echo ""
-echo "--- Critical: Member Home Page Redirect ---"
+echo "--- Critical: Sidebar-Based Default Landing Page ---"
 check_file_contains \
   "packages/twenty-front/src/modules/navigation/hooks/useDefaultHomePagePath.ts" \
-  "person" \
-  "Members should land on People (Leads) page, not alphabetical first object"
+  "navigationMenuItemsState" \
+  "Default landing page should use workspace sidebar nav items as source of truth"
+check_file_contains \
+  "packages/twenty-front/src/modules/navigation/hooks/useDefaultHomePagePath.ts" \
+  "sidebarObjectMetadataIds" \
+  "Admin last-visited should be validated against sidebar membership"
 
 echo ""
 echo "--- Critical: Create Record CTA ---"
