@@ -64,6 +64,7 @@ services:
     networks:
       - default
       - dagster_network
+      - crm-stack
     environment:
       NODE_PORT: 3000
       SERVER_URL: ${SERVER_URL}
@@ -146,4 +147,6 @@ volumes:
 
 networks:
   dagster_network:
+    external: true
+  crm-stack:
     external: true
