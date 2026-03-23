@@ -242,6 +242,7 @@ export const ChatInput = ({
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const cancelledRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -270,6 +271,7 @@ export const ChatInput = ({
   }, []);
 
   const cancelRecording = useCallback(() => {
+    cancelledRef.current = true;
     chunksRef.current = [];
     stopRecording();
   }, [stopRecording]);
@@ -296,7 +298,7 @@ export const ChatInput = ({
       };
 
       recorder.onstop = () => {
-        if (chunksRef.current.length > 0) {
+        if (!cancelledRef.current && chunksRef.current.length > 0) {
           const blob = new Blob(chunksRef.current, { type: mimeType });
           const ext = mimeType.includes('ogg') ? 'ogg' : 'webm';
           const file = new File([blob], `voice-message.${ext}`, {
@@ -305,8 +307,10 @@ export const ChatInput = ({
           onSendMedia(file);
         }
         chunksRef.current = [];
+        cancelledRef.current = false;
       };
 
+      cancelledRef.current = false;
       recorder.start(100);
       setRecording(true);
       setDuration(0);
