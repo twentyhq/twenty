@@ -1,32 +1,22 @@
 import { useLingui } from '@lingui/react/macro';
-import { Link } from 'react-router-dom';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsUsageAnalyticsSection } from '@/settings/usage/components/SettingsUsageAnalyticsSection';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { isDefined, getSettingsPath } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
-import {
-  H2Title,
-  IconChartBar,
-  IconCircleX,
-  IconCreditCard,
-} from 'twenty-ui/display';
+import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useQuery } from '@apollo/client/react';
 import {
-  SubscriptionStatus,
   BillingPortalSessionDocument,
-  FeatureFlagKey,
+  SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
@@ -54,10 +44,6 @@ export const SettingsBillingContent = () => {
     },
     skip: !hasSubscriptions,
   });
-
-  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
-  );
 
   const billingPortalButtonDisabled =
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
@@ -90,24 +76,6 @@ export const SettingsBillingContent = () => {
             }
           />
         )}
-      {isUsageAnalyticsEnabled && (
-        <>
-          <SettingsUsageAnalyticsSection />
-          <Section>
-            <H2Title
-              title={t`Usage`}
-              description={t`View detailed usage analytics for your workspace`}
-            />
-            <Link to={getSettingsPath(SettingsPath.Usage)}>
-              <Button
-                Icon={IconChartBar}
-                title={t`View usage`}
-                variant="secondary"
-              />
-            </Link>
-          </Section>
-        </>
-      )}
       <Section>
         <H2Title
           title={t`Manage billing information`}

@@ -1,4 +1,5 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { MeteredPriceSelector } from '@/settings/billing/components/internal/MeteredPriceSelector';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
@@ -6,16 +7,27 @@ import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { formatToShortNumber } from 'twenty-shared/utils';
-import { H2Title, HorizontalSeparator } from 'twenty-ui/display';
+import { useNavigate } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { formatToShortNumber, getSettingsPath } from 'twenty-shared/utils';
+import { H2Title, HorizontalSeparator, IconChartBar } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  FeatureFlagKey,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
+
+const StyledCreditUsageFooterActions = styled.div`
+  margin-top: ${themeCssVariables.spacing[4]};
+`;
 
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
@@ -25,12 +37,17 @@ export const SettingsBillingCreditsSection = ({
   >;
 }) => {
   const { theme } = useContext(ThemeContext);
+  const navigate = useNavigate();
   const subscriptionStatus = useSubscriptionStatus();
   const { formatNumber } = useNumberFormat();
 
   const { isMonthlyPlan } = useCurrentBillingFlags();
 
   const { getCurrentMeteredPricesByInterval } = useCurrentMetered();
+
+  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
+  );
 
   const { getIntervalLabel } = useBillingWording();
 
@@ -127,6 +144,17 @@ export const SettingsBillingCreditsSection = ({
             </>
           )}
         </SubscriptionInfoContainer>
+
+        {isUsageAnalyticsEnabled && (
+          <StyledCreditUsageFooterActions>
+            <Button
+              Icon={IconChartBar}
+              title={t`View usage`}
+              variant="secondary"
+              onClick={() => navigate(getSettingsPath(SettingsPath.Usage))}
+            />
+          </StyledCreditUsageFooterActions>
+        )}
       </Section>
       <Section>
         <MeteredPriceSelector
