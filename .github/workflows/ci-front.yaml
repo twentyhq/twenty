@@ -163,12 +163,12 @@ jobs:
           name: storybook-static
           path: storybook-static
       - name: Package storybook
-        run: tar -czf /tmp/storybook-front.tar.gz -C storybook-static .
+        run: tar -czf /tmp/storybook-twenty-front.tar.gz -C storybook-static .
       - name: Upload storybook tarball
         uses: actions/upload-artifact@v4
         with:
-          name: storybook-front-tarball
-          path: /tmp/storybook-front.tar.gz
+          name: storybook-twenty-front-tarball
+          path: /tmp/storybook-twenty-front.tar.gz
           retention-days: 1
       - name: Dispatch to ci-privileged
         uses: peter-evans/repository-dispatch@v2
