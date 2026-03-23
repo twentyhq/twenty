@@ -58,3 +58,11 @@ jobs:
           base: main
           labels: ai, automated
           delete-branch: true
+
+      - name: Trigger automerge
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          repository: twentyhq/twenty-infra
+          event-type: automated-pr-ready
