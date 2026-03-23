@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
+import { BackfillFieldWidgetsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-field-widgets.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
@@ -58,6 +59,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     IdentifyObjectPermissionMetadataCommand,
     MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     BackfillCommandMenuItemsCommand,
+    BackfillFieldWidgetsCommand,
     BackfillNavigationMenuItemTypeCommand,
     BackfillPageLayoutsCommand,
     BackfillSelectFieldOptionIdsCommand,
@@ -73,6 +75,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     IdentifyObjectPermissionMetadataCommand,
     MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     BackfillCommandMenuItemsCommand,
+    BackfillFieldWidgetsCommand,
     BackfillNavigationMenuItemTypeCommand,
     BackfillPageLayoutsCommand,
     BackfillSelectFieldOptionIdsCommand,

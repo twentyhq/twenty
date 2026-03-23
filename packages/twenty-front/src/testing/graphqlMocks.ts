@@ -207,6 +207,11 @@ export const graphqlMocks = {
         data: { navigationMenuItems: mockedNavigationMenuItems },
       });
     }),
+    metadataGraphql.query('FindManyCommandMenuItems', () => {
+      return HttpResponse.json({
+        data: { commandMenuItems: [] },
+      });
+    }),
     graphql.query('SearchPeople', () => {
       return HttpResponse.json({
         data: {

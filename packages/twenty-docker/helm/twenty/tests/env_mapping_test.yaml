@@ -1,0 +1,58 @@
+suite: env mapping
+templates:
+  - templates/deployment-server.yaml
+  - templates/deployment-worker.yaml
+release:
+  name: my-twenty
+  namespace: default
+tests:
+  - it: renders server extraEnv with plain value
+    template: templates/deployment-server.yaml
+    set:
+      server.extraEnv:
+        - name: FEATURE_X_ENABLED
+          value: "true"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: FEATURE_X_ENABLED
+            value: "true"
+
+  - it: renders server extraEnv with valueFrom
+    template: templates/deployment-server.yaml
+    set:
+      server.extraEnv:
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: smtp-creds
+              key: password
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SMTP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: smtp-creds
+                key: password
+
+  - it: renders worker extraEnv with valueFrom
+    template: templates/deployment-worker.yaml
+    set:
+      worker.extraEnv:
+        - name: CUSTOM_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: custom
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CUSTOM_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: my-secret
+                key: custom

@@ -57,6 +57,7 @@ import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-dashboards';
 import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-opportunities';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
+import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-command-menu-items';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
@@ -697,6 +698,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
+
+      await prefillWorkflowCommandMenuItems(queryRunner.manager, workspaceId);
 
       await prefillOpportunities(queryRunner.manager, schemaName);
 

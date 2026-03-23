@@ -1120,6 +1120,7 @@ msgid "Add view"
 msgstr ""
 
 #. js-lingui-id: 8sZiWP
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Add widget"
 msgstr ""
@@ -6553,6 +6554,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getFieldLabelWithSubField.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 msgid "Field"
 msgstr ""
 
@@ -6609,6 +6611,11 @@ msgstr ""
 #. js-lingui-id: 3w/aqw
 #: src/testing/mock-data/tableData.ts
 msgid "Fields Count"
+msgstr ""
+
+#. js-lingui-id: EI7W0X
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Fields group"
 msgstr ""
 
 #. js-lingui-id: 5UU7Q6
@@ -7123,6 +7130,11 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Group by"
+msgstr ""
+
+#. js-lingui-id: tyyaxS
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Group multiple fields from this record"
 msgstr ""
 
 #. js-lingui-id: WcF1uL
@@ -9079,6 +9091,11 @@ msgstr ""
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownMenuContent.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
 msgid "More options"
+msgstr ""
+
+#. js-lingui-id: 2MjaQ8
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "More widgets"
 msgstr ""
 
 #. js-lingui-id: SOHptZ
@@ -12932,6 +12949,11 @@ msgstr ""
 #. js-lingui-id: BZdVGR
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Single edit"
+msgstr ""
+
+#. js-lingui-id: RGk8YF
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Single field with smart formats"
 msgstr ""
 
 #. js-lingui-id: 5v3IHX

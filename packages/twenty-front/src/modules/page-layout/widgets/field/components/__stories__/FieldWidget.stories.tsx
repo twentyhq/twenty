@@ -4,10 +4,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
-import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -23,8 +21,10 @@ import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget'
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  FieldDisplayMode,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
@@ -36,6 +36,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow(
   CoreObjectNameSingular.Company,
@@ -348,7 +349,7 @@ export const TextFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: nameField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -442,7 +443,7 @@ export const AddressFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: addressField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -539,7 +540,7 @@ export const NumberFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: employeesField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -633,7 +634,7 @@ export const LinkFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: linkedinField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -727,7 +728,7 @@ export const ManyToOneRelationFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: accountOwnerField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -831,7 +832,7 @@ export const OneToManyRelationFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyPeopleField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -927,7 +928,7 @@ export const BooleanFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: idealCustomerProfileField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1020,7 +1021,7 @@ export const CurrencyFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: annualRecurringRevenueField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1113,7 +1114,7 @@ export const EmailsFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: personEmailsField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1207,7 +1208,7 @@ export const PhonesFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: personPhonesField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1301,7 +1302,7 @@ export const SelectFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: opportunityStageField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1396,7 +1397,7 @@ export const MultiSelectFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyWorkPolicyField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1494,7 +1495,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: timelineActivityWorkspaceMemberField.id,
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1593,7 +1594,7 @@ export const ManyToOneRelationCardWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: accountOwnerField.id,
-        layout: 'CARD',
+        fieldDisplayMode: FieldDisplayMode.CARD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1705,7 +1706,7 @@ export const OneToManyRelationCardWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyPeopleField.id,
-        layout: 'CARD',
+        fieldDisplayMode: FieldDisplayMode.CARD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1800,7 +1801,7 @@ export const TimelineActivityRelationCardWidget: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: timelineActivityWorkspaceMemberField.id,
-        layout: 'CARD',
+        fieldDisplayMode: FieldDisplayMode.CARD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
@@ -1961,7 +1962,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: companyPeopleField.id,
-        layout: 'CARD',
+        fieldDisplayMode: FieldDisplayMode.CARD,
       },
       isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',

@@ -321,8 +321,25 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FIELD: {
+      const { fieldMetadataId, fieldDisplayMode, configurationType } =
+        configuration;
+
+      const fieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        });
+
+      return {
+        configurationType,
+        fieldMetadataId: fieldMetadataUniversalIdentifier ?? fieldMetadataId,
+        fieldDisplayMode,
+      };
+    }
+
     case WidgetConfigurationType.VIEW:
-    case WidgetConfigurationType.FIELD:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
     case WidgetConfigurationType.NOTES:

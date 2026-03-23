@@ -10,10 +10,11 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
@@ -26,9 +27,17 @@ export const PageLayoutInitializationQueryEffect = ({
   const [pageLayoutIsInitialized, setPageLayoutIsInitialized] =
     useAtomComponentState(pageLayoutIsInitializedComponentState);
 
-  const basePageLayout = useBasePageLayout(pageLayoutId);
+  const featureFlags = useFeatureFlagsMap();
+  const isRecordPageLayoutEditingEnabled =
+    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
 
-  const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
+  const basePageLayout = useBasePageLayout(pageLayoutId);
+  const pageLayoutWithRelationWidgets =
+    usePageLayoutWithRelationWidgets(basePageLayout);
+
+  const pageLayout = isRecordPageLayoutEditingEnabled
+    ? basePageLayout
+    : pageLayoutWithRelationWidgets;
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);

@@ -96,7 +96,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
       });
     } else {
-      formConfig.reset(undefined, { keepValues: true });
+      formConfig.reset(formValues);
     }
 
     navigate(SettingsPath.ObjectDetail, {

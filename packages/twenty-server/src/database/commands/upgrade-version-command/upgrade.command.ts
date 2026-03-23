@@ -34,6 +34,7 @@ import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgra
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
+import { BackfillFieldWidgetsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-field-widgets.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
 import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
@@ -107,6 +108,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
     protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
     protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
+    protected readonly backfillFieldWidgetsCommand: BackfillFieldWidgetsCommand,
     protected readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
     protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
   ) {
@@ -169,6 +171,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillPageLayoutsCommand,
       this.seedCliApplicationRegistrationCommand,
       this.migrateMessagingInfrastructureToMetadataCommand,
+      this.backfillFieldWidgetsCommand,
       this.backfillSelectFieldOptionIdsCommand,
       this.updateStandardIndexViewNamesCommand,
     ];
