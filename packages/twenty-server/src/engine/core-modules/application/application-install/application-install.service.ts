@@ -178,6 +178,8 @@ export class ApplicationInstallService {
         );
       }
 
+      // TODO: mimeType should be defined, default to application/octet-stream, which won't be displayed
+      // inline by the browser (forced download) due to Content-Disposition security headers.
       await this.fileStorageService.writeFile({
         sourceFile: content,
         mimeType: undefined,
