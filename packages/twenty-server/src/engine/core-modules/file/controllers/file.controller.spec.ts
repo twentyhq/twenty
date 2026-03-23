@@ -82,12 +82,10 @@ describe('FileController', () => {
     it('should call fileService.getFileStreamById and pipe the result with headers', async () => {
       const mockStream = createMockStream();
 
-      jest
-        .spyOn(fileService, 'getFileStreamById')
-        .mockResolvedValue({
-          stream: mockStream,
-          mimeType: 'image/png',
-        });
+      jest.spyOn(fileService, 'getFileStreamById').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
 
       const mockRequest = { workspaceId: 'workspace-id' } as any;
       const mockResponse = createMockResponse() as any;
@@ -122,12 +120,10 @@ describe('FileController', () => {
     it('should force attachment disposition for non-safe MIME types', async () => {
       const mockStream = createMockStream();
 
-      jest
-        .spyOn(fileService, 'getFileStreamById')
-        .mockResolvedValue({
-          stream: mockStream,
-          mimeType: 'text/html',
-        });
+      jest.spyOn(fileService, 'getFileStreamById').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'text/html',
+      });
 
       const mockRequest = { workspaceId: 'workspace-id' } as any;
       const mockResponse = createMockResponse() as any;
@@ -202,12 +198,10 @@ describe('FileController', () => {
     it('should call fileService.getFileStreamByPath and pipe with headers', async () => {
       const mockStream = createMockStream();
 
-      jest
-        .spyOn(fileService, 'getFileStreamByPath')
-        .mockResolvedValue({
-          stream: mockStream,
-          mimeType: 'image/png',
-        });
+      jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
 
       const mockRequest = {
         params: { path: ['images', 'logo.png'] },
@@ -238,7 +232,7 @@ describe('FileController', () => {
       );
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Disposition',
-        'inline; filename="logo.png"',
+        'inline',
       );
       expect(mockStream.pipe).toHaveBeenCalledWith(mockResponse);
     });
@@ -246,12 +240,10 @@ describe('FileController', () => {
     it('should handle single-segment path', async () => {
       const mockStream = createMockStream();
 
-      jest
-        .spyOn(fileService, 'getFileStreamByPath')
-        .mockResolvedValue({
-          stream: mockStream,
-          mimeType: 'image/x-icon',
-        });
+      jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'image/x-icon',
+      });
 
       const mockRequest = {
         params: { path: ['favicon.ico'] },

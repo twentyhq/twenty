@@ -49,15 +49,14 @@ export class FileController {
     const filepath = join(...req.params.path);
 
     try {
-      const { stream, mimeType } =
-        await this.fileService.getFileStreamByPath({
-          workspaceId,
-          applicationId,
-          fileFolder: FileFolder.PublicAsset,
-          filepath,
-        });
+      const { stream, mimeType } = await this.fileService.getFileStreamByPath({
+        workspaceId,
+        applicationId,
+        fileFolder: FileFolder.PublicAsset,
+        filepath,
+      });
 
-      setFileResponseHeaders(res, { mimeType, filename: filepath });
+      setFileResponseHeaders(res, mimeType);
 
       stream.on('error', () => {
         throw new FileException(
@@ -97,14 +96,13 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     try {
-      const { stream, mimeType } =
-        await this.fileService.getFileStreamById({
-          fileId,
-          workspaceId,
-          fileFolder,
-        });
+      const { stream, mimeType } = await this.fileService.getFileStreamById({
+        fileId,
+        workspaceId,
+        fileFolder,
+      });
 
-      setFileResponseHeaders(res, { mimeType });
+      setFileResponseHeaders(res, mimeType);
 
       stream.on('error', () => {
         throw new FileException(
