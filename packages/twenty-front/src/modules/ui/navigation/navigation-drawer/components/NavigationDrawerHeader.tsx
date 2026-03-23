@@ -48,7 +48,6 @@ const StyledWorkspaceDropdownContainer = styled.div`
   flex: 1 1 auto;
   min-height: ${themeCssVariables.spacing[8]};
   min-width: 0;
-  overflow: hidden;
 `;
 
 type NavigationDrawerHeaderProps = {
