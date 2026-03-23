@@ -5083,12 +5083,6 @@ msgstr "Widget position type must match the tab layout mode"
 msgid "Widget row exceeds grid height"
 msgstr "Widget row exceeds grid height"
 
-#. js-lingui-id: F+TRXG
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FIELD is not supported yet."
-msgstr "Widget type FIELD is not supported yet."
-
 #. js-lingui-id: rL2haJ
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
