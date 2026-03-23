@@ -1,10 +1,10 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -41,6 +41,8 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly featureFlagService: FeatureFlagService,
@@ -75,9 +77,34 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    await this.backfillStandardCommandMenuItems(workspaceId, isDryRun);
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await this.backfillWorkflowCommandMenuItems(workspaceId, isDryRun);
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await this.backfillStandardCommandMenuItems(
+        workspaceId,
+        isDryRun,
+        queryRunner,
+      );
+
+      await this.backfillWorkflowCommandMenuItems(
+        workspaceId,
+        isDryRun,
+        queryRunner,
+      );
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error(
+        `Rolling back backfill of command menu items for workspace ${workspaceId}: ${error.message}`,
+      );
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
 
     if (!isDryRun) {
       await this.featureFlagService.enableFeatureFlags(
@@ -94,6 +121,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
   private async backfillStandardCommandMenuItems(
     workspaceId: string,
     isDryRun: boolean,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -159,6 +187,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
           workspaceId,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
+          queryRunner,
         },
       );
 
@@ -180,6 +209,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
   private async backfillWorkflowCommandMenuItems(
     workspaceId: string,
     isDryRun: boolean,
+    queryRunner: QueryRunner,
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -263,6 +293,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
             availabilityObjectMetadataId,
           },
           workspaceId,
+          queryRunner,
         );
 
         createdWorkflowCommandMenuItemsCount++;
