@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { extname } from 'path';
 import { type Readable } from 'stream';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { lookup } from 'mrmime';
 import { FileFolder } from 'twenty-shared/types';
 import {
   buildSignedPath,
@@ -45,7 +47,7 @@ export class FileService {
     applicationId: string;
     filepath: string;
     fileFolder: FileFolder;
-  }) {
+  }): Promise<{ stream: Readable; mimeType: string }> {
     const application = await this.applicationRepository.findOneOrFail({
       where: {
         id: applicationId,
@@ -53,12 +55,18 @@ export class FileService {
       },
     });
 
-    return this.fileStorageService.readFile({
+    const stream = await this.fileStorageService.readFile({
       resourcePath: filepath,
       fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
     });
+
+    const ext = extname(filepath).slice(1).toLowerCase();
+    const mimeType =
+      (ext ? lookup(ext) : undefined) ?? 'application/octet-stream';
+
+    return { stream, mimeType };
   }
 
   async getFileStreamById({
@@ -69,7 +77,7 @@ export class FileService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<Readable> {
+  }): Promise<{ stream: Readable; mimeType: string }> {
     const file = await this.fileRepository.findOneOrFail({
       where: {
         id: fileId,
@@ -85,12 +93,17 @@ export class FileService {
       },
     });
 
-    return this.fileStorageService.readFile({
+    const stream = await this.fileStorageService.readFile({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
     });
+
+    return {
+      stream,
+      mimeType: file.mimeType ?? 'application/octet-stream',
+    };
   }
 
   async getFileContentById({
