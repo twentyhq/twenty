@@ -5,14 +5,15 @@ import { Command } from 'nest-commander';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, type QueryRunner, Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -47,7 +48,6 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly commandMenuItemService: CommandMenuItemService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
@@ -239,6 +239,18 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
         return;
       }
 
+      const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatCommandMenuItemMaps',
+        ]);
+
+      const existingWorkflowVersionIds = new Set(
+        Object.values(existingFlatCommandMenuItemMaps.byUniversalIdentifier)
+          .filter(isDefined)
+          .map((item) => item.workflowVersionId)
+          .filter(isDefined),
+      );
+
       const workflowRepository =
         await this.twentyORMGlobalManager.getRepository<WorkflowWorkspaceEntity>(
           workspaceId,
@@ -246,16 +258,15 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
           { shouldBypassPermissionChecks: true },
         );
 
-      let createdWorkflowCommandMenuItemsCount = 0;
+      const { workspaceCustomFlatApplication } =
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        );
+
+      const flatCommandMenuItemsToCreate: FlatCommandMenuItem[] = [];
 
       for (const workflowVersion of manualTriggerVersions) {
-        const existingCommandMenuItem =
-          await this.commandMenuItemService.findByWorkflowVersionId(
-            workflowVersion.id,
-            workspaceId,
-          );
-
-        if (isDefined(existingCommandMenuItem)) {
+        if (existingWorkflowVersionIds.has(workflowVersion.id)) {
           continue;
         }
 
@@ -273,41 +284,86 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
         const { availabilityType, availabilityObjectMetadataId } =
           await this.resolveManualTriggerAvailability(trigger, workspaceId);
 
-        if (isDryRun) {
-          this.logger.log(
-            `[DRY RUN] Would create command menu item for workflow version ${workflowVersion.id} (label: "${label}")`,
-          );
-          createdWorkflowCommandMenuItemsCount++;
+        const id = uuidv4();
+        const now = new Date().toISOString();
 
-          continue;
-        }
-
-        await this.commandMenuItemService.create(
-          {
-            workflowVersionId: workflowVersion.id,
-            label,
-            shortLabel: label,
-            icon: trigger.settings.icon,
-            isPinned: trigger.settings.isPinned,
-            availabilityType,
-            availabilityObjectMetadataId,
-          },
+        flatCommandMenuItemsToCreate.push({
+          id,
+          universalIdentifier: id,
+          workflowVersionId: workflowVersion.id,
+          frontComponentId: null,
+          frontComponentUniversalIdentifier: null,
+          engineComponentKey: null,
+          label,
+          shortLabel: label,
+          icon: trigger.settings.icon ?? null,
+          isPinned: trigger.settings.isPinned ?? false,
+          position: 0,
+          hotKeys: null,
+          availabilityType,
+          availabilityObjectMetadataId:
+            availabilityObjectMetadataId ?? null,
+          availabilityObjectMetadataUniversalIdentifier: null,
+          conditionalAvailabilityExpression: null,
           workspaceId,
-          queryRunner,
+          applicationId: workspaceCustomFlatApplication.id,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+
+      if (flatCommandMenuItemsToCreate.length === 0) {
+        this.logger.log(
+          `No missing workflow command menu items for workspace ${workspaceId}`,
         );
 
-        createdWorkflowCommandMenuItemsCount++;
+        return;
+      }
 
+      this.logger.log(
+        `Found ${flatCommandMenuItemsToCreate.length} missing workflow command menu item(s) for workspace ${workspaceId}`,
+      );
+
+      if (isDryRun) {
         this.logger.log(
-          `Created command menu item for workflow version ${workflowVersion.id} (label: "${label}")`,
+          `[DRY RUN] Would create ${flatCommandMenuItemsToCreate.length} workflow command menu item(s) for workspace ${workspaceId}`,
+        );
+
+        return;
+      }
+
+      const validateAndBuildResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            allFlatEntityOperationByMetadataName: {
+              commandMenuItem: {
+                flatEntityToCreate: flatCommandMenuItemsToCreate,
+                flatEntityToDelete: [],
+                flatEntityToUpdate: [],
+              },
+            },
+            workspaceId,
+            applicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+            queryRunner,
+          },
+        );
+
+      if (validateAndBuildResult.status === 'fail') {
+        this.logger.error(
+          `Failed to backfill workflow command menu items:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        );
+
+        throw new Error(
+          `Failed to backfill workflow command menu items for workspace ${workspaceId}`,
         );
       }
 
-      if (createdWorkflowCommandMenuItemsCount > 0) {
-        this.logger.log(
-          `${isDryRun ? '[DRY RUN] Would create' : 'Created'} ${createdWorkflowCommandMenuItemsCount} workflow command menu item(s) for workspace ${workspaceId}`,
-        );
-      }
+      this.logger.log(
+        `Successfully backfilled ${flatCommandMenuItemsToCreate.length} workflow command menu item(s) for workspace ${workspaceId}`,
+      );
     }, authContext);
   }
 
