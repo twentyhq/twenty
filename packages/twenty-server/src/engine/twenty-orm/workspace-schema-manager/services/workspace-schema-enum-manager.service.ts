@@ -327,7 +327,6 @@ export class WorkspaceSchemaEnumManagerService {
           escapedTable,
           escapedOldColumn,
           escapedNewColumn,
-          escapedNewEnumType,
           escapedOldEnumType: `${escapedSchema}.${escapeIdentifier(oldEnumTypeName)}`,
           caseStatements,
           mappedValuesCondition,
@@ -357,7 +356,6 @@ export class WorkspaceSchemaEnumManagerService {
     escapedTable: string;
     escapedOldColumn: string;
     escapedNewColumn: string;
-    escapedNewEnumType: string;
     escapedOldEnumType: string;
     caseStatements: string;
     mappedValuesCondition: string;

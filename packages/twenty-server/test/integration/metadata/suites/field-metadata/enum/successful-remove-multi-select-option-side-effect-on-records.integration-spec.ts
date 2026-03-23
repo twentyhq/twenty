@@ -16,7 +16,6 @@ describe('remove multi-select option with side effect on records', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
   let firstOptionId: string;
-  let secondOptionId: string;
   let thirdOptionId: string;
 
   beforeAll(async () => {
@@ -91,7 +90,6 @@ describe('remove multi-select option with side effect on records', () => {
     }
 
     firstOptionId = option1.id;
-    secondOptionId = option2.id;
     thirdOptionId = option3.id;
   });
 
