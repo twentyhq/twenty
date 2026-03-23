@@ -4,7 +4,7 @@ import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessio
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
-import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
+import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import deepEqual from 'deep-equal';
 import { useStore } from 'jotai';
 

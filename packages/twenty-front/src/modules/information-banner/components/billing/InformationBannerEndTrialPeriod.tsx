@@ -1,4 +1,4 @@
-import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
+import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useLingui } from '@lingui/react/macro';

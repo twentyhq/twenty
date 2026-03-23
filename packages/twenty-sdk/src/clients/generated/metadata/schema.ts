@@ -1256,7 +1256,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_APPLICATION_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_DASHBOARD_V2_ENABLED' | 'IS_ATTACHMENT_MIGRATED' | 'IS_NOTE_TARGET_MIGRATED' | 'IS_TASK_TARGET_MIGRATED' | 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_USAGE_ANALYTICS_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED'
 
 export interface SSOIdentityProvider {
     id: Scalars['UUID']
@@ -2492,6 +2492,35 @@ export interface MarketplaceApp {
     __typename: 'MarketplaceApp'
 }
 
+export interface UsageBreakdownItem {
+    key: Scalars['String']
+    label?: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageBreakdownItem'
+}
+
+export interface UsageTimeSeries {
+    date: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageTimeSeries'
+}
+
+export interface UsageUserDaily {
+    userWorkspaceId: Scalars['String']
+    dailyUsage: UsageTimeSeries[]
+    __typename: 'UsageUserDaily'
+}
+
+export interface UsageAnalytics {
+    usageByUser: UsageBreakdownItem[]
+    usageByOperationType: UsageBreakdownItem[]
+    timeSeries: UsageTimeSeries[]
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    userDailyUsage?: UsageUserDaily
+    __typename: 'UsageAnalytics'
+}
+
 export interface PublicDomain {
     id: Scalars['UUID']
     domain: Scalars['String']
@@ -2794,6 +2823,7 @@ export interface Query {
     findOneMarketplaceApp: MarketplaceApp
     findManyApplications: Application[]
     findOneApplication: Application
+    getUsageAnalytics: UsageAnalytics
     __typename: 'Query'
 }
 
@@ -2807,7 +2837,7 @@ export type SortDirection = 'ASC' | 'DESC'
 /** Sort Nulls Options */
 export type SortNulls = 'NULLS_FIRST' | 'NULLS_LAST'
 
-export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT'
+export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -5635,6 +5665,39 @@ export interface MarketplaceAppGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageBreakdownItemGenqlSelection{
+    key?: boolean | number
+    label?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageTimeSeriesGenqlSelection{
+    date?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageUserDailyGenqlSelection{
+    userWorkspaceId?: boolean | number
+    dailyUsage?: UsageTimeSeriesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageAnalyticsGenqlSelection{
+    usageByUser?: UsageBreakdownItemGenqlSelection
+    usageByOperationType?: UsageBreakdownItemGenqlSelection
+    timeSeries?: UsageTimeSeriesGenqlSelection
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    userDailyUsage?: UsageUserDailyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicDomainGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
@@ -5980,6 +6043,7 @@ export interface QueryGenqlSelection{
     findOneMarketplaceApp?: (MarketplaceAppGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findManyApplications?: ApplicationGenqlSelection
     findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
+    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6013,6 +6077,8 @@ export interface PieChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface LineChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
 
 export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
+
+export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null)}
 
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
@@ -8399,6 +8465,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
+    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
+      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
+    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
+      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
+    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
+      return UsageUserDaily_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
+    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
+      return UsageAnalytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const PublicDomain_possibleTypes: string[] = ['PublicDomain']
     export const isPublicDomain = (obj?: { __typename?: any } | null): obj is PublicDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
@@ -8979,6 +9077,7 @@ export const enumFeatureFlagKey = {
    IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: 'IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED' as const,
    IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' as const,
    IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const,
+   IS_USAGE_ANALYTICS_ENABLED: 'IS_USAGE_ANALYTICS_ENABLED' as const,
    IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const,
    IS_DIRECT_GRAPHQL_EXECUTION_ENABLED: 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED' as const,
    IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as const,
@@ -9312,7 +9411,8 @@ export const enumSortNulls = {
 export const enumEventLogTable = {
    WORKSPACE_EVENT: 'WORKSPACE_EVENT' as const,
    PAGEVIEW: 'PAGEVIEW' as const,
-   OBJECT_EVENT: 'OBJECT_EVENT' as const
+   OBJECT_EVENT: 'OBJECT_EVENT' as const,
+   USAGE_EVENT: 'USAGE_EVENT' as const
 }
 
 export const enumAnalyticsType = {

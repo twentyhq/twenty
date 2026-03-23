@@ -19,6 +19,7 @@ import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-acc
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
@@ -82,6 +83,7 @@ import { FileModule } from './file/file.module';
     AuthModule,
     BillingModule,
     BillingWebhookModule,
+    UsageModule,
     ClientConfigModule,
     FeatureFlagModule,
     FileModule,

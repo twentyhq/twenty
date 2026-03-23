@@ -1554,6 +1554,7 @@ enum FeatureFlagKey {
   IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
+  IS_USAGE_ANALYTICS_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
   IS_DIRECT_GRAPHQL_EXECUTION_ENABLED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
@@ -2918,6 +2919,31 @@ type MarketplaceApp {
   isFeatured: Boolean!
 }
 
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
+}
+
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
+
 type PublicDomain {
   id: UUID!
   domain: String!
@@ -3240,6 +3266,7 @@ type Query {
   findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
 }
 
 input LogicFunctionIdInput {
@@ -3317,6 +3344,7 @@ enum EventLogTable {
   WORKSPACE_EVENT
   PAGEVIEW
   OBJECT_EVENT
+  USAGE_EVENT
 }
 
 input EventLogFiltersInput {
@@ -3345,6 +3373,12 @@ input LineChartDataInput {
 input BarChartDataInput {
   objectMetadataId: UUID!
   configuration: JSON!
+}
+
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
 }
 
 type Mutation {
