@@ -27,11 +27,8 @@ jobs:
       - name: Build dependencies
         run: npx nx build twenty-shared
 
-      - name: Build twenty-server
-        run: npx nx build twenty-server
-
       - name: Run catalog sync
-        run: npx nx run twenty-server:command-no-deps ai:sync-models-dev
+        run: npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/ai-sync-models-dev.ts
 
       - name: Check for changes
         id: changes
