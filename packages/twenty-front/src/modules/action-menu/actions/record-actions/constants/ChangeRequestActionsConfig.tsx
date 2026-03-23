@@ -8,7 +8,6 @@ import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-ac
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconX } from 'twenty-ui/display';
 
@@ -16,8 +15,8 @@ export const CHANGE_REQUEST_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
     [ChangeRequestSingleRecordActionKeys.APPROVE_CHANGE_REQUEST]: {
       key: ChangeRequestSingleRecordActionKeys.APPROVE_CHANGE_REQUEST,
-      label: msg`Approve`,
-      shortLabel: msg`Approve`,
+      label: 'Approve',
+      shortLabel: 'Approve',
       isPinned: true,
       position: 1,
       Icon: IconCheck,
@@ -36,8 +35,8 @@ export const CHANGE_REQUEST_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
     [ChangeRequestSingleRecordActionKeys.REJECT_CHANGE_REQUEST]: {
       key: ChangeRequestSingleRecordActionKeys.REJECT_CHANGE_REQUEST,
-      label: msg`Reject`,
-      shortLabel: msg`Reject`,
+      label: 'Reject',
+      shortLabel: 'Reject',
       isPinned: true,
       position: 2,
       Icon: IconX,
