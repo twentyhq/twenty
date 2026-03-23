@@ -17,8 +17,10 @@ const StyledAnimatedContainer = motion.create(StyledAnimatedContainerBase);
 
 export const NavigationDrawerAnimatedCollapseWrapper = ({
   children,
+  className,
 }: {
   children: React.ReactNode;
+  className?: string;
 }) => {
   const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
@@ -27,7 +29,15 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
   );
 
   if (isSettingsPage) {
-    return children;
+    if (!className) {
+      return children;
+    }
+
+    return (
+      <StyledAnimatedContainerBase className={className}>
+        {children}
+      </StyledAnimatedContainerBase>
+    );
   }
 
   const animate: AnimationControls | TargetAndTransition =
@@ -47,6 +57,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
 
   return (
     <StyledAnimatedContainer
+      className={className}
       initial={false}
       animate={animate}
       transition={{

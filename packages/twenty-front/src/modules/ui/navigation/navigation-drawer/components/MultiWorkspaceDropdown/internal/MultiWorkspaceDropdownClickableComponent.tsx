@@ -4,6 +4,7 @@ import {
   StyledContainer,
   StyledIconChevronDown,
   StyledLabel,
+  StyledLabelCollapseWrapper,
 } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspacesDropdownStyles';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -27,9 +28,9 @@ export const MultiWorkspaceDropdownClickableComponent = () => {
         placeholder={currentWorkspace?.displayName || ''}
         avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
       />
-      <NavigationDrawerAnimatedCollapseWrapper>
+      <StyledLabelCollapseWrapper>
         <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
-      </NavigationDrawerAnimatedCollapseWrapper>
+      </StyledLabelCollapseWrapper>
       <NavigationDrawerAnimatedCollapseWrapper>
         <StyledIconChevronDown
           size={theme.icon.size.md}
