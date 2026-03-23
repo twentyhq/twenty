@@ -449,6 +449,12 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `engine/workspace-manager/.../compute-person-standard-flat-field-metadata.util.ts` | Emails `isUnique: false`, Phones `isUnique: true` (upstream default is reversed) |
 | `engine/workspace-manager/.../compute-person-standard-flat-index-metadata.util.ts` | Phone is unique (not email)                                                      |
 
+### Invitation Email Branding
+
+| File                                                                                     | Modification                                        |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| `engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts`      | Removed "(via Twenty)" from invitation email sender  |
+
 ## Fragile Import Dependencies (Check After Upstream Renames)
 
 Our custom files import from upstream modules that may be renamed/moved. After merging, grep for broken imports:

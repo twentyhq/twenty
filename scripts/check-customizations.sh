@@ -969,6 +969,13 @@ check_file_contains \
   "MinimalMetadataService must fire-and-forget cache priming for missing entity hashes"
 
 echo ""
+echo "--- Invitation Email Branding ---"
+check_file_not_contains \
+  "packages/twenty-server/src/engine/core-modules/workspace-invitation/services/workspace-invitation.service.ts" \
+  "(via Twenty)" \
+  "workspace-invitation.service.ts must not contain '(via Twenty)' in sender name"
+
+echo ""
 echo "--- Deployment ---"
 check_file_contains \
   ".github/workflows/deploy-eks.yaml" \
