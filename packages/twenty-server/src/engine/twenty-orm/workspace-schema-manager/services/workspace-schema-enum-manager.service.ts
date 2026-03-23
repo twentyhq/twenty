@@ -349,7 +349,6 @@ export class WorkspaceSchemaEnumManagerService {
     escapedOldColumn,
     escapedSchema,
     escapedTable,
-    escapedNewEnumType,
     escapedOldEnumType,
     caseStatements,
     mappedValuesCondition,
@@ -363,16 +362,19 @@ export class WorkspaceSchemaEnumManagerService {
     caseStatements: string;
     mappedValuesCondition: string;
   }) {
+    // Removed values (not in caseStatements) produce NULL via the implicit
+    // CASE default, then get stripped by the FILTER clause.
     return `
           UPDATE ${escapedSchema}.${escapedTable}
           SET ${escapedNewColumn} = (
-            SELECT array_agg(
-              CASE unnest_value::text
-                ${caseStatements}
-                ELSE unnest_value::text::${escapedNewEnumType}
-              END
-            )
-            FROM unnest(${escapedOldColumn}) AS unnest_value
+            SELECT array_agg(mapped_value) FILTER (WHERE mapped_value IS NOT NULL)
+            FROM (
+              SELECT
+                CASE unnest_value::text
+                  ${caseStatements}
+                END AS mapped_value
+              FROM unnest(${escapedOldColumn}) AS unnest_value
+            ) enum_mapping
           )
           WHERE ${escapedOldColumn} IS NOT NULL
             AND ${escapedOldColumn} && ARRAY[${mappedValuesCondition}]::${escapedOldEnumType}[]`;
