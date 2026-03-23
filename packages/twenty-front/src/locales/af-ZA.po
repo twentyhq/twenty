@@ -19,8 +19,8 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #. js-lingui-id: lndIq/
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid " billed annually"
 msgstr "jaarliks gefaktureer"
 
@@ -70,7 +70,7 @@ msgid ": Today{timeZoneAbbreviationSuffix}"
 msgstr ": Vandag{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid ". The change will be applied the {beautifiedRenewDate}."
 msgstr ". Die verandering sal toegepas word op {beautifiedRenewDate}."
 
@@ -153,6 +153,21 @@ msgstr "{0, plural, one {# Voorwerp} other {# Voorwerpe}}"
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, one {Jy het nie toestemming om toegang tot die {fieldsList} veld te hê nie} other {Jy het nie toestemming om toegang tot die {fieldsList} velde te hê nie}}"
 
+#. js-lingui-id: dNIJYp
+#. placeholder {0}: formatNumber(totalCredits)
+#. placeholder {0}: formatNumber(datum.value)
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/UsagePieChart.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "{0} credits"
+msgstr ""
+
+#. js-lingui-id: m8fdzW
+#. placeholder {0}: formatNumber(totalCredits)
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "{0} credits used"
+msgstr ""
+
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
@@ -198,7 +213,7 @@ msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} 
 msgstr "{count, plural, one {Byv. {0}{1} vir {count} desimaal} other {Byv. {2}{3} vir {count} desimale}}"
 
 #. js-lingui-id: aTq2js
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{credits} Credits - ${price}"
 msgstr "{credits} Krediete - ${price}"
 
@@ -231,7 +246,7 @@ msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} othe
 msgstr "{deletedCount, plural, one {Suksesvol uitgevee {deletedCount} werk} other {Suksesvol uitgevee {deletedCount} werke}}"
 
 #. js-lingui-id: 2Xxop4
-#: src/modules/billing/components/TrialCard.tsx
+#: src/modules/settings/billing/components/TrialCard.tsx
 msgid "{duration} days trial"
 msgstr "{duration} dae proeflopie"
 
@@ -635,7 +650,7 @@ msgid "About"
 msgstr "Omtrent"
 
 #. js-lingui-id: NBHoKd
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "About my subscription"
 msgstr "Oor my intekening"
 
@@ -1320,6 +1335,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "AI"
 msgstr "KI"
+
+#. js-lingui-id: V+Qj+q
+#: src/modules/settings/usage/utils/getOperationTypeLabel.ts
+msgid "AI Chat"
+msgstr ""
 
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -2307,7 +2327,7 @@ msgid "Background Colors"
 msgstr "Agtergrondkleure"
 
 #. js-lingui-id: EbQe8o
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Base Credits"
 msgstr ""
 
@@ -2371,7 +2391,7 @@ msgid "Billing history"
 msgstr ""
 
 #. js-lingui-id: nJGwRf
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Billing interval"
 msgstr "Faktureringsinterval"
 
@@ -2630,44 +2650,44 @@ msgid "Cancel Edition"
 msgstr "Kanselleer uitgawe"
 
 #. js-lingui-id: dV4HC5
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching"
 msgstr "Kanselleer intervalwisseling"
 
 #. js-lingui-id: M5CqkG
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching?"
 msgstr "Kanselleer intervalwisseling?"
 
 #. js-lingui-id: /Dmw1h
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel metered tier switching"
 msgstr "Kanselleer gemeterde vlakwisseling"
 
 #. js-lingui-id: Q/chGD
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel metered tier switching?"
 msgstr "Kanselleer gemeterde vlakwisseling?"
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Cancel Plan"
 msgstr "Kanselleer Plan"
 
 #. js-lingui-id: 8eSMLX
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching"
 msgstr "Kanselleer planwisseling"
 
 #. js-lingui-id: f6KFEf
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching?"
 msgstr "Kanselleer planwisseling?"
 
 #. js-lingui-id: N6gPiD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "Kanselleer jou intekening"
 
@@ -2760,22 +2780,22 @@ msgid "Change subdomain?"
 msgstr "Verander subdomein?"
 
 #. js-lingui-id: 9m7pJA
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Monthly?"
 msgstr "Verander na Maandeliks?"
 
 #. js-lingui-id: C8G9Mq
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "Verander na Organisasie Plan?"
 
 #. js-lingui-id: t7uUc+
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Pro Plan?"
 msgstr "Verander na Pro Plan?"
 
 #. js-lingui-id: N8mUQE
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
 msgstr "Verander na jaarliks?"
 
@@ -2816,7 +2836,7 @@ msgid "Check your inbox to verify your new email address."
 msgstr "Kontroleer jou inkassie om jou nuwe e-posadres te bevestig."
 
 #. js-lingui-id: SxwQE8
-#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+#: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
 msgid "Checkout session error. Please retry or contact Twenty team"
 msgstr "Betaalafhandeling sessie fout. Probeer asseblief weer of kontak Twenty-span"
 
@@ -2903,6 +2923,11 @@ msgstr "Maak skoon"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Maak die veld skoon of \"X\" om terug te keer na omgewing/standaardwaarde."
+
+#. js-lingui-id: Gt8ndY
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Click a user to see their daily breakdown."
+msgstr ""
 
 #. js-lingui-id: HevGC0
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2996,6 +3021,11 @@ msgstr "Kode"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code Editor"
 msgstr "Kode-redigeerder"
+
+#. js-lingui-id: tyxkc0
+#: src/modules/settings/usage/utils/getOperationTypeLabel.ts
+msgid "Code Execution"
+msgstr ""
 
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
@@ -3233,20 +3263,20 @@ msgstr ""
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/command-menu-item/display/components/CommandModal.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "Bevestig"
 
 #. js-lingui-id: qmnX/6
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm changing your current credit plan."
 msgstr "Bevestig dat jy jou huidige kredietplan verander."
 
@@ -3256,7 +3286,7 @@ msgid "Confirm deletion of {roleName} role? This cannot be undone. All members w
 msgstr "Bevestig verwydering van {roleName} rol? Dit kan nie ongedaan gemaak word nie. Alle lede sal aan die verstekrol toegewys word."
 
 #. js-lingui-id: kZkFSm
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "Bevestig verlaagde gradering"
 
@@ -3266,7 +3296,7 @@ msgid "Confirm role update"
 msgstr "Bevestig rolopdatering"
 
 #. js-lingui-id: DDbn3x
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "Bevestig opgradering"
 
@@ -3532,7 +3562,7 @@ msgid "Core Objects"
 msgstr ""
 
 #. js-lingui-id: I99Miw
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "Koste"
@@ -3548,7 +3578,7 @@ msgid "Cost / 1M tokens"
 msgstr ""
 
 #. js-lingui-id: iX2opZ
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
 msgstr "Koste per 1k ekstra krediette"
 
@@ -3845,15 +3875,25 @@ msgstr ""
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr ""
 
+#. js-lingui-id: 7iwYAn
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Credit consumption over time."
+msgstr ""
+
 #. js-lingui-id: Efny36
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
 msgstr "Kredietkaart Plan"
 
 #. js-lingui-id: c1ojkj
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
 msgstr "Kredietgebruik"
+
+#. js-lingui-id: 6/q4+J
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Credit usage breakdown for your workspace."
+msgstr ""
 
 #. js-lingui-id: UQ4Hjl
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
@@ -3861,8 +3901,15 @@ msgstr "Kredietgebruik"
 msgid "credits"
 msgstr ""
 
+#. js-lingui-id: lDIOek
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Credits"
+msgstr ""
+
 #. js-lingui-id: hdSacI
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credits by period"
 msgstr "Krediete per periode"
 
@@ -3877,7 +3924,7 @@ msgid "Credits exhausted. Upgrade your plan to get more credits."
 msgstr "Krediete uitgeput. Gradeer jou plan op om meer krediete te kry."
 
 #. js-lingui-id: n3kKrs
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
 msgstr "Krediete Gebruik"
 
@@ -3923,7 +3970,7 @@ msgid "Currency Code"
 msgstr "Geldeenheidskode"
 
 #. js-lingui-id: Hp1l6f
-#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
+#: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 msgid "Current"
 msgstr "Huidig"
 
@@ -4047,6 +4094,12 @@ msgstr "Siaan"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Czech"
 msgstr "Tsjeggies"
+
+#. js-lingui-id: KXQkvT
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Daily Usage"
+msgstr ""
 
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4731,6 +4784,7 @@ msgid "Detach"
 msgstr "Ontkoppel"
 
 #. js-lingui-id: URmyfc
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Details"
 msgstr "Besonderhede"
@@ -4875,8 +4929,8 @@ msgid "Dots and comma - {dotsAndCommaExample}"
 msgstr "Punte en komma - {dotsAndCommaExample}"
 
 #. js-lingui-id: LE8J+K
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
 msgstr "Verlaagde gradering"
 
@@ -5157,7 +5211,7 @@ msgstr ""
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Redigeer betalingsmetode, sien jou fakture en meer"
 
@@ -5866,22 +5920,22 @@ msgid "Error validating approved access domain"
 msgstr "Fout tydens bevestiging van goedgekeurde toegangsdomein"
 
 #. js-lingui-id: pt7mmi
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling interval switching."
 msgstr "Fout tydens die kansellasie van intervalwisseling."
 
 #. js-lingui-id: a1gs9Y
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling metered tier switching."
 msgstr "Fout tydens die kansellasie van gemeterde vlakwisseling."
 
 #. js-lingui-id: FS6DQK
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling plan switching."
 msgstr "Fout tydens die kansellasie van planwisseling."
 
 #. js-lingui-id: QmR+2U
-#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+#: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "Fout tydens die beëindiging van die proefperiode. Kontak asseblief die Twenty-span."
 
@@ -5891,12 +5945,12 @@ msgid "Error while saving the name"
 msgstr ""
 
 #. js-lingui-id: QEee5f
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to {oppositPlan} Plan."
 msgstr "Fout tydens die wissel van intekening na {oppositPlan} Plan."
 
 #. js-lingui-id: QPJi2W
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription."
 msgstr "Fout tydens die oorskakeling van subskripsie."
 
@@ -6256,7 +6310,7 @@ msgid "Expression"
 msgstr "Uitdrukking"
 
 #. js-lingui-id: uE7S0L
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Extra Credits Used"
 msgstr "Ekstra Krediete Gebruik"
 
@@ -6452,7 +6506,7 @@ msgid "Failed to update model selection mode"
 msgstr ""
 
 #. js-lingui-id: HnBqPY
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "Kon nie prys opdateer nie."
 
@@ -7763,7 +7817,7 @@ msgid "Integrations - Settings"
 msgstr "Integrasies - Instellings"
 
 #. js-lingui-id: jyjroS
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Interval switching has been cancelled."
 msgstr "Intervalwisseling is gekanselleer."
 
@@ -8200,6 +8254,11 @@ msgstr "Laaste 12 Ure (oudste → nuutste)"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Laaste 24 Ure (oudste → nuutste)"
 
+#. js-lingui-id: uq2BmQ
+#: src/modules/settings/usage/utils/getPeriodOptions.ts
+msgid "Last 30 days"
+msgstr ""
+
 #. js-lingui-id: gdAJ4I
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 4 hours"
@@ -8210,10 +8269,20 @@ msgstr "Laaste 4 uur"
 msgid "Last 4 Hours (oldest → newest)"
 msgstr "Laaste 4 Ure (oudste → nuutste)"
 
+#. js-lingui-id: ct2SYD
+#: src/modules/settings/usage/utils/getPeriodOptions.ts
+msgid "Last 7 days"
+msgstr ""
+
 #. js-lingui-id: GQgBSj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
 msgstr "Laaste 7 Dae (oudste → nuutste)"
+
+#. js-lingui-id: XgOuA7
+#: src/modules/settings/usage/utils/getPeriodOptions.ts
+msgid "Last 90 days"
+msgstr ""
 
 #. js-lingui-id: c5zxSg
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
@@ -8671,7 +8740,7 @@ msgstr "Bestuur rekening en intekeninge"
 #. js-lingui-id: nvgUPq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "Bestuur faktuurinligting"
 
@@ -8923,7 +8992,7 @@ msgid "Metadata file generation failed"
 msgstr "Metadataleêr generasie het misluk"
 
 #. js-lingui-id: onCJJ6
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Metered tier switching has been cancelled."
 msgstr "Gemeterde vlakwisseling is gekanselleer."
 
@@ -9035,7 +9104,7 @@ msgid "Monitor the execution of your emails sync job"
 msgstr "Monitor die uitvoering van jou e-posse se sinchronisasie werk"
 
 #. js-lingui-id: kY2ll9
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "month"
 msgstr "maand"
 
@@ -9053,7 +9122,7 @@ msgid "Month of the year"
 msgstr "Maand van die jaar"
 
 #. js-lingui-id: rdfE9o
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "monthly"
 msgstr "maandeliks"
 
@@ -9194,6 +9263,7 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -9488,8 +9558,8 @@ msgstr ""
 
 #. js-lingui-id: hXzOVo
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
-#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
 msgstr "Volgende"
@@ -9624,6 +9694,16 @@ msgstr "Geen land nie"
 #. js-lingui-id: afg3OQ
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "No credentials"
+msgstr ""
+
+#. js-lingui-id: FoID5n
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "No credit consumption recorded for this user."
+msgstr ""
+
+#. js-lingui-id: H7TRcV
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No credit consumption recorded yet."
 msgstr ""
 
 #. js-lingui-id: kxH3HO
@@ -9862,7 +9942,7 @@ msgid "No parameters"
 msgstr ""
 
 #. js-lingui-id: 5pSj4j
-#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+#: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
 msgstr "Geen betaalmetode gevind nie. Werk asseblief u faktureringsbesonderhede by."
 
@@ -9957,6 +10037,12 @@ msgstr ""
 #. js-lingui-id: fBsRs5
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No triggers configured for this function."
+msgstr ""
+
+#. js-lingui-id: WwlPOG
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No usage data"
 msgstr ""
 
 #. js-lingui-id: wJwIUq
@@ -10110,7 +10196,7 @@ msgid "Number of decimals"
 msgstr "Aantal desimale"
 
 #. js-lingui-id: tYOaY8
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
 msgstr "Aantal nuwe krediete toegeken elke {recurringInterval}"
 
@@ -10475,8 +10561,8 @@ msgstr ""
 
 #. js-lingui-id: ucgZ0o
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/components/internal/PlansTags.tsx
 msgid "Organization"
 msgstr "Organisasie"
 
@@ -10720,6 +10806,11 @@ msgstr "Mense aan wie ek e-posse gestuur en van ontvang het."
 msgid "People I’ve sent emails to."
 msgstr "Mense aan wie ek e-posse gestuur het."
 
+#. js-lingui-id: i9iYjM
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "Per-day credit consumption."
+msgstr ""
+
 #. js-lingui-id: SrVzRe
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContent.tsx
@@ -10882,12 +10973,12 @@ msgid "Plain text paragraph"
 msgstr ""
 
 #. js-lingui-id: GdgCoi
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
 msgstr "Plan"
 
 #. js-lingui-id: XduPHC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan switching has been cancelled."
 msgstr "Planwisseling is gekanselleer."
 
@@ -10929,7 +11020,7 @@ msgid "Please select at least one destination object for this relation."
 msgstr "Kies asseblief ten minste een bestemmingsobjek vir hierdie verhouding."
 
 #. js-lingui-id: 8YnlGz
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
 msgstr "Begin asseblief eers met jou inskrywing"
 
@@ -11043,7 +11134,7 @@ msgid "Previous AI Chats"
 msgstr "Vorige KI-kletse"
 
 #. js-lingui-id: jmc+FY
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Price updated."
 msgstr "Prys opdateer."
 
@@ -11092,8 +11183,8 @@ msgid "Privacy Policy"
 msgstr "Privaatheidsbeleid"
 
 #. js-lingui-id: 3fPjUY
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "Pro"
 
@@ -11649,7 +11740,7 @@ msgid "Rename"
 msgstr "Hernoem"
 
 #. js-lingui-id: oQjB9l
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
 msgstr "Hernuwingsdatum"
 
@@ -11726,6 +11817,11 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "Reset variable"
 msgstr "Herstel veranderlike"
+
+#. js-lingui-id: esl+Tv
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+msgid "Resource Type"
+msgstr ""
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -11913,7 +12009,7 @@ msgid "Roles"
 msgstr "Rolle"
 
 #. js-lingui-id: Qz0FZ3
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Rollover Credits"
 msgstr ""
 
@@ -12251,6 +12347,11 @@ msgstr "Soek velde"
 msgid "Search folders..."
 msgstr "Soek vouers..."
 
+#. js-lingui-id: uHAV+O
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Search for a user..."
+msgstr ""
+
 #. js-lingui-id: ofuw3g
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 msgid "Search for an object..."
@@ -12319,18 +12420,18 @@ msgstr ""
 
 #. js-lingui-id: 8sgZS9
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-#: src/modules/billing/components/SubscriptionPrice.tsx
+#: src/modules/settings/billing/components/SubscriptionPrice.tsx
 msgid "seat / month"
 msgstr "sitplek / maand"
 
 #. js-lingui-id: aQnWwf
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-#: src/modules/billing/components/SubscriptionPrice.tsx
+#: src/modules/settings/billing/components/SubscriptionPrice.tsx
 msgid "seat / month - billed yearly"
 msgstr "sitplek / maand - jaarliks gefaktureer"
 
 #. js-lingui-id: grt0Pu
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Seats"
 msgstr "Sitplekke"
 
@@ -13244,7 +13345,7 @@ msgid "Start Date"
 msgstr ""
 
 #. js-lingui-id: s+K73L
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
 msgstr "Begin Jou Inskrywing"
 
@@ -13399,38 +13500,38 @@ msgid "Subscribe"
 msgstr "Teken in"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Subscribe Now"
 msgstr "Teken Nou In"
 
 #. js-lingui-id: WVzGc2
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription"
 msgstr "Subskripsie"
 
 #. js-lingui-id: uvY7Wk
-#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+#: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
 msgstr "Intekening geaktiveer."
 
 #. js-lingui-id: gvXPJz
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to {oppositPlan} Plan."
 msgstr "Intekening is verwissel na {oppositPlan} Plan."
 
 #. js-lingui-id: A5YO8f
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "Inschrijving is verander na jaarliks."
 
 #. js-lingui-id: nQcG+x
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
 msgstr "Intekening sal gewissel word na Maandeliks teen die {beautifiedRenewDate}."
 
 #. js-lingui-id: WB5mu5
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switched to {oppositPlan} Plan the {beautifiedRenewDate}."
 msgstr "Intekening sal oorgeskakel word na die {oppositPlan}-plan op {beautifiedRenewDate}."
 
@@ -13498,22 +13599,22 @@ msgid "Swedish"
 msgstr "Sweeds"
 
 #. js-lingui-id: dpXnFC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Monthly"
 msgstr "Wissel na Maandeliks"
 
 #. js-lingui-id: GCMizN
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Organization"
 msgstr "Verander na Organisasie"
 
 #. js-lingui-id: GPKudC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Pro"
 msgstr "Wissel na Pro"
 
 #. js-lingui-id: eCX1DT
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Yearly"
 msgstr "Verander na jaarliks"
 
@@ -14111,12 +14212,12 @@ msgid "This week"
 msgstr "Hierdie week"
 
 #. js-lingui-id: h4VeOo
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
 msgstr "Dit sal die geskeduleerde intervalverandering kanselleer en jou huidige faktureringsinterval ({currentIntervalLabel}) behou."
 
 #. js-lingui-id: XpARoU
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
 msgstr "Dit sal die geskeduleerde planverandering kanselleer en jou huidige plan ({planKeyWord}) behou."
 
@@ -14197,6 +14298,7 @@ msgid "Timeout"
 msgstr ""
 
 #. js-lingui-id: 8TMaZI
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -14309,7 +14411,7 @@ msgid "Total"
 msgstr ""
 
 #. js-lingui-id: Fm0Lw/
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Total Available"
 msgstr ""
 
@@ -14330,7 +14432,7 @@ msgid "Total time"
 msgstr "Totale tyd"
 
 #. js-lingui-id: YT/cKI
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Hou jou {intervalLabel} werkvloeikredietverbruik dop."
 
@@ -14348,7 +14450,7 @@ msgstr ""
 #. js-lingui-id: lhkaAC
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/settings/billing/components/internal/PlansTags.tsx
 msgid "Trial"
 msgstr "Proeflopie"
 
@@ -14820,8 +14922,8 @@ msgstr "Opdaterings"
 
 #. js-lingui-id: kwkhPe
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Upgrade"
 msgstr "Opgradering"
 
@@ -14914,9 +15016,38 @@ msgstr "URL om in te voeg"
 msgid "us-east-1"
 msgstr ""
 
+#. js-lingui-id: 7FaY4u
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/SettingsUsage.tsx
+#: src/pages/settings/SettingsUsage.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Usage"
+msgstr ""
+
 #. js-lingui-id: 8Jr4QC
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Usage across all workspaces on this server"
+msgstr ""
+
+#. js-lingui-id: 21hsGI
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage Analytics"
+msgstr ""
+
+#. js-lingui-id: 7vRxpC
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage by Type"
+msgstr ""
+
+#. js-lingui-id: 4C6sMs
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage by User"
+msgstr ""
+
+#. js-lingui-id: CedRjP
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+msgid "Usage Events"
 msgstr ""
 
 #. js-lingui-id: 6dMpmz
@@ -14965,6 +15096,7 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
@@ -15007,6 +15139,12 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
 msgstr "Gebruiker is nie aangeteken nie"
+
+#. js-lingui-id: 5r/Ozr
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "User Usage"
+msgstr ""
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -15172,7 +15310,7 @@ msgstr ""
 #. js-lingui-id: KANz0G
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Sien faktuurbesonderhede"
 
@@ -15274,6 +15412,11 @@ msgstr ""
 msgid "View type"
 msgstr "Bekyk tipe"
 
+#. js-lingui-id: ZjBqNE
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "View usage"
+msgstr ""
+
 #. js-lingui-id: rWiqJF
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "View workspace activity logs"
@@ -15369,7 +15512,7 @@ msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "Ons ondersteun jou vierkantige PNGs, JPEGs en GIFs onder 10MB"
 
 #. js-lingui-id: 4pcfmN
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
 msgstr "Ons sal jou betaalde plan aktiveer. Wil jy voortgaan?"
 
@@ -15543,7 +15686,7 @@ msgid "Will continue to the next iteration even if the current one fails"
 msgstr ""
 
 #. js-lingui-id: bB8dFW
-#: src/modules/billing/components/TrialCard.tsx
+#: src/modules/settings/billing/components/TrialCard.tsx
 msgid "With Credit Card"
 msgstr "Met kredietkaart"
 
@@ -15553,7 +15696,7 @@ msgid "Without calling code"
 msgstr "Sonder roepkode"
 
 #. js-lingui-id: 30aZb8
-#: src/modules/billing/components/TrialCard.tsx
+#: src/modules/settings/billing/components/TrialCard.tsx
 msgid "Without Credit Card"
 msgstr "Sonder kredietkaart"
 
@@ -15573,6 +15716,11 @@ msgstr ""
 msgid "Workflow duplicated successfully"
 msgstr ""
 
+#. js-lingui-id: UJqqRe
+#: src/modules/settings/usage/utils/getOperationTypeLabel.ts
+msgid "Workflow Execution"
+msgstr ""
+
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workflows"
@@ -15580,6 +15728,8 @@ msgstr "Werksvloeie"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/SettingsUsage.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
@@ -15744,7 +15894,7 @@ msgid "Y axis"
 msgstr "Y-as"
 
 #. js-lingui-id: 7qI8sJ
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "jaar"
 
@@ -15754,7 +15904,7 @@ msgid "Year"
 msgstr "Jaar"
 
 #. js-lingui-id: dfmB8/
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "yearly"
 msgstr "jaarliks"
 
@@ -15831,7 +15981,7 @@ msgid "You do not have permission to view this widget"
 msgstr "U het nie vergunning om hierdie widget te besigtig nie"
 
 #. js-lingui-id: M2lYgq
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "Jy het 'n geskeduleerde gemeterde vlakverandering. Wil jy dit kanselleer?"
 
@@ -15841,22 +15991,22 @@ msgid "You selected {selectedCountFormatted} records but manual triggers can run
 msgstr ""
 
 #. js-lingui-id: z8eKS7
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "you will be charged ${enterprisePrice} per user per month"
 msgstr "u sal ${enterprisePrice} per gebruiker per maand gehef word"
 
 #. js-lingui-id: u3S6u8
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
 msgstr "Jy sal ${monthlyPrice} per gebruiker per maand faktuur betaal. Die verandering sal toegepas word op die {beautifiedRenewDate}."
 
 #. js-lingui-id: /T5zAB
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${proPrice} per user per month"
 msgstr "U sal ${proPrice} per gebruiker per maand gehef word"
 
 #. js-lingui-id: W3k5LA
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "Jy sal ${yearlyPrice} per gebruiker per jaar betaal, gefaktureer jaarliks. 'n Prorata met jou huidige intekening sal toegepas word."
 
@@ -15961,12 +16111,12 @@ msgid "Your subscription status is: {statusLabel}"
 msgstr ""
 
 #. js-lingui-id: QOd24n
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and "
 msgstr "Jou proeftydperk sal eindig, en "
 
 #. js-lingui-id: 2Fkd7s
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "Jou proeftydperk sal eindig, en jy sal ${yearlyPrice} per gebruiker per jaar betaal, gefaktureer jaarliks. 'n Prorata met jou huidige intekening sal toegepas word."
 
@@ -15981,6 +16131,6 @@ msgid "Your workspace doesn't have an active subscription. Please contact your a
 msgstr "U werksruimte het nie 'n aktiewe intekening nie. Kontak asseblief u admin."
 
 #. js-lingui-id: RhNbPE
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Your workspace will be disabled"
 msgstr "Jou werkskerm sal onaktief gemaak word"
