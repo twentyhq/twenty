@@ -191,6 +191,9 @@ export class BackfillFieldWidgetsCommand extends ActiveOrSuspendedWorkspacesMigr
     // Group fields by objectMetadataId
     const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
 
+    // Map morphId → all field IDs sharing that morphId (for dedup)
+    const fieldIdsByMorphId = new Map<string, string[]>();
+
     for (const field of Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
     )) {
@@ -202,12 +205,23 @@ export class BackfillFieldWidgetsCommand extends ActiveOrSuspendedWorkspacesMigr
 
       list.push(field);
       fieldsByObjectId.set(field.objectMetadataId, list);
+
+      if (
+        field.type === FieldMetadataType.MORPH_RELATION &&
+        isDefined(field.morphId)
+      ) {
+        const morphFieldIds = fieldIdsByMorphId.get(field.morphId) ?? [];
+
+        morphFieldIds.push(field.id);
+        fieldIdsByMorphId.set(field.morphId, morphFieldIds);
+      }
     }
 
     const now = new Date().toISOString();
 
     const standardWidgetsToCreate: FlatPageLayoutWidget[] = [];
     const customWidgetsToCreate: FlatPageLayoutWidget[] = [];
+    const processedMorphIds = new Set<string>();
 
     for (const object of objectById.values()) {
       const pageLayout = recordPageLayoutByObjectId.get(object.id);
@@ -257,6 +271,28 @@ export class BackfillFieldWidgetsCommand extends ActiveOrSuspendedWorkspacesMigr
           if (!isRelationTargetAvailable(targetObject)) {
             continue;
           }
+        }
+
+        // For morph relations, skip if any sibling field (same morphId)
+        // already has a widget or was already processed in this run
+        if (
+          field.type === FieldMetadataType.MORPH_RELATION &&
+          isDefined(field.morphId)
+        ) {
+          if (processedMorphIds.has(field.morphId)) {
+            continue;
+          }
+
+          const siblingFieldIds = fieldIdsByMorphId.get(field.morphId) ?? [];
+          const alreadyHasWidget = siblingFieldIds.some((id) =>
+            existingFieldWidgetFieldIds.has(id),
+          );
+
+          if (alreadyHasWidget) {
+            continue;
+          }
+
+          processedMorphIds.add(field.morphId);
         }
 
         if (existingFieldWidgetFieldIds.has(field.id)) {
