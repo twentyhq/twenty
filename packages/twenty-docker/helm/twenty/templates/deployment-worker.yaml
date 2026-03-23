@@ -94,17 +94,6 @@ spec:
             {{- if $storageEnv }}
             {{- $storageEnv | nindent 12 }}
             {{- end }}
-            {{- range $key, $value := .Values.worker.extraEnv }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- range $key, $ref := .Values.worker.extraEnvSecrets }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ $ref.secretName }}
-                  key: {{ $ref.key }}
-            {{- end }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
           stdin: {{ default true .Values.worker.stdin }}

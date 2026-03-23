@@ -213,17 +213,6 @@ spec:
             {{- with .Values.server.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{- range $key, $value := .Values.server.extraEnv }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- range $key, $ref := .Values.server.extraEnvSecrets }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ $ref.secretName }}
-                  key: {{ $ref.key }}
-            {{- end }}
           lifecycle:
             preStop:
               exec:

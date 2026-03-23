@@ -14,14 +14,18 @@ server:
     SENTRY_FRONT_DSN: https://660cb58838f1dbf2ee91c1290136056e@o4510840638930944.ingest.us.sentry.io/4510840650989568
     NODE_OPTIONS: "--max-old-space-size=1536"
   extraEnv:
-    LOGIC_FUNCTION_TYPE: LOCAL
-  extraEnvSecrets:
-    CONVOSO_API_TOKEN:
-      secretName: convoso-credentials
-      key: apiToken
-    DEEPGRAM_API_KEY:
-      secretName: deepgram-credentials
-      key: apiKey
+    - name: LOGIC_FUNCTION_TYPE
+      value: LOCAL
+    - name: CONVOSO_API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: convoso-credentials
+          key: apiToken
+    - name: DEEPGRAM_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: deepgram-credentials
+          key: apiKey
   resources:
     requests:
       cpu: 100m
@@ -67,14 +71,18 @@ worker:
     repository: 189365142140.dkr.ecr.us-east-1.amazonaws.com/twenty-crm
     tag: latest
   extraEnv:
-    LOGIC_FUNCTION_TYPE: LOCAL
-  extraEnvSecrets:
-    CONVOSO_API_TOKEN:
-      secretName: convoso-credentials
-      key: apiToken
-    DEEPGRAM_API_KEY:
-      secretName: deepgram-credentials
-      key: apiKey
+    - name: LOGIC_FUNCTION_TYPE
+      value: LOCAL
+    - name: CONVOSO_API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: convoso-credentials
+          key: apiToken
+    - name: DEEPGRAM_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: deepgram-credentials
+          key: apiKey
   resources:
     requests:
       cpu: 100m
