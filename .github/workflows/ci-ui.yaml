@@ -79,6 +79,8 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Build dependencies
+        run: npx nx build twenty-shared
       - name: Download storybook build
         uses: actions/download-artifact@v4
         with:
