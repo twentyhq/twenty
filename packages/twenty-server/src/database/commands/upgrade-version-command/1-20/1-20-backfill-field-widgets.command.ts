@@ -1,7 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  FieldMetadataType,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -179,7 +183,11 @@ export class BackfillFieldWidgetsCommand extends ActiveOrSuspendedWorkspacesMigr
     for (const tab of Object.values(
       flatPageLayoutTabMaps.byUniversalIdentifier,
     )) {
-      if (isDefined(tab) && tab.position === HOME_TAB_POSITION) {
+      if (
+        isDefined(tab) &&
+        tab.position === HOME_TAB_POSITION &&
+        tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+      ) {
         homeTabByPageLayoutId.set(tab.pageLayoutId, {
           id: tab.id,
           universalIdentifier: tab.universalIdentifier,
