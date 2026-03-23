@@ -279,6 +279,7 @@
     },
     "lingui:extract": {
       "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "lingui extract --overwrite --clean"
