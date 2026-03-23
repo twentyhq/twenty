@@ -16,6 +16,7 @@ const INLINE_SAFE_MIME_TYPES = new Set([
   'video/mp4',
   'video/webm',
   'video/ogg',
+  'image/x-icon',
 ]);
 
 export const setFileResponseHeaders = (res: Response, mimeType: string) => {

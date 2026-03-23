@@ -70,7 +70,7 @@ export class FileService {
 
     return {
       stream,
-      mimeType: file.mimeType ?? 'application/octet-stream',
+      mimeType: file.mimeType,
     };
   }
 
@@ -107,7 +107,7 @@ export class FileService {
 
     return {
       stream,
-      mimeType: file.mimeType ?? 'application/octet-stream',
+      mimeType: file.mimeType,
     };
   }
 
