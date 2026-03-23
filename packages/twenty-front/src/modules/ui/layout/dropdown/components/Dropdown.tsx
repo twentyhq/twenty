@@ -46,7 +46,6 @@ const StyledClickableComponent = styled.div<{
 
 export type DropdownProps = {
   clickableComponent?: ReactNode;
-  clickableComponentClassName?: string;
   clickableComponentWidth?: Width;
   dropdownComponents: ReactNode;
   hotkey?: {
@@ -83,7 +82,6 @@ export const Dropdown = ({
   onClickOutside,
   onClose,
   onOpen,
-  clickableComponentClassName,
   clickableComponentWidth = 'auto',
   excludedClickOutsideIds,
   isDropdownInModal = false,
@@ -200,7 +198,6 @@ export const Dropdown = ({
       {isDefined(clickableComponent) ? (
         <StyledClickableComponent
           ref={refs.setReference}
-          className={clickableComponentClassName}
           onClick={handleClickableComponentClick}
           aria-controls={`${dropdownId}-options`}
           aria-expanded={isDropdownOpen}

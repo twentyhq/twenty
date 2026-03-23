@@ -1,4 +1,3 @@
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -11,36 +10,31 @@ export const StyledContainer = styled.div<{
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   gap: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? themeCssVariables.spacing[1] : '0'};
   height: ${themeCssVariables.spacing[5]};
-  justify-content: flex-start;
-  max-width: 100%;
   min-width: 0;
   padding: calc(${themeCssVariables.spacing[1]} - 1px);
-  width: fit-content;
+  width: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded ? '100%' : 'auto'};
   &:hover {
     background-color: ${themeCssVariables.background.transparent.lighter};
     border: 1px solid ${themeCssVariables.border.color.medium};
   }
 `;
 
+export const StyledLabelWrapper = styled.div`
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+`;
+
 export const StyledLabel = styled.div`
-  display: block;
   font-weight: ${themeCssVariables.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 100%;
-`;
-
-export const StyledLabelCollapseWrapper = styled(
-  NavigationDrawerAnimatedCollapseWrapper,
-)`
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
 `;
 
 const StyledIconChevronDownContainer = styled.div<{ disabled?: boolean }>`

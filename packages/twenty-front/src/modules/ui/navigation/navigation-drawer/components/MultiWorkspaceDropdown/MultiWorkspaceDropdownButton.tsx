@@ -1,4 +1,3 @@
-import { css } from '@linaria/core';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MultiWorkspaceDropdownClickableComponent } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownClickableComponent';
 import { MultiWorkspaceDropdownDefaultComponents } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents';
@@ -8,13 +7,6 @@ import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/c
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMemo } from 'react';
-
-const dropdownClickableComponentClassName = css`
-  display: flex;
-  flex: 0 1 auto;
-  max-width: 100%;
-  min-width: 0;
-`;
 
 export const MultiWorkspaceDropdownButton = () => {
   const [multiWorkspaceDropdown, setMultiWorkspaceDropdown] = useAtomState(
@@ -37,7 +29,7 @@ export const MultiWorkspaceDropdownButton = () => {
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
       dropdownOffset={{ y: -30, x: -5 }}
       clickableComponent={<MultiWorkspaceDropdownClickableComponent />}
-      clickableComponentClassName={dropdownClickableComponentClassName}
+      clickableComponentWidth="100%"
       dropdownComponents={<DropdownComponents />}
       onClose={() => {
         setMultiWorkspaceDropdown('default');
