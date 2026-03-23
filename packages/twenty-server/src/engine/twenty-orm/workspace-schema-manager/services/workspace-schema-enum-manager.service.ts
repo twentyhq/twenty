@@ -360,8 +360,6 @@ export class WorkspaceSchemaEnumManagerService {
     caseStatements: string;
     mappedValuesCondition: string;
   }) {
-    // Removed values (not in caseStatements) produce NULL via the implicit
-    // CASE default, then get stripped by the FILTER clause.
     return `
           UPDATE ${escapedSchema}.${escapedTable}
           SET ${escapedNewColumn} = (
