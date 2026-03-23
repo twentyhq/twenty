@@ -1,8 +1,11 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  GRID_POSITIONS,
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -18,6 +21,15 @@ const WORKFLOW_RUN_PAGE_TABS = {
       fields: {
         universalIdentifier: '20202020-ac08-4008-8008-a0bcf10a8811',
         ...WIDGET_PROPS.fields,
+      },
+      workflow: {
+        universalIdentifier: '20202020-ac08-4008-8008-a0bcf10a8813',
+        title: 'Workflow',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.workflowRun.fields.workflow.universalIdentifier,
       },
     },
   },
