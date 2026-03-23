@@ -19,7 +19,7 @@ export default defineView({
   name: 'Normalized Book Rows',
   objectUniversalIdentifier: NORMALIZED_BOOK_ROW_OBJECT_ID,
   icon: 'IconTable',
-  position: 1,
+  position: 4,
   fields: [
     {
       universalIdentifier: '20a1b2c3-0001-4000-8000-000000000001',

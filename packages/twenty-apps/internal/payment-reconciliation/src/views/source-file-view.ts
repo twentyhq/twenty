@@ -17,7 +17,7 @@ export default defineView({
   name: 'Source Files',
   objectUniversalIdentifier: SOURCE_FILE_OBJECT_ID,
   icon: 'IconFileUpload',
-  position: 0,
+  position: 1,
   fields: [
     {
       universalIdentifier: '10a1b2c3-0001-4000-8000-000000000001',

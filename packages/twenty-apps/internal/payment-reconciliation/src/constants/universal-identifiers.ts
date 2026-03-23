@@ -156,6 +156,10 @@ export const MR_CANCEL_PREVIOUS_POLICY_ID_FIELD_ID =
   'a9479121-91fb-4ecf-8104-4124d6e0d7dd';
 export const MR_SUGGESTED_POLICY_NUMBER_FIELD_ID =
   '25be0844-f881-48c6-8442-2ea379d6a31e';
+export const MR_CRM_POLICY_LINK_FIELD_ID =
+  'a3f7b2c8-4d1e-4a5f-9b6c-8e0d2a3f5c1b';
+export const MR_FIELD_DIFFS_FIELD_ID =
+  'e4a1b5c9-2d3f-4e6a-8b7c-1f0d9a8e7c6b';
 
 // MatchOverride fields
 export const MO_NAME_FIELD_ID = 'a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
@@ -255,6 +259,10 @@ export const SOURCE_FILE_ON_RECONCILIATION_RUN_ID =
   '962070fc-ec84-4b7e-a2a2-02dcba63eb20';
 export const RECONCILIATION_RUNS_ON_SOURCE_FILE_ID =
   'ee6e6fca-9e57-4fa2-b360-d8ce8f79a774';
+export const RECONCILIATION_RUN_ON_MATCH_RESULT_ID =
+  'c8d4e2f6-1a3b-4c5d-8e7f-9b0a1c2d3e4f';
+export const MATCH_RESULTS_ON_RECONCILIATION_RUN_ID =
+  'd9e5f3a7-2b4c-4d6e-9f8a-0c1b2d3e4f5a';
 
 // Logic functions
 export const PARSE_BOB_LOGIC_FUNCTION_ID =
@@ -269,10 +277,20 @@ export const PARSE_ON_PENDING_LOGIC_FUNCTION_ID =
   'a8c4e1d6-3b7f-4e2a-9d5c-0f6b8a1e4c3d';
 export const RECOVER_STUCK_PARSING_LOGIC_FUNCTION_ID =
   '858df703-d78e-4993-803a-c46f4aa02b16';
+export const MATCH_ON_COMPLETED_LOGIC_FUNCTION_ID =
+  'f9ff5bb9-0093-4df7-a144-c30fd609d2b7';
+export const APPLY_ON_STATUS_LOGIC_FUNCTION_ID =
+  'b301b63f-038f-4a21-8614-76b03d74c9a9';
+export const RECOVER_STUCK_MATCHING_LOGIC_FUNCTION_ID =
+  '370645e3-01b6-46fb-9e8c-8939ace861b0';
+export const RECOVER_STUCK_APPLYING_LOGIC_FUNCTION_ID =
+  '95353f99-26a3-436c-bc86-84d75f352fd0';
 
 // Front components
 export const SOURCE_FILE_ACTIONS_FRONT_COMPONENT_ID =
   'b5a2c8d1-3e7f-4d6a-9b4c-8e1f0a2d5c7b';
+export const MATCH_RESULT_DIFF_VIEWER_FRONT_COMPONENT_ID =
+  'c6b3d9e2-4f8a-4e7b-ac5d-9f2e1b0a3d8c';
 
 // Page layouts
 export const SOURCE_FILE_PAGE_LAYOUT_ID =
@@ -289,6 +307,22 @@ export const SOURCE_FILE_PAGE_LAYOUT_TIMELINE_TAB_ID =
   'b3e1d7f5-2c4a-4b9e-8d6f-1a0c3e5b7d2f';
 export const SOURCE_FILE_PAGE_LAYOUT_TIMELINE_WIDGET_ID =
   'e8d4a2f6-7b3c-4e1a-9f5d-0c6b8a3e2d1f';
+
+// MatchResult page layout
+export const MATCH_RESULT_PAGE_LAYOUT_ID =
+  'f1a2b3c4-5d6e-4f7a-8b9c-0d1e2f3a4b5d';
+export const MATCH_RESULT_PAGE_LAYOUT_SUMMARY_TAB_ID =
+  'a2b3c4d5-6e7f-4a8b-9c0d-1e2f3a4b5c6d';
+export const MATCH_RESULT_PAGE_LAYOUT_SUMMARY_FIELDS_WIDGET_ID =
+  'b3c4d5e6-7f8a-4b9c-ad1e-2f3a4b5c6d7e';
+export const MATCH_RESULT_PAGE_LAYOUT_DIFF_TAB_ID =
+  'c4d5e6f7-8a9b-4cad-be2f-3a4b5c6d7e8f';
+export const MATCH_RESULT_PAGE_LAYOUT_DIFF_WIDGET_ID =
+  'd5e6f7a8-9bac-4dbe-8f3a-4b5c6d7e8f9a';
+export const MATCH_RESULT_PAGE_LAYOUT_TIMELINE_TAB_ID =
+  'e6f7a8b9-acbd-4ecf-9a4b-5c6d7e8f9a0b';
+export const MATCH_RESULT_PAGE_LAYOUT_TIMELINE_WIDGET_ID =
+  'f7a8b9ca-bdce-4fda-ab5c-6d7e8f9a0b1c';
 
 // Views
 export const SOURCE_FILE_VIEW_ID =
@@ -393,10 +427,6 @@ export const MR_STATUS_REJECTED_ID =
 // MatchResult writeBackStatus SELECT options
 export const MR_WB_PENDING_ID =
   '0ba90845-a6c8-4db5-8217-88562ca8adfa';
-export const MR_WB_APPROVED_ID =
-  '7fb3f1ad-9343-490f-be35-3ffeebd84592';
-export const MR_WB_REJECTED_ID =
-  '1010fbbe-56f4-47dd-83bc-9bab7ac2cfd5';
 export const MR_WB_APPLIED_ID =
   '282df906-9019-4d88-a70c-a9f049611113';
 export const MR_WB_FAILED_ID =

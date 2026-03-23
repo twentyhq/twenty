@@ -11,6 +11,7 @@ import {
   RR_MISSING_FROM_BOB_FIELD_ID,
   RR_DISCREPANCIES_FOUND_FIELD_ID,
   RR_RUN_STATUS_FIELD_ID,
+  MATCH_RESULTS_ON_RECONCILIATION_RUN_ID,
   SOURCE_FILE_ON_RECONCILIATION_RUN_ID,
 } from 'src/constants/universal-identifiers';
 
@@ -19,7 +20,7 @@ export default defineView({
   name: 'Reconciliation Runs',
   objectUniversalIdentifier: RECONCILIATION_RUN_OBJECT_ID,
   icon: 'IconPlayerPlay',
-  position: 7,
+  position: 0,
   fields: [
     {
       universalIdentifier: '50385180-19b0-453e-ba8e-f01744f7db2d',
@@ -78,11 +79,19 @@ export default defineView({
       position: 7,
     },
     {
+      universalIdentifier: 'a7c3e1f5-8b2d-4a6e-9f4c-0d1b3e5a7c2f',
+      fieldMetadataUniversalIdentifier:
+        MATCH_RESULTS_ON_RECONCILIATION_RUN_ID,
+      isVisible: true,
+      size: 12,
+      position: 8,
+    },
+    {
       universalIdentifier: 'd1ee1c44-831c-4bb4-9fe1-082674e03976',
       fieldMetadataUniversalIdentifier: SOURCE_FILE_ON_RECONCILIATION_RUN_ID,
       isVisible: true,
       size: 12,
-      position: 8,
+      position: 9,
     },
   ],
 });

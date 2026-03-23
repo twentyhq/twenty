@@ -66,6 +66,8 @@ worker:
   image:
     repository: 189365142140.dkr.ecr.us-east-1.amazonaws.com/twenty-crm
     tag: latest
+  extraEnv:
+    LOGIC_FUNCTION_TYPE: LOCAL
   extraEnvSecrets:
     CONVOSO_API_TOKEN:
       secretName: convoso-credentials

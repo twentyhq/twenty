@@ -33,16 +33,16 @@ import {
   MR_METHOD_MISSING_FROM_BOB_ID,
   MR_METHOD_POLICY_NUMBER_DISCOVERY_ID,
   MR_SUGGESTED_POLICY_NUMBER_FIELD_ID,
+  MR_CRM_POLICY_LINK_FIELD_ID,
   MR_STATUS_AUTO_MATCHED_ID,
   MR_STATUS_NEEDS_REVIEW_ID,
   MR_STATUS_UNMATCHED_ID,
   MR_STATUS_CONFIRMED_ID,
   MR_STATUS_REJECTED_ID,
   MR_WB_PENDING_ID,
-  MR_WB_APPROVED_ID,
-  MR_WB_REJECTED_ID,
   MR_WB_APPLIED_ID,
   MR_WB_FAILED_ID,
+  MR_FIELD_DIFFS_FIELD_ID,
 } from 'src/constants/universal-identifiers';
 
 export default defineObject({
@@ -323,31 +323,17 @@ export default defineObject({
           color: 'orange',
         },
         {
-          id: MR_WB_APPROVED_ID,
-          value: 'APPROVED',
-          label: 'Approved',
-          position: 1,
-          color: 'blue',
-        },
-        {
-          id: MR_WB_REJECTED_ID,
-          value: 'REJECTED',
-          label: 'Rejected',
-          position: 2,
-          color: 'gray',
-        },
-        {
           id: MR_WB_APPLIED_ID,
           value: 'APPLIED',
           label: 'Applied',
-          position: 3,
+          position: 1,
           color: 'green',
         },
         {
           id: MR_WB_FAILED_ID,
           value: 'FAILED',
           label: 'Failed',
-          position: 4,
+          position: 2,
           color: 'red',
         },
       ],
@@ -368,6 +354,23 @@ export default defineObject({
       description:
         'Discovered Ambetter policy number from BOB for SUBMITTED/PENDING policies or those with non-U policy numbers',
       icon: 'IconBulb',
+    },
+    {
+      universalIdentifier: MR_CRM_POLICY_LINK_FIELD_ID,
+      type: FieldType.LINKS,
+      name: 'crmPolicyLink',
+      label: 'CRM Policy',
+      description: 'Clickable link to the matched CRM Policy record',
+      icon: 'IconExternalLink',
+    },
+    {
+      universalIdentifier: MR_FIELD_DIFFS_FIELD_ID,
+      type: FieldType.RAW_JSON,
+      name: 'fieldDiffs',
+      label: 'Field Diffs',
+      description:
+        'JSON array of field-level differences between BOB and CRM data',
+      icon: 'IconArrowsDiff',
     },
   ],
 });

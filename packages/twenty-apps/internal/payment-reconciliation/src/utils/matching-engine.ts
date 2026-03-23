@@ -46,6 +46,10 @@ export type CrmPolicy = {
   leadDob: string | null;
   agentName: string | null;
   agentNpn: string | null;
+  planIdentifier: string | null;
+  leadPhone: string | null;
+  leadEmail: string | null;
+  leadId: string | null;
 };
 
 export type Override = {
@@ -61,6 +65,8 @@ export type MatchingConfig = {
   autoRejectThreshold: number;
   dateToleranceDays: number;
   nameMatchThreshold: number;
+  /** When true, detect active CRM policies missing from the BOB (2-way reconciliation). Default: false (1-way). */
+  enableMissingFromBob: boolean;
 };
 
 export const DEFAULT_MATCHING_CONFIG: MatchingConfig = {
@@ -78,6 +84,7 @@ export const DEFAULT_MATCHING_CONFIG: MatchingConfig = {
   autoRejectThreshold: 30,
   dateToleranceDays: 30,
   nameMatchThreshold: 0.88,
+  enableMissingFromBob: false,
 };
 
 // --- Fuzzy matching helpers ---

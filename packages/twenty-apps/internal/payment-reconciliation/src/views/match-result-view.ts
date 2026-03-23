@@ -1,9 +1,11 @@
-import { defineView } from 'twenty-sdk';
+import { AggregateOperations, defineView } from 'twenty-sdk';
+import { ViewType } from 'twenty-shared/types';
 
 import {
   MATCH_RESULT_OBJECT_ID,
   MATCH_RESULT_VIEW_ID,
   MR_CONFIDENCE_FIELD_ID,
+  MR_CRM_POLICY_LINK_FIELD_ID,
   MR_CRM_POLICY_NUMBER_FIELD_ID,
   MR_DERIVED_STATUS_FIELD_ID,
   MR_HAS_DISCREPANCY_FIELD_ID,
@@ -12,7 +14,9 @@ import {
   MR_NAME_FIELD_ID,
   MR_SUGGESTED_POLICY_NUMBER_FIELD_ID,
   MR_WRITE_BACK_STATUS_FIELD_ID,
+  MR_FIELD_DIFFS_FIELD_ID,
   NORMALIZED_BOOK_ROW_ON_MATCH_RESULT_ID,
+  RECONCILIATION_RUN_ON_MATCH_RESULT_ID,
   SOURCE_FILE_ON_MATCH_RESULT_ID,
 } from 'src/constants/universal-identifiers';
 
@@ -20,8 +24,11 @@ export default defineView({
   universalIdentifier: MATCH_RESULT_VIEW_ID,
   name: 'Match Results',
   objectUniversalIdentifier: MATCH_RESULT_OBJECT_ID,
+  type: ViewType.KANBAN,
+  mainGroupByFieldMetadataUniversalIdentifier: MR_MATCH_STATUS_FIELD_ID,
+  kanbanAggregateOperation: AggregateOperations.COUNT,
   icon: 'IconLink',
-  position: 4,
+  position: 3,
   fields: [
     {
       universalIdentifier: '50a1b2c3-0001-4000-8000-000000000001',
@@ -66,39 +73,60 @@ export default defineView({
       position: 5,
     },
     {
+      universalIdentifier: '50a1b2c3-0001-4000-8000-000000000012',
+      fieldMetadataUniversalIdentifier: MR_CRM_POLICY_LINK_FIELD_ID,
+      isVisible: true,
+      size: 10,
+      position: 6,
+    },
+    {
       universalIdentifier: '50a1b2c3-0001-4000-8000-000000000008',
       fieldMetadataUniversalIdentifier: MR_DERIVED_STATUS_FIELD_ID,
       isVisible: true,
       size: 12,
-      position: 6,
+      position: 7,
     },
     {
       universalIdentifier: '50a1b2c3-0001-4000-8000-000000000009',
       fieldMetadataUniversalIdentifier: MR_HAS_DISCREPANCY_FIELD_ID,
       isVisible: true,
       size: 8,
-      position: 7,
+      position: 8,
     },
     {
       universalIdentifier: '50a1b2c3-0001-4000-8000-000000000010',
       fieldMetadataUniversalIdentifier: MR_WRITE_BACK_STATUS_FIELD_ID,
       isVisible: true,
       size: 10,
-      position: 8,
+      position: 9,
     },
     {
       universalIdentifier: '50a1b2c3-0001-4000-8000-000000000011',
       fieldMetadataUniversalIdentifier: MR_SUGGESTED_POLICY_NUMBER_FIELD_ID,
       isVisible: true,
       size: 10,
-      position: 9,
+      position: 10,
+    },
+    {
+      universalIdentifier: '50a1b2c3-0001-4000-8000-000000000013',
+      fieldMetadataUniversalIdentifier: RECONCILIATION_RUN_ON_MATCH_RESULT_ID,
+      isVisible: true,
+      size: 12,
+      position: 11,
     },
     {
       universalIdentifier: '50a1b2c3-0001-4000-8000-000000000007',
       fieldMetadataUniversalIdentifier: SOURCE_FILE_ON_MATCH_RESULT_ID,
       isVisible: true,
       size: 12,
-      position: 10,
+      position: 12,
+    },
+    {
+      universalIdentifier: '50a1b2c3-0001-4000-8000-000000000014',
+      fieldMetadataUniversalIdentifier: MR_FIELD_DIFFS_FIELD_ID,
+      isVisible: false,
+      size: 12,
+      position: 13,
     },
   ],
 });
