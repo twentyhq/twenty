@@ -168,6 +168,7 @@ export const useSaveLayoutCustomization = () => {
     saveFieldsWidgetGroups,
     exitLayoutCustomizationMode,
     enqueueErrorSnackBar,
+    isRecordPageLayoutEditingEnabled,
     store,
     t,
   ]);

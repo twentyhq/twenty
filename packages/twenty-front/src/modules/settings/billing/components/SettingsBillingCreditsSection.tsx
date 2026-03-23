@@ -12,13 +12,13 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatToShortNumber, getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, HorizontalSeparator, IconChartBar } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   FeatureFlagKey,
@@ -37,7 +37,6 @@ export const SettingsBillingCreditsSection = ({
   >;
 }) => {
   const { theme } = useContext(ThemeContext);
-  const navigate = useNavigate();
   const subscriptionStatus = useSubscriptionStatus();
   const { formatNumber } = useNumberFormat();
 
@@ -147,12 +146,13 @@ export const SettingsBillingCreditsSection = ({
 
         {isUsageAnalyticsEnabled && (
           <StyledCreditUsageFooterActions>
-            <Button
-              Icon={IconChartBar}
-              title={t`View usage`}
-              variant="secondary"
-              onClick={() => navigate(getSettingsPath(SettingsPath.Usage))}
-            />
+            <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
+              <Button
+                Icon={IconChartBar}
+                title={t`View usage`}
+                variant="secondary"
+              />
+            </UndecoratedLink>
           </StyledCreditUsageFooterActions>
         )}
       </Section>
