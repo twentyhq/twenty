@@ -30,7 +30,6 @@ COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
-RUN npx nx build twenty-shared
 RUN npx nx run twenty-server:lingui:compile && \
     npx nx run twenty-emails:lingui:compile
 
@@ -47,7 +46,6 @@ COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
-RUN npx nx build twenty-shared
 RUN npx nx run twenty-front:lingui:compile
 RUN npx nx build twenty-front
 
