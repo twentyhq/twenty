@@ -144,7 +144,7 @@ echo ""
 echo "--- Critical: Sidebar-Based Default Landing Page ---"
 check_file_contains \
   "packages/twenty-front/src/modules/navigation/hooks/useDefaultHomePagePath.ts" \
-  "navigationMenuItemsState" \
+  "navigationMenuItemsSelector" \
   "Default landing page should use workspace sidebar nav items as source of truth"
 check_file_contains \
   "packages/twenty-front/src/modules/navigation/hooks/useDefaultHomePagePath.ts" \
@@ -209,27 +209,27 @@ check_file_contains \
   "OmniaMemberWorkspaceNavigationMenuItems" \
   "Members must use the fixed Omnia workspace section instead of the editable workspace tree"
 check_file_contains \
-  "packages/twenty-front/src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx" \
+  "packages/twenty-front/src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx" \
   "canEditSidebar" \
   "Workspace sidebar editing must stay gated behind LAYOUTS permission"
 check_file_contains \
-  "packages/twenty-front/src/modules/navigation-menu-item/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts" \
+  "packages/twenty-front/src/modules/navigation-menu-item/common/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts" \
   "CoreObjectNameSingular.Task" \
   "Omnia member workspace list must include Tasks"
 check_file_contains \
-  "packages/twenty-front/src/modules/navigation-menu-item/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts" \
+  "packages/twenty-front/src/modules/navigation-menu-item/common/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts" \
   "'policy'" \
   "Omnia member workspace list must include Policies"
 check_file_contains \
-  "packages/twenty-front/src/modules/navigation-menu-item/components/OmniaMemberWorkspaceNavigationMenuItems.tsx" \
+  "packages/twenty-front/src/modules/navigation-menu-item/display/dnd/components/OmniaMemberWorkspaceNavigationMenuItems.tsx" \
   "ignoreShowInSidebar" \
   "Curated member workspace section must bypass upstream showInSidebar filtering for fixed items"
 check_file_contains \
-  "packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx" \
-  "shouldDisplayObjectInOpenedSectionForMemberWorkspace" \
+  "packages/twenty-front/src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx" \
+  "isOmniaMemberWorkspaceObject" \
   "Opened section must avoid duplicating fixed member workspace items"
 check_file_exists \
-  "packages/twenty-front/src/modules/navigation-menu-item/utils/__tests__/getOmniaMemberWorkspaceObjectMetadataItems.test.ts" \
+  "packages/twenty-front/src/modules/navigation-menu-item/common/utils/__tests__/getOmniaMemberWorkspaceObjectMetadataItems.test.ts" \
   "Regression test for Omnia member workspace ordering"
 check_file_contains \
   "packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx" \
@@ -481,9 +481,9 @@ check_file_contains \
   "targetScope: RowLevelPermissionPredicateScope.WRITE" \
   "Record validation must always enforce WRITE-scoped predicates"
 check_file_contains \
-  "packages/twenty-server/src/engine/workspace-event-emitter/workspace-event-emitter.service.ts" \
+  "packages/twenty-server/src/engine/subscriptions/object-record-event/object-record-event-publisher.ts" \
   "targetScope: RowLevelPermissionPredicateScope.READ" \
-  "Workspace event subscriptions must stay READ-scoped"
+  "Object record event subscriptions must stay READ-scoped"
 check_file_contains \
   "packages/twenty-server/src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service.ts" \
   "validateScopedPredicateTree" \
@@ -892,10 +892,10 @@ check_file_not_contains \
   "packages/twenty-front/src/modules/apollo/components/ApolloProvider.tsx" \
   "useApolloClientCachePersist" \
   "ApolloProvider must NOT use cache persist (render-blocking, no timeout)"
-check_file_not_contains \
+check_file_contains \
   "packages/twenty-front/src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx" \
-  "useIsFieldRequired" \
-  "RecordInlineCellDisplayMode must NOT call useIsFieldRequired (900+ jotai subs in tables)"
+  "RequiredEmptyField" \
+  "RecordInlineCellDisplayMode must isolate useIsFieldRequired in RequiredEmptyField sub-component (900+ jotai subs in tables)"
 check_file_contains \
   "packages/twenty-front/src/modules/object-record/hooks/useObjectPermissions.ts" \
   "useMemo" \
@@ -909,7 +909,7 @@ check_file_contains \
   "fetchPolicy: 'no-cache'" \
   "Offset fetch must use no-cache (record table reads from jotai, Apollo 3 has no cache GC)"
 check_file_contains \
-  "packages/twenty-front/src/modules/object-record/record-index/hooks/useRecordIndexTableFetchMore.ts" \
+  "packages/twenty-front/src/modules/object-record/record-index/hooks/useRecordIndexTableLazyQuery.ts" \
   "fetchPolicy: 'no-cache'" \
   "Initial table fetch must use no-cache (record table reads from jotai, Apollo 3 has no cache GC)"
 check_file_not_contains \
@@ -965,7 +965,7 @@ check_file_exists \
   "Compressed localStorage adapter using lz-string"
 check_file_contains \
   "packages/twenty-front/src/modules/metadata-store/hooks/useLoadMinimalMetadata.ts" \
-  "entry.status === 'empty'" \
+  ".status === 'empty'" \
   "useLoadMinimalMetadata must treat missing hashes as stale when local store is empty (Redis flush fix)"
 check_file_contains \
   "packages/twenty-server/src/engine/metadata-modules/minimal-metadata/minimal-metadata.service.ts" \

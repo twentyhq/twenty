@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
+import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -9,7 +11,6 @@ import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
 
 @Injectable()
@@ -20,6 +21,8 @@ export class MessagingProcessGroupEmailActionsService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
+    private readonly messageFolderDataAccessService: MessageFolderDataAccessService,
     private readonly messagingDeleteGroupEmailMessagesService: MessagingDeleteGroupEmailMessagesService,
   ) {}
 
@@ -28,24 +31,15 @@ export class MessagingProcessGroupEmailActionsService {
     workspaceId: string,
     pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction,
   ): Promise<void> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    await this.messageChannelDataAccessService.update(
+      workspaceId,
+      { id: messageChannel.id },
+      { pendingGroupEmailsAction },
+    );
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
-
-      await messageChannelRepository.update(
-        { id: messageChannel.id },
-        { pendingGroupEmailsAction },
-      );
-
-      this.logger.debug(
-        `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Marked message channel as pending group emails action: ${pendingGroupEmailsAction}`,
-      );
-    }, authContext);
+    this.logger.debug(
+      `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Marked message channel as pending group emails action: ${pendingGroupEmailsAction}`,
+    );
   }
 
   async processGroupEmailActions(
@@ -74,12 +68,6 @@ export class MessagingProcessGroupEmailActionsService {
       await workspaceDataSource?.transaction(
         async (transactionManager: WorkspaceEntityManager) => {
           try {
-            const messageChannelRepository =
-              await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-                workspaceId,
-                'messageChannel',
-              );
-
             switch (pendingGroupEmailsAction) {
               case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION:
                 await this.handleGroupEmailsDeletion(
@@ -97,7 +85,8 @@ export class MessagingProcessGroupEmailActionsService {
                 break;
             }
 
-            await messageChannelRepository.update(
+            await this.messageChannelDataAccessService.update(
+              workspaceId,
               { id: messageChannel.id },
               {
                 pendingGroupEmailsAction:
@@ -167,27 +156,17 @@ export class MessagingProcessGroupEmailActionsService {
     messageChannelId: string;
     transactionManager: WorkspaceEntityManager;
   }) {
-    const messageChannelRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-        workspaceId,
-        'messageChannel',
-      );
-
-    await messageChannelRepository.update(
-      messageChannelId,
+    await this.messageChannelDataAccessService.update(
+      workspaceId,
+      { id: messageChannelId },
       {
         syncCursor: '',
       },
       transactionManager,
     );
 
-    const messageFolderRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
-        workspaceId,
-        'messageFolder',
-      );
-
-    await messageFolderRepository.update(
+    await this.messageFolderDataAccessService.update(
+      workspaceId,
       { messageChannelId },
       { syncCursor: '' },
       transactionManager,

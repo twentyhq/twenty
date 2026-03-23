@@ -2,16 +2,17 @@ import { renderHook } from '@testing-library/react';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
 describe('useObjectMetadataItemById', () => {
-  const opportunityObjectMetadata = generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'opportunity',
-  );
+  const opportunityObjectMetadata =
+    getTestEnrichedObjectMetadataItemsMock().find(
+      (item) => item.nameSingular === 'opportunity',
+    );
 
   if (!opportunityObjectMetadata) {
     throw new Error('Opportunity object metadata not found');

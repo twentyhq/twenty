@@ -198,8 +198,12 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     args: CommonInput<FindDuplicatesQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<FindDuplicatesQueryArgs>> {
-    const { authContext, flatObjectMetadata, flatFieldMetadataMaps } =
-      queryRunnerContext;
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = queryRunnerContext;
 
     const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
@@ -224,6 +228,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         authContext,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
         shouldBackfillPositionIfUndefined: false,
       }),
     };

@@ -35,6 +35,7 @@ import { cookieStorage } from '~/utils/cookie-storage';
 export const useAgentChat = (
   uiMessages: ExtendedUIMessage[],
   ensureThreadIdForSend: () => Promise<string | null>,
+  onStreamingComplete?: () => void,
 ) => {
   const setTokenPair = useSetAtomState(tokenPairState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
@@ -51,8 +52,7 @@ export const useAgentChat = (
 
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
 
-  const [pendingThreadIdAfterFirstSend, setPendingThreadIdAfterFirstSend] =
-    useState<string | null>(null);
+  const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
 
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
     agentChatUploadedFilesState,
@@ -108,111 +108,109 @@ export const useAgentChat = (
     }
   };
 
-  const { sendMessage, messages, status, error, regenerate, stop, clearError } =
-    useChat({
-      transport: new DefaultChatTransport({
-        api: `${REST_API_BASE_URL}/agent-chat/stream`,
-        headers: () => ({
-          Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
-        }),
-        fetch: async (input, init) => {
-          const response = await fetch(input, init);
-
-          if (response.status === 401) {
-            const retriedResponse = await retryFetchWithRenewedToken(
-              input,
-              init,
-            );
-
-            return retriedResponse ?? response;
-          }
-
-          // For non-2xx responses, parse the error body and throw with the code
-          if (!response.ok) {
-            const errorBody = await response.json().catch(() => ({}));
-            const error = new Error(
-              errorBody.messages?.[0] ||
-                `Request failed with status ${response.status}`,
-            ) as Error & { code?: string };
-
-            if (isDefined(errorBody.code)) {
-              error.code = errorBody.code;
-            }
-            throw error;
-          }
-
-          return response;
-        },
+  const { sendMessage, messages, status, error, regenerate, stop } = useChat({
+    transport: new DefaultChatTransport({
+      api: `${REST_API_BASE_URL}/agent-chat/stream`,
+      headers: () => ({
+        Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
       }),
-      messages: uiMessages,
-      id: `${currentAIChatThread}-${uiMessages.length}`,
-      experimental_throttle: 100,
-      onFinish: ({ message }) => {
-        type UsageMetadata = {
-          inputTokens: number;
-          outputTokens: number;
-          cachedInputTokens: number;
-          inputCredits: number;
-          outputCredits: number;
-          conversationSize: number;
-        };
-        type ModelMetadata = {
-          contextWindowTokens: number;
-        };
-        const metadata = message.metadata as
-          | { usage?: UsageMetadata; model?: ModelMetadata }
-          | undefined;
-        const usage = metadata?.usage;
-        const model = metadata?.model;
+      fetch: async (input, init) => {
+        const response = await fetch(input, init);
 
-        if (isDefined(usage) && isDefined(model)) {
-          setAgentChatUsage((prev) => ({
-            lastMessage: {
-              inputTokens: usage.inputTokens,
-              outputTokens: usage.outputTokens,
-              cachedInputTokens: usage.cachedInputTokens,
-              inputCredits: usage.inputCredits,
-              outputCredits: usage.outputCredits,
-            },
-            conversationSize: usage.conversationSize,
-            contextWindowTokens: model.contextWindowTokens,
-            inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
-            outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
-            inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
-            outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
-          }));
+        if (response.status === 401) {
+          const retriedResponse = await retryFetchWithRenewedToken(input, init);
+
+          return retriedResponse ?? response;
         }
 
-        const titlePart = message.parts.find(
-          (part) => part.type === 'data-thread-title',
-        );
+        // For non-2xx responses, parse the error body and throw with the code
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => ({}));
+          const error = new Error(
+            errorBody.messages?.[0] ||
+              `Request failed with status ${response.status}`,
+          ) as Error & { code?: string };
 
-        setPendingThreadIdAfterFirstSend((pendingId) => {
-          const threadIdForTitle = pendingId ?? currentAIChatThread;
-          if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
-            setCurrentAIChatThreadTitle(titlePart.data.title);
-            if (isDefined(threadIdForTitle)) {
-              const threadRef = apolloClient.cache.identify({
-                __typename: 'AgentChatThread',
-                id: threadIdForTitle,
+          if (isDefined(errorBody.code)) {
+            error.code = errorBody.code;
+          }
+          throw error;
+        }
+
+        return response;
+      },
+    }),
+    messages: uiMessages,
+    id: `${currentAIChatThread}-${uiMessages.length}`,
+    experimental_throttle: 100,
+    onFinish: ({ message }) => {
+      type UsageMetadata = {
+        inputTokens: number;
+        outputTokens: number;
+        cachedInputTokens: number;
+        inputCredits: number;
+        outputCredits: number;
+        conversationSize: number;
+      };
+      type ModelMetadata = {
+        contextWindowTokens: number;
+      };
+      const metadata = message.metadata as
+        | { usage?: UsageMetadata; model?: ModelMetadata }
+        | undefined;
+      const usage = metadata?.usage;
+      const model = metadata?.model;
+
+      if (isDefined(usage) && isDefined(model)) {
+        setAgentChatUsage((prev) => ({
+          lastMessage: {
+            inputTokens: usage.inputTokens,
+            outputTokens: usage.outputTokens,
+            cachedInputTokens: usage.cachedInputTokens,
+            inputCredits: usage.inputCredits,
+            outputCredits: usage.outputCredits,
+          },
+          conversationSize: usage.conversationSize,
+          contextWindowTokens: model.contextWindowTokens,
+          inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
+          outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
+          inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
+          outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
+        }));
+      }
+
+      const titlePart = message.parts.find(
+        (part) => part.type === 'data-thread-title',
+      );
+
+      setPendingThreadIdAfterFirstSend((pendingId) => {
+        const threadIdForTitle = pendingId ?? currentAIChatThread;
+        if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
+          setCurrentAIChatThreadTitle(titlePart.data.title);
+          if (isDefined(threadIdForTitle)) {
+            const threadRef = apolloClient.cache.identify({
+              __typename: 'AgentChatThread',
+              id: threadIdForTitle,
+            });
+            if (isDefined(threadRef)) {
+              apolloClient.cache.modify({
+                id: threadRef,
+                fields: {
+                  title: () => titlePart.data.title,
+                },
               });
-              if (isDefined(threadRef)) {
-                apolloClient.cache.modify({
-                  id: threadRef,
-                  fields: {
-                    title: () => titlePart.data.title,
-                  },
-                });
-              }
             }
           }
-          if (isDefined(pendingId)) {
-            setCurrentAIChatThread(pendingId);
-          }
-          return null;
-        });
-      },
-    });
+        }
+        if (isDefined(pendingId)) {
+          setCurrentAIChatThread(pendingId);
+        }
+        return null;
+      });
+
+      onStreamingComplete?.();
+    },
+  });
 
   const isStreaming = status === 'streaming';
   const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
@@ -277,40 +275,6 @@ export const useAgentChat = (
     setAgentChatDraftsByThreadId,
   ]);
 
-  const handleRetryMessage = useCallback(async () => {
-    const threadId = pendingThreadIdAfterFirstSend ?? currentAIChatThread;
-    const lastMessageId = messages.at(-1)?.id;
-
-    if (
-      !isDefined(threadId) ||
-      threadId === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ||
-      !isDefined(lastMessageId)
-    ) {
-      return;
-    }
-
-    clearError();
-
-    try {
-      await regenerate({
-        messageId: lastMessageId,
-        body: {
-          threadId,
-          browsingContext: getBrowsingContext(),
-        },
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, [
-    clearError,
-    currentAIChatThread,
-    getBrowsingContext,
-    messages,
-    pendingThreadIdAfterFirstSend,
-    regenerate,
-  ]);
-
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handleSendMessage,
@@ -323,9 +287,7 @@ export const useAgentChat = (
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_RETRY_EVENT_NAME,
-    onBrowserEvent: () => {
-      void handleRetryMessage();
-    },
+    onBrowserEvent: regenerate,
   });
 
   return {

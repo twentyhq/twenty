@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
@@ -11,7 +11,7 @@ export type TargetFieldInfo = {
 const findMorphTargetFieldInfo = (
   field: FieldMetadataItem,
   targetObjectMetadataId: string,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): TargetFieldInfo | undefined => {
   if (!isDefined(field.morphRelations) || field.morphRelations.length === 0) {
     return undefined;
@@ -52,7 +52,7 @@ const findMorphTargetFieldInfo = (
 export const findTargetFieldInfo = (
   targetFields: FieldMetadataItem[],
   targetObjectMetadataId: string,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): TargetFieldInfo | undefined => {
   for (const field of targetFields) {
     const morphResult = findMorphTargetFieldInfo(

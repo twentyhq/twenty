@@ -1,26 +1,28 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
-import { type Layout, type Layouts } from 'react-grid-layout';
 import { useCallback } from 'react';
+import { type Layout, type Layouts } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
-import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { convertLayoutsToWidgets } from '@/page-layout/utils/convertLayoutsToWidgets';
 
-export const usePageLayoutHandleLayoutChange = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const usePageLayoutHandleLayoutChange = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
 
   const store = useStore();
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,

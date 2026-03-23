@@ -24,6 +24,9 @@ export class MinimalObjectMetadataDTO {
   @Field({ nullable: true })
   icon?: string;
 
+  @Field({ nullable: true })
+  color?: string;
+
   @Field()
   isCustom: boolean;
 

@@ -36,6 +36,19 @@ type ClickHouseEventRecord = {
   isCustom?: boolean;
 };
 
+type ClickHouseUsageEventRecord = {
+  timestamp: string;
+  userWorkspaceId?: string;
+  resourceType?: string;
+  operationType?: string;
+  quantity?: number;
+  unit?: string;
+  creditsUsedMicro?: number;
+  resourceId?: string;
+  resourceContext?: string;
+  metadata?: Record<string, unknown>;
+};
+
 const ALLOWED_TABLES = Object.values(EventLogTable);
 const MAX_LIMIT = 10000;
 
@@ -43,6 +56,7 @@ const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
   [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
   [EventLogTable.PAGEVIEW]: 'pageview',
   [EventLogTable.OBJECT_EVENT]: 'objectEvent',
+  [EventLogTable.USAGE_EVENT]: 'usageEvent',
 };
 
 @Injectable()
@@ -67,7 +81,11 @@ export class EventLogsService {
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
     const tableName = CLICKHOUSE_TABLE_NAMES[input.table];
     const eventFieldName =
-      input.table === EventLogTable.PAGEVIEW ? 'name' : 'event';
+      input.table === EventLogTable.USAGE_EVENT
+        ? 'resourceType'
+        : input.table === EventLogTable.PAGEVIEW
+          ? 'name'
+          : 'event';
 
     const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
     const params: Record<string, unknown> = { workspaceId };
@@ -178,15 +196,24 @@ export class EventLogsService {
       params.eventTypePattern = `%${filters.eventType.toLowerCase()}%`;
     }
 
+    // TODO: Legacy event tables (workspaceEvent, pageview, objectEvent) use
+    // userId because some actions are logged out. Usage events use
+    // userWorkspaceId directly which is more relevant in a workspace context.
+    // Consider migrating all event tables to userWorkspaceId for consistency.
     if (isDefined(filters.userWorkspaceId)) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { id: filters.userWorkspaceId },
-        select: ['userId'],
-      });
+      if (table === EventLogTable.USAGE_EVENT) {
+        whereClauses.push('"userWorkspaceId" = {userWorkspaceId:String}');
+        params.userWorkspaceId = filters.userWorkspaceId;
+      } else {
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: { id: filters.userWorkspaceId },
+          select: ['userId'],
+        });
 
-      if (isDefined(userWorkspace)) {
-        whereClauses.push('"userId" = {userId:String}');
-        params.userId = userWorkspace.userId;
+        if (isDefined(userWorkspace)) {
+          whereClauses.push('"userId" = {userId:String}');
+          params.userId = userWorkspace.userId;
+        }
       }
     }
 
@@ -222,10 +249,27 @@ export class EventLogsService {
   }
 
   private normalizeRecords(
-    records: ClickHouseEventRecord[],
+    records: ClickHouseEventRecord[] | ClickHouseUsageEventRecord[],
     table: EventLogTable,
   ): EventLogRecord[] {
-    return records.map((record) => {
+    if (table === EventLogTable.USAGE_EVENT) {
+      return (records as ClickHouseUsageEventRecord[]).map((record) => ({
+        event: record.resourceType ?? '',
+        timestamp: new Date(record.timestamp),
+        userId: record.userWorkspaceId,
+        properties: {
+          operationType: record.operationType,
+          quantity: record.quantity,
+          unit: record.unit,
+          creditsUsedMicro: record.creditsUsedMicro,
+          resourceId: record.resourceId,
+          resourceContext: record.resourceContext,
+          ...(record.metadata ?? {}),
+        },
+      }));
+    }
+
+    return (records as ClickHouseEventRecord[]).map((record) => {
       const eventName =
         table === EventLogTable.PAGEVIEW
           ? (record.name ?? '')

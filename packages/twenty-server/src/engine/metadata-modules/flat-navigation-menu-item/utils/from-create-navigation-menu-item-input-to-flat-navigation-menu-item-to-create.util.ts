@@ -25,7 +25,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatViewMaps'
   >): FlatNavigationMenuItem => {
-    const id = uuidv4();
+    const id = createNavigationMenuItemInput.id ?? uuidv4();
     const now = new Date().toISOString();
 
     let position = createNavigationMenuItemInput.position;
@@ -69,6 +69,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
 
     return {
       id,
+      type: createNavigationMenuItemInput.type,
       universalIdentifier: id,
       userWorkspaceId: createNavigationMenuItemInput.userWorkspaceId ?? null,
       targetRecordId: createNavigationMenuItemInput.targetRecordId ?? null,

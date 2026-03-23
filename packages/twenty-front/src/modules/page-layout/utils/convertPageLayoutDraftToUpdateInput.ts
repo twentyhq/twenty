@@ -40,18 +40,25 @@ const buildWidgetPosition = (
 
 export const convertPageLayoutDraftToUpdateInput = (
   pageLayoutDraft: DraftPageLayout,
+  options?: { shouldFilterDynamicRelationWidgets?: boolean },
 ): UpdatePageLayoutWithTabsInput => {
+  const shouldFilter = options?.shouldFilterDynamicRelationWidgets ?? false;
+
   return {
     name: pageLayoutDraft.name,
     type: pageLayoutDraft.type,
     objectMetadataId: pageLayoutDraft.objectMetadataId ?? null,
-    tabs: pageLayoutDraft.tabs.map((tab) => ({
-      id: tab.id,
-      title: tab.title,
-      position: tab.position,
-      widgets: tab.widgets
-        .filter((widget) => !isDynamicRelationWidget(widget))
-        .map((widget, widgetIndex) => ({
+    tabs: pageLayoutDraft.tabs.map((tab) => {
+      const widgets = shouldFilter
+        ? tab.widgets.filter((widget) => !isDynamicRelationWidget(widget))
+        : tab.widgets;
+
+      return {
+        id: tab.id,
+        title: tab.title,
+        position: tab.position,
+        layoutMode: tab.layoutMode,
+        widgets: widgets.map((widget, widgetIndex) => ({
           id: widget.id,
           pageLayoutTabId: widget.pageLayoutTabId,
           title: widget.title,
@@ -70,6 +77,7 @@ export const convertPageLayoutDraftToUpdateInput = (
           ),
           configuration: widget.configuration ?? null,
         })),
-    })),
+      };
+    }),
   };
 };

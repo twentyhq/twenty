@@ -117,6 +117,21 @@ export class ObjectMetadataResolver {
     );
   }
 
+  @ResolveField(() => String, { nullable: true })
+  async color(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @Context() context: I18nContext,
+  ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
+    return resolveObjectMetadataStandardOverride(
+      objectMetadata,
+      'color',
+      context.req.locale,
+      i18n,
+    );
+  }
+
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async createOneObject(

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -9,7 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventFieldDiffValueProps = {
   diffArtificialRecordStoreId: string;
-  mainObjectMetadataItem: ObjectMetadataItem;
+  mainObjectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
 };
 

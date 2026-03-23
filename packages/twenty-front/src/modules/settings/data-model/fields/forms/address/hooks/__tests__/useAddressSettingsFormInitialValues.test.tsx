@@ -1,9 +1,9 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 
 jest.mock('react-hook-form', () => ({
@@ -17,7 +17,7 @@ const mockUseFormContext = useFormContext as jest.MockedFunction<
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
-  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
 });
 
 describe('useAddressSettingsFormInitialValues', () => {
@@ -126,7 +126,7 @@ describe('useAddressSettingsFormInitialValues', () => {
 
   it('should return configured subFields when they exist', () => {
     const newGeneratedMockObjectMetadataItems = addNewAddressToMetadataItems(
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
       'new-field',
       ['addressStreet1', 'addressCity', 'addressCountry'],
     );
@@ -182,7 +182,7 @@ describe('useAddressSettingsFormInitialValues', () => {
     const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
       apolloMocks: [],
       objectMetadataItems: addNewAddressToMetadataItems(
-        generatedMockObjectMetadataItems,
+        getTestEnrichedObjectMetadataItemsMock(),
         'new-field',
         ['addressStreet1', 'addressCity'],
       ),
@@ -205,11 +205,11 @@ describe('useAddressSettingsFormInitialValues', () => {
 });
 
 const addNewAddressToMetadataItems = (
-  generatedMockObjectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   fieldNameId: string,
   subFields: string[],
 ) => {
-  return generatedMockObjectMetadataItems
+  return objectMetadataItems
     .filter((item) => item.nameSingular === 'company')
     .map((item) => {
       const fields = item.fields;

@@ -2,7 +2,6 @@ import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/Pag
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type DropResult } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
@@ -41,53 +40,40 @@ export const useReorderPageLayoutTabs = (pageLayoutIdFromProps?: string) => {
         return false;
       }
 
-      if (
+      const isDropOnMoreButton =
         destination.droppableId ===
-        PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.MORE_BUTTON
-      ) {
-        const maxPosition =
-          sortedTabs.length > 0
-            ? Math.max(...sortedTabs.map((tab) => tab.position))
-            : 0;
+        PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.MORE_BUTTON;
 
-        setPageLayoutDraft((prev) => ({
-          ...prev,
-          tabs: prev.tabs.map((tab) =>
-            tab.id === draggableId
-              ? { ...tab, position: maxPosition + 1 }
-              : tab,
-          ),
-        }));
-
-        return true;
-      }
-
-      const tabsWithoutDragged = sortedTabs.filter(
-        (tab) => tab.id !== draggableId,
-      );
+      const orderedIds = sortedTabs
+        .map((tab) => tab.id)
+        .filter((id) => id !== draggableId);
 
       const movingBetweenDroppables =
         source.droppableId !== destination.droppableId;
 
-      const destinationIndexAdjusted =
-        movingBetweenDroppables && destination.index > source.index
+      const insertIndex = isDropOnMoreButton
+        ? orderedIds.length
+        : movingBetweenDroppables && destination.index > source.index
           ? destination.index - 1
           : destination.index;
 
-      const newPosition = calculateNewPosition({
-        destinationIndex: destinationIndexAdjusted,
-        sourceIndex: source.index,
-        items: tabsWithoutDragged,
-      });
+      orderedIds.splice(insertIndex, 0, draggableId);
+
+      const newPositionById = new Map(
+        orderedIds.map((id, index) => [id, index]),
+      );
 
       setPageLayoutDraft((prev) => ({
         ...prev,
-        tabs: prev.tabs.map((tab) =>
-          tab.id === draggableId ? { ...tab, position: newPosition } : tab,
-        ),
+        tabs: prev.tabs.map((tab) => {
+          const newPosition = newPositionById.get(tab.id);
+          return isDefined(newPosition)
+            ? { ...tab, position: newPosition }
+            : tab;
+        }),
       }));
 
-      return false;
+      return isDropOnMoreButton;
     },
     [currentPageLayout, setPageLayoutDraft],
   );

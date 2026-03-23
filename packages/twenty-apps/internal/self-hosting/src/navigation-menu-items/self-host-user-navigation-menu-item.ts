@@ -1,4 +1,5 @@
 import { defineNavigationMenuItem } from 'twenty-sdk';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers.constant';
 
 export default defineNavigationMenuItem({
@@ -6,6 +7,7 @@ export default defineNavigationMenuItem({
   name: 'Self host user',
   icon: 'IconList',
   position: 1,
+  type: NavigationMenuItemType.VIEW,
   viewUniversalIdentifier:
     UNIVERSAL_IDENTIFIERS.views.selfHostingUserView.universalIdentifier,
 });

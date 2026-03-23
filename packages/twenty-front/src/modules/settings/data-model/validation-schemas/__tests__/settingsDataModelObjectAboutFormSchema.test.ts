@@ -50,6 +50,19 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
         expectedSuccess: true,
       },
     },
+    {
+      title: 'validates input with identical labels but different names',
+      context: {
+        input: {
+          ...validInput,
+          labelSingular: 'Sheep',
+          labelPlural: 'Sheep',
+          nameSingular: 'sheep',
+          namePlural: 'sheeps',
+        },
+        expectedSuccess: true,
+      },
+    },
   ];
 
   const failsValidationTestsUseCase: EachTestingContext<{
@@ -90,12 +103,15 @@ describe('settingsDataModelObjectAboutFormSchema', () => {
       },
     },
     {
-      title: 'fails when singular and plural labels are the same',
+      title:
+        'fails when singular and plural labels are the same and names are the same',
       context: {
         input: {
           ...validInput,
           labelPlural: 'Same Label',
           labelSingular: 'Same Label',
+          namePlural: 'sameName',
+          nameSingular: 'sameName',
         },
         expectedSuccess: false,
       },

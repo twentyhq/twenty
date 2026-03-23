@@ -1,4 +1,5 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-export const isAggregationEnabled = (objectMetadataItem: ObjectMetadataItem) =>
-  !objectMetadataItem.isRemote;
+export const isAggregationEnabled = (
+  objectMetadataItem: EnrichedObjectMetadataItem,
+) => !objectMetadataItem.isRemote;

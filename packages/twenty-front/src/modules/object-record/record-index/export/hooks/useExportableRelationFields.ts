@@ -1,5 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   buildExportableRelationFieldPaths,
   type ExportableRelationFieldPath,
@@ -20,7 +20,7 @@ export const useExportableRelationFields = ({
   objectMetadataItem,
   visibleFieldNames,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   visibleFieldNames: string[];
 }): ExportableRelationField[] => {
   const { objectMetadataItems } = useObjectMetadataItems();

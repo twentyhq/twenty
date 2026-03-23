@@ -1,5 +1,5 @@
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { resolveCreateRecordActionLabels } from '@/command-menu-item/utils/resolveCreateRecordActionLabels';
 
 describe('resolveCreateRecordActionLabels', () => {
@@ -19,7 +19,7 @@ describe('resolveCreateRecordActionLabels', () => {
 
     const objectMetadataItem = {
       labelSingular: 'Policy',
-    } as Pick<ObjectMetadataItem, 'labelSingular'>;
+    } as Pick<EnrichedObjectMetadataItem, 'labelSingular'>;
 
     expect(
       resolveCreateRecordActionLabels(actions, objectMetadataItem),

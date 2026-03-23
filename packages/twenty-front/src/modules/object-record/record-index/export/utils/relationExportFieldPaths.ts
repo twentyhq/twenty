@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -10,7 +10,7 @@ type RelationExportFieldMetadataItem = Pick<
 >;
 
 type RelationExportObjectMetadataItem = Pick<
-  ObjectMetadataItem,
+  EnrichedObjectMetadataItem,
   'fields' | 'id' | 'nameSingular'
 >;
 

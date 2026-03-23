@@ -57,6 +57,8 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     roleTargetUniversalIdentifiers: [],
     objectPermissionIds: [],
     permissionFlagIds: [],
+    objectPermissionUniversalIdentifiers: [],
+    permissionFlagUniversalIdentifiers: [],
     fieldPermissionIds: [],
     rowLevelPermissionPredicateIds: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],

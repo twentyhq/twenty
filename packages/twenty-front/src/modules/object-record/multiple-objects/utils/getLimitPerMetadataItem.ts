@@ -1,8 +1,8 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { capitalize } from 'twenty-shared/utils';
 
 export const getLimitPerMetadataItem = (
-  objectMetadataItems: Pick<ObjectMetadataItem, 'nameSingular'>[],
+  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'nameSingular'>[],
   limit: number,
 ) => {
   return Object.fromEntries(

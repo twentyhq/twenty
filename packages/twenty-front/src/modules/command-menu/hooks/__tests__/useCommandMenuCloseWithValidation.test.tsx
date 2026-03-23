@@ -11,7 +11,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconSearch } from 'twenty-ui/display';
 
 import { useCommandMenuCloseWithValidation } from '@/command-menu/hooks/useCommandMenuCloseWithValidation';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
@@ -51,20 +51,21 @@ describe('useCommandMenuCloseWithValidation', () => {
     basePersonMetadata.fields.find((field) => field.name === 'name') ??
     basePersonMetadata.fields[0];
 
-  const objectMetadataItems = generatedMockObjectMetadataItems.map((item) =>
-    item.nameSingular === 'person'
-      ? {
-          ...item,
-          fields: item.fields.map((field) =>
-            field.id === requiredField.id
-              ? {
-                  ...field,
-                  requiredCondition: { type: 'always' },
-                }
-              : field,
-          ),
-        }
-      : item,
+  const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
+    (item) =>
+      item.nameSingular === 'person'
+        ? {
+            ...item,
+            fields: item.fields.map((field) =>
+              field.id === requiredField.id
+                ? {
+                    ...field,
+                    requiredCondition: { type: 'always' },
+                  }
+                : field,
+            ),
+          }
+        : item,
   );
 
   const deletedRecord = {

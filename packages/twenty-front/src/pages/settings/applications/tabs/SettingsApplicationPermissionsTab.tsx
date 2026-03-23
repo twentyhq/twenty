@@ -1,6 +1,6 @@
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -30,7 +30,7 @@ type SettingsApplicationPermissionsTabProps = {
 
 const resolvePermissionIds = (
   defaultRole: MarketplaceAppDefaultRole,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): {
   objectUniversalIdToIdMap: Record<string, string>;
   fieldUniversalIdToIdMap: Record<string, string>;
@@ -188,7 +188,7 @@ const buildobjectMetadataItemsFromMarketplaceApp = (
   defaultRole: MarketplaceAppDefaultRole,
   objectUniversalIdToIdMap: Record<string, string>,
   marketplaceAppObjects: MarketplaceAppObject[],
-): ObjectMetadataItem[] => {
+): EnrichedObjectMetadataItem[] => {
   const unresolvedUniversalIds = new Set<string>();
 
   for (const permission of defaultRole.objectPermissions) {
@@ -238,7 +238,7 @@ const buildobjectMetadataItemsFromMarketplaceApp = (
           .map((permission) => permission.fieldUniversalIdentifier),
       );
 
-      const item: ObjectMetadataItem = {
+      const item: EnrichedObjectMetadataItem = {
         __typename: 'Object',
         id: universalId,
         universalIdentifier: universalId,
@@ -281,10 +281,10 @@ const MarketplaceRoleEffect = ({
   defaultRole: MarketplaceAppDefaultRole;
   marketplaceAppObjects: MarketplaceAppObject[];
   onObjectMetadataItemsFromMarketplaceApp: (
-    items: ObjectMetadataItem[],
+    items: EnrichedObjectMetadataItem[],
   ) => void;
 }) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     defaultRole.id,
@@ -336,10 +336,10 @@ const MarketplaceAppPermissions = ({
   const [
     objectMetadataItemsFromMarketplaceApp,
     setObjectMetadataItemsFromMarketplaceApp,
-  ] = useState<ObjectMetadataItem[]>([]);
+  ] = useState<EnrichedObjectMetadataItem[]>([]);
 
   const handleObjectsFromMarketplaceApp = useCallback(
-    (objects: ObjectMetadataItem[]) =>
+    (objects: EnrichedObjectMetadataItem[]) =>
       setObjectMetadataItemsFromMarketplaceApp(objects),
     [],
   );

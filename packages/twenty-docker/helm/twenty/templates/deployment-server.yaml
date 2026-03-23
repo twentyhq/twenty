@@ -98,7 +98,16 @@ spec:
               psql -h ${DB_HOST} -p 5432 -U postgres -d postgres -Atc "SELECT 1 FROM pg_database WHERE datname = '${DBNAME}'" | grep -q 1 || \
               psql -h ${DB_HOST} -p 5432 -U postgres -d postgres -c "CREATE DATABASE ${DBNAME};"
               echo "Creating app user ${APP_USER} if it doesn't exist..."
-              psql -h ${DB_HOST} -p 5432 -U postgres -d postgres -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${APP_USER}') THEN CREATE USER ${APP_USER} WITH PASSWORD '${APP_PASSWORD}'; END IF; END \$\$;"
+              psql -h ${DB_HOST} -p 5432 -U postgres -d postgres -v app_user="${APP_USER}" -v app_password="${APP_PASSWORD}" <<'EOSQL'
+              DO
+              $do$
+              BEGIN
+              IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
+              EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
+              END IF;
+              END
+              $do$;
+              EOSQL
               echo "Creating core schema and granting permissions..."
               psql -h ${DB_HOST} -p 5432 -U postgres -d ${DBNAME} -c "CREATE SCHEMA IF NOT EXISTS core"
               psql -h ${DB_HOST} -p 5432 -U postgres -d ${DBNAME} -c "GRANT ALL PRIVILEGES ON DATABASE ${DBNAME} TO ${APP_USER};"
@@ -172,6 +181,16 @@ spec:
                   name: {{ include "twenty.dbUrl.secretName" . }}
                   key: url
             {{- end }}
+            {{- if eq (include "twenty.redis.useExternalSecret" .) "true" }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.external.secretName }}
+                  key: {{ .Values.redis.external.passwordKey }}
+            {{- else if .Values.redis.external.password }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.external.password | quote }}
+            {{- end }}
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: SIGN_IN_PREFILLED
@@ -189,7 +208,10 @@ spec:
                   key: accessToken
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
-            {{ $storageEnv | nindent 12 }}
+            {{- $storageEnv | nindent 12 }}
+            {{- end }}
+            {{- with .Values.server.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- range $key, $value := .Values.server.extraEnv }}
             - name: {{ $key }}

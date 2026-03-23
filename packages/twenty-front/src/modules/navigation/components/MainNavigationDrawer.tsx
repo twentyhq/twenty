@@ -60,8 +60,7 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
             label={t`Search`}
             Icon={IconSearch}
             onClick={openRecordsSearchPage}
-            keyboard={['/']}
-            mouseUpNavigation={true}
+            modifier={{ keyboard: ['/'] }}
           />
         )}
         <NavigationDrawerItem

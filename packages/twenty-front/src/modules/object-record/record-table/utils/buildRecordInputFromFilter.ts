@@ -1,5 +1,5 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildValueFromFilter';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -19,7 +19,7 @@ export const buildRecordInputFromFilter = ({
   currentWorkspaceMember,
 }: {
   currentRecordFilters: RecordFilter[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   currentWorkspaceMember?: CurrentWorkspaceMember;
 }): Partial<ObjectRecord> => {
   const recordInput: Partial<ObjectRecord> = {};

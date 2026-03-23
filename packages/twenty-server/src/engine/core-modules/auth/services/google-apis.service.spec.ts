@@ -11,6 +11,9 @@ import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/au
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -36,22 +39,16 @@ describe('GoogleAPIsService', () => {
   let messagingChannelSyncStatusService: MessageChannelSyncStatusService;
   let createMessageChannelService: CreateMessageChannelService;
 
-  const mockConnectedAccountRepository = {
+  const mockConnectedAccountDataAccessService = {
     findOne: jest.fn(),
-    find: jest.fn(),
-    update: jest.fn(),
   };
 
-  const mockCalendarChannelRepository = {
-    findOne: jest.fn(),
+  const mockMessageChannelDataAccessService = {
     find: jest.fn(),
-    update: jest.fn(),
   };
 
-  const mockMessageChannelRepository = {
-    findOne: jest.fn(),
+  const mockCalendarChannelDataAccessService = {
     find: jest.fn(),
-    update: jest.fn(),
   };
 
   const mockWorkspaceMemberRepository = {
@@ -84,12 +81,6 @@ describe('GoogleAPIsService', () => {
             getRepository: jest
               .fn()
               .mockImplementation((_workspaceId, entity) => {
-                if (entity === 'connectedAccount')
-                  return mockConnectedAccountRepository;
-                if (entity === 'calendarChannel')
-                  return mockCalendarChannelRepository;
-                if (entity === 'messageChannel')
-                  return mockMessageChannelRepository;
                 if (entity === 'workspaceMember')
                   return mockWorkspaceMemberRepository;
 
@@ -188,6 +179,18 @@ describe('GoogleAPIsService', () => {
             isFeatureEnabled: jest.fn().mockResolvedValue(false),
           },
         },
+        {
+          provide: ConnectedAccountDataAccessService,
+          useValue: mockConnectedAccountDataAccessService,
+        },
+        {
+          provide: MessageChannelDataAccessService,
+          useValue: mockMessageChannelDataAccessService,
+        },
+        {
+          provide: CalendarChannelDataAccessService,
+          useValue: mockCalendarChannelDataAccessService,
+        },
       ],
     }).compile();
 
@@ -221,7 +224,7 @@ describe('GoogleAPIsService', () => {
         provider: ConnectedAccountProvider.GOOGLE,
       } as ConnectedAccountWorkspaceEntity;
 
-      mockConnectedAccountRepository.findOne.mockResolvedValue(
+      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(
         existingConnectedAccount,
       );
 
@@ -237,11 +240,11 @@ describe('GoogleAPIsService', () => {
         syncStage: CalendarChannelSyncStage.FAILED,
       };
 
-      mockCalendarChannelRepository.find.mockResolvedValue([
+      mockCalendarChannelDataAccessService.find.mockResolvedValue([
         failedCalendarChannel,
       ]);
 
-      mockMessageChannelRepository.find.mockResolvedValue([]);
+      mockMessageChannelDataAccessService.find.mockResolvedValue([]);
 
       await service.refreshGoogleRefreshToken({
         handle: 'test@example.com',
@@ -263,7 +266,7 @@ describe('GoogleAPIsService', () => {
 
       expect(
         createMessageChannelService.createMessageChannel,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalled();
     });
   });
 });

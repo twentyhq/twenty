@@ -1,11 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   computeStepOutputSchema,
   shouldComputeOutputSchemaOnFrontend,
 } from '@/workflow/workflow-variables/utils/generate/computeStepOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const mockCompanyObjectMetadataItem: ObjectMetadataItem = {
+const mockCompanyObjectMetadataItem: EnrichedObjectMetadataItem = {
   id: 'company-metadata-id',
   nameSingular: 'company',
   namePlural: 'companies',
@@ -22,7 +22,7 @@ const mockCompanyObjectMetadataItem: ObjectMetadataItem = {
       isSystem: false,
     },
   ],
-} as ObjectMetadataItem;
+} as EnrichedObjectMetadataItem;
 
 describe('computeStepOutputSchema', () => {
   describe('PERSISTED_OUTPUT_SCHEMA_TYPES', () => {

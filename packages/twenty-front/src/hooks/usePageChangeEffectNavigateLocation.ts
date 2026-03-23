@@ -6,7 +6,7 @@ import { returnToPathState } from '@/auth/states/returnToPathState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
@@ -40,7 +40,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
   );
@@ -49,9 +49,25 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
 
   const returnToPath = useAtomStateValue(returnToPathState);
-  const resolvedReturnToPath = isNonEmptyString(returnToPath)
+  const rawReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
+
+  // OMNIA-CUSTOM: Validate returnToPath points to an active object.
+  // Without this, OAuth callbacks can redirect to deactivated objects
+  // (e.g. /objects/companies) that were the last page before sign-in.
+  const resolvedReturnToPath = (() => {
+    if (!isNonEmptyString(rawReturnToPath)) return null;
+    const objectMatch = rawReturnToPath.match(/^\/objects\/([^/?]+)/);
+    if (!objectMatch) return rawReturnToPath; // non-object paths are fine
+    const targetPlural = objectMatch[1];
+    const targetObject = objectMetadataItems?.find(
+      (item) => item.namePlural === targetPlural,
+    );
+    // If the object doesn't exist or is inactive, ignore the returnToPath
+    if (!targetObject || !targetObject.isActive) return null;
+    return rawReturnToPath;
+  })();
 
   if (
     (!hasAccessTokenPair || (hasAccessTokenPair && !isOnAWorkspace)) &&

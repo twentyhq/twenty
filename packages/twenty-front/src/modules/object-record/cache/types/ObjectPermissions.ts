@@ -3,6 +3,6 @@ import { type ObjectPermission } from '~/generated-metadata/graphql';
 export type ObjectPermissions = {
   [K in keyof Omit<
     ObjectPermission,
-    'objectMetadataId' | '__typename'
+    'objectMetadataId' | '__typename' | 'editWindowMinutes' | 'showInSidebar' | 'restrictedFields' | 'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
   >]-?: boolean;
 };

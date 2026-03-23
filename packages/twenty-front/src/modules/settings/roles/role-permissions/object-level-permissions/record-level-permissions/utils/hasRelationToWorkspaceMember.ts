@@ -2,11 +2,11 @@
 
 import { FieldMetadataType, CoreObjectNameSingular } from 'twenty-shared/types';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export const hasRelationToWorkspaceMember = (
   targetObjectNameSingular: string,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ): boolean => {
   if (targetObjectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
     return false; // Direct relation, handled by existing logic

@@ -1,5 +1,5 @@
 import { AIChatBanner } from '@/ai/components/AIChatBanner';
-import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
+import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';

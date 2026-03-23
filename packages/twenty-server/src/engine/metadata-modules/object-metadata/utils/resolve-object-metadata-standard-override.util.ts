@@ -9,6 +9,7 @@ import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metad
 export const resolveObjectMetadataStandardOverride = (
   objectMetadata: Pick<
     ObjectMetadataDTO,
+    | 'color'
     | 'labelPlural'
     | 'labelSingular'
     | 'description'
@@ -16,7 +17,7 @@ export const resolveObjectMetadataStandardOverride = (
     | 'isCustom'
     | 'standardOverrides'
   >,
-  labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
+  labelKey: 'color' | 'labelPlural' | 'labelSingular' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
   i18nInstance: I18n,
 ): string => {
@@ -27,15 +28,16 @@ export const resolveObjectMetadataStandardOverride = (
   }
 
   if (
-    labelKey === 'icon' &&
-    isDefined(objectMetadata.standardOverrides?.icon)
+    (labelKey === 'icon' || labelKey === 'color') &&
+    isDefined(objectMetadata.standardOverrides?.[labelKey])
   ) {
-    return objectMetadata.standardOverrides.icon;
+    return objectMetadata.standardOverrides[labelKey];
   }
 
   if (
     isDefined(objectMetadata.standardOverrides?.translations) &&
-    labelKey !== 'icon'
+    labelKey !== 'icon' &&
+    labelKey !== 'color'
   ) {
     const translationValue =
       objectMetadata.standardOverrides.translations[safeLocale]?.[labelKey];
@@ -45,10 +47,7 @@ export const resolveObjectMetadataStandardOverride = (
     }
   }
 
-  if (
-    safeLocale === SOURCE_LOCALE &&
-    isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])
-  ) {
+  if (isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])) {
     return objectMetadata.standardOverrides[labelKey] ?? '';
   }
 

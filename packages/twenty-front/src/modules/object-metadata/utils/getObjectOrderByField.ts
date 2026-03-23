@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
@@ -9,7 +9,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 export const getOrderByFieldForObjectMetadataItem = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   orderBy?: OrderBy | null,
 ): RecordGqlOperationOrderBy => {
   const labelIdentifierFieldMetadata =

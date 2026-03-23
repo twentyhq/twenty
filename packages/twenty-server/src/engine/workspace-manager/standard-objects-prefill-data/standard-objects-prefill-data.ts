@@ -5,11 +5,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
+import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-command-menu-items';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 
 export const standardObjectsPrefillData = async (
   dataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
@@ -24,5 +26,7 @@ export const standardObjectsPrefillData = async (
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     );
+
+    await prefillWorkflowCommandMenuItems(entityManager, workspaceId);
   });
 };

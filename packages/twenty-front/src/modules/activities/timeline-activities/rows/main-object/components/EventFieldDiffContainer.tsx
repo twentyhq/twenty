@@ -1,10 +1,10 @@
 import { EventFieldDiff } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiff';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type EventFieldDiffContainerProps = {
-  mainObjectMetadataItem: ObjectMetadataItem;
+  mainObjectMetadataItem: EnrichedObjectMetadataItem;
   diffKey: string;
   diffValue: any;
   diffBeforeValue?: any;
@@ -16,7 +16,6 @@ export const EventFieldDiffContainer = ({
   mainObjectMetadataItem,
   diffKey,
   diffValue,
-  diffBeforeValue,
   eventId,
   fieldMetadataItemMap,
 }: EventFieldDiffContainerProps) => {
@@ -29,18 +28,14 @@ export const EventFieldDiffContainer = ({
   }
 
   const diffArtificialRecordStoreId = eventId + '--' + fieldMetadataItem.id;
-  const diffBeforeArtificialRecordStoreId =
-    eventId + '--before--' + fieldMetadataItem.id;
 
   return (
     <EventFieldDiff
       key={diffArtificialRecordStoreId}
       diffRecord={diffValue}
-      diffBeforeRecord={diffBeforeValue}
       fieldMetadataItem={fieldMetadataItem}
       mainObjectMetadataItem={mainObjectMetadataItem}
       diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-      diffBeforeArtificialRecordStoreId={diffBeforeArtificialRecordStoreId}
     />
   );
 };

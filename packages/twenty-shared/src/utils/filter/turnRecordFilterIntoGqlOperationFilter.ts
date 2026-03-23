@@ -40,12 +40,12 @@ import {
 import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
-  checkIfShouldSkipFiltering,
   CustomError,
   getFilterTypeFromFieldType,
   getNextPeriodStart,
   getPeriodStart,
   isDefined,
+  isRecordFilterValueValid,
   resolveDateFilter,
   resolveDateTimeFilter,
   resolveRelativeDateFilterStringified,
@@ -84,9 +84,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     return;
   }
 
-  const shouldSkipFiltering = checkIfShouldSkipFiltering({ recordFilter });
-
-  if (shouldSkipFiltering) {
+  if (!isRecordFilterValueValid(recordFilter)) {
     return;
   }
 

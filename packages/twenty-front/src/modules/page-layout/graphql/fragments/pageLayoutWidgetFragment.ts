@@ -161,6 +161,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       }
       ... on FieldConfiguration {
         configurationType
+        fieldDisplayMode
+        fieldMetadataId
       }
       ... on FieldRichTextConfiguration {
         configurationType
