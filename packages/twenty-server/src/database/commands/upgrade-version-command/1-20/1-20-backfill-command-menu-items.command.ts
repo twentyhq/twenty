@@ -301,8 +301,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
           position: 0,
           hotKeys: null,
           availabilityType,
-          availabilityObjectMetadataId:
-            availabilityObjectMetadataId ?? null,
+          availabilityObjectMetadataId: availabilityObjectMetadataId ?? null,
           availabilityObjectMetadataUniversalIdentifier: null,
           conditionalAvailabilityExpression: null,
           workspaceId,
