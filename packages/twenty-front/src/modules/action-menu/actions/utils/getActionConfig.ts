@@ -1,3 +1,4 @@
+import { CHANGE_REQUEST_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/ChangeRequestActionsConfig';
 import { DASHBOARD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DashboardActionsConfig';
 import { DEFAULT_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig';
 import { TOB_SUBSCRIPTION_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/constants/TobSubscriptionActionsConfig';
@@ -37,6 +38,9 @@ export const getActionConfig = ({
     }
     case CoreObjectNameSingular.TobSubscription: {
       return TOB_SUBSCRIPTION_ACTIONS_CONFIG;
+    }
+    case CoreObjectNameSingular.SubscriptionPeriodChangeRequest: {
+      return CHANGE_REQUEST_ACTIONS_CONFIG;
     }
     case CoreObjectNameSingular.Company: {
       return DEFAULT_RECORD_ACTIONS_CONFIG;

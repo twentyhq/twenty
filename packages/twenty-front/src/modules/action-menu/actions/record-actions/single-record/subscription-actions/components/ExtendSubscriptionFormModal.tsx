@@ -15,7 +15,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -47,7 +46,10 @@ export const ExtendSubscriptionFormModal = ({
 
   const { closeModal } = useModal();
   const { closeActionMenu } = useCloseActionMenu();
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { createOneRecord: createChangeRequest } = useCreateOneRecord({
+    objectNameSingular:
+      CoreObjectNameSingular.SubscriptionPeriodChangeRequest,
+  });
   const { createOneRecord: createNote } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -63,10 +65,14 @@ export const ExtendSubscriptionFormModal = ({
     objectRecordId: recordId,
   });
 
+  // Use finalEndDate (period-system computed) with fallback to endDate
+  // (Dagster contract data) for pre-migration subscriptions without periods yet
   const currentEndDate =
-    isDefined(record) && isDefined(record.endDate)
-      ? new Date(record.endDate as string)
-      : null;
+    isDefined(record) && isDefined(record.finalEndDate)
+      ? new Date(record.finalEndDate as string)
+      : isDefined(record) && isDefined(record.endDate)
+        ? new Date(record.endDate as string)
+        : null;
 
   const MAX_EXTENSION_MONTHS = 36;
   const extensionMonths = Number(extensionMonthsInput) || 0;
@@ -95,14 +101,29 @@ export const ExtendSubscriptionFormModal = ({
     setIsSubmitting(true);
 
     try {
-      await updateOneRecord({
-        objectNameSingular,
-        idToUpdate: recordId,
-        updateOneRecordInput: {
-          endDate: newEndDate.toISOString(),
-          finalEndDate: newEndDate.toISOString(),
-          accessStatus: 'ACTIVE',
-        },
+      // Convert months to days for the Change Request duration field
+      const baseDate = isDefined(currentEndDate) ? currentEndDate : new Date();
+      const endDate = new Date(baseDate);
+      endDate.setMonth(endDate.getMonth() + extensionMonths);
+      const durationDays = Math.round(
+        (endDate.getTime() - baseDate.getTime()) / (24 * 60 * 60 * 1000),
+      );
+
+      const reasonParts = [`Extension: ${extensionMonths} months`];
+      if (offerReference.trim()) reasonParts.push(`Offer: ${offerReference.trim()}`);
+      if (contractId.trim()) reasonParts.push(`Contract: ${contractId.trim()}`);
+
+      await createChangeRequest({
+        subscriptionId: recordId,
+        periodType: 'ACTIVE',
+        startDate: baseDate.toISOString(),
+        duration: durationDays,
+        reason: reasonParts.join(' — '),
+        notes,
+        requestStatus: 'PENDING',
+        ...(isDefined(currentMember) && {
+          requestedById: currentMember.id,
+        }),
       });
 
       try {
@@ -121,12 +142,12 @@ export const ExtendSubscriptionFormModal = ({
       }
 
       enqueueSuccessSnackBar({
-        message: `Subscription extended by ${extensionMonths} months`,
+        message: 'Extension request created — pending approval',
       });
       closeModal(modalId);
       closeActionMenu();
     } catch {
-      enqueueErrorSnackBar({ message: 'Failed to extend subscription' });
+      enqueueErrorSnackBar({ message: 'Failed to create extension request' });
     } finally {
       setIsSubmitting(false);
     }
@@ -220,7 +241,7 @@ export const ExtendSubscriptionFormModal = ({
           onClick={() => closeModal(modalId)}
         />
         <Button
-          title="Confirm Extension"
+          title="Submit Change Request"
           variant="primary"
           accent="blue"
           disabled={!isFormValid || isSubmitting}

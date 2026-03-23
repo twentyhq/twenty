@@ -15,7 +15,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -50,7 +49,10 @@ export const PauseSubscriptionFormModal = ({
 
   const { closeModal } = useModal();
   const { closeActionMenu } = useCloseActionMenu();
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { createOneRecord: createChangeRequest } = useCreateOneRecord({
+    objectNameSingular:
+      CoreObjectNameSingular.SubscriptionPeriodChangeRequest,
+  });
   const { createOneRecord: createNote } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -66,10 +68,14 @@ export const PauseSubscriptionFormModal = ({
     objectRecordId: recordId,
   });
 
+  // Use finalEndDate (period-system computed) with fallback to endDate
+  // (Dagster contract data) for pre-migration subscriptions without periods yet
   const currentEndDate =
-    isDefined(record) && isDefined(record.endDate)
-      ? new Date(record.endDate as string)
-      : null;
+    isDefined(record) && isDefined(record.finalEndDate)
+      ? new Date(record.finalEndDate as string)
+      : isDefined(record) && isDefined(record.endDate)
+        ? new Date(record.endDate as string)
+        : null;
 
   const currentPauseDays =
     isDefined(record) &&
@@ -107,17 +113,17 @@ export const PauseSubscriptionFormModal = ({
     setIsSubmitting(true);
 
     try {
-      await updateOneRecord({
-        objectNameSingular,
-        idToUpdate: recordId,
-        updateOneRecordInput: {
-          accessStatus: 'PAUSED',
-          pauseDays: totalPauseDays,
-          ...(isDefined(newEndDate) && {
-            endDate: newEndDate.toISOString(),
-            finalEndDate: newEndDate.toISOString(),
-          }),
-        },
+      await createChangeRequest({
+        subscriptionId: recordId,
+        periodType: 'PAUSE',
+        startDate: new Date().toISOString(),
+        duration: pauseDays,
+        reason,
+        notes,
+        requestStatus: 'PENDING',
+        ...(isDefined(currentMember) && {
+          requestedById: currentMember.id,
+        }),
       });
 
       try {
@@ -135,12 +141,12 @@ export const PauseSubscriptionFormModal = ({
       }
 
       enqueueSuccessSnackBar({
-        message: `Subscription paused for ${pauseDays} days`,
+        message: 'Change request created — pending approval',
       });
       closeModal(modalId);
       closeActionMenu();
     } catch {
-      enqueueErrorSnackBar({ message: 'Failed to pause subscription' });
+      enqueueErrorSnackBar({ message: 'Failed to create change request' });
     } finally {
       setIsSubmitting(false);
     }
@@ -170,7 +176,7 @@ export const PauseSubscriptionFormModal = ({
             </StyledPreviewRow>
             {pauseDays > 0 && (
               <StyledPreviewRow>
-                <StyledPreviewLabel>New End Date:</StyledPreviewLabel>
+                <StyledPreviewLabel>New End Date (after approval):</StyledPreviewLabel>
                 <span>{formatDate(newEndDate)}</span>
               </StyledPreviewRow>
             )}
@@ -239,7 +245,7 @@ export const PauseSubscriptionFormModal = ({
           onClick={() => closeModal(modalId)}
         />
         <Button
-          title="Confirm Pause"
+          title="Submit Change Request"
           variant="primary"
           accent="blue"
           disabled={!isFormValid || isSubmitting}
