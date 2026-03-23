@@ -191,7 +191,7 @@ export class EmailComposerService {
     const attachments: MessageAttachment[] = [];
 
     for (const fileMetadata of files) {
-      const stream = await this.fileService.getFileStreamById({
+      const { stream } = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
         fileFolder: FileFolder.Workflow,
