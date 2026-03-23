@@ -12,7 +12,7 @@ export const StyledContainer = styled.div<{
   cursor: pointer;
   display: flex;
   gap: ${({ isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? themeCssVariables.spacing[1] : '0'};
+    isNavigationDrawerExpanded ? themeCssVariables.spacing[2] : '0'};
   max-width: 100%;
   min-width: 0;
   padding: calc(${themeCssVariables.spacing[1]} - 1px);
