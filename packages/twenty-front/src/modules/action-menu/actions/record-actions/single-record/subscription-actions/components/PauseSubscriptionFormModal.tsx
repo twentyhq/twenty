@@ -89,10 +89,14 @@ export const PauseSubscriptionFormModal = ({
     objectRecordId: recordId,
   });
 
+  // Use finalEndDate (period-system computed) with fallback to endDate
+  // (Dagster contract data) for pre-migration subscriptions without periods yet
   const currentEndDate =
-    isDefined(record) && isDefined(record.endDate)
-      ? new Date(record.endDate as string)
-      : null;
+    isDefined(record) && isDefined(record.finalEndDate)
+      ? new Date(record.finalEndDate as string)
+      : isDefined(record) && isDefined(record.endDate)
+        ? new Date(record.endDate as string)
+        : null;
 
   const pauseDays = Number(pauseDaysInput) || 0;
   const isFormValid = pauseDays > 0 && reason.trim().length > 0;

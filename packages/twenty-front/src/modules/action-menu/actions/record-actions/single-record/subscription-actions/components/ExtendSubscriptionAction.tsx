@@ -36,13 +36,16 @@ export const ExtendSubscriptionAction = () => {
       return;
     }
 
-    const currentEndDate = record.endDate
-      ? new Date(record.endDate as string)
+    // Use finalEndDate (period-system computed) with fallback to endDate
+    // (Dagster contract data) for pre-migration subscriptions without periods yet
+    const effectiveEndDate = record.finalEndDate ?? record.endDate;
+    const currentEndDate = effectiveEndDate
+      ? new Date(effectiveEndDate as string)
       : new Date();
     const newEndDate = new Date(currentEndDate);
     newEndDate.setDate(newEndDate.getDate() + EXTENSION_DAYS);
 
-    const currentEndDateStr = record.endDate
+    const currentEndDateStr = effectiveEndDate
       ? currentEndDate.toLocaleDateString()
       : t`Not set`;
     const newEndDateStr = newEndDate.toLocaleDateString();

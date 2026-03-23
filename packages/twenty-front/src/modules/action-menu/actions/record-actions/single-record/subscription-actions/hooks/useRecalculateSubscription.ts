@@ -112,11 +112,11 @@ export const useRecalculateSubscription = () => {
         updateOneRecordInput: {
           subscriptionStatus,
           inactiveReason: isDefined(inactiveReason) ? inactiveReason : null,
-          // Write to both finalEndDate (new) and endDate (old) so smart views
-          // like "Expiring in 60 Days" keep working during the transition
+          // Only write finalEndDate — endDate is Dagster's field (contract
+          // data from DocuSeal) and must not be overwritten by the period system.
+          // Smart views should filter on finalEndDate instead of endDate.
           ...(isDefined(endDateIso) && {
             finalEndDate: endDateIso,
-            endDate: endDateIso,
           }),
           pauseDays,
           accessStatus,
