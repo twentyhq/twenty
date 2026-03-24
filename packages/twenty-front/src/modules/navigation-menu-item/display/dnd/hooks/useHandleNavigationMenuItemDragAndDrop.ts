@@ -29,8 +29,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
-  const { updateManyNavigationMenuItems } =
-    useUpdateManyNavigationMenuItems();
+  const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );

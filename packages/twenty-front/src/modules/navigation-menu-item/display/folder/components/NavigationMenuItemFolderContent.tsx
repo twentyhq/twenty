@@ -29,8 +29,7 @@ export const NavigationMenuItemFolderContent = ({
 }: NavigationMenuItemFolderContentProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const { deleteManyNavigationMenuItems } =
-    useDeleteManyNavigationMenuItems();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   const folderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${folderId}`;
 

@@ -51,8 +51,7 @@ const ORPHAN_DROPPABLE_ID =
 export const FavoritesSection = () => {
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
-  const { deleteManyNavigationMenuItems } =
-    useDeleteManyNavigationMenuItems();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const favoritesDropDisabled = useIsDropDisabledForSection(false);
 

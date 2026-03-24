@@ -55,8 +55,7 @@ export const ViewPickerOptionDropdown = ({
   );
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
-  const { createManyNavigationMenuItems } =
-    useCreateManyNavigationMenuItems();
+  const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
   const { navigationMenuItems, currentWorkspaceMemberId } =
     useNavigationMenuItemsData();
 
@@ -80,8 +79,7 @@ export const ViewPickerOptionDropdown = ({
   const handleAddToFavorites = () => {
     if (!isFavorite) {
       const relevantItems = navigationMenuItems.filter(
-        (item) =>
-          !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
+        (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
       );
 
       const maxPosition = Math.max(

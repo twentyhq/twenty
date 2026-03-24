@@ -133,8 +133,7 @@ export const NavigationMenuItemFolderDnd = ({
     NavigationDropTargetContext,
   );
 
-  const { deleteManyNavigationMenuItems } =
-    useDeleteManyNavigationMenuItems();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const favoritesEdit = useFavoritesFolderEdit({
     folderId,
     folderName,

@@ -17,8 +17,7 @@ export const AddToFavoritesSingleRecordCommand = () => {
     throw new Error('Object metadata item is required to add to favorites');
   }
 
-  const { createManyNavigationMenuItems } =
-    useCreateManyNavigationMenuItems();
+  const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
   const { navigationMenuItems, currentWorkspaceMemberId } =
     useNavigationMenuItemsData();
 
@@ -28,8 +27,7 @@ export const AddToFavoritesSingleRecordCommand = () => {
     }
 
     const relevantItems = navigationMenuItems.filter(
-      (item) =>
-        !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
+      (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
     );
 
     const maxPosition = Math.max(

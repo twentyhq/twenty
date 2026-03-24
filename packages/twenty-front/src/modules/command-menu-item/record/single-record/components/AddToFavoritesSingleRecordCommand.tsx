@@ -13,15 +13,13 @@ export const AddToFavoritesSingleRecordCommand = () => {
 
   const recordId = useSelectedRecordIdOrThrow();
 
-  const { createManyNavigationMenuItems } =
-    useCreateManyNavigationMenuItems();
+  const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
   const { navigationMenuItems, currentWorkspaceMemberId } =
     useNavigationMenuItemsData();
 
   const handleClick = () => {
     const relevantItems = navigationMenuItems.filter(
-      (item) =>
-        !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
+      (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
     );
 
     const maxPosition = Math.max(

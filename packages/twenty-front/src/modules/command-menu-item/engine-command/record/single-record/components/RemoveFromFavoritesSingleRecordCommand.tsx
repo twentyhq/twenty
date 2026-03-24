@@ -20,8 +20,7 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
 
-  const { deleteManyNavigationMenuItems } =
-    useDeleteManyNavigationMenuItems();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   const foundNavigationMenuItem = [
     ...navigationMenuItems,
