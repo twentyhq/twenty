@@ -932,6 +932,18 @@ check_file_contains \
   "packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellBaseContainer.tsx" \
   "useCallback" \
   "Cell click handler must use useCallback (created per cell)"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-table/components/RecordTableScrollAndZIndexEffect.tsx" \
+  "store.get" \
+  "Scroll handler must use store.get/store.set (not reactive hooks) to avoid listener teardown loop on mobile"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-table/record-table-cell/components/RecordTableCellWrapper.tsx" \
+  "useMemo" \
+  "RecordTableCellContext.Provider value must be memoized"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-table/record-table-row/components/RecordTableTr.tsx" \
+  "useMemo" \
+  "RecordTableRowContextProvider value must be memoized"
 check_file_not_contains \
   "packages/twenty-front/package.json" \
   "apollo3-cache-persist" \

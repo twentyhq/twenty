@@ -5,6 +5,8 @@ import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useMemo } from 'react';
 
+// OMNIA-CUSTOM: Memoized RecordTableCellContext.Provider value to prevent
+// cascading re-renders of all cell context consumers on every parent re-render.
 export const RecordTableCellWrapper = ({
   children,
   recordField,
@@ -24,12 +26,17 @@ export const RecordTableCellWrapper = ({
     [recordFieldIndex, rowIndex],
   );
 
+  const cellContextValue = useMemo(
+    () => ({
+      recordField,
+      cellPosition: currentTableCellPosition,
+    }),
+    [recordField, currentTableCellPosition],
+  );
+
   return (
     <RecordTableCellContext.Provider
-      value={{
-        recordField,
-        cellPosition: currentTableCellPosition,
-      }}
+      value={cellContextValue}
       key={recordField.fieldMetadataItemId}
     >
       <RecordTableCellFieldContextWrapper recordField={recordField}>

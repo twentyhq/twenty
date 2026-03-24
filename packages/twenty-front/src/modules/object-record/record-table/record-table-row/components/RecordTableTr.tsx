@@ -10,7 +10,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { forwardRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, type ReactNode } from 'react';
 
 type RecordTableTrProps = {
   children: ReactNode;
@@ -22,6 +22,9 @@ type RecordTableTrProps = {
   'isActive' | 'isNextRowActiveOrFocused' | 'isFocused'
 >;
 
+// OMNIA-CUSTOM: Memoized RecordTableRowContextProvider value to prevent
+// cascading re-renders of all row context consumers on scroll-triggered
+// parent re-renders.
 export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
   ({ children, recordId, focusIndex, isDragging = false, ...props }, ref) => {
     const { objectMetadataItem } = useRecordTableContextOrThrow();
@@ -50,20 +53,29 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       objectMetadataId: objectMetadataItem.id,
     });
 
+    const rowContextValue = useMemo(
+      () => ({
+        recordId: recordId,
+        rowIndex: focusIndex,
+        pathToShowPage:
+          getBasePathToShowPage({
+            objectNameSingular: objectMetadataItem.nameSingular,
+          }) + recordId,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        isSelected: isRowSelected,
+        isRecordReadOnly,
+      }),
+      [
+        recordId,
+        focusIndex,
+        objectMetadataItem.nameSingular,
+        isRowSelected,
+        isRecordReadOnly,
+      ],
+    );
+
     return (
-      <RecordTableRowContextProvider
-        value={{
-          recordId: recordId,
-          rowIndex: focusIndex,
-          pathToShowPage:
-            getBasePathToShowPage({
-              objectNameSingular: objectMetadataItem.nameSingular,
-            }) + recordId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          isSelected: isRowSelected,
-          isRecordReadOnly,
-        }}
-      >
+      <RecordTableRowContextProvider value={rowContextValue}>
         <RecordTableRowDiv
           className="table-row"
           isDragging={isDragging}

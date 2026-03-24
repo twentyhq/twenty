@@ -7,96 +7,112 @@ import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-reco
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
 
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+// OMNIA-CUSTOM: Rewrote scroll handler to use jotai store.get()/store.set()
+// instead of reactive hooks. The original closed over isRecordTableScrolledVertically
+// and isRecordTableScrolledHorizontally in the useEffect dependency array, causing
+// the scroll listener to be torn down and re-attached on every scroll state change.
+// On mobile Safari with momentum scrolling this created a feedback loop that crashed
+// the browser. Using store.get() reads the current value without subscribing, keeping
+// the handler reference stable and the useEffect deps minimal.
 export const RecordTableScrollAndZIndexEffect = () => {
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
   const isMobile = useIsMobile();
-  const [
-    isRecordTableScrolledHorizontally,
-    setIsRecordTableScrolledHorizontally,
-  ] = useAtomComponentState(isRecordTableScrolledHorizontallyComponentState);
+  const store = useStore();
 
-  const setShouldCompactRecordTableFirstColumn = useSetAtomComponentState(
-    shouldCompactRecordTableFirstColumnComponentState,
+  const isScrolledHorizontallyCallbackState =
+    useAtomComponentStateCallbackState(
+      isRecordTableScrolledHorizontallyComponentState,
+    );
+
+  const isScrolledVerticallyCallbackState =
+    useAtomComponentStateCallbackState(
+      isRecordTableScrolledVerticallyComponentState,
+    );
+
+  const shouldCompactFirstColumnCallbackState =
+    useAtomComponentStateCallbackState(
+      shouldCompactRecordTableFirstColumnComponentState,
+    );
+
+  const shouldCompactLabelIdentifierCallbackState =
+    useAtomComponentStateCallbackState(
+      shouldCompactRecordIndexLabelIdentifierComponentState,
+    );
+
+  const handleScroll = useCallback(
+    (event: Event) => {
+      const target = event.currentTarget as HTMLElement | null;
+
+      const newIsScrolledVertically = (target?.scrollTop ?? 0) > 0;
+      const prevIsScrolledVertically = store.get(
+        isScrolledVerticallyCallbackState,
+      );
+
+      if (newIsScrolledVertically !== prevIsScrolledVertically) {
+        store.set(isScrolledVerticallyCallbackState, newIsScrolledVertically);
+
+        updateRecordTableCSSVariable(
+          RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          newIsScrolledVertically ? 'visible' : 'hidden',
+        );
+      }
+
+      const newIsScrolledHorizontally = (target?.scrollLeft ?? 0) > 0;
+      const prevIsScrolledHorizontally = store.get(
+        isScrolledHorizontallyCallbackState,
+      );
+
+      if (newIsScrolledHorizontally !== prevIsScrolledHorizontally) {
+        store.set(
+          isScrolledHorizontallyCallbackState,
+          newIsScrolledHorizontally,
+        );
+
+        updateRecordTableCSSVariable(
+          RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
+          newIsScrolledHorizontally ? 'visible' : 'hidden',
+        );
+
+        if (isMobile) {
+          store.set(
+            shouldCompactFirstColumnCallbackState,
+            newIsScrolledHorizontally,
+          );
+          store.set(
+            shouldCompactLabelIdentifierCallbackState,
+            newIsScrolledHorizontally,
+          );
+        }
+      }
+    },
+    [
+      store,
+      isScrolledVerticallyCallbackState,
+      isScrolledHorizontallyCallbackState,
+      shouldCompactFirstColumnCallbackState,
+      shouldCompactLabelIdentifierCallbackState,
+      isMobile,
+    ],
   );
-
-  const setShouldCompactRecordIndexLabelIdentifier = useSetAtomComponentState(
-    shouldCompactRecordIndexLabelIdentifierComponentState,
-  );
-
-  const [isRecordTableScrolledVertically, setIsRecordTableScrolledVertically] =
-    useAtomComponentState(isRecordTableScrolledVerticallyComponentState);
 
   useEffect(() => {
     if (!isDefined(scrollWrapperHTMLElement)) {
       return;
     }
 
-    const handleScroll = (event: any) => {
-      const target = event.currentTarget;
-
-      const newIsScrolledVertically = target?.scrollTop > 0;
-
-      if (newIsScrolledVertically !== isRecordTableScrolledVertically) {
-        setIsRecordTableScrolledVertically(newIsScrolledVertically);
-
-        const newVisibilityOfShadows = newIsScrolledVertically
-          ? 'visible'
-          : 'hidden';
-
-        updateRecordTableCSSVariable(
-          RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
-          newVisibilityOfShadows,
-        );
-      }
-
-      const newIsScrolledHorizontally = target?.scrollLeft > 0;
-
-      if (newIsScrolledHorizontally !== isRecordTableScrolledHorizontally) {
-        setIsRecordTableScrolledHorizontally(newIsScrolledHorizontally);
-
-        const newVisibilityOfShadows = newIsScrolledHorizontally
-          ? 'visible'
-          : 'hidden';
-
-        updateRecordTableCSSVariable(
-          RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
-          newVisibilityOfShadows,
-        );
-
-        if (isMobile) {
-          if (newIsScrolledHorizontally) {
-            setShouldCompactRecordTableFirstColumn(true);
-            setShouldCompactRecordIndexLabelIdentifier(true);
-          } else {
-            setShouldCompactRecordTableFirstColumn(false);
-            setShouldCompactRecordIndexLabelIdentifier(false);
-          }
-        }
-      }
-    };
-
-    scrollWrapperHTMLElement?.addEventListener('scroll', handleScroll);
+    scrollWrapperHTMLElement.addEventListener('scroll', handleScroll);
 
     return () => {
-      scrollWrapperHTMLElement?.removeEventListener('scroll', handleScroll);
+      scrollWrapperHTMLElement.removeEventListener('scroll', handleScroll);
     };
-  }, [
-    scrollWrapperHTMLElement,
-    isRecordTableScrolledVertically,
-    isRecordTableScrolledHorizontally,
-    setIsRecordTableScrolledVertically,
-    setIsRecordTableScrolledHorizontally,
-    isMobile,
-    setShouldCompactRecordTableFirstColumn,
-    setShouldCompactRecordIndexLabelIdentifier,
-  ]);
+  }, [scrollWrapperHTMLElement, handleScroll]);
 
   return <></>;
 };

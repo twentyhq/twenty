@@ -326,6 +326,9 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `record-table/record-table-cell/components/RecordTableCellFieldContextGeneric.tsx`                                | Memoized `FieldContext.Provider` value — rendered per cell (O(rows × fields)), prevents cascading re-renders from new object refs                             |
 | `record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier.tsx`                        | Memoized `FieldContext.Provider` value + `useCallback` for chip click handler                                                                                 |
 | `record-table/record-table-cell/components/RecordTableCellBaseContainer.tsx`                                      | `useCallback` for click handler — created per cell, prevents re-render from new function ref                                                                  |
+| `record-table/components/RecordTableScrollAndZIndexEffect.tsx`                                                    | Rewrote scroll handler to use `store.get()`/`store.set()` — original used reactive hooks in deps, causing listener teardown/reattach loop that crashed mobile Safari |
+| `record-table/record-table-cell/components/RecordTableCellWrapper.tsx`                                            | Memoized `RecordTableCellContext.Provider` value — inline object literal caused all cell context consumers to re-render on every parent re-render              |
+| `record-table/record-table-row/components/RecordTableTr.tsx`                                                      | Memoized `RecordTableRowContextProvider` value — inline object literal caused all row context consumers to re-render on every parent re-render                 |
 
 ## Modified Upstream Server Files
 
