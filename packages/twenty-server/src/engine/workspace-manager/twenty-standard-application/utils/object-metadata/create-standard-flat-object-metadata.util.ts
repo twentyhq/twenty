@@ -753,6 +753,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelPlural: 'Workflows',
         description: 'A workflow',
         icon: 'IconSettingsAutomation',
+        isSearchable: true,
         shortcut: 'W',
         labelIdentifierFieldMetadataName: 'name',
       },
