@@ -45,19 +45,13 @@ describe('setFileResponseHeaders', () => {
     'text/plain',
     'video/mp4',
     'audio/mpeg',
-  ])(
-    'should set Content-Disposition: inline for safe type %s',
-    (mimeType) => {
-      const res = createMockResponse();
+  ])('should set Content-Disposition: inline for safe type %s', (mimeType) => {
+    const res = createMockResponse();
 
-      setFileResponseHeaders(res as any, mimeType);
+    setFileResponseHeaders(res as any, mimeType);
 
-      expect(res.setHeader).toHaveBeenCalledWith(
-        'Content-Disposition',
-        'inline',
-      );
-    },
-  );
+    expect(res.setHeader).toHaveBeenCalledWith('Content-Disposition', 'inline');
+  });
 
   it.each([
     'text/html',

@@ -63,9 +63,10 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
         const secretAccessKey = this.twentyConfigService.get(
           'STORAGE_S3_SECRET_ACCESS_KEY',
         );
-        const presignEndpoint = this.twentyConfigService.get(
+        const presignEndpointOverride = this.twentyConfigService.get(
           'STORAGE_S3_PRESIGNED_URL_BASE',
         );
+        const presignEndpoint = presignEndpointOverride ?? endpoint;
 
         rawDriver = new S3Driver({
           bucketName: bucketName ?? '',

@@ -78,8 +78,12 @@ describe('S3Driver.getPresignedUrl', () => {
       expiresInSeconds: 3600,
     });
 
-    expect(getSignedUrl).toHaveBeenCalledWith(expect.anything(), expect.any(GetObjectCommand), {
-      expiresIn: 3600,
-    });
+    expect(getSignedUrl).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(GetObjectCommand),
+      {
+        expiresIn: 3600,
+      },
+    );
   });
 });

@@ -469,7 +469,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
     description:
-      'Public S3 endpoint for presigned URLs (e.g. https://s3.us-east-1.amazonaws.com or http://localhost:9000). When set, file downloads redirect to S3. Do not include the bucket name.',
+      'Public S3 endpoint for presigned URL redirects. Defaults to STORAGE_S3_ENDPOINT. Override only when the browser cannot reach the internal endpoint (e.g. Docker/VPC). Set to empty to disable redirects.',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
