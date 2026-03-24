@@ -23,6 +23,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -34,7 +35,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { useLoadMockedMinimalMetadata } from '@/metadata-store/hooks/useLoadMockedMinimalMetadata';
+import { useMetadataStoreActions } from '@/metadata-store/hooks/useMetadataStoreActions';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
@@ -86,7 +87,8 @@ export const useAuth = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const { clearSseClient } = useClearSseClient();
 
-  const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
+  const { preloadMockedMetadata, applyMockedMetadata } =
+    useMetadataStoreActions();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetAtomState(signInUpStepState);
@@ -126,7 +128,12 @@ export const useAuth = () => {
 
   const clearSession = useCallback(async () => {
     clearSseClient();
+    store.set(isAppEffectRedirectEnabledState.atom, false);
 
+    // Pre-load mocked data before clearing state so the swap is atomic
+    const mockedData = await preloadMockedMetadata();
+
+    // Snapshot values the sign-in page needs to render correctly
     const authProvidersValue = store.get(workspaceAuthProvidersState.atom);
     const domainConfigurationValue = store.get(domainConfigurationState.atom);
     const workspacePublicDataValue = store.get(workspacePublicDataState.atom);
@@ -137,17 +144,17 @@ export const useAuth = () => {
       isCaptchaScriptLoadedState.atom,
     );
 
-    store.set(isAppEffectRedirectEnabledState.atom, false);
-
     sessionStorage.clear();
-    localStorage.clear();
+    clearSessionLocalStorageKeys();
 
+    // Restore values needed by the sign-in page
     store.set(workspaceAuthProvidersState.atom, authProvidersValue);
     store.set(workspacePublicDataState.atom, workspacePublicDataValue);
     store.set(domainConfigurationState.atom, domainConfigurationValue);
     store.set(isCaptchaScriptLoadedState.atom, isCaptchaScriptLoadedValue);
     store.set(lastAuthenticatedMethodState.atom, lastAuthenticatedMethod);
 
+    // Null auth atoms
     store.set(tokenPairState.atom, null);
     store.set(currentUserState.atom, null);
     store.set(currentWorkspaceState.atom, null);
@@ -161,16 +168,19 @@ export const useAuth = () => {
     store.set(loginTokenState.atom, null);
     store.set(signInUpStepState.atom, SignInUpStep.Init);
 
+    // Atomic swap: reset metadata store and fill with mocks in one sync batch
+    applyMockedMetadata(mockedData);
+
     await client.clearStore();
     setLastAuthenticateWorkspaceDomain(null);
-    await loadMockedMinimalMetadata();
     navigate(AppPath.SignInUp);
     store.set(isAppEffectRedirectEnabledState.atom, true);
   }, [
     clearSseClient,
     client,
     setLastAuthenticateWorkspaceDomain,
-    loadMockedMinimalMetadata,
+    preloadMockedMetadata,
+    applyMockedMetadata,
     navigate,
     store,
   ]);
