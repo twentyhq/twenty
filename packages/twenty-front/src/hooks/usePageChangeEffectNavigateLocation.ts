@@ -170,7 +170,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
     !isDefined(objectMetadataItem)
   ) {
-    return AppPath.NotFound;
+    // OMNIA-CUSTOM: Redirect to default home page instead of showing 404
+    // when navigating to a deactivated or non-existent object (e.g. Companies
+    // via a stale OAuth returnToPath or browser history).
+    return defaultHomePagePath;
   }
 
   return;
