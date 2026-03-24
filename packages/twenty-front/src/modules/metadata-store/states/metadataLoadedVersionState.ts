@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const metadataLoadVersionState = createAtomState<number>({
-  key: 'metadataLoadVersionState',
+export const metadataLoadedVersionState = createAtomState<number>({
+  key: 'metadataLoadedVersionState',
   defaultValue: 0,
 });

@@ -2,7 +2,7 @@ const SIGN_OUT_CHANNEL_NAME = 'twenty-sign-out';
 
 let sharedChannel: BroadcastChannel | null = null;
 
-const getSharedChannel = (): BroadcastChannel | null => {
+const getSharedSignOutChannel = (): BroadcastChannel | null => {
   if (sharedChannel) {
     return sharedChannel;
   }
@@ -16,12 +16,14 @@ const getSharedChannel = (): BroadcastChannel | null => {
   return sharedChannel;
 };
 
-export const broadcastSignOut = () => {
-  getSharedChannel()?.postMessage({ type: 'sign-out' });
+export const broadcastSignOutToOtherTabs = () => {
+  getSharedSignOutChannel()?.postMessage({ type: 'sign-out' });
 };
 
-export const subscribeToSignOut = (callback: () => void): (() => void) => {
-  const channel = getSharedChannel();
+export const subscribeToSignOutFromOtherTabs = (
+  callback: () => void,
+): (() => void) => {
+  const channel = getSharedSignOutChannel();
 
   if (!channel) {
     return () => {};

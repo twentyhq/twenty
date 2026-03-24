@@ -1,4 +1,4 @@
-import { metadataLoadVersionState } from '@/metadata-store/states/metadataLoadVersionState';
+import { metadataLoadedVersionState } from '@/metadata-store/states/metadataLoadedVersionState';
 import {
   ALL_METADATA_ENTITY_KEYS,
   metadataStoreState,
@@ -16,7 +16,7 @@ export const useInvalidateMetadataStore = () => {
         currentCollectionHash: undefined,
       }));
     }
-    store.set(metadataLoadVersionState.atom, (prev) => prev + 1);
+    store.set(metadataLoadedVersionState.atom, (prev) => prev + 1);
   }, [store]);
 
   return { invalidateMetadataStore };

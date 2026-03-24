@@ -1,12 +1,12 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { subscribeToSignOut } from '@/auth/utils/crossTabSignOut';
+import { subscribeToSignOutFromOtherTabs } from '@/auth/utils/crossTabSignOut';
 import { useEffect } from 'react';
 
 export const SignOutOnOtherTabSignOutEffect = () => {
   const { clearSession } = useAuth();
 
   useEffect(() => {
-    const unsubscribe = subscribeToSignOut(() => {
+    const unsubscribe = subscribeToSignOutFromOtherTabs(() => {
       clearSession();
     });
 
