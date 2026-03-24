@@ -109,10 +109,13 @@ export class FileController {
       setFileResponseHeaders(res, fileResponse.mimeType);
 
       fileResponse.stream.on('error', () => {
-        throw new FileException(
-          'Error streaming file from storage',
-          FileExceptionCode.INTERNAL_SERVER_ERROR,
-        );
+        if (!res.headersSent) {
+          res.status(500).send('Error streaming file from storage');
+
+          return;
+        }
+
+        res.destroy();
       });
 
       fileResponse.stream.pipe(res);

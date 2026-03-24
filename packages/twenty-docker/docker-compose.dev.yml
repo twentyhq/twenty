@@ -5,9 +5,6 @@
 #   docker compose -f docker-compose.dev.yml up -d
 #   docker compose -f docker-compose.dev.yml down       # stop
 #   docker compose -f docker-compose.dev.yml down -v    # stop + wipe data
-#
-# Optional S3-compatible storage (MinIO):
-#   docker compose -f docker-compose.dev.yml --profile s3 up -d
 
 name: twenty-dev
 
@@ -41,38 +38,5 @@ services:
       retries: 10
     restart: unless-stopped
 
-  minio:
-    image: minio/minio:latest
-    profiles: ["s3"]
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-    command: server /data --console-address ":9001"
-    volumes:
-      - dev-minio-data:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-
-  minio-init:
-    image: minio/mc:latest
-    profiles: ["s3"]
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set local http://minio:9000 minioadmin minioadmin &&
-      mc mb --ignore-existing local/twenty-storage &&
-      mc anonymous set download local/twenty-storage
-      "
-
 volumes:
   dev-db-data:
-  dev-minio-data:

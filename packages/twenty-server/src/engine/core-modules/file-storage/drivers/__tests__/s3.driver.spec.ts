@@ -1,4 +1,4 @@
-import { GetObjectCommand, S3 } from '@aws-sdk/client-s3';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
@@ -61,23 +61,6 @@ describe('S3Driver.getPresignedUrl', () => {
       expect.anything(),
       expect.any(GetObjectCommand),
       { expiresIn: 900 },
-    );
-  });
-
-  it('should create a separate S3 client for presigning with the public endpoint', () => {
-    new S3Driver({
-      bucketName: 'test-bucket',
-      region: 'us-east-1',
-      endpoint: 'http://internal:9000',
-      presignEndpoint: 'https://public.s3.com',
-    });
-
-    expect(S3).toHaveBeenCalledTimes(2);
-    expect(S3).toHaveBeenCalledWith(
-      expect.objectContaining({ endpoint: 'http://internal:9000' }),
-    );
-    expect(S3).toHaveBeenCalledWith(
-      expect.objectContaining({ endpoint: 'https://public.s3.com' }),
     );
   });
 
