@@ -38,19 +38,28 @@ export const useDefaultHomePagePath = () => {
     objectPermissionsByObjectMetadataId,
   ]);
 
-  // For non-layout users, filter to only objects visible in sidebar
+  // For non-layout users, filter to only objects visible in sidebar,
+  // sorted to match sidebar display order (ORDERED_FIRST_STANDARD_OBJECTS).
   const sidebarVisibleObjectMetadataItems = useMemo(() => {
     if (isAdmin) return readableAlphaSortedActiveNonSystemObjectMetadataItems;
-    return readableAlphaSortedActiveNonSystemObjectMetadataItems.filter(
-      (item) => {
+    const SIDEBAR_ORDER = ['person', 'policy', 'company', 'opportunity', 'note', 'task'];
+    return readableAlphaSortedActiveNonSystemObjectMetadataItems
+      .filter((item) => {
         const objectPermissions =
           getObjectPermissionsFromMapByObjectMetadataId({
             objectPermissionsByObjectMetadataId,
             objectMetadataId: item.id,
           });
         return objectPermissions?.showInSidebar;
-      },
-    );
+      })
+      .sort((a, b) => {
+        const indexA = SIDEBAR_ORDER.indexOf(a.nameSingular);
+        const indexB = SIDEBAR_ORDER.indexOf(b.nameSingular);
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        return a.nameSingular.localeCompare(b.nameSingular);
+      });
   }, [
     isAdmin,
     readableAlphaSortedActiveNonSystemObjectMetadataItems,
@@ -102,9 +111,21 @@ export const useDefaultHomePagePath = () => {
     return ids;
   }, [allNavigationMenuItems, views]);
 
-  // For the default landing page, find the first root-level workspace nav
-  // item (sorted by position) that resolves to a readable object.
+  // For the default landing page, find the first object visible in the sidebar.
+  // Admins: first root-level workspace nav item (sorted by position).
+  // Non-layout users: first sidebar-visible object (sorted by ORDERED_FIRST_STANDARD_OBJECTS).
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
+    // Non-layout users: use the first sidebar-visible object
+    if (!isAdmin && sidebarVisibleObjectMetadataItems.length > 0) {
+      const firstItem = sidebarVisibleObjectMetadataItems[0];
+
+      return {
+        objectMetadataItem: firstItem,
+        view: getFirstView(firstItem.id),
+      };
+    }
+
+    // Admins: use workspace navigation menu items
     const rootWorkspaceItems = allNavigationMenuItems
       .filter(
         (item) =>
@@ -130,29 +151,24 @@ export const useDefaultHomePagePath = () => {
       }
     }
 
-    // Ultimate fallback: for non-layout users, pick the first sidebar-visible
-    // object; for admins, prefer "person" (Leads), then first readable object.
-    const fallbackItems = isAdmin
-      ? readableAlphaSortedActiveNonSystemObjectMetadataItems
-      : sidebarVisibleObjectMetadataItems;
-    const preferredFallback = isAdmin
-      ? (fallbackItems.find((item) => item.nameSingular === 'person') ??
-        fallbackItems[0])
-      : fallbackItems[0];
-    return preferredFallback
+    // Ultimate fallback
+    const fallbackItem =
+      readableAlphaSortedActiveNonSystemObjectMetadataItems[0];
+
+    return fallbackItem
       ? {
-          objectMetadataItem: preferredFallback,
-          view: getFirstView(preferredFallback.id),
+          objectMetadataItem: fallbackItem,
+          view: getFirstView(fallbackItem.id),
         }
       : null;
   }, [
+    isAdmin,
     allNavigationMenuItems,
     views,
     getActiveObjectMetadataItemMatchingId,
     getFirstView,
     readableAlphaSortedActiveNonSystemObjectMetadataItems,
     sidebarVisibleObjectMetadataItems,
-    isAdmin,
   ]);
 
   const getDefaultObjectPathInfo = useCallback(() => {
