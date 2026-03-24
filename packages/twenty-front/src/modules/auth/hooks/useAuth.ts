@@ -137,8 +137,6 @@ export const useAuth = () => {
       isCaptchaScriptLoadedState.atom,
     );
 
-    store.set(isAppEffectRedirectEnabledState.atom, false);
-
     sessionStorage.clear();
     localStorage.clear();
 
@@ -168,16 +166,18 @@ export const useAuth = () => {
     } catch (error) {
       // oxlint-disable-next-line no-console
       console.error('Error during session cleanup:', error);
-    } finally {
-      navigate(AppPath.SignInUp);
-      store.set(isAppEffectRedirectEnabledState.atom, true);
     }
+
+    // Use hard navigation instead of React Router's navigate because
+    // clearing currentUserState above triggers an AppRouter re-render that
+    // recreates the BrowserRouter (useCreateAppRouter is not memoized),
+    // which makes the navigate function from the old router instance stale.
+    window.location.href = AppPath.SignInUp;
   }, [
     clearSseClient,
     client,
     setLastAuthenticateWorkspaceDomain,
     loadMockedMinimalMetadata,
-    navigate,
     store,
   ]);
 
