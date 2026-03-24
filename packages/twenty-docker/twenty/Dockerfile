@@ -71,60 +71,6 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 
 
 # ===========================================================================
-# Target: twenty (production)
-#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
-# ===========================================================================
-
-FROM node:24-alpine AS twenty
-
-RUN apk add --no-cache curl jq postgresql-client
-
-COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-WORKDIR /app/packages/twenty-server
-
-ARG REACT_APP_SERVER_BASE_URL
-ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
-
-ARG APP_VERSION
-ENV APP_VERSION=$APP_VERSION
-
-# Workspace root config
-COPY --chown=1000 --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
-COPY --chown=1000 --from=twenty-server-build /app/tsconfig.base.json /app/nx.json /app/
-COPY --chown=1000 --from=twenty-server-build /app/.yarn /app/.yarn
-COPY --chown=1000 --from=twenty-server-build /app/node_modules /app/node_modules
-
-# Server package (compiled dist + package.json only, no src/)
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/package.json /app/packages/twenty-server/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/dist /app/packages/twenty-server/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/patches /app/packages/twenty-server/patches
-
-# Workspace packages (dist + package.json; node_modules symlinks resolve to these)
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/package.json /app/packages/twenty-shared/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/dist /app/packages/twenty-shared/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/package.json /app/packages/twenty-emails/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/twenty-emails/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
-
-# Frontend static build
-COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
-
-LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
-LABEL org.opencontainers.image.description="Production Twenty image with backend and frontend."
-
-RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
-    chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
-
-USER 1000
-
-CMD ["node", "dist/main"]
-ENTRYPOINT ["/app/entrypoint.sh"]
-
-
-# ===========================================================================
 # Target: twenty-app-dev (all-in-one with Postgres + Redis)
 #   docker build --target twenty-app-dev -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
@@ -215,8 +161,64 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     SIGN_IN_PREFILLED=true
 
 EXPOSE 3000
+VOLUME ["/data/postgres", "/app/.local-storage"]
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="All-in-one Twenty image for local development and SDK usage. Includes PostgreSQL, Redis, server, and worker."
 
 ENTRYPOINT ["/init"]
+
+
+# ===========================================================================
+# Target: twenty (production) — MUST REMAIN THE LAST STAGE
+# Railway builds the last stage by default (dockerTarget is not supported).
+#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM node:24-alpine AS twenty
+
+RUN apk add --no-cache curl jq postgresql-client
+
+COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+WORKDIR /app/packages/twenty-server
+
+ARG REACT_APP_SERVER_BASE_URL
+ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
+
+ARG APP_VERSION
+ENV APP_VERSION=$APP_VERSION
+
+# Workspace root config
+COPY --chown=1000 --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
+COPY --chown=1000 --from=twenty-server-build /app/tsconfig.base.json /app/nx.json /app/
+COPY --chown=1000 --from=twenty-server-build /app/.yarn /app/.yarn
+COPY --chown=1000 --from=twenty-server-build /app/node_modules /app/node_modules
+
+# Server package (compiled dist + package.json only, no src/)
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/package.json /app/packages/twenty-server/
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/dist /app/packages/twenty-server/dist
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/patches /app/packages/twenty-server/patches
+
+# Workspace packages (dist + package.json; node_modules symlinks resolve to these)
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/package.json /app/packages/twenty-shared/
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/dist /app/packages/twenty-shared/dist
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/package.json /app/packages/twenty-emails/
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/twenty-emails/dist
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
+
+# Frontend static build
+COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+
+LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
+LABEL org.opencontainers.image.description="Production Twenty image with backend and frontend."
+
+RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
+    chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
+
+USER 1000
+
+CMD ["node", "dist/main"]
+ENTRYPOINT ["/app/entrypoint.sh"]

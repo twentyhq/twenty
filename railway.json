@@ -2,7 +2,6 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "dockerfilePath": "packages/twenty-docker/twenty/Dockerfile",
-    "dockerTarget": "twenty",
     "watchPatterns": [
       "packages/twenty-server/src/**",
       "packages/twenty-front/src/**",
