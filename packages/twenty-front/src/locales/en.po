@@ -11635,11 +11635,6 @@ msgstr "Reload validity token"
 msgid "Reloading..."
 msgstr "Reloading..."
 
-#. js-lingui-id: qlAIQ1
-#: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
-msgid "Remote"
-msgstr "Remote"
-
 #. js-lingui-id: t/YqKh
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx

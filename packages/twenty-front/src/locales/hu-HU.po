@@ -11640,11 +11640,6 @@ msgstr ""
 msgid "Reloading..."
 msgstr ""
 
-#. js-lingui-id: qlAIQ1
-#: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
-msgid "Remote"
-msgstr "Távoli"
-
 #. js-lingui-id: t/YqKh
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
