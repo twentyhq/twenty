@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
@@ -100,7 +99,7 @@ export const NavigationMenuItemIcon = ({
     navigationMenuItem,
     objectMetadataItem,
   );
-  const useStyledIcon = !isRecord && isNonEmptyString(effectiveColor);
+  const useStyledIcon = !isRecord;
   const iconStyle = useStyledIcon
     ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
     : null;

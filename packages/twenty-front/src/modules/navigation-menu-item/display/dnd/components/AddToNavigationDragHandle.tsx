@@ -92,9 +92,7 @@ export const AddToNavigationDragHandle = ({
       : undefined,
   );
   const hasBackgroundColor =
-    payload.type !== NavigationMenuItemType.RECORD &&
-    isDefined(effectiveColor) &&
-    !isHovered;
+    payload.type !== NavigationMenuItemType.RECORD && !isHovered;
   const showCustomContentWithoutWrapper = isDefined(customIconContent);
 
   return (
