@@ -45,6 +45,7 @@ services:
     networks:
       - default
       - dagster_network
+      - crm-stack
 
   redis:
     image: redis:7
