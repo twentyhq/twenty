@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteSingleRecordCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords } =
-    useMountedCommandState();
+    useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
 

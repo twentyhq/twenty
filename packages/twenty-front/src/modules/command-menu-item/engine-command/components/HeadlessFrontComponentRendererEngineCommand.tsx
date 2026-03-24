@@ -1,8 +1,8 @@
 import { Suspense, lazy } from 'react';
 
-import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { isMountedFrontComponentCommandState } from '@/command-menu-item/engine-command/utils/isMountedFrontComponentCommandState';
+import { isHeadlessFrontComponentCommandContextApi } from '@/command-menu-item/engine-command/utils/isHeadlessFrontComponentCommandContextApi';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,10 +19,12 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
     CommandComponentInstanceContext,
   );
 
-  const context = useMountedCommandState();
+  const context = useHeadlessCommandContextApi();
 
-  if (!isMountedFrontComponentCommandState(context)) {
-    throw new Error('Context is not a mounted front component command state');
+  if (!isHeadlessFrontComponentCommandContextApi(context)) {
+    throw new Error(
+      'Context is not a headless front component command context API',
+    );
   }
 
   const objectNameSingular = context.objectMetadataItem?.nameSingular;

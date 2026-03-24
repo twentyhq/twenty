@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { headlessCommandContextApisState } from '@/command-menu-item/engine-command/states/headlessCommandContextApisState';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { useStore } from 'jotai';
 
@@ -9,7 +9,7 @@ export const useUnmountCommand = () => {
 
   const unmountCommand = useCallback(
     (engineCommandId: string) => {
-      store.set(mountedCommandsState.atom, (previousMap) => {
+      store.set(headlessCommandContextApisState.atom, (previousMap) => {
         const newMap = new Map(previousMap);
 
         newMap.delete(engineCommandId);

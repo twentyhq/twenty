@@ -1,12 +1,12 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { isDefined } from 'twenty-shared/utils';
 import { useResetLocationHash } from 'twenty-ui/utilities';
 
 export const EditRecordPageLayoutSingleRecordCommand = () => {
-  const { objectMetadataItem } = useMountedCommandState();
+  const { objectMetadataItem } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(

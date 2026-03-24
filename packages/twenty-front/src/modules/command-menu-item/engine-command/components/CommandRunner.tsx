@@ -2,33 +2,37 @@ import { CommandMenuItemErrorBoundary } from '@/command-menu-item/display/compon
 import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { headlessCommandContextApisState } from '@/command-menu-item/engine-command/states/headlessCommandContextApisState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const CommandRunner = () => {
-  const mountedCommands = useAtomStateValue(mountedCommandsState);
+  const headlessCommandContextApis = useAtomStateValue(
+    headlessCommandContextApisState,
+  );
   const unmountCommand = useUnmountCommand();
 
   return (
     <>
-      {[...mountedCommands.entries()].map(([commandMenuItemId, context]) => (
-        <ContextStoreComponentInstanceContext.Provider
-          key={commandMenuItemId}
-          value={{ instanceId: context.contextStoreInstanceId }}
-        >
-          <CommandComponentInstanceContext.Provider
-            value={{ instanceId: commandMenuItemId }}
+      {[...headlessCommandContextApis.entries()].map(
+        ([commandMenuItemId, context]) => (
+          <ContextStoreComponentInstanceContext.Provider
+            key={commandMenuItemId}
+            value={{ instanceId: context.contextStoreInstanceId }}
           >
-            <CommandMenuItemErrorBoundary
-              shouldReportToSentry
-              onError={() => unmountCommand(commandMenuItemId)}
+            <CommandComponentInstanceContext.Provider
+              value={{ instanceId: commandMenuItemId }}
             >
-              {ENGINE_COMPONENT_KEY_COMPONENT_MAP[context.engineComponentKey]}
-            </CommandMenuItemErrorBoundary>
-          </CommandComponentInstanceContext.Provider>
-        </ContextStoreComponentInstanceContext.Provider>
-      ))}
+              <CommandMenuItemErrorBoundary
+                shouldReportToSentry
+                onError={() => unmountCommand(commandMenuItemId)}
+              >
+                {ENGINE_COMPONENT_KEY_COMPONENT_MAP[context.engineComponentKey]}
+              </CommandMenuItemErrorBoundary>
+            </CommandComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
+        ),
+      )}
     </>
   );
 };

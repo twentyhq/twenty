@@ -1,10 +1,10 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
-  const { objectMetadataItem, recordIndexId } = useMountedCommandState();
+  const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(

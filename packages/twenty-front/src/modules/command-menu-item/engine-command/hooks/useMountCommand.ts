@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { useBuildTriggerWorkflowVersionCommandState } from '@/command-menu-item/engine-command/hooks/useBuildTriggerWorkflowVersionCommandState';
-import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
-import { buildMountedCommandBaseState } from '@/command-menu-item/engine-command/utils/buildMountedCommandBaseState';
+import { useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation } from '@/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation';
+import { headlessCommandContextApisState } from '@/command-menu-item/engine-command/states/headlessCommandContextApisState';
+import { buildHeadlessCommandContextApi } from '@/command-menu-item/engine-command/utils/buildHeadlessCommandContextApi';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -23,8 +23,9 @@ type MountCommandParams = {
 export const useMountCommand = () => {
   const store = useStore();
 
-  const { buildTriggerWorkflowVersionCommandState } =
-    useBuildTriggerWorkflowVersionCommandState();
+  const {
+    enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation,
+  } = useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation();
 
   const mountCommand = useCallback(
     async ({
@@ -36,28 +37,30 @@ export const useMountCommand = () => {
       availabilityType,
       availabilityObjectMetadataId,
     }: MountCommandParams) => {
-      const baseState = buildMountedCommandBaseState({
+      const headlessEngineCommandContextApi = buildHeadlessCommandContextApi({
         store,
         contextStoreInstanceId,
         engineComponentKey,
       });
 
       const commandState = isDefined(frontComponentId)
-        ? { ...baseState, frontComponentId }
+        ? { ...headlessEngineCommandContextApi, frontComponentId }
         : isDefined(workflowVersionId) && isDefined(availabilityType)
-          ? await buildTriggerWorkflowVersionCommandState({
-              baseState,
-              workflowVersionId,
-              availabilityType,
-              availabilityObjectMetadataId,
-            })
-          : baseState;
+          ? await enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
+              {
+                headlessEngineCommandContextApi,
+                workflowVersionId,
+                availabilityType,
+                availabilityObjectMetadataId,
+              },
+            )
+          : headlessEngineCommandContextApi;
 
       if (!isDefined(commandState)) {
         return;
       }
 
-      store.set(mountedCommandsState.atom, (previousMap) => {
+      store.set(headlessCommandContextApisState.atom, (previousMap) => {
         const newMap = new Map(previousMap);
 
         newMap.set(engineCommandId, commandState);
@@ -65,7 +68,10 @@ export const useMountCommand = () => {
         return newMap;
       });
     },
-    [store, buildTriggerWorkflowVersionCommandState],
+    [
+      store,
+      enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation,
+    ],
   );
 
   return mountCommand;

@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -43,7 +43,7 @@ const ExportMultipleRecordsCommandContent = ({
 };
 
 export const ExportMultipleRecordsCommand = () => {
-  const { objectMetadataItem, recordIndexId } = useMountedCommandState();
+  const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();
 
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
     CommandComponentInstanceContext,

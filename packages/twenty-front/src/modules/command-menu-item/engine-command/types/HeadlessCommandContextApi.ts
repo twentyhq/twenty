@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { type EngineComponentKey } from '~/generated-metadata/graphql';
 
-export type MountedCommandBaseState = {
+export type HeadlessEngineCommandContextApi = {
   engineComponentKey: EngineComponentKey;
   contextStoreInstanceId: string;
   objectMetadataItem: Nullable<EnrichedObjectMetadataItem>;
@@ -18,19 +18,19 @@ export type MountedCommandBaseState = {
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
 };
 
-export type MountedHeadlessFrontComponentCommandState =
-  MountedCommandBaseState & {
+export type HeadlessFrontComponentCommandContextApi =
+  HeadlessEngineCommandContextApi & {
     frontComponentId: string;
   };
 
-export type MountedTriggerWorkflowVersionCommandState =
-  MountedCommandBaseState & {
+export type HeadlessTriggerWorkflowVersionCommandContextApi =
+  HeadlessEngineCommandContextApi & {
     workflowId: string;
     workflowVersionId: string;
     payloads: Record<string, any>[];
   };
 
-export type MountedCommandState =
-  | MountedCommandBaseState
-  | MountedHeadlessFrontComponentCommandState
-  | MountedTriggerWorkflowVersionCommandState;
+export type HeadlessCommandContextApi =
+  | HeadlessEngineCommandContextApi
+  | HeadlessFrontComponentCommandContextApi
+  | HeadlessTriggerWorkflowVersionCommandContextApi;

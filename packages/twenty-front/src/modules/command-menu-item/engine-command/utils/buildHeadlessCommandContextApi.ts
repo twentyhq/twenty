@@ -1,7 +1,7 @@
 import type { Store } from 'jotai/vanilla/store';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { type MountedCommandBaseState } from '@/command-menu-item/engine-command/types/MountedCommandState';
+import { type HeadlessEngineCommandContextApi } from '@/command-menu-item/engine-command/types/HeadlessCommandContextApi';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -16,7 +16,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { isDefined } from 'twenty-shared/utils';
 import { type EngineComponentKey } from '~/generated-metadata/graphql';
 
-export const buildMountedCommandBaseState = ({
+export const buildHeadlessCommandContextApi = ({
   store,
   contextStoreInstanceId,
   engineComponentKey,
@@ -24,7 +24,7 @@ export const buildMountedCommandBaseState = ({
   store: Store;
   contextStoreInstanceId: string;
   engineComponentKey: EngineComponentKey;
-}): MountedCommandBaseState => {
+}): HeadlessEngineCommandContextApi => {
   const objectMetadataItemId = store.get(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
       instanceId: contextStoreInstanceId,

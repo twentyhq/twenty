@@ -1,22 +1,25 @@
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { headlessCommandContextApisState } from '@/command-menu-item/engine-command/states/headlessCommandContextApisState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMountedCommandState = () => {
+export const useHeadlessCommandContextApi = () => {
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
     CommandComponentInstanceContext,
   );
 
-  const mountedCommands = useAtomStateValue(mountedCommandsState);
-  const mountedCommandState = mountedCommands.get(engineCommandId);
+  const headlessCommandContextApis = useAtomStateValue(
+    headlessCommandContextApisState,
+  );
+  const headlessCommandContextApi =
+    headlessCommandContextApis.get(engineCommandId);
 
-  if (!isDefined(mountedCommandState)) {
+  if (!isDefined(headlessCommandContextApi)) {
     throw new Error(
-      'Mounted command state not found. Make sure the command was mounted via the command mount flow.',
+      'Headless command context API not found. Make sure the command was mounted via the command mount flow.',
     );
   }
 
-  return mountedCommandState;
+  return headlessCommandContextApi;
 };

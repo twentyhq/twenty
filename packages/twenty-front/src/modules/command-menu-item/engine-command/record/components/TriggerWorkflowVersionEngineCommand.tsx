@@ -1,17 +1,19 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
-import { isMountedTriggerWorkflowVersionCommandState } from '@/command-menu-item/engine-command/utils/isMountedTriggerWorkflowVersionCommandState';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { isHeadlessTriggerWorkflowVersionCommandContextApi } from '@/command-menu-item/engine-command/utils/isHeadlessTriggerWorkflowVersionCommandContextApi';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useCallback } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const TriggerWorkflowVersionEngineCommand = () => {
-  const mountedCommandState = useMountedCommandState();
+  const mountedCommandState = useHeadlessCommandContextApi();
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
   const execute = useCallback(async () => {
-    if (!isMountedTriggerWorkflowVersionCommandState(mountedCommandState)) {
+    if (
+      !isHeadlessTriggerWorkflowVersionCommandContextApi(mountedCommandState)
+    ) {
       return;
     }
 
