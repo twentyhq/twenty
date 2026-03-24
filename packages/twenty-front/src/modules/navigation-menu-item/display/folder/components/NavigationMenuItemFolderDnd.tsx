@@ -34,6 +34,7 @@ import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
   NavigationMenuItemDroppableSlot,
 } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
+import { NavigationMenuItemInsertBeforeDroppableZone } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemInsertBeforeDroppableZone';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
 import { NavigationMenuItemFolderLayout } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderLayout';
@@ -88,6 +89,7 @@ type NavigationMenuItemFolderDndProps = {
   isDragging: boolean;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
+  orphanIndex?: number;
 };
 
 export const NavigationMenuItemFolderDnd = ({
@@ -102,6 +104,7 @@ export const NavigationMenuItemFolderDnd = ({
   isDragging: isDraggingProp,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
+  orphanIndex,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -243,8 +246,22 @@ export const NavigationMenuItemFolderDnd = ({
     />
   );
 
+  const showInsertBeforeZone =
+    isDragging && orphanIndex !== undefined && !isEditInPlace;
+
   const wrappedHeader = (
-    <div ref={setSortableDropTargetRef ?? undefined}>
+    <div
+      ref={setSortableDropTargetRef ?? undefined}
+      style={{ position: 'relative' }}
+    >
+      {showInsertBeforeZone && (
+        <NavigationMenuItemInsertBeforeDroppableZone
+          orphanDroppableId={config.orphanDroppableId}
+          orphanIndex={orphanIndex}
+          itemId={folderId}
+          disabled={dropDisabled}
+        />
+      )}
       <NavigationMenuItemDroppableSlot
         droppableId={folderHeaderDroppableId}
         index={0}
@@ -369,7 +386,7 @@ export const NavigationMenuItemFolderDnd = ({
                 folderId={folderId}
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
-                compact={!(isWorkspace && isLayoutCustomizationModeEnabled)}
+                compact={isCompact}
                 dropTargetIdOverride={getDndKitDropTargetId(
                   folderContentDroppableId,
                   navigationMenuItems.length,

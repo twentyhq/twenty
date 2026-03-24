@@ -1,4 +1,4 @@
-name: CI Docker Compose
+name: CI Docker
 
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
       files: |
         packages/twenty-docker/**
         docker-compose.yml
-  test:
+  test-compose:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
@@ -30,10 +30,10 @@ jobs:
       - name: Run compose
         run: |
           echo "Patching docker-compose.yml..."
-          # change image to localbuild using yq
           yq eval 'del(.services.server.image)' -i docker-compose.yml
           yq eval '.services.server.build.context = "../../"' -i docker-compose.yml
           yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
+          yq eval '.services.server.build.target = "twenty"' -i docker-compose.yml
           yq eval '.services.server.restart = "no"' -i docker-compose.yml
 
           echo "Setting up .env file..."
@@ -89,11 +89,64 @@ jobs:
               echo "Still waiting for server... (${count}/300s)"
           done
         working-directory: ./packages/twenty-docker/
-  ci-test-docker-compose-status-check:
+  test-app-dev:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create frontend placeholder
+        run: |
+          mkdir -p packages/twenty-front/build
+          echo '<html><body>CI placeholder</body></html>' > packages/twenty-front/build/index.html
+      - name: Build app-dev image
+        run: |
+          docker build \
+            --target twenty-app-dev \
+            -f packages/twenty-docker/twenty/Dockerfile \
+            -t twenty-app-dev-ci \
+            .
+      - name: Start container
+        run: |
+          docker run -d --name twenty-app-dev \
+            -p 3000:3000 \
+            twenty-app-dev-ci
+          docker logs twenty-app-dev -f &
+      - name: Wait for server health
+        run: |
+          echo "Waiting for twenty-app-dev to become healthy..."
+          count=0
+          while true; do
+            status=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/healthz 2>/dev/null || echo "000")
+            if [ "$status" = "200" ]; then
+              echo "Server is healthy!"
+              curl -s http://localhost:3000/healthz
+              break
+            fi
+
+            container_status=$(docker inspect --format='{{.State.Status}}' twenty-app-dev 2>/dev/null || echo "unknown")
+            if [ "$container_status" = "exited" ]; then
+              echo "Container exited unexpectedly"
+              docker logs twenty-app-dev
+              exit 1
+            fi
+
+            count=$((count+1))
+            if [ $count -gt 300 ]; then
+              echo "Server did not become healthy within 5 minutes"
+              docker logs twenty-app-dev
+              exit 1
+            fi
+            echo "Still waiting... (${count}/300s) [HTTP ${status}]"
+            sleep 1
+          done
+  ci-test-docker-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, test]
+    needs: [changed-files-check, test-compose, test-app-dev]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
