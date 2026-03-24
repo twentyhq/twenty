@@ -27,7 +27,6 @@ export type PreloadedMockedMetadata = {
   navigationMenuItems: NavigationMenuItem[];
 };
 
-// Async: fetches mock data via dynamic imports. Does NOT touch the store.
 export const preloadMockedMetadata =
   async (): Promise<PreloadedMockedMetadata> => {
     const [

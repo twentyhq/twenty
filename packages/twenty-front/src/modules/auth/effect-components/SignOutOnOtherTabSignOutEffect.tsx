@@ -2,7 +2,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { subscribeToSignOut } from '@/auth/utils/crossTabSignOut';
 import { useEffect } from 'react';
 
-export const CrossTabSignOutEffect = () => {
+export const SignOutOnOtherTabSignOutEffect = () => {
   const { clearSession } = useAuth();
 
   useEffect(() => {

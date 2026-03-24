@@ -23,22 +23,15 @@ const safeRemoveItems = (keys: string[]) => {
     try {
       localStorage.removeItem(key);
     } catch {
-      // localStorage may be unavailable in some environments
+      // noop
     }
   }
 };
 
-// Clears non-metadata session keys only. Metadata keys are NOT deleted
-// so that other browser tabs (sharing localStorage) keep working.
-// The caller is expected to overwrite metadata via applyMockedMetadata()
-// which writes mocked data back to localStorage through atomWithStorage.
 export const clearSessionLocalStorageKeys = () => {
   safeRemoveItems(SESSION_KEYS_TO_CLEAR);
 };
 
-// Clears everything including metadata keys. Use only when creating
-// a brand-new Jotai store (resetJotaiStore) where stale localStorage
-// values must not be hydrated into the new store.
 export const clearAllSessionLocalStorageKeys = () => {
   safeRemoveItems([...getMetadataStoreKeys(), ...SESSION_KEYS_TO_CLEAR]);
 };

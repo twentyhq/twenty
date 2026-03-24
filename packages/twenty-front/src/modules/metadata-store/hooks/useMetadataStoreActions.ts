@@ -95,7 +95,6 @@ export const useMetadataStoreActions = () => {
   return {
     invalidateAndReload,
     loadMockedMetadataAtomic,
-    preloadMockedMetadata,
     applyMockedMetadata,
   };
 };
