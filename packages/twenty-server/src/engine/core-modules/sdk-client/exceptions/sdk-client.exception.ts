@@ -36,8 +36,7 @@ export class SdkClientException extends CustomException<SdkClientExceptionCode> 
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ??
-        getSdkClientExceptionUserFriendlyMessage(code),
+        userFriendlyMessage ?? getSdkClientExceptionUserFriendlyMessage(code),
     });
   }
 }
