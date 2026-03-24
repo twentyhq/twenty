@@ -5,6 +5,8 @@ import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-
 import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+
 describe('CommandMenuItem deletion should succeed', () => {
   beforeAll(async () => {
     await updateFeatureFlag({
@@ -29,6 +31,7 @@ describe('CommandMenuItem deletion should succeed', () => {
       expectToFail: false,
       input: {
         workflowVersionId,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Command Menu Item To Delete',
       },
     });

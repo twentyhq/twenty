@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
@@ -8,7 +8,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SaveRecordPageLayoutSingleRecordCommand = () => {
-  const { objectMetadataItem } = useMountedEngineCommandContext();
+  const { objectMetadataItem } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error(

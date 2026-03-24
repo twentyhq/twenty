@@ -1,10 +1,10 @@
 import { useMutation } from '@apollo/client/react';
 import { DeleteNavigationMenuItemDocument } from '~/generated-metadata/graphql';
 
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 
 export const useDeleteNavigationMenuItem = () => {
-  const { removeFromDraft, applyChanges } = useMetadataStore();
+  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const [deleteNavigationMenuItemMutation] = useMutation(
     DeleteNavigationMenuItemDocument,

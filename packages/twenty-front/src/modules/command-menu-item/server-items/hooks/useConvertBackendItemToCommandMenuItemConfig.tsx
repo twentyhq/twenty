@@ -1,7 +1,5 @@
-import { EngineCommandMenuItem } from '@/command-menu-item/display/components/EngineCommandMenuItem';
 import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/components/FrontComponentCommandMenuItem';
-import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
-import { WorkflowCommandMenuItem } from '@/command-menu-item/display/components/WorkflowCommandMenuItem';
+import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -19,6 +17,7 @@ import { useIcons } from 'twenty-ui/display';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
+  EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
 const resolveScope = (
@@ -36,16 +35,15 @@ const resolveType = (
   if (item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK) {
     return CommandMenuItemType.Fallback;
   }
-  if (isDefined(item.engineComponentKey)) {
-    return CommandMenuItemType.Standard;
+
+  switch (item.engineComponentKey) {
+    case EngineComponentKey.FRONT_COMPONENT_RENDERER:
+      return CommandMenuItemType.FrontComponent;
+    case EngineComponentKey.TRIGGER_WORKFLOW_VERSION:
+      return CommandMenuItemType.WorkflowRun;
+    default:
+      return CommandMenuItemType.Standard;
   }
-  if (isDefined(item.frontComponentId)) {
-    return CommandMenuItemType.FrontComponent;
-  }
-  if (isDefined(item.workflowVersionId)) {
-    return CommandMenuItemType.WorkflowRun;
-  }
-  return CommandMenuItemType.Standard;
 };
 
 // TODO: Remove this hook once we finish refactoring and we use
@@ -101,33 +99,22 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
         context: commandMenuContextApi,
       });
 
-      const component = isDefined(item.engineComponentKey) ? (
-        <EngineCommandMenuItem
-          commandMenuItemId={item.id}
-          engineComponentKey={item.engineComponentKey}
-        />
-      ) : isDefined(item.frontComponentId) ? (
-        item.frontComponent?.isHeadless === true ? (
-          <HeadlessFrontComponentCommandMenuItem
-            frontComponentId={item.frontComponentId}
-            commandMenuItemId={item.id}
-          />
-        ) : (
-          <FrontComponentCommandMenuItem
-            frontComponentId={item.frontComponentId}
-          />
-        )
-      ) : isDefined(item.workflowVersionId) ? (
-        <WorkflowCommandMenuItem
-          workflowVersionId={item.workflowVersionId}
-          availabilityType={item.availabilityType}
-          availabilityObjectMetadataId={item.availabilityObjectMetadataId}
-        />
-      ) : null;
+      const component = (() => {
+        if (
+          item.engineComponentKey ===
+            EngineComponentKey.FRONT_COMPONENT_RENDERER &&
+          isDefined(item.frontComponentId) &&
+          item.frontComponent?.isHeadless !== true
+        ) {
+          return (
+            <FrontComponentCommandMenuItem
+              frontComponentId={item.frontComponentId}
+            />
+          );
+        }
 
-      if (!isDefined(component)) {
-        return;
-      }
+        return <HeadlessCommandMenuItem item={item} />;
+      })();
 
       return {
         type: resolveType(item),

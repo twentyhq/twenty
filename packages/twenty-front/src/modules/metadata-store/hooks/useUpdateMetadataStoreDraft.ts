@@ -56,7 +56,7 @@ const changeMetadataEntityAsUpToDate = (
   });
 };
 
-export const useMetadataStore = () => {
+export const useUpdateMetadataStoreDraft = () => {
   const store = useStore();
 
   const replaceDraft = useCallback(
