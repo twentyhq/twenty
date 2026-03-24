@@ -34,6 +34,7 @@ import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
@@ -47,6 +48,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
     TypeORMModule,
     TypeOrmModule.forFeature([BillingSubscriptionEntity, WorkspaceEntity]),
     MetricsModule,
+    LogicFunctionModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         AuditModule,
@@ -79,6 +81,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
         ApplicationModule,
         EnterpriseModule,
+        LogicFunctionModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

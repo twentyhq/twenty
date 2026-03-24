@@ -22,6 +22,7 @@ export const standardObjectsPrefillData = async (
 
     await prefillWorkflows(
       entityManager,
+      workspaceId,
       schemaName,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
