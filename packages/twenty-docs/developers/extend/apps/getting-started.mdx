@@ -19,7 +19,7 @@ Apps let you extend Twenty with custom objects, fields, logic functions, AI skil
 ## Prerequisites
 
 - Node.js 24+ and Yarn 4
-- A Twenty workspace and an API key (create one at https://app.twenty.com/settings/api-webhooks)
+- Docker (for the local Twenty dev server)
 
 ## Getting Started
 
@@ -37,7 +37,7 @@ yarn twenty app:dev
 The scaffolder supports two modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -220,6 +220,18 @@ Then add a `twenty` script:
 ```
 
 Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty help`, etc.
+
+## How to use a local Twenty instance
+
+If you're already running a Twenty instance locally (e.g. via `npx nx start twenty-server`), you can connect to it instead of using Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## Troubleshooting
 

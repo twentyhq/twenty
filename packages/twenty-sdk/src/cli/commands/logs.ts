@@ -59,9 +59,7 @@ export class LogicFunctionLogsCommand {
         : 'functions';
 
     console.log(
-      chalk.blue(`🚀 Watching ${appPath} ${functionIdentifier} logs:`),
+      chalk.blue(`🚀 Watching ${appPath} ${functionIdentifier} logs:\n`),
     );
-
-    console.log('');
   }
 }
