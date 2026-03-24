@@ -212,25 +212,18 @@ check_file_contains \
   "packages/twenty-front/src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx" \
   "canEditSidebar" \
   "Workspace sidebar editing must stay gated behind LAYOUTS permission"
-check_file_contains \
-  "packages/twenty-front/src/modules/navigation-menu-item/common/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts" \
-  "CoreObjectNameSingular.Task" \
-  "Omnia member workspace list must include Tasks"
-check_file_contains \
-  "packages/twenty-front/src/modules/navigation-menu-item/common/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts" \
-  "'policy'" \
-  "Omnia member workspace list must include Policies"
 check_file_not_contains \
   "packages/twenty-front/src/modules/navigation-menu-item/display/dnd/components/OmniaMemberWorkspaceNavigationMenuItems.tsx" \
   "ignoreShowInSidebar" \
-  "Curated member workspace section must respect showInSidebar permission for per-role sidebar filtering"
+  "Non-layout sidebar must respect showInSidebar permission"
+check_file_not_contains \
+  "packages/twenty-front/src/modules/navigation-menu-item/display/dnd/components/OmniaMemberWorkspaceNavigationMenuItems.tsx" \
+  "getOmniaMemberWorkspaceObjectMetadataItems" \
+  "Non-layout sidebar must use all objects filtered by permission, not a hardcoded list"
 check_file_contains \
   "packages/twenty-front/src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx" \
-  "isOmniaMemberWorkspaceObject" \
-  "Opened section must avoid duplicating fixed member workspace items"
-check_file_exists \
-  "packages/twenty-front/src/modules/navigation-menu-item/common/utils/__tests__/getOmniaMemberWorkspaceObjectMetadataItems.test.ts" \
-  "Regression test for Omnia member workspace ordering"
+  "showInSidebar" \
+  "Opened section must use showInSidebar permission to avoid duplicating workspace items"
 check_file_contains \
   "packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx" \
   "ignoreShowInSidebar" \

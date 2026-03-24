@@ -135,6 +135,8 @@ export class ObjectPermissionService {
               canUpdateObjectRecords: desired.canUpdateObjectRecords,
               canSoftDeleteObjectRecords: desired.canSoftDeleteObjectRecords,
               canDestroyObjectRecords: desired.canDestroyObjectRecords,
+              showInSidebar: desired.showInSidebar,
+              editWindowMinutes: desired.editWindowMinutes,
             },
             flatApplication,
             flatRoleMaps,
@@ -151,14 +153,22 @@ export class ObjectPermissionService {
           current.canSoftDeleteObjectRecords;
         const effectiveCanDestroy =
           desired.canDestroyObjectRecords ?? current.canDestroyObjectRecords;
+        const effectiveShowInSidebar =
+          desired.showInSidebar ?? current.showInSidebar;
+        const effectiveEditWindowMinutes =
+          desired.editWindowMinutes !== undefined
+            ? desired.editWindowMinutes
+            : current.editWindowMinutes;
 
-        const canChanged =
+        const hasChanged =
           effectiveCanRead !== current.canReadObjectRecords ||
           effectiveCanUpdate !== current.canUpdateObjectRecords ||
           effectiveCanSoftDelete !== current.canSoftDeleteObjectRecords ||
-          effectiveCanDestroy !== current.canDestroyObjectRecords;
+          effectiveCanDestroy !== current.canDestroyObjectRecords ||
+          effectiveShowInSidebar !== current.showInSidebar ||
+          effectiveEditWindowMinutes !== current.editWindowMinutes;
 
-        if (canChanged) {
+        if (hasChanged) {
           const now = new Date().toISOString();
           flatEntityToUpdate.push({
             universalIdentifier: current.universalIdentifier,
@@ -171,6 +181,8 @@ export class ObjectPermissionService {
             canUpdateObjectRecords: effectiveCanUpdate,
             canSoftDeleteObjectRecords: effectiveCanSoftDelete,
             canDestroyObjectRecords: effectiveCanDestroy,
+            showInSidebar: effectiveShowInSidebar,
+            editWindowMinutes: effectiveEditWindowMinutes,
             createdAt: current.createdAt,
             updatedAt: now,
           });

@@ -5,5 +5,7 @@ export type CreateObjectPermissionInput = {
   canUpdateObjectRecords?: boolean;
   canSoftDeleteObjectRecords?: boolean;
   canDestroyObjectRecords?: boolean;
+  showInSidebar?: boolean;
+  editWindowMinutes?: number | null;
   universalIdentifier?: string;
 };

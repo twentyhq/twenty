@@ -1,9 +1,10 @@
 import { useParams } from 'react-router-dom';
 
-import { getOmniaMemberWorkspaceObjectMetadataItems } from '@/navigation-menu-item/common/utils/getOmniaMemberWorkspaceObjectMetadataItems';
 import { useWorkspaceNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuItems';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useLingui } from '@lingui/react/macro';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -18,11 +19,7 @@ export const NavigationDrawerOpenedSection = () => {
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
 
   const { objectMetadataIdsInWorkspaceNav } = useWorkspaceNavigationMenuItems();
-
-  const omniaMemberWorkspaceObjectMetadataItems =
-    getOmniaMemberWorkspaceObjectMetadataItems(
-      filteredActiveNonSystemObjectMetadataItems,
-    );
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const {
     objectNamePlural: currentObjectNamePlural,
@@ -44,22 +41,22 @@ export const NavigationDrawerOpenedSection = () => {
   }
 
   // For admins, upstream's objectMetadataIdsInWorkspaceNav handles exclusion.
-  // For members, also exclude Omnia member workspace objects (Leads, Calls, Policies, Notes, Tasks)
-  // since those are shown via OmniaMemberWorkspaceNavigationMenuItems.
+  // For non-layout users, exclude objects already shown in the workspace
+  // section via showInSidebar permission.
   const isObjectAlreadyInNavbar = objectMetadataIdsInWorkspaceNav.has(
     objectMetadataItem.id,
   );
 
-  const isOmniaMemberWorkspaceObject =
+  const isAlreadyShownInWorkspaceSection =
     !hasLayoutsPermission &&
-    omniaMemberWorkspaceObjectMetadataItems.some(
-      (workspaceObjectMetadataItem) =>
-        workspaceObjectMetadataItem.id === objectMetadataItem.id,
-    );
+    getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      objectMetadataItem.id,
+    ).showInSidebar;
 
   return (
     !isObjectAlreadyInNavbar &&
-    !isOmniaMemberWorkspaceObject && (
+    !isAlreadyShownInWorkspaceSection && (
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Opened`}
         objectMetadataItems={[objectMetadataItem]}

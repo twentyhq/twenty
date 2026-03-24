@@ -25,6 +25,8 @@ export const fromCreateObjectPermissionInputToUniversalFlatObjectPermission = ({
     canUpdateObjectRecords,
     canSoftDeleteObjectRecords,
     canDestroyObjectRecords,
+    showInSidebar,
+    editWindowMinutes,
     universalIdentifier,
   } = createObjectPermissionInput;
   const now = new Date().toISOString();
@@ -48,6 +50,8 @@ export const fromCreateObjectPermissionInputToUniversalFlatObjectPermission = ({
     canUpdateObjectRecords: canUpdateObjectRecords ?? undefined,
     canSoftDeleteObjectRecords: canSoftDeleteObjectRecords ?? undefined,
     canDestroyObjectRecords: canDestroyObjectRecords ?? undefined,
+    showInSidebar: showInSidebar ?? undefined,
+    editWindowMinutes: editWindowMinutes ?? undefined,
     createdAt: now,
     updatedAt: now,
   };
