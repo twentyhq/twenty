@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconTwentyStar } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -14,14 +13,14 @@ import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoa
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
+import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
@@ -111,11 +110,12 @@ const StyledRightButtonsContainer = styled.div`
 
 export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const { enabledModels } = useWorkspaceAiModelAvailability();
-  const [agentChatUserSelectedModel, setAgentChatUserSelectedModel] =
-    useAtomState(agentChatUserSelectedModelState);
+  const setAgentChatUserSelectedModel = useSetAtomState(
+    agentChatUserSelectedModelState,
+  );
+  const { resolvedModelId } = useAgentChatModelId();
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
@@ -144,16 +144,6 @@ export const AIChatEditorSection = () => {
     })),
   ];
 
-  const isUserModelAvailable =
-    isDefined(agentChatUserSelectedModel) &&
-    smartModelOptions.some(
-      (option) => option.value === agentChatUserSelectedModel,
-    );
-
-  const selectedModel = isUserModelAvailable
-    ? agentChatUserSelectedModel
-    : currentWorkspace?.smartModel;
-
   const handleModelChange = (value: string) => {
     setAgentChatUserSelectedModel(value);
   };
@@ -179,7 +169,7 @@ export const AIChatEditorSection = () => {
             <StyledRightButtonsContainer>
               <Select
                 dropdownId="ai-chat-smart-model-select"
-                value={selectedModel}
+                value={resolvedModelId}
                 onChange={handleModelChange}
                 options={smartModelOptions}
                 selectSizeVariant="small"

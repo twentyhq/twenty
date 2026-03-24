@@ -15,7 +15,7 @@ import {
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
+import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
@@ -41,6 +41,7 @@ export const useAgentChat = (
   const setTokenPair = useSetAtomState(tokenPairState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
 
+  const { resolvedModelId } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
@@ -249,7 +250,6 @@ export const useAgentChat = (
     }));
 
     const browsingContext = getBrowsingContext();
-    const userSelectedModel = store.get(agentChatUserSelectedModelState.atom);
 
     sendMessage(
       {
@@ -260,8 +260,8 @@ export const useAgentChat = (
         body: {
           threadId,
           browsingContext,
-          ...(isDefined(userSelectedModel) && {
-            modelId: userSelectedModel,
+          ...(isDefined(resolvedModelId) && {
+            modelId: resolvedModelId,
           }),
         },
       },
@@ -278,6 +278,7 @@ export const useAgentChat = (
     agentChatUploadedFiles,
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
+    resolvedModelId,
   ]);
 
   useListenToBrowserEvent({
