@@ -15,8 +15,7 @@ export class AppPublishCommand {
     await checkSdkVersionCompatibility(appPath);
 
     console.log(chalk.blue('Publishing to npm...'));
-    console.log(chalk.gray(`App path: ${appPath}`));
-    console.log('');
+    console.log(chalk.gray(`App path: ${appPath}\n`));
 
     const result = await appPublish({
       appPath,
