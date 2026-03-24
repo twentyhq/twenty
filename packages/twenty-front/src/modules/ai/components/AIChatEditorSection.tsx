@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconTwentyStar } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -118,9 +119,6 @@ export const AIChatEditorSection = () => {
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
-  const selectedModel =
-    agentChatUserSelectedModel ?? currentWorkspace?.smartModel;
-
   const buildVirtualModelOption = (virtualModelId: string) => {
     const virtualModel = aiModels.find(
       (model) => model.modelId === virtualModelId,
@@ -145,6 +143,16 @@ export const AIChatEditorSection = () => {
       Icon: getModelIcon(model.modelFamily, model.providerName),
     })),
   ];
+
+  const isUserModelAvailable =
+    isDefined(agentChatUserSelectedModel) &&
+    smartModelOptions.some(
+      (option) => option.value === agentChatUserSelectedModel,
+    );
+
+  const selectedModel = isUserModelAvailable
+    ? agentChatUserSelectedModel
+    : currentWorkspace?.smartModel;
 
   const handleModelChange = (value: string) => {
     setAgentChatUserSelectedModel(value);
@@ -175,6 +183,8 @@ export const AIChatEditorSection = () => {
                 onChange={handleModelChange}
                 options={smartModelOptions}
                 selectSizeVariant="small"
+                withSearchInput
+                dropdownOffset={{ x: 0, y: 8 }}
               />
               <SendMessageButton onSend={handleSendAndClear} />
             </StyledRightButtonsContainer>

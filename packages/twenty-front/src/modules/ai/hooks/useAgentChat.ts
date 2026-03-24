@@ -249,9 +249,7 @@ export const useAgentChat = (
     }));
 
     const browsingContext = getBrowsingContext();
-    const userSelectedModel = store.get(
-      agentChatUserSelectedModelState.atom,
-    );
+    const userSelectedModel = store.get(agentChatUserSelectedModelState.atom);
 
     sendMessage(
       {
