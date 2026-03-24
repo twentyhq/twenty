@@ -3,7 +3,9 @@ import { CommandLink } from '@/command-menu-item/display/components/CommandLink'
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -26,7 +28,17 @@ export const useSidePanelSearchRecords = () => {
   const coreClient = useApolloCoreClient();
 
   const [deferredSidePanelSearch] = useDebounce(sidePanelSearch, 300);
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const readableObjectMetadataItems = useMemo(
+    () =>
+      filterReadableActiveObjectMetadataItems(
+        activeObjectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      ),
+    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
+  );
 
   const searchableObjectNameSingulars = useMemo(
     () =>

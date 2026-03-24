@@ -1,6 +1,8 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useCallback, useMemo } from 'react';
 import {
   type SearchQuery,
@@ -11,15 +13,17 @@ import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 const MENTION_SEARCH_LIMIT = 50;
 
 export const useMentionSearch = () => {
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const apolloCoreClient = useApolloCoreClient();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const searchableObjectMetadataItems = useMemo(
     () =>
-      readableObjectMetadataItems.filter(
-        (item) => !item.isSystem && item.isSearchable,
-      ),
-    [readableObjectMetadataItems],
+      filterReadableActiveObjectMetadataItems(
+        activeObjectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      ).filter((item) => !item.isSystem && item.isSearchable),
+    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
   );
 
   const objectsToSearch = useMemo(

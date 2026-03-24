@@ -1,7 +1,9 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import isEmpty from 'lodash.isempty';
@@ -13,15 +15,19 @@ import { useStore } from 'jotai';
 export const useDefaultHomePagePath = () => {
   const store = useStore();
   const currentUser = useAtomStateValue(currentUserState);
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const readableNonSystemObjectMetadataItems = useMemo(
     () =>
-      readableObjectMetadataItems
+      filterReadableActiveObjectMetadataItems(
+        activeObjectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      )
         .filter((item) => !item.isSystem)
         .sort((a, b) => a.nameSingular.localeCompare(b.nameSingular)),
-    [readableObjectMetadataItems],
+    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
   );
 
   const getActiveObjectMetadataItemMatchingId = useCallback(

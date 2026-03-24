@@ -4,11 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { SidePanelNewSidebarItemRecordItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -35,17 +37,21 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
   const [recordSearchInput, setRecordSearchInput] = useState('');
   const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);
   const coreClient = useApolloCoreClient();
-  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const [selectedObjectNameSingular, setSelectedObjectNameSingular] = useState<
     string | null
   >(null);
 
   const searchableObjectNameSingulars = useMemo(
     () =>
-      readableObjectMetadataItems
+      filterReadableActiveObjectMetadataItems(
+        activeObjectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      )
         .filter((item) => item.isSearchable)
         .map((item) => item.nameSingular),
-    [readableObjectMetadataItems],
+    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
   );
 
   const includedObjectNameSingulars = isDefined(selectedObjectNameSingular)
