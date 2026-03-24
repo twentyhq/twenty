@@ -2066,7 +2066,7 @@ type CommandMenuItem {
   workflowVersionId: UUID
   frontComponentId: UUID
   frontComponent: FrontComponent
-  engineComponentKey: EngineComponentKey
+  engineComponentKey: EngineComponentKey!
   label: String!
   icon: String
   shortLabel: String
@@ -2139,6 +2139,8 @@ enum EngineComponentKey {
   SEARCH_RECORDS_FALLBACK
   ASK_AI
   VIEW_PREVIOUS_AI_CHATS
+  TRIGGER_WORKFLOW_VERSION
+  FRONT_COMPONENT_RENDERER
 }
 
 enum CommandMenuItemAvailabilityType {
@@ -3895,7 +3897,7 @@ input UpdateLogicFunctionFromSourceInputUpdates {
 input CreateCommandMenuItemInput {
   workflowVersionId: UUID
   frontComponentId: UUID
-  engineComponentKey: EngineComponentKey
+  engineComponentKey: EngineComponentKey!
   label: String!
   icon: String
   shortLabel: String
