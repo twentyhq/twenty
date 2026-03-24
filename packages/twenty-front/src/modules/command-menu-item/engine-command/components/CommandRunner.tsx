@@ -13,22 +13,21 @@ export const CommandRunner = () => {
   return (
     <>
       {[...mountedCommands.entries()].map(([commandMenuItemId, context]) => (
-        <CommandMenuItemErrorBoundary
+        <ContextStoreComponentInstanceContext.Provider
           key={commandMenuItemId}
-          commandId={commandMenuItemId}
-          shouldReportToSentry
-          onError={() => unmountCommand(commandMenuItemId)}
+          value={{ instanceId: context.contextStoreInstanceId }}
         >
-          <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: context.contextStoreInstanceId }}
+          <CommandComponentInstanceContext.Provider
+            value={{ instanceId: commandMenuItemId }}
           >
-            <CommandComponentInstanceContext.Provider
-              value={{ instanceId: commandMenuItemId }}
+            <CommandMenuItemErrorBoundary
+              shouldReportToSentry
+              onError={() => unmountCommand(commandMenuItemId)}
             >
               {ENGINE_COMPONENT_KEY_COMPONENT_MAP[context.engineComponentKey]}
-            </CommandComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
-        </CommandMenuItemErrorBoundary>
+            </CommandMenuItemErrorBoundary>
+          </CommandComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
       ))}
     </>
   );
