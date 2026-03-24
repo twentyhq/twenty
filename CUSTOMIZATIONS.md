@@ -142,6 +142,7 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow.ts`        | Explicit `isRelationConnectField` filter                                              |
 | `object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV.ts`          | Keep composite fields as objects for proper sub-field export                          |
 | `command-menu-item/record/multiple-records/components/ExportMultipleRecordsCommand.tsx` | Restore the related-fields modal before export when visible relations exist           |
+| `command-menu-item/engine-command/record/multiple-records/components/ExportMultipleRecordsCommand.tsx` | Restore the related-fields modal in the engine-command export path             |
 | `object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx`       | Select relation export leaves by field path so nested relational fields can be chosen |
 | `object-record/record-index/export/hooks/useExportableRelationFields.ts`                | Recursively enumerate exportable `MANY_TO_ONE` relation leaves                        |
 | `object-record/record-index/export/hooks/useRecordIndexExportRecords.ts`                | Split composite relation sub-fields into separate CSV columns                         |

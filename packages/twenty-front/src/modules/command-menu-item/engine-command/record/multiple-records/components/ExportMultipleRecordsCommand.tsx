@@ -1,13 +1,19 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { ExportRelationFieldConfigModal } from '@/object-record/record-index/export/components/ExportRelationFieldConfigModal';
+import { useExportableRelationFields } from '@/object-record/record-index/export/hooks/useExportableRelationFields';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
+import { type ExportConfig } from '@/object-record/record-index/export/types/ExportConfig';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const ExportMultipleRecordsCommandContent = ({
@@ -19,12 +25,35 @@ const ExportMultipleRecordsCommandContent = ({
   recordIndexId: string;
   setCommandMenuItemProgress: (value: number | undefined) => void;
 }) => {
-  const { download, progress } = useRecordIndexExportRecords({
-    delayMs: 100,
+  const { download, downloadWithConfig, progress, finalColumns } =
+    useRecordIndexExportRecords({
+      delayMs: 100,
+      objectMetadataItem,
+      recordIndexId,
+      filename: `${objectMetadataItem.nameSingular}.csv`,
+    });
+
+  const visibleFieldNames = finalColumns.map(
+    (column) => column.metadata.fieldName,
+  );
+
+  const exportableRelationFields = useExportableRelationFields({
     objectMetadataItem,
-    recordIndexId,
-    filename: `${objectMetadataItem.nameSingular}.csv`,
+    visibleFieldNames,
   });
+
+  const hasRelationFields = exportableRelationFields.length > 0;
+
+  const engineCommandId = useAvailableComponentInstanceIdOrThrow(
+    EngineCommandComponentInstanceContext,
+  );
+
+  const unmountEngineCommand = useUnmountEngineCommand();
+  const { openModal } = useModal();
+  const { isInitializedRef, setIsInitialized } =
+    useIsHeadlessEngineCommandEffectInitialized();
+
+  const relationExportModalId = `${engineCommandId}-relation-export-modal`;
 
   useEffect(() => {
     if (
@@ -38,6 +67,41 @@ const ExportMultipleRecordsCommandContent = ({
       setCommandMenuItemProgress(percentage);
     }
   }, [progress, setCommandMenuItemProgress]);
+
+  // Open the relation config modal on mount when relation fields exist
+  useEffect(() => {
+    if (!hasRelationFields || isInitializedRef.current) {
+      return;
+    }
+
+    setIsInitialized(true);
+    openModal(relationExportModalId);
+  }, [
+    hasRelationFields,
+    isInitializedRef,
+    setIsInitialized,
+    openModal,
+    relationExportModalId,
+  ]);
+
+  const handleModalExport = useCallback(
+    async (config: ExportConfig) => {
+      await downloadWithConfig(config);
+      unmountEngineCommand(engineCommandId);
+    },
+    [downloadWithConfig, unmountEngineCommand, engineCommandId],
+  );
+
+  if (hasRelationFields) {
+    return (
+      <ExportRelationFieldConfigModal
+        modalId={relationExportModalId}
+        objectMetadataItem={objectMetadataItem}
+        visibleFieldNames={visibleFieldNames}
+        onExport={handleModalExport}
+      />
+    );
+  }
 
   return <HeadlessEngineCommandWrapperEffect execute={download} />;
 };

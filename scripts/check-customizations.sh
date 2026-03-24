@@ -670,6 +670,10 @@ check_file_contains \
   "ExportRelationFieldConfigModal" \
   "Export view must open the related-fields modal instead of exporting directly when relation fields are available"
 check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/engine-command/record/multiple-records/components/ExportMultipleRecordsCommand.tsx" \
+  "ExportRelationFieldConfigModal" \
+  "Engine-command export path must open the related-fields modal when relation fields are available"
+check_file_contains \
   "packages/twenty-front/src/modules/object-record/record-index/export/hooks/useExportableRelationFields.ts" \
   "buildExportableRelationFieldPaths" \
   "Related export fields must recurse through nested MANY_TO_ONE relations"
