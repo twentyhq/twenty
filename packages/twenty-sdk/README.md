@@ -16,18 +16,27 @@ A CLI and SDK to develop, build, and publish applications that extend [Twenty CR
 
 - Typed GraphQL clients: `CoreApiClient` (auto-generated per app for workspace data) and `MetadataApiClient` (pre-built with the SDK for workspace configuration & file uploads)
 - Built‑in CLI for auth, dev mode (watch & sync), uninstall, and function management
-- Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 
-## Documentation
+## Getting Started
 
-See Twenty application documentation https://docs.twenty.com/developers/extend/capabilities/apps
+The recommended way to start building a Twenty app is with [**create-twenty-app**](https://www.npmjs.com/package/create-twenty-app), which scaffolds a project with everything preconfigured:
+
+```bash
+npx create-twenty-app@latest my-app
+cd my-app
+yarn twenty dev
+```
+
+See the [create-twenty-app README](https://www.npmjs.com/package/create-twenty-app) or the [full documentation](https://docs.twenty.com/developers/extend/capabilities/apps) for details.
 
 ## Prerequisites
 
 - Node.js 24+ (recommended) and Yarn 4
 - Docker (for the local Twenty dev server) or a remote Twenty workspace
 
-## Installation
+## Manual Installation
+
+If you're adding `twenty-sdk` to an existing project instead of using `create-twenty-app`:
 
 ```bash
 npm install twenty-sdk
@@ -62,7 +71,7 @@ Commands:
   help [command]      display help for command
 ```
 
-In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
+In a project created with `create-twenty-app` (recommended), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
 
 ## Global Options
 
