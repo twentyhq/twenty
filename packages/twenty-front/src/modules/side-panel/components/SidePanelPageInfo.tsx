@@ -101,6 +101,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
         SidePanelPages.PageLayoutIframeSettings,
         SidePanelPages.PageLayoutTabSettings,
         SidePanelPages.PageLayoutFieldsSettings,
+        SidePanelPages.PageLayoutRecordTableSettings,
       ].includes(pageChip.page?.page)
     : false;
 

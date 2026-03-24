@@ -280,7 +280,14 @@ export class DirectExecutionService {
     );
   }
 
-  private formatError(error: any, req: Request): GraphQLFormattedError {
+  private formatError(error: unknown, req: Request): GraphQLFormattedError {
+    if (!(error instanceof Error)) {
+      return {
+        message: 'Internal server error',
+        extensions: { code: 'INTERNAL_SERVER_ERROR' },
+      };
+    }
+
     try {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error);
     } catch (graphqlError) {
@@ -301,9 +308,7 @@ export class DirectExecutionService {
     }
 
     return {
-      message: isDefined(error.message)
-        ? error.message
-        : 'Internal server error',
+      message: error.message,
       extensions: { code: 'INTERNAL_SERVER_ERROR' },
     };
   }

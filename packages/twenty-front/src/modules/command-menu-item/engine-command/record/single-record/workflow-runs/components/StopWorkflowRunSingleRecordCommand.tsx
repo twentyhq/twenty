@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useStopWorkflowRun } from '@/workflow/hooks/useStopWorkflowRun';
@@ -7,8 +7,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const StopWorkflowRunSingleRecordCommand = () => {
-  const { targetedRecordsRule, graphqlFilter } =
-    useMountedEngineCommandContext();
+  const { targetedRecordsRule, graphqlFilter } = useHeadlessCommandContextApi();
 
   const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,

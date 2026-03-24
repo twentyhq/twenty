@@ -1,6 +1,5 @@
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { type RecordUpdateHookParams } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
+import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
@@ -22,23 +21,13 @@ export const RecordIndexTableContainer = ({
     RECORD_INDEX_REMOVE_SORTING_MODAL_ID,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord();
-
-  const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-    updateOneRecord({
-      objectNameSingular,
-      idToUpdate: variables.where.id as string,
-      updateOneRecordInput: variables.updateOneRecordInput,
-    });
-  };
-
   return (
     <>
+      <RecordIndexTableContainerEffect />
       <RecordTableWithWrappers
         recordTableId={recordTableId}
         objectNameSingular={objectNameSingular}
         viewBarId={viewBarInstanceId}
-        updateRecordMutation={updateEntity}
       />
       {isModalOpened && <RecordIndexRemoveSortingModal />}
     </>

@@ -7,6 +7,7 @@ import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelPageLayoutChartSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutChartSettings';
 import { SidePanelPageLayoutFieldsSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings';
+import { SidePanelPageLayoutRecordTableSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings';
 import { SidePanelPageLayoutIframeSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings';
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
 import { SidePanelPageLayoutWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect';
@@ -61,6 +62,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [
       SidePanelPages.PageLayoutFieldsSettings,
       <SidePanelPageLayoutFieldsSettings />,
+    ],
+    [
+      SidePanelPages.PageLayoutRecordTableSettings,
+      <SidePanelPageLayoutRecordTableSettings />,
     ],
     [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
     [

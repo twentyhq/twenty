@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { DataSource } from 'typeorm';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { DataSource } from 'typeorm';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -27,6 +28,8 @@ import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/t
 
 @Injectable()
 export class DevSeederService {
+  private readonly logger = new Logger(DevSeederService.name);
+
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -39,6 +42,7 @@ export class DevSeederService {
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -90,10 +94,24 @@ export class DevSeederService {
       },
     );
 
+    await this.sdkClientGenerationService.generateSdkClientForApplication({
+      workspaceId,
+      applicationId: twentyStandardFlatApplication.id,
+      applicationUniversalIdentifier:
+        twentyStandardFlatApplication.universalIdentifier,
+    });
+
     await this.devSeederMetadataService.seed({
       dataSourceMetadata,
       workspaceId,
       light,
+    });
+
+    await this.sdkClientGenerationService.generateSdkClientForApplication({
+      workspaceId,
+      applicationId: workspaceCustomFlatApplication.id,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     await this.devSeederMetadataService.seedRelations({

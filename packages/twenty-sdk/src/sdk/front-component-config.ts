@@ -18,6 +18,7 @@ export type FrontComponentConfig = Omit<
   | 'builtComponentPath'
   | 'builtComponentChecksum'
   | 'componentName'
+  | 'usesSdkClient'
   | 'command'
 > & {
   component: FrontComponentType;

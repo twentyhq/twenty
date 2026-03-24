@@ -1,10 +1,10 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, type QueryRunner, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -13,8 +13,9 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -34,7 +35,7 @@ import {
 @Command({
   name: 'upgrade:1-20:backfill-command-menu-items',
   description:
-    'Backfill missing standard and workflow command menu items for existing workspaces and enable IS_COMMAND_MENU_ITEM_ENABLED feature flag',
+    'Backfill missing standard and trigger workflow version command menu items for existing workspaces and enable IS_COMMAND_MENU_ITEM_ENABLED feature flag',
 })
 export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
@@ -42,8 +43,6 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly featureFlagService: FeatureFlagService,
@@ -77,52 +76,83 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const standardCommandMenuItems =
+      await this.computeStandardCommandMenuItemsToCreate(workspaceId);
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await this.backfillStandardCommandMenuItems(
-        workspaceId,
-        isDryRun,
-        queryRunner,
-      );
-
-      await this.backfillWorkflowCommandMenuItems(
-        workspaceId,
-        isDryRun,
-        queryRunner,
-      );
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this.logger.error(
-        `Rolling back backfill of command menu items for workspace ${workspaceId}: ${error.message}`,
-      );
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED],
+    const triggerWorkflowVersionCommandMenuItems =
+      await this.computeTriggerWorkflowVersionCommandMenuItemsToCreate(
         workspaceId,
       );
+
+    const allCommandMenuItemsToCreate = [
+      ...standardCommandMenuItems,
+      ...triggerWorkflowVersionCommandMenuItems,
+    ];
+
+    if (allCommandMenuItemsToCreate.length === 0) {
+      this.logger.log(
+        `No missing command menu items for workspace ${workspaceId}`,
+      );
+
+      return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Completed backfill of command menu items for workspace ${workspaceId}`,
+      `Found ${allCommandMenuItemsToCreate.length} missing command menu item(s) for workspace ${workspaceId} (${standardCommandMenuItems.length} standard, ${triggerWorkflowVersionCommandMenuItems.length} trigger workflow version)`,
+    );
+
+    if (isDryRun) {
+      this.logger.log(
+        `[DRY RUN] Would create ${allCommandMenuItemsToCreate.length} command menu item(s) for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: allCommandMenuItemsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      this.logger.error(
+        `Failed to backfill command menu items:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+      );
+
+      throw new Error(
+        `Failed to backfill command menu items for workspace ${workspaceId}`,
+      );
+    }
+
+    await this.featureFlagService.enableFeatureFlags(
+      [FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED],
+      workspaceId,
+    );
+
+    this.logger.log(
+      `Successfully backfilled ${allCommandMenuItemsToCreate.length} command menu item(s) for workspace ${workspaceId}`,
     );
   }
 
-  private async backfillStandardCommandMenuItems(
+  private async computeStandardCommandMenuItemsToCreate(
     workspaceId: string,
-    isDryRun: boolean,
-    queryRunner: QueryRunner,
-  ): Promise<void> {
+  ): Promise<FlatCommandMenuItem[]> {
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -154,216 +184,131 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
           ),
       );
 
-    if (commandMenuItemsToCreate.length === 0) {
+    if (commandMenuItemsToCreate.length > 0) {
       this.logger.log(
-        `No missing standard command menu items for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    this.logger.log(
-      `Found ${commandMenuItemsToCreate.length} missing standard command menu item(s) for workspace ${workspaceId}`,
-    );
-
-    if (isDryRun) {
-      this.logger.log(
-        `[DRY RUN] Would create ${commandMenuItemsToCreate.length} standard command menu item(s) for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            commandMenuItem: {
-              flatEntityToCreate: commandMenuItemsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          queryRunner,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      this.logger.error(
-        `Failed to backfill missing standard command menu items:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-      );
-
-      throw new Error(
-        `Failed to backfill missing standard command menu items for workspace ${workspaceId}`,
+        `Found ${commandMenuItemsToCreate.length} missing standard command menu item(s) for workspace ${workspaceId}`,
       );
     }
 
-    this.logger.log(
-      `Successfully backfilled ${commandMenuItemsToCreate.length} standard command menu item(s) for workspace ${workspaceId}`,
-    );
+    return commandMenuItemsToCreate;
   }
 
-  private async backfillWorkflowCommandMenuItems(
+  private async computeTriggerWorkflowVersionCommandMenuItemsToCreate(
     workspaceId: string,
-    isDryRun: boolean,
-    queryRunner: QueryRunner,
-  ): Promise<void> {
+  ): Promise<FlatCommandMenuItem[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.twentyORMGlobalManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        await this.twentyORMGlobalManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
+    return await this.twentyORMGlobalManager.executeInWorkspaceContext(
+      async () => {
+        const workflowVersionRepository =
+          await this.twentyORMGlobalManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            workspaceId,
+            'workflowVersion',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const activeWorkflowVersions = await workflowVersionRepository.find({
+          where: { status: WorkflowVersionStatus.ACTIVE },
+        });
+
+        const manualTriggerVersions = activeWorkflowVersions.filter(
+          (version) =>
+            isDefined(version.trigger) &&
+            version.trigger.type === WorkflowTriggerType.MANUAL,
         );
 
-      const activeWorkflowVersions = await workflowVersionRepository.find({
-        where: { status: WorkflowVersionStatus.ACTIVE },
-      });
+        if (manualTriggerVersions.length === 0) {
+          this.logger.log(
+            `No active workflow versions with manual triggers for workspace ${workspaceId}`,
+          );
 
-      const manualTriggerVersions = activeWorkflowVersions.filter(
-        (version) =>
-          isDefined(version.trigger) &&
-          version.trigger.type === WorkflowTriggerType.MANUAL,
-      );
-
-      if (manualTriggerVersions.length === 0) {
-        this.logger.log(
-          `No active workflow versions with manual triggers for workspace ${workspaceId}`,
-        );
-
-        return;
-      }
-
-      const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatCommandMenuItemMaps',
-        ]);
-
-      const existingWorkflowVersionIds = new Set(
-        Object.values(existingFlatCommandMenuItemMaps.byUniversalIdentifier)
-          .filter(isDefined)
-          .map((item) => item.workflowVersionId)
-          .filter(isDefined),
-      );
-
-      const workflowRepository =
-        await this.twentyORMGlobalManager.getRepository<WorkflowWorkspaceEntity>(
-          workspaceId,
-          'workflow',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const { workspaceCustomFlatApplication } =
-        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId },
-        );
-
-      const flatCommandMenuItemsToCreate: FlatCommandMenuItem[] = [];
-
-      for (const workflowVersion of manualTriggerVersions) {
-        if (existingWorkflowVersionIds.has(workflowVersion.id)) {
-          continue;
+          return [];
         }
 
-        const workflow = await workflowRepository.findOne({
-          where: { id: workflowVersion.workflowId },
-        });
+        const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatCommandMenuItemMaps',
+          ]);
 
-        const label =
-          workflow && isNonEmptyString(workflow.name)
-            ? workflow.name
-            : 'Manual Trigger';
-
-        const trigger = workflowVersion.trigger as WorkflowManualTrigger;
-
-        const { availabilityType, availabilityObjectMetadataId } =
-          await this.resolveManualTriggerAvailability(trigger, workspaceId);
-
-        const id = uuidv4();
-        const now = new Date().toISOString();
-
-        flatCommandMenuItemsToCreate.push({
-          id,
-          universalIdentifier: id,
-          workflowVersionId: workflowVersion.id,
-          frontComponentId: null,
-          frontComponentUniversalIdentifier: null,
-          engineComponentKey: null,
-          label,
-          shortLabel: label,
-          icon: trigger.settings.icon ?? null,
-          isPinned: trigger.settings.isPinned ?? false,
-          position: 0,
-          hotKeys: null,
-          availabilityType,
-          availabilityObjectMetadataId: availabilityObjectMetadataId ?? null,
-          availabilityObjectMetadataUniversalIdentifier: null,
-          conditionalAvailabilityExpression: null,
-          workspaceId,
-          applicationId: workspaceCustomFlatApplication.id,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-          createdAt: now,
-          updatedAt: now,
-        });
-      }
-
-      if (flatCommandMenuItemsToCreate.length === 0) {
-        this.logger.log(
-          `No missing workflow command menu items for workspace ${workspaceId}`,
+        const existingWorkflowVersionIds = new Set(
+          Object.values(existingFlatCommandMenuItemMaps.byUniversalIdentifier)
+            .filter(isDefined)
+            .map((item) => item.workflowVersionId)
+            .filter(isDefined),
         );
 
-        return;
-      }
-
-      this.logger.log(
-        `Found ${flatCommandMenuItemsToCreate.length} missing workflow command menu item(s) for workspace ${workspaceId}`,
-      );
-
-      if (isDryRun) {
-        this.logger.log(
-          `[DRY RUN] Would create ${flatCommandMenuItemsToCreate.length} workflow command menu item(s) for workspace ${workspaceId}`,
-        );
-
-        return;
-      }
-
-      const validateAndBuildResult =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            allFlatEntityOperationByMetadataName: {
-              commandMenuItem: {
-                flatEntityToCreate: flatCommandMenuItemsToCreate,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-            },
+        const workflowRepository =
+          await this.twentyORMGlobalManager.getRepository<WorkflowWorkspaceEntity>(
             workspaceId,
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const { workspaceCustomFlatApplication } =
+          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          );
+
+        const flatCommandMenuItemsToCreate: FlatCommandMenuItem[] = [];
+
+        for (const workflowVersion of manualTriggerVersions) {
+          if (existingWorkflowVersionIds.has(workflowVersion.id)) {
+            continue;
+          }
+
+          const workflow = await workflowRepository.findOne({
+            where: { id: workflowVersion.workflowId },
+          });
+
+          const label =
+            workflow && isNonEmptyString(workflow.name)
+              ? workflow.name
+              : 'Manual Trigger';
+
+          const trigger = workflowVersion.trigger as WorkflowManualTrigger;
+
+          const { availabilityType, availabilityObjectMetadataId } =
+            await this.resolveManualTriggerAvailability(trigger, workspaceId);
+
+          const id = uuidv4();
+          const now = new Date().toISOString();
+
+          flatCommandMenuItemsToCreate.push({
+            id,
+            universalIdentifier: id,
+            workflowVersionId: workflowVersion.id,
+            frontComponentId: null,
+            frontComponentUniversalIdentifier: null,
+            engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+            label,
+            shortLabel: label,
+            icon: trigger.settings.icon ?? null,
+            isPinned: trigger.settings.isPinned ?? false,
+            position: 0,
+            hotKeys: null,
+            availabilityType,
+            availabilityObjectMetadataId: availabilityObjectMetadataId ?? null,
+            availabilityObjectMetadataUniversalIdentifier: null,
+            conditionalAvailabilityExpression: null,
+            workspaceId,
+            applicationId: workspaceCustomFlatApplication.id,
             applicationUniversalIdentifier:
               workspaceCustomFlatApplication.universalIdentifier,
-            queryRunner,
-          },
-        );
+            createdAt: now,
+            updatedAt: now,
+          });
+        }
 
-      if (validateAndBuildResult.status === 'fail') {
-        this.logger.error(
-          `Failed to backfill workflow command menu items:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-        );
+        if (flatCommandMenuItemsToCreate.length > 0) {
+          this.logger.log(
+            `Found ${flatCommandMenuItemsToCreate.length} missing trigger workflow version command menu item(s) for workspace ${workspaceId}`,
+          );
+        }
 
-        throw new Error(
-          `Failed to backfill workflow command menu items for workspace ${workspaceId}`,
-        );
-      }
-
-      this.logger.log(
-        `Successfully backfilled ${flatCommandMenuItemsToCreate.length} workflow command menu item(s) for workspace ${workspaceId}`,
-      );
-    }, authContext);
+        return flatCommandMenuItemsToCreate;
+      },
+      authContext,
+    );
   }
 
   private async resolveManualTriggerAvailability(

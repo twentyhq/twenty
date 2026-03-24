@@ -321,6 +321,7 @@ describe('WorkspaceEntityManager', () => {
       userWorkspaceRoleMap: {
         'user-workspace-id': 'role-id',
       },
+      apiKeyRoleMap: {},
     };
 
     setWorkspaceContext(mockWorkspaceContext);

@@ -8,6 +8,24 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 
+jest.mock(
+  '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget',
+  () => ({
+    useDeleteViewForRecordTableWidget: () => ({
+      deleteViewForRecordTableWidget: jest.fn(),
+    }),
+  }),
+);
+
+jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
+  useSidePanelMenu: () => ({
+    closeSidePanelMenu: jest.fn(),
+    openSidePanelMenu: jest.fn(),
+    navigateSidePanelMenu: jest.fn(),
+    toggleSidePanelMenu: jest.fn(),
+  }),
+}));
+
 describe('useDeletePageLayoutWidget', () => {
   const getWrapper =
     (store = createStore()) =>

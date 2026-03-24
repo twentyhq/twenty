@@ -1,0 +1,119 @@
+---
+title: Publikování
+description: Distribuujte svou aplikaci Twenty do Marketplace nebo ji nasaďte interně.
+---
+
+<Warning>
+Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
+</Warning>
+
+## Přehled
+
+Jakmile je vaše aplikace [sestavena a otestována lokálně](/l/cs/developers/extend/apps/building), máte dvě cesty, jak ji distribuovat:
+
+* **Publish to npm** — uveďte svou aplikaci v Marketplace Twenty, aby ji mohl kterýkoli pracovní prostor objevit a nainstalovat.
+* **Odeslat tarball** — nasaďte svou aplikaci na konkrétní server Twenty pro interní použití, aniž by byla veřejně dostupná.
+
+## Publikování na npm
+
+Publikování na npm zajistí, že bude vaše aplikace dohledatelná v Marketplace Twenty. Jakýkoli pracovní prostor Twenty může procházet, instalovat a aktualizovat aplikace z Marketplace přímo z UI.
+
+### Požadavky
+
+* Účet na [npm](https://www.npmjs.com)
+* Název vašeho balíčku **musí** používat předponu `twenty-app-` (např. `twenty-app-postcard-sender`)
+
+### Postup
+
+1. **Sestavte svou aplikaci** — CLI zkompiluje vaše zdrojové soubory TypeScript a vygeneruje manifest aplikace:
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+2. **Publikujte na npm** — odešlete sestavený balíček do registru npm:
+
+```bash filename="Terminal"
+npx twenty publish
+```
+
+### Automatické rozpoznání
+
+Balíčky s předponou `twenty-app-` jsou automaticky rozpoznávány katalogem Marketplace Twenty. Po publikování se vaše aplikace během několika minut objeví v Marketplace — nevyžaduje žádnou ruční registraci ani schvalování.
+
+### Publikování pomocí CI
+
+Vygenerovaný projekt obsahuje pracovní postup GitHub Actions, který publikuje při každém vydání. Spouští `app:build`, a poté `npm publish --provenance` z výstupu buildu:
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+Pro jiné systémy CI (GitLab CI, CircleCI atd.) platí stejné tři příkazy: `yarn install`, `npx twenty build` a poté `npm publish` z `.twenty/output`.
+
+<Tip>
+**npm provenance** je volitelné, ale doporučené. Publikování s `--provenance` přidá k vašemu záznamu na npm odznak důvěryhodnosti a umožní uživatelům ověřit, že balíček byl sestaven z konkrétního commitu ve veřejné CI pipeline. Pokyny k nastavení najdete v [dokumentaci k npm provenance](https://docs.npmjs.com/generating-provenance-statements).
+</Tip>
+
+## Interní distribuce
+
+Pro aplikace, které nechcete zpřístupnit veřejně — proprietární nástroje, integrace pouze pro enterprise nebo experimentální buildy — můžete odeslat tarball přímo na server Twenty.
+
+### Odeslat tarball
+
+Sestavte svou aplikaci a nasaďte ji na konkrétní server v jednom kroku:
+
+```bash filename="Terminal"
+npx twenty publish --server <server-url>
+```
+
+Jakýkoli pracovní prostor na tomto serveru pak může aplikaci instalovat a aktualizovat ze stránky nastavení **Applications**.
+
+### Správa verzí
+
+Chcete-li vydat aktualizaci:
+
+1. Zvyšte hodnotu pole `version` v souboru `package.json`
+2. Odešlete nový tarball pomocí `npx twenty publish --server <server-url>`
+3. Pracovní prostory na tomto serveru uvidí dostupnou aktualizaci ve svém nastavení
+
+<Note>
+Interní aplikace jsou omezené na server, na který jsou odeslány. Nezobrazí se ve veřejném Marketplace a nelze je instalovat v pracovních prostorech na jiných serverech.
+</Note>
+
+## Kategorie aplikací
+
+Twenty organizuje aplikace do tří kategorií podle způsobu distribuce:
+
+| Kategorie       | Jak to funguje                                                                                                                     | Viditelné v Marketplace? |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **Vývoj**       | Aplikace v místním vývojářském režimu spuštěné přes `yarn twenty dev`. Slouží k sestavování a testování.                           | Ne                       |
+| **Publikováno** | Aplikace publikované na npm s předponou `twenty-app-`. Uvedeny v Marketplace, aby je mohl kterýkoli pracovní prostor nainstalovat. | Ano                      |
+| **Interní**     | Aplikace nasazené pomocí tarballu na konkrétní server. Dostupné pouze pro pracovní prostory na tomto serveru.                      | Ne                       |
+
+<Tip>
+Začněte v režimu **Development** při sestavování své aplikace. Až bude připravena, zvolte **Published** (npm) pro širokou distribuci nebo **Internal** (tarball) pro soukromé nasazení.
+</Tip>
