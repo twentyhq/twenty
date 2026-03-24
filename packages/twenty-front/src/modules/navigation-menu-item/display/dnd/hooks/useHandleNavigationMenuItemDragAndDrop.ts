@@ -175,37 +175,31 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    if (sourceFolderId === destinationFolderId) {
-      const sourceList = getSortedItems().filter((item) =>
-        matchesFolderId(item, sourceFolderId),
-      );
-
-      if (!sourceList.some((item) => item.id === draggableId)) return;
-
-      const insertBeforeIndex =
-        result.insertBeforeItemId != null
-          ? sourceList.findIndex(
-              (item) => item.id === result.insertBeforeItemId,
-            )
-          : -1;
-
-      await computeAndApplyReorder(
-        draggableId,
-        sourceList,
-        insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index,
-      );
-      return;
-    }
+    const isSameFolder = sourceFolderId === destinationFolderId;
 
     const destinationList = getSortedItems().filter((item) =>
       matchesFolderId(item, destinationFolderId),
     );
 
+    if (
+      isSameFolder &&
+      !destinationList.some((item) => item.id === draggableId)
+    ) {
+      return;
+    }
+
+    const insertBeforeIndex =
+      result.insertBeforeItemId != null
+        ? destinationList.findIndex(
+            (item) => item.id === result.insertBeforeItemId,
+          )
+        : -1;
+
     await computeAndApplyReorder(
       draggableId,
       destinationList,
-      destination.index,
-      destinationFolderId ?? null,
+      insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index,
+      isSameFolder ? undefined : (destinationFolderId ?? null),
     );
   };
 
