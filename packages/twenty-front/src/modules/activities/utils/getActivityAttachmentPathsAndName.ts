@@ -1,35 +1,32 @@
-import type { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
-import { parseJson } from 'twenty-shared/utils';
+
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 
 export type AttachmentInfo = {
   path: string;
   name: string;
 };
+
+const ATTACHMENT_BLOCK_TYPES = ['image', 'file', 'video', 'audio'];
+
 export const getActivityAttachmentPathsAndName = (
   stringifiedActivityBlocknote: string,
 ): AttachmentInfo[] => {
-  const activityBlocknote =
-    parseJson<PartialBlock[]>(stringifiedActivityBlocknote) ?? [];
+  const blocks = parseInitialBlocknote(stringifiedActivityBlocknote) ?? [];
 
-  return activityBlocknote.reduce(
-    (acc: AttachmentInfo[], block: PartialBlock) => {
-      const props = block.props as
-        | { url?: string; name?: string }
-        | undefined;
+  return blocks.reduce((acc: AttachmentInfo[], block) => {
+    const props = block.props as { url?: string; name?: string } | undefined;
 
-      if (
-        block.type !== undefined &&
-        ['image', 'file', 'video', 'audio'].includes(block.type) &&
-        isNonEmptyString(props?.url)
-      ) {
-        acc.push({
-          path: props.url,
-          name: props?.name ?? '',
-        });
-      }
-      return acc;
-    },
-    [],
-  );
+    if (
+      block.type !== undefined &&
+      ATTACHMENT_BLOCK_TYPES.includes(block.type) &&
+      isNonEmptyString(props?.url)
+    ) {
+      acc.push({
+        path: props.url,
+        name: props?.name ?? '',
+      });
+    }
+    return acc;
+  }, []);
 };

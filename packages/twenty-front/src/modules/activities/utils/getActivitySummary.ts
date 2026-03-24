@@ -1,34 +1,8 @@
-import type { PartialBlock } from '@blocknote/core';
-import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { parseJson } from 'twenty-shared/utils';
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
+import { getFirstNonEmptyLineOfRichText } from '@/blocknote-editor/utils/getFirstNonEmptyLineOfRichText';
 
-// TODO: merge with getFirstNonEmptyLineOfRichText
-export const getActivitySummary = (activityBody: string | null) => {
-  const noteBody = activityBody
-    ? (parseJson<PartialBlock[]>(activityBody) ?? [])
-    : [];
+export const getActivitySummary = (activityBody: string | null): string => {
+  const blocks = parseInitialBlocknote(activityBody) ?? null;
 
-  if (!noteBody.length) {
-    return '';
-  }
-
-  const firstNoteBlockContent = noteBody[0].content as
-    | { text?: string }[]
-    | { text?: string }
-    | undefined;
-
-  if (!firstNoteBlockContent) {
-    return '';
-  }
-
-  if (!isArray(firstNoteBlockContent)) {
-    return isNonEmptyString(firstNoteBlockContent.text)
-      ? firstNoteBlockContent.text
-      : '';
-  }
-
-  return firstNoteBlockContent
-    .map((content) => content.text ?? '')
-    .filter(isNonEmptyString)
-    .join(' ');
+  return getFirstNonEmptyLineOfRichText(blocks);
 };
