@@ -78,6 +78,18 @@ npx create-twenty-app@latest my-app
 npx create-twenty-app@latest my-app --minimal
 ```
 
+### كيفية استخدام مثيل محلي من Twenty
+
+إذا كنت تقوم بتشغيل مثيل محلي من Twenty بالفعل، فيمكنك الاتصال به بدلًا من استخدام Docker. مرِّر المنفذ الذي يستمع عليه الخادم المحلي لديك (القيمة الافتراضية: `3000`):
+
+```bash filename="Terminal"
+# During scaffolding
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding
+yarn twenty remote add --local --port 3000
+```
+
 من هنا يمكنك:
 
 ```bash filename="Terminal"

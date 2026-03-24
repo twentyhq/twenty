@@ -20,7 +20,7 @@ Aplicațiile vă permit să extindeți Twenty cu obiecte personalizate, câmpuri
 ## Cerințe
 
 * Node.js 24+ și Yarn 4
-* Un spațiu de lucru Twenty și o cheie API (creați una la https://app.twenty.com/settings/api-webhooks)
+* Docker (pentru serverul local de dezvoltare Twenty)
 
 ## Începeți
 
@@ -38,7 +38,7 @@ yarn twenty app:dev
 Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -222,6 +222,18 @@ Apoi adăugați un script `twenty`:
 ```
 
 Acum puteți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty help`, etc.
+
+## Cum să folosești o instanță Twenty locală
+
+Dacă rulezi deja local o instanță Twenty (de exemplu prin `npx nx start twenty-server`), te poți conecta la ea în loc să folosești Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## Depanare
 
