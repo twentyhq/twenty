@@ -36,7 +36,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { useMetadataStoreActions } from '@/metadata-store/hooks/useMetadataStoreActions';
+import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
 import { preloadMockedMetadata } from '@/metadata-store/utils/preloadMockedMetadata';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
@@ -89,7 +89,7 @@ export const useAuth = () => {
   const { loadCurrentUser } = useLoadCurrentUser();
   const { clearSseClient } = useClearSseClient();
 
-  const { applyMockedMetadata } = useMetadataStoreActions();
+  const { applyMockedMetadata } = useLoadMockedMetadata();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetAtomState(signInUpStepState);

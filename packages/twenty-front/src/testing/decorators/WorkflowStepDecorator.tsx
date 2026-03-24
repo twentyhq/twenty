@@ -1,6 +1,6 @@
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { useMetadataStoreActions } from '@/metadata-store/hooks/useMetadataStoreActions';
+import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
@@ -24,7 +24,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
 
   const workflowVersion = mockedWorkflowVersion as WorkflowVersion;
   const { populateStepsOutputSchema } = useStepsOutputSchema();
-  const { loadMockedMetadataAtomic } = useMetadataStoreActions();
+  const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
 
   const [ready, setReady] = useState(false);
 

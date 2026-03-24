@@ -2,7 +2,7 @@ import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMetadata';
-import { useMetadataStoreActions } from '@/metadata-store/hooks/useMetadataStoreActions';
+import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
 import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
 import { metadataLoadVersionState } from '@/metadata-store/states/metadataLoadVersionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -33,7 +33,7 @@ export const MinimalMetadataLoadEffect = () => {
   }>({ state: 'none', version: -1 });
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
-  const { loadMockedMetadataAtomic } = useMetadataStoreActions();
+  const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
   const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
 
   const isActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);

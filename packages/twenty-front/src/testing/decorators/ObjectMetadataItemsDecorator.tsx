@@ -7,7 +7,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
-import { useMetadataStoreActions } from '@/metadata-store/hooks/useMetadataStoreActions';
+import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -22,7 +22,7 @@ export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
   const setCurrentUser = useSetAtomState(currentUserState);
   const setCurrentUserWorkspace = useSetAtomState(currentUserWorkspaceState);
 
-  const { loadMockedMetadataAtomic } = useMetadataStoreActions();
+  const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
 
   useEffect(() => {
     setCurrentWorkspaceMember(

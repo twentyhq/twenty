@@ -1,9 +1,5 @@
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { metadataLoadVersionState } from '@/metadata-store/states/metadataLoadVersionState';
-import {
-  ALL_METADATA_ENTITY_KEYS,
-  metadataStoreState,
-} from '@/metadata-store/states/metadataStoreState';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import {
   preloadMockedMetadata,
   type PreloadedMockedMetadata,
@@ -13,9 +9,10 @@ import { useCallback } from 'react';
 
 const MOCKED_COLLECTION_HASH = 'mocked';
 
-export const useMetadataStoreActions = () => {
+export const useLoadMockedMetadata = () => {
   const store = useStore();
-  const { replaceDraft, applyChanges, resetMetadataStore } = useMetadataStore();
+  const { replaceDraft, applyChanges, resetMetadataStore } =
+    useUpdateMetadataStoreDraft();
 
   const applyMockedMetadata = useCallback(
     (data: PreloadedMockedMetadata) => {
@@ -37,10 +34,26 @@ export const useMetadataStoreActions = () => {
         MOCKED_COLLECTION_HASH,
       );
       replaceDraft('views', data.flatViews, MOCKED_COLLECTION_HASH);
-      replaceDraft('viewFields', data.flatViewFields, MOCKED_COLLECTION_HASH);
-      replaceDraft('viewFilters', data.flatViewFilters, MOCKED_COLLECTION_HASH);
-      replaceDraft('viewSorts', data.flatViewSorts, MOCKED_COLLECTION_HASH);
-      replaceDraft('viewGroups', data.flatViewGroups, MOCKED_COLLECTION_HASH);
+      replaceDraft(
+        'viewFields',
+        data.flatViewFields,
+        MOCKED_COLLECTION_HASH,
+      );
+      replaceDraft(
+        'viewFilters',
+        data.flatViewFilters,
+        MOCKED_COLLECTION_HASH,
+      );
+      replaceDraft(
+        'viewSorts',
+        data.flatViewSorts,
+        MOCKED_COLLECTION_HASH,
+      );
+      replaceDraft(
+        'viewGroups',
+        data.flatViewGroups,
+        MOCKED_COLLECTION_HASH,
+      );
       replaceDraft(
         'viewFilterGroups',
         data.flatViewFilterGroups,
@@ -82,19 +95,5 @@ export const useMetadataStoreActions = () => {
     applyMockedMetadata(data);
   }, [applyMockedMetadata, isAlreadyMocked]);
 
-  const invalidateAndReload = useCallback(() => {
-    for (const key of ALL_METADATA_ENTITY_KEYS) {
-      store.set(metadataStoreState.atomFamily(key), (prev) => ({
-        ...prev,
-        currentCollectionHash: undefined,
-      }));
-    }
-    store.set(metadataLoadVersionState.atom, (prev) => prev + 1);
-  }, [store]);
-
-  return {
-    invalidateAndReload,
-    loadMockedMetadataAtomic,
-    applyMockedMetadata,
-  };
+  return { applyMockedMetadata, loadMockedMetadataAtomic };
 };
