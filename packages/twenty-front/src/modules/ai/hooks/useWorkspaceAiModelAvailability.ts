@@ -5,12 +5,13 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-const VIRTUAL_MODEL_IDS: Set<string> = new Set([
+const DEFAULT_MODEL_SENTINEL_IDS: Set<string> = new Set([
   DEFAULT_SMART_MODEL,
   DEFAULT_FAST_MODEL,
 ]);
 
-const isVirtualModel = (modelId: string) => VIRTUAL_MODEL_IDS.has(modelId);
+const isDefaultModelSentinel = (modelId: string) =>
+  DEFAULT_MODEL_SENTINEL_IDS.has(modelId);
 
 export const useWorkspaceAiModelAvailability = () => {
   const aiModels = useAtomStateValue(aiModelsState);
@@ -23,7 +24,7 @@ export const useWorkspaceAiModelAvailability = () => {
     modelId: string,
     model?: ClientAiModelConfig,
   ): boolean => {
-    if (isVirtualModel(modelId)) {
+    if (isDefaultModelSentinel(modelId)) {
       return true;
     }
 
@@ -35,7 +36,7 @@ export const useWorkspaceAiModelAvailability = () => {
   };
 
   const realModels = aiModels.filter(
-    (model) => !isVirtualModel(model.modelId) && !model.isDeprecated,
+    (model) => !isDefaultModelSentinel(model.modelId) && !model.isDeprecated,
   );
 
   const enabledModels = realModels.filter((model) =>

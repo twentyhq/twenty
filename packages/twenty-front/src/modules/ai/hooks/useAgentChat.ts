@@ -41,7 +41,7 @@ export const useAgentChat = (
   const setTokenPair = useSetAtomState(tokenPairState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
 
-  const { resolvedModelId } = useAgentChatModelId();
+  const { modelIdForRequest } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
@@ -260,8 +260,8 @@ export const useAgentChat = (
         body: {
           threadId,
           browsingContext,
-          ...(isDefined(resolvedModelId) && {
-            modelId: resolvedModelId,
+          ...(isDefined(modelIdForRequest) && {
+            modelId: modelIdForRequest,
           }),
         },
       },
@@ -278,7 +278,7 @@ export const useAgentChat = (
     agentChatUploadedFiles,
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
-    resolvedModelId,
+    modelIdForRequest,
   ]);
 
   useListenToBrowserEvent({

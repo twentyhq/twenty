@@ -51,22 +51,24 @@ export const SettingsAIModelsTab = () => {
   const currentSmartModel = currentWorkspace?.smartModel;
   const currentFastModel = currentWorkspace?.fastModel;
 
-  const buildVirtualModelOption = (virtualModelId: string) => {
-    const virtualModel = aiModels.find(
-      (model) => model.modelId === virtualModelId,
+  const buildDefaultModelOption = (defaultModelId: string) => {
+    const defaultModel = aiModels.find(
+      (model) => model.modelId === defaultModelId,
     );
 
-    return virtualModel
+    return defaultModel
       ? {
-          value: virtualModelId,
-          label: virtualModel.label,
+          value: defaultModelId,
+          label: defaultModel.label,
           Icon: IconTwentyStar,
         }
       : null;
   };
 
-  const smartAutoOption = buildVirtualModelOption(DEFAULT_SMART_MODEL);
-  const fastAutoOption = buildVirtualModelOption(DEFAULT_FAST_MODEL);
+  const serverDefaultSmartModelOption =
+    buildDefaultModelOption(DEFAULT_SMART_MODEL);
+  const serverDefaultFastModelOption =
+    buildDefaultModelOption(DEFAULT_FAST_MODEL);
 
   const modelOptions = enabledModels.map((model) => {
     const residencyFlag = model.dataResidency
@@ -82,14 +84,14 @@ export const SettingsAIModelsTab = () => {
 
   const smartModelOptions = [...modelOptions];
 
-  if (smartAutoOption !== null) {
-    smartModelOptions.unshift(smartAutoOption);
+  if (serverDefaultSmartModelOption !== null) {
+    smartModelOptions.unshift(serverDefaultSmartModelOption);
   }
 
   const fastModelOptions = [...modelOptions];
 
-  if (fastAutoOption !== null) {
-    fastModelOptions.unshift(fastAutoOption);
+  if (serverDefaultFastModelOption !== null) {
+    fastModelOptions.unshift(serverDefaultFastModelOption);
   }
 
   const handleModelFieldChange = async (
