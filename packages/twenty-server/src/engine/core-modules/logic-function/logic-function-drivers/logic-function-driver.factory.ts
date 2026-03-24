@@ -11,7 +11,7 @@ import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-fun
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
+import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -21,7 +21,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
   constructor(
     twentyConfigService: TwentyConfigService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
-    private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly sdkClientArchiveService: SdkClientArchiveService,
   ) {
     super(twentyConfigService);
   }
@@ -46,7 +46,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
       case LogicFunctionDriverType.LOCAL:
         return new LocalDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
-          sdkClientGenerationService: this.sdkClientGenerationService,
+          sdkClientArchiveService: this.sdkClientArchiveService,
         });
 
       case LogicFunctionDriverType.LAMBDA: {
@@ -85,7 +85,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           subhostingRole,
           layerBucket,
           layerBucketRegion,
-          sdkClientGenerationService: this.sdkClientGenerationService,
+          sdkClientArchiveService: this.sdkClientArchiveService,
         });
       }
 

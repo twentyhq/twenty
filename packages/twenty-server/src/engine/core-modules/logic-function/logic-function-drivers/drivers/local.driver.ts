@@ -21,20 +21,20 @@ import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/c
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import type { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
+import type { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
-  sdkClientGenerationService: SdkClientGenerationService;
+  sdkClientArchiveService: SdkClientArchiveService;
 }
 
 export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
-  private readonly sdkClientGenerationService: SdkClientGenerationService;
+  private readonly sdkClientArchiveService: SdkClientArchiveService;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
-    this.sdkClientGenerationService = options.sdkClientGenerationService;
+    this.sdkClientArchiveService = options.sdkClientArchiveService;
   }
 
   private getDepsLayerPath(flatApplication: FlatApplication): string {
@@ -111,13 +111,13 @@ export class LocalDriver implements LogicFunctionDriver {
       'twenty-client-sdk',
     );
 
-    await this.sdkClientGenerationService.downloadAndExtractToPackage({
+    await this.sdkClientArchiveService.downloadAndExtractToPackage({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
       targetPackagePath: sdkPackagePath,
     });
 
-    await this.sdkClientGenerationService.markSdkLayerFresh({
+    await this.sdkClientArchiveService.markSdkLayerFresh({
       applicationId: flatApplication.id,
       workspaceId: flatApplication.workspaceId,
     });

@@ -13,8 +13,8 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ALLOWED_SDK_MODULES,
   type SdkModuleName,
-} from 'src/engine/core-modules/sdk-client-generation/constants/allowed-sdk-modules';
-import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
+} from 'src/engine/core-modules/sdk-client/constants/allowed-sdk-modules';
+import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -26,7 +26,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class SdkClientController {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly sdkClientArchiveService: SdkClientArchiveService,
   ) {}
 
   @Get(':applicationId/:moduleName')
@@ -57,7 +57,7 @@ export class SdkClientController {
     }
 
     const fileBuffer =
-      await this.sdkClientGenerationService.getClientModuleFromArchive({
+      await this.sdkClientArchiveService.getClientModuleFromArchive({
         workspaceId: workspace.id,
         applicationUniversalIdentifier: application.universalIdentifier,
         moduleName,
