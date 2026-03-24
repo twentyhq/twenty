@@ -43,7 +43,7 @@ import { SeeVersionsWorkflowSingleRecordCommand } from '@/command-menu-item/engi
 import { TestWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TestWorkflowSingleRecordCommand';
 import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TidyUpWorkflowSingleRecordCommand';
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
-import { RunWorkflowEngineCommand } from '@/command-menu-item/engine-command/record/components/RunWorkflowEngineCommand';
+import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
@@ -253,7 +253,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.SEE_VERSIONS_WORKFLOW_VERSION]: (
     <SeeVersionsWorkflowVersionSingleRecordCommand />
   ),
-  [EngineComponentKey.TRIGGER_WORKFLOW_VERSION]: <RunWorkflowEngineCommand />,
+  [EngineComponentKey.TRIGGER_WORKFLOW_VERSION]: (
+    <TriggerWorkflowVersionEngineCommand />
+  ),
   [EngineComponentKey.FRONT_COMPONENT_RENDERER]: (
     <HeadlessFrontComponentRendererEngineCommand />
   ),

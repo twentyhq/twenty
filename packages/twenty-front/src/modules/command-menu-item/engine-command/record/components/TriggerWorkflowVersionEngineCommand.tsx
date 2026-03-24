@@ -5,33 +5,33 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useCallback } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-export const RunWorkflowEngineCommand = () => {
-  const context = useMountedCommandState();
+export const TriggerWorkflowVersionEngineCommand = () => {
+  const mountedCommandState = useMountedCommandState();
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
   const execute = useCallback(async () => {
-    if (!isMountedTriggerWorkflowVersionCommandState(context)) {
+    if (!isMountedTriggerWorkflowVersionCommandState(mountedCommandState)) {
       return;
     }
 
-    if (!isNonEmptyArray(context.payloads)) {
+    if (!isNonEmptyArray(mountedCommandState.payloads)) {
       await runWorkflowVersion({
-        workflowId: context.workflowId,
-        workflowVersionId: context.workflowVersionId,
+        workflowId: mountedCommandState.workflowId,
+        workflowVersionId: mountedCommandState.workflowVersionId,
       });
 
       return;
     }
 
-    for (const payload of context.payloads) {
+    for (const payload of mountedCommandState.payloads) {
       await runWorkflowVersion({
-        workflowId: context.workflowId,
-        workflowVersionId: context.workflowVersionId,
+        workflowId: mountedCommandState.workflowId,
+        workflowVersionId: mountedCommandState.workflowVersionId,
         payload,
       });
     }
-  }, [context, runWorkflowVersion]);
+  }, [runWorkflowVersion, mountedCommandState]);
 
   return <HeadlessEngineCommandWrapperEffect execute={execute} />;
 };
