@@ -68,8 +68,7 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
         }: BuildTriggerWorkflowVersionCommandStateParams): Promise<
           HeadlessCommandContextApi | undefined
         > => {
-          const workflowVersion =
-            await fetchWorkflowVersion(workflowVersionId);
+          const workflowVersion = await fetchWorkflowVersion(workflowVersionId);
 
           if (!isDefined(workflowVersion)) {
             return undefined;
