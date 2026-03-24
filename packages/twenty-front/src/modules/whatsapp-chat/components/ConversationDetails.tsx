@@ -10,6 +10,8 @@ import { useMopSummary } from '@/whatsapp-chat/hooks/useMopSummary';
 import { useMopDetails } from '@/whatsapp-chat/hooks/useMopDetails';
 import { useStrukturanalyse, type SaResult } from '@/whatsapp-chat/hooks/useStrukturanalyse';
 import { useTypedFacts } from '@/whatsapp-chat/hooks/useTypedFacts';
+import { useHealthExtractions, EXTRACTION_LABELS, parseExtractionsJson } from '@/whatsapp-chat/hooks/useHealthExtractions';
+import { useVimeoVideos, getCategoryEmoji, formatDuration } from '@/whatsapp-chat/hooks/useVimeoVideos';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
 import { formatPhoneNumber } from '@/whatsapp-chat/utils/formatPhoneNumber';
 
@@ -932,6 +934,227 @@ const StyledClearFilters = styled.button`
   }
 `;
 
+// ── Video Library styled components ─────────────────────────────
+
+const StyledCategoryPills = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 0 8px 0;
+`;
+
+const StyledCategoryPill = styled.button<{ active: boolean }>`
+  background: ${({ active }) => (active ? '#075E54' : '#FFFFFF')};
+  border: 1px solid ${({ active }) => (active ? '#075E54' : '#D1D5DB')};
+  border-radius: 20px;
+  color: ${({ active }) => (active ? '#FFFFFF' : '#4B5563')};
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: ${({ active }) => (active ? 600 : 400)};
+  padding: 5px 12px;
+  transition: all 120ms ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: #075E54;
+    color: ${({ active }) => (active ? '#FFFFFF' : '#075E54')};
+  }
+`;
+
+const StyledVideoSearch = styled.input`
+  background: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  color: #111827;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  padding: 8px 10px;
+  width: 100%;
+
+  &::placeholder {
+    color: #9CA3AF;
+  }
+  &:focus {
+    border-color: #075E54;
+  }
+`;
+
+const StyledVideoCard = styled.div`
+  align-items: flex-start;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  transition: border-color 120ms ease;
+
+  &:hover {
+    border-color: #075E54;
+  }
+`;
+
+const StyledVideoThumb = styled.div`
+  border-radius: 6px;
+  flex-shrink: 0;
+  height: 60px;
+  overflow: hidden;
+  position: relative;
+  width: 80px;
+`;
+
+const StyledVideoThumbImg = styled.img`
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+`;
+
+const StyledVideoDuration = styled.span`
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 3px;
+  bottom: 3px;
+  color: #FFFFFF;
+  font-family: monospace;
+  font-size: 10px;
+  padding: 1px 4px;
+  position: absolute;
+  right: 3px;
+`;
+
+const StyledVideoInfo = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+`;
+
+const StyledVideoTitle = styled.span`
+  color: #111827;
+  display: -webkit-box;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+`;
+
+const StyledVideoMeta = styled.div`
+  align-items: center;
+  color: #9CA3AF;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 11px;
+  gap: 6px;
+`;
+
+const StyledVideoCatBadge = styled.span`
+  background: #ECFDF5;
+  border-radius: 10px;
+  color: #065F46;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+`;
+
+const StyledVideoLinkWarning = styled.div`
+  align-items: center;
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
+  border-radius: 6px;
+  color: #92400E;
+  display: flex;
+  font-size: 11px;
+  gap: 8px;
+  padding: 8px 10px;
+`;
+
+const StyledVideoLinkButton = styled.button<{ variant?: 'primary' | 'secondary' }>`
+  background: ${({ variant }) => (variant === 'primary' ? '#075E54' : '#FFFFFF')};
+  border: 1px solid ${({ variant }) => (variant === 'primary' ? '#075E54' : '#D1D5DB')};
+  border-radius: 6px;
+  color: ${({ variant }) => (variant === 'primary' ? '#FFFFFF' : '#374151')};
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
+
+// ── Health Profile styled components ────────────────────────────
+
+const StyledHealthSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const StyledHealthCard = styled.div`
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 12px;
+`;
+
+const StyledHealthRow = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+
+  & + & {
+    border-top: 1px solid #F3F4F6;
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+`;
+
+const StyledHealthLabel = styled.span`
+  color: #6B7280;
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 100px;
+`;
+
+const StyledHealthValue = styled.div`
+  color: #111827;
+  flex: 1;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+`;
+
+const StyledHealthTag = styled.span<{ variant?: 'info' | 'warning' }>`
+  background: ${({ variant }) =>
+    variant === 'warning' ? '#FEF3C7' : '#DBEAFE'};
+  border-radius: 12px;
+  color: ${({ variant }) =>
+    variant === 'warning' ? '#92400E' : '#1E40AF'};
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  margin: 2px;
+  padding: 3px 8px;
+`;
+
+const StyledHealthTagContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+`;
+
 // ── Key Facts color maps ────────────────────────────────────────
 
 const SOURCE_COLORS: Record<string, string> = {
@@ -1376,6 +1599,23 @@ export const ConversationDetails = ({
     setSortOrder: factsSetSortOrder,
     sortOrder: factsSortOrder,
   } = useTypedFacts(contactEmail ?? undefined);
+  const {
+    extractions: healthExtractions,
+    filledExtractions: healthFilled,
+    loading: healthLoading,
+    hasData: healthHasData,
+  } = useHealthExtractions(contactEmail ?? undefined);
+  const {
+    videos,
+    categories: videoCategories,
+    activeCategory: videoActiveCategory,
+    selectCategory: videoSelectCategory,
+    loading: videosLoading,
+    loadMore: videosLoadMore,
+    hasMore: videosHasMore,
+    searchQuery: videoSearch,
+    setSearchQuery: setVideoSearch,
+  } = useVimeoVideos();
   const [activeTab, setActiveTab] = useState<TabId>('sa');
   const [mopExpanded, setMopExpanded] = useState(false);
   const [callExpanded, setCallExpanded] = useState<Record<string, boolean>>({});
@@ -1449,6 +1689,16 @@ export const ConversationDetails = ({
     setFactsFilterOpen((prev) => !prev);
   }, []);
 
+  const [videoLinkCopied, setVideoLinkCopied] = useState<string | null>(null);
+  const handleVideoSelect = useCallback(
+    (link: string, videoId: string) => {
+      navigator.clipboard.writeText(link);
+      setVideoLinkCopied(videoId);
+      setTimeout(() => setVideoLinkCopied(null), 2000);
+    },
+    [],
+  );
+
   // Derive first leadId from calls for Close.io link
   const firstCallLeadId = calls.length > 0 ? calls[0].leadId : null;
 
@@ -1520,12 +1770,108 @@ export const ConversationDetails = ({
 
         {/* ── Videos Tab ─────────────────────────────────── */}
         {activeTab === 'videos' && (
-          <StyledSection>
-            <StyledSectionTitle>Video Library</StyledSectionTitle>
-            <StyledEmptyState>
-              Video sharing coming soon
-            </StyledEmptyState>
-          </StyledSection>
+          <>
+            <StyledSection>
+              <StyledSectionTitle>Video Library</StyledSectionTitle>
+              <StyledVideoSearch
+                type="text"
+                placeholder="Type to filter videos..."
+                value={videoSearch}
+                onChange={(e) => setVideoSearch(e.target.value)}
+              />
+              <StyledCategoryPills>
+                <StyledCategoryPill
+                  active={videoActiveCategory === null}
+                  onClick={() => videoSelectCategory(null)}
+                >
+                  Alle ({videoCategories.reduce((s, c) => s + c.count, 0)})
+                </StyledCategoryPill>
+                {videoCategories.map((cat) => (
+                  <StyledCategoryPill
+                    key={cat.key}
+                    active={videoActiveCategory === cat.key}
+                    onClick={() => videoSelectCategory(cat.key)}
+                  >
+                    {getCategoryEmoji(cat.key)} {cat.label} ({cat.count})
+                  </StyledCategoryPill>
+                ))}
+              </StyledCategoryPills>
+            </StyledSection>
+
+            <StyledSection>
+              {videosLoading && videos.length === 0 && (
+                <StyledLoadingText>Loading videos...</StyledLoadingText>
+              )}
+
+              {!videosLoading && videos.length === 0 && (
+                <StyledEmptyState>
+                  {videoSearch
+                    ? `No videos matching "${videoSearch}"`
+                    : 'No videos in this category'}
+                </StyledEmptyState>
+              )}
+
+              {videos.map((video) => (
+                <StyledVideoCard
+                  key={video.id}
+                  onClick={() =>
+                    handleVideoSelect(
+                      video.tobAppLink || video.vimeoLink || '',
+                      video.videoId,
+                    )
+                  }
+                >
+                  <StyledVideoThumb>
+                    {video.thumbnailUrl && (
+                      <StyledVideoThumbImg
+                        src={video.thumbnailUrl.replace('_1920x1080', '_320x180')}
+                        alt={video.videoName}
+                        loading="lazy"
+                      />
+                    )}
+                    {video.duration != null && (
+                      <StyledVideoDuration>
+                        {formatDuration(video.duration)}
+                      </StyledVideoDuration>
+                    )}
+                  </StyledVideoThumb>
+                  <StyledVideoInfo>
+                    <StyledVideoTitle>{video.videoName}</StyledVideoTitle>
+                    <StyledVideoMeta>
+                      {video.tobCategory && (
+                        <StyledVideoCatBadge>
+                          {getCategoryEmoji(video.tobCategoryKey ?? '')} {video.tobCategory}
+                        </StyledVideoCatBadge>
+                      )}
+                      {video.folderName && <span>{video.folderName}</span>}
+                      {video.views != null && <span>{video.views} views</span>}
+                    </StyledVideoMeta>
+                    {videoLinkCopied === video.videoId ? (
+                      <StyledVideoMeta style={{ color: '#059669' }}>
+                        <IconCheck size={12} /> Link copied!
+                      </StyledVideoMeta>
+                    ) : (
+                      <StyledVideoMeta>
+                        {video.tobAppLink ? (
+                          <span>📋 Click to copy TOB link</span>
+                        ) : video.vimeoLink ? (
+                          <StyledVideoLinkWarning>
+                            ⚠️ No TOB link — will copy Vimeo link
+                          </StyledVideoLinkWarning>
+                        ) : null}
+                      </StyledVideoMeta>
+                    )}
+                  </StyledVideoInfo>
+                </StyledVideoCard>
+              ))}
+
+              {videosHasMore && (
+                <StyledShowMore onClick={videosLoadMore}>
+                  {videosLoading ? 'Loading...' : 'Load more videos'}
+                </StyledShowMore>
+              )}
+            </StyledSection>
+          </>
         )}
 
         {/* ── Profile Tab (merged: contact, MOP, assignment, pipeline, opportunities) ── */}
@@ -1740,6 +2086,209 @@ export const ConversationDetails = ({
                   </StyledBadge>
                 </StyledBadgeRow>
               </StyledSection>
+            )}
+
+            <StyledDivider />
+
+            {/* ── Health Profile Section ── */}
+            {contactEmail && healthLoading && (
+              <StyledLoadingText>Loading health profile...</StyledLoadingText>
+            )}
+
+            {contactEmail && !healthLoading && healthHasData && (
+              <>
+                <StyledSection>
+                  <StyledSectionTitle>Health Context</StyledSectionTitle>
+                  <StyledHealthCard>
+                    {healthExtractions.gender &&
+                      (healthExtractions.gender.extractionCount > 0 ||
+                        healthExtractions.gender.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.gender}
+                          </StyledHealthLabel>
+                          <StyledHealthValue>
+                            {healthExtractions.gender.extractionValue || '—'}
+                          </StyledHealthValue>
+                        </StyledHealthRow>
+                      )}
+
+                    {healthExtractions.symptoms &&
+                      (healthExtractions.symptoms.extractionCount > 0 ||
+                        healthExtractions.symptoms.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.symptoms}
+                          </StyledHealthLabel>
+                          <StyledHealthTagContainer>
+                            {healthExtractions.symptoms.extractionValue
+                              ? healthExtractions.symptoms.extractionValue
+                                  .split(',')
+                                  .map((s) => s.trim())
+                                  .filter(Boolean)
+                                  .map((tag) => (
+                                    <StyledHealthTag key={tag} variant="info">
+                                      {tag}
+                                    </StyledHealthTag>
+                                  ))
+                              : parseExtractionsJson(
+                                  healthExtractions.symptoms.extractionsJson,
+                                ).map((e) => (
+                                  <StyledHealthTag
+                                    key={e.extraction}
+                                    variant="info"
+                                  >
+                                    {e.extraction}
+                                  </StyledHealthTag>
+                                ))}
+                          </StyledHealthTagContainer>
+                        </StyledHealthRow>
+                      )}
+
+                    {healthExtractions.pain_severity &&
+                      (healthExtractions.pain_severity.extractionCount > 0 ||
+                        healthExtractions.pain_severity.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.pain_severity}
+                          </StyledHealthLabel>
+                          <StyledHealthValue>
+                            {healthExtractions.pain_severity.extractionValue ||
+                              '—'}
+                          </StyledHealthValue>
+                        </StyledHealthRow>
+                      )}
+
+                    {healthExtractions.pain_duration &&
+                      (healthExtractions.pain_duration.extractionCount > 0 ||
+                        healthExtractions.pain_duration.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.pain_duration}
+                          </StyledHealthLabel>
+                          <StyledHealthValue>
+                            {healthExtractions.pain_duration.extractionValue ||
+                              '—'}
+                          </StyledHealthValue>
+                        </StyledHealthRow>
+                      )}
+
+                    {healthExtractions.past_treatments &&
+                      (healthExtractions.past_treatments.extractionCount > 0 ||
+                        healthExtractions.past_treatments.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.past_treatments}
+                          </StyledHealthLabel>
+                          <StyledHealthTagContainer>
+                            {healthExtractions.past_treatments.extractionValue
+                              ? healthExtractions.past_treatments.extractionValue
+                                  .split(',')
+                                  .map((s) => s.trim())
+                                  .filter(Boolean)
+                                  .map((tag) => (
+                                    <StyledHealthTag key={tag} variant="info">
+                                      {tag}
+                                    </StyledHealthTag>
+                                  ))
+                              : parseExtractionsJson(
+                                  healthExtractions.past_treatments
+                                    .extractionsJson,
+                                ).map((e) => (
+                                  <StyledHealthTag
+                                    key={e.extraction}
+                                    variant="info"
+                                  >
+                                    {e.extraction}
+                                  </StyledHealthTag>
+                                ))}
+                          </StyledHealthTagContainer>
+                        </StyledHealthRow>
+                      )}
+
+                    {healthExtractions.relatives &&
+                      (healthExtractions.relatives.extractionCount > 0 ||
+                        healthExtractions.relatives.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.relatives}
+                          </StyledHealthLabel>
+                          <StyledHealthValue>
+                            {healthExtractions.relatives.extractionValue || '—'}
+                          </StyledHealthValue>
+                        </StyledHealthRow>
+                      )}
+                  </StyledHealthCard>
+                </StyledSection>
+
+                <StyledSection>
+                  <StyledSectionTitle>Goals & Motivations</StyledSectionTitle>
+                  <StyledHealthCard>
+                    {healthExtractions.dreams_desires &&
+                      (healthExtractions.dreams_desires.extractionCount > 0 ||
+                        healthExtractions.dreams_desires.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.dreams_desires}
+                          </StyledHealthLabel>
+                          <StyledHealthValue>
+                            {healthExtractions.dreams_desires.extractionValue ||
+                              '—'}
+                          </StyledHealthValue>
+                        </StyledHealthRow>
+                      )}
+
+                    {healthExtractions.life_situation &&
+                      (healthExtractions.life_situation.extractionCount > 0 ||
+                        healthExtractions.life_situation.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.life_situation}
+                          </StyledHealthLabel>
+                          <StyledHealthValue>
+                            {healthExtractions.life_situation.extractionValue ||
+                              '—'}
+                          </StyledHealthValue>
+                        </StyledHealthRow>
+                      )}
+
+                    {healthExtractions.objections &&
+                      (healthExtractions.objections.extractionCount > 0 ||
+                        healthExtractions.objections.extractionValue) && (
+                        <StyledHealthRow>
+                          <StyledHealthLabel>
+                            {EXTRACTION_LABELS.objections}
+                          </StyledHealthLabel>
+                          <StyledHealthTagContainer>
+                            {healthExtractions.objections.extractionValue
+                              ? healthExtractions.objections.extractionValue
+                                  .split(',')
+                                  .map((s) => s.trim())
+                                  .filter(Boolean)
+                                  .map((tag) => (
+                                    <StyledHealthTag
+                                      key={tag}
+                                      variant="warning"
+                                    >
+                                      {tag}
+                                    </StyledHealthTag>
+                                  ))
+                              : parseExtractionsJson(
+                                  healthExtractions.objections.extractionsJson,
+                                ).map((e) => (
+                                  <StyledHealthTag
+                                    key={e.extraction}
+                                    variant="warning"
+                                  >
+                                    {e.extraction}
+                                  </StyledHealthTag>
+                                ))}
+                          </StyledHealthTagContainer>
+                        </StyledHealthRow>
+                      )}
+                  </StyledHealthCard>
+                </StyledSection>
+              </>
             )}
 
             <StyledDivider />

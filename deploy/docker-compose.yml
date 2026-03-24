@@ -84,6 +84,8 @@ services:
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
       EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+      API_RATE_LIMITING_LONG_LIMIT: "1000"
+      API_RATE_LIMITING_SHORT_LIMIT: "200"
     depends_on:
       twenty-db:
         condition: service_healthy
