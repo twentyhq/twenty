@@ -21,15 +21,17 @@ export const RecordTableWidgetViewLoadEffect = ({
   const [
     lastLoadedRecordTableWidgetViewId,
     setLastLoadedRecordTableWidgetViewId,
-  ] = useAtomComponentState(
-    lastLoadedRecordTableWidgetViewIdComponentState,
+  ] = useAtomComponentState(lastLoadedRecordTableWidgetViewIdComponentState);
+
+  const viewFromViewId = useAtomFamilySelectorValue(
+    viewFromViewIdFamilySelector,
+    {
+      viewId,
+    },
   );
 
-  const viewFromViewId = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
-    viewId,
-  });
-
-  const viewHasFields = isDefined(viewFromViewId) && viewFromViewId.viewFields.length > 0;
+  const viewHasFields =
+    isDefined(viewFromViewId) && viewFromViewId.viewFields.length > 0;
 
   useEffect(() => {
     if (!isDefined(viewFromViewId)) {

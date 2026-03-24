@@ -1,4 +1,4 @@
-import { getRecordTableHtmlId } from '../getRecordTableHtmlId';
+import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 
 describe('getRecordTableHtmlId', () => {
   it('returns the correct html id format', () => {

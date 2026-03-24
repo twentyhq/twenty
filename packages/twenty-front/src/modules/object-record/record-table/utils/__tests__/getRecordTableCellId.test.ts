@@ -1,4 +1,4 @@
-import { getRecordTableCellId } from '../getRecordTableCellId';
+import { getRecordTableCellId } from '@/object-record/record-table/utils/getRecordTableCellId';
 
 describe('getRecordTableCellId', () => {
   it('returns the correct cell id format', () => {

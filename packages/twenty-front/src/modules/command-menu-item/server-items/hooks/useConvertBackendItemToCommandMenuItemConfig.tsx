@@ -85,9 +85,8 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
       }
 
       const isEditModeItem =
-        item.conditionalAvailabilityExpression?.includes(
-          'isPageInEditMode',
-        ) ?? false;
+        item.conditionalAvailabilityExpression?.includes('isPageInEditMode') ??
+        false;
 
       const isPinned =
         item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK &&

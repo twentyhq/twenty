@@ -49,9 +49,7 @@ export const RecordTableBodyLoading = () => {
               data-testid={`row-id-${rowIndex}`}
               data-selectable-id={`row-id-${rowIndex}`}
             >
-              {!isRecordTableDragColumnHidden && (
-                <RecordTableCellDragAndDrop />
-              )}
+              {!isRecordTableDragColumnHidden && <RecordTableCellDragAndDrop />}
               {!isRecordTableCheckboxColumnHidden && (
                 <RecordTableCellCheckbox />
               )}

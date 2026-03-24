@@ -16,6 +16,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,18 +58,14 @@ export const RecordTableDataSourceDropdownContent = () => {
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
 
-  const objectsWithReadAccess = objectMetadataItems.filter(
-    (objectMetadataItem) => {
-      const objectPermissions =
-        objectPermissionsByObjectMetadataId[objectMetadataItem.id];
+  const readableActiveObjectMetadataItems =
+    filterReadableActiveObjectMetadataItems(
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    );
 
-      return (
-        isDefined(objectPermissions) &&
-        objectPermissions.canReadObjectRecords &&
-        objectMetadataItem.isActive &&
-        !objectMetadataItem.isSystem
-      );
-    },
+  const objectsWithReadAccess = readableActiveObjectMetadataItems.filter(
+    (objectMetadataItem) => !objectMetadataItem.isSystem,
   );
 
   const sortedObjects = objectsWithReadAccess.sort((first, second) =>
