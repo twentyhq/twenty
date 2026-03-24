@@ -115,8 +115,11 @@ export const useDefaultHomePagePath = () => {
   // Admins: first root-level workspace nav item (sorted by position).
   // Non-layout users: first sidebar-visible object (sorted by ORDERED_FIRST_STANDARD_OBJECTS).
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
-    // Non-layout users: use the first sidebar-visible object
-    if (!isAdmin && sidebarVisibleObjectMetadataItems.length > 0) {
+    // Non-layout users: always use sidebar-visible objects, never nav menu items.
+    // Return null if permissions haven't loaded yet (empty list) — the caller
+    // will show the settings page until permissions resolve.
+    if (!isAdmin) {
+      if (sidebarVisibleObjectMetadataItems.length === 0) return null;
       const firstItem = sidebarVisibleObjectMetadataItems[0];
 
       return {
