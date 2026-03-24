@@ -1,4 +1,4 @@
-import { useObjectNavItemColor } from '@/navigation-menu-item/common/hooks/useObjectNavItemColor';
+import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
@@ -50,7 +50,13 @@ export const SidePanelEditObjectViewBase = ({
       ) ?? '')
     : '';
 
-  const objectColor = useObjectNavItemColor(objectNameSingular);
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
+
+  const objectColor = isDefined(objectMetadataItem)
+    ? getObjectColorForNavigationMenuItem(objectMetadataItem)
+    : 'gray';
 
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const persistedNavItem = navigationMenuItems.find(

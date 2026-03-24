@@ -8,7 +8,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/display/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
-import { useObjectNavItemColor } from '@/navigation-menu-item/common/hooks/useObjectNavItemColor';
+import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
 import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemIconStyleFromColor';
@@ -53,7 +53,9 @@ export const NavigationMenuItemIcon = ({
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === objectNameSingular,
   );
-  const objectNavItemColor = useObjectNavItemColor(objectNameSingular);
+  const objectNavItemColor = isDefined(objectMetadataItem)
+    ? getObjectColorForNavigationMenuItem(objectMetadataItem)
+    : 'gray';
   const objectIconForView =
     objectMetadataItem?.icon != null
       ? getIcon(objectMetadataItem.icon)
