@@ -123,7 +123,7 @@ The server is pre-seeded with a workspace and user (`tim@apple.dev` / `tim@apple
 
 ### How to use a local Twenty instance
 
-If you're already running a Twenty instance locally (e.g. via `npx nx start twenty-server`), you can connect to it instead of using Docker:
+If you're already running a local Twenty instance, you can connect to it instead of using Docker. Pass the port your local server is listening on (default: `3000`):
 
 ```bash
 npx create-twenty-app@latest my-app --port 3000
