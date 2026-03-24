@@ -20,9 +20,7 @@ export const broadcastSignOut = () => {
   getSharedChannel()?.postMessage({ type: 'sign-out' });
 };
 
-export const subscribeToSignOut = (
-  callback: () => void,
-): (() => void) => {
+export const subscribeToSignOut = (callback: () => void): (() => void) => {
   const channel = getSharedChannel();
 
   if (!channel) {

@@ -102,9 +102,7 @@ export const SSEQuerySubscribeEffect = () => {
           return;
         }
 
-        throw new Error(
-          `Unhandled error for event stream: ${error.message}`,
-        );
+        throw new Error(`Unhandled error for event stream: ${error.message}`);
       }
     }
 

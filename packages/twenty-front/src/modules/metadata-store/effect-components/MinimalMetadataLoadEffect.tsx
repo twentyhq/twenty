@@ -6,7 +6,7 @@ import { useMetadataStoreActions } from '@/metadata-store/hooks/useMetadataStore
 import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
 import { metadataLoadVersionState } from '@/metadata-store/states/metadataLoadVersionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 
 type LoadedState = 'none' | 'mocked' | 'real';
@@ -26,9 +26,11 @@ export const MinimalMetadataLoadEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const loadVersion = useAtomStateValue(metadataLoadVersionState);
-  const [loadedState, setLoadedState] = useState<LoadedState>('none');
-  const lastLoadedVersionRef = useRef(-1);
+  const metadataLoadVersion = useAtomStateValue(metadataLoadVersionState);
+  const [lastLoad, setLastLoad] = useState<{
+    state: LoadedState;
+    version: number;
+  }>({ state: 'none', version: -1 });
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
   const { loadMockedMetadataAtomic } = useMetadataStoreActions();
@@ -46,14 +48,13 @@ export const MinimalMetadataLoadEffect = () => {
       return;
     }
 
-    const versionChanged = loadVersion !== lastLoadedVersionRef.current;
+    const versionChanged = metadataLoadVersion !== lastLoad.version;
 
-    if (!versionChanged && loadedState === desiredLoadState) {
+    if (!versionChanged && lastLoad.state === desiredLoadState) {
       return;
     }
 
-    lastLoadedVersionRef.current = loadVersion;
-    setLoadedState(desiredLoadState);
+    setLastLoad({ state: desiredLoadState, version: metadataLoadVersion });
 
     const performLoad = async () => {
       if (desiredLoadState === 'mocked') {
@@ -74,8 +75,8 @@ export const MinimalMetadataLoadEffect = () => {
     hasAccessTokenPair,
     isActiveWorkspace,
     desiredLoadState,
-    loadedState,
-    loadVersion,
+    lastLoad,
+    metadataLoadVersion,
     loadMinimalMetadata,
     loadMockedMetadataAtomic,
     loadStaleMetadataEntities,
