@@ -27,12 +27,11 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? 'Link';
     const linkUrl = (draftItem.link ?? '').trim();
-    input.link =
-      HTTP_PROTOCOL_REGEX.test(linkUrl)
-        ? linkUrl
-        : linkUrl
-          ? `https://${linkUrl}`
-          : undefined;
+    input.link = HTTP_PROTOCOL_REGEX.test(linkUrl)
+      ? linkUrl
+      : linkUrl
+        ? `https://${linkUrl}`
+        : undefined;
   } else if (isNavigationMenuItemObject(draftItem)) {
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;
