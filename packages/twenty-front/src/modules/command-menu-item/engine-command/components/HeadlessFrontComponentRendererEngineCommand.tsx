@@ -32,6 +32,7 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
       ? context.selectedRecords[0].id
       : undefined;
 
+  // TODO: Remove layout rendering provider once we have refactored FrontComponentRenderer to have one headless renderer and a standard renderer
   return (
     <Suspense fallback={null}>
       <LayoutRenderingProvider
