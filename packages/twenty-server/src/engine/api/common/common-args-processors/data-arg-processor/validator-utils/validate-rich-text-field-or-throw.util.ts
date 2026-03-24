@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
-import { isNull, isObject } from '@sniptt/guards';
+import { isNonEmptyString, isNull, isObject } from '@sniptt/guards';
 import {
   compositeTypeDefinitions,
   FieldMetadataType,
@@ -11,6 +11,24 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+
+const validateBlocknoteJsonOrThrow = (blocknote: unknown): void => {
+  if (!isNonEmptyString(blocknote)) {
+    return;
+  }
+
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(blocknote);
+  } catch {
+    throw new Error('blocknote must contain valid JSON');
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('blocknote must be a JSON array of blocks');
+  }
+};
 
 export const validateRichTextFieldOrThrow = (
   value: unknown,
@@ -40,6 +58,10 @@ export const validateRichTextFieldOrThrow = (
       throw new Error(
         `Should have only ${richTextSubfields?.join(', ')} subfields`,
       );
+
+    validateBlocknoteJsonOrThrow(
+      (parsedValue as Record<string, unknown>).blocknote,
+    );
 
     return value as {
       blocknote: string | null | undefined;

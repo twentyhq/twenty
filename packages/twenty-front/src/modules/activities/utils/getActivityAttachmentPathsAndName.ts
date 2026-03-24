@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { parseJson } from 'twenty-shared/utils';
 
 export type AttachmentInfo = {
   path: string;
@@ -7,7 +8,7 @@ export type AttachmentInfo = {
 export const getActivityAttachmentPathsAndName = (
   stringifiedActivityBlocknote: string,
 ): AttachmentInfo[] => {
-  const activityBlocknote = JSON.parse(stringifiedActivityBlocknote ?? '{}');
+  const activityBlocknote = parseJson<any[]>(stringifiedActivityBlocknote) ?? [];
 
   return activityBlocknote.reduce((acc: AttachmentInfo[], block: any) => {
     if (

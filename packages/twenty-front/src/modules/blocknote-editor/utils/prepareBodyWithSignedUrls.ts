@@ -1,4 +1,5 @@
 import type { PartialBlock } from '@blocknote/core';
+import { parseJson } from 'twenty-shared/utils';
 
 // TODO: This function is extracted but its not doing what it is supposed to do. It is not signing the urls. It is just parsing the image urls.
 // tracking issue - https://github.com/twentyhq/twenty/issues/8351
@@ -7,7 +8,9 @@ export const prepareBodyWithSignedUrls = (
 ): string => {
   if (!newStringifiedBody) return newStringifiedBody;
 
-  const body: PartialBlock[] = JSON.parse(newStringifiedBody);
+  const body = parseJson<PartialBlock[]>(newStringifiedBody);
+
+  if (!Array.isArray(body)) return newStringifiedBody;
 
   const bodyWithSignedPayload = body.map((block) => {
     if (block.type !== 'image' || !block.props?.url) {

@@ -1,6 +1,7 @@
 // TODO: merge with getFirstNonEmptyLineOfRichText (and one duplicate I saw and also added a note on)
 
 import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { parseJson } from 'twenty-shared/utils';
 
 interface BaseNode {
   type: string;
@@ -28,7 +29,9 @@ const isLinkNode = (node: RichTextNode): node is LinkNode =>
   node.type === 'link';
 
 export const getActivityPreview = (activityBody: string | null): string => {
-  const noteBody: RichTextNode[] = activityBody ? JSON.parse(activityBody) : [];
+  const noteBody: RichTextNode[] = activityBody
+    ? (parseJson<RichTextNode[]>(activityBody) ?? [])
+    : [];
 
   const extractText = (node: RichTextNode | undefined | null): string => {
     if (!node) return '';
