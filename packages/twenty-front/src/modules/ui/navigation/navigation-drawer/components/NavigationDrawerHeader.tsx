@@ -28,6 +28,7 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   align-self: ${({ isExpanded }) => (isExpanded ? 'auto' : 'flex-end')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
+  flex-shrink: 0;
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[1])};
   margin-left: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
@@ -44,8 +45,9 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
 const StyledWorkspaceDropdownContainer = styled.div`
   align-items: center;
   display: flex;
-  justify-content: center;
+  flex: 1 1 auto;
   min-height: ${themeCssVariables.spacing[8]};
+  min-width: 0;
 `;
 
 type NavigationDrawerHeaderProps = {

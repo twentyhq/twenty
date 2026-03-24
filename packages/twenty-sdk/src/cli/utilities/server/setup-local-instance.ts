@@ -1,41 +1,11 @@
+import {
+  checkServerHealth,
+  detectLocalServer,
+} from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import { execSync } from 'node:child_process';
 
 const LOCAL_PORTS = [2020, 3000];
-
-// Minimal health check — the full implementation lives in twenty-sdk
-const isServerReady = async (port: number): Promise<boolean> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-  try {
-    const response = await fetch(`http://localhost:${port}/healthz`, {
-      signal: controller.signal,
-    });
-
-    const body = await response.json();
-
-    return body.status === 'ok';
-  } catch {
-    return false;
-  } finally {
-    clearTimeout(timeoutId);
-  }
-};
-
-const detectRunningServer = async (
-  preferredPort?: number,
-): Promise<number | null> => {
-  const ports = preferredPort ? [preferredPort] : LOCAL_PORTS;
-
-  for (const port of ports) {
-    if (await isServerReady(port)) {
-      return port;
-    }
-  }
-
-  return null;
-};
 
 export type LocalInstanceResult = {
   running: boolean;
@@ -46,11 +16,9 @@ export const setupLocalInstance = async (
   appDirectory: string,
   preferredPort?: number,
 ): Promise<LocalInstanceResult> => {
-  const detectedPort = await detectRunningServer(preferredPort);
+  const serverUrl = await detectLocalServer(preferredPort);
 
-  if (detectedPort) {
-    const serverUrl = `http://localhost:${detectedPort}`;
-
+  if (serverUrl) {
     console.log(chalk.green(`Twenty server detected on ${serverUrl}.\n`));
 
     return { running: true, serverUrl };
@@ -84,7 +52,7 @@ export const setupLocalInstance = async (
   const timeoutMs = 180 * 1000;
 
   while (Date.now() - startTime < timeoutMs) {
-    if (await isServerReady(LOCAL_PORTS[0])) {
+    if (await checkServerHealth(LOCAL_PORTS[0])) {
       const serverUrl = `http://localhost:${LOCAL_PORTS[0]}`;
 
       console.log(chalk.green(`Server running on '${serverUrl}'\n`));

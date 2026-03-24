@@ -121,6 +121,14 @@ yarn twenty server reset     # Wipe all data and start fresh
 
 The server is pre-seeded with a workspace and user (`tim@apple.dev` / `tim@apple.dev`).
 
+### How to use a local Twenty instance
+
+If you're already running a local Twenty instance, you can connect to it instead of using Docker. Pass the port your local server is listening on (default: `3000`):
+
+```bash
+npx create-twenty-app@latest my-app --port 3000
+```
+
 ## Next steps
 
 - Run `yarn twenty help` to see all available commands.

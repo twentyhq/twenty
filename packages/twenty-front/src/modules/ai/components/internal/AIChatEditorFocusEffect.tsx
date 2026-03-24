@@ -1,7 +1,7 @@
 import { type Editor } from '@tiptap/react';
 import { useEffect } from 'react';
 
-import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
+import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 type AIChatEditorFocusEffectProps = {
@@ -11,24 +11,24 @@ type AIChatEditorFocusEffectProps = {
 export const AIChatEditorFocusEffect = ({
   editor,
 }: AIChatEditorFocusEffectProps) => {
-  const [focusEditorAfterMigrate, setFocusEditorAfterMigrate] = useAtomState(
-    focusEditorAfterMigrateState,
+  const [shouldFocusChatEditor, setShouldFocusChatEditor] = useAtomState(
+    shouldFocusChatEditorState,
   );
 
   useEffect(() => {
-    if (!focusEditorAfterMigrate || !editor) {
+    if (!shouldFocusChatEditor || !editor) {
       return;
     }
 
     const rafId = requestAnimationFrame(() => {
       editor.commands.focus('end');
-      setFocusEditorAfterMigrate(false);
+      setShouldFocusChatEditor(false);
     });
 
     return () => {
       cancelAnimationFrame(rafId);
     };
-  }, [focusEditorAfterMigrate, editor, setFocusEditorAfterMigrate]);
+  }, [shouldFocusChatEditor, editor, setShouldFocusChatEditor]);
 
   return null;
 };
