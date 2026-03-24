@@ -25,7 +25,10 @@ export const useReplaceBlockEditorContent = (
       ];
 
       if (!isDeeplyEqual(editor.document, content as typeof editor.document)) {
-        editor.replaceBlocks(editor.document, content as typeof editor.document);
+        editor.replaceBlocks(
+          editor.document,
+          content as typeof editor.document,
+        );
       }
     },
     [store, editor, fieldName],
