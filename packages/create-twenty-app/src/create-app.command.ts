@@ -1,3 +1,4 @@
+import { basename } from 'path';
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
@@ -218,7 +219,7 @@ export class CreateAppCommand {
     appDirectory: string,
     localResult: LocalInstanceResult,
   ): void {
-    const dirName = appDirectory.split('/').reverse()[0] ?? '';
+    const dirName = basename(appDirectory);
 
     console.log(chalk.blue('\nApplication created. Next steps:'));
     console.log(chalk.gray(`- cd ${dirName}`));
