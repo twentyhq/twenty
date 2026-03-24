@@ -53,11 +53,10 @@ export class SdkClientGenerationService {
     applicationId: string;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const graphqlSchema =
-      await this.workspaceSchemaFactory.createGraphQLSchema(
-        { id: workspaceId } as WorkspaceEntity,
-        applicationId,
-      );
+    const graphqlSchema = await this.workspaceSchemaFactory.createGraphQLSchema(
+      { id: workspaceId } as WorkspaceEntity,
+      applicationId,
+    );
 
     await this.generateAndStore({
       workspaceId,
