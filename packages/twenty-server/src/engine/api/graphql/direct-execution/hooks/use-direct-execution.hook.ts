@@ -89,20 +89,18 @@ export function useDirectExecution(
         return;
       }
 
-      const isTimingEnabled =
-        await config.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_GRAPHQL_QUERY_TIMING_ENABLED,
-          req.workspace.id,
-        );
+      const isTimingEnabled = await config.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GRAPHQL_QUERY_TIMING_ENABLED,
+        req.workspace.id,
+      );
 
       const resolvedOperationName = operationName ?? 'Anonymous';
 
       if (isTimingEnabled) {
         const startTime = performance.now();
 
-        const timedResult = await queryTimingContextStorage.run(
-          true,
-          () => config.directExecutionService.execute(req, document),
+        const timedResult = await queryTimingContextStorage.run(true, () =>
+          config.directExecutionService.execute(req, document),
         );
 
         const durationMs = (performance.now() - startTime).toFixed(2);
@@ -118,10 +116,7 @@ export function useDirectExecution(
         return endResponse(Response.json(timedResult));
       }
 
-      const result = await config.directExecutionService.execute(
-        req,
-        document,
-      );
+      const result = await config.directExecutionService.execute(req, document);
 
       if (isNull(result)) {
         return;

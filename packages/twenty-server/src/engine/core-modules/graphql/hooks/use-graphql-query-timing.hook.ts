@@ -14,9 +14,7 @@ type GraphQLQueryTimingOptions = {
 
 const logger = new Logger('GraphQLQueryTiming');
 
-export const useGraphQLQueryTiming = <
-  PluginContext extends GraphQLContext,
->(
+export const useGraphQLQueryTiming = <PluginContext extends GraphQLContext>(
   options: GraphQLQueryTimingOptions,
 ): Plugin<PluginContext> => {
   return {
@@ -42,9 +40,7 @@ export const useGraphQLQueryTiming = <
       ) as OperationDefinitionNode | undefined;
 
       const operationName =
-        args.operationName ||
-        rootOperation?.name?.value ||
-        'Anonymous';
+        args.operationName || rootOperation?.name?.value || 'Anonymous';
 
       const operationType = rootOperation?.operation ?? 'unknown';
       const startTime = performance.now();
