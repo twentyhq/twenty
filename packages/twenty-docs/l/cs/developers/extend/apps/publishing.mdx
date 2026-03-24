@@ -72,7 +72,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty build`, then `npm publish` from `.twenty/output`.
+Pro jiné systémy CI (GitLab CI, CircleCI atd.) platí stejné tři příkazy: `yarn install`, `npx twenty build` a poté `npm publish` z `.twenty/output`.
 
 <Tip>
 **npm provenance** je volitelné, ale doporučené. Publikování s `--provenance` přidá k vašemu záznamu na npm odznak důvěryhodnosti a umožní uživatelům ověřit, že balíček byl sestaven z konkrétního commitu ve veřejné CI pipeline. Pokyny k nastavení najdete v [dokumentaci k npm provenance](https://docs.npmjs.com/generating-provenance-statements).
@@ -97,7 +97,7 @@ Jakýkoli pracovní prostor na tomto serveru pak může aplikaci instalovat a ak
 Chcete-li vydat aktualizaci:
 
 1. Zvyšte hodnotu pole `version` v souboru `package.json`
-2. Push a new tarball with `npx twenty publish --server <server-url>`
+2. Odešlete nový tarball pomocí `npx twenty publish --server <server-url>`
 3. Pracovní prostory na tomto serveru uvidí dostupnou aktualizaci ve svém nastavení
 
 <Note>
@@ -110,7 +110,7 @@ Twenty organizuje aplikace do tří kategorií podle způsobu distribuce:
 
 | Kategorie       | Jak to funguje                                                                                                                     | Viditelné v Marketplace? |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| **Vývoj**       | Local dev mode apps running via `yarn twenty dev`. Slouží k sestavování a testování.                                               | Ne                       |
+| **Vývoj**       | Aplikace v místním vývojářském režimu spuštěné přes `yarn twenty dev`. Slouží k sestavování a testování.                           | Ne                       |
 | **Publikováno** | Aplikace publikované na npm s předponou `twenty-app-`. Uvedeny v Marketplace, aby je mohl kterýkoli pracovní prostor nainstalovat. | Ano                      |
 | **Interní**     | Aplikace nasazené pomocí tarballu na konkrétní server. Dostupné pouze pro pracovní prostory na tomto serveru.                      | Ne                       |
 

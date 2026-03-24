@@ -72,7 +72,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty build`, then `npm publish` from `.twenty/output`.
+بالنسبة لأنظمة CI الأخرى (GitLab CI، CircleCI، إلخ)، تنطبق الأوامر الثلاثة نفسها: `yarn install`، ثم `npx twenty build`، ثم `npm publish` من `.twenty/output`.
 
 <Tip>
 **npm provenance** اختياري ولكنه موصى به. يضيف النشر باستخدام `--provenance` شارة ثقة إلى إدراجك على npm، مما يتيح للمستخدمين التحقق من أن الحزمة تم بناؤها من التزام محدد ضمن خط أنابيب CI عام. راجع [وثائق npm provenance](https://docs.npmjs.com/generating-provenance-statements) للحصول على تعليمات الإعداد.
@@ -97,7 +97,7 @@ npx twenty publish --server <server-url>
 لطرح تحديث:
 
 1. ارفع قيمة الحقل `version` في ملف `package.json`
-2. Push a new tarball with `npx twenty publish --server <server-url>`
+2. أرسل tarball جديدًا باستخدام `npx twenty publish --server <server-url>`
 3. سترى مساحات العمل على ذلك الخادم الترقية متاحة في إعداداتها
 
 <Note>
@@ -110,7 +110,7 @@ npx twenty publish --server <server-url>
 
 | الفئة       | كيف يعمل                                                                                             | مرئي في سوق Twenty؟ |
 | ----------- | ---------------------------------------------------------------------------------------------------- | ------------------- |
-| **التطوير** | Local dev mode apps running via `yarn twenty dev`. تُستخدم للبناء والاختبار.                         | لا                  |
+| **التطوير** | تطبيقات وضع التطوير المحلي التي تعمل عبر `yarn twenty dev`. تُستخدم للبناء والاختبار.                | لا                  |
 | **منشور**   | تطبيقات منشورة على npm مع البادئة `twenty-app-`. مدرجة في سوق Twenty لتتمكن أي مساحة عمل من تثبيتها. | نعم                 |
 | **داخلي**   | تطبيقات منشورة عبر tarball إلى خادم محدد. متاحة فقط لمساحات العمل على ذلك الخادم.                    | لا                  |
 
