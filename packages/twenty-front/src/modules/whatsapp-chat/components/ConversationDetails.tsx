@@ -9,6 +9,7 @@ import { useCloseOpportunities } from '@/whatsapp-chat/hooks/useCloseOpportuniti
 import { useMopSummary } from '@/whatsapp-chat/hooks/useMopSummary';
 import { useMopDetails } from '@/whatsapp-chat/hooks/useMopDetails';
 import { useStrukturanalyse, type SaResult } from '@/whatsapp-chat/hooks/useStrukturanalyse';
+import { useTypedFacts } from '@/whatsapp-chat/hooks/useTypedFacts';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
 import { formatPhoneNumber } from '@/whatsapp-chat/utils/formatPhoneNumber';
 
@@ -662,6 +663,352 @@ const StyledSaErrorBox = styled.div<{ variant: 'warning' | 'error' }>`
       : 'background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b;'}
 `;
 
+// ── Calls tab styled components ──────────────────────────────────
+
+const StyledCallCard = styled.div`
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const StyledCallCardHeader = styled.div<{ isExpanded: boolean }>`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 10px 12px;
+  user-select: none;
+
+  &:hover {
+    background: #f9fafb;
+  }
+`;
+
+const StyledCallChevron = styled.span<{ expanded: boolean }>`
+  color: #9ca3af;
+  display: inline-flex;
+  font-size: 11px;
+  transform: rotate(${({ expanded }) => (expanded ? '90deg' : '0deg')});
+  transition: transform 0.15s ease;
+`;
+
+const StyledCallCardBody = styled.div`
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+`;
+
+const StyledCallNote = styled.div`
+  background: #f9fafb;
+  border-left: 3px solid #d1d5db;
+  border-radius: 4px;
+  color: #4b5563;
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  white-space: pre-wrap;
+`;
+
+const StyledCallCopyButton = styled.button`
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  color: #6b7280;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 11px;
+  gap: 4px;
+  padding: 4px 8px;
+  transition: background 0.15s;
+  width: fit-content;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+`;
+
+const StyledDirectionBadge = styled.span<{ direction: string }>`
+  background: ${({ direction }) =>
+    direction === 'inbound'
+      ? 'rgba(59, 130, 246, 0.1)'
+      : 'rgba(139, 92, 246, 0.1)'};
+  border: 1px solid
+    ${({ direction }) =>
+      direction === 'inbound' ? '#3b82f6' : '#8b5cf6'};
+  border-radius: 12px;
+  color: ${({ direction }) =>
+    direction === 'inbound' ? '#3b82f6' : '#8b5cf6'};
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+`;
+
+const StyledCloseLink = styled.a`
+  align-items: center;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #1a6cff;
+  display: flex;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 4px;
+  justify-content: center;
+  padding: 6px 12px;
+  text-decoration: none;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+`;
+
+// ── Key Facts styled components ─────────────────────────────────
+
+const StyledFilterToggle = styled.button<{ hasFilters: boolean }>`
+  align-items: center;
+  background: ${({ hasFilters }) => (hasFilters ? '#075E54' : '#f3f4f6')};
+  border: 1px solid ${({ hasFilters }) => (hasFilters ? '#075E54' : '#e5e7eb')};
+  border-radius: 6px;
+  color: ${({ hasFilters }) => (hasFilters ? '#ffffff' : '#374151')};
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 6px;
+  padding: 6px 12px;
+  transition: all 0.15s;
+
+  &:hover {
+    background: ${({ hasFilters }) => (hasFilters ? '#064e46' : '#e5e7eb')};
+  }
+`;
+
+const StyledFilterPanel = styled.div`
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+`;
+
+const StyledFilterChips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`;
+
+const StyledFilterChip = styled.button<{ active: boolean; color: string }>`
+  background: ${({ active, color }) =>
+    active ? `${color}20` : '#f9fafb'};
+  border: 1px solid ${({ active, color }) =>
+    active ? color : '#e5e7eb'};
+  border-radius: 12px;
+  color: ${({ active, color }) =>
+    active ? color : '#6b7280'};
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: ${({ color }) => color};
+    color: ${({ color }) => color};
+  }
+`;
+
+const StyledFactCard = styled.div`
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+`;
+
+const StyledFactBadge = styled.span<{ color: string }>`
+  background: ${({ color }) => `${color}20`};
+  border: 1px solid ${({ color }) => color};
+  border-radius: 12px;
+  color: ${({ color }) => color};
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+`;
+
+const StyledFactQuote = styled.div`
+  border-left: 3px solid #22c55e;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 4px 10px;
+`;
+
+const StyledFactMeta = styled.div`
+  align-items: center;
+  color: #9ca3af;
+  display: flex;
+  font-size: 11px;
+  gap: 6px;
+`;
+
+const StyledAggCard = styled.div`
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr 1fr 1fr;
+  overflow: hidden;
+`;
+
+const StyledAggItem = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 8px;
+
+  & + & {
+    border-left: 1px solid #f3f4f6;
+  }
+`;
+
+const StyledSortToggle = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 11px;
+  gap: 4px;
+  padding: 2px 4px;
+
+  &:hover {
+    color: #374151;
+  }
+`;
+
+const StyledTimelineHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledClearFilters = styled.button`
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+// ── Key Facts color maps ────────────────────────────────────────
+
+const SOURCE_COLORS: Record<string, string> = {
+  zoom_chat: '#14b8a6',
+  zoom_transcript: '#0891b2',
+  close_call: '#8b5cf6',
+  whatsapp: '#22c55e',
+  email: '#ef4444',
+  default: '#6b7280',
+};
+
+const EXTRACTION_KEY_COLORS: Record<string, string> = {
+  main_pain: '#ef4444',
+  is_cert_interested: '#f59e0b',
+  symptoms: '#ef4444',
+  objections: '#f59e0b',
+  dreams_desires: '#22c55e',
+  pain_severity: '#dc2626',
+  life_situation: '#3b82f6',
+  relatives: '#8b5cf6',
+  past_treatments: '#0891b2',
+  pain_duration: '#f97316',
+  default: '#6b7280',
+};
+
+const EXTRACTION_KEY_LABELS: Record<string, string> = {
+  main_pain: 'Main Pain',
+  is_cert_interested: 'Certification Interest',
+  symptoms: 'Symptoms',
+  objections: 'Objections',
+  dreams_desires: 'Dreams & Desires',
+  pain_severity: 'Pain Severity',
+  life_situation: 'Life Situation',
+  relatives: 'Relatives',
+  past_treatments: 'Past Treatments',
+  pain_duration: 'Pain Duration',
+};
+
+const SOURCE_LABELS: Record<string, string> = {
+  zoom_chat: 'Zoom Chat',
+  zoom_transcript: 'Zoom Transcript',
+  close_call: 'Close Call',
+  whatsapp: 'WhatsApp',
+  email: 'Email',
+};
+
+const getSourceColor = (source: string | null): string =>
+  SOURCE_COLORS[source ?? ''] ?? SOURCE_COLORS.default;
+
+const getExtractionKeyColor = (key: string): string =>
+  EXTRACTION_KEY_COLORS[key] ?? EXTRACTION_KEY_COLORS.default;
+
+const getExtractionKeyLabel = (key: string): string =>
+  EXTRACTION_KEY_LABELS[key] ?? key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+const getSourceLabel = (source: string | null): string =>
+  SOURCE_LABELS[source ?? ''] ?? source ?? 'Unknown';
+
+const formatRelativeTime = (isoString: string | null): string => {
+  if (!isoString) return '';
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return '';
+  const now = Date.now();
+  const diffMs = now - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+  const diffMonth = Math.floor(diffDay / 30);
+
+  if (diffSec < 60) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHr < 24) return `${diffHr}h ago`;
+  if (diffDay < 30) return `${diffDay}d ago`;
+  return `${diffMonth} month${diffMonth !== 1 ? 's' : ''} ago`;
+};
+
 // ── Helpers ─────────────────────────────────────────────────────
 
 const formatDate = (isoString: string | null): string => {
@@ -1015,8 +1362,26 @@ export const ConversationDetails = ({
     getFullResult: saGetFullResult,
     fetchResults: saFetchResults,
   } = useStrukturanalyse(conversation.id);
+  const {
+    facts: typedFacts,
+    allFacts: allTypedFacts,
+    aggregation: factsAggregation,
+    loading: factsLoading,
+    loadMore: factsLoadMore,
+    hasMore: factsHasMore,
+    applyFilters: factsApplyFilters,
+    clearFilters: factsClearFilters,
+    activeFilters: factsActiveFilters,
+    activeFilterCount: factsActiveFilterCount,
+    setSortOrder: factsSetSortOrder,
+    sortOrder: factsSortOrder,
+  } = useTypedFacts(contactEmail ?? undefined);
   const [activeTab, setActiveTab] = useState<TabId>('sa');
   const [mopExpanded, setMopExpanded] = useState(false);
+  const [callExpanded, setCallExpanded] = useState<Record<string, boolean>>({});
+  const [callCopiedId, setCallCopiedId] = useState<string | null>(null);
+  const [callDisplayCount, setCallDisplayCount] = useState(10);
+  const [factsFilterOpen, setFactsFilterOpen] = useState(false);
   const [coachEmail, setCoachEmail] = useState(
     conversation.coachLeadOwnerEmail ?? '',
   );
@@ -1069,6 +1434,23 @@ export const ConversationDetails = ({
       // Silently fail
     }
   }, [bridgeFetch, conversation.id, coachEmail, onUpdate]);
+
+  const handleCallToggle = useCallback((callId: string) => {
+    setCallExpanded((prev) => ({ ...prev, [callId]: !prev[callId] }));
+  }, []);
+
+  const handleCallCopyNote = useCallback((note: string, callId: string) => {
+    navigator.clipboard.writeText(note);
+    setCallCopiedId(callId);
+    setTimeout(() => setCallCopiedId(null), 2000);
+  }, []);
+
+  const handleFactsFilterToggle = useCallback(() => {
+    setFactsFilterOpen((prev) => !prev);
+  }, []);
+
+  // Derive first leadId from calls for Close.io link
+  const firstCallLeadId = calls.length > 0 ? calls[0].leadId : null;
 
   return (
     <StyledContainer>
@@ -1609,52 +1991,323 @@ export const ConversationDetails = ({
         {/* ── Calls Tab ───────────────────────────────────── */}
         {activeTab === 'calls' && (
           <>
+            {firstCallLeadId && (
+              <StyledCloseLink
+                href={`https://app.close.com/lead/${firstCallLeadId}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View Lead in Close.io &rarr;
+              </StyledCloseLink>
+            )}
+
             <StyledSection>
-              <StyledSectionTitle>Close.io Calls</StyledSectionTitle>
+              <StyledSectionTitle>
+                Close.io Calls{calls.length > 0 ? ` (${calls.length})` : ''}
+              </StyledSectionTitle>
               {callsLoading && (
                 <StyledLoadingText>Loading calls...</StyledLoadingText>
               )}
               {!callsLoading && calls.length === 0 && (
                 <StyledEmptyState>No calls recorded</StyledEmptyState>
               )}
-              {calls.map((call) => (
-                <StyledCard key={call.id}>
-                  <StyledCardHeader>
-                    <StyledCardTitle>
-                      {call.direction === 'outbound' ? 'Outgoing' : 'Incoming'}
-                      {call.disposition ? ` · ${call.disposition}` : ''}
-                    </StyledCardTitle>
-                    <StyledCardMeta>
-                      {call.dateCreated ? formatDate(call.dateCreated) : ''}
-                    </StyledCardMeta>
-                  </StyledCardHeader>
-                  <StyledCardBody>
-                    {call.duration != null && (
-                      <span>
-                        {Math.floor(call.duration / 60)}m{' '}
-                        {call.duration % 60}s
-                      </span>
+              {calls.slice(0, callDisplayCount).map((call) => {
+                const isExpanded = !!callExpanded[call.id];
+                return (
+                  <StyledCallCard key={call.id}>
+                    <StyledCallCardHeader
+                      isExpanded={isExpanded}
+                      onClick={() => handleCallToggle(call.id)}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                        <StyledCallChevron expanded={isExpanded}>&#9654;</StyledCallChevron>
+                        <StyledDirectionBadge direction={call.direction || 'inbound'}>
+                          {call.direction === 'outbound' ? 'Outbound' : 'Inbound'}
+                        </StyledDirectionBadge>
+                        {call.disposition && (
+                          <StyledCardMeta style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {call.disposition}
+                          </StyledCardMeta>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                        {call.duration != null && call.duration > 0 && (
+                          <StyledCardMeta>{formatCallDuration(call.duration)}</StyledCardMeta>
+                        )}
+                        <StyledCardMeta>
+                          {call.dateCreated ? formatDate(call.dateCreated) : ''}
+                        </StyledCardMeta>
+                      </div>
+                    </StyledCallCardHeader>
+
+                    {isExpanded && (
+                      <StyledCallCardBody>
+                        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                          {call.userName && (
+                            <StyledCardMeta>
+                              <span style={{ color: '#6b7280' }}>Rep:</span> {call.userName}
+                            </StyledCardMeta>
+                          )}
+                          {call.status && (
+                            <StyledCardMeta>
+                              <span style={{ color: '#6b7280' }}>Status:</span> {call.status}
+                            </StyledCardMeta>
+                          )}
+                          {call.duration != null && (
+                            <StyledCardMeta>
+                              <span style={{ color: '#6b7280' }}>Duration:</span> {formatCallDuration(call.duration)}
+                            </StyledCardMeta>
+                          )}
+                        </div>
+
+                        {call.note && (
+                          <>
+                            <StyledCallNote>{call.note}</StyledCallNote>
+                            <StyledCallCopyButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCallCopyNote(call.note!, call.id);
+                              }}
+                            >
+                              {callCopiedId === call.id ? (
+                                <>
+                                  <IconCheck size={12} />
+                                  Copied
+                                </>
+                              ) : (
+                                <>
+                                  <IconCopy size={12} />
+                                  Copy note
+                                </>
+                              )}
+                            </StyledCallCopyButton>
+                          </>
+                        )}
+
+                        {!call.note && (
+                          <StyledCardMeta style={{ fontStyle: 'italic' }}>
+                            No note recorded
+                          </StyledCardMeta>
+                        )}
+                      </StyledCallCardBody>
                     )}
-                    {call.userName && <span> · {call.userName}</span>}
-                    {call.status && <span> · {call.status}</span>}
-                  </StyledCardBody>
-                  {call.note && (
-                    <StyledCardBody>{call.note}</StyledCardBody>
-                  )}
-                </StyledCard>
-              ))}
+                  </StyledCallCard>
+                );
+              })}
+
+              {calls.length > callDisplayCount && (
+                <StyledShowMore
+                  onClick={() => setCallDisplayCount((prev) => prev + 10)}
+                >
+                  Load more ({calls.length - callDisplayCount} remaining)
+                </StyledShowMore>
+              )}
             </StyledSection>
           </>
         )}
 
         {/* ── Key Facts Tab ──────────────────────────────── */}
         {activeTab === 'keyfacts' && (
-          <StyledSection>
-            <StyledSectionTitle>Key Facts</StyledSectionTitle>
-            <StyledEmptyState>
-              AI-extracted key facts coming soon
-            </StyledEmptyState>
-          </StyledSection>
+          <>
+            {factsLoading && allTypedFacts.length === 0 && (
+              <StyledSection>
+                <StyledLoadingText>Loading key facts...</StyledLoadingText>
+              </StyledSection>
+            )}
+
+            {!factsLoading && !contactEmail && (
+              <StyledSection>
+                <StyledSectionTitle>Key Facts</StyledSectionTitle>
+                <StyledEmptyState>No email found for facts lookup</StyledEmptyState>
+              </StyledSection>
+            )}
+
+            {!factsLoading && contactEmail && allTypedFacts.length === 0 && (
+              <StyledSection>
+                <StyledSectionTitle>Key Facts</StyledSectionTitle>
+                <StyledEmptyState>No key facts extracted yet</StyledEmptyState>
+              </StyledSection>
+            )}
+
+            {(allTypedFacts.length > 0 || factsAggregation) && (
+              <>
+                {/* Aggregation summary */}
+                {factsAggregation && (
+                  <StyledSection>
+                    <StyledSectionTitle>Overview</StyledSectionTitle>
+                    <StyledAggCard>
+                      <StyledAggItem>
+                        <StyledStatValue>{factsAggregation.totalCount}</StyledStatValue>
+                        <StyledStatLabel>Total Facts</StyledStatLabel>
+                      </StyledAggItem>
+                      <StyledAggItem>
+                        <StyledStatValue>
+                          {Object.keys(factsAggregation.sourceBreakdown).length}
+                        </StyledStatValue>
+                        <StyledStatLabel>Sources</StyledStatLabel>
+                      </StyledAggItem>
+                      <StyledAggItem>
+                        <StyledStatValue>
+                          {Object.keys(factsAggregation.extractionKeyBreakdown).length}
+                        </StyledStatValue>
+                        <StyledStatLabel>Categories</StyledStatLabel>
+                      </StyledAggItem>
+                    </StyledAggCard>
+                  </StyledSection>
+                )}
+
+                {/* Filter controls */}
+                <StyledSection>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <StyledFilterToggle
+                      hasFilters={factsActiveFilterCount > 0}
+                      onClick={handleFactsFilterToggle}
+                    >
+                      Filters
+                      {factsActiveFilterCount > 0 && (
+                        <span
+                          style={{
+                            background: 'rgba(255,255,255,0.3)',
+                            borderRadius: 10,
+                            fontSize: 10,
+                            fontWeight: 700,
+                            padding: '1px 6px',
+                          }}
+                        >
+                          {factsActiveFilterCount}
+                        </span>
+                      )}
+                    </StyledFilterToggle>
+                    {factsActiveFilterCount > 0 && (
+                      <StyledClearFilters onClick={factsClearFilters}>
+                        Clear all
+                      </StyledClearFilters>
+                    )}
+                  </div>
+
+                  {factsFilterOpen && (
+                    <StyledFilterPanel>
+                      {/* Source filters */}
+                      {factsAggregation && Object.keys(factsAggregation.sourceBreakdown).length > 0 && (
+                        <>
+                          <StyledSectionTitle>Source</StyledSectionTitle>
+                          <StyledFilterChips>
+                            {Object.entries(factsAggregation.sourceBreakdown).map(
+                              ([source, count]) => (
+                                <StyledFilterChip
+                                  key={source}
+                                  active={factsActiveFilters.sources.has(source)}
+                                  color={getSourceColor(source)}
+                                  onClick={() => factsApplyFilters('source', source)}
+                                >
+                                  {getSourceLabel(source)} ({count})
+                                </StyledFilterChip>
+                              ),
+                            )}
+                          </StyledFilterChips>
+                        </>
+                      )}
+
+                      {/* Extraction key filters */}
+                      {factsAggregation && Object.keys(factsAggregation.extractionKeyBreakdown).length > 0 && (
+                        <>
+                          <StyledSectionTitle>Category</StyledSectionTitle>
+                          <StyledFilterChips>
+                            {Object.entries(factsAggregation.extractionKeyBreakdown).map(
+                              ([key, count]) => (
+                                <StyledFilterChip
+                                  key={key}
+                                  active={factsActiveFilters.extractionKeys.has(key)}
+                                  color={getExtractionKeyColor(key)}
+                                  onClick={() => factsApplyFilters('extractionKey', key)}
+                                >
+                                  {getExtractionKeyLabel(key)} ({count})
+                                </StyledFilterChip>
+                              ),
+                            )}
+                          </StyledFilterChips>
+                        </>
+                      )}
+                    </StyledFilterPanel>
+                  )}
+                </StyledSection>
+
+                {/* Timeline header */}
+                <StyledSection>
+                  <StyledTimelineHeader>
+                    <StyledSectionTitle>
+                      Facts ({typedFacts.length}
+                      {factsActiveFilterCount > 0
+                        ? ` of ${allTypedFacts.length}`
+                        : ''}
+                      )
+                    </StyledSectionTitle>
+                    <StyledSortToggle
+                      onClick={() =>
+                        factsSetSortOrder(
+                          factsSortOrder === 'desc' ? 'asc' : 'desc',
+                        )
+                      }
+                    >
+                      {factsSortOrder === 'desc' ? 'Newest' : 'Oldest'} first
+                      {factsSortOrder === 'desc' ? ' \u2193' : ' \u2191'}
+                    </StyledSortToggle>
+                  </StyledTimelineHeader>
+
+                  {/* Filtered empty state */}
+                  {typedFacts.length === 0 && factsActiveFilterCount > 0 && (
+                    <StyledEmptyState>
+                      No facts match the current filters
+                    </StyledEmptyState>
+                  )}
+
+                  {/* Fact cards */}
+                  {typedFacts.map((fact) => (
+                    <StyledFactCard key={fact.factId}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                        <StyledFactBadge color={getExtractionKeyColor(fact.extractionKey)}>
+                          {getExtractionKeyLabel(fact.extractionKey)}
+                        </StyledFactBadge>
+                        {fact.source && (
+                          <StyledFactBadge color={getSourceColor(fact.source)}>
+                            {getSourceLabel(fact.source)}
+                          </StyledFactBadge>
+                        )}
+                        {fact.touchpointTimestamp && (
+                          <StyledFactMeta style={{ marginLeft: 'auto' }}>
+                            {formatRelativeTime(fact.touchpointTimestamp)}
+                          </StyledFactMeta>
+                        )}
+                      </div>
+
+                      <StyledFactQuote>{fact.cleanExtraction}</StyledFactQuote>
+
+                      <StyledFactMeta>
+                        {fact.touchpointTimestamp && (
+                          <span>{formatDate(fact.touchpointTimestamp)}</span>
+                        )}
+                        {fact.direction && (
+                          <span style={{ textTransform: 'capitalize' }}>
+                            {fact.direction}
+                          </span>
+                        )}
+                        {fact.interestLevel && (
+                          <span>Interest: {fact.interestLevel}</span>
+                        )}
+                      </StyledFactMeta>
+                    </StyledFactCard>
+                  ))}
+
+                  {/* Load more */}
+                  {factsHasMore && (
+                    <StyledShowMore onClick={factsLoadMore}>
+                      Load more facts
+                    </StyledShowMore>
+                  )}
+                </StyledSection>
+              </>
+            )}
+          </>
         )}
       </StyledBody>
     </StyledContainer>
