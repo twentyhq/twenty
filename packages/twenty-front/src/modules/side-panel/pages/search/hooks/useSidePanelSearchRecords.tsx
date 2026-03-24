@@ -49,10 +49,7 @@ export const useSidePanelSearchRecords = () => {
     variables: {
       searchInput: deferredSidePanelSearch ?? '',
       limit: MAX_SEARCH_RESULTS,
-      excludedObjectNameSingulars: [
-        CoreObjectNameSingular.WorkspaceMember,
-        ...nonReadableObjectMetadataItemsNameSingular,
-      ],
+      excludedObjectNameSingulars: nonReadableObjectMetadataItemsNameSingular,
       ...(isDefined(sidePanelSearchObjectFilter)
         ? {
             includedObjectNameSingulars: [sidePanelSearchObjectFilter],

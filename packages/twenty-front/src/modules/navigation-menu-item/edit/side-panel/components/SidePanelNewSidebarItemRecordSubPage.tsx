@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
@@ -61,10 +60,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
       variables: {
         searchInput: deferredRecordSearchInput ?? '',
         limit: MAX_SEARCH_RESULTS,
-        excludedObjectNameSingulars: [
-          CoreObjectNameSingular.WorkspaceMember,
-          ...nonReadableObjectMetadataItemsNameSingular,
-        ],
+        excludedObjectNameSingulars: nonReadableObjectMetadataItemsNameSingular,
         ...(isDefined(selectedObjectNameSingular)
           ? {
               includedObjectNameSingulars: [selectedObjectNameSingular],

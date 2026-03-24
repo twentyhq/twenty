@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCube, IconFilter, useIcons } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -36,7 +35,7 @@ const ObjectFilterDropdownContent = ({
     () =>
       activeObjectMetadataItems.filter(
         (item) =>
-          item.nameSingular !== CoreObjectNameSingular.WorkspaceMember &&
+          item.isSearchable &&
           item.labelPlural.toLowerCase().includes(filterSearch.toLowerCase()),
       ),
     [activeObjectMetadataItems, filterSearch],
