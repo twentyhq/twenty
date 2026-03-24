@@ -31,6 +31,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationRegistrationModule,
     WorkspaceMigrationModule,
     FeatureFlagModule,
+    WorkflowCommonModule,
   ],
   providers: [
     IdentifyPermissionFlagMetadataCommand,

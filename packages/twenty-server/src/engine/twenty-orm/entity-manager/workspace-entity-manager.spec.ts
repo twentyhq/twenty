@@ -250,6 +250,7 @@ describe('WorkspaceEntityManager', () => {
         IS_DIRECT_GRAPHQL_EXECUTION_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: false,
         IS_CONNECTED_ACCOUNT_MIGRATED: false,
+        IS_GRAPHQL_QUERY_TIMING_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {

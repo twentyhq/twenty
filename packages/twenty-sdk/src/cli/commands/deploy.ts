@@ -36,8 +36,7 @@ export class DeployCommand {
     const remoteName = options.remote ?? ConfigService.getActiveRemote();
 
     console.log(chalk.blue(`Deploying to ${remoteName} (${serverUrl})...`));
-    console.log(chalk.gray(`App path: ${appPath}`));
-    console.log('');
+    console.log(chalk.gray(`App path: ${appPath}\n`));
 
     const result = await appDeploy({
       appPath,
