@@ -27,7 +27,6 @@ import {
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
-import { getCreateNavigationMenuItemBatchProcessingIndices } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-create-navigation-menu-item-batch-processing-indices.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -198,28 +197,23 @@ export class NavigationMenuItemService {
       },
     );
 
-    const existingIds = new Set(
-      Object.values(existingFlatNavigationMenuItemMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .map((item) => item.id),
-    );
-
-    const processingIndices = getCreateNavigationMenuItemBatchProcessingIndices(
-      {
-        inputs,
-        existingIds,
-      },
-    );
-
     const optimisticFlatNavigationMenuItemMaps = structuredClone(
       existingFlatNavigationMenuItemMaps,
     );
 
-    const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
+    const foldersFirst = [...inputs].sort((a, b) => {
+      const aIsFolder = a.type === NavigationMenuItemType.FOLDER ? 0 : 1;
+      const bIsFolder = b.type === NavigationMenuItemType.FOLDER ? 0 : 1;
 
-    for (const inputIndex of processingIndices) {
-      const input = inputs[inputIndex];
+      return aIsFolder - bIsFolder;
+    });
 
+    const flatEntityByInput = new Map<
+      CreateNavigationMenuItemInput,
+      FlatNavigationMenuItem
+    >();
+
+    const flatNavigationMenuItemsToCreate = foldersFirst.map((input) => {
       const normalizedInput: CreateNavigationMenuItemInput = {
         ...input,
         userWorkspaceId:
@@ -243,15 +237,9 @@ export class NavigationMenuItemService {
         flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
       });
 
-      flatNavigationMenuItemsToCreate.push(flatNavigationMenuItemToCreate);
-    }
+      flatEntityByInput.set(input, flatNavigationMenuItemToCreate);
 
-    const flatNavigationMenuItemsByInputIndex: FlatNavigationMenuItem[] =
-      new Array(inputs.length);
-
-    processingIndices.forEach((originalIndex, orderIndex) => {
-      flatNavigationMenuItemsByInputIndex[originalIndex] =
-        flatNavigationMenuItemsToCreate[orderIndex];
+      return flatNavigationMenuItemToCreate;
     });
 
     const validateAndBuildResult =
@@ -286,10 +274,10 @@ export class NavigationMenuItemService {
         },
       );
 
-    return flatNavigationMenuItemsByInputIndex.map((flatEntity) =>
+    return inputs.map((input) =>
       fromFlatNavigationMenuItemToNavigationMenuItemDto(
         findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: flatEntity.id,
+          flatEntityId: flatEntityByInput.get(input)!.id,
           flatEntityMaps: recomputedFlatNavigationMenuItemMaps,
         }),
       ),

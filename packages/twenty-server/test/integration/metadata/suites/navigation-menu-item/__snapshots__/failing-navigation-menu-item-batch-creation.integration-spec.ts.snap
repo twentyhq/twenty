@@ -1,17 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`NavigationMenuItem batch creation should fail when batch contains folder without id 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-    "userFriendlyMessage": "Invalid navigation menu item input.",
-  },
-  "message": "Folder navigation menu items in a batch create must include an id",
-  "name": "UserInputError",
-}
-`;
-
 exports[`NavigationMenuItem batch creation should fail when batch contains item with invalid folderId 1`] = `
 {
   "extensions": {
@@ -69,14 +57,3 @@ exports[`NavigationMenuItem batch creation should fail when batch contains item 
 }
 `;
 
-exports[`NavigationMenuItem batch creation should fail when batch has circular folder hierarchy 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-    "userFriendlyMessage": "Invalid navigation menu item input.",
-  },
-  "message": "Invalid folder hierarchy in batch create (missing parent folder or cycle)",
-  "name": "UserInputError",
-}
-`;

@@ -50,46 +50,6 @@ const failingBatchCreationTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when batch contains folder without id',
-    context: {
-      inputs: [
-        {
-          type: NavigationMenuItemType.FOLDER,
-          name: 'Missing ID Folder',
-        },
-        {
-          type: NavigationMenuItemType.RECORD,
-          targetRecordId: faker.string.uuid(),
-          targetObjectMetadataId: faker.string.uuid(),
-        },
-      ],
-    },
-  },
-  {
-    title: 'when batch has circular folder hierarchy',
-    context: {
-      inputs: (() => {
-        const folderA = faker.string.uuid();
-        const folderB = faker.string.uuid();
-
-        return [
-          {
-            id: folderA,
-            type: NavigationMenuItemType.FOLDER,
-            name: 'Folder A',
-            folderId: folderB,
-          },
-          {
-            id: folderB,
-            type: NavigationMenuItemType.FOLDER,
-            name: 'Folder B',
-            folderId: folderA,
-          },
-        ];
-      })(),
-    },
-  },
-  {
     title: 'when batch contains item with invalid folderId',
     context: {
       inputs: [
