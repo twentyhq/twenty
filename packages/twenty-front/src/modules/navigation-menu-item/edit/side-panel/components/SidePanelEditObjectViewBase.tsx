@@ -1,6 +1,5 @@
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeColor';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -54,10 +53,6 @@ export const SidePanelEditObjectViewBase = ({
     (item) => item.nameSingular === objectNameSingular,
   );
 
-  const objectColor = isDefined(objectMetadataItem)
-    ? getObjectColorForNavigationMenuItem(objectMetadataItem)
-    : 'gray';
-
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const persistedNavItem = navigationMenuItems.find(
     (item) => item.id === selectedItem?.id,
@@ -67,7 +62,7 @@ export const SidePanelEditObjectViewBase = ({
     selectedItem.color !== (persistedNavItem?.color ?? undefined);
 
   const effectiveColor = isDefined(selectedItem)
-    ? getEffectiveNavigationMenuItemColor(selectedItem, objectColor)
+    ? getNavigationMenuItemColor(selectedItem, objectMetadataItem)
     : undefined;
   const displayColor = hasUserChangedColor
     ? selectedItem.color

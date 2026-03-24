@@ -8,8 +8,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/display/components/NavigationMenuItemIconContainer';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemIconStyleFromColor';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
@@ -53,9 +52,6 @@ export const NavigationMenuItemIcon = ({
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === objectNameSingular,
   );
-  const objectNavItemColor = isDefined(objectMetadataItem)
-    ? getObjectColorForNavigationMenuItem(objectMetadataItem)
-    : 'gray';
   const objectIconForView =
     objectMetadataItem?.icon != null
       ? getIcon(objectMetadataItem.icon)
@@ -69,7 +65,10 @@ export const NavigationMenuItemIcon = ({
       <ObjectIconWithViewOverlay
         ObjectIcon={objectIconForView}
         ViewIcon={getIcon(view!.icon)}
-        objectColor={objectNavItemColor}
+        objectColor={getNavigationMenuItemColor(
+          navigationMenuItem,
+          objectMetadataItem,
+        )}
       />
     );
   }
@@ -85,7 +84,7 @@ export const NavigationMenuItemIcon = ({
         link={computedLink}
         LinkIcon={IconLink}
         DefaultIcon={IconWorld}
-        color={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
+        color={getNavigationMenuItemColor(navigationMenuItem)}
       />
     );
   }
@@ -97,9 +96,9 @@ export const NavigationMenuItemIcon = ({
       : undefined;
   const iconToUse = StandardIcon ?? itemIcon;
 
-  const effectiveColor = getEffectiveNavigationMenuItemColor(
+  const effectiveColor = getNavigationMenuItemColor(
     navigationMenuItem,
-    objectNavItemColor,
+    objectMetadataItem,
   );
   const useStyledIcon = !isRecord && isNonEmptyString(effectiveColor);
   const iconStyle = useStyledIcon

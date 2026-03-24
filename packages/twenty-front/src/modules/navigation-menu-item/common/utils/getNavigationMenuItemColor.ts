@@ -2,28 +2,39 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
+import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-export const getEffectiveNavigationMenuItemColor = (
+export const getNavigationMenuItemColor = (
   navigationMenuItem: {
     type: NavigationMenuItemType;
     color?: string | null;
   },
-  objectColor?: string,
+  objectMetadataItem?: Pick<
+    EnrichedObjectMetadataItem,
+    'nameSingular' | 'color' | 'isSystem'
+  >,
 ): string | undefined => {
   if (navigationMenuItem.type === NavigationMenuItemType.FOLDER) {
     return isNonEmptyString(navigationMenuItem.color)
       ? navigationMenuItem.color
       : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER;
   }
-  if (navigationMenuItem.type === NavigationMenuItemType.OBJECT) {
-    return objectColor;
-  }
-  if (navigationMenuItem.type === NavigationMenuItemType.VIEW) {
-    return objectColor;
-  }
+
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
     return DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK;
   }
+
+  if (
+    navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
+    navigationMenuItem.type === NavigationMenuItemType.VIEW
+  ) {
+    if (objectMetadataItem) {
+      return getObjectColorForNavigationMenuItem(objectMetadataItem);
+    }
+    return undefined;
+  }
+
   return undefined;
 };

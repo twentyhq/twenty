@@ -3,7 +3,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
@@ -109,7 +109,10 @@ export const NavigationMenuItemFolderSubItem = ({
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
       )}
-      iconColor={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
+      iconColor={getNavigationMenuItemColor(
+        navigationMenuItem,
+        objectMetadataItem ?? undefined,
+      )}
       to={isDragging || handleClick ? undefined : computedLink}
       onClick={handleClick}
       active={index === selectedNavigationMenuItemIndex}
