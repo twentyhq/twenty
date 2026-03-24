@@ -1,8 +1,10 @@
 import { styled } from '@linaria/react';
 
+import {
+  RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR,
+  RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR,
+} from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
-import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
-import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnLastEmptyColumnWidthClassName';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -15,7 +17,10 @@ const StyledPlaceholderDragAndDropFooterCell = styled.div`
   bottom: 0;
   left: 0px;
   position: sticky;
-  width: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+  width: calc(
+    var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
+      var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
+  );
 
   z-index: ${TABLE_Z_INDEX.footer.stickyColumn};
 `;

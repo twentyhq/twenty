@@ -1,6 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
-import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
@@ -43,11 +43,10 @@ const ExportMultipleRecordsCommandContent = ({
 };
 
 export const ExportMultipleRecordsCommand = () => {
-  const { objectMetadataItem, recordIndexId } =
-    useMountedEngineCommandContext();
+  const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();
 
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
-    EngineCommandComponentInstanceContext,
+    CommandComponentInstanceContext,
   );
 
   const setCommandMenuItemProgress = useSetAtomFamilyState(

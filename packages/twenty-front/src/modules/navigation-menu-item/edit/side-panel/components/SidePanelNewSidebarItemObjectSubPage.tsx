@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
 import { getObjectIconColor } from '@/navigation-menu-item/common/utils/getObjectIconColor';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/edit/object/hooks/useAddObjectToNavigationMenuDraft';
 import { SidePanelObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
@@ -13,8 +13,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIcons } from 'twenty-ui/display';
 
@@ -30,12 +29,10 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
     useOpenNavigationMenuItemInSidePanel();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
-  );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
-  );
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
   const {
     views,
     objectMetadataIdsWithIndexView,
@@ -65,21 +62,19 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
     const itemId = addObjectToDraft({
       objectMetadataId: objectMetadataItem.id,
       currentDraft,
-      targetFolderId: addMenuItemInsertionContext?.targetFolderId,
-      targetIndex: addMenuItemInsertionContext?.targetIndex,
+      targetFolderId: pendingInsertionNavigationMenuItem?.folderId,
+      targetIndex: pendingInsertionNavigationMenuItem?.position,
       color: getObjectIconColor({
         nameSingular: objectMetadataItem.nameSingular,
       }),
     });
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
       pageTitle: objectMetadataItem.labelSingular,
       pageIcon: getIcon(objectMetadataItem.icon),
     });
   };
-
-  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
 
   return (
     <SidePanelObjectPickerSubView
@@ -94,7 +89,6 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
       isViewItem={false}
       onChangeObject={handleSelectObject}
       objectMenuItemVariant="add"
-      disableDrag={disableDrag}
     />
   );
 };

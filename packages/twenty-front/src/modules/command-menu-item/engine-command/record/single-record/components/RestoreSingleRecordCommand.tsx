@@ -1,5 +1,5 @@
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const RestoreSingleRecordCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords } =
-    useMountedEngineCommandContext();
+    useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
 

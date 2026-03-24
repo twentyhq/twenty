@@ -120,7 +120,7 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "Multiple validation errors occurred while creating navigation menu item",
+  "message": "Multiple validation errors occurred while creating navigation menu items",
   "name": "GraphQLError",
 }
 `;

@@ -1,12 +1,13 @@
-import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { isDefined } from 'twenty-shared/utils';
+
+import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
   const { selectedRecords, objectMetadataItem } =
-    useMountedEngineCommandContext();
+    useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
 
@@ -19,7 +20,7 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
 
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   const foundNavigationMenuItem = [
     ...navigationMenuItems,
@@ -35,7 +36,7 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
       return;
     }
 
-    deleteNavigationMenuItem(foundNavigationMenuItem.id);
+    deleteManyNavigationMenuItems([foundNavigationMenuItem.id]);
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

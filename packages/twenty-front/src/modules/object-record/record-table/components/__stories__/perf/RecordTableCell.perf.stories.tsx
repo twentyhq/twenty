@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
@@ -53,7 +53,7 @@ const RelationFieldValueSetterEffect = () => {
     'recordTableId',
   );
 
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   useEffect(() => {
     setRecordStore(mockPerformance.entityValue);
