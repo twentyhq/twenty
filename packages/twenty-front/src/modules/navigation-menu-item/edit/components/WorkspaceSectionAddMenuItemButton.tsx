@@ -3,7 +3,7 @@ import React from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconColumnInsertRight, IconPlus } from 'twenty-ui/display';
 
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
@@ -15,11 +15,11 @@ export const WorkspaceSectionAddMenuItemButton = () => {
   const { t } = useLingui();
   const { navigateSidePanel } = useNavigateSidePanel();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
+  const setPendingInsertionNavigationMenuItem = useSetAtomState(
+    pendingInsertionNavigationMenuItemState,
   );
 
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
@@ -28,7 +28,7 @@ export const WorkspaceSectionAddMenuItemButton = () => {
 
   const handleClick = (event?: React.MouseEvent) => {
     event?.stopPropagation();
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     setSelectedNavigationMenuItemInEditMode(null);
     navigateSidePanel({
       page: SidePanelPages.NavigationMenuAddItem,
@@ -40,7 +40,7 @@ export const WorkspaceSectionAddMenuItemButton = () => {
 
   const isSelected =
     sidePanelPage === SidePanelPages.NavigationMenuAddItem &&
-    addMenuItemInsertionContext === null;
+    pendingInsertionNavigationMenuItem === null;
 
   return (
     <NavigationDrawerItem

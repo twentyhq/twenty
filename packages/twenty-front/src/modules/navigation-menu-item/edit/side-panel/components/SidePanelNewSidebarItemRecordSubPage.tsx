@@ -5,7 +5,7 @@ import { useDebounce } from 'use-debounce';
 
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -28,10 +28,9 @@ type SearchRecordBase = {
 
 export const SidePanelNewSidebarItemRecordSubPage = () => {
   const { t } = useLingui();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
-  const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
@@ -107,8 +106,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
                   <SidePanelNewSidebarItemRecordItem
                     key={record.recordId}
                     record={record}
-                    dragIndex={disableDrag ? undefined : index}
-                    disableDrag={disableDrag}
+                    dragIndex={index}
                   />
                 ))}
               </SidePanelGroup>

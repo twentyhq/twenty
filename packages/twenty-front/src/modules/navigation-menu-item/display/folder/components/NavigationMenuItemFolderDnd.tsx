@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomValue } from 'jotai';
 import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -27,7 +26,7 @@ import { NavigationDropTargetContext } from '@/navigation-menu-item/common/conte
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
@@ -46,9 +45,7 @@ import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/displ
 import { useFavoritesFolderEdit } from '@/navigation-menu-item/edit/folder/hooks/useFavoritesFolderEdit';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
-import { NEW_SIDEBAR_ITEM_FLOW_SIDE_PANEL_SUB_PAGES } from '@/side-panel/constants/SidePanelNewSidebarItemFlowSubPages';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { sidePanelSubPageStackForActiveSidePanelPageAtom } from '@/side-panel/states/sidePanelSubPageStackForActiveSidePanelPageAtom';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -147,32 +144,15 @@ export const NavigationMenuItemFolderDnd = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
-  const sidePanelSubPageStack = useAtomValue(
-    sidePanelSubPageStackForActiveSidePanelPageAtom,
-  );
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
-
-  const insertionContextTargetsThisFolder =
-    isDefined(addMenuItemInsertionContext) &&
-    addMenuItemInsertionContext.targetFolderId === folderId;
-
-  const shouldHighlightDrawerAddMenuItemRow =
-    addMenuItemInsertionContext?.shouldHighlightDrawerAddMenuItem !== false;
-
-  const isSidePanelOnNewSidebarItemFlow =
-    sidePanelPage === SidePanelPages.NavigationMenuAddItem ||
-    (sidePanelPage === SidePanelPages.NavigationMenuItemEdit &&
-      sidePanelSubPageStack.some((entry) =>
-        NEW_SIDEBAR_ITEM_FLOW_SIDE_PANEL_SUB_PAGES.includes(entry.subPage),
-      ));
 
   const isAddMenuItemToThisFolderActive =
-    insertionContextTargetsThisFolder &&
-    shouldHighlightDrawerAddMenuItemRow &&
-    isSidePanelOnNewSidebarItemFlow;
+    isDefined(pendingInsertionNavigationMenuItem) &&
+    pendingInsertionNavigationMenuItem.folderId === folderId &&
+    sidePanelPage === SidePanelPages.NavigationMenuAddItem;
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const folderHeaderDroppableId = `${config.folderHeaderPrefix}${folderId}`;
@@ -309,8 +289,8 @@ export const NavigationMenuItemFolderDnd = ({
 
   const handleAddMenuItemToFolder = useCallback(() => {
     openAddItemToFolderPage({
-      targetFolderId: folderId,
-      targetIndex: navigationMenuItems.length,
+      folderId,
+      position: navigationMenuItems.length,
       resetNavigationStack: true,
     });
   }, [folderId, navigationMenuItems.length, openAddItemToFolderPage]);

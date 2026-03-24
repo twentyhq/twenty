@@ -5,7 +5,7 @@ import { IconLink } from 'twenty-ui/display';
 import { useAddLinkToNavigationMenuDraft } from '@/navigation-menu-item/edit/link/hooks/useAddLinkToNavigationMenuDraft';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -19,11 +19,11 @@ export const useAddLinkToNavigationMenu = () => {
   );
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
+  const setPendingInsertionNavigationMenuItem = useSetAtomState(
+    pendingInsertionNavigationMenuItemState,
   );
 
   const currentDraft = isDefined(navigationMenuItemsDraft)
@@ -31,18 +31,15 @@ export const useAddLinkToNavigationMenu = () => {
     : workspaceNavigationMenuItems;
 
   const handleAddLink = () => {
-    const targetFolderId = addMenuItemInsertionContext?.targetFolderId ?? null;
-    const targetIndex = addMenuItemInsertionContext?.targetIndex;
-
     const itemId = addLinkToDraft(
       t`Link label`,
       'www.example.com',
       currentDraft,
-      targetFolderId,
-      targetIndex,
+      pendingInsertionNavigationMenuItem?.folderId ?? null,
+      pendingInsertionNavigationMenuItem?.position,
     );
 
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
       pageTitle: t`Edit link`,

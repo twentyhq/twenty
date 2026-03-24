@@ -3,7 +3,7 @@ import { Avatar, IconFolder, useIcons } from 'twenty-ui/display';
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/edit/record/hooks/useAddRecordToNavigationMenuDraft';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/types/add-to-navigation-drag-payload';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
@@ -25,22 +25,20 @@ type SearchRecord = {
 type SidePanelNewSidebarItemRecordItemProps = {
   record: SearchRecord;
   dragIndex?: number;
-  disableDrag?: boolean;
 };
 
 export const SidePanelNewSidebarItemRecordItem = ({
   record,
   dragIndex,
-  disableDrag = false,
 }: SidePanelNewSidebarItemRecordItemProps) => {
   const { getIcon } = useIcons();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
+  const setPendingInsertionNavigationMenuItem = useSetAtomState(
+    pendingInsertionNavigationMenuItemState,
   );
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
@@ -66,10 +64,10 @@ export const SidePanelNewSidebarItemRecordItem = ({
         imageUrl: record.imageUrl,
       },
       currentDraft,
-      addMenuItemInsertionContext?.targetFolderId ?? null,
-      addMenuItemInsertionContext?.targetIndex,
+      pendingInsertionNavigationMenuItem?.folderId ?? null,
+      pendingInsertionNavigationMenuItem?.position,
     );
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
       pageTitle: record.label,
@@ -101,7 +99,6 @@ export const SidePanelNewSidebarItemRecordItem = ({
         id={record.recordId}
         onClick={handleSelectRecord}
         dragIndex={dragIndex}
-        disableDrag={disableDrag}
         payload={recordPayload}
       />
     </SelectableListItem>

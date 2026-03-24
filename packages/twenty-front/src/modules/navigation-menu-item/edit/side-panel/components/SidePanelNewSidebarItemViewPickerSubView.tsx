@@ -4,7 +4,7 @@ import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/vie
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
@@ -37,11 +37,11 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const [searchValue, setSearchValue] = useState('');
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
+  const setPendingInsertionNavigationMenuItem = useSetAtomState(
+    pendingInsertionNavigationMenuItemState,
   );
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
@@ -76,19 +76,17 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     ? t`No results found`
     : t`No custom views available`;
 
-  const isDragDisabled = addMenuItemInsertionContext?.disableDrag === true;
-
   const handleSelectView = (view: View) => {
     const itemId = addViewToDraft(
       view.id,
       currentDraft,
-      addMenuItemInsertionContext?.targetFolderId ?? null,
-      addMenuItemInsertionContext?.targetIndex,
+      pendingInsertionNavigationMenuItem?.folderId ?? null,
+      pendingInsertionNavigationMenuItem?.position,
       isDefined(selectedObjectMetadataItem)
         ? getStandardObjectIconColor(selectedObjectMetadataItem.nameSingular)
         : undefined,
     );
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
       pageTitle: view.name,
@@ -141,8 +139,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
                       label={view.name}
                       id={view.id}
                       onClick={() => handleSelectView(view)}
-                      dragIndex={isDragDisabled ? undefined : index}
-                      disableDrag={isDragDisabled}
+                      dragIndex={index}
                       payload={{
                         type: NavigationMenuItemType.VIEW,
                         viewId: view.id,
