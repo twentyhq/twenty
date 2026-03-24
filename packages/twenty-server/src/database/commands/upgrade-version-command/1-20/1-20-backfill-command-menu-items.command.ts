@@ -13,6 +13,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -293,7 +294,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
           workflowVersionId: workflowVersion.id,
           frontComponentId: null,
           frontComponentUniversalIdentifier: null,
-          engineComponentKey: null,
+          engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           label,
           shortLabel: label,
           icon: trigger.settings.icon ?? null,
