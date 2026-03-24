@@ -20,7 +20,6 @@ export const OmniaMemberWorkspaceNavigationMenuItems = () => {
       objectMetadataItems={omniaMemberWorkspaceObjectMetadataItems}
       isRemote={false}
       respectProvidedOrder
-      ignoreShowInSidebar
     />
   );
 };
