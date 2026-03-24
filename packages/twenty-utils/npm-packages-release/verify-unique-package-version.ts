@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 
-const packages = ['twenty-sdk', 'create-twenty-app'];
+const packages = ['twenty-sdk', 'create-twenty-app', 'twenty-client-sdk'];
 
 const verifyUniquePackageVersion = () => {
   const packageVersions = packages.map((pkg) => {
