@@ -13547,11 +13547,6 @@ msgstr "نجاح"
 msgid "Successfully merged {recordCount} records"
 msgstr "تم دمج {recordCount} من السجلات بنجاح"
 
-#. js-lingui-id: zsDoFr
-#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
-msgid "Successfully updated {count} records"
-msgstr ""
-
 #. js-lingui-id: QJz8/3
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
@@ -14223,6 +14218,11 @@ msgstr "سيؤدي ذلك إلى إلغاء تغيير الخطة المجدول
 msgid "This will disconnect all models from this provider. Models will no longer be available until a new provider is configured."
 msgstr ""
 
+#. js-lingui-id: y8xx3L
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "This will modify {contextStoreNumberOfSelectedRecords} records. This action cannot be undone."
+msgstr ""
+
 #. js-lingui-id: XGDxrH
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
@@ -14869,6 +14869,11 @@ msgstr "تحديث"
 msgid "Update"
 msgstr "تحديث"
 
+#. js-lingui-id: ymv+je
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "Update {contextStoreNumberOfSelectedRecords} records"
+msgstr ""
+
 #. js-lingui-id: Y69tSP
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update payment method"
@@ -14876,6 +14881,7 @@ msgstr ""
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update records"
 msgstr ""
