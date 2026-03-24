@@ -34,26 +34,10 @@ export const useLoadMockedMetadata = () => {
         MOCKED_COLLECTION_HASH,
       );
       replaceDraft('views', data.flatViews, MOCKED_COLLECTION_HASH);
-      replaceDraft(
-        'viewFields',
-        data.flatViewFields,
-        MOCKED_COLLECTION_HASH,
-      );
-      replaceDraft(
-        'viewFilters',
-        data.flatViewFilters,
-        MOCKED_COLLECTION_HASH,
-      );
-      replaceDraft(
-        'viewSorts',
-        data.flatViewSorts,
-        MOCKED_COLLECTION_HASH,
-      );
-      replaceDraft(
-        'viewGroups',
-        data.flatViewGroups,
-        MOCKED_COLLECTION_HASH,
-      );
+      replaceDraft('viewFields', data.flatViewFields, MOCKED_COLLECTION_HASH);
+      replaceDraft('viewFilters', data.flatViewFilters, MOCKED_COLLECTION_HASH);
+      replaceDraft('viewSorts', data.flatViewSorts, MOCKED_COLLECTION_HASH);
+      replaceDraft('viewGroups', data.flatViewGroups, MOCKED_COLLECTION_HASH);
       replaceDraft(
         'viewFilterGroups',
         data.flatViewFilterGroups,

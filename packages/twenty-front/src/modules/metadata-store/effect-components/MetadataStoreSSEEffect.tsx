@@ -8,7 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 type AnyMetadataEntity = MetadataEntityTypeMap[MetadataEntityKey];
 
 export const MetadataStoreSSEEffect = () => {
-  const { addToDraft, removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { addToDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {

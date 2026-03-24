@@ -26,7 +26,8 @@ export const useCreateOneObjectMetadataItem = () => {
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { addToDraft, replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { addToDraft, replaceDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const createOneObjectMetadataItem = async (
     input: CreateObjectInput,
