@@ -20,7 +20,7 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 ## 先决条件
 
 * Node.js 24+ 和 Yarn 4
-* 一个 Twenty 工作空间和一个 API 密钥（在 https://app.twenty.com/settings/api-webhooks 创建）
+* Docker (用于本地 Twenty 开发服务器)
 
 ## 开始使用
 
@@ -38,7 +38,7 @@ yarn twenty app:dev
 脚手架工具支持两种模式，用于控制包含哪些示例文件：
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -222,6 +222,18 @@ yarn add -D twenty-sdk
 ```
 
 现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty help` 等。
+
+## 如何使用本地 Twenty 实例
+
+如果你已经在本地运行一个 Twenty 实例（例如通过 `npx nx start twenty-server`），你可以连接到它，而不是使用 Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## 故障排除
 
