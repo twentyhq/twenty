@@ -18,9 +18,15 @@ export class ConvertEngineComponentKeyToVarchar1774363913813
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE" CHECK (("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL))`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" ALTER COLUMN "engineComponentKey" SET NOT NULL`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."commandMenuItem" ALTER COLUMN "engineComponentKey" DROP NOT NULL`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT "CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE"`,
     );
