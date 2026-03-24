@@ -6,6 +6,7 @@ import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components
 
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
+import { CrossTabSignOutEffect } from '@/auth/effect-components/CrossTabSignOutEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
 import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
@@ -80,6 +81,7 @@ export const AppRouterProviders = () => {
                       <MainContextStoreProvider />
                       <SupportChatEffect />
                       <PageChangeEffect />
+                      <CrossTabSignOutEffect />
                     </PreComputedChipGeneratorsProvider>
                   </SSEProvider>
                 </ApolloCoreProvider>

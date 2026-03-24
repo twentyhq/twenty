@@ -1,6 +1,9 @@
 import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { metadataLoadVersionState } from '@/metadata-store/states/metadataLoadVersionState';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import {
+  ALL_METADATA_ENTITY_KEYS,
+  metadataStoreState,
+} from '@/metadata-store/states/metadataStoreState';
 import {
   preloadMockedMetadata,
   type PreloadedMockedMetadata,
@@ -15,12 +18,6 @@ export const useMetadataStoreActions = () => {
   const { replaceDraft, applyChanges, resetMetadataStore } =
     useMetadataStore();
 
-  // Sync: writes pre-loaded mock data into the store in a single batch.
-  // resetMetadataStore + replaceDraft + applyChanges run synchronously,
-  // so React 18 batches them into one render and consumers never see
-  // an empty store.
-  // Does NOT bump metadataLoadVersionState — only invalidateAndReload
-  // should trigger the load effect.
   const applyMockedMetadata = useCallback(
     (data: PreloadedMockedMetadata) => {
       resetMetadataStore();
@@ -89,8 +86,6 @@ export const useMetadataStoreActions = () => {
     );
   }, [store]);
 
-  // Async convenience: pre-loads mocks, then atomically swaps.
-  // No-op if the store already contains mocked data.
   const loadMockedMetadataAtomic = useCallback(async () => {
     if (isAlreadyMocked()) {
       return;
@@ -100,12 +95,15 @@ export const useMetadataStoreActions = () => {
     applyMockedMetadata(data);
   }, [applyMockedMetadata, isAlreadyMocked]);
 
-  // Resets metadata to empty and triggers MinimalMetadataLoadEffect
-  // to re-fetch from the server.
   const invalidateAndReload = useCallback(() => {
-    resetMetadataStore();
+    for (const key of ALL_METADATA_ENTITY_KEYS) {
+      store.set(metadataStoreState.atomFamily(key), (prev) => ({
+        ...prev,
+        currentCollectionHash: undefined,
+      }));
+    }
     store.set(metadataLoadVersionState.atom, (prev) => prev + 1);
-  }, [resetMetadataStore, store]);
+  }, [store]);
 
   return {
     invalidateAndReload,

@@ -24,6 +24,7 @@ import {
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
+import { broadcastSignOut } from '@/auth/utils/crossTabSignOut';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -486,6 +487,7 @@ export const useAuth = () => {
   );
 
   const handleSignOut = useCallback(async () => {
+    broadcastSignOut();
     await clearSession();
     if (isCaptchaScriptLoaded) await requestFreshCaptchaToken();
   }, [clearSession, isCaptchaScriptLoaded, requestFreshCaptchaToken]);
