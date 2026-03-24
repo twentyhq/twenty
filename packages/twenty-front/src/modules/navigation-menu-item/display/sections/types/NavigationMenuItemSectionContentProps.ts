@@ -21,4 +21,5 @@ export type NavigationMenuItemSectionContentProps = {
     navigationMenuItemId: string,
   ) => void;
   readOnly?: boolean;
+  orphanIndex?: number;
 };
