@@ -135,6 +135,11 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
         tabUniversalIdentifiers.has(widget.pageLayoutTabUniversalIdentifier),
       );
 
+    const { flatViewMaps: existingFlatViewMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatViewMaps',
+      ]);
+
     const viewUniversalIdentifiers = new Set<string>();
 
     const viewsToCreate = Object.values(
@@ -143,6 +148,16 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
       .filter(isDefined)
       .filter((view) => {
         if (view.type !== ViewType.FIELDS_WIDGET) {
+          return false;
+        }
+
+        if (
+          isDefined(
+            existingFlatViewMaps.byUniversalIdentifier[
+              view.universalIdentifier
+            ],
+          )
+        ) {
           return false;
         }
 
