@@ -1,6 +1,4 @@
-import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { EditorContent } from '@tiptap/react';
 import { IconTwentyStar } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -16,15 +14,14 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
+import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
@@ -113,17 +110,16 @@ const StyledRightButtonsContainer = styled.div`
 
 export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
-  );
-  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const { enabledModels } = useWorkspaceAiModelAvailability();
+  const [agentChatUserSelectedModel, setAgentChatUserSelectedModel] =
+    useAtomState(agentChatUserSelectedModelState);
 
   const { editor, handleSendAndClear } = useAIChatEditor();
 
-  const currentSmartModel = currentWorkspace?.smartModel;
+  const selectedModel =
+    agentChatUserSelectedModel ?? currentWorkspace?.smartModel;
 
   const buildVirtualModelOption = (virtualModelId: string) => {
     const virtualModel = aiModels.find(
@@ -150,36 +146,8 @@ export const AIChatEditorSection = () => {
     })),
   ];
 
-  const handleSmartModelChange = async (value: string) => {
-    if (!currentWorkspace?.id) {
-      return;
-    }
-
-    const previousValue = currentWorkspace.smartModel;
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        smartModel: value,
-      });
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            smartModel: value,
-          },
-        },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        smartModel: previousValue,
-      });
-
-      enqueueErrorSnackBar({
-        message: t`Failed to update model`,
-      });
-    }
+  const handleModelChange = (value: string) => {
+    setAgentChatUserSelectedModel(value);
   };
 
   return (
@@ -203,8 +171,8 @@ export const AIChatEditorSection = () => {
             <StyledRightButtonsContainer>
               <Select
                 dropdownId="ai-chat-smart-model-select"
-                value={currentSmartModel}
-                onChange={handleSmartModelChange}
+                value={selectedModel}
+                onChange={handleModelChange}
                 options={smartModelOptions}
                 selectSizeVariant="small"
               />

@@ -15,6 +15,7 @@ import {
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
@@ -248,6 +249,9 @@ export const useAgentChat = (
     }));
 
     const browsingContext = getBrowsingContext();
+    const userSelectedModel = store.get(
+      agentChatUserSelectedModelState.atom,
+    );
 
     sendMessage(
       {
@@ -258,6 +262,9 @@ export const useAgentChat = (
         body: {
           threadId,
           browsingContext,
+          ...(isDefined(userSelectedModel) && {
+            modelId: userSelectedModel,
+          }),
         },
       },
     );

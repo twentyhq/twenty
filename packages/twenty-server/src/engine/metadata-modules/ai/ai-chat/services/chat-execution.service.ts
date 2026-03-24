@@ -60,6 +60,7 @@ export type ChatExecutionOptions = {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
+  modelId?: string;
 };
 
 export type ChatExecutionResult = {
@@ -89,6 +90,7 @@ export class ChatExecutionService {
     messages,
     browsingContext,
     onCodeExecutionUpdate,
+    modelId,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -128,13 +130,16 @@ export class ChatExecutionService {
       toolContext,
     );
 
-    const modelId = workspace.smartModel;
+    const resolvedModelId = modelId ?? workspace.smartModel;
 
-    this.aiModelRegistryService.validateModelAvailability(modelId, workspace);
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
+    );
 
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent({
-        modelId,
+        modelId: resolvedModelId,
       });
 
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(

@@ -59,6 +59,7 @@ export class AgentChatController {
       threadId: string;
       messages: ExtendedUIMessage[];
       browsingContext?: BrowsingContextType | null;
+      modelId?: string;
     },
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -71,7 +72,7 @@ export class AgentChatController {
       );
     }
 
-    const resolvedModelId = workspace.smartModel;
+    const resolvedModelId = body.modelId ?? workspace.smartModel;
 
     this.aiModelRegistryService.validateModelAvailability(
       resolvedModelId,
@@ -96,6 +97,7 @@ export class AgentChatController {
       threadId: body.threadId,
       messages: body.messages,
       browsingContext: body.browsingContext ?? null,
+      modelId: body.modelId,
       userWorkspaceId,
       workspace,
       response,
