@@ -1,7 +1,7 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { filterOutInvalidTimelineActivities } from '@/activities/timeline-activities/utils/filterOutInvalidTimelineActivities';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 const noteObjectMetadataItem = {
   nameSingular: CoreObjectNameSingular.Note,
@@ -9,7 +9,7 @@ const noteObjectMetadataItem = {
   fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
   readableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
   updatableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
-} as ObjectMetadataItem;
+} as EnrichedObjectMetadataItem;
 
 describe('filterOutInvalidTimelineActivities', () => {
   it('should filter out TimelineActivities with deleted fields from the properties diff', () => {
@@ -52,7 +52,7 @@ describe('filterOutInvalidTimelineActivities', () => {
         { name: 'field2' },
         { name: 'field3' },
       ],
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const filteredEvents = filterOutInvalidTimelineActivities(
       events,
@@ -113,7 +113,7 @@ describe('filterOutInvalidTimelineActivities', () => {
       fields: [{ name: 'field1' }, { name: 'field2' }],
       readableFields: [{ name: 'field1' }, { name: 'field2' }],
       updatableFields: [{ name: 'field1' }, { name: 'field2' }],
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const filteredEvents = filterOutInvalidTimelineActivities(
       events,
@@ -144,7 +144,7 @@ describe('filterOutInvalidTimelineActivities', () => {
       fields: [{ name: 'field1' }, { name: 'field2' }],
       readableFields: [{ name: 'field1' }, { name: 'field2' }],
       updatableFields: [{ name: 'field1' }, { name: 'field2' }],
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const filteredEvents = filterOutInvalidTimelineActivities(
       events,

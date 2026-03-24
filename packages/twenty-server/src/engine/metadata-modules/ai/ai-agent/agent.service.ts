@@ -251,7 +251,7 @@ export class AgentService {
 
     const {
       flatAgentMaps: recomputedFlatAgentMaps,
-      flatRoleTargetByAgentIdMaps: recmputedFlatRoleTargetByAgentIdMaps,
+      flatRoleTargetByAgentIdMaps: recomputedFlatRoleTargetByAgentIdMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatAgentMaps',
       'flatRoleTargetByAgentIdMaps',
@@ -263,7 +263,7 @@ export class AgentService {
     });
 
     const existingRoleTarget =
-      recmputedFlatRoleTargetByAgentIdMaps[flatAgentToUpdate.id];
+      recomputedFlatRoleTargetByAgentIdMaps[flatAgentToUpdate.id];
 
     return {
       ...updatedAgent,

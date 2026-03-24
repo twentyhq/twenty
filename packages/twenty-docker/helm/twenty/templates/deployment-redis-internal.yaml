@@ -46,12 +46,12 @@ spec:
           volumeMounts:
             - name: redis-data
               mountPath: /data
-    volumes:
-      - name: redis-data
-        {{- if .Values.redisInternal.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: {{ .Values.redisInternal.persistence.existingClaim | default (printf "%s-redis" (include "twenty.fullname" .)) }}
-        {{- else }}
-        emptyDir: {}
-        {{- end }}
+      volumes:
+        - name: redis-data
+          {{- if .Values.redisInternal.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.redisInternal.persistence.existingClaim | default (printf "%s-redis" (include "twenty.fullname" .)) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
 {{- end }}

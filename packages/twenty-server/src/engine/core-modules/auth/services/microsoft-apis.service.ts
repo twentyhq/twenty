@@ -99,43 +99,19 @@ export class MicrosoftAPIsService {
 
         await workspaceDataSource.transaction(
           async (manager: WorkspaceEntityManager) => {
-            if (!existingAccountId) {
-              await this.createConnectedAccountService.createConnectedAccount({
-                workspaceId,
-                connectedAccountId: newOrExistingConnectedAccountId,
-                handle,
-                provider: ConnectedAccountProvider.MICROSOFT,
-                accessToken: input.accessToken,
-                refreshToken: input.refreshToken,
-                accountOwnerId: workspaceMemberId,
-                scopes,
-                manager,
-              });
+            await this.createConnectedAccountService.createConnectedAccount({
+              workspaceId,
+              connectedAccountId: newOrExistingConnectedAccountId,
+              handle,
+              provider: ConnectedAccountProvider.MICROSOFT,
+              accessToken: input.accessToken,
+              refreshToken: input.refreshToken,
+              accountOwnerId: workspaceMemberId,
+              scopes,
+              manager,
+            });
 
-              await this.createMessageChannelService.createMessageChannel({
-                workspaceId,
-                connectedAccountId: newOrExistingConnectedAccountId,
-                handle,
-                messageVisibility,
-                manager,
-                skipMessageChannelConfiguration,
-              });
-
-              if (
-                this.twentyConfigService.get(
-                  'CALENDAR_PROVIDER_MICROSOFT_ENABLED',
-                )
-              ) {
-                await this.createCalendarChannelService.createCalendarChannel({
-                  workspaceId,
-                  connectedAccountId: newOrExistingConnectedAccountId,
-                  handle,
-                  calendarVisibility,
-                  manager,
-                  skipMessageChannelConfiguration,
-                });
-              }
-            } else {
+            if (existingAccountId) {
               await this.updateConnectedAccountOnReconnectService.updateConnectedAccountOnReconnect(
                 {
                   workspaceId,
@@ -176,6 +152,50 @@ export class MicrosoftAPIsService {
                 [newOrExistingConnectedAccountId],
                 workspaceId,
               );
+            }
+
+            const existingMessageChannels =
+              await this.messageChannelDataAccessService.find(workspaceId, {
+                connectedAccountId: newOrExistingConnectedAccountId,
+              });
+
+            if (
+              this.twentyConfigService.get(
+                'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
+              ) &&
+              existingMessageChannels.length === 0
+            ) {
+              await this.createMessageChannelService.createMessageChannel({
+                workspaceId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                messageVisibility,
+                manager,
+                skipMessageChannelConfiguration,
+              });
+            }
+
+            const existingCalendarChannels =
+              await this.calendarChannelDataAccessService.find(workspaceId, {
+                where: {
+                  connectedAccountId: newOrExistingConnectedAccountId,
+                },
+              });
+
+            if (
+              this.twentyConfigService.get(
+                'CALENDAR_PROVIDER_MICROSOFT_ENABLED',
+              ) &&
+              existingCalendarChannels.length === 0
+            ) {
+              await this.createCalendarChannelService.createCalendarChannel({
+                workspaceId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                calendarVisibility,
+                manager,
+                skipMessageChannelConfiguration,
+              });
             }
           },
         );

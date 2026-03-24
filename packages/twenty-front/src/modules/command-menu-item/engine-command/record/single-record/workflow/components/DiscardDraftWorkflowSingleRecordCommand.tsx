@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DiscardDraftWorkflowSingleRecordCommand = () => {
-  const { selectedRecords } = useMountedEngineCommandContext();
+  const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
   const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
@@ -27,5 +27,10 @@ export const DiscardDraftWorkflowSingleRecordCommand = () => {
     });
   };
 
-  return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+  return (
+    <HeadlessEngineCommandWrapperEffect
+      execute={handleExecute}
+      ready={isDefined(workflowWithCurrentVersion)}
+    />
+  );
 };

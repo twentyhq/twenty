@@ -52,6 +52,14 @@ server:
     SIGN_IN_PREFILLED: "false"
     ACCESS_TOKEN_EXPIRES_IN: "7d"
     LOGIN_TOKEN_EXPIRES_IN: "1h"
+  extraEnv: []
+  # - name: EMAIL_DRIVER
+  #   value: smtp
+  # - name: SMTP_PASSWORD
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: smtp-creds
+  #       key: password
 
   service:
     type: ClusterIP
@@ -104,6 +112,8 @@ worker:
     limits:
       cpu: 1000m
       memory: 2048Mi
+
+  extraEnv: []
 
 # PostgreSQL
 db:
@@ -174,3 +184,6 @@ redis:
   external:
     host: ""
     port: 6379
+    password: ""
+    secretName: ""
+    passwordKey: ""

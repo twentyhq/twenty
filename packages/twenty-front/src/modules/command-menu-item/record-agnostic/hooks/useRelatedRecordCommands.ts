@@ -7,7 +7,7 @@ import {
   CoreObjectNameSingular,
 } from 'twenty-shared/types';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { msg } from '@lingui/core/macro';
@@ -16,7 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconPlus } from 'twenty-ui/display';
 
 interface GenerateRelatedRecordCommandsParams {
-  sourceObjectMetadataItem?: ObjectMetadataItem;
+  sourceObjectMetadataItem?: EnrichedObjectMetadataItem;
   getIcon: (iconKey: string) => IconComponent;
   startPosition: number;
 }

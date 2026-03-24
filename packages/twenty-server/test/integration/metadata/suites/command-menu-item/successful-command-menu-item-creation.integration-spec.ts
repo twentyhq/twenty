@@ -10,6 +10,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 describe('CommandMenuItem creation should succeed', () => {
   let createdCommandMenuItemId: string;
@@ -93,6 +94,7 @@ describe('CommandMenuItem creation should succeed', () => {
       expectToFail: false,
       input: {
         workflowVersionId,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Test Command Menu Item',
       },
     });
@@ -117,6 +119,7 @@ describe('CommandMenuItem creation should succeed', () => {
       expectToFail: false,
       input: {
         workflowVersionId,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Full Command Menu Item',
         icon: 'IconSparkles',
         isPinned: true,
@@ -145,6 +148,7 @@ describe('CommandMenuItem creation should succeed', () => {
       expectToFail: false,
       input: {
         workflowVersionId,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Bulk Records Command',
         availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
         availabilityObjectMetadataId: personObjectMetadataId,
@@ -169,6 +173,7 @@ describe('CommandMenuItem creation should succeed', () => {
       expectToFail: false,
       input: {
         workflowVersionId,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Global Command',
       },
     });
@@ -202,6 +207,7 @@ describe('CommandMenuItem creation should succeed', () => {
       expectToFail: false,
       input: {
         frontComponentId: createdFrontComponentId,
+        engineComponentKey: EngineComponentKey.FRONT_COMPONENT_RENDERER,
         label: 'Front Component Command',
       },
     });

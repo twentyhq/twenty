@@ -2,8 +2,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import { SubscriptionInfoRowContainer } from '@/billing/components/internal/SubscriptionInfoRowContainer';
+import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
+import { SubscriptionInfoRowContainer } from '@/settings/billing/components/internal/SubscriptionInfoRowContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   ENTERPRISE_PLAN_MODAL_ID,

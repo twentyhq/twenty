@@ -15,26 +15,26 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
-import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
-import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
+import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
 import {
   type NavigationMenuItemClickParams,
   useNavigationMenuItemSectionItems,
 } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
-import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
+import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
-import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
-import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -106,7 +106,7 @@ export const WorkspaceSection = () => {
 
   const openViewOrRecordEditPanelAndNavigate = (
     item: NavigationMenuItemClickParams['item'],
-    objectMetadataItem: ObjectMetadataItem | null | undefined,
+    objectMetadataItem: EnrichedObjectMetadataItem | null | undefined,
   ) => {
     if (objectMetadataItem) {
       const label =
@@ -151,7 +151,7 @@ export const WorkspaceSection = () => {
   };
 
   const handleActiveObjectMetadataItemClick = (
-    objectMetadataItem: ObjectMetadataItem,
+    objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => {
     enterLayoutCustomizationMode();
@@ -166,7 +166,7 @@ export const WorkspaceSection = () => {
     event?.stopPropagation();
     navigateSidePanel({
       page: SidePanelPages.NavigationMenuAddItem,
-      pageTitle: t`New sidebar item`,
+      pageTitle: t`New menu item`,
       pageIcon: IconColumnInsertRight,
       resetNavigationStack: true,
     });

@@ -8,7 +8,7 @@ import {
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -38,7 +38,7 @@ export const useCreateNavigationMenuItem = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
     useNavigationMenuItemsData();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const { addToDraft, applyChanges } = useMetadataStore();
+  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const [createNavigationMenuItemMutation] = useMutation(
     CreateNavigationMenuItemDocument,

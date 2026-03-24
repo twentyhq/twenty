@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
 import { capitalize } from 'twenty-shared/utils';
@@ -9,7 +9,7 @@ export const generateAggregateQuery = ({
   objectMetadataItem,
   recordGqlFields,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   recordGqlFields: RecordGqlFields;
 }) => {
   const selectedFields = Object.entries(recordGqlFields)

@@ -75,6 +75,7 @@ export const WorkspaceSectionListDndKit = ({
               selectedNavigationMenuItemId={selectedNavigationMenuItemId}
               onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+              orphanIndex={index}
             />
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>

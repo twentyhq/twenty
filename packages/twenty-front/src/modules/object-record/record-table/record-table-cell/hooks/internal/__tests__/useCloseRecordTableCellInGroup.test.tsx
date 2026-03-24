@@ -21,14 +21,14 @@ import { recordTableCellEditModePositionComponentState } from '@/object-record/r
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const recordTableId = 'record-table-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
-    generatedMockObjectMetadataItems,
+    getTestEnrichedObjectMetadataItemsMock(),
   );
 
   return (

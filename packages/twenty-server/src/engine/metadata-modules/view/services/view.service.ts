@@ -10,8 +10,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -31,9 +31,12 @@ import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/d
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { computeFieldsWidgetViewFieldsAndGroupsToCreate } from 'src/engine/metadata-modules/view/utils/compute-fields-widget-view-fields-and-groups-to-create.util';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { type UniversalFlatViewFieldGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field-group.type';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 @Injectable()
 export class ViewService {
@@ -82,6 +85,39 @@ export class ViewService {
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
+    let flatViewFieldGroupsToCreate: UniversalFlatViewFieldGroup[] = [];
+    let flatViewFieldsToCreate: UniversalFlatViewField[] = [];
+
+    if (flatViewToCreate.type === ViewType.FIELDS_WIDGET) {
+      const objectFlatFieldMetadatas = Object.values(
+        existingFlatFieldMetadataMaps.byUniversalIdentifier,
+      ).filter(
+        (field): field is NonNullable<typeof field> =>
+          field !== undefined &&
+          field.objectMetadataUniversalIdentifier ===
+            flatViewToCreate.objectMetadataUniversalIdentifier,
+      );
+
+      const objectFlatMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+        flatEntityMaps: existingFlatObjectMetadataMaps,
+        universalIdentifier: flatViewToCreate.objectMetadataUniversalIdentifier,
+      });
+
+      const fieldsWidgetResult = computeFieldsWidgetViewFieldsAndGroupsToCreate(
+        {
+          objectFlatFieldMetadatas,
+          viewUniversalIdentifier: flatViewToCreate.universalIdentifier,
+          flatApplication: workspaceCustomFlatApplication,
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            objectFlatMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+        },
+      );
+
+      flatViewFieldGroupsToCreate =
+        fieldsWidgetResult.flatViewFieldGroupsToCreate;
+      flatViewFieldsToCreate = fieldsWidgetResult.flatViewFieldsToCreate;
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -94,6 +130,18 @@ export class ViewService {
 
             viewGroup: {
               flatEntityToCreate: flatViewGroupsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+
+            viewFieldGroup: {
+              flatEntityToCreate: flatViewFieldGroupsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+
+            viewField: {
+              flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },

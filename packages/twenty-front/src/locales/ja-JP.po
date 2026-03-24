@@ -19,8 +19,8 @@ msgstr ""
 "X-Crowdin-File-ID: 29\n"
 
 #. js-lingui-id: lndIq/
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid " billed annually"
 msgstr "年間請求されます"
 
@@ -70,7 +70,7 @@ msgid ": Today{timeZoneAbbreviationSuffix}"
 msgstr ": 今日{timeZoneAbbreviationSuffix}"
 
 #. js-lingui-id: N/lIUf
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid ". The change will be applied the {beautifiedRenewDate}."
 msgstr "変更は、{beautifiedRenewDate}に適用されます。"
 
@@ -153,6 +153,21 @@ msgstr "{0, plural, other {# オブジェクト}}"
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, other {フィールド {fieldsList} にアクセスする権限がありません}}"
 
+#. js-lingui-id: dNIJYp
+#. placeholder {0}: formatNumber(totalCredits)
+#. placeholder {0}: formatNumber(datum.value)
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/UsagePieChart.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "{0} credits"
+msgstr ""
+
+#. js-lingui-id: m8fdzW
+#. placeholder {0}: formatNumber(totalCredits)
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "{0} credits used"
+msgstr ""
+
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
@@ -198,7 +213,7 @@ msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} 
 msgstr "{count, plural, other {例: {2}{3} ({count} 桁)}}"
 
 #. js-lingui-id: aTq2js
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{credits} Credits - ${price}"
 msgstr "{credits} クレジット - ${price}"
 
@@ -231,7 +246,7 @@ msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} othe
 msgstr "{deletedCount, plural, other {正常に削除されたジョブ数: {deletedCount} 件}}"
 
 #. js-lingui-id: 2Xxop4
-#: src/modules/billing/components/TrialCard.tsx
+#: src/modules/settings/billing/components/TrialCard.tsx
 msgid "{duration} days trial"
 msgstr "{duration} 日間のトライアル"
 
@@ -341,16 +356,6 @@ msgstr ""
 msgid "{positionLabel} record holds priority"
 msgstr "{positionLabel} のレコードが優先されます"
 
-#. js-lingui-id: YG/wl5
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "{providerLabel} — API key not configured"
-msgstr ""
-
-#. js-lingui-id: s80lrU
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "{providerLabel} — Deprecated"
-msgstr ""
-
 #. js-lingui-id: Sxx5Hr
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "{recordCount} of {totalCount} records"
@@ -450,14 +455,10 @@ msgstr "{workspaceMemberName}が次の役割から割り当て解除されます
 msgid "••••••••"
 msgstr "••••••••"
 
-#. js-lingui-id: PxSAUc
+#. js-lingui-id: tD9raa
+#. placeholder {0}: formatNumber(preview.estimatedTokenCount, { abbreviate: true, decimals: 1, })
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "~{count} tokens"
-msgstr ""
-
-#. js-lingui-id: hVFr+7
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "~{kTokens}k tokens"
+msgid "~{0} tokens"
 msgstr ""
 
 #. js-lingui-id: Cx0xl3
@@ -566,6 +567,11 @@ msgstr "2FA方法リセット"
 msgid "500 Error - {duration}ms"
 msgstr "500 エラー - {duration}ms"
 
+#. js-lingui-id: 43TqJC
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "A display name for this provider"
+msgstr ""
+
 #. js-lingui-id: keUlu+
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "A draft already exists"
@@ -644,7 +650,7 @@ msgid "About"
 msgstr "概要"
 
 #. js-lingui-id: NBHoKd
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "About my subscription"
 msgstr "私のサブスクリプションについて"
 
@@ -657,6 +663,11 @@ msgstr "このユーザーについて"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "About this workspace"
 msgstr "このワークスペースについて"
+
+#. js-lingui-id: pNW+Rt
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Access Key ID"
+msgstr ""
 
 #. js-lingui-id: o0Ci6l
 #: src/pages/auth/Authorize.tsx
@@ -884,9 +895,20 @@ msgstr "ブロックを追加"
 msgid "Add CC"
 msgstr ""
 
+#. js-lingui-id: RVp8im
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Add custom endpoints, private gateways, or additional regions."
+msgstr ""
+
 #. js-lingui-id: GuJvBr
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 msgid "Add custom instructions specific to your workspace (appended to system prompt)"
+msgstr ""
+
+#. js-lingui-id: 4JviOV
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
+msgid "Add Custom Provider"
 msgstr ""
 
 #. js-lingui-id: 3O3+7h
@@ -930,6 +952,11 @@ msgstr "フィルタールールを追加"
 msgid "Add first filter"
 msgstr "最初のフィルターを追加"
 
+#. js-lingui-id: 7K4Hxr
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Add In-Reply-To"
+msgstr ""
+
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
@@ -964,6 +991,11 @@ msgstr ""
 #. js-lingui-id: DKlI/M
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item before"
+msgstr ""
+
+#. js-lingui-id: q5ruxx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Add Model"
 msgstr ""
 
 #. js-lingui-id: Hkobke
@@ -1108,6 +1140,7 @@ msgid "Add view"
 msgstr "ビューを追加"
 
 #. js-lingui-id: 8sZiWP
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Add widget"
 msgstr "ウィジェットを追加"
@@ -1164,15 +1197,13 @@ msgstr "住所 2"
 msgid "Admin"
 msgstr ""
 
-#. js-lingui-id: K2OX5h
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Admin Model Controls"
-msgstr ""
-
 #. js-lingui-id: g1in8j
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -1295,6 +1326,7 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -1303,6 +1335,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "AI"
 msgstr "AI"
+
+#. js-lingui-id: V+Qj+q
+#: src/modules/settings/usage/utils/getOperationTypeLabel.ts
+msgid "AI Chat"
+msgstr ""
 
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -1325,6 +1362,11 @@ msgstr "AI リクエストの準備"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "AI Response Schema"
 msgstr "AIレスポンススキーマ"
+
+#. js-lingui-id: BAiyFV
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "AKIA..."
+msgstr ""
 
 #. js-lingui-id: Zdun41
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -1407,11 +1449,6 @@ msgstr ""
 #. js-lingui-id: ypSiuQ
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "All Metadata"
-msgstr ""
-
-#. js-lingui-id: AJgjR+
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "All Models"
 msgstr ""
 
 #. js-lingui-id: aFE/OW
@@ -1682,18 +1719,26 @@ msgstr "API & Webhooks"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "APIキー"
+
+#. js-lingui-id: Jl+rxL
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
+msgid "API key configured"
+msgstr ""
 
 #. js-lingui-id: r+NRG6
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 msgid "API Key copied to clipboard"
 msgstr "APIキーがクリップボードにコピーされました"
 
-#. js-lingui-id: jjaYji
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "API key not configured"
+#. js-lingui-id: eZ6HbZ
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "API key is required"
 msgstr ""
 
 #. js-lingui-id: Widx6n
@@ -1957,7 +2002,6 @@ msgstr "昇順"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Ask AI"
 msgstr "AIに尋ねる"
 
@@ -2096,6 +2140,11 @@ msgstr ""
 msgid "Attachments"
 msgstr "添付ファイル"
 
+#. js-lingui-id: /rTz0M
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Audio"
+msgstr ""
+
 #. js-lingui-id: y2W2Hg
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Audit logs"
@@ -2207,16 +2256,6 @@ msgstr "人々のために自動的に連絡先を作成する。"
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "メールの受信・送信時に自動的に人物レコードを作成"
 
-#. js-lingui-id: erwsgX
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Automatically enable new models"
-msgstr ""
-
-#. js-lingui-id: fx8TeY
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "Automatically mark new models as available"
-msgstr ""
-
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
@@ -2287,8 +2326,19 @@ msgid "Background Colors"
 msgstr "背景色"
 
 #. js-lingui-id: EbQe8o
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Base Credits"
+msgstr ""
+
+#. js-lingui-id: 9JIIfQ
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Base URL"
+msgstr ""
+
+#. js-lingui-id: QtMnui
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Base URL is required"
 msgstr ""
 
 #. js-lingui-id: PFohi3
@@ -2340,7 +2390,7 @@ msgid "Billing history"
 msgstr ""
 
 #. js-lingui-id: nJGwRf
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Billing interval"
 msgstr "請求間隔"
 
@@ -2419,6 +2469,16 @@ msgstr ""
 msgid "Built-in"
 msgstr ""
 
+#. js-lingui-id: uvoIrk
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Built-in models from this provider. Toggle to enable or disable."
+msgstr ""
+
+#. js-lingui-id: 30JOri
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Built-in providers activated by API key. Click to manage models."
+msgstr ""
+
 #. js-lingui-id: 1QEPf7
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Bulk edit"
@@ -2448,6 +2508,21 @@ msgstr "Twentyを利用することにより、以下の事項に同意したも
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Bypass SSO"
 msgstr "SSOをバイパスする"
+
+#. js-lingui-id: ZPnTAU
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Cache pricing"
+msgstr ""
+
+#. js-lingui-id: UHhAMv
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Cache read"
+msgstr ""
+
+#. js-lingui-id: cGlfU4
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Cache write"
+msgstr ""
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -2574,44 +2649,44 @@ msgid "Cancel Edition"
 msgstr "編集をキャンセル"
 
 #. js-lingui-id: dV4HC5
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching"
 msgstr "間隔切替をキャンセル"
 
 #. js-lingui-id: M5CqkG
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel interval switching?"
 msgstr "間隔切替をキャンセルしますか？"
 
 #. js-lingui-id: /Dmw1h
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel metered tier switching"
 msgstr "メーター制ティア切替をキャンセル"
 
 #. js-lingui-id: Q/chGD
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel metered tier switching?"
 msgstr "メーター制ティア切替をキャンセルしますか？"
 
 #. js-lingui-id: rRK/Lf
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Cancel Plan"
 msgstr "プランをキャンセル"
 
 #. js-lingui-id: 8eSMLX
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching"
 msgstr "プラン切替をキャンセル"
 
 #. js-lingui-id: f6KFEf
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching?"
 msgstr "プラン切替をキャンセルしますか？"
 
 #. js-lingui-id: N6gPiD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Cancel your subscription"
 msgstr "サブスクリプションをキャンセル"
 
@@ -2699,27 +2774,27 @@ msgid "Change Password"
 msgstr "パスワードを変更"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Change subdomain?"
 msgstr "サブドメインを変更しますか？"
 
 #. js-lingui-id: 9m7pJA
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Monthly?"
 msgstr "月額に変更しますか？"
 
 #. js-lingui-id: C8G9Mq
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Organization Plan?"
 msgstr "組織プランに変更しますか？"
 
 #. js-lingui-id: t7uUc+
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Pro Plan?"
 msgstr "プロプランに変更しますか？"
 
 #. js-lingui-id: N8mUQE
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
 msgstr "年間に変更?"
 
@@ -2760,7 +2835,7 @@ msgid "Check your inbox to verify your new email address."
 msgstr "新しいメールアドレスを確認するため、受信トレイを確認してください。"
 
 #. js-lingui-id: SxwQE8
-#: src/modules/billing/hooks/useHandleCheckoutSession.ts
+#: src/modules/settings/billing/hooks/useHandleCheckoutSession.ts
 msgid "Checkout session error. Please retry or contact Twenty team"
 msgstr "チェックアウトセッションエラー。再試行するか、Twentyチームに連絡してください"
 
@@ -2847,6 +2922,11 @@ msgstr "クリア"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "フィールドをクリアするか、環境/デフォルトの値に戻すには、「X」を使用します。"
+
+#. js-lingui-id: Gt8ndY
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Click a user to see their daily breakdown."
+msgstr ""
 
 #. js-lingui-id: HevGC0
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2940,6 +3020,11 @@ msgstr "コード"
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code Editor"
 msgstr "コードエディタ"
+
+#. js-lingui-id: tyxkc0
+#: src/modules/settings/usage/utils/getOperationTypeLabel.ts
+msgid "Code Execution"
+msgstr ""
 
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
@@ -3087,6 +3172,7 @@ msgstr "構成"
 
 #. js-lingui-id: iAL9tI
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Configure"
 msgstr ""
 
@@ -3140,6 +3226,11 @@ msgstr "メールを受信および同期するためにIMAP設定を構成し�
 msgid "Configure SMTP settings to send emails from your account."
 msgstr "アカウントからメールを送信するには、SMTP設定を構成します。"
 
+#. js-lingui-id: TiCmQz
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Configure the default AI models for all workspaces"
+msgstr ""
+
 #. js-lingui-id: qA9AGQ
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Configure these DNS records with your domain provider"
@@ -3162,6 +3253,7 @@ msgstr "メールとカレンダーの設定を行う。"
 
 #. js-lingui-id: M1co/O
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Configured"
 msgstr ""
 
@@ -3170,20 +3262,20 @@ msgstr ""
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/command-menu-item/display/components/CommandModal.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
 msgstr "確認"
 
 #. js-lingui-id: qmnX/6
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm changing your current credit plan."
 msgstr "現在のクレジットプラン変更を確認してください。"
 
@@ -3193,7 +3285,7 @@ msgid "Confirm deletion of {roleName} role? This cannot be undone. All members w
 msgstr "{roleName}のロールを削除しますか？この操作は元に戻せません。すべてのメンバーはデフォルトのロールに再割り当てされます。"
 
 #. js-lingui-id: kZkFSm
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm downgrade"
 msgstr "ダウングレードを確認"
 
@@ -3203,7 +3295,7 @@ msgid "Confirm role update"
 msgstr "ロールの更新を確認"
 
 #. js-lingui-id: DDbn3x
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Confirm upgrade"
 msgstr "アップグレードを確認"
 
@@ -3282,6 +3374,7 @@ msgstr "コンテンツ"
 
 #. js-lingui-id: M73whl
 #: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "コンテキスト"
@@ -3307,6 +3400,7 @@ msgid "Context size"
 msgstr "コンテキストサイズ"
 
 #. js-lingui-id: LXIm4m
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Context window"
 msgstr ""
@@ -3467,15 +3561,35 @@ msgid "Core Objects"
 msgstr ""
 
 #. js-lingui-id: I99Miw
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "コスト"
 
+#. js-lingui-id: Iw/ard
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard.tsx
+msgid "Cost / 1M"
+msgstr ""
+
+#. js-lingui-id: 3kzLg2
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelsTable.tsx
+msgid "Cost / 1M tokens"
+msgstr ""
+
 #. js-lingui-id: iX2opZ
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
 msgstr "1k追加クレジットあたりのコスト"
+
+#. js-lingui-id: 3X5ngu
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Cost per million tokens (USD)"
+msgstr ""
+
+#. js-lingui-id: t+sNce
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Cost per million tokens for cached input (USD)"
+msgstr ""
 
 #. js-lingui-id: VVRHmR
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
@@ -3750,20 +3864,35 @@ msgstr "データモデルを作成中..."
 msgid "Creating your workspace"
 msgstr "ワークスペースを作成中"
 
+#. js-lingui-id: HAzhV7
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Credentials"
+msgstr ""
+
 #. js-lingui-id: L3dKdL
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr ""
 
+#. js-lingui-id: 7iwYAn
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Credit consumption over time."
+msgstr ""
+
 #. js-lingui-id: Efny36
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
 msgstr "クレジットプラン"
 
 #. js-lingui-id: c1ojkj
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
 msgstr "クレジット使用量"
+
+#. js-lingui-id: 6/q4+J
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Credit usage breakdown for your workspace."
+msgstr ""
 
 #. js-lingui-id: UQ4Hjl
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
@@ -3771,8 +3900,15 @@ msgstr "クレジット使用量"
 msgid "credits"
 msgstr ""
 
+#. js-lingui-id: lDIOek
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Credits"
+msgstr ""
+
 #. js-lingui-id: hdSacI
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credits by period"
 msgstr "期間別のクレジット"
 
@@ -3787,7 +3923,7 @@ msgid "Credits exhausted. Upgrade your plan to get more credits."
 msgstr "クレジットを使い切りました。より多くのクレジットを得るには、プランをアップグレードしてください。"
 
 #. js-lingui-id: n3kKrs
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
 msgstr "使用済みクレジット"
 
@@ -3833,7 +3969,7 @@ msgid "Currency Code"
 msgstr "通貨コード"
 
 #. js-lingui-id: Hp1l6f
-#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
+#: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 msgid "Current"
 msgstr "現在"
 
@@ -3862,14 +3998,22 @@ msgid "Custom"
 msgstr "カスタム"
 
 #. js-lingui-id: XQ681Q
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "カスタムドメイン"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Custom domain updated"
 msgstr "カスタムドメインが更新されました"
+
+#. js-lingui-id: 87ZNeX
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Custom model ID"
+msgstr ""
 
 #. js-lingui-id: 8skTDV
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -3877,6 +4021,16 @@ msgstr "カスタムドメインが更新されました"
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Custom objects"
 msgstr "カスタムオブジェクト"
+
+#. js-lingui-id: sakSHW
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Custom provider"
+msgstr ""
+
+#. js-lingui-id: Gh6L3r
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Custom Providers"
+msgstr ""
 
 #. js-lingui-id: jt16uy
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -3904,11 +4058,6 @@ msgstr "カスタマイズ"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
 msgid "Customize"
 msgstr ""
-
-#. js-lingui-id: CMhr4u
-#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
-msgid "Customize Domain"
-msgstr "ドメインをカスタマイズ"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
@@ -3945,12 +4094,19 @@ msgstr "シアン"
 msgid "Czech"
 msgstr "チェコ語"
 
+#. js-lingui-id: KXQkvT
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Daily Usage"
+msgstr ""
+
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -4035,6 +4191,17 @@ msgstr "データモデル - 設定"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Data on display"
 msgstr "表示中のデータ"
+
+#. js-lingui-id: Ix/CMz
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard.tsx
+msgid "Data residency"
+msgstr ""
+
+#. js-lingui-id: RzkN1M
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Data Residency"
+msgstr ""
 
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -4203,6 +4370,21 @@ msgstr "デフォルトの国"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "デフォルトの国コード"
+
+#. js-lingui-id: hUWaAk
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Default model for chats and complex reasoning"
+msgstr ""
+
+#. js-lingui-id: NTzYp2
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Default model for lightweight tasks"
+msgstr ""
+
+#. js-lingui-id: Zrez13
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Default Models"
+msgstr ""
 
 #. js-lingui-id: 4HDpKr
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorPaletteOption.tsx
@@ -4527,16 +4709,6 @@ msgstr "削除されたレコード"
 msgid "Deleting this method will remove it permanently from your account."
 msgstr "この方法を削除すると、アカウントから永久に削除されます。"
 
-#. js-lingui-id: Ssdrw4
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Deprecated"
-msgstr ""
-
-#. js-lingui-id: 8OJZ/p
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Deprecated models"
-msgstr ""
-
 #. js-lingui-id: O3LJh6
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4611,6 +4783,7 @@ msgid "Detach"
 msgstr "関連付けを解除"
 
 #. js-lingui-id: URmyfc
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Details"
 msgstr "詳細"
@@ -4656,6 +4829,11 @@ msgstr "平坦な数値またはパーセンテージとして表示"
 msgid "Display Format"
 msgstr "表示形式"
 
+#. js-lingui-id: 7sBzvW
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Display name for the model"
+msgstr ""
+
 #. js-lingui-id: GoHpxA
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Display text on multiple lines"
@@ -4694,10 +4872,13 @@ msgstr "含まない"
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "ドメイン"
+
+#. js-lingui-id: 0nBpE2
+#: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
+msgid "Domain already taken"
+msgstr ""
 
 #. js-lingui-id: OjtVhh
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -4714,8 +4895,9 @@ msgstr "ドメインセットアップ"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Domains"
 msgstr "ドメイン"
@@ -4746,8 +4928,8 @@ msgid "Dots and comma - {dotsAndCommaExample}"
 msgstr "ドットとコンマ - {dotsAndCommaExample}"
 
 #. js-lingui-id: LE8J+K
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Downgrade"
 msgstr "ダウングレード"
 
@@ -4840,6 +5022,36 @@ msgstr "重複"
 msgid "Dutch"
 msgstr "オランダ語"
 
+#. js-lingui-id: 8zfXiN
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. 1.25"
+msgstr ""
+
+#. js-lingui-id: il+blF
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. 10.00"
+msgstr ""
+
+#. js-lingui-id: 1VmVrX
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. 128000"
+msgstr ""
+
+#. js-lingui-id: 6bwSBJ
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. 16384"
+msgstr ""
+
+#. js-lingui-id: 8u2elr
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. 2.50"
+msgstr ""
+
+#. js-lingui-id: 7F0zgN
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. 3.75"
+msgstr ""
+
 #. js-lingui-id: QVVmxi
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4847,9 +5059,29 @@ msgstr "オランダ語"
 msgid "E.g. backoffice integration"
 msgstr "例：バックオフィス統合"
 
+#. js-lingui-id: u+aOKb
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. gpt-4o"
+msgstr ""
+
+#. js-lingui-id: c+GbbT
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "e.g. GPT-4o"
+msgstr ""
+
+#. js-lingui-id: Xh9FA2
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "e.g. My OpenAI Proxy"
+msgstr ""
+
 #. js-lingui-id: 88vQqv
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "e.g. my-workspace"
+msgstr ""
+
+#. js-lingui-id: XnR4kd
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "e.g. OpenAI EU"
 msgstr ""
 
 #. js-lingui-id: p5P8NB
@@ -4978,7 +5210,7 @@ msgstr ""
 #. js-lingui-id: h2KoTu
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "支払い方法の編集、請求書の確認など"
 
@@ -5374,6 +5606,11 @@ msgstr ""
 msgid "Enter link"
 msgstr "リンクを入力"
 
+#. js-lingui-id: KR7n/y
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "Enter Message-ID to reply to"
+msgstr ""
+
 #. js-lingui-id: O0qPMN
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Enter number between 0 and 23"
@@ -5491,6 +5728,7 @@ msgstr "API キーを入力"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Enterprise"
 msgstr "エンタープライズ"
 
@@ -5681,22 +5919,22 @@ msgid "Error validating approved access domain"
 msgstr "承認されたアクセスドメインの検証エラー"
 
 #. js-lingui-id: pt7mmi
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling interval switching."
 msgstr "間隔切替のキャンセル中にエラーが発生しました。"
 
 #. js-lingui-id: a1gs9Y
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling metered tier switching."
 msgstr "メーター制ティア切替のキャンセル中にエラーが発生しました。"
 
 #. js-lingui-id: FS6DQK
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while cancelling plan switching."
 msgstr "プラン切替のキャンセル中にエラーが発生しました。"
 
 #. js-lingui-id: QmR+2U
-#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+#: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Error while ending trial period. Please contact Twenty team."
 msgstr "試用期間の終了中にエラーが発生しました。Twentyチームにお問い合わせください。"
 
@@ -5706,12 +5944,12 @@ msgid "Error while saving the name"
 msgstr ""
 
 #. js-lingui-id: QEee5f
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription to {oppositPlan} Plan."
 msgstr "サブスクリプションを{oppositPlan}プランに切り替える際にエラーが発生しました。"
 
 #. js-lingui-id: QPJi2W
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Error while switching subscription."
 msgstr "サブスクリプションの切替中にエラーが発生しました。"
 
@@ -6071,7 +6309,7 @@ msgid "Expression"
 msgstr "式"
 
 #. js-lingui-id: uE7S0L
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Extra Credits Used"
 msgstr "追加クレジットが使用されました"
 
@@ -6105,6 +6343,16 @@ msgstr ""
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsSkillsTable.tsx
 msgid "Failed to activate skill"
+msgstr ""
+
+#. js-lingui-id: ZWX/Lk
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Failed to add model"
+msgstr ""
+
+#. js-lingui-id: gU+vGA
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Failed to add provider"
 msgstr ""
 
 #. js-lingui-id: WM7GKt
@@ -6179,6 +6427,11 @@ msgstr "レコードのマージに失敗しました。もう一度お試しく
 msgid "Failed to parse context: {contextValue}"
 msgstr "コンテキストの解析に失敗しました: {contextValue}"
 
+#. js-lingui-id: 3YA1cX
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Failed to remove model"
+msgstr ""
+
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
@@ -6188,6 +6441,11 @@ msgstr "オーバーライドを削除できませんでした"
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to remove picture"
 msgstr "画像を削除できませんでした"
+
+#. js-lingui-id: B6yaak
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Failed to remove provider"
+msgstr ""
 
 #. js-lingui-id: SJEIIJ
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
@@ -6215,9 +6473,9 @@ msgstr ""
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr ""
 
-#. js-lingui-id: YzURPo
+#. js-lingui-id: 2D6TRg
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Failed to update auto-enable setting"
+msgid "Failed to update default model"
 msgstr ""
 
 #. js-lingui-id: P1NmNz
@@ -6232,13 +6490,13 @@ msgstr ""
 
 #. js-lingui-id: W7Ff/4
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Failed to update model availability"
 msgstr ""
 
-#. js-lingui-id: LgZlJ7
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "Failed to update model availability settings"
+#. js-lingui-id: A1sMrV
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Failed to update model recommendation"
 msgstr ""
 
 #. js-lingui-id: rCUG3c
@@ -6247,7 +6505,7 @@ msgid "Failed to update model selection mode"
 msgstr ""
 
 #. js-lingui-id: HnBqPY
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "価格の更新に失敗しました。"
 
@@ -6310,6 +6568,7 @@ msgstr "偽"
 
 #. js-lingui-id: XVIZ7v
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Fast Model"
 msgstr ""
 
@@ -6353,6 +6612,7 @@ msgstr "フィールド"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getFieldLabelWithSubField.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
 msgid "Field"
 msgstr "フィールド"
 
@@ -6410,6 +6670,11 @@ msgstr "フィールドの競合"
 #: src/testing/mock-data/tableData.ts
 msgid "Fields Count"
 msgstr "フィールド数"
+
+#. js-lingui-id: EI7W0X
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Fields group"
+msgstr ""
 
 #. js-lingui-id: 5UU7Q6
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -6925,6 +7190,11 @@ msgstr "グループ"
 msgid "Group by"
 msgstr "グループ化"
 
+#. js-lingui-id: tyyaxS
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Group multiple fields from this record"
+msgstr ""
+
 #. js-lingui-id: WcF1uL
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Group name"
@@ -7145,6 +7415,11 @@ msgstr "HTTP リクエストに失敗しました"
 msgid "https://api.example.com/endpoint"
 msgstr "https://api.example.com/endpoint"
 
+#. js-lingui-id: xsawDG
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "https://api.example.com/v1"
+msgstr ""
+
 #. js-lingui-id: 1Un+Rf
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "https://example.com/callback"
@@ -7174,6 +7449,16 @@ msgstr "ハンガリー語"
 #. js-lingui-id: YUJ1ey
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "I need a dashboard for lead conversion: number of new leads by source this month, how many moved to opportunity, and conversion rate by source. Include a simple table and a bar chart."
+msgstr ""
+
+#. js-lingui-id: VNC0Db
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
+msgid "IAM credentials"
+msgstr ""
+
+#. js-lingui-id: bacFcZ
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "IAM credentials configured"
 msgstr ""
 
 #. js-lingui-id: wwu18a
@@ -7242,6 +7527,11 @@ msgstr "iFrame 設定"
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "iFrame Widget"
 msgstr "iFrame ウィジェット"
+
+#. js-lingui-id: hG89Ed
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Image"
+msgstr ""
 
 #. js-lingui-id: ijW9MW
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -7346,6 +7636,11 @@ msgstr "データをインポート中 ..."
 msgid "In {dateDiff}"
 msgstr "{dateDiff} で"
 
+#. js-lingui-id: hVockd
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+msgid "In-Reply-To"
+msgstr ""
+
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
@@ -7412,6 +7707,7 @@ msgstr "情報"
 #. js-lingui-id: XU5AOg
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
@@ -7520,7 +7816,7 @@ msgid "Integrations - Settings"
 msgstr "統合 - 設定"
 
 #. js-lingui-id: jyjroS
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Interval switching has been cancelled."
 msgstr "間隔切替がキャンセルされました。"
 
@@ -7569,6 +7865,16 @@ msgstr "無効な cron パターン: {errorMessage}"
 msgid "Invalid day value '{newDay}'. Should be integer greater than 1"
 msgstr "無効な日付の値 '{newDay}'。1 を超える整数である必要があります"
 
+#. js-lingui-id: u3hwhx
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
+msgstr ""
+
+#. js-lingui-id: Vxmaf0
+#: src/modules/settings/domains/utils/getDomainValidationSchema.ts
+msgid "Invalid domain. Please include at least one subdomain (e.g., sub.example.com)."
+msgstr ""
+
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
@@ -7590,11 +7896,6 @@ msgstr "無効なメール認証リンクです。"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Invalid File"
 msgstr "無効なファイル"
-
-#. js-lingui-id: QdoUFL
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "Invalid form values"
-msgstr "無効なフォーム値"
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -7890,6 +8191,8 @@ msgid "Korean"
 msgstr "韓国語"
 
 #. js-lingui-id: 87a/t/
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsText.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -7897,6 +8200,17 @@ msgstr "韓国語"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 msgid "Label"
 msgstr "ラベル"
+
+#. js-lingui-id: w8Rv8T
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Label is required"
+msgstr ""
+
+#. js-lingui-id: +I+tjN
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Label must contain at least one alphanumeric character"
+msgstr ""
 
 #. js-lingui-id: vXIe7J
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -7939,6 +8253,11 @@ msgstr "直近12時間（古い順 → 新しい順）"
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "直近24時間（古い順 → 新しい順）"
 
+#. js-lingui-id: uq2BmQ
+#: src/modules/settings/usage/utils/getPeriodOptions.ts
+msgid "Last 30 days"
+msgstr ""
+
 #. js-lingui-id: gdAJ4I
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 4 hours"
@@ -7949,10 +8268,20 @@ msgstr "過去<b>4</b>時間"
 msgid "Last 4 Hours (oldest → newest)"
 msgstr "直近4時間（古い順 → 新しい順）"
 
+#. js-lingui-id: ct2SYD
+#: src/modules/settings/usage/utils/getPeriodOptions.ts
+msgid "Last 7 days"
+msgstr ""
+
 #. js-lingui-id: GQgBSj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
 msgstr "直近7日間（古い順 → 新しい順）"
+
+#. js-lingui-id: XgOuA7
+#: src/modules/settings/usage/utils/getPeriodOptions.ts
+msgid "Last 90 days"
+msgstr ""
 
 #. js-lingui-id: c5zxSg
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
@@ -8134,6 +8463,11 @@ msgstr "このフィールドに追加できる値の数を制限する"
 #. js-lingui-id: a4SJUE
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit must be greater than 0."
+msgstr ""
+
+#. js-lingui-id: 6BDqha
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Limits"
 msgstr ""
 
 #. js-lingui-id: pFkLY3
@@ -8405,7 +8739,7 @@ msgstr "請求とサブスクリプションの管理"
 #. js-lingui-id: nvgUPq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "請求情報を管理する"
 
@@ -8502,6 +8836,12 @@ msgstr "最大"
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
 msgstr "最大インポート容量: {formatSpreadsheetMaxRecordImportCapacity} 件。それ以上の場合は、ファイルを分割するかAPIをご利用ください。"
+
+#. js-lingui-id: S8w4XA
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard.tsx
+msgid "Max output"
+msgstr ""
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -8651,7 +8991,7 @@ msgid "Metadata file generation failed"
 msgstr "メタデータファイルの生成に失敗しました"
 
 #. js-lingui-id: onCJJ6
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Metered tier switching has been cancelled."
 msgstr "メーター制ティア切替がキャンセルされました。"
 
@@ -8708,15 +9048,43 @@ msgstr ""
 msgid "Mission accomplished!"
 msgstr "任務完了！"
 
+#. js-lingui-id: bC/dq9
+#. placeholder {0}: values.label.trim()
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Model \"{0}\" added"
+msgstr ""
+
+#. js-lingui-id: dpLl7b
+#. placeholder {0}: modelToRemove.label
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Model \"{0}\" removed"
+msgstr ""
+
+#. js-lingui-id: IzB3v0
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Model ID"
+msgstr ""
+
+#. js-lingui-id: 9I618z
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Model ID is required"
+msgstr ""
+
 #. js-lingui-id: //nm2/
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Models"
 msgstr ""
 
 #. js-lingui-id: oHM560
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 msgid "Models available in the chat model picker"
+msgstr ""
+
+#. js-lingui-id: tNFUgB
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Models for this provider. Toggle to enable or disable."
 msgstr ""
 
 #. js-lingui-id: hty0d5
@@ -8735,7 +9103,7 @@ msgid "Monitor the execution of your emails sync job"
 msgstr "メール同期ジョブの実行を監視する"
 
 #. js-lingui-id: kY2ll9
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "month"
 msgstr "月"
 
@@ -8753,7 +9121,7 @@ msgid "Month of the year"
 msgstr "月"
 
 #. js-lingui-id: rdfE9o
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "monthly"
 msgstr "月払い"
 
@@ -8797,6 +9165,11 @@ msgstr "その他のアクション"
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent.tsx
 msgid "More options"
 msgstr "その他のオプション"
+
+#. js-lingui-id: 2MjaQ8
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "More widgets"
+msgstr ""
 
 #. js-lingui-id: SOHptZ
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -8886,8 +9259,10 @@ msgstr ""
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -8909,6 +9284,8 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelsTable.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard.tsx
 msgid "Name"
 msgstr "名前"
 
@@ -9046,6 +9423,12 @@ msgstr "新しいアカウント"
 msgid "New Agent"
 msgstr "新しいエージェント"
 
+#. js-lingui-id: JJFwWE
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "New AI Provider"
+msgstr ""
+
 #. js-lingui-id: 2qr/61
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -9100,6 +9483,21 @@ msgstr "新しいキー"
 msgid "New Key"
 msgstr "新しいキー"
 
+#. js-lingui-id: K2wBR9
+#: src/modules/side-panel/hooks/useSidePanelMenu.ts
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
+#: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
+#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+msgid "New menu item"
+msgstr ""
+
+#. js-lingui-id: ROxeMs
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "New Model"
+msgstr ""
+
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "New note"
@@ -9119,15 +9517,6 @@ msgstr "新しいパスワード"
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "New record"
 msgstr "新しいレコード"
-
-#. js-lingui-id: x6Ckh1
-#: src/modules/side-panel/hooks/useSidePanelMenu.ts
-#: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
-#: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
-#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
-msgid "New sidebar item"
-msgstr ""
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -9168,8 +9557,8 @@ msgstr ""
 
 #. js-lingui-id: hXzOVo
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
-#: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
 msgstr "次へ"
@@ -9273,11 +9662,6 @@ msgstr "本文なし"
 msgid "No calling code"
 msgstr ""
 
-#. js-lingui-id: OTe3RI
-#: src/pages/settings/domains/SettingsDomain.tsx
-msgid "No change detected"
-msgstr "変更なし"
-
 #. js-lingui-id: wgUPZ1
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "No comment"
@@ -9305,6 +9689,21 @@ msgstr "このリクエストにはコンテキストが提供されていませ
 #: src/modules/object-record/record-field/ui/form-types/components/FormCountrySelectInput.tsx
 msgid "No country"
 msgstr "国なし"
+
+#. js-lingui-id: afg3OQ
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
+msgid "No credentials"
+msgstr ""
+
+#. js-lingui-id: FoID5n
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "No credit consumption recorded for this user."
+msgstr ""
+
+#. js-lingui-id: H7TRcV
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No credit consumption recorded yet."
+msgstr ""
 
 #. js-lingui-id: kxH3HO
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
@@ -9542,7 +9941,7 @@ msgid "No parameters"
 msgstr ""
 
 #. js-lingui-id: 5pSj4j
-#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+#: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
 msgstr "お支払い方法が見つかりません。請求先の詳細を更新してください。"
 
@@ -9639,6 +10038,12 @@ msgstr ""
 msgid "No triggers configured for this function."
 msgstr ""
 
+#. js-lingui-id: WwlPOG
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No usage data"
+msgstr ""
+
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No value"
@@ -9675,6 +10080,7 @@ msgid "Node"
 msgstr "ノード"
 
 #. js-lingui-id: EdQY6l
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
@@ -9789,7 +10195,7 @@ msgid "Number of decimals"
 msgstr "小数点の数"
 
 #. js-lingui-id: tYOaY8
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
 msgstr "新しいクレジットが毎{recurringInterval}に割り当てられます"
 
@@ -10106,6 +10512,12 @@ msgstr "商談"
 msgid "Option 1"
 msgstr "オプション 1"
 
+#. js-lingui-id: gUeG+X
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Optional — uses IAM role if empty"
+msgstr ""
+
 #. js-lingui-id: hY8F2i
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Optional secret used to compute the HMAC signature for webhook payloads"
@@ -10148,8 +10560,8 @@ msgstr ""
 
 #. js-lingui-id: ucgZ0o
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/components/internal/PlansTags.tsx
 msgid "Organization"
 msgstr "組織"
 
@@ -10168,6 +10580,7 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
@@ -10213,6 +10626,7 @@ msgid "Outage"
 msgstr "障害"
 
 #. js-lingui-id: gh06VD
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -10363,6 +10777,11 @@ msgstr "パス"
 msgid "Payment issue"
 msgstr ""
 
+#. js-lingui-id: CcK+Ft
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "PDF"
+msgstr ""
+
 #. js-lingui-id: UbRKMZ
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -10385,6 +10804,11 @@ msgstr "送信したメールおよび受信したメールの相手。"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to."
 msgstr "送信したメールの相手。"
+
+#. js-lingui-id: i9iYjM
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "Per-day credit consumption."
+msgstr ""
 
 #. js-lingui-id: SrVzRe
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -10548,12 +10972,12 @@ msgid "Plain text paragraph"
 msgstr ""
 
 #. js-lingui-id: GdgCoi
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
 msgstr "プラン"
 
 #. js-lingui-id: XduPHC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan switching has been cancelled."
 msgstr "プラン切替がキャンセルされました。"
 
@@ -10595,7 +11019,7 @@ msgid "Please select at least one destination object for this relation."
 msgstr "この関係の宛先オブジェクトを少なくとも1つ選択してください。"
 
 #. js-lingui-id: 8YnlGz
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
 msgstr "まずサブスクリプションを開始してください"
 
@@ -10709,9 +11133,14 @@ msgid "Previous AI Chats"
 msgstr "以前のAIチャット"
 
 #. js-lingui-id: jmc+FY
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Price updated."
 msgstr "価格が更新されました。"
+
+#. js-lingui-id: aHCEmh
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Pricing"
+msgstr ""
 
 #. js-lingui-id: 0Ni6nR
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -10753,8 +11182,8 @@ msgid "Privacy Policy"
 msgstr "プライバシーポリシー"
 
 #. js-lingui-id: 3fPjUY
-#: src/modules/billing/hooks/useBillingWording.ts
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/components/internal/PlansTags.tsx
 msgid "Pro"
 msgstr "プロ"
 
@@ -10815,8 +11244,28 @@ msgstr "プロパティ値"
 msgid "Provide your OIDC provider details"
 msgstr "OIDCプロバイダーの詳細を提供してください"
 
+#. js-lingui-id: aemBRq
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelsTable.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard.tsx
+msgid "Provider"
+msgstr ""
+
+#. js-lingui-id: d7tyJ/
+#. placeholder {0}: values.label.trim()
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Provider \"{0}\" added"
+msgstr ""
+
+#. js-lingui-id: Bkg47g
+#. placeholder {0}: provider?.label ?? providerName
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Provider \"{0}\" removed"
+msgstr ""
+
 #. js-lingui-id: jerYcl
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Providers"
 msgstr ""
 
@@ -10961,6 +11410,11 @@ msgstr "パスワード更新リンクを含むメールを受け取る"
 msgid "Recent Events (oldest → newest)"
 msgstr "最近のイベント（古い順 → 新しい順）"
 
+#. js-lingui-id: b2+5uV
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Recommended Models"
+msgstr ""
+
 #. js-lingui-id: gcoiFh
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
@@ -11087,6 +11541,22 @@ msgstr "キーを再生成"
 msgid "Regenerate Key"
 msgstr "キーを再生成"
 
+#. js-lingui-id: uJ+Ve2
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Region"
+msgstr ""
+
+#. js-lingui-id: bPJyAg
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Region is required for Bedrock"
+msgstr ""
+
+#. js-lingui-id: qeXMXz
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Region where inference data is processed (optional)"
+msgstr ""
+
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
 msgid "Relation"
@@ -11147,6 +11617,8 @@ msgid "Remote"
 msgstr "リモート"
 
 #. js-lingui-id: t/YqKh
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/modules/ui/input/components/ImageInput.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
@@ -11206,10 +11678,27 @@ msgstr "メンバーを削除"
 msgid "Remove member from workspace"
 msgstr "ワークスペースからメンバーを削除"
 
+#. js-lingui-id: FeQ/sf
+#. placeholder {0}: modelToRemove?.label ?? ''
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Remove model \"{0}\""
+msgstr ""
+
 #. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "オプションを削除"
+
+#. js-lingui-id: bKJVLZ
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Remove provider"
+msgstr ""
+
+#. js-lingui-id: hJ4+Zq
+#. placeholder {0}: provider?.label ?? providerName
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Remove provider \"{0}\""
+msgstr ""
 
 #. js-lingui-id: SjxzXf
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
@@ -11232,6 +11721,11 @@ msgstr "並び替えを削除"
 msgid "Remove sorting?"
 msgstr "並び替えを削除しますか？"
 
+#. js-lingui-id: yBC05U
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Remove this provider and disconnect all its models"
+msgstr ""
+
 #. js-lingui-id: Kl3J3D
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Remove variable"
@@ -11245,7 +11739,7 @@ msgid "Rename"
 msgstr "名前を変更"
 
 #. js-lingui-id: oQjB9l
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
 msgstr "更新日"
 
@@ -11322,6 +11816,11 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "Reset variable"
 msgstr "変数をリセット"
+
+#. js-lingui-id: esl+Tv
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+msgid "Resource Type"
+msgstr ""
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -11509,7 +12008,7 @@ msgid "Roles"
 msgstr "役割"
 
 #. js-lingui-id: Qz0FZ3
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Rollover Credits"
 msgstr ""
 
@@ -11654,6 +12153,11 @@ msgstr ""
 msgid "Score"
 msgstr ""
 
+#. js-lingui-id: hJjXGo
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "SDK"
+msgstr ""
+
 #. js-lingui-id: A1taO8
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerHeader.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
@@ -11668,8 +12172,6 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Search"
 msgstr "検索"
 
@@ -11712,7 +12214,7 @@ msgstr ""
 
 #. js-lingui-id: 8J0e5B
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Search a model..."
 msgstr ""
 
@@ -11842,6 +12344,11 @@ msgstr "フィールドを検索"
 msgid "Search folders..."
 msgstr "フォルダーを検索..."
 
+#. js-lingui-id: uHAV+O
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Search for a user..."
+msgstr ""
+
 #. js-lingui-id: ofuw3g
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 msgid "Search for an object..."
@@ -11910,18 +12417,18 @@ msgstr ""
 
 #. js-lingui-id: 8sgZS9
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-#: src/modules/billing/components/SubscriptionPrice.tsx
+#: src/modules/settings/billing/components/SubscriptionPrice.tsx
 msgid "seat / month"
 msgstr "座席 / 月"
 
 #. js-lingui-id: aQnWwf
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-#: src/modules/billing/components/SubscriptionPrice.tsx
+#: src/modules/settings/billing/components/SubscriptionPrice.tsx
 msgid "seat / month - billed yearly"
 msgstr "座席 / 月 - 年間請求"
 
 #. js-lingui-id: grt0Pu
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Seats"
 msgstr "座席"
 
@@ -11949,6 +12456,11 @@ msgstr "シークレット"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Secret (optional)"
 msgstr "シークレット (オプション)"
+
+#. js-lingui-id: llJ0OR
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Secret Access Key"
+msgstr ""
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
@@ -12099,6 +12611,16 @@ msgstr "前のステップからフィールドを選択してください"
 msgid "Select a field to display in this widget"
 msgstr "このウィジェットに表示するフィールドを選択してください"
 
+#. js-lingui-id: rHNnAT
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Select a known model or add a custom one"
+msgstr ""
+
+#. js-lingui-id: d/tbM2
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Select a known provider or create a custom one"
+msgstr ""
+
 #. js-lingui-id: dtAvBz
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Select a navigation item to edit"
@@ -12245,6 +12767,11 @@ msgstr "タイプを選択"
 msgid "Select value"
 msgstr "値を選択"
 
+#. js-lingui-id: RKE3bT
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "Select which models appear as recommended in the workspace model picker"
+msgstr ""
+
 #. js-lingui-id: AXTJAW
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your preferred language"
@@ -12294,11 +12821,6 @@ msgstr "セルビア語（キリル文字）"
 #. js-lingui-id: fHVf32
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Server Variables"
-msgstr ""
-
-#. js-lingui-id: 8ZSrlB
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Server-wide AI model availability settings"
 msgstr ""
 
 #. js-lingui-id: LUc0oL
@@ -12532,6 +13054,11 @@ msgstr "サインアップ"
 msgid "Single edit"
 msgstr ""
 
+#. js-lingui-id: RGk8YF
+#: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
+msgid "Single field with smart formats"
+msgstr ""
+
 #. js-lingui-id: 5v3IHX
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithSSO.tsx
 msgid "Single sign-on (SSO)"
@@ -12551,6 +13078,11 @@ msgstr "単数形と複数形の名前は異なる必要があります"
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Sixth"
 msgstr "第六"
+
+#. js-lingui-id: Nbjq/v
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "sk-..."
+msgstr ""
 
 #. js-lingui-id: vJRTzI
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -12618,6 +13150,7 @@ msgstr ""
 
 #. js-lingui-id: 5J8ZFl
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Smart Model"
 msgstr ""
 
@@ -12809,7 +13342,7 @@ msgid "Start Date"
 msgstr ""
 
 #. js-lingui-id: s+K73L
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
 msgstr "サブスクリプションを開始"
 
@@ -12892,18 +13425,30 @@ msgid "Sub-Fields"
 msgstr "サブフィールド"
 
 #. js-lingui-id: ku9TbG
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "サブドメイン"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/domains/SettingsDomain.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain already taken"
 msgstr "サブドメインは既に使用されています"
 
+#. js-lingui-id: OlC/tU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be longer than 30 characters"
+msgstr ""
+
+#. js-lingui-id: ZETwlU
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Subdomain can not be shorter than 3 characters"
+msgstr ""
+
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/hooks/useSettingsSubdomain.ts
 msgid "Subdomain updated"
 msgstr "サブドメインが更新されました"
 
@@ -12952,38 +13497,38 @@ msgid "Subscribe"
 msgstr "購読"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
 msgid "Subscribe Now"
 msgstr "今すぐ購読"
 
 #. js-lingui-id: WVzGc2
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription"
 msgstr "サブスクリプション"
 
 #. js-lingui-id: uvY7Wk
-#: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
+#: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "Subscription activated."
 msgstr "サブスクリプションが有効になりました。"
 
 #. js-lingui-id: gvXPJz
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to {oppositPlan} Plan."
 msgstr "サブスクリプションが{oppositPlan}プランに切り替わりました。"
 
 #. js-lingui-id: A5YO8f
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription has been switched to Yearly."
 msgstr "サブスクリプションが年払いに切り替わりました。"
 
 #. js-lingui-id: nQcG+x
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
 msgstr "サブスクリプションは{beautifiedRenewDate}に月額に切り替わります。"
 
 #. js-lingui-id: WB5mu5
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switched to {oppositPlan} Plan the {beautifiedRenewDate}."
 msgstr "サブスクリプションは {beautifiedRenewDate} に {oppositPlan} プランへ切り替わります。"
 
@@ -13001,11 +13546,6 @@ msgstr "成功"
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Successfully merged {recordCount} records"
 msgstr "{recordCount} 件のレコードが正常にマージされました"
-
-#. js-lingui-id: zsDoFr
-#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
-msgid "Successfully updated {count} records"
-msgstr ""
 
 #. js-lingui-id: QJz8/3
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -13035,28 +13575,38 @@ msgstr "日曜日"
 msgid "Support"
 msgstr "サポート"
 
+#. js-lingui-id: omBFwv
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Supported input types"
+msgstr ""
+
+#. js-lingui-id: Gw5WrN
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Supports reasoning"
+msgstr ""
+
 #. js-lingui-id: UaISq3
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Swedish"
 msgstr "スウェーデン語"
 
 #. js-lingui-id: dpXnFC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Monthly"
 msgstr "月額に切り替える"
 
 #. js-lingui-id: GCMizN
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Organization"
 msgstr "組織へ切り替える"
 
 #. js-lingui-id: GPKudC
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Pro"
 msgstr "プロに切り替える"
 
 #. js-lingui-id: eCX1DT
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Yearly"
 msgstr "年払いに切り替える"
 
@@ -13314,6 +13864,16 @@ msgstr "テキストがクリップボードにコピーされました"
 msgid "Text Editor"
 msgstr "テキストエディタ"
 
+#. js-lingui-id: oVH0Mt
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "The API endpoint for your OpenAI-compatible provider"
+msgstr ""
+
+#. js-lingui-id: qjNojw
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "The AWS region for Bedrock"
+msgstr ""
+
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -13348,6 +13908,11 @@ msgstr "アカウントに関連付けられたメール"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "ワークフロートリガーでコマンドメニューに表示するアイコン"
+
+#. js-lingui-id: HiI1Lo
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "The model identifier used by the provider API"
+msgstr ""
 
 #. js-lingui-id: h8mvCd
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -13578,6 +14143,16 @@ msgstr "手動での行の並び替えを有効にするには、これが必要
 msgid "This key should be set through body input"
 msgstr "このキーはボディ入力で設定する必要があります"
 
+#. js-lingui-id: Wuvfgw
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "This model will be removed from the provider. You can re-add it later."
+msgstr ""
+
+#. js-lingui-id: R/PuIn
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "This provider doesn't have a native SDK yet — it will use OpenAI-compatible mode. Need native support? Reach out to us."
+msgstr ""
+
 #. js-lingui-id: dWJTyU
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 msgid "This record has been deleted"
@@ -13613,6 +14188,11 @@ msgstr "この設定は環境変数を通してのみ設定できます。"
 msgid "This should never happen"
 msgstr "これは起こるべきではありません"
 
+#. js-lingui-id: Ryrt8E
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "This subdomain is reserved"
+msgstr ""
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -13624,14 +14204,24 @@ msgid "This week"
 msgstr "今週"
 
 #. js-lingui-id: h4VeOo
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
 msgstr "これによりスケジュールされた間隔の変更がキャンセルされ、現在の請求間隔（{currentIntervalLabel}）が維持されます。"
 
 #. js-lingui-id: XpARoU
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled plan change and keep your current plan ({planKeyWord})."
 msgstr "これによりスケジュールされたプランの変更がキャンセルされ、現在のプラン（{planKeyWord}）が維持されます。"
+
+#. js-lingui-id: 0+L84I
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "This will disconnect all models from this provider. Models will no longer be available until a new provider is configured."
+msgstr ""
+
+#. js-lingui-id: y8xx3L
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "This will modify {contextStoreNumberOfSelectedRecords} records. This action cannot be undone."
+msgstr ""
 
 #. js-lingui-id: XGDxrH
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -13707,6 +14297,7 @@ msgstr ""
 #. js-lingui-id: 8TMaZI
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Timestamp"
 msgstr "タイムスタンプ"
@@ -13760,9 +14351,9 @@ msgstr "全オブジェクトの権限を切り替える"
 msgid "Toggle all settings permissions"
 msgstr "すべての設定権限を切り替える"
 
-#. js-lingui-id: 93pMSK
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Toggle model availability across all workspaces"
+#. js-lingui-id: IHtFjq
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Token limits for context and output"
 msgstr ""
 
 #. js-lingui-id: WOr+hW
@@ -13817,7 +14408,7 @@ msgid "Total"
 msgstr ""
 
 #. js-lingui-id: Fm0Lw/
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Total Available"
 msgstr ""
 
@@ -13838,7 +14429,7 @@ msgid "Total time"
 msgstr "合計時間"
 
 #. js-lingui-id: YT/cKI
-#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "{intervalLabel}のワークフロークレジット消費を追跡します。"
 
@@ -13856,7 +14447,7 @@ msgstr ""
 #. js-lingui-id: lhkaAC
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/internal/PlansTags.tsx
+#: src/modules/settings/billing/components/internal/PlansTags.tsx
 msgid "Trial"
 msgstr "トライアル"
 
@@ -14050,6 +14641,11 @@ msgstr "何でも入力..."
 msgid "Type to search records"
 msgstr ""
 
+#. js-lingui-id: D38O1A
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Types of content this model can process besides text"
+msgstr ""
+
 #. js-lingui-id: 4KcBEY
 #: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 msgid "UI components provided by this app"
@@ -14079,11 +14675,6 @@ msgstr ""
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "バックエンドに接続できません"
-
-#. js-lingui-id: EbnX+O
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "Unconfigured models"
-msgstr ""
 
 #. js-lingui-id: EUHN7i
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -14278,6 +14869,11 @@ msgstr "更新"
 msgid "Update"
 msgstr "更新"
 
+#. js-lingui-id: ymv+je
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "Update {contextStoreNumberOfSelectedRecords} records"
+msgstr ""
+
 #. js-lingui-id: Y69tSP
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update payment method"
@@ -14285,6 +14881,7 @@ msgstr ""
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update records"
 msgstr ""
@@ -14328,8 +14925,8 @@ msgstr "更新"
 
 #. js-lingui-id: kwkhPe
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
-#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Upgrade"
 msgstr "アップグレード"
 
@@ -14417,9 +15014,43 @@ msgstr "URL"
 msgid "URL to Embed"
 msgstr "埋め込むURL"
 
+#. js-lingui-id: WUREiw
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "us-east-1"
+msgstr ""
+
+#. js-lingui-id: 7FaY4u
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/SettingsUsage.tsx
+#: src/pages/settings/SettingsUsage.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Usage"
+msgstr ""
+
 #. js-lingui-id: 8Jr4QC
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Usage across all workspaces on this server"
+msgstr ""
+
+#. js-lingui-id: 21hsGI
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage Analytics"
+msgstr ""
+
+#. js-lingui-id: 7vRxpC
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage by Type"
+msgstr ""
+
+#. js-lingui-id: 4C6sMs
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage by User"
+msgstr ""
+
+#. js-lingui-id: CedRjP
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+msgid "Usage Events"
 msgstr ""
 
 #. js-lingui-id: 6dMpmz
@@ -14436,6 +15067,11 @@ msgstr "1Password、Authy、Microsoft Authenticatorなどの認証アプリや�
 #. js-lingui-id: hCZsJ0
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 msgid "Use best models only"
+msgstr ""
+
+#. js-lingui-id: oTTQsc
+#: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
+msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr ""
 
 #. js-lingui-id: c6uZUV
@@ -14461,6 +15097,7 @@ msgstr ""
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -14505,6 +15142,12 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
 msgstr "ユーザーがログインしていません"
+
+#. js-lingui-id: 5r/Ozr
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+msgid "User Usage"
+msgstr ""
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -14624,6 +15267,11 @@ msgstr "アプリケーションのバージョン"
 msgid "Vertical Bar Chart"
 msgstr ""
 
+#. js-lingui-id: vSJd18
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Video"
+msgstr ""
+
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Vietnamese"
@@ -14665,7 +15313,7 @@ msgstr ""
 #. js-lingui-id: KANz0G
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "請求の詳細を表示"
 
@@ -14738,7 +15386,6 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "以前のAIチャットを見る"
 
@@ -14766,6 +15413,11 @@ msgstr ""
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
 msgstr "ビューのタイプ"
+
+#. js-lingui-id: ZjBqNE
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "View usage"
+msgstr ""
 
 #. js-lingui-id: rWiqJF
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -14862,7 +15514,7 @@ msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "10MB以下の正方形のPNG、JPEG、GIFに対応しています"
 
 #. js-lingui-id: 4pcfmN
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
 msgstr "有料プランをアクティブ化します。進めてもよろしいですか？"
 
@@ -15002,16 +15654,6 @@ msgstr ""
 msgid "When enabled, AI agents and workflow automations can discover and call this function"
 msgstr ""
 
-#. js-lingui-id: i2V4DO
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-msgid "When enabled, new AI models will be available to users by default"
-msgstr ""
-
-#. js-lingui-id: 01e9rV
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "When enabled, newly added models are available to all workspaces by default"
-msgstr ""
-
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -15030,6 +15672,11 @@ msgstr "キーが無効になる時期"
 msgid "Where"
 msgstr "条件"
 
+#. js-lingui-id: PAbCsV
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Whether this model supports chain-of-thought reasoning"
+msgstr ""
+
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
@@ -15041,7 +15688,7 @@ msgid "Will continue to the next iteration even if the current one fails"
 msgstr ""
 
 #. js-lingui-id: bB8dFW
-#: src/modules/billing/components/TrialCard.tsx
+#: src/modules/settings/billing/components/TrialCard.tsx
 msgid "With Credit Card"
 msgstr "クレジットカードで"
 
@@ -15051,7 +15698,7 @@ msgid "Without calling code"
 msgstr "コーリングコードなしで"
 
 #. js-lingui-id: 30aZb8
-#: src/modules/billing/components/TrialCard.tsx
+#: src/modules/settings/billing/components/TrialCard.tsx
 msgid "Without Credit Card"
 msgstr "クレジットカードなしで"
 
@@ -15071,6 +15718,11 @@ msgstr ""
 msgid "Workflow duplicated successfully"
 msgstr ""
 
+#. js-lingui-id: UJqqRe
+#: src/modules/settings/usage/utils/getOperationTypeLabel.ts
+msgid "Workflow Execution"
+msgstr ""
+
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Workflows"
@@ -15078,6 +15730,8 @@ msgstr "ワークフロー"
 
 #. js-lingui-id: pmUArF
 #: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/SettingsUsage.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
@@ -15093,7 +15747,6 @@ msgstr "ワークフロー"
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
-#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -15127,6 +15780,8 @@ msgstr "ワークフロー"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -15241,7 +15896,7 @@ msgid "Y axis"
 msgstr "Y軸"
 
 #. js-lingui-id: 7qI8sJ
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "年"
 
@@ -15251,7 +15906,7 @@ msgid "Year"
 msgstr "年"
 
 #. js-lingui-id: dfmB8/
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "yearly"
 msgstr "年払い"
 
@@ -15328,32 +15983,33 @@ msgid "You do not have permission to view this widget"
 msgstr "このウィジェットを表示する権限がありません。"
 
 #. js-lingui-id: M2lYgq
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "メーター制ティア変更をスケジュールしました。キャンセルしますか？"
 
 #. js-lingui-id: qXzOWu
 #: src/modules/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands.tsx
+#: src/modules/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation.ts
 msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
 msgstr ""
 
 #. js-lingui-id: z8eKS7
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "you will be charged ${enterprisePrice} per user per month"
 msgstr "ユーザーあたり月額${enterprisePrice}が請求されます"
 
 #. js-lingui-id: u3S6u8
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${monthlyPrice} per user per month billed monthly. The change will be applied the {beautifiedRenewDate}."
 msgstr "ユーザーあたり月額${monthlyPrice}が請求され、月額で請求されます。変更は、{beautifiedRenewDate}に適用されます。"
 
 #. js-lingui-id: /T5zAB
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${proPrice} per user per month"
 msgstr "ユーザーあたり月額${proPrice}が請求されます"
 
 #. js-lingui-id: W3k5LA
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "You will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "年間請求で、ユーザーあたり年間${yearlyPrice}が請求されます。現在のサブスクリプションとの比例計算が適用されます。"
 
@@ -15363,7 +16019,7 @@ msgid "You will lose all your mappings."
 msgstr "すべてのマッピングが失われます。"
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "ワークスペースのサブドメインを変更しようとしています。この操作により、すべてのユーザーがログアウトされます。"
 
@@ -15432,6 +16088,11 @@ msgstr "表示名"
 msgid "Your name as it will be displayed on the app"
 msgstr "アプリ上での表示名"
 
+#. js-lingui-id: MxZ8eH
+#: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
+msgid "Your provider API key for authentication"
+msgstr ""
+
 #. js-lingui-id: 319YPG
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription is active but your validity token is invalid or has expired. Try reloading it or contact support."
@@ -15453,12 +16114,12 @@ msgid "Your subscription status is: {statusLabel}"
 msgstr ""
 
 #. js-lingui-id: QOd24n
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and "
 msgstr "試用期間が終了し、"
 
 #. js-lingui-id: 2Fkd7s
-#: src/modules/billing/hooks/useBillingWording.ts
+#: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your trial period will end, and you will be charged ${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied."
 msgstr "試用期間が終了し、年間請求で、ユーザーあたり年間${yearlyPrice}が請求されます。現在のサブスクリプションとの比例計算が適用されます。"
 
@@ -15473,6 +16134,6 @@ msgid "Your workspace doesn't have an active subscription. Please contact your a
 msgstr "お客様のワークスペースにはアクティブなサブスクリプションがありません。管理者に連絡してください。"
 
 #. js-lingui-id: RhNbPE
-#: src/modules/billing/components/SettingsBillingContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Your workspace will be disabled"
 msgstr "ワークスペースが無効になります"

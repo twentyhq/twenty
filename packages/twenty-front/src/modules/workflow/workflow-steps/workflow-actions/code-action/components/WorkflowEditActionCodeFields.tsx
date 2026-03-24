@@ -38,7 +38,7 @@ export const WorkflowEditActionCodeFields = ({
 }: WorkflowEditActionCodeFieldsProps) => {
   return (
     <StyledContainer fullWidth={fullWidth}>
-      {Object.entries(functionInput).map(([inputKey, inputValue]) => {
+      {Object.entries(functionInput ?? {}).map(([inputKey, inputValue]) => {
         const currentPath = [...path, inputKey];
         const pathKey = currentPath.join('.');
 

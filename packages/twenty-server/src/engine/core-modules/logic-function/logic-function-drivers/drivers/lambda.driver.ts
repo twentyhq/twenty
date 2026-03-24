@@ -114,6 +114,9 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
 
 export class LambdaDriver implements LogicFunctionDriver {
   private lambdaClient: Lambda | undefined;
+  private assumeRoleCredentials:
+    | { accessKeyId: string; secretAccessKey: string; sessionToken: string }
+    | undefined;
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
@@ -124,30 +127,16 @@ export class LambdaDriver implements LogicFunctionDriver {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
   }
 
-  private async getLambdaClient() {
-    if (
-      !isDefined(this.lambdaClient) ||
-      (isDefined(this.options.subhostingRole) &&
-        isDefined(this.credentialsExpiry) &&
+  private areAssumeRoleCredentialsExpired(): boolean {
+    return (
+      !isDefined(this.assumeRoleCredentials) ||
+      (isDefined(this.credentialsExpiry) &&
         new Date() >= this.credentialsExpiry)
-    ) {
-      this.lambdaClient = new Lambda({
-        ...this.options,
-        ...(isDefined(this.options.subhostingRole) && {
-          credentials: await this.getAssumeRoleCredentials(),
-        }),
-      });
-    }
-
-    return this.lambdaClient;
+    );
   }
 
-  private async getAssumeRoleCredentials() {
+  private async refreshAssumeRoleCredentials() {
     const stsClient = new STSClient({ region: this.options.region });
-
-    this.credentialsExpiry = new Date(
-      Date.now() + (CREDENTIALS_DURATION_IN_SECONDS - 60 * 5) * 1000,
-    );
 
     const assumeRoleCommand = new AssumeRoleCommand({
       RoleArn: this.options.subhostingRole,
@@ -166,11 +155,42 @@ export class LambdaDriver implements LogicFunctionDriver {
       throw new Error('Failed to assume role');
     }
 
-    return {
+    this.assumeRoleCredentials = {
       accessKeyId: Credentials.AccessKeyId,
       secretAccessKey: Credentials.SecretAccessKey,
       sessionToken: Credentials.SessionToken,
     };
+
+    this.credentialsExpiry = new Date(
+      Date.now() + (CREDENTIALS_DURATION_IN_SECONDS - 60 * 5) * 1000,
+    );
+
+    this.lambdaClient = undefined;
+  }
+
+  private async getAssumeRoleCredentials() {
+    if (this.areAssumeRoleCredentialsExpired()) {
+      await this.refreshAssumeRoleCredentials();
+    }
+
+    return this.assumeRoleCredentials!;
+  }
+
+  private async getLambdaClient() {
+    if (
+      !isDefined(this.lambdaClient) ||
+      (isDefined(this.options.subhostingRole) &&
+        this.areAssumeRoleCredentialsExpired())
+    ) {
+      this.lambdaClient = new Lambda({
+        ...this.options,
+        ...(isDefined(this.options.subhostingRole) && {
+          credentials: await this.getAssumeRoleCredentials(),
+        }),
+      });
+    }
+
+    return this.lambdaClient;
   }
 
   private async generatePresignedUploadUrl(

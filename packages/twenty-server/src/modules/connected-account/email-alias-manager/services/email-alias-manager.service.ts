@@ -39,7 +39,8 @@ export class EmailAliasManagerService {
           );
         break;
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-        // IMAP Protocol does not support email aliases
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
         handleAliases = [];
         break;
       default:

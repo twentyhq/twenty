@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { DataSource, type QueryRunner } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -154,9 +154,11 @@ export class WorkspaceMigrationRunnerService {
   run = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
+    queryRunner: externalQueryRunner,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    queryRunner?: QueryRunner;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -164,7 +166,10 @@ export class WorkspaceMigrationRunnerService {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const queryRunner =
+      externalQueryRunner ?? this.coreDataSource.createQueryRunner();
+    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
+
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
     ];
@@ -214,10 +219,12 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.time('Runner', 'Transaction execution');
 
-    try {
+    if (!isTransactionAlreadyActive) {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+    }
 
+    try {
       const allMetadataEvents: MetadataEvent[] = [];
 
       for (const action of actions) {
@@ -243,7 +250,9 @@ export class WorkspaceMigrationRunnerService {
         allMetadataEvents.push(...metadataEvents);
       }
 
-      await queryRunner.commitTransaction();
+      if (!isTransactionAlreadyActive) {
+        await queryRunner.commitTransaction();
+      }
 
       this.logger.timeEnd('Runner', 'Transaction execution');
 
@@ -256,10 +265,12 @@ export class WorkspaceMigrationRunnerService {
 
       return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
     } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction().catch((error) =>
+      if (!isTransactionAlreadyActive && queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction().catch((rollbackError) =>
           // oxlint-disable-next-line no-console
-          console.trace(`Failed to rollback transaction: ${error.message}`),
+          console.trace(
+            `Failed to rollback transaction: ${rollbackError.message}`,
+          ),
         );
       }
 
@@ -288,7 +299,9 @@ export class WorkspaceMigrationRunnerService {
         code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
       });
     } finally {
-      await queryRunner.release();
+      if (!isTransactionAlreadyActive) {
+        await queryRunner.release();
+      }
     }
   };
 }

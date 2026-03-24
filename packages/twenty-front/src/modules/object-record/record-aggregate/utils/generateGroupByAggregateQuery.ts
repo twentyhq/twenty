@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getGroupByAggregateQueryName } from '@/object-record/record-aggregate/utils/getGroupByAggregateQueryName';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import { capitalize } from 'twenty-shared/utils';
@@ -9,7 +9,7 @@ export const generateGroupByAggregateQuery = ({
   objectMetadataItem,
   aggregateOperationGqlFields,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   aggregateOperationGqlFields: string[];
 }) => {
   const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);

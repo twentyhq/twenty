@@ -1,0 +1,68 @@
+name: AI Catalog Sync
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Daily at 6 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Build dependencies
+        run: npx nx build twenty-shared
+
+      - name: Run catalog sync
+        run: npx nx run twenty-server:ts-node-no-deps-transpile-only -- ./scripts/ai-sync-models-dev.ts
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet packages/twenty-server/src/engine/metadata-modules/ai/ai-models/ai-providers.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create pull request
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: sync AI model catalog from models.dev'
+          title: 'chore: sync AI model catalog from models.dev'
+          body: |
+            Automated daily sync of `ai-providers.json` from [models.dev](https://models.dev).
+
+            This PR updates pricing, context windows, and model availability based on the latest data.
+            New models meeting inclusion criteria (tool calling, pricing data, context limits) are added automatically.
+            Deprecated models are detected based on cost-efficiency within the same model family.
+
+            **Please review before merging** — verify no critical models were incorrectly deprecated.
+          branch: chore/ai-catalog-sync
+          base: main
+          labels: ai, automated
+          delete-branch: true
+
+      - name: Trigger automerge
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          repository: twentyhq/twenty-infra
+          event-type: automated-pr-ready

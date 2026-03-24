@@ -93,6 +93,8 @@ export type ViewConfiguration = {
 
 export type FieldConfiguration = {
   configurationType: 'FIELD';
+  fieldMetadataId: string;
+  fieldDisplayMode: 'CARD' | 'FIELD' | 'VIEW';
 };
 
 export type FieldsConfiguration = {

@@ -1,17 +1,17 @@
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { convertAggregateOperationForDateField } from '@/side-panel/pages/page-layout/utils/convertAggregateOperationForDateField';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { TEST_BAR_CHART_CONFIGURATION } from '~/testing/mock-data/widget-configurations';
 
 const createMockObjectMetadataItem = (
   fields: { id: string; type: FieldMetadataType }[],
-): ObjectMetadataItem =>
+): EnrichedObjectMetadataItem =>
   ({
     id: 'object-1',
     fields: fields.map((f) => ({ ...f, name: 'field' })),
-  }) as ObjectMetadataItem;
+  }) as EnrichedObjectMetadataItem;
 
 describe('convertAggregateOperationForDateField', () => {
   it('returns COUNT when date field uses MIN operation', () => {
