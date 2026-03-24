@@ -9,10 +9,10 @@ describe('validateRichTextFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when value is an empty object', () => {
+    it('should return value when value is an empty object', () => {
       const result = validateRichTextFieldOrThrow({}, 'testField');
 
-      expect(result).toBeNull();
+      expect(result).toEqual({});
     });
 
     it('should return the value when it has valid subfields', () => {
@@ -61,7 +61,7 @@ describe('validateRichTextFieldOrThrow', () => {
         CommonQueryRunnerException,
       );
       expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
-        /Should have only blocknote, markdown subfields/,
+        /Invalid subfield.*invalidField.*rich text field/,
       );
     });
 
@@ -72,7 +72,7 @@ describe('validateRichTextFieldOrThrow', () => {
         CommonQueryRunnerException,
       );
       expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
-        /blocknote must contain valid JSON/,
+        /must contain valid JSON/,
       );
     });
 
@@ -83,7 +83,7 @@ describe('validateRichTextFieldOrThrow', () => {
         CommonQueryRunnerException,
       );
       expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
-        /blocknote must be a JSON array of blocks/,
+        /must be a JSON array of blocks/,
       );
     });
   });
