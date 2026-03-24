@@ -1177,6 +1177,16 @@ msgstr ""
 msgid "Empty field permissions are not allowed."
 msgstr "不允許空的欄位權限。"
 
+#. js-lingui-id: g2om8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Engine component key is required"
+msgstr ""
+
+#. js-lingui-id: BmtSAK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "engineComponentKey is required"
+msgstr ""
+
 #. js-lingui-id: ArAFBo
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Enterprise validity token is not valid."
@@ -1207,16 +1217,6 @@ msgstr "錯誤"
 #. js-lingui-id: b3ictS
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
-msgstr ""
-
-#. js-lingui-id: gyqLlt
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflow version, front component or engine component key is required"
-msgstr ""
-
-#. js-lingui-id: ucm3bq
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflowVersionId, frontComponentUniversalIdentifier or engineComponentKey is required"
 msgstr ""
 
 #. js-lingui-id: AiFXmG
@@ -1580,6 +1580,21 @@ msgstr "星期五"
 msgid "Front component is not ready."
 msgstr ""
 
+#. js-lingui-id: A7aUMa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Front component is required for front component renderer items"
+msgstr ""
+
+#. js-lingui-id: 0aXgXb
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Front component must not be set for this item type"
+msgstr ""
+
+#. js-lingui-id: AfxLzg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Front component must not be set for workflow trigger items"
+msgstr ""
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1598,6 +1613,21 @@ msgstr ""
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
+msgstr ""
+
+#. js-lingui-id: 4wM9Cs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_RENDERER"
+msgstr ""
+
+#. js-lingui-id: N6YN7J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
+msgstr ""
+
+#. js-lingui-id: z8/E1J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr ""
 
 #. js-lingui-id: pouguB
@@ -5147,6 +5177,36 @@ msgstr "工作流版本未包含觸發器"
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "工作流版本不在草稿狀態"
+
+#. js-lingui-id: 4OOQwW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Workflow version is required for workflow trigger items"
+msgstr ""
+
+#. js-lingui-id: LrPIBF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Workflow version must not be set for front component renderer items"
+msgstr ""
+
+#. js-lingui-id: f9Rp2t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Workflow version must not be set for this item type"
+msgstr ""
+
+#. js-lingui-id: m34s12
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
+msgstr ""
+
+#. js-lingui-id: +67q2u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
+msgstr ""
+
+#. js-lingui-id: lscvqN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "workflowVersionId must not be set when engineComponentKey is FRONT_COMPONENT_RENDERER"
+msgstr ""
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
