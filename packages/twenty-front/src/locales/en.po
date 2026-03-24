@@ -973,17 +973,20 @@ msgid "Add item to folder"
 msgstr "Add item to folder"
 
 #. js-lingui-id: gaZXkv
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "Add menu item"
 msgstr "Add menu item"
 
 #. js-lingui-id: JbORSt
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item after"
 msgstr "Add menu item after"
 
 #. js-lingui-id: DKlI/M
+#: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Add menu item before"
 msgstr "Add menu item before"
@@ -9496,7 +9499,6 @@ msgstr "New Key"
 
 #. js-lingui-id: K2wBR9
 #: src/modules/side-panel/hooks/useSidePanelMenu.ts
-#: src/modules/navigation-menu-item/edit/side-panel/hooks/useNavigationMenuItemEditOrganizeActions.ts
 #: src/modules/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage.ts
 #: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
