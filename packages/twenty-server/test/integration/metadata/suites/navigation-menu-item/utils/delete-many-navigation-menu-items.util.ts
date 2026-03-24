@@ -10,10 +10,12 @@ export const deleteManyNavigationMenuItems = async ({
   ids,
   gqlFields,
   expectToFail = false,
+  token,
 }: {
   ids: string[];
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   deleteManyNavigationMenuItems: NavigationMenuItemDTO[];
 }> => {
@@ -22,7 +24,7 @@ export const deleteManyNavigationMenuItems = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

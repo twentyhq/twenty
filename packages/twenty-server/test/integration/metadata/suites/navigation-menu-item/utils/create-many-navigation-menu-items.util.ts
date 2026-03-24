@@ -11,10 +11,12 @@ export const createManyNavigationMenuItems = async ({
   inputs,
   gqlFields,
   expectToFail = false,
+  token,
 }: {
   inputs: CreateNavigationMenuItemInput[];
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   createManyNavigationMenuItems: NavigationMenuItemDTO[];
 }> => {
@@ -23,7 +25,7 @@ export const createManyNavigationMenuItems = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

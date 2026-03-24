@@ -8,6 +8,17 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 
 describe('NavigationMenuItem batch deletion should succeed', () => {
   let personObjectMetadataId: string;
+  let pendingCleanupIds: string[] = [];
+
+  afterEach(async () => {
+    if (pendingCleanupIds.length > 0) {
+      await deleteManyNavigationMenuItems({
+        ids: pendingCleanupIds,
+        expectToFail: false,
+      });
+      pendingCleanupIds = [];
+    }
+  });
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -54,10 +65,14 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
     const items = createData.createManyNavigationMenuItems;
     const idsToDelete = items.map((item) => item.id);
 
+    pendingCleanupIds = [...idsToDelete];
+
     const { data: deleteData } = await deleteManyNavigationMenuItems({
       ids: idsToDelete,
       expectToFail: false,
     });
+
+    pendingCleanupIds = [];
 
     jestExpectToBeDefined(deleteData?.deleteManyNavigationMenuItems);
     expect(deleteData.deleteManyNavigationMenuItems).toHaveLength(2);
@@ -101,10 +116,14 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
     const items = createData.createManyNavigationMenuItems;
     const childId = items[1].id;
 
+    pendingCleanupIds = items.map((item) => item.id);
+
     const { data: deleteData } = await deleteManyNavigationMenuItems({
       ids: [folderId],
       expectToFail: false,
     });
+
+    pendingCleanupIds = [];
 
     jestExpectToBeDefined(deleteData?.deleteManyNavigationMenuItems);
     expect(deleteData.deleteManyNavigationMenuItems).toHaveLength(1);
@@ -138,10 +157,14 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
     jestExpectToBeDefined(createData?.createManyNavigationMenuItems);
     const itemId = createData.createManyNavigationMenuItems[0].id;
 
+    pendingCleanupIds = [itemId];
+
     const { data: deleteData } = await deleteManyNavigationMenuItems({
       ids: [itemId, itemId],
       expectToFail: false,
     });
+
+    pendingCleanupIds = [];
 
     jestExpectToBeDefined(deleteData?.deleteManyNavigationMenuItems);
     expect(deleteData.deleteManyNavigationMenuItems).toHaveLength(1);

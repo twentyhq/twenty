@@ -74,6 +74,8 @@ describe('NavigationMenuItem batch creation should succeed', () => {
 
     const items = data.createManyNavigationMenuItems;
 
+    createdIds = items.map((item) => item.id);
+
     expect(items).toHaveLength(2);
 
     expect(items[0]).toMatchObject({
@@ -87,8 +89,6 @@ describe('NavigationMenuItem batch creation should succeed', () => {
       targetRecordId: targetRecordId2,
       targetObjectMetadataId: companyObjectMetadataId,
     });
-
-    createdIds = items.map((item) => item.id);
   });
 
   it('should create a folder and a child item in a single batch', async () => {
@@ -118,6 +118,8 @@ describe('NavigationMenuItem batch creation should succeed', () => {
 
     const items = data.createManyNavigationMenuItems;
 
+    createdIds = items.map((item) => item.id);
+
     expect(items).toHaveLength(2);
 
     expect(items[0]).toMatchObject({
@@ -130,8 +132,6 @@ describe('NavigationMenuItem batch creation should succeed', () => {
       targetRecordId,
       folderId,
     });
-
-    createdIds = items.map((item) => item.id);
   });
 
   it('should preserve input order in the response', async () => {
@@ -167,12 +167,12 @@ describe('NavigationMenuItem batch creation should succeed', () => {
 
     const items = data.createManyNavigationMenuItems;
 
+    createdIds = items.map((item) => item.id);
+
     expect(items).toHaveLength(3);
     expect(items[0].targetRecordId).toBe(targetRecordId1);
     expect(items[1].targetRecordId).toBe(targetRecordId2);
     expect(items[2].targetRecordId).toBe(targetRecordId3);
-
-    createdIds = items.map((item) => item.id);
   });
 
   it('should return empty array for empty inputs', async () => {
