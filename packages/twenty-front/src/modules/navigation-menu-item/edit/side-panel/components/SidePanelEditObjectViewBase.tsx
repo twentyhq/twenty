@@ -70,7 +70,9 @@ export const SidePanelEditObjectViewBase = ({
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-      {showColorOption && isDefined(selectedItem) && (
+      {showColorOption &&
+        isDefined(selectedItem) &&
+        objectMetadataItem?.isSystem !== true && (
         <SidePanelGroup heading={t`Customize`}>
           <SidePanelEditColorOption
             navigationMenuItemId={selectedItem.id}
