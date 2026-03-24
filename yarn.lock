@@ -89,18 +89,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/groq@npm:^3.0.24":
-  version: 3.0.24
-  resolution: "@ai-sdk/groq@npm:3.0.24"
-  dependencies:
-    "@ai-sdk/provider": "npm:3.0.8"
-    "@ai-sdk/provider-utils": "npm:4.0.15"
-  peerDependencies:
-    zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/10e2b017f52006fcbcd4c46b78a3f02e3b3df3f337982d1669785df1492ca9a8793276403c5bff2c59bfd11ff1f6c58bcc1d3c49738bffd7ba13f527e85137b6
-  languageName: node
-  linkType: hard
-
 "@ai-sdk/mistral@npm:^3.0.20":
   version: 3.0.25
   resolution: "@ai-sdk/mistral@npm:3.0.25"
@@ -56663,7 +56651,6 @@ __metadata:
     "@ai-sdk/amazon-bedrock": "npm:^3.0.83"
     "@ai-sdk/anthropic": "npm:^3.0.46"
     "@ai-sdk/google": "npm:^3.0.30"
-    "@ai-sdk/groq": "npm:^3.0.24"
     "@ai-sdk/mistral": "npm:^3.0.20"
     "@ai-sdk/openai": "npm:^3.0.30"
     "@ai-sdk/provider-utils": "npm:^4.0.15"
