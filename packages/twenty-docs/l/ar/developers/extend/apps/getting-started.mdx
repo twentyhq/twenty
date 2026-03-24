@@ -20,7 +20,7 @@ description: أنشئ أول تطبيق Twenty خلال دقائق.
 ## المتطلبات الأساسية
 
 * Node.js 24+ وYarn 4
-* مساحة عمل Twenty ومفتاح واجهة برمجة التطبيقات (أنشئ واحدًا على https://app.twenty.com/settings/api-webhooks)
+* Docker (لخادم تطوير Twenty المحلي)
 
 ## البدء
 
@@ -38,7 +38,7 @@ yarn twenty app:dev
 يدعم المُهيئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -222,6 +222,18 @@ yarn add -D twenty-sdk
 ```
 
 الآن يمكنك تشغيل جميع الأوامر عبر `yarn twenty <command>`، مثلًا: `yarn twenty app:dev`، `yarn twenty help`، إلخ.
+
+## كيفية استخدام مثيل محلي من Twenty
+
+إذا كنت تقوم بتشغيل مثيل محلي من Twenty بالفعل (على سبيل المثال عبر `npx nx start twenty-server`)، فيمكنك الاتصال به بدلًا من استخدام Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## استكشاف الأخطاء وإصلاحها
 

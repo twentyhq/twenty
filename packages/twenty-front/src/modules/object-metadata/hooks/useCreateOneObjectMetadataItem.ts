@@ -7,7 +7,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
@@ -26,7 +26,8 @@ export const useCreateOneObjectMetadataItem = () => {
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { addToDraft, replaceDraft, applyChanges } = useMetadataStore();
+  const { addToDraft, replaceDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const createOneObjectMetadataItem = async (
     input: CreateObjectInput,

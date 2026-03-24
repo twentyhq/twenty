@@ -7,10 +7,10 @@ import {
   UpdateNavigationMenuItemDocument,
 } from '~/generated-metadata/graphql';
 
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 
 export const useUpdateNavigationMenuItem = () => {
-  const { addToDraft, applyChanges } = useMetadataStore();
+  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const [updateNavigationMenuItemMutation] = useMutation(
     UpdateNavigationMenuItemDocument,

@@ -78,6 +78,18 @@ npx create-twenty-app@latest my-app
 npx create-twenty-app@latest my-app --minimal
 ```
 
+### Come utilizzare un'istanza locale di Twenty
+
+Se stai già eseguendo un'istanza locale di Twenty, puoi connetterti ad essa invece di usare Docker. Indica la porta su cui il tuo server locale è in ascolto (predefinita: `3000`):
+
+```bash filename="Terminal"
+# Durante lo scaffolding
+npx create-twenty-app@latest my-app --port 3000
+
+# Oppure dopo lo scaffolding
+yarn twenty remote add --local --port 3000
+```
+
 Da qui puoi:
 
 ```bash filename="Terminal"

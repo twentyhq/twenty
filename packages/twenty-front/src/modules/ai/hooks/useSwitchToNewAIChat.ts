@@ -8,6 +8,7 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
@@ -48,7 +49,8 @@ export const useSwitchToNewAIChat = () => {
     setAgentChatInput(newChatDraft);
     setCurrentAIChatThreadTitle(null);
     setAgentChatUsage(null);
-    openAskAIPage({ resetNavigationStack: false });
+    openAskAIPage();
+    store.set(shouldFocusChatEditorState.atom, true);
   };
 
   return { switchToNewChat };

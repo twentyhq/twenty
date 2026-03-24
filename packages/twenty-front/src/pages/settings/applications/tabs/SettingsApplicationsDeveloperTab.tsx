@@ -100,7 +100,7 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const syncCommands = [
     // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'yarn twenty app:dev',
+    'yarn twenty dev',
   ];
 
   const syncCopyButton = (
@@ -124,13 +124,7 @@ export const SettingsApplicationsDeveloperTab = () => {
     const badgeConfig = SOURCE_TYPE_BADGE_CONFIG[item.sourceType];
 
     return (
-      <StyledRowRightContainer>
-        <Tag text={badgeConfig.label} color={badgeConfig.color} preventShrink />
-        <IconChevronRight
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
-      </StyledRowRightContainer>
+      <Tag text={badgeConfig.label} color={badgeConfig.color} preventShrink />
     );
   };
 

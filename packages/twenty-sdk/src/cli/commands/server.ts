@@ -1,3 +1,4 @@
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
@@ -45,6 +46,20 @@ const containerExists = (): boolean => {
   }
 };
 
+const checkDockerRunning = (): boolean => {
+  try {
+    execSync('docker info', { stdio: 'ignore' });
+
+    return true;
+  } catch {
+    console.error(
+      chalk.red('Docker is not running. Please start Docker and try again.'),
+    );
+
+    return false;
+  }
+};
+
 const validatePort = (value: string): number => {
   const port = parseInt(value, 10);
 
@@ -69,11 +84,21 @@ export const registerServerCommands = (program: Command): void => {
       let port = validatePort(options.port);
 
       if (await checkServerHealth(port)) {
+        const localUrl = `http://localhost:${port}`;
+        const configService = new ConfigService();
+
+        ConfigService.setActiveRemote('local');
+        await configService.setConfig({ apiUrl: localUrl });
+
         console.log(
           chalk.green(`Twenty server is already running on localhost:${port}.`),
         );
 
         return;
+      }
+
+      if (!checkDockerRunning()) {
+        process.exit(1);
       }
 
       if (isContainerRunning()) {
@@ -93,30 +118,13 @@ export const registerServerCommands = (program: Command): void => {
           );
         }
 
+        port = existingPort;
+
         console.log(chalk.gray('Starting existing container...'));
         execSync(`docker start ${CONTAINER_NAME}`, { stdio: 'ignore' });
-        port = existingPort;
       } else {
-        try {
-          execSync('docker info', { stdio: 'ignore' });
-        } catch {
-          console.error(
-            chalk.red(
-              'Docker is not running. Please start Docker and try again.',
-            ),
-          );
-          process.exit(1);
-        }
-
-        console.log(chalk.gray(`Pulling ${IMAGE}...`));
-
-        try {
-          execSync(`docker pull ${IMAGE}`, { stdio: 'inherit' });
-        } catch {
-          console.log(chalk.gray('Pull failed, trying local image...'));
-        }
-
         console.log(chalk.gray('Starting Twenty container...'));
+
         const runResult = spawnSync(
           'docker',
           [
@@ -136,17 +144,18 @@ export const registerServerCommands = (program: Command): void => {
         );
 
         if (runResult.status !== 0) {
-          console.error(chalk.red('Failed to start Twenty container.'));
+          console.error(chalk.red('\nFailed to start Twenty container.'));
           process.exit(runResult.status ?? 1);
         }
       }
 
-      console.log(
-        chalk.green(`Twenty server starting on http://localhost:${port}`),
-      );
-      console.log(
-        chalk.gray('Run `yarn twenty server logs` to follow startup progress.'),
-      );
+      const localUrl = `http://localhost:${port}`;
+      const configService = new ConfigService();
+
+      ConfigService.setActiveRemote('local');
+      await configService.setConfig({ apiUrl: localUrl });
+
+      console.log(chalk.green(`\nLocal remote configured → ${localUrl}`));
     });
 
   server
