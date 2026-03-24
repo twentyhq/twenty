@@ -1,40 +1,37 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { workflowRunCallsFamilyState } from '@/command-menu-item/engine-command/states/workflowRunCallsFamilyState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
+import { isMountedTriggerWorkflowVersionCommandState } from '@/command-menu-item/engine-command/utils/isMountedTriggerWorkflowVersionCommandState';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useCallback } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const RunWorkflowEngineCommand = () => {
-  const engineCommandId = useAvailableComponentInstanceIdOrThrow(
-    CommandComponentInstanceContext,
-  );
-
-  const workflowRunCalls = useAtomFamilyStateValue(
-    workflowRunCallsFamilyState,
-    engineCommandId,
-  );
-
-  const setWorkflowRunCalls = useSetAtomFamilyState(
-    workflowRunCallsFamilyState,
-    engineCommandId,
-  );
+  const context = useMountedCommandState();
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
   const execute = useCallback(async () => {
-    for (const call of workflowRunCalls) {
-      await runWorkflowVersion({
-        workflowId: call.workflowId,
-        workflowVersionId: call.workflowVersionId,
-        payload: call.payload,
-      });
+    if (!isMountedTriggerWorkflowVersionCommandState(context)) {
+      return;
     }
 
-    setWorkflowRunCalls([]);
-  }, [workflowRunCalls, runWorkflowVersion, setWorkflowRunCalls]);
+    if (!isNonEmptyArray(context.payloads)) {
+      await runWorkflowVersion({
+        workflowId: context.workflowId,
+        workflowVersionId: context.workflowVersionId,
+      });
+
+      return;
+    }
+
+    for (const payload of context.payloads) {
+      await runWorkflowVersion({
+        workflowId: context.workflowId,
+        workflowVersionId: context.workflowVersionId,
+        payload,
+      });
+    }
+  }, [context, runWorkflowVersion]);
 
   return <HeadlessEngineCommandWrapperEffect execute={execute} />;
 };

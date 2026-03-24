@@ -1,12 +1,12 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SaveDashboardSingleRecordCommand = () => {
-  const { selectedRecords } = useMountedEngineCommandContext();
+  const { selectedRecords } = useMountedCommandState();
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {

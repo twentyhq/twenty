@@ -1,10 +1,10 @@
 import { Suspense, lazy } from 'react';
 
+import { useMountedCommandState } from '@/command-menu-item/engine-command/hooks/useMountedCommandState';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
-import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { isMountedFrontComponentCommandState } from '@/command-menu-item/engine-command/utils/isMountedFrontComponentCommandState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -19,11 +19,10 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
     CommandComponentInstanceContext,
   );
 
-  const mountedCommands = useAtomStateValue(mountedCommandsState);
-  const context = mountedCommands.get(commandMenuItemId);
+  const context = useMountedCommandState();
 
-  if (!isDefined(context?.frontComponentId)) {
-    return null;
+  if (!isMountedFrontComponentCommandState(context)) {
+    throw new Error('Context is not a mounted front component command state');
   }
 
   const objectNameSingular = context.objectMetadataItem?.nameSingular;

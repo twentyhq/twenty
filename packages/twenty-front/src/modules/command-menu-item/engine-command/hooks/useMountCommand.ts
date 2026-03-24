@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { type MountedCommandState } from '@/command-menu-item/engine-command/types/MountedCommandState';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -25,11 +26,17 @@ export const useMountCommand = () => {
       contextStoreInstanceId,
       engineComponentKey,
       frontComponentId,
+      workflowId,
+      workflowVersionId,
+      payloads,
     }: {
       engineCommandId: string;
       contextStoreInstanceId: string;
       engineComponentKey: EngineComponentKey;
       frontComponentId?: string;
+      workflowId?: string;
+      workflowVersionId?: string;
+      payloads?: Record<string, any>[];
     }) => {
       const objectMetadataItemId = store.get(
         contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
@@ -111,20 +118,36 @@ export const useMountCommand = () => {
             )
           : null;
 
+      const baseState = {
+        engineComponentKey,
+        contextStoreInstanceId,
+        objectMetadataItem: objectMetadataItem ?? null,
+        currentViewId,
+        recordIndexId,
+        targetedRecordsRule,
+        selectedRecords,
+        graphqlFilter,
+      };
+
+      let commandState: MountedCommandState;
+
+      if (isDefined(frontComponentId)) {
+        commandState = { ...baseState, frontComponentId };
+      } else if (isDefined(workflowId) && isDefined(workflowVersionId)) {
+        commandState = {
+          ...baseState,
+          workflowId,
+          workflowVersionId,
+          payloads: payloads ?? [],
+        };
+      } else {
+        commandState = baseState;
+      }
+
       store.set(mountedCommandsState.atom, (previousMap) => {
         const newMap = new Map(previousMap);
 
-        newMap.set(engineCommandId, {
-          engineComponentKey,
-          contextStoreInstanceId,
-          objectMetadataItem: objectMetadataItem ?? null,
-          currentViewId,
-          recordIndexId,
-          targetedRecordsRule,
-          selectedRecords,
-          graphqlFilter,
-          frontComponentId,
-        });
+        newMap.set(engineCommandId, commandState);
 
         return newMap;
       });

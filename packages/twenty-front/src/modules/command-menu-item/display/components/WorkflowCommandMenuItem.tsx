@@ -1,10 +1,6 @@
 import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
 import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine-command/selectors/isEngineCommandMountedFamilySelector';
-import {
-  type WorkflowRunCall,
-  workflowRunCallsFamilyState,
-} from '@/command-menu-item/engine-command/states/workflowRunCallsFamilyState';
 import { isBulkRecordsManualTrigger } from '@/command-menu-item/record/utils/isBulkRecordsManualTrigger';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -73,7 +69,7 @@ export const WorkflowCommandMenuItem = ({
       return;
     }
 
-    const calls: WorkflowRunCall[] = [];
+    const payloads: Record<string, any>[] = [];
 
     switch (availabilityType) {
       case CommandMenuItemAvailabilityTypeEnum.RECORD_SELECTION: {
@@ -100,13 +96,11 @@ export const WorkflowCommandMenuItem = ({
             )
             .filter(isDefined);
 
-          calls.push({
-            workflowId: workflowVersion.workflowId,
-            workflowVersionId: workflowVersion.id,
-            payload: isDefined(objectMetadataItem)
-              ? { [objectMetadataItem.namePlural]: selectedRecords }
-              : undefined,
-          });
+          if (isDefined(objectMetadataItem)) {
+            payloads.push({
+              [objectMetadataItem.namePlural]: selectedRecords,
+            });
+          }
 
           break;
         }
@@ -120,38 +114,25 @@ export const WorkflowCommandMenuItem = ({
             continue;
           }
 
-          calls.push({
-            workflowId: workflowVersion.workflowId,
-            workflowVersionId: workflowVersion.id,
-            payload: selectedRecord,
-          });
+          payloads.push(selectedRecord);
         }
 
         break;
       }
       case CommandMenuItemAvailabilityTypeEnum.GLOBAL:
       case CommandMenuItemAvailabilityTypeEnum.FALLBACK: {
-        calls.push({
-          workflowId: workflowVersion.workflowId,
-          workflowVersionId: workflowVersion.id,
-        });
-
         break;
       }
     }
 
-    if (calls.length > 0) {
-      store.set(
-        workflowRunCallsFamilyState.atomFamily(commandMenuItemId),
-        calls,
-      );
-
-      mountCommand({
-        engineCommandId: commandMenuItemId,
-        contextStoreInstanceId,
-        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
-      });
-    }
+    mountCommand({
+      engineCommandId: commandMenuItemId,
+      contextStoreInstanceId,
+      engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+      workflowId: workflowVersion.workflowId,
+      workflowVersionId: workflowVersion.id,
+      payloads,
+    });
   };
 
   return (

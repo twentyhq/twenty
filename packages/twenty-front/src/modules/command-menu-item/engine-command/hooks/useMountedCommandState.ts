@@ -4,19 +4,19 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMountedEngineCommandContext = () => {
+export const useMountedCommandState = () => {
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
     CommandComponentInstanceContext,
   );
 
   const mountedCommands = useAtomStateValue(mountedCommandsState);
-  const context = mountedCommands.get(engineCommandId);
+  const mountedCommandState = mountedCommands.get(engineCommandId);
 
-  if (!isDefined(context)) {
+  if (!isDefined(mountedCommandState)) {
     throw new Error(
-      'Engine command mount context not found. Make sure the command was mounted via the engine command mount flow.',
+      'Mounted command state not found. Make sure the command was mounted via the command mount flow.',
     );
   }
 
-  return context;
+  return mountedCommandState;
 };
