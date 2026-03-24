@@ -27,8 +27,9 @@ export const MultiWorkspaceDropdownButton = () => {
   return (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
-      dropdownOffset={{ y: -30, x: -5 }}
+      dropdownOffset={{ y: -29, x: -5 }}
       clickableComponent={<MultiWorkspaceDropdownClickableComponent />}
+      clickableComponentWidth="100%"
       dropdownComponents={<DropdownComponents />}
       onClose={() => {
         setMultiWorkspaceDropdown('default');
