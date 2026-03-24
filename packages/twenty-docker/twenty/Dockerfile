@@ -161,7 +161,6 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     SIGN_IN_PREFILLED=true
 
 EXPOSE 3000
-VOLUME ["/data/postgres", "/app/.local-storage"]
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="All-in-one Twenty image for local development and SDK usage. Includes PostgreSQL, Redis, server, and worker."
