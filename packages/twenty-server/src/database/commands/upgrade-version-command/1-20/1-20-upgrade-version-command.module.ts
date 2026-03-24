@@ -16,8 +16,8 @@ import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/co
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SdkClientGenerationModule } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.module';
@@ -34,6 +34,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     FeatureFlagModule,
     SdkClientGenerationModule,
+    WorkflowCommonModule,
   ],
   providers: [
     IdentifyPermissionFlagMetadataCommand,
