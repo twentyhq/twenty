@@ -2002,7 +2002,6 @@ msgstr "Tăng dần"
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Ask AI"
 msgstr "Yêu cầu AI"
 
@@ -12173,8 +12172,6 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "Search"
 msgstr "Tìm kiếm"
 
@@ -13550,11 +13547,6 @@ msgstr "Thành công"
 msgid "Successfully merged {recordCount} records"
 msgstr "Đã ghép thành công {recordCount} hồ sơ"
 
-#. js-lingui-id: zsDoFr
-#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
-msgid "Successfully updated {count} records"
-msgstr ""
-
 #. js-lingui-id: QJz8/3
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Suffix"
@@ -14226,6 +14218,11 @@ msgstr "Thao tác này sẽ hủy thay đổi kế hoạch đã đặt lịch v�
 msgid "This will disconnect all models from this provider. Models will no longer be available until a new provider is configured."
 msgstr ""
 
+#. js-lingui-id: y8xx3L
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "This will modify {contextStoreNumberOfSelectedRecords} records. This action cannot be undone."
+msgstr ""
+
 #. js-lingui-id: XGDxrH
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "This will permanently delete the field and all its data from {objectLabel}. Type \"yes\" to confirm."
@@ -14872,6 +14869,11 @@ msgstr "cập nhật"
 msgid "Update"
 msgstr "Cập nhật"
 
+#. js-lingui-id: ymv+je
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
+msgid "Update {contextStoreNumberOfSelectedRecords} records"
+msgstr ""
+
 #. js-lingui-id: Y69tSP
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update payment method"
@@ -14879,6 +14881,7 @@ msgstr ""
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
+#: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Update records"
 msgstr ""
@@ -15383,7 +15386,6 @@ msgstr ""
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/command-menu-item/constants/EngineComponentKeyComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "Xem các cuộc trò chuyện AI trước đây"
 
@@ -15987,6 +15989,7 @@ msgstr "Bạn đã lên lịch thay đổi cấp đo. Bạn có muốn hủy nó
 
 #. js-lingui-id: qXzOWu
 #: src/modules/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands.tsx
+#: src/modules/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation.ts
 msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
 msgstr ""
 

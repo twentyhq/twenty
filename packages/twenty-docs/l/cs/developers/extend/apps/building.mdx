@@ -1,0 +1,689 @@
+---
+title: Vytváření aplikací
+description: Definujte objekty, logické funkce, frontendové komponenty a další pomocí Twenty SDK.
+---
+
+<Warning>
+Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
+</Warning>
+
+## Používejte zdroje SDK (typy a konfiguraci)
+
+twenty-sdk poskytuje typované stavební bloky a pomocné funkce, které používáte ve své aplikaci. Níže jsou klíčové části, se kterými budete nejčastěji pracovat.
+
+### Pomocné funkce
+
+SDK poskytuje pomocné funkce pro definování entit vaší aplikace. Jak je popsáno v [Detekce entit](/l/cs/developers/extend/apps/getting-started#entity-detection), musíte použít `export default define<Entity>({...})`, aby byly vaše entity detekovány:
+
+| Funkce                           | Účel                                                              |
+| -------------------------------- | ----------------------------------------------------------------- |
+| `defineApplication`              | Nakonfigurujte metadata aplikace (povinné, jedno na aplikaci)     |
+| `defineObject`                   | Definice vlastních objektů s poli                                 |
+| `defineLogicFunction`            | Definice logických funkcí s obslužnými funkcemi                   |
+| `definePreInstallLogicFunction`  | Definujte předinstalační logickou funkci (jedna na aplikaci)      |
+| `definePostInstallLogicFunction` | Definujte postinstalační logickou funkci (jedna na aplikaci)      |
+| `defineFrontComponent`           | Definujte frontendové komponenty pro vlastní uživatelské rozhraní |
+| `defineRole`                     | Konfigurace oprávnění rolí a přístupu k objektům                  |
+| `defineField`                    | Rozšiřte existující objekty o další pole                          |
+| `defineView`                     | Definujte uložená zobrazení pro objekty                           |
+| `defineNavigationMenuItem`       | Definujte odkazy postranní navigace                               |
+| `defineSkill`                    | Definujte dovednosti agenta AI                                    |
+
+Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
+
+### Definování objektů
+
+Vlastní objekty popisují jak schéma, tak chování záznamů ve vašem pracovním prostoru. K definování objektů s vestavěnou validací použijte `defineObject()`:
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+Hlavní body:
+
+* Použijte `defineObject()` pro vestavěnou validaci a lepší podporu v IDE.
+* Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
+* Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
+* Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
+* Nové objekty můžete vygenerovat pomocí `yarn twenty entity:add`, který vás provede pojmenováním, poli a vztahy.
+
+<Note>
+**Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
+jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
+Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
+Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
+ale to se nedoporučuje.
+</Note>
+
+### Konfigurace aplikace (application-config.ts)
+
+Každá aplikace má jeden soubor `application-config.ts`, který popisuje:
+
+* **Identitu aplikace**: identifikátory, zobrazovaný název a popis.
+* **Jak běží její funkce**: kterou roli používají pro oprávnění.
+* **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
+* **(Volitelná) předinstalační funkce**: logická funkce, která se spouští před instalací aplikace.
+* **(Volitelná) postinstalační funkce**: logická funkce, která se spouští po instalaci aplikace.
+
+K definování konfigurace aplikace použijte `defineApplication()`:
+
+```typescript
+// src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Poznámky:
+
+* Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
+* `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` se musí shodovat se souborem role (viz níže).
+* Předinstalační a postinstalační funkce jsou při sestavování manifestu automaticky detekovány. Viz [Předinstalační funkce](#pre-install-functions) a [Postinstalační funkce](#post-install-functions).
+
+#### Role a oprávnění
+
+Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. Pole `defaultRoleUniversalIdentifier` v `application-config.ts` určuje výchozí roli používanou logickými funkcemi vaší aplikace.
+
+* Běhový klíč API vložený jako `TWENTY_API_KEY` je odvozen z této výchozí role funkcí.
+* Typovaný klient bude omezen oprávněními udělenými této roli.
+* Dodržujte princip nejmenších oprávnění: vytvořte vyhrazenou roli pouze s oprávněními, která vaše funkce potřebují, a poté odkazujte na její univerzální identifikátor.
+
+##### Výchozí role funkce (*.role.ts)
+
+Když vygenerujete novou aplikaci, CLI také vytvoří výchozí soubor role. K definování rolí s vestavěnou validací použijte `defineRole()`:
+
+```typescript
+// src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+Na `universalIdentifier` této role se poté odkazuje v `application-config.ts` jako na `defaultRoleUniversalIdentifier`. Jinými slovy:
+
+* **\*.role.ts** definuje, co může výchozí role funkce dělat.
+* **application-config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
+
+Poznámky:
+
+* Začněte rolí vytvořenou scaffolderem a postupně ji omezujte podle principu nejmenších oprávnění.
+* Nahraďte `objectPermissions` a `fieldPermissions` objekty/poli, která vaše funkce potřebují.
+* `permissionFlags` řídí přístup k schopnostem na úrovni platformy. Držte je na minimu; přidávejte pouze to, co potřebujete.
+* Podívejte se na funkční příklad v aplikaci Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### Konfigurace logických funkcí a vstupní bod
+
+Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s obslužnou funkcí (handlerem) a volitelnými spouštěči.
+
+```typescript
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+Běžné typy spouštěčů:
+
+* **route**: Zpřístupní vaši funkci na HTTP cestě a metodě **pod koncovým bodem `/s/`**:
+
+> např. `path: '/post-card/create',` -> volání na `<APP_URL>/s/post-card/create`
+
+* **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
+* **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
+
+> např. `person.updated`
+
+Poznámky:
+
+* Pole `triggers` je volitelné. Funkce bez spouštěčů lze použít jako pomocné funkce volané jinými funkcemi.
+* V jedné funkci můžete kombinovat více typů spouštěčů.
+
+### Předinstalační funkce
+
+Předinstalační funkce je logická funkce, která se automaticky spouští před instalací vaší aplikace v pracovním prostoru. To je užitečné pro validační úlohy, kontrolu předpokladů nebo přípravu stavu pracovního prostoru před zahájením hlavní instalace.
+
+Když vygenerujete kostru nové aplikace pomocí `create-twenty-app`, vytvoří se pro vás předinstalační funkce v `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Předinstalační funkci můžete také kdykoli spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Hlavní body:
+
+* Předinstalační funkce používají `definePreInstallLogicFunction()` — specializovanou variantu, která vynechává nastavení spouštěčů (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Obslužná funkce (handler) obdrží `InstallLogicFunctionPayload` s `{ previousVersion: string }` — verzi aplikace, která byla dříve nainstalována (nebo prázdný řetězec při čisté instalaci).
+* Na jednu aplikaci je povolena pouze jedna předinstalační funkce. Sestavení manifestu skončí chybou, pokud je zjištěna více než jedna.
+* Identifikátor `universalIdentifier` funkce se během sestavení automaticky nastaví v manifestu aplikace jako `preInstallLogicFunctionUniversalIdentifier` — není potřeba jej uvádět v `defineApplication()`.
+* Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší přípravné úlohy.
+* Předinstalační funkce nepotřebují spouštěče — platforma je vyvolává před instalací nebo je lze spustit ručně pomocí `function:execute --preInstall`.
+
+### Postinstalační funkce
+
+Postinstalační funkce je logická funkce, která se automaticky spouští po instalaci vaší aplikace do pracovního prostoru. To je užitečné pro jednorázové úlohy nastavení, jako je naplnění výchozími daty, vytvoření počátečních záznamů nebo konfigurace nastavení pracovního prostoru.
+
+Když vygenerujete kostru nové aplikace pomocí `create-twenty-app`, vytvoří se pro vás postinstalační funkce v `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Postinstalační funkci můžete také kdykoli spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Hlavní body:
+
+* Postinstalační funkce používají `definePostInstallLogicFunction()` — specializovanou variantu, která vynechává nastavení spouštěčů (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Obslužná funkce (handler) obdrží `InstallLogicFunctionPayload` s `{ previousVersion: string }` — verzi aplikace, která byla dříve nainstalována (nebo prázdný řetězec při čisté instalaci).
+* Na jednu aplikaci je povolena pouze jedna postinstalační funkce. Sestavení manifestu skončí chybou, pokud je zjištěna více než jedna.
+* Identifikátor `universalIdentifier` funkce se během sestavení automaticky nastaví v manifestu aplikace jako `postInstallLogicFunctionUniversalIdentifier` — není potřeba jej uvádět v `defineApplication()`.
+* Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší úlohy nastavení, jako je naplnění daty.
+* Postinstalační funkce nepotřebují spouštěče — jsou spouštěny platformou během instalace nebo ručně pomocí `function:execute --postInstall`.
+
+### Payload spouštěče trasy
+
+<Warning>
+**Zpětně nekompatibilní změna (v1.16, leden 2026):** Formát payloadu spouštěče trasy se změnil. Před verzí v1.16 byly parametry dotazu, parametry cesty a tělo odesílány přímo jako payload. Od verze v1.16 jsou zanořeny uvnitř strukturovaného objektu `RoutePayload`.
+
+**Před v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
+
+**Po v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
+
+**Jak migrovat existující funkce:** Aktualizujte svůj handler tak, aby destrukturoval z `event.body`, `event.queryStringParameters` nebo `event.pathParameters` místo přímo z objektu params.
+</Warning>
+
+Když spouštěč trasy vyvolá vaši logickou funkci, ta obdrží objekt `RoutePayload`, který odpovídá formátu AWS HTTP API v2. Importujte typ z `twenty-sdk`:
+
+```typescript
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Typ `RoutePayload` má následující strukturu:
+
+| Vlastnost                    | Typ                                   | Popis                                                                             |
+| ---------------------------- | ------------------------------------- | --------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | Záhlaví HTTP (pouze ta uvedená v `forwardedRequestHeaders`)                       |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametry query stringu (více hodnot spojených čárkami)                           |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametry cesty extrahované ze vzoru trasy (např. `/users/:id` → `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Parsované tělo požadavku (JSON)                                                   |
+| `isBase64Encoded`            | `boolean`                             | Zda je tělo kódováno base64                                                       |
+| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                       |
+| `requestContext.http.path`   | `string`                              | Nezpracovaná cesta požadavku                                                      |
+
+### Přeposílání záhlaví HTTP
+
+Ve výchozím nastavení se záhlaví HTTP z příchozích požadavků z bezpečnostních důvodů do vaší logické funkce **ne** předávají. Chcete-li zpřístupnit konkrétní záhlaví, výslovně je uveďte v poli `forwardedRequestHeaders`:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+Ve vašem handleru k nim poté můžete přistupovat:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  Názvy záhlaví jsou normalizovány na malá písmena. Přistupujte k nim pomocí klíčů s malými písmeny (například `event.headers['content-type']`).
+</Note>
+
+Nové funkce můžete vytvářet dvěma způsoby:
+
+* **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou logickou funkci. Tím se vygeneruje startovací soubor s obslužnou funkcí a konfigurací.
+* **Ruční**: Vytvořte nový soubor `*.logic-function.ts` a použijte `defineLogicFunction()` podle stejného vzoru.
+
+### Označení logické funkce jako nástroje
+
+Logické funkce lze zpřístupnit jako **nástroje** pro agenty AI a pracovní postupy. Když je funkce označena jako nástroj, stane se dohledatelnou funkcemi AI produktu Twenty a lze ji vybrat jako krok v automatizacích pracovních postupů.
+
+Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true` a poskytněte `toolInputSchema` popisující očekávané vstupní parametry pomocí [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Hlavní body:
+
+* **`isTool`** (`boolean`, výchozí: `false`): Když je nastaveno na `true`, funkce je zaregistrována jako nástroj a zpřístupní se agentům AI a automatizacím pracovních postupů.
+* **`toolInputSchema`** (`object`, volitelné): Objekt JSON Schema, který popisuje parametry, jež vaše funkce přijímá. Agenti AI používají toto schéma k pochopení toho, jaké vstupy nástroj očekává, a k ověřování volání. Pokud je vynecháno, schéma má výchozí podobu `{ type: 'object', properties: {} }` (žádné parametry).
+* Funkce s `isTool: false` (nebo není nastaveno) **nejsou** zpřístupněny jako nástroje. Stále je lze spouštět přímo nebo volat z jiných funkcí, ale neobjeví se ve vyhledávání nástrojů.
+* **Pojmenování nástrojů**: Když je funkce zpřístupněna jako nástroj, její název se automaticky normalizuje na `logic_function_<name>` (převedeno na malá písmena, nealfanumerické znaky jsou nahrazeny podtržítky). Například `enrich-company` se změní na `logic_function_enrich_company`.
+* Můžete kombinovat `isTool` se spouštěči — funkce může být zároveň nástrojem (volatelným agenty AI) i spouštěna událostmi (cron, databázové události, routes).
+
+<Note>
+**Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+</Note>
+
+### Frontendové komponenty
+
+Frontendové komponenty vám umožňují vytvářet vlastní React komponenty, které se vykreslují v rozhraní Twenty. K definování komponent s vestavěnou validací použijte `defineFrontComponent()`:
+
+```typescript
+// src/front-components/my-widget.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Hlavní body:
+
+* Frontendové komponenty jsou React komponenty, které se vykreslují v izolovaných kontextech v rámci Twenty.
+* Pole `component` odkazuje na vaši React komponentu.
+* Komponenty se během `yarn twenty dev` automaticky sestaví a synchronizují.
+
+Nové frontendové komponenty můžete vytvořit dvěma způsoby:
+
+* **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou frontendovou komponentu.
+* **Ruční**: Vytvořte nový soubor `.tsx` a použijte `defineFrontComponent()`, podle stejného vzoru.
+
+### Dovednosti
+
+Dovednosti definují znovupoužitelné pokyny a schopnosti, které mohou agenti AI používat ve vašem pracovním prostoru. K definování dovedností s vestavěnou validací použijte `defineSkill()`:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Hlavní body:
+
+* `name` je jedinečný identifikátor dovednosti (doporučuje se kebab-case).
+* `label` je uživatelsky čitelný název zobrazovaný v UI.
+* `content` obsahuje pokyny dovednosti — je to text, který agent AI používá.
+* `icon` (volitelné) nastavuje ikonu zobrazovanou v UI.
+* `description` (volitelné) poskytuje doplňující kontext o účelu dovednosti.
+
+Nové dovednosti můžete vytvářet dvěma způsoby:
+
+* **Vygenerované**: Spusťte `yarn twenty entity:add` a zvolte možnost přidat novou dovednost.
+* **Ruční**: Vytvořte nový soubor a použijte `defineSkill()` podle stejného vzoru.
+
+### Generované typované klienty
+
+Dva typovaní klienti jsou automaticky generováni pomocí `yarn twenty dev` a ukládají se do `node_modules/twenty-sdk/generated` podle schématu vašeho pracovního prostoru:
+
+* **`CoreApiClient`** — provádí dotazy na endpoint `/graphql` za účelem získání dat pracovního prostoru
+* **`MetadataApiClient`** — odesílá dotazy na endpoint `/metadata` pro konfiguraci pracovního prostoru a nahrávání souborů
+
+```typescript
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+
+const client = new CoreApiClient();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+```
+
+Oba klienti se automaticky znovu generují pomocí `yarn twenty dev` kdykoli se změní vaše objekty nebo pole.
+
+#### Běhové přihlašovací údaje v logických funkcích
+
+Když vaše funkce běží na Twenty, platforma před spuštěním kódu vloží přihlašovací údaje jako proměnné prostředí:
+
+* `TWENTY_API_URL`: Základní URL Twenty API, na které vaše aplikace cílí.
+* `TWENTY_API_KEY`: Krátkodobý klíč s rozsahem omezeným na výchozí roli funkce vaší aplikace.
+
+Poznámky:
+
+* Není nutné předávat URL ani klíč API vygenerovanému klientovi. Za běhu čte `TWENTY_API_URL` a `TWENTY_API_KEY` z process.env.
+* Oprávnění klíče API jsou určena rolí odkazovanou ve vašem `application-config.ts` prostřednictvím `defaultRoleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
+* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `defaultRoleUniversalIdentifier` na univerzální identifikátor této role.
+
+#### Nahrávání souborů
+
+Vygenerovaný `MetadataApiClient` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru u objektů ve vašem pracovním prostoru. Protože standardní klienti GraphQL nativně nepodporují nahrávání souborů pomocí multipart, klient poskytuje tuto speciální metodu, která interně implementuje [specifikaci multipart požadavků GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+
+```typescript
+import { MetadataApiClient } from 'twenty-sdk/generated';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Signatura metody:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parametr                           | Typ      | Popis                                                                       |
+| ---------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Surový obsah souboru                                                        |
+| `filename`                         | `string` | Název souboru (používá se pro ukládání a zobrazení)                         |
+| `contentType`                      | `string` | Typ MIME souboru (pokud je vynechán, výchozí je `application/octet-stream`) |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` pole typu souboru ve vašem objektu                    |
+
+Hlavní body:
+
+* Metoda `uploadFile` je k dispozici v `MetadataApiClient`, protože mutaci nahrávání obsluhuje endpoint `/metadata`.
+* Používá `universalIdentifier` pole (nikoli jeho ID specifické pro pracovní prostor), takže váš kód pro nahrávání funguje ve všech pracovních prostorech, kde je vaše aplikace nainstalována — v souladu s tím, jak aplikace odkazují na pole všude jinde.
+* Vrácená hodnota `url` je podepsaná adresa URL, kterou můžete použít k přístupu k nahranému souboru.
+
+### Příklad Hello World
+
+Prozkoumejte minimalistický end-to-end příklad, který demonstruje objekty, logické funkce, frontendové komponenty a více spouštěčů [zde](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world).

@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteMultipleRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, graphqlFilter } =
-    useMountedEngineCommandContext();
+    useHeadlessCommandContextApi();
 
   if (
     !isDefined(recordIndexId) ||

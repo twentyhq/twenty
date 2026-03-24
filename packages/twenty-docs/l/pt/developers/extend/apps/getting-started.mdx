@@ -32,7 +32,7 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn twenty app:dev
+yarn twenty dev
 ```
 
 O gerador de estrutura oferece suporte a dois modos para controlar quais arquivos de exemplo são incluídos:
@@ -64,7 +64,7 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
 yarn twenty help
@@ -167,7 +167,7 @@ export default defineObject({
 
 Comandos posteriores adicionarão mais arquivos e pastas:
 
-* `yarn twenty app:dev` irá gerar automaticamente dois clientes de API tipados em `node_modules/twenty-sdk/generated`: `CoreApiClient` (para dados do espaço de trabalho via `/graphql`) e `MetadataApiClient` (para configuração do espaço de trabalho e envio de arquivos via `/metadata`).
+* `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 * `yarn twenty entity:add` adicionará arquivos de definição de entidade em `src/` para seus objetos, funções, componentes de front-end, papéis e habilidades personalizados, entre outros.
 
 ## Autenticação
@@ -221,7 +221,7 @@ Em seguida, adicione um script `twenty`:
 }
 ```
 
-Agora você pode executar todos os comandos via `yarn twenty <command>`, por exemplo, `yarn twenty app:dev`, `yarn twenty help`, etc.
+Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
 
 ## Como usar uma instância local do Twenty
 
@@ -239,7 +239,7 @@ yarn twenty remote add --local --port 3000
 
 * Erros de autenticação: execute `yarn twenty auth:login` e certifique-se de que sua chave de API tenha as permissões necessárias.
 * Não é possível conectar ao servidor: verifique a URL da API e se o servidor do Twenty está acessível.
-* Tipos ou cliente ausentes/desatualizados: reinicie `yarn twenty app:dev` — ele gera automaticamente o cliente tipado.
-* Modo de desenvolvimento não sincronizando: certifique-se de que `yarn twenty app:dev` esteja em execução e de que as alterações não estejam sendo ignoradas pelo seu ambiente.
+* Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
+* Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
 
 Canal de ajuda no Discord: https://discord.com/channels/1130383047699738754/1130386664812982322
