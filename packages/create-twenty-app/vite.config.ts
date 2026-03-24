@@ -1,4 +1,3 @@
-import { builtinModules } from 'node:module';
 import fs from 'fs-extra';
 import path from 'path';
 import { defineConfig } from 'vite';
@@ -77,9 +76,9 @@ export default defineConfig(() => {
             return true;
           }
 
-          if (
-            builtinModules.some((mod) => id === mod || id.startsWith(mod + '/'))
-          ) {
+          const builtins = ['path', 'fs', 'child_process', 'util'];
+
+          if (builtins.includes(id)) {
             return true;
           }
 

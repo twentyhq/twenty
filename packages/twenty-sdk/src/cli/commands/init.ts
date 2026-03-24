@@ -20,7 +20,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { execSync } from 'node:child_process';
 
 import sdkPackageJson from '../../../package.json';
-import { basename } from 'path';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 
@@ -194,7 +193,7 @@ export const executeInit = async (options: InitOptions): Promise<void> => {
       }
     }
 
-    const dirName = basename(appDirectory);
+    const dirName = appDirectory.split('/').reverse()[0] ?? '';
 
     console.log(chalk.blue('\nApplication created. Next steps:'));
     console.log(chalk.gray(`- cd ${dirName}`));
