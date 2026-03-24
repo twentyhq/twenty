@@ -20,7 +20,7 @@ Apps ermöglichen es Ihnen, Twenty mit benutzerdefinierten Objekten, Feldern, Lo
 ## Voraussetzungen
 
 * Node.js 24+ und Yarn 4
-* Ein Twenty-Workspace und ein API-Schlüssel (unter https://app.twenty.com/settings/api-webhooks erstellen)
+* Docker (für den lokalen Twenty-Dev-Server)
 
 ## Erste Schritte
 
@@ -38,7 +38,7 @@ yarn twenty app:dev
 Das Scaffolding-Tool unterstützt zwei Modi, um zu steuern, welche Beispieldateien enthalten sind:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -222,6 +222,18 @@ Fügen Sie dann ein `twenty`-Skript hinzu:
 ```
 
 Jetzt können Sie alle Befehle über `yarn twenty <command>` ausführen, z. B. `yarn twenty app:dev`, `yarn twenty help` usw.
+
+## So verwenden Sie eine lokale Twenty-Instanz
+
+Wenn Sie bereits lokal eine Twenty-Instanz ausführen (z. B. über `npx nx start twenty-server`), können Sie sich damit verbinden, anstatt Docker zu verwenden:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## Fehlerbehebung
 

@@ -66,6 +66,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         return;
       }
 
+      setPageLayoutEditingWidgetId(widgetId);
       setSidePanelPage(SidePanelPages.Root);
       closeSidePanelMenu();
     },

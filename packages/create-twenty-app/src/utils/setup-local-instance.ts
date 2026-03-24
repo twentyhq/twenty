@@ -1,8 +1,7 @@
 import chalk from 'chalk';
 import { execSync } from 'node:child_process';
-import { platform } from 'node:os';
 
-const DEFAULT_PORT = 2020;
+const LOCAL_PORTS = [2020, 3000];
 
 // Minimal health check — the full implementation lives in twenty-sdk
 const isServerReady = async (port: number): Promise<boolean> => {
@@ -24,6 +23,20 @@ const isServerReady = async (port: number): Promise<boolean> => {
   }
 };
 
+const detectRunningServer = async (
+  preferredPort?: number,
+): Promise<number | null> => {
+  const ports = preferredPort ? [preferredPort] : LOCAL_PORTS;
+
+  for (const port of ports) {
+    if (await isServerReady(port)) {
+      return port;
+    }
+  }
+
+  return null;
+};
+
 export type LocalInstanceResult = {
   running: boolean;
   serverUrl?: string;
@@ -31,20 +44,30 @@ export type LocalInstanceResult = {
 
 export const setupLocalInstance = async (
   appDirectory: string,
+  preferredPort?: number,
 ): Promise<LocalInstanceResult> => {
-  console.log('');
-  console.log(chalk.blue('Setting up local Twenty instance...'));
+  const detectedPort = await detectRunningServer(preferredPort);
 
-  if (await isServerReady(DEFAULT_PORT)) {
-    const serverUrl = `http://localhost:${DEFAULT_PORT}`;
+  if (detectedPort) {
+    const serverUrl = `http://localhost:${detectedPort}`;
 
-    console.log(chalk.green(`Twenty server detected on ${serverUrl}.`));
+    console.log(chalk.green(`Twenty server detected on ${serverUrl}.\n`));
 
     return { running: true, serverUrl };
   }
 
-  // Delegate to `twenty server start` from the scaffolded app
-  console.log(chalk.gray('Starting local Twenty server...'));
+  if (preferredPort) {
+    console.log(
+      chalk.yellow(
+        `No Twenty server found on port ${preferredPort}.\n` +
+          'Start your server and run `yarn twenty remote add --local` manually.\n',
+      ),
+    );
+
+    return { running: false };
+  }
+
+  console.log(chalk.blue('Setting up local Twenty instance...\n'));
 
   try {
     execSync('yarn twenty server start', {
@@ -52,38 +75,19 @@ export const setupLocalInstance = async (
       stdio: 'inherit',
     });
   } catch {
-    console.log(
-      chalk.yellow(
-        'Failed to start Twenty server. Run `yarn twenty server start` manually.',
-      ),
-    );
-
     return { running: false };
   }
 
-  console.log(chalk.gray('Waiting for Twenty to be ready...'));
+  console.log(chalk.gray('Waiting for Twenty to be ready...\n'));
 
   const startTime = Date.now();
   const timeoutMs = 180 * 1000;
 
   while (Date.now() - startTime < timeoutMs) {
-    if (await isServerReady(DEFAULT_PORT)) {
-      const serverUrl = `http://localhost:${DEFAULT_PORT}`;
+    if (await isServerReady(LOCAL_PORTS[0])) {
+      const serverUrl = `http://localhost:${LOCAL_PORTS[0]}`;
 
-      console.log(chalk.green(`Twenty server is running on ${serverUrl}.`));
-      console.log(
-        chalk.gray(
-          'Workspace ready — login with tim@apple.dev / tim@apple.dev',
-        ),
-      );
-
-      const openCommand = platform() === 'darwin' ? 'open' : 'xdg-open';
-
-      try {
-        execSync(`${openCommand} ${serverUrl}`, { stdio: 'ignore' });
-      } catch {
-        // Ignore if browser can't be opened
-      }
+      console.log(chalk.green(`Server running on '${serverUrl}'\n`));
 
       return { running: true, serverUrl };
     }
@@ -93,7 +97,8 @@ export const setupLocalInstance = async (
 
   console.log(
     chalk.yellow(
-      'Twenty server did not become healthy in time. Check: yarn twenty server logs',
+      'Twenty server did not become healthy in time.\n',
+      "Check: 'yarn twenty server logs'\n",
     ),
   );
 
