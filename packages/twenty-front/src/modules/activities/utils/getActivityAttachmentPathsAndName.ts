@@ -1,3 +1,4 @@
+import type { PartialBlock } from '@blocknote/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { parseJson } from 'twenty-shared/utils';
 
@@ -8,18 +9,27 @@ export type AttachmentInfo = {
 export const getActivityAttachmentPathsAndName = (
   stringifiedActivityBlocknote: string,
 ): AttachmentInfo[] => {
-  const activityBlocknote = parseJson<any[]>(stringifiedActivityBlocknote) ?? [];
+  const activityBlocknote =
+    parseJson<PartialBlock[]>(stringifiedActivityBlocknote) ?? [];
 
-  return activityBlocknote.reduce((acc: AttachmentInfo[], block: any) => {
-    if (
-      ['image', 'file', 'video', 'audio'].includes(block.type) &&
-      isNonEmptyString(block.props.url)
-    ) {
-      acc.push({
-        path: block.props.url,
-        name: block.props.name,
-      });
-    }
-    return acc;
-  }, []);
+  return activityBlocknote.reduce(
+    (acc: AttachmentInfo[], block: PartialBlock) => {
+      const props = block.props as
+        | { url?: string; name?: string }
+        | undefined;
+
+      if (
+        block.type !== undefined &&
+        ['image', 'file', 'video', 'audio'].includes(block.type) &&
+        isNonEmptyString(props?.url)
+      ) {
+        acc.push({
+          path: props.url,
+          name: props?.name ?? '',
+        });
+      }
+      return acc;
+    },
+    [],
+  );
 };
