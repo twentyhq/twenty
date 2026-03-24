@@ -11,8 +11,6 @@ export const NavigationDrawerOpenedSection = () => {
   const { t } = useLingui();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const filteredActiveNonSystemObjectMetadataItems =
-    activeObjectMetadataItems.filter((item) => !item.isRemote);
 
   const { objectMetadataIdsInWorkspaceNav } = useWorkspaceNavigationMenuItems();
 
@@ -21,14 +19,14 @@ export const NavigationDrawerOpenedSection = () => {
     objectNameSingular: currentObjectNameSingular,
   } = useParams();
 
-  const objectMetadataItem = filteredActiveNonSystemObjectMetadataItems.find(
+  const objectMetadataItem = activeObjectMetadataItems.find(
     (item) =>
       item.namePlural === currentObjectNamePlural ||
       item.nameSingular === currentObjectNameSingular,
   );
-  const shouldShowOpenedSection =
-    isDefined(objectMetadataItem) &&
-    !objectMetadataIdsInWorkspaceNav.has(objectMetadataItem.id);
+  const shouldShowOpenedSection = isDefined(objectMetadataItem)
+    ? !objectMetadataIdsInWorkspaceNav.has(objectMetadataItem.id)
+    : false;
 
   return (
     <AnimatedExpandableContainer isExpanded={shouldShowOpenedSection}>
@@ -37,7 +35,6 @@ export const NavigationDrawerOpenedSection = () => {
         objectMetadataItems={
           isDefined(objectMetadataItem) ? [objectMetadataItem] : []
         }
-        isRemote={false}
       />
     </AnimatedExpandableContainer>
   );
