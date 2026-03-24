@@ -22,8 +22,13 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
-  const { addToDraft, removeFromDraft, replaceDraft, applyChanges } =
-    useMetadataStore();
+  const {
+    addToDraft,
+    updateInDraft,
+    removeFromDraft,
+    replaceDraft,
+    applyChanges,
+  } = useMetadataStore();
   const [createManyNavigationMenuItemsMutation] = useMutation(
     CreateManyNavigationMenuItemsDocument,
   );
@@ -180,10 +185,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
       })) as NavigationMenuItem[];
 
       await runWithNavigationMenuRollback(async () => {
-        addToDraft({
-          key: 'navigationMenuItems',
-          items: optimisticItems,
-        });
+        updateInDraft('navigationMenuItems', optimisticItems);
         applyChanges();
         const updateResult = await updateManyNavigationMenuItemsMutation({
           variables: { inputs: updateInputs },
@@ -203,6 +205,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
     await applyUpdates();
   }, [
     addToDraft,
+    updateInDraft,
     applyChanges,
     removeFromDraft,
     replaceDraft,
