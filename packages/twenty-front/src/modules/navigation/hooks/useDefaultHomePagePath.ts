@@ -38,6 +38,25 @@ export const useDefaultHomePagePath = () => {
     objectPermissionsByObjectMetadataId,
   ]);
 
+  // For non-layout users, filter to only objects visible in sidebar
+  const sidebarVisibleObjectMetadataItems = useMemo(() => {
+    if (isAdmin) return readableAlphaSortedActiveNonSystemObjectMetadataItems;
+    return readableAlphaSortedActiveNonSystemObjectMetadataItems.filter(
+      (item) => {
+        const objectPermissions =
+          getObjectPermissionsFromMapByObjectMetadataId({
+            objectPermissionsByObjectMetadataId,
+            objectMetadataId: item.id,
+          });
+        return objectPermissions?.showInSidebar;
+      },
+    );
+  }, [
+    isAdmin,
+    readableAlphaSortedActiveNonSystemObjectMetadataItems,
+    objectPermissionsByObjectMetadataId,
+  ]);
+
   const getActiveObjectMetadataItemMatchingId = useCallback(
     (objectMetadataId: string) => {
       return readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
@@ -111,12 +130,15 @@ export const useDefaultHomePagePath = () => {
       }
     }
 
-    // Ultimate fallback: prefer "person" (Leads), then first readable object.
-    // This covers the initial render when nav items haven't loaded yet.
-    const preferredFallback =
-      readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
-        (item) => item.nameSingular === 'person',
-      ) ?? readableAlphaSortedActiveNonSystemObjectMetadataItems[0];
+    // Ultimate fallback: for non-layout users, pick the first sidebar-visible
+    // object; for admins, prefer "person" (Leads), then first readable object.
+    const fallbackItems = isAdmin
+      ? readableAlphaSortedActiveNonSystemObjectMetadataItems
+      : sidebarVisibleObjectMetadataItems;
+    const preferredFallback = isAdmin
+      ? (fallbackItems.find((item) => item.nameSingular === 'person') ??
+        fallbackItems[0])
+      : fallbackItems[0];
     return preferredFallback
       ? {
           objectMetadataItem: preferredFallback,
@@ -129,6 +151,8 @@ export const useDefaultHomePagePath = () => {
     getActiveObjectMetadataItemMatchingId,
     getFirstView,
     readableAlphaSortedActiveNonSystemObjectMetadataItems,
+    sidebarVisibleObjectMetadataItems,
+    isAdmin,
   ]);
 
   const getDefaultObjectPathInfo = useCallback(() => {
