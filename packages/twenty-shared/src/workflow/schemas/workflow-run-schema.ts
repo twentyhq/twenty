@@ -3,7 +3,7 @@ import { workflowRunStateSchema } from './workflow-run-state-schema';
 import { workflowRunStatusSchema } from './workflow-run-status-schema';
 
 export const workflowRunSchema = z.looseObject({
-  __typename: z.literal('WorkflowRun'),
+  __typename: z.string().catch('WorkflowRun'),
   id: z.string(),
   workflowVersionId: z.string(),
   workflowId: z.string(),
