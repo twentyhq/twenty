@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, type QueryRunner, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -13,8 +13,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -77,34 +77,8 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await this.backfillStandardCommandMenuItems(
-        workspaceId,
-        isDryRun,
-        queryRunner,
-      );
-
-      await this.backfillWorkflowCommandMenuItems(
-        workspaceId,
-        isDryRun,
-        queryRunner,
-      );
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this.logger.error(
-        `Rolling back backfill of command menu items for workspace ${workspaceId}: ${error.message}`,
-      );
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+    await this.backfillStandardCommandMenuItems(workspaceId, isDryRun);
+    await this.backfillWorkflowCommandMenuItems(workspaceId, isDryRun);
 
     if (!isDryRun) {
       await this.featureFlagService.enableFeatureFlags(
@@ -121,7 +95,6 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
   private async backfillStandardCommandMenuItems(
     workspaceId: string,
     isDryRun: boolean,
-    queryRunner: QueryRunner,
   ): Promise<void> {
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -187,7 +160,6 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
           workspaceId,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
-          queryRunner,
         },
       );
 
@@ -209,7 +181,6 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
   private async backfillWorkflowCommandMenuItems(
     workspaceId: string,
     isDryRun: boolean,
-    queryRunner: QueryRunner,
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -346,7 +317,6 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
             workspaceId,
             applicationUniversalIdentifier:
               workspaceCustomFlatApplication.universalIdentifier,
-            queryRunner,
           },
         );
 
