@@ -1,41 +1,35 @@
 import { CommandMenuItemErrorBoundary } from '@/command-menu-item/display/components/CommandMenuItemErrorBoundary';
 import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
-import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
-import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
-import { mountedEngineCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
+import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const CommandRunner = () => {
-  const mountedEngineCommands = useAtomStateValue(mountedEngineCommandsState);
-  const unmountEngineCommand = useUnmountEngineCommand();
+  const mountedCommands = useAtomStateValue(mountedCommandsState);
+  const unmountCommand = useUnmountCommand();
 
   return (
     <>
-      {[...mountedEngineCommands.entries()].map(
-        ([engineCommandId, mountContext]) => (
-          <CommandMenuItemErrorBoundary
-            key={engineCommandId}
-            engineCommandId={engineCommandId}
-            shouldReportToSentry
-            onError={() => unmountEngineCommand(engineCommandId)}
+      {[...mountedCommands.entries()].map(([commandMenuItemId, context]) => (
+        <CommandMenuItemErrorBoundary
+          key={commandMenuItemId}
+          commandId={commandMenuItemId}
+          shouldReportToSentry
+          onError={() => unmountCommand(commandMenuItemId)}
+        >
+          <ContextStoreComponentInstanceContext.Provider
+            value={{ instanceId: context.contextStoreInstanceId }}
           >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId: mountContext.contextStoreInstanceId }}
+            <CommandComponentInstanceContext.Provider
+              value={{ instanceId: commandMenuItemId }}
             >
-              <EngineCommandComponentInstanceContext.Provider
-                value={{ instanceId: engineCommandId }}
-              >
-                {
-                  ENGINE_COMPONENT_KEY_COMPONENT_MAP[
-                    mountContext.engineComponentKey
-                  ]
-                }
-              </EngineCommandComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
-          </CommandMenuItemErrorBoundary>
-        ),
-      )}
+              {ENGINE_COMPONENT_KEY_COMPONENT_MAP[context.engineComponentKey]}
+            </CommandComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
+        </CommandMenuItemErrorBoundary>
+      ))}
     </>
   );
 };

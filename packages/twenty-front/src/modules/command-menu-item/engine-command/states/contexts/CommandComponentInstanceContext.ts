@@ -1,4 +1,3 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 
-export const EngineCommandComponentInstanceContext =
-  createComponentInstanceContext();
+export const CommandComponentInstanceContext = createComponentInstanceContext();

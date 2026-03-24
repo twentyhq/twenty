@@ -1,5 +1,5 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { workflowRunCallsFamilyState } from '@/command-menu-item/engine-command/states/workflowRunCallsFamilyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -9,7 +9,7 @@ import { useCallback } from 'react';
 
 export const RunWorkflowEngineCommand = () => {
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
-    EngineCommandComponentInstanceContext,
+    CommandComponentInstanceContext,
   );
 
   const workflowRunCalls = useAtomFamilyStateValue(

@@ -4,14 +4,14 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 type CommandMenuItemErrorBoundaryProps = {
   children: ReactNode;
-  engineCommandId: string;
+  commandId: string;
   shouldReportToSentry?: boolean;
   onError?: () => void;
 };
 
 export const CommandMenuItemErrorBoundary = ({
   children,
-  engineCommandId,
+  commandId,
   shouldReportToSentry = false,
   onError,
 }: CommandMenuItemErrorBoundaryProps) => {
@@ -41,7 +41,7 @@ export const CommandMenuItemErrorBoundary = ({
     <ErrorBoundary
       fallbackRender={() => null}
       onError={handleError}
-      resetKeys={[engineCommandId]}
+      resetKeys={[commandId]}
     >
       {children}
     </ErrorBoundary>

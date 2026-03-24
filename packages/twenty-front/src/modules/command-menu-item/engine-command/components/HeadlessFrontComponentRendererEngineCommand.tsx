@@ -1,7 +1,7 @@
 import { Suspense, lazy } from 'react';
 
-import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
-import { mountedEngineCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
+import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,22 +15,22 @@ const FrontComponentRenderer = lazy(() =>
 );
 
 export const HeadlessFrontComponentRendererEngineCommand = () => {
-  const engineCommandId = useAvailableComponentInstanceIdOrThrow(
-    EngineCommandComponentInstanceContext,
+  const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
+    CommandComponentInstanceContext,
   );
 
-  const mountedEngineCommands = useAtomStateValue(mountedEngineCommandsState);
-  const mountContext = mountedEngineCommands.get(engineCommandId);
+  const mountedCommands = useAtomStateValue(mountedCommandsState);
+  const context = mountedCommands.get(commandMenuItemId);
 
-  if (!isDefined(mountContext?.frontComponentId)) {
+  if (!isDefined(context?.frontComponentId)) {
     return null;
   }
 
-  const objectNameSingular = mountContext.objectMetadataItem?.nameSingular;
+  const objectNameSingular = context.objectMetadataItem?.nameSingular;
 
   const recordId =
-    mountContext.selectedRecords.length === 1
-      ? mountContext.selectedRecords[0].id
+    context.selectedRecords.length === 1
+      ? context.selectedRecords[0].id
       : undefined;
 
   return (
@@ -49,8 +49,8 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
         }}
       >
         <FrontComponentRenderer
-          frontComponentId={mountContext.frontComponentId}
-          commandMenuItemId={engineCommandId}
+          frontComponentId={context.frontComponentId}
+          commandMenuItemId={commandMenuItemId}
         />
       </LayoutRenderingProvider>
     </Suspense>

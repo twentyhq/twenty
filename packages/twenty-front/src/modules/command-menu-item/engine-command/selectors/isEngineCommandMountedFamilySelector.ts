@@ -1,4 +1,4 @@
-import { mountedEngineCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const isEngineCommandMountedFamilySelector = createAtomFamilySelector<
@@ -9,7 +9,7 @@ export const isEngineCommandMountedFamilySelector = createAtomFamilySelector<
   get:
     (engineCommandId: string) =>
     ({ get }) => {
-      const mountedMap = get(mountedEngineCommandsState);
+      const mountedMap = get(mountedCommandsState);
 
       return mountedMap.has(engineCommandId);
     },

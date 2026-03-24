@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { mountedEngineCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
+import { mountedCommandsState } from '@/command-menu-item/engine-command/states/mountedEngineCommandsState';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -111,7 +111,7 @@ export const useMountCommand = () => {
             )
           : null;
 
-      store.set(mountedEngineCommandsState.atom, (previousMap) => {
+      store.set(mountedCommandsState.atom, (previousMap) => {
         const newMap = new Map(previousMap);
 
         newMap.set(engineCommandId, {
