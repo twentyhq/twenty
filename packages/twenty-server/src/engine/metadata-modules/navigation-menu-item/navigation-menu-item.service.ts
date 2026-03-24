@@ -167,13 +167,15 @@ export class NavigationMenuItemService {
     }
 
     for (const input of inputs) {
-      await this.navigationMenuItemAccessService.canUserCreateNavigationMenuItem({
-        userWorkspaceId: authUserWorkspaceId,
-        workspaceId,
-        apiKeyId: authApiKeyId,
-        applicationId: authApplicationId,
-        inputUserWorkspaceId: input.userWorkspaceId,
-      });
+      await this.navigationMenuItemAccessService.canUserCreateNavigationMenuItem(
+        {
+          userWorkspaceId: authUserWorkspaceId,
+          workspaceId,
+          apiKeyId: authApiKeyId,
+          applicationId: authApplicationId,
+          inputUserWorkspaceId: input.userWorkspaceId,
+        },
+      );
     }
 
     const { workspaceCustomFlatApplication } =
@@ -197,9 +199,9 @@ export class NavigationMenuItemService {
     );
 
     const existingIds = new Set(
-      Object.values(
-        existingFlatNavigationMenuItemMaps.byUniversalIdentifier,
-      ).filter(isDefined).map((item) => item.id),
+      Object.values(existingFlatNavigationMenuItemMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((item) => item.id),
     );
 
     const processingIndices = getCreateNavigationMenuItemBatchProcessingIndices(
@@ -536,13 +538,15 @@ export class NavigationMenuItemService {
           navigationMenuItemId: requestedId,
         });
 
-      await this.navigationMenuItemAccessService.canUserDeleteNavigationMenuItem({
-        userWorkspaceId: authUserWorkspaceId,
-        workspaceId,
-        apiKeyId: authApiKeyId,
-        applicationId: authApplicationId,
-        existingUserWorkspaceId: flatNavigationMenuItemRoot.userWorkspaceId,
-      });
+      await this.navigationMenuItemAccessService.canUserDeleteNavigationMenuItem(
+        {
+          userWorkspaceId: authUserWorkspaceId,
+          workspaceId,
+          apiKeyId: authApiKeyId,
+          applicationId: authApplicationId,
+          existingUserWorkspaceId: flatNavigationMenuItemRoot.userWorkspaceId,
+        },
+      );
 
       deletedNavigationMenuItemDtoByRequestedId.set(
         requestedId,
