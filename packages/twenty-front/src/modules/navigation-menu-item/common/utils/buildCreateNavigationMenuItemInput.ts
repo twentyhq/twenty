@@ -9,6 +9,8 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 import { isNavigationMenuItemObject } from '@/navigation-menu-item/common/utils/isNavigationMenuItemObject';
 
+const HTTP_PROTOCOL_REGEX = /^https?:\/\//i;
+
 export const buildCreateNavigationMenuItemInput = (
   draftItem: NavigationMenuItem,
   resolveFolderId: (draftFolderId: string) => string,
@@ -26,7 +28,7 @@ export const buildCreateNavigationMenuItemInput = (
     input.name = draftItem.name ?? 'Link';
     const linkUrl = (draftItem.link ?? '').trim();
     input.link =
-      linkUrl.startsWith('http://') || linkUrl.startsWith('https://')
+      HTTP_PROTOCOL_REGEX.test(linkUrl)
         ? linkUrl
         : linkUrl
           ? `https://${linkUrl}`

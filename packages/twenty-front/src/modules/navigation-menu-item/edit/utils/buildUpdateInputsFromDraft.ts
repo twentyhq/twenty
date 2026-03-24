@@ -7,6 +7,8 @@ import {
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 
+const HTTP_PROTOCOL_REGEX = /^https?:\/\//i;
+
 export const buildUpdateInputsFromDraft = ({
   draft,
   workspaceItemsById,
@@ -77,7 +79,7 @@ export const buildUpdateInputsFromDraft = ({
     if (linkChanged && isNavigationMenuItemLink(draftItem)) {
       const linkUrl = (draftItem.link ?? '').trim();
       updatePayload.link = linkUrl
-        ? linkUrl.startsWith('http://') || linkUrl.startsWith('https://')
+        ? HTTP_PROTOCOL_REGEX.test(linkUrl)
           ? linkUrl
           : `https://${linkUrl}`
         : null;
