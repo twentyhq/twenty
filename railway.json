@@ -8,6 +8,7 @@
       "packages/twenty-shared/**",
       "packages/twenty-ui/**",
       "packages/twenty-emails/**",
+      "packages/twenty-sdk/**",
       "packages/twenty-docker/**",
       "package.json",
       "yarn.lock",
