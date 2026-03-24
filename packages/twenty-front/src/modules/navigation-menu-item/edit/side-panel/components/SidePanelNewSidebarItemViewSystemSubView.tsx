@@ -63,9 +63,7 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
                 Icon={() => (
                   <NavigationMenuItemStyleIcon
                     Icon={getIcon(objectMetadataItem.icon)}
-                    color={getObjectColorWithFallback(
-                      objectMetadataItem,
-                    )}
+                    color={getObjectColorWithFallback(objectMetadataItem)}
                   />
                 )}
                 label={objectMetadataItem.labelPlural}

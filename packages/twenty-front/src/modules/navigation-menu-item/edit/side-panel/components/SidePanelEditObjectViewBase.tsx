@@ -73,13 +73,13 @@ export const SidePanelEditObjectViewBase = ({
       {showColorOption &&
         isDefined(selectedItem) &&
         objectMetadataItem?.isSystem !== true && (
-        <SidePanelGroup heading={t`Customize`}>
-          <SidePanelEditColorOption
-            navigationMenuItemId={selectedItem.id}
-            color={parseThemeColor(displayColor)}
-          />
-        </SidePanelGroup>
-      )}
+          <SidePanelGroup heading={t`Customize`}>
+            <SidePanelEditColorOption
+              navigationMenuItemId={selectedItem.id}
+              color={parseThemeColor(displayColor)}
+            />
+          </SidePanelGroup>
+        )}
       <SidePanelEditOrganizeActions
         canMoveUp={canMoveUp}
         canMoveDown={canMoveDown}

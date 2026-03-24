@@ -55,8 +55,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
 
   const { getIcon } = useIcons();
-  const objectNavItemColor =
-    getObjectColorWithFallback(objectMetadataItem);
+  const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
   const location = useLocation();
   const currentPath = location.pathname;
   const currentPathWithSearch = `${location.pathname}${location.search}`;
