@@ -48,7 +48,6 @@ Options:
   -h, --help          display help for command
 
 Commands:
-  init [directory]    Create a new Twenty application
   dev [appPath]       Watch and sync local application changes
   build [appPath]     Build, sync, and generate API client into .twenty/output/
   deploy [appPath]    Build and deploy to a Twenty server
@@ -63,40 +62,13 @@ Commands:
   help [command]      display help for command
 ```
 
-In a scaffolded project (via `create-twenty-app` or `twenty init`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
+In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
 
 ## Global Options
 
 - `--remote <name>` (or `-r <name>`): Use a specific remote configuration. Defaults to `local`. See Configuration for details.
 
 ## Commands
-
-### Init
-
-Scaffold a new Twenty application. Equivalent to `npx create-twenty-app`.
-
-- `twenty init [directory]` — Create a new application project.
-  - Options:
-    - `-e, --exhaustive`: Create all example entities (default).
-    - `-m, --minimal`: Create only core files (application-config and default-role).
-    - `-n, --name <name>`: Application name (skips prompt).
-    - `-d, --display-name <displayName>`: Application display name (skips prompt).
-    - `--description <description>`: Application description (skips prompt).
-    - `--skip-local-instance`: Skip the local Twenty instance setup.
-    - `-p, --port <port>`: Port of an existing Twenty server (skips Docker setup).
-
-Examples:
-
-```bash
-# Scaffold with all examples
-twenty init my-app
-
-# Minimal project (core files only)
-twenty init my-app --minimal
-
-# Non-interactive (CI)
-twenty init my-app --name "My App" --display-name "My App" --skip-local-instance
-```
 
 ### Server
 
@@ -362,7 +334,7 @@ If you're already running a Twenty instance locally (e.g. via `npx nx start twen
 
 ```bash
 # During scaffolding
-twenty init my-app --port 3000
+npx create-twenty-app@latest my-app --port 3000
 
 # Or after scaffolding
 twenty remote add --local --port 3000
