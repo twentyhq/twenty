@@ -1,6 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
-import { getObjectIconColor } from '@/navigation-menu-item/common/utils/getObjectIconColor';
+import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
 export const useObjectNavItemColor = (objectNameSingular: string): string => {
@@ -9,15 +7,9 @@ export const useObjectNavItemColor = (objectNameSingular: string): string => {
     (item) => item.nameSingular === objectNameSingular,
   );
 
-  const storedColor = objectMetadataItem?.color;
-  const fallbackColor = getObjectIconColor({
-    nameSingular: objectNameSingular,
-    isSystem: objectMetadataItem?.isSystem === true,
-  });
-
-  if (isNonEmptyString(storedColor)) {
-    return storedColor;
+  if (!objectMetadataItem) {
+    return 'gray';
   }
 
-  return fallbackColor;
+  return getObjectColorForNavigationMenuItem(objectMetadataItem);
 };

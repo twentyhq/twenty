@@ -1,9 +1,11 @@
-import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultIconColor.constant';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
-const STANDARD_OBJECT_ICON_COLOR: Partial<
+const STANDARD_OBJECT_FALLBACK_COLOR: Partial<
   Record<CoreObjectNameSingular, ThemeColor>
 > = {
   [CoreObjectNameSingular.Company]: 'blue',
@@ -29,26 +31,27 @@ const getColorForCustomObject = (seed: string): ThemeColor => {
     hash = (hash << 5) - hash + seed.charCodeAt(index);
     hash |= 0;
   }
-  const index = Math.abs(hash) % CUSTOM_OBJECT_ICON_COLORS.length;
-  return CUSTOM_OBJECT_ICON_COLORS[index];
+  const colorIndex = Math.abs(hash) % CUSTOM_OBJECT_ICON_COLORS.length;
+  return CUSTOM_OBJECT_ICON_COLORS[colorIndex];
 };
 
-type GetObjectIconColorParams = {
-  nameSingular: string;
-  isSystem?: boolean;
-};
-
-export const getObjectIconColor = (
-  params: GetObjectIconColorParams,
+export const getObjectColorForNavigationMenuItem = (
+  objectMetadataItem: Pick<
+    EnrichedObjectMetadataItem,
+    'nameSingular' | 'color' | 'isSystem'
+  >,
 ): ThemeColor => {
-  const { nameSingular, isSystem } = params;
-
-  if (isSystem === true) {
+  if (objectMetadataItem.isSystem) {
     return DEFAULT_NAV_ITEM_ICON_COLOR;
   }
 
+  if (isNonEmptyString(objectMetadataItem.color)) {
+    return objectMetadataItem.color as ThemeColor;
+  }
+
   return (
-    STANDARD_OBJECT_ICON_COLOR[nameSingular as CoreObjectNameSingular] ??
-    getColorForCustomObject(nameSingular)
+    STANDARD_OBJECT_FALLBACK_COLOR[
+      objectMetadataItem.nameSingular as CoreObjectNameSingular
+    ] ?? getColorForCustomObject(objectMetadataItem.nameSingular)
   );
 };

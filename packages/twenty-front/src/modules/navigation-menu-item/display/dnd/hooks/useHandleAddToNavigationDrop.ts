@@ -10,7 +10,7 @@ import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/stat
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { getObjectIconColor } from '@/navigation-menu-item/common/utils/getObjectIconColor';
+import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/edit/folder/hooks/useAddFolderToNavigationMenuDraft';
@@ -147,10 +147,7 @@ export const useHandleAddToNavigationDrop = () => {
             color:
               payload.iconColor ??
               (objectMetadataItem
-                ? getObjectIconColor({
-                    nameSingular: objectMetadataItem.nameSingular,
-                    isSystem: objectMetadataItem.isSystem,
-                  })
+                ? getObjectColorForNavigationMenuItem(objectMetadataItem)
                 : undefined),
           });
           openEditForNewNavItem(newItemId, {
@@ -174,10 +171,7 @@ export const useHandleAddToNavigationDrop = () => {
             folderId,
             index,
             viewObjectMetadataItem
-              ? getObjectIconColor({
-                  nameSingular: viewObjectMetadataItem.nameSingular,
-                  isSystem: viewObjectMetadataItem.isSystem,
-                })
+              ? getObjectColorForNavigationMenuItem(viewObjectMetadataItem)
               : undefined,
           );
           openEditForNewNavItem(newItemId, {

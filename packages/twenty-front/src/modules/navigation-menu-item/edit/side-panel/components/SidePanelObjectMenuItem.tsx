@@ -7,7 +7,7 @@ import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/comp
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { getObjectIconColor } from '@/navigation-menu-item/common/utils/getObjectIconColor';
+import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -42,10 +42,7 @@ export const SidePanelObjectMenuItem = ({
     { objectMetadataItemId: objectMetadataItem.id },
   );
   const Icon = getIcon(objectMetadataItem.icon);
-  const iconColor = getObjectIconColor({
-    nameSingular: objectMetadataItem.nameSingular,
-    isSystem: objectMetadataItem.isSystem,
-  });
+  const iconColor = getObjectColorForNavigationMenuItem(objectMetadataItem);
   const isDisabled = isAlreadyInNavbar || !isDefined(defaultViewId);
 
   const handleClick = () => {
