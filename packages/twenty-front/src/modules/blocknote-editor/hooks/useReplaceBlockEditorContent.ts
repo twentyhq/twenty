@@ -24,8 +24,8 @@ export const useReplaceBlockEditorContent = (
         { type: 'paragraph' as const, content: '' },
       ];
 
-      if (!isDeeplyEqual(editor.document, content)) {
-        editor.replaceBlocks(editor.document, content);
+      if (!isDeeplyEqual(editor.document, content as typeof editor.document)) {
+        editor.replaceBlocks(editor.document, content as typeof editor.document);
       }
     },
     [store, editor, fieldName],
