@@ -7,6 +7,7 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
@@ -53,6 +54,29 @@ export const useSidePanelSearchRecords = () => {
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
+  const personRecordIds = useMemo(
+    () =>
+      (searchData?.search.edges.map((e) => e.node) ?? [])
+        .filter((r) => r.objectNameSingular === 'person')
+        .map((r) => r.recordId),
+    [searchData],
+  );
+
+  const { records: personRecordsWithCompany } = useFindManyRecords({
+    objectNameSingular: 'person',
+    filter: personRecordIds.length > 0 ? { id: { in: personRecordIds } } : undefined,
+    recordGqlFields: { id: true, company: { name: true } },
+    skip: personRecordIds.length === 0,
+  });
+
+  const companyNameByPersonId = useMemo(() => {
+    const map: Record<string, string> = {};
+    personRecordsWithCompany.forEach((p: { id: string; company?: { name?: string } }) => {
+      if (p.company?.name) map[p.id] = p.company.name;
+    });
+    return map;
+  }, [personRecordsWithCompany]);
+
   const actionItems = useMemo(() => {
     return (searchData?.search.edges.map((edge) => edge.node) ?? []).map(
       (searchRecord, index) => {
@@ -77,9 +101,13 @@ export const useSidePanelSearchRecords = () => {
           ),
           shouldBeRegistered: () => true,
           description:
-            objectMetadataItems.find(
-              (item) => item.nameSingular === searchRecord.objectNameSingular,
-            )?.labelSingular ?? searchRecord.objectNameSingular,
+            searchRecord.objectNameSingular === 'person'
+              ? (companyNameByPersonId[searchRecord.recordId] ??
+                  objectMetadataItems.find((i) => i.nameSingular === 'person')?.labelSingular ??
+                  'Person')
+              : (objectMetadataItems.find(
+                  (item) => item.nameSingular === searchRecord.objectNameSingular,
+                )?.labelSingular ?? searchRecord.objectNameSingular),
         };
 
         if (
@@ -122,7 +150,7 @@ export const useSidePanelSearchRecords = () => {
         };
       },
     );
-  }, [searchData, openRecordInSidePanel, objectMetadataItems]);
+  }, [searchData, openRecordInSidePanel, objectMetadataItems, companyNameByPersonId]);
 
   return {
     loading,

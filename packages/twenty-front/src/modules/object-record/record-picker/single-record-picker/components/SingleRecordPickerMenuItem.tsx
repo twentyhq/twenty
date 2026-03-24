@@ -83,9 +83,14 @@ export const SingleRecordPickerMenuItem = ({
           />
         }
         contextualText={
-          showObjectName
-            ? capitalize(searchRecordStore.objectLabelSingular)
-            : undefined
+          searchRecordStore.objectNameSingular === 'person'
+            ? ((searchRecordStore.record?.company as { name?: string } | undefined)?.name ??
+                (showObjectName
+                  ? capitalize(searchRecordStore.objectLabelSingular)
+                  : undefined))
+            : (showObjectName
+                ? capitalize(searchRecordStore.objectLabelSingular)
+                : undefined)
         }
       />
     </SelectableListItem>

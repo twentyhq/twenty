@@ -17,6 +17,8 @@ import { Avatar } from 'twenty-ui/display';
 import { MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
 
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
+import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type SearchRecord } from '~/generated/graphql';
 
 type MultipleRecordPickerMenuItemContentProps = {
@@ -71,6 +73,16 @@ export const MultipleRecordPickerMenuItemContent = ({
   const showObjectName =
     multipleRecordPickerSearchableObjectMetadataItems.length > 1;
 
+  const fullRecordStore = useAtomFamilyStateValue(
+    searchRecordStoreFamilyState,
+    searchRecord.recordId,
+  );
+
+  const companyName =
+    objectMetadataItem.nameSingular === 'person'
+      ? (fullRecordStore?.record?.company as { name?: string } | undefined)?.name
+      : undefined;
+
   return (
     <SelectableListItem
       itemId={searchRecord.recordId}
@@ -92,9 +104,8 @@ export const MultipleRecordPickerMenuItemContent = ({
         }
         text={displayText}
         contextualText={
-          showObjectName
-            ? capitalize(objectMetadataItem.labelSingular)
-            : undefined
+          companyName ??
+          (showObjectName ? capitalize(objectMetadataItem.labelSingular) : undefined)
         }
       />
     </SelectableListItem>
