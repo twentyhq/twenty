@@ -1,5 +1,5 @@
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -16,7 +16,7 @@ export const RecordIndexPageHeaderIcon = ({
     return null;
   }
 
-  const iconColor = getObjectColorForNavigationMenuItem(objectMetadataItem);
+  const iconColor = getObjectColorWithFallback(objectMetadataItem);
 
   return <NavigationMenuItemStyleIcon Icon={ObjectIcon} color={iconColor} />;
 };

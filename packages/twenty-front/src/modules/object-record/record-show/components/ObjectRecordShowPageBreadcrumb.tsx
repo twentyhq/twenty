@@ -1,5 +1,5 @@
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -83,7 +83,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectRecordId,
   );
 
-  const iconColor = getObjectColorForNavigationMenuItem(objectMetadataItem);
+  const iconColor = getObjectColorWithFallback(objectMetadataItem);
 
   if (loading) {
     return null;

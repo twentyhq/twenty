@@ -1,9 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultIconColor.constant';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+
+const SYSTEM_OBJECT_COLOR: ThemeColor = 'gray';
 
 const STANDARD_OBJECT_FALLBACK_COLOR: Partial<
   Record<CoreObjectNameSingular, ThemeColor>
@@ -15,10 +16,10 @@ const STANDARD_OBJECT_FALLBACK_COLOR: Partial<
   [CoreObjectNameSingular.Note]: 'turquoise',
   [CoreObjectNameSingular.NoteTarget]: 'turquoise',
   [CoreObjectNameSingular.Opportunity]: 'red',
-  [CoreObjectNameSingular.Dashboard]: DEFAULT_NAV_ITEM_ICON_COLOR,
-  [CoreObjectNameSingular.Workflow]: DEFAULT_NAV_ITEM_ICON_COLOR,
-  [CoreObjectNameSingular.WorkflowRun]: DEFAULT_NAV_ITEM_ICON_COLOR,
-  [CoreObjectNameSingular.WorkflowVersion]: DEFAULT_NAV_ITEM_ICON_COLOR,
+  [CoreObjectNameSingular.Dashboard]: SYSTEM_OBJECT_COLOR,
+  [CoreObjectNameSingular.Workflow]: SYSTEM_OBJECT_COLOR,
+  [CoreObjectNameSingular.WorkflowRun]: SYSTEM_OBJECT_COLOR,
+  [CoreObjectNameSingular.WorkflowVersion]: SYSTEM_OBJECT_COLOR,
 };
 
 const CUSTOM_OBJECT_ICON_COLORS: ThemeColor[] = MAIN_COLOR_NAMES.filter(
@@ -35,14 +36,14 @@ const getColorForCustomObject = (seed: string): ThemeColor => {
   return CUSTOM_OBJECT_ICON_COLORS[colorIndex];
 };
 
-export const getObjectColorForNavigationMenuItem = (
+export const getObjectColorWithFallback = (
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
     'nameSingular' | 'color' | 'isSystem'
   >,
 ): ThemeColor => {
   if (objectMetadataItem.isSystem) {
-    return DEFAULT_NAV_ITEM_ICON_COLOR;
+    return SYSTEM_OBJECT_COLOR;
   }
 
   if (isNonEmptyString(objectMetadataItem.color)) {

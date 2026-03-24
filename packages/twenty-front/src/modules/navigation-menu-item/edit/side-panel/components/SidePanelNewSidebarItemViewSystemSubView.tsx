@@ -3,7 +3,7 @@ import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -63,7 +63,7 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
                 Icon={() => (
                   <NavigationMenuItemStyleIcon
                     Icon={getIcon(objectMetadataItem.icon)}
-                    color={getObjectColorForNavigationMenuItem(
+                    color={getObjectColorWithFallback(
                       objectMetadataItem,
                     )}
                   />

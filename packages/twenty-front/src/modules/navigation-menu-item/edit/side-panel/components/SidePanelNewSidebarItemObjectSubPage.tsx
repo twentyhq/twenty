@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
@@ -64,7 +64,7 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
       currentDraft,
       targetFolderId: pendingInsertionNavigationMenuItem?.folderId,
       targetIndex: pendingInsertionNavigationMenuItem?.position,
-      color: getObjectColorForNavigationMenuItem(objectMetadataItem),
+      color: getObjectColorWithFallback(objectMetadataItem),
     });
     setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({

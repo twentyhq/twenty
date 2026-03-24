@@ -10,7 +10,7 @@ import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/stat
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/edit/folder/hooks/useAddFolderToNavigationMenuDraft';
@@ -147,7 +147,7 @@ export const useHandleAddToNavigationDrop = () => {
             color:
               payload.iconColor ??
               (objectMetadataItem
-                ? getObjectColorForNavigationMenuItem(objectMetadataItem)
+                ? getObjectColorWithFallback(objectMetadataItem)
                 : undefined),
           });
           openEditForNewNavItem(newItemId, {
@@ -171,7 +171,7 @@ export const useHandleAddToNavigationDrop = () => {
             folderId,
             index,
             viewObjectMetadataItem
-              ? getObjectColorForNavigationMenuItem(viewObjectMetadataItem)
+              ? getObjectColorWithFallback(viewObjectMetadataItem)
               : undefined,
           );
           openEditForNewNavItem(newItemId, {

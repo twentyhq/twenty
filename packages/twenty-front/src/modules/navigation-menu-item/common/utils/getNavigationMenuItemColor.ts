@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultIconColor.constant';
-import { getObjectColorForNavigationMenuItem } from '@/navigation-menu-item/common/utils/getObjectColorForNavigationMenuItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -33,7 +33,7 @@ export const getNavigationMenuItemColor = (
     navigationMenuItem.type === NavigationMenuItemType.VIEW
   ) {
     if (objectMetadataItem) {
-      return getObjectColorForNavigationMenuItem(objectMetadataItem);
+      return getObjectColorWithFallback(objectMetadataItem);
     }
     return DEFAULT_NAV_ITEM_ICON_COLOR;
   }
