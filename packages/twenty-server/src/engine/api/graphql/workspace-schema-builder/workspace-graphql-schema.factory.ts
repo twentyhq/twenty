@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { GraphQLObjectType, GraphQLSchema } from 'graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
+import {
+  WorkspaceGraphQLSchemaException,
+  WorkspaceGraphQLSchemaExceptionCode,
+} from 'src/engine/api/graphql/workspace-schema-builder/exceptions/workspace-graphql-schema.exception';
 import { GqlTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/gql-type.generator';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceGraphQLSchemaGenerator {
@@ -23,19 +27,27 @@ export class WorkspaceGraphQLSchemaGenerator {
       GqlOperation.Mutation,
     );
 
-    if (!isDefined(queryType) || !isDefined(mutationType)) {
-      throw new Error('PRASTOIN TODO');
+    if (!isDefined(queryType)) {
+      throw new WorkspaceGraphQLSchemaException(
+        'Query type not found in GqlTypesStorage',
+        WorkspaceGraphQLSchemaExceptionCode.QUERY_TYPE_NOT_FOUND,
+      );
     }
 
-    const types = gqlTypesStorage.getAllGqlTypesExcept([
-      GqlOperation.Query,
-      GqlOperation.Mutation,
-    ]);
+    if (!isDefined(mutationType)) {
+      throw new WorkspaceGraphQLSchemaException(
+        'Mutation type not found in GqlTypesStorage',
+        WorkspaceGraphQLSchemaExceptionCode.MUTATION_TYPE_NOT_FOUND,
+      );
+    }
 
     return new GraphQLSchema({
       query: queryType,
       mutation: mutationType,
-      types,
+      types: gqlTypesStorage.getAllGqlTypesExcept([
+        GqlOperation.Query,
+        GqlOperation.Mutation,
+      ]),
     });
   }
 }
