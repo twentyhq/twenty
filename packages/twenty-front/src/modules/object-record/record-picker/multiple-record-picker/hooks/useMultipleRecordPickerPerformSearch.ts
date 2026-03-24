@@ -321,33 +321,31 @@ export const useMultipleRecordPickerPerformSearch = () => {
             },
           }));
 
-        if (operationSignatures.length === 0) {
-          return;
+        if (operationSignatures.length > 0) {
+          const { result } = await performCombinedFindManyRecords({
+            operationSignatures,
+          });
+
+          Object.values(result)
+            .flat()
+            .forEach((objectRecord) => {
+              const searchRecord = searchRecords.find(
+                ({ recordId }) => recordId === objectRecord.id,
+              );
+
+              if (!searchRecord) {
+                return;
+              }
+
+              store.set(
+                searchRecordStoreFamilyState.atomFamily(objectRecord.id),
+                {
+                  ...searchRecord,
+                  record: objectRecord,
+                },
+              );
+            });
         }
-
-        performCombinedFindManyRecords({ operationSignatures }).then(
-          ({ result }) => {
-            Object.values(result)
-              .flat()
-              .forEach((objectRecord) => {
-                const searchRecord = searchRecords.find(
-                  ({ recordId }) => recordId === objectRecord.id,
-                );
-
-                if (!searchRecord) {
-                  return;
-                }
-
-                store.set(
-                  searchRecordStoreFamilyState.atomFamily(objectRecord.id),
-                  {
-                    ...searchRecord,
-                    record: objectRecord,
-                  },
-                );
-              });
-          },
-        );
       }
 
       store.set(multipleRecordPickerPaginationState.atomFamily(atomFamilyKey), {
