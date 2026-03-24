@@ -10,7 +10,6 @@ import { DataSource } from 'typeorm';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
@@ -123,8 +122,11 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-command-menu-items';
-import { ensureCreateCompanyWhenAddingNewPersonCodeStepLogicFunctions } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-code-step-logic-functions';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
+import {
+  CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService,
+  type CreatedPrefilledLogicFunctionResource,
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/services/create-company-when-adding-new-person-code-step-logic-function.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 type RecordSeedConfig = {
@@ -306,7 +308,7 @@ export class DevSeederDataService {
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
     private readonly fileStorageService: FileStorageService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
+    private readonly createCompanyWhenAddingNewPersonCodeStepLogicFunctionService: CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService,
   ) {}
 
   public async seed({
@@ -334,49 +336,62 @@ export class DevSeederDataService {
     const { seeds: attachmentSeeds, fileSeedMetadata: attachmentFileMeta } =
       generateAttachmentSeedsForWorkspace(workspaceId);
 
-    await ensureCreateCompanyWhenAddingNewPersonCodeStepLogicFunctions({
-      workspaceId,
-      logicFunctionFromSourceService: this.logicFunctionFromSourceService,
-      flatEntityMapsCacheService: this.flatEntityMapsCacheService,
-    });
+    let createdLogicFunctionResources: CreatedPrefilledLogicFunctionResource[] =
+      [];
 
-    await this.coreDataSource.transaction(
-      async (entityManager: WorkspaceEntityManager) => {
-        await this.seedRecordsInBatches({
-          entityManager,
-          schemaName,
-          workspaceId,
-          attachmentSeeds,
-          featureFlags,
-          objectMetadataItems,
-          light,
-        });
+    try {
+      await this.coreDataSource.transaction(
+        async (entityManager: WorkspaceEntityManager) => {
+          createdLogicFunctionResources =
+            await this.createCompanyWhenAddingNewPersonCodeStepLogicFunctionService.ensureSeeded(
+              {
+                entityManager,
+                workspaceId,
+              },
+            );
 
-        if (!light) {
-          await this.timelineActivitySeederService.seedTimelineActivities({
+          await this.seedRecordsInBatches({
             entityManager,
             schemaName,
             workspaceId,
+            attachmentSeeds,
+            featureFlags,
+            objectMetadataItems,
+            light,
           });
 
-          await this.seedAttachmentFiles(
-            workspaceId,
+          if (!light) {
+            await this.timelineActivitySeederService.seedTimelineActivities({
+              entityManager,
+              schemaName,
+              workspaceId,
+            });
+
+            await this.seedAttachmentFiles(
+              workspaceId,
+              entityManager,
+              attachmentFileMeta,
+            );
+          }
+
+          await prefillWorkflows(
             entityManager,
-            attachmentFileMeta,
+            workspaceId,
+            schemaName,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
           );
-        }
 
-        await prefillWorkflows(
-          entityManager,
-          workspaceId,
-          schemaName,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        );
+          await prefillWorkflowCommandMenuItems(entityManager, workspaceId);
+        },
+      );
+    } catch (error) {
+      await this.createCompanyWhenAddingNewPersonCodeStepLogicFunctionService.cleanupSeededResources(
+        createdLogicFunctionResources,
+      );
 
-        await prefillWorkflowCommandMenuItems(entityManager, workspaceId);
-      },
-    );
+      throw error;
+    }
   }
 
   private async seedRecordsInBatches({

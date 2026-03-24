@@ -29,8 +29,11 @@ export const prefillWorkflows = async (
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
-  const { extractDomainLogicFunctionId, isPersonalEmailLogicFunctionId } =
-    getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds(workspaceId);
+  const {
+    extractDomainLogicFunctionId,
+    findMatchingCompanyByDomainLogicFunctionId,
+    isPersonalEmailLogicFunctionId,
+  } = getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds(workspaceId);
 
   const { idByNameSingular: objectIdByNameSingular } = buildObjectIdByNameMaps(
     flatObjectMetadataMaps,
@@ -493,17 +496,17 @@ export const prefillWorkflows = async (
             },
             settings: {
               input: {
-                limit: 1,
+                limit: 25,
                 filter: {
                   recordFilters: [
                     {
                       id: 'a9b917a0-5c4c-4e8f-bf91-160d0b888693',
                       type: 'LINKS',
                       label: 'Domain Name',
-                      value: '{{1b01193b-8300-4d79-940b-44464bf45505.url}}',
+                      value: '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
                       operand: 'CONTAINS',
                       displayValue:
-                        '{{1b01193b-8300-4d79-940b-44464bf45505.url}}',
+                        '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
                       subFieldName: 'primaryLinkUrl',
                       fieldMetadataId: companyDomainNameFieldMetadata.id,
                       recordFilterGroupId:
@@ -530,6 +533,49 @@ export const prefillWorkflows = async (
               },
             },
             __typename: 'WorkflowAction',
+            nextStepIds: ['9d0b6ef2-aad2-4853-92e1-95f2abf10d5b'],
+          },
+          {
+            id: '9d0b6ef2-aad2-4853-92e1-95f2abf10d5b',
+            name: 'Find exact company match',
+            type: 'CODE',
+            valid: false,
+            position: {
+              x: 247.75,
+              y: 650,
+            },
+            settings: {
+              input: {
+                logicFunctionId: findMatchingCompanyByDomainLogicFunctionId,
+                logicFunctionInput: {
+                  companies: '{{becb3acf-79bb-4672-8a42-3696e94957b5.all}}',
+                  domain: '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
+                },
+              },
+              outputSchema: {
+                companyId: {
+                  type: 'string',
+                  label: 'companyId',
+                  value: '00000000-0000-0000-0000-000000000000',
+                  isLeaf: true,
+                },
+                hasMatch: {
+                  type: 'boolean',
+                  label: 'hasMatch',
+                  value: true,
+                  isLeaf: true,
+                },
+              },
+              errorHandlingOptions: {
+                retryOnFailure: {
+                  value: false,
+                },
+                continueOnFailure: {
+                  value: false,
+                },
+              },
+            },
+            __typename: 'WorkflowAction',
             nextStepIds: ['0c99a900-656a-40e8-977e-5a7357be33b9'],
           },
           {
@@ -539,7 +585,7 @@ export const prefillWorkflows = async (
             valid: false,
             position: {
               x: 216.25,
-              y: 650,
+              y: 780,
             },
             settings: {
               input: {
@@ -557,12 +603,12 @@ export const prefillWorkflows = async (
                 stepFilters: [
                   {
                     id: '290cc6a3-08fd-4be5-b42e-966d0bb90ff7',
-                    type: 'NUMBER',
-                    value: '1',
-                    operand: 'GREATER_THAN_OR_EQUAL',
+                    type: 'boolean',
+                    value: 'true',
+                    operand: 'IS',
                     isFullRecord: false,
                     stepOutputKey:
-                      '{{becb3acf-79bb-4672-8a42-3696e94957b5.totalCount}}',
+                      '{{9d0b6ef2-aad2-4853-92e1-95f2abf10d5b.hasMatch}}',
                     stepFilterGroupId: 'f5c41047-2a6e-49fb-968a-fa7789a90ee5',
                     positionInStepFilterGroup: 0,
                   },
@@ -593,14 +639,14 @@ export const prefillWorkflows = async (
             valid: false,
             position: {
               x: 0,
-              y: 780,
+              y: 910,
             },
             settings: {
               input: {
                 objectName: 'person',
                 objectRecord: {
                   companyId:
-                    '{{becb3acf-79bb-4672-8a42-3696e94957b5.first.id}}',
+                    '{{9d0b6ef2-aad2-4853-92e1-95f2abf10d5b.companyId}}',
                 },
                 fieldsToUpdate: ['companyId'],
                 objectRecordId: '{{trigger.properties.after.id}}',
@@ -624,7 +670,7 @@ export const prefillWorkflows = async (
             valid: false,
             position: {
               x: 440,
-              y: 780,
+              y: 910,
             },
             settings: {
               input: {
@@ -659,7 +705,7 @@ export const prefillWorkflows = async (
             valid: false,
             position: {
               x: 420.5,
-              y: 910,
+              y: 1040,
             },
             settings: {
               input: {

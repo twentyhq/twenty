@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
+import { type QueryRunner } from 'typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,6 +41,7 @@ type UpdateSourceFilesParams = Omit<
   'builtHandlerPath'
 > & {
   sourceHandlerCode: string;
+  queryRunner?: QueryRunner;
 };
 
 type GetSourceCodeParams = Identifier & {
@@ -128,6 +130,7 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
     sourceHandlerCode,
+    queryRunner,
   }: UpdateSourceFilesParams): Promise<void> {
     await this.fileStorageService.writeFile({
       workspaceId,
@@ -137,6 +140,20 @@ export class LogicFunctionResourceService {
       sourceFile: sourceHandlerCode,
       settings: { isTemporaryFile: false, toDelete: false },
       mimeType: 'application/typescript',
+      queryRunner,
+    });
+  }
+
+  async deleteSourceFile({
+    sourceHandlerPath,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: GetSourceCodeParams): Promise<void> {
+    await this.fileStorageService.delete({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: sourceHandlerPath,
     });
   }
 

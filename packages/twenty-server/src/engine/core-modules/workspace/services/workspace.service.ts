@@ -44,7 +44,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -59,8 +58,11 @@ import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects
 import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-opportunities';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
 import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-command-menu-items';
-import { ensureCreateCompanyWhenAddingNewPersonCodeStepLogicFunctions } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-code-step-logic-functions';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
+import {
+  CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService,
+  type CreatedPrefilledLogicFunctionResource,
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/services/create-company-when-adding-new-person-code-step-logic-function.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
@@ -113,7 +115,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly permissionsService: PermissionsService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
+    private readonly createCompanyWhenAddingNewPersonCodeStepLogicFunctionService: CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -684,18 +686,23 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         },
       );
 
-    await ensureCreateCompanyWhenAddingNewPersonCodeStepLogicFunctions({
-      workspaceId,
-      logicFunctionFromSourceService: this.logicFunctionFromSourceService,
-      flatEntityMapsCacheService: this.flatEntityMapsCacheService,
-    });
-
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
 
+    let createdLogicFunctionResources: CreatedPrefilledLogicFunctionResource[] =
+      [];
+
     try {
       await queryRunner.startTransaction();
+
+      createdLogicFunctionResources =
+        await this.createCompanyWhenAddingNewPersonCodeStepLogicFunctionService.ensureSeeded(
+          {
+            entityManager: queryRunner.manager,
+            workspaceId,
+          },
+        );
 
       await prefillCompanies(queryRunner.manager, schemaName);
 
@@ -730,6 +737,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           );
         }
       }
+
+      await this.createCompanyWhenAddingNewPersonCodeStepLogicFunctionService.cleanupSeededResources(
+        createdLogicFunctionResources,
+      );
+
       throw error;
     } finally {
       await queryRunner.release();
