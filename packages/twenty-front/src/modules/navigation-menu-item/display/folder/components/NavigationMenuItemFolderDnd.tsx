@@ -24,7 +24,7 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
@@ -133,7 +133,8 @@ export const NavigationMenuItemFolderDnd = ({
     NavigationDropTargetContext,
   );
 
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const { deleteManyNavigationMenuItems } =
+    useDeleteManyNavigationMenuItems();
   const favoritesEdit = useFavoritesFolderEdit({
     folderId,
     folderName,
@@ -361,7 +362,9 @@ export const NavigationMenuItemFolderDnd = ({
                           Icon={IconHeartOff}
                           onClick={(event) => {
                             event.stopPropagation();
-                            deleteNavigationMenuItem(navigationMenuItem.id);
+                            deleteManyNavigationMenuItems([
+                              navigationMenuItem.id,
+                            ]);
                           }}
                           accent="tertiary"
                         />

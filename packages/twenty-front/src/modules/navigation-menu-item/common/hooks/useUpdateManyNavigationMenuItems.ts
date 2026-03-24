@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
 import {
   type NavigationMenuItem,
   UpdateManyNavigationMenuItemsDocument,
@@ -29,10 +28,9 @@ export const useUpdateManyNavigationMenuItems = () => {
 
     const previousItems = store.get(navigationMenuItemsSelector.atom);
 
-    const optimisticItems = inputs.map(({ id, update }) => ({
-      id,
-      ...update,
-    })) as NavigationMenuItem[];
+    const optimisticItems = inputs.map(
+      ({ id, update }) => ({ id, ...update }) as NavigationMenuItem,
+    );
 
     updateInDraft('navigationMenuItems', optimisticItems);
     applyChanges();
@@ -42,22 +40,16 @@ export const useUpdateManyNavigationMenuItems = () => {
         variables: { inputs },
       });
 
-      const updatedItems = result.data?.updateManyNavigationMenuItems;
+      const updatedItems = result.data?.updateManyNavigationMenuItems ?? [];
 
-      if (isDefined(updatedItems) && updatedItems.length > 0) {
-        addToDraft({
-          key: 'navigationMenuItems',
-          items: updatedItems as NavigationMenuItem[],
-        });
+      if (updatedItems.length > 0) {
+        addToDraft({ key: 'navigationMenuItems', items: updatedItems });
         applyChanges();
       }
 
-      return (updatedItems as NavigationMenuItem[]) ?? [];
+      return updatedItems;
     } catch (error) {
-      replaceDraft(
-        'navigationMenuItems',
-        previousItems as NavigationMenuItem[],
-      );
+      replaceDraft('navigationMenuItems', previousItems);
       applyChanges();
       throw error;
     }

@@ -1,8 +1,5 @@
 import { useMutation } from '@apollo/client/react';
-import {
-  DeleteManyNavigationMenuItemsDocument,
-  type NavigationMenuItem,
-} from '~/generated-metadata/graphql';
+import { DeleteManyNavigationMenuItemsDocument } from '~/generated-metadata/graphql';
 
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
@@ -31,10 +28,7 @@ export const useDeleteManyNavigationMenuItems = () => {
     try {
       await deleteManyNavigationMenuItemsMutation({ variables: { ids } });
     } catch (error) {
-      replaceDraft(
-        'navigationMenuItems',
-        previousItems as NavigationMenuItem[],
-      );
+      replaceDraft('navigationMenuItems', previousItems);
       applyChanges();
       throw error;
     }
