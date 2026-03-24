@@ -4,7 +4,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconColumnInsertRight, IconPlus } from 'twenty-ui/display';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -21,14 +21,14 @@ export const WorkspaceSectionAddMenuItemButton = () => {
     setPendingInsertionNavigationMenuItem,
   ] = useAtomState(pendingInsertionNavigationMenuItemState);
 
-  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeState,
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
   );
 
   const handleClick = (event?: React.MouseEvent) => {
     event?.stopPropagation();
     setPendingInsertionNavigationMenuItem(null);
-    setSelectedNavigationMenuItemInEditMode(null);
+    setSelectedNavigationMenuItemIdInEditMode(null);
     navigateSidePanel({
       page: SidePanelPages.NavigationMenuAddItem,
       pageTitle: t`New menu item`,

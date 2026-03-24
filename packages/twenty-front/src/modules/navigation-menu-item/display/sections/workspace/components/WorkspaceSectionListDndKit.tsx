@@ -35,7 +35,6 @@ export const WorkspaceSectionListDndKit = ({
   filteredItems,
   getEditModeProps,
   folderChildrenById,
-  selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
 }: WorkspaceSectionListDndKitProps) => {
@@ -72,7 +71,6 @@ export const WorkspaceSectionListDndKit = ({
               isDragging={isDragging}
               folderChildrenById={folderChildrenById}
               folderCount={folderCount}
-              selectedNavigationMenuItemId={selectedNavigationMenuItemId}
               onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
               orphanIndex={index}

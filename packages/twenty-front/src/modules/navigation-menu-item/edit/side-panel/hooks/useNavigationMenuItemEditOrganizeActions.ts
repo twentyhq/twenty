@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { type PendingInsertionNavigationMenuItem } from '@/navigation-menu-item/common/types/PendingInsertionNavigationMenuItem';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
@@ -47,11 +47,11 @@ export const useNavigationMenuItemEditOrganizeActions =
     const { t } = useLingui();
     const { closeSidePanelMenu } = useSidePanelMenu();
     const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
-    const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-      selectedNavigationMenuItemInEditModeState,
+    const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+      selectedNavigationMenuItemIdInEditModeState,
     );
-    const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-      selectedNavigationMenuItemInEditModeState,
+    const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+      selectedNavigationMenuItemIdInEditModeState,
     );
     const setPendingInsertionNavigationMenuItem = useSetAtomState(
       pendingInsertionNavigationMenuItemState,
@@ -60,8 +60,8 @@ export const useNavigationMenuItemEditOrganizeActions =
     const items = useNavigationMenuItemSectionItems();
     const { moveUp, moveDown, remove } = useNavigationMenuItemMoveRemove();
 
-    const selectedItem = selectedNavigationMenuItemInEditMode
-      ? items.find((item) => item.id === selectedNavigationMenuItemInEditMode)
+    const selectedItem = selectedNavigationMenuItemIdInEditMode
+      ? items.find((item) => item.id === selectedNavigationMenuItemIdInEditMode)
       : undefined;
 
     const folderId = selectedItem?.folderId ?? null;
@@ -78,29 +78,29 @@ export const useNavigationMenuItemEditOrganizeActions =
     const canMoveUp =
       selectedIndexInSiblings > 0 &&
       selectedItem != null &&
-      isDefined(selectedNavigationMenuItemInEditMode);
+      isDefined(selectedNavigationMenuItemIdInEditMode);
     const canMoveDown =
       selectedIndexInSiblings >= 0 &&
       selectedIndexInSiblings < siblings.length - 1 &&
       selectedItem != null &&
-      isDefined(selectedNavigationMenuItemInEditMode);
+      isDefined(selectedNavigationMenuItemIdInEditMode);
 
     const handleMoveUp = () => {
-      if (canMoveUp && isDefined(selectedNavigationMenuItemInEditMode)) {
-        moveUp(selectedNavigationMenuItemInEditMode);
+      if (canMoveUp && isDefined(selectedNavigationMenuItemIdInEditMode)) {
+        moveUp(selectedNavigationMenuItemIdInEditMode);
       }
     };
 
     const handleMoveDown = () => {
-      if (canMoveDown && isDefined(selectedNavigationMenuItemInEditMode)) {
-        moveDown(selectedNavigationMenuItemInEditMode);
+      if (canMoveDown && isDefined(selectedNavigationMenuItemIdInEditMode)) {
+        moveDown(selectedNavigationMenuItemIdInEditMode);
       }
     };
 
     const handleRemove = () => {
-      if (isDefined(selectedNavigationMenuItemInEditMode)) {
-        remove(selectedNavigationMenuItemInEditMode);
-        setSelectedNavigationMenuItemInEditMode(null);
+      if (isDefined(selectedNavigationMenuItemIdInEditMode)) {
+        remove(selectedNavigationMenuItemIdInEditMode);
+        setSelectedNavigationMenuItemIdInEditMode(null);
         closeSidePanelMenu();
       }
     };

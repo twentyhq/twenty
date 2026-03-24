@@ -14,7 +14,6 @@ export type NavigationMenuItemSectionContentProps = {
   folderChildrenById: Map<string, NavigationMenuItem[]>;
   folderCount: number;
   rightOptions?: ReactNode;
-  selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
     objectMetadataItem: EnrichedObjectMetadataItem,

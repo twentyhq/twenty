@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
@@ -26,7 +25,6 @@ import { NavigationDropTargetContext } from '@/navigation-menu-item/common/conte
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
-import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
@@ -42,10 +40,11 @@ import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigati
 import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
 import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { useFavoritesFolderEdit } from '@/navigation-menu-item/edit/folder/hooks/useFavoritesFolderEdit';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -87,7 +86,6 @@ type NavigationMenuItemFolderDndProps = {
   isEditInPlace: boolean;
   editModeProps?: EditModeProps;
   isDragging: boolean;
-  selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   orphanIndex?: number;
 };
@@ -102,7 +100,6 @@ export const NavigationMenuItemFolderDnd = ({
   isEditInPlace,
   editModeProps,
   isDragging: isDraggingProp,
-  selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   orphanIndex,
 }: NavigationMenuItemFolderDndProps) => {
@@ -144,16 +141,10 @@ export const NavigationMenuItemFolderDnd = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const pendingInsertionNavigationMenuItem = useAtomStateValue(
-    pendingInsertionNavigationMenuItemState,
-  );
-
-  const isAddMenuItemToThisFolderActive =
-    isDefined(pendingInsertionNavigationMenuItem) &&
-    pendingInsertionNavigationMenuItem.folderId === folderId &&
-    (sidePanelPage === SidePanelPages.NavigationMenuAddItem ||
-      sidePanelPage === SidePanelPages.NavigationMenuItemEdit);
+  const isFolderEditHighlighted = useIsNavigationMenuItemEditHighlighted({
+    id: folderId,
+    folderId: null,
+  });
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const folderHeaderDroppableId = `${config.folderHeaderPrefix}${folderId}`;
@@ -321,7 +312,7 @@ export const NavigationMenuItemFolderDnd = ({
   return (
     <>
       <StyledFolderContainer
-        $isSelectedInEditMode={isWorkspace && isSelectedInEditMode}
+        $isSelectedInEditMode={isWorkspace && isFolderEditHighlighted}
         data-drag-over-header={isDragOverFolderHeader ? 'true' : undefined}
         data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
       >
@@ -378,9 +369,6 @@ export const NavigationMenuItemFolderDnd = ({
                     onNavigationMenuItemClick={
                       isWorkspace ? onNavigationMenuItemClick : undefined
                     }
-                    selectedNavigationMenuItemId={
-                      isWorkspace ? selectedNavigationMenuItemId : undefined
-                    }
                   />
                 </NavigationMenuItemSortableItem>
               </Fragment>
@@ -407,7 +395,7 @@ export const NavigationMenuItemFolderDnd = ({
                   onClick={handleAddMenuItemToFolder}
                   triggerEvent="CLICK"
                   variant="tertiary"
-                  isSelectedInEditMode={isAddMenuItemToThisFolderActive}
+                  isSelectedInEditMode={false}
                   subItemState={getNavigationSubItemLeftAdornment({
                     index: navigationMenuItems.length,
                     arrayLength: folderContentLength,

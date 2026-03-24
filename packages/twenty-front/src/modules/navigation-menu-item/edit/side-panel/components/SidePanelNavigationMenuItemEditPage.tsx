@@ -6,7 +6,7 @@ import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/ed
 
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItemLabel';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/hooks/useUpdateLinkInDraft';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeColor';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -42,8 +42,8 @@ const StyledSidePanelPageContainer = styled.div`
 export const SidePanelNavigationMenuItemEditPage = () => {
   const { t } = useLingui();
 
-  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
   );
   const { selectedItemLabel } = useSelectedNavigationMenuItemEditItemLabel();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
@@ -83,7 +83,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     navigateToSidePanelSubPage(SidePanelSubPages.NewSidebarItemMainMenu);
   };
 
-  if (!selectedNavigationMenuItemInEditMode || !selectedItemLabel) {
+  if (!selectedNavigationMenuItemIdInEditMode || !selectedItemLabel) {
     return (
       <StyledSidePanelPageContainer>
         <StyledSidePanelPlaceholder>

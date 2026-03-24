@@ -10,6 +10,7 @@ import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/d
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -30,7 +31,6 @@ type NavigationMenuItemFolderSubItemProps = {
     item: NavigationMenuItem;
     objectMetadataItem?: EnrichedObjectMetadataItem;
   }) => void;
-  selectedNavigationMenuItemId?: string | null;
 };
 
 export const NavigationMenuItemFolderSubItem = ({
@@ -42,8 +42,9 @@ export const NavigationMenuItemFolderSubItem = ({
   rightOptions,
   onClick,
   onNavigationMenuItemClick,
-  selectedNavigationMenuItemId,
 }: NavigationMenuItemFolderSubItemProps) => {
+  const isEditHighlightedInNavigationMenu =
+    useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
@@ -112,9 +113,7 @@ export const NavigationMenuItemFolderSubItem = ({
       to={isDragging || handleClick ? undefined : computedLink}
       onClick={handleClick}
       active={index === selectedNavigationMenuItemIndex}
-      isSelectedInEditMode={
-        selectedNavigationMenuItemId === navigationMenuItem.id
-      }
+      isSelectedInEditMode={isEditHighlightedInNavigationMenu}
       subItemState={getNavigationSubItemLeftAdornment({
         index,
         arrayLength,

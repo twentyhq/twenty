@@ -27,7 +27,6 @@ type NavigationMenuItemFolderProps = Pick<
   | 'isDragging'
   | 'folderChildrenById'
   | 'folderCount'
-  | 'selectedNavigationMenuItemId'
   | 'onNavigationMenuItemClick'
   | 'readOnly'
   | 'orphanIndex'
@@ -40,7 +39,6 @@ export const NavigationMenuItemFolder = ({
   isDragging,
   folderChildrenById,
   folderCount,
-  selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   readOnly = false,
   orphanIndex,
@@ -88,7 +86,6 @@ export const NavigationMenuItemFolder = ({
         isEditInPlace={isEditInPlace}
         editModeProps={editModeProps}
         isDragging={isDragging}
-        selectedNavigationMenuItemId={selectedNavigationMenuItemId}
         onNavigationMenuItemClick={onNavigationMenuItemClick}
         orphanIndex={orphanIndex}
       />
