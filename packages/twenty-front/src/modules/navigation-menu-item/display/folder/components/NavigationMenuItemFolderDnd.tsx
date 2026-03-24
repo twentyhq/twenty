@@ -26,7 +26,7 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
@@ -35,6 +35,7 @@ import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
   NavigationMenuItemDroppableSlot,
 } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
+import { NavigationMenuItemInsertBeforeDroppableZone } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemInsertBeforeDroppableZone';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
 import { NavigationMenuItemFolderLayout } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderLayout';
@@ -91,6 +92,7 @@ type NavigationMenuItemFolderDndProps = {
   isDragging: boolean;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
+  orphanIndex?: number;
 };
 
 export const NavigationMenuItemFolderDnd = ({
@@ -105,6 +107,7 @@ export const NavigationMenuItemFolderDnd = ({
   isDragging: isDraggingProp,
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
+  orphanIndex,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -133,7 +136,7 @@ export const NavigationMenuItemFolderDnd = ({
     NavigationDropTargetContext,
   );
 
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const favoritesEdit = useFavoritesFolderEdit({
     folderId,
     folderName,
@@ -268,8 +271,22 @@ export const NavigationMenuItemFolderDnd = ({
     />
   );
 
+  const showInsertBeforeZone =
+    isDragging && orphanIndex !== undefined && !isEditInPlace;
+
   const wrappedHeader = (
-    <div ref={setSortableDropTargetRef ?? undefined}>
+    <div
+      ref={setSortableDropTargetRef ?? undefined}
+      style={{ position: 'relative' }}
+    >
+      {showInsertBeforeZone && (
+        <NavigationMenuItemInsertBeforeDroppableZone
+          orphanDroppableId={config.orphanDroppableId}
+          orphanIndex={orphanIndex}
+          itemId={folderId}
+          disabled={dropDisabled}
+        />
+      )}
       <NavigationMenuItemDroppableSlot
         droppableId={folderHeaderDroppableId}
         index={0}
@@ -369,7 +386,9 @@ export const NavigationMenuItemFolderDnd = ({
                           Icon={IconHeartOff}
                           onClick={(event) => {
                             event.stopPropagation();
-                            deleteNavigationMenuItem(navigationMenuItem.id);
+                            deleteManyNavigationMenuItems([
+                              navigationMenuItem.id,
+                            ]);
                           }}
                           accent="tertiary"
                         />

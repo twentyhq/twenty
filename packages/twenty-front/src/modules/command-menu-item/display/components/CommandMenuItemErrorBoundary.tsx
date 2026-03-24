@@ -1,21 +1,25 @@
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 type CommandMenuItemErrorBoundaryProps = {
   children: ReactNode;
-  engineCommandId: string;
   shouldReportToSentry?: boolean;
   onError?: () => void;
 };
 
 export const CommandMenuItemErrorBoundary = ({
   children,
-  engineCommandId,
   shouldReportToSentry = false,
   onError,
 }: CommandMenuItemErrorBoundaryProps) => {
   const { enqueueErrorSnackBar } = useSnackBar();
+
+  const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
+    CommandComponentInstanceContext,
+  );
 
   const handleError = async (error: Error) => {
     enqueueErrorSnackBar({ message: error.message });
@@ -41,7 +45,7 @@ export const CommandMenuItemErrorBoundary = ({
     <ErrorBoundary
       fallbackRender={() => null}
       onError={handleError}
-      resetKeys={[engineCommandId]}
+      resetKeys={[commandMenuItemId]}
     >
       {children}
     </ErrorBoundary>

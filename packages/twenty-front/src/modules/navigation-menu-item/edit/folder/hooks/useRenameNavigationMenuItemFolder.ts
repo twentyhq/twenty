@@ -1,7 +1,7 @@
-import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useUpdateNavigationMenuItem';
+import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
 
 export const useRenameNavigationMenuItemFolder = () => {
-  const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
+  const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
 
   const renameNavigationMenuItemFolder = async (
     folderId: string,
@@ -11,10 +11,9 @@ export const useRenameNavigationMenuItemFolder = () => {
       return;
     }
 
-    await updateNavigationMenuItem({
-      id: folderId,
-      name: newName,
-    });
+    await updateManyNavigationMenuItems([
+      { id: folderId, update: { name: newName } },
+    ]);
   };
 
   return {

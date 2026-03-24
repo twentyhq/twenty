@@ -24,10 +24,12 @@ jobs:
           yq eval 'del(.services.server.image)' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.server.build.context = "../../"' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i packages/twenty-docker/docker-compose.yml
+          yq eval '.services.server.build.target = "twenty"' -i packages/twenty-docker/docker-compose.yml
 
           yq eval 'del(.services.worker.image)' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.worker.build.context = "../../"' -i packages/twenty-docker/docker-compose.yml
           yq eval '.services.worker.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i packages/twenty-docker/docker-compose.yml
+          yq eval '.services.worker.build.target = "twenty"' -i packages/twenty-docker/docker-compose.yml
 
           echo "Adding SIGN_IN_PREFILLED environment variable to server service..."
           yq eval '.services.server.environment.SIGN_IN_PREFILLED = "${SIGN_IN_PREFILLED}"' -i packages/twenty-docker/docker-compose.yml

@@ -28,13 +28,13 @@ Publishing to npm makes your app discoverable in the Twenty marketplace. Any Twe
 1. **Build your app** — the CLI compiles your TypeScript sources and generates the application manifest:
 
 ```bash filename="Terminal"
-yarn twenty app:build
+yarn twenty build
 ```
 
 2. **Publish to npm** — push the built package to the npm registry:
 
 ```bash filename="Terminal"
-npx twenty app:publish
+npx twenty publish
 ```
 
 ### Auto-discovery
@@ -65,14 +65,14 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty app:build
+      - run: npx twenty build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty app:build`, then `npm publish` from `.twenty/output`.
+For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty build`, then `npm publish` from `.twenty/output`.
 
 <Tip>
 **npm provenance** is optional but recommended. Publishing with `--provenance` adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for setup instructions.
@@ -87,7 +87,7 @@ For apps you don't want publicly available — proprietary tools, enterprise-onl
 Build your app and deploy it to a specific server in one step:
 
 ```bash filename="Terminal"
-npx twenty app:publish --server <server-url>
+npx twenty publish --server <server-url>
 ```
 
 Any workspace on that server can then install and upgrade the app from the **Applications** settings page.
@@ -97,7 +97,7 @@ Any workspace on that server can then install and upgrade the app from the **App
 To release an update:
 
 1. Bump the `version` field in your `package.json`
-2. Push a new tarball with `npx twenty app:publish --server <server-url>`
+2. Push a new tarball with `npx twenty publish --server <server-url>`
 3. Workspaces on that server will see the upgrade available in their settings
 
 <Note>
@@ -110,7 +110,7 @@ Twenty organizes apps into three categories based on how they're distributed:
 
 | Category | How it works | Visible in marketplace? |
 |----------|-------------|------------------------|
-| **Development** | Local dev mode apps running via `yarn twenty app:dev`. Used for building and testing. | No |
+| **Development** | Local dev mode apps running via `yarn twenty dev`. Used for building and testing. | No |
 | **Published** | Apps published to npm with the `twenty-app-` prefix. Listed in the marketplace for any workspace to install. | Yes |
 | **Internal** | Apps deployed via tarball to a specific server. Available only to workspaces on that server. | No |
 

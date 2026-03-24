@@ -44,7 +44,6 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
   const featureFlags = useFeatureFlagsMap();
   const isRecordPageLayoutEditingEnabled =
     featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
-
   const store = useStore();
 
   const savePageLayout = useCallback(async () => {

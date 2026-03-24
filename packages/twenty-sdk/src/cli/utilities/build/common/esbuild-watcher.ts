@@ -1,4 +1,3 @@
-import { CLIENTS_SOURCE_DIR } from '@/cli/constants/clients-dir';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
@@ -16,6 +15,8 @@ import { NODE_ESM_CJS_BANNER, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
+  'twenty-client-sdk/core',
+  'twenty-client-sdk/metadata',
   'path',
   'fs',
   'crypto',
@@ -186,25 +187,6 @@ export class EsbuildWatcher implements RestartableWatcher {
   }
 }
 
-// Resolves twenty-sdk/clients to the source barrel so esbuild
-// bundles it instead of treating it as external (via twenty-sdk/*)
-export const createSdkClientsResolverPlugin = (
-  appPath: string,
-): esbuild.Plugin => ({
-  name: 'sdk-clients-resolver',
-  setup: (build) => {
-    build.onResolve({ filter: /^twenty-sdk\/clients/ }, () => ({
-      path: path.join(
-        appPath,
-        'node_modules',
-        'twenty-sdk',
-        CLIENTS_SOURCE_DIR,
-        'index.ts',
-      ),
-    }));
-  },
-});
-
 export type EsbuildWatcherFactoryOptions = RestartableWatcherOptions & {
   shouldSkipTypecheck: () => boolean;
 };
@@ -220,7 +202,6 @@ export const createLogicFunctionsWatcher = (
       platform: 'node',
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
-        createSdkClientsResolverPlugin(options.appPath),
       ],
       banner: NODE_ESM_CJS_BANNER,
     },
@@ -237,7 +218,6 @@ export const createFrontComponentsWatcher = (
       jsx: 'automatic',
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
-        createSdkClientsResolverPlugin(options.appPath),
         ...getFrontComponentBuildPlugins(),
       ],
     },

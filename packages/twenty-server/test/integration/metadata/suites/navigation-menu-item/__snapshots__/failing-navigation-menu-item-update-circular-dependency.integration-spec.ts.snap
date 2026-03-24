@@ -30,7 +30,7 @@ exports[`Navigation Menu Item update should fail with circular dependency when f
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "Multiple validation errors occurred while updating navigation menu item",
+  "message": "Multiple validation errors occurred while updating navigation menu items",
   "name": "GraphQLError",
 }
 `;
@@ -65,7 +65,7 @@ exports[`Navigation Menu Item update should fail with circular dependency when u
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "Multiple validation errors occurred while updating navigation menu item",
+  "message": "Multiple validation errors occurred while updating navigation menu items",
   "name": "GraphQLError",
 }
 `;

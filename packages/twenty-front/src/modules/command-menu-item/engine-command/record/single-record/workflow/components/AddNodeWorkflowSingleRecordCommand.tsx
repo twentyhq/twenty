@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-shared/utils';
 
 export const AddNodeWorkflowSingleRecordCommand = () => {
-  const { selectedRecords } = useMountedEngineCommandContext();
+  const { selectedRecords } = useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(

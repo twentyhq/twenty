@@ -7,9 +7,9 @@ import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
+import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
-import { useUnmountHeadlessFrontComponent } from '@/front-components/hooks/useUnmountHeadlessFrontComponent';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -40,7 +40,7 @@ export const useFrontComponentExecutionContext = ({
   const { navigateSidePanel } = useNavigateSidePanel();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
-  const unmountHeadlessFrontComponent = useUnmountHeadlessFrontComponent();
+  const unmountEngineCommand = useUnmountCommand();
   const {
     enqueueSuccessSnackBar,
     enqueueErrorSnackBar,
@@ -133,7 +133,9 @@ export const useFrontComponentExecutionContext = ({
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =
     async () => {
-      unmountHeadlessFrontComponent(frontComponentId);
+      if (isDefined(commandMenuItemId)) {
+        unmountEngineCommand(commandMenuItemId);
+      }
     };
 
   const closeSidePanel: FrontComponentHostCommunicationApi['closeSidePanel'] =

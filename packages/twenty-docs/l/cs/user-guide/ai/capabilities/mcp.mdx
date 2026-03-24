@@ -1,0 +1,142 @@
+---
+title: MCP Server
+description: Připojte asistenty AI ke svému pracovnímu prostoru Twenty pomocí protokolu Model Context Protocol.
+---
+
+<Warning>
+MCP je v současnosti ve fázi **alpha** a je dostupný pouze v některých pracovních prostorech. MCP nemusí být ve vašem pracovním prostoru ještě povolen.
+</Warning>
+
+Twenty zpřístupňuje server [MCP](https://modelcontextprotocol.io/), aby AI asistenti — Claude Desktop, Claude Code, Cursor, ChatGPT a další — mohli číst a zapisovat data vašeho CRM pomocí přirozeného jazyka.
+
+Použijte svou **adresu URL pracovní oblasti** (adresu URL, kterou používáte k přístupu k Twenty) jako koncový bod MCP. V Twenty Cloud může vaše adresa URL pracovní oblasti být `https://{mycompany}.twenty.com` nebo vlastní doména. Server je dostupný na:
+
+| Prostředí           | Koncový bod MCP                                                               |
+| ------------------- | ----------------------------------------------------------------------------- |
+| **Cloud**           | `https://{your-workspace-url}/mcp` (např. `https://mycompany.twenty.com/mcp`) |
+| **Vlastní hosting** | `https://{your-domain}/mcp`                                                   |
+
+## Metody ověření
+
+Máte dva způsoby, jak ověřit svého klienta MCP: **OAuth** (doporučeno) nebo **klíč API**.
+
+### Možnost A — OAuth (doporučeno)
+
+S OAuth váš klient MCP otevře okno prohlížeče, abyste se mohli přihlásit. V konfiguračních souborech se neukládají žádné tajné údaje a tokeny se automaticky obnovují.
+
+<Note>
+OAuth vyžaduje klienta MCP, který podporuje [specifikaci autorizace MCP](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Podporují ji Claude Desktop, Claude Code, Cursor a ChatGPT.
+</Note>
+
+Přidejte toto do konfigurace svého klienta MCP a nahraďte `{your-workspace-url}` hostitelem vaší pracovní oblasti (např. `mycompany.twenty.com`):
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp"
+    }
+  }
+}
+```
+
+To je vše — není potřeba žádný klíč API. Když se klient připojí poprvé, provede:
+
+1. Získá metadata OAuth služby Twenty pomocí `/.well-known/oauth-protected-resource` a `/.well-known/oauth-authorization-server`
+2. Zaregistruje se jako klient OAuth prostřednictvím dynamické registrace klienta (RFC 7591)
+3. Otevře váš prohlížeč k autorizaci přístupu
+4. Převezme tokeny a připojí se k serveru MCP
+
+Následující připojení znovu použijí uložené tokeny a automaticky je obnoví.
+
+### Možnost B — klíč API
+
+Pokud váš klient MCP nepodporuje OAuth, nebo dáváte přednost statickým přihlašovacím údajům, předejte klíč API v hlavičce `Authorization`:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "type": "streamable-http",
+      "url": "https://{your-workspace-url}/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+<Warning>
+Váš klíč API poskytuje přístup k datům pracovní oblasti. Nenechávejte jej ve verzovacím systému ani ve sdílených dotfiles.
+</Warning>
+
+Chcete-li vytvořit klíč API, přejděte do **Settings > APIs & Webhooks > + Create key**. Podrobnosti viz [Rozhraní API](/l/cs/developers/extend/api#create-an-api-key).
+
+## Rychlý start
+
+### 1. Zkopírujte konfiguraci
+
+V Twenty přejděte do **Settings > AI > More > MCP Server**. Vyberte metodu ověření (OAuth nebo klíč API), zkopírujte úryvek JSON (už bude používat adresu URL vaší pracovní oblasti) a vložte jej do konfiguračního souboru klienta MCP.
+
+| Klient             | Umístění konfiguračního souboru                                                                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) nebo `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                           |
+| **Claude Code**    | `~/.claude.json` (uživatel) nebo `.mcp.json` (projekt)                                                                                                           |
+| **Cursor**         | `.cursor/mcp.json` ve vašem projektu nebo `~/.cursor/mcp.json` globálně                                                                                          |
+| **ChatGPT**        | Zapněte Developer Mode v **Settings > Apps & Connectors > Advanced settings**, poté použijte **Create** v **Settings > Apps & Connectors** k přidání serveru MCP |
+
+### 2. Připojení
+
+Restartujte svého klienta MCP (nebo znovu načtěte konfiguraci). Pokud používáte OAuth, budete přesměrováni do Twenty k autorizaci přístupu. Pokud používáte klíč API, připojení je okamžité.
+
+### 3. Začněte jej používat
+
+Požádejte svého AI asistenta, aby pracoval s vaším CRM:
+
+* *"Ukaž mi 5 nejnověji vytvořených společností"*
+* *"Vytvoř novou osobu jménem Jane Doe ve společnosti Acme Corp"*
+* *"Najdi všechny otevřené příležitosti s hodnotou vyšší než 10 000 $"*
+
+## Dostupné nástroje
+
+Po připojení server MCP zpřístupní nástroje, které odpovídají rozhraní Twenty API. Doporučený pracovní postup je:
+
+1. **`get_tool_catalog`** — zjistit všechny dostupné nástroje
+2. **`learn_tools`** — získat vstupní schéma pro konkrétní nástroje
+3. **`execute_tool`** — spustit nástroj
+
+Není potřeba si pamatovat názvy nástrojů. Zeptejte se svého AI asistenta, co umí, a automaticky zavolá `get_tool_catalog`.
+
+## Oprávnění
+
+Připojení MCP dědí oprávnění ověřeného uživatele (OAuth) nebo roli přiřazenou ke klíči API. Chcete-li omezit, co může server MCP provádět:
+
+* **OAuth**: Platí role uživatele v pracovní oblasti.
+* **Klíč API**: Přiřaďte klíči API roli v **Settings > Roles**. Viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
+
+## Konfigurace pro self-hosting
+
+U samostatně hostovaných instancí nahraďte `{your-workspace-url}` adresou URL svého serveru. Ujistěte se, že `SERVER_URL` ve vašem prostředí odpovídá veřejné adrese URL vaší instance Twenty — tato hodnota se používá k vygenerování metadat pro zjišťování OAuth.
+
+```bash
+SERVER_URL=https://twenty.yourcompany.com
+```
+
+Koncový bod MCP, koncové body OAuth a metadata pro zjišťování se z této hodnoty odvozují.
+
+## Řešení potíží
+
+**Chyby "Unauthorized" nebo 401**
+
+* OAuth: Proveďte znovu autorizaci vymazáním uložených tokenů ve vašem klientovi MCP a znovu se připojte.
+* Klíč API: Ověřte, že je klíč platný a nevypršela mu platnost. V případě potřeby jej znovu vygenerujte.
+
+**Tok OAuth neotevírá prohlížeč**
+
+* Ujistěte se, že váš klient MCP podporuje autorizaci MCP. Pokud ne, použijte metodu s klíčem API.
+
+**Časový limit připojení**
+
+* Ověřte, že je adresa URL koncového bodu MCP dosažitelná z vašeho počítače. U samostatně hostovaných instancí zkontrolujte, že server běží a že je `SERVER_URL` nastaven správně.

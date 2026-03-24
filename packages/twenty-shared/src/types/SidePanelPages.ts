@@ -21,6 +21,7 @@ export enum SidePanelPages {
   PageLayoutIframeSettings = 'page-layout-iframe-settings',
   PageLayoutTabSettings = 'page-layout-tab-settings',
   PageLayoutFieldsSettings = 'page-layout-fields-settings',
+  PageLayoutRecordTableSettings = 'page-layout-record-table-settings',
   ViewFrontComponent = 'view-front-component',
   NavigationMenuItemEdit = 'navigation-menu-item-edit',
   NavigationMenuAddItem = 'navigation-menu-add-item',
