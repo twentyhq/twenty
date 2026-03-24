@@ -1,8 +1,8 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 
-const mockObjectMetadataItems: ObjectMetadataItem[] = [
+const mockObjectMetadataItems: EnrichedObjectMetadataItem[] = [
   {
     id: 'company-id',
     nameSingular: 'company',
@@ -12,7 +12,7 @@ const mockObjectMetadataItems: ObjectMetadataItem[] = [
     icon: 'IconBuilding',
     fields: [],
     createdAt: new Date(),
-  } as unknown as ObjectMetadataItem,
+  } as unknown as EnrichedObjectMetadataItem,
 ];
 
 describe('getManualTriggerDefaultSettings', () => {
@@ -76,7 +76,7 @@ describe('getManualTriggerDefaultSettings', () => {
     });
 
     it('should use the first object metadata item', () => {
-      const multipleObjects: ObjectMetadataItem[] = [
+      const multipleObjects: EnrichedObjectMetadataItem[] = [
         ...mockObjectMetadataItems,
         {
           id: 'person-id',
@@ -86,7 +86,7 @@ describe('getManualTriggerDefaultSettings', () => {
           labelPlural: 'People',
           icon: 'IconUser',
           fields: [],
-        } as unknown as ObjectMetadataItem,
+        } as unknown as EnrichedObjectMetadataItem,
       ];
 
       const result = getManualTriggerDefaultSettings({

@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getGroupByAggregateQueryName } from '@/object-record/record-aggregate/utils/getGroupByAggregateQueryName';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
 
@@ -9,7 +9,7 @@ export const useRefetchAggregateQueriesForObjectMetadataItem = () => {
   const refetchAggregateQueriesForObjectMetadataItem = async ({
     objectMetadataItem,
   }: {
-    objectMetadataItem: ObjectMetadataItem;
+    objectMetadataItem: EnrichedObjectMetadataItem;
   }) => {
     const queryName = getAggregateQueryName(objectMetadataItem.namePlural);
     const groupByAggregateQueryName = getGroupByAggregateQueryName({

@@ -10,13 +10,11 @@ module.exports = {
     './src/modules/views/graphql/**/*.{ts,tsx}',
     './src/modules/ai/graphql/**/*.{ts,tsx}',
     './src/modules/applications/graphql/**/*.{ts,tsx}',
-    './src/modules/application-variables/graphql/**/*.{ts,tsx}',
 
     './src/modules/workspace/graphql/**/*.{ts,tsx}',
     './src/modules/workspace-member/graphql/**/*.{ts,tsx}',
     './src/modules/workspace-invitation/graphql/**/*.{ts,tsx}',
 
-    './src/modules/billing/graphql/**/*.{ts,tsx}',
     './src/modules/settings/**/graphql/**/*.{ts,tsx}',
     './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
 

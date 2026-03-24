@@ -7,10 +7,12 @@ import { useEffect } from 'react';
 
 export type HeadlessEngineCommandWrapperEffectProps = {
   execute: () => void | Promise<unknown>;
+  ready?: boolean;
 };
 
 export const HeadlessEngineCommandWrapperEffect = ({
   execute,
+  ready = true,
 }: HeadlessEngineCommandWrapperEffectProps) => {
   const { isInitializedRef, setIsInitialized } =
     useIsHeadlessEngineCommandEffectInitialized();
@@ -24,7 +26,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
   const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
-    if (isInitializedRef.current) {
+    if (isInitializedRef.current || !ready) {
       return;
     }
 
@@ -39,6 +41,7 @@ export const HeadlessEngineCommandWrapperEffect = ({
     run();
   }, [
     execute,
+    ready,
     isInitializedRef,
     setIsInitialized,
     engineCommandId,

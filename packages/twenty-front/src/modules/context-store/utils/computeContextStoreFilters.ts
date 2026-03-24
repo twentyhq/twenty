@@ -1,5 +1,5 @@
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
@@ -16,7 +16,7 @@ type ComputeContextStoreFiltersProps = {
   contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule;
   contextStoreFilters: RecordFilter[];
   contextStoreFilterGroups: RecordFilterGroup[];
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
 };

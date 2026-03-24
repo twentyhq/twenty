@@ -1,9 +1,9 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordBoardColumnHeaderAggregateContentId } from '@/object-record/record-board/types/RecordBoardColumnHeaderAggregateContentId';
 import { createContext } from 'react';
 
 export type RecordBoardColumnHeaderAggregateDropdownContextValue = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   currentContentId: RecordBoardColumnHeaderAggregateContentId | null;
   onContentChange: (key: RecordBoardColumnHeaderAggregateContentId) => void;
   resetContent: () => void;

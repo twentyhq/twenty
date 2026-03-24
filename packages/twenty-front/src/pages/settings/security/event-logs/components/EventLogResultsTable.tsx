@@ -79,6 +79,28 @@ const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
   },
 ];
 
+const USAGE_EVENT_COLUMNS: ColumnConfig[] = [
+  {
+    id: 'event',
+    label: msg`Resource Type`,
+    minWidth: 100,
+    defaultWidth: 130,
+  },
+  {
+    id: 'timestamp',
+    label: msg`Timestamp`,
+    minWidth: 100,
+    defaultWidth: 140,
+  },
+  { id: 'userId', label: msg`User`, minWidth: 100, defaultWidth: 130 },
+  {
+    id: 'properties',
+    label: msg`Details`,
+    minWidth: 200,
+    defaultWidth: 400,
+  },
+];
+
 const StyledScrollWrapperContainer = styled.div`
   height: 100%;
   overflow: hidden;
@@ -159,9 +181,12 @@ export const EventLogResultsTable = ({
   const { t } = useLingui();
 
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
-  const baseColumns = showObjectEventColumns
-    ? OBJECT_EVENT_COLUMNS
-    : DEFAULT_COLUMNS;
+  const baseColumns =
+    selectedTable === EventLogTable.OBJECT_EVENT
+      ? OBJECT_EVENT_COLUMNS
+      : selectedTable === EventLogTable.USAGE_EVENT
+        ? USAGE_EVENT_COLUMNS
+        : DEFAULT_COLUMNS;
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
     Object.fromEntries(baseColumns.map((col) => [col.id, col.defaultWidth])),

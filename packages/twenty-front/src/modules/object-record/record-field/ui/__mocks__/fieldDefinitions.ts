@@ -11,7 +11,7 @@ import {
   FieldTextMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 export const fieldMetadataId = 'fieldMetadataId';
 
@@ -24,9 +24,10 @@ export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {
   metadata: { placeHolder: 'John Doe', fieldName: 'userName' },
 };
 
-const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  ({ nameSingular }) => nameSingular === 'person',
-);
+const mockedPersonObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    ({ nameSingular }) => nameSingular === 'person',
+  );
 
 if (!mockedPersonObjectMetadataItem) {
   throw new Error('Person object metadata item not found');
@@ -87,9 +88,10 @@ export const ratingFieldDefinition: FieldDefinition<FieldRatingMetadata> = {
   },
 };
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    (item) => item.nameSingular === 'company',
+  );
 
 if (!mockedCompanyObjectMetadataItem) {
   throw new Error('Company object metadata item not found');

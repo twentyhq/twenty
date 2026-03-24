@@ -6,13 +6,13 @@ import { WORKFLOW_VERSIONS_COMMAND_MENU_ITEMS_CONFIG } from '@/command-menu-item
 import { WORKSPACE_MEMBERS_COMMAND_MENU_ITEMS_CONFIG } from '@/command-menu-item/record/constants/WorkspaceMembersCommandMenuItemsConfig';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getCommandMenuItemConfig = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
 }): Record<string, CommandMenuItemConfig> => {
   if (!isDefined(objectMetadataItem)) {
     return {};

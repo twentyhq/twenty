@@ -14,7 +14,7 @@ import {
   ViewVisibility,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
@@ -31,7 +31,7 @@ const renderHooks = ({
 }) => {
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
-    generatedMockObjectMetadataItems,
+    getTestEnrichedObjectMetadataItemsMock(),
   );
 
   const { result } = renderHook(

@@ -18,7 +18,7 @@ import { InMemoryCache } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const getDefaultMocks = (
@@ -45,7 +45,7 @@ const mockRefetchAggregateQueries = jest.fn();
 });
 
 const objectMetadataItem = getMockObjectMetadataItemOrThrow('person');
-const objectMetadataItems = generatedMockObjectMetadataItems;
+const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
 const expectedCachedRecordsWithUpdatedCity = personRecords.map(
   (personRecord) => ({
@@ -126,7 +126,7 @@ describe('useUpdateManyRecords', () => {
           objectMetadataItems,
           record,
           recordGqlFields: generateDepthRecordGqlFieldsFromRecord({
-            objectMetadataItems: generatedMockObjectMetadataItems,
+            objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
             objectMetadataItem,
             record,
             depth: 1,

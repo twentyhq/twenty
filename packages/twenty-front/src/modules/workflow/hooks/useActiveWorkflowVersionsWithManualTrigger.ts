@@ -1,6 +1,6 @@
 import { isGlobalManualTrigger } from '@/command-menu-item/record/utils/isGlobalManualTrigger';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   type ManualTriggerWorkflowVersion,
@@ -12,7 +12,7 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem,
   skip,
 }: {
-  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   skip?: boolean;
 }) => {
   const filters = [

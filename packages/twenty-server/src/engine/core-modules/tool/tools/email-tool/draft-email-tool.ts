@@ -89,6 +89,7 @@ export class DraftEmailTool implements Tool {
         body: data.plainTextBody,
         html: data.sanitizedHtmlBody,
         attachments: data.attachments,
+        inReplyTo: data.inReplyTo,
       },
       data.connectedAccount,
     );

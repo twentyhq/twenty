@@ -19,7 +19,7 @@ tests:
             - crm.example.com
     asserts:
       - equal:
-          path: spec.template.spec.containers[0].env[0].value
+          path: spec.template.spec.containers[0].env[?(@.name=="SERVER_URL")].value
           value: "https://crm.example.com:443"
   - it: falls back to service when ingress disabled
     set:
@@ -28,7 +28,7 @@ tests:
       server.env.SERVER_URL: ""
     asserts:
       - matchRegex:
-          path: spec.template.spec.containers[0].env[0].value
+          path: spec.template.spec.containers[0].env[?(@.name=="SERVER_URL")].value
           pattern: ^http://my-twenty-twenty-server\.default\.svc\.cluster\.local:3000$
 ---
 suite: ingress configuration
@@ -66,6 +66,7 @@ tests:
     set:
       server.ingress.acme: true
     asserts:
-      - equal:
-          path: metadata.annotations[cert-manager.io/cluster-issuer]
-          value: letsencrypt-prod
+      - isSubset:
+          path: metadata.annotations
+          content:
+            cert-manager.io/cluster-issuer: letsencrypt-prod

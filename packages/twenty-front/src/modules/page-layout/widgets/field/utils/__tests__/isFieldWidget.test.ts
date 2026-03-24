@@ -1,6 +1,7 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import {
+  FieldDisplayMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -14,7 +15,7 @@ describe('isFieldWidget', () => {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: 'fm-1',
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
     } as PageLayoutWidget;
 
@@ -29,7 +30,7 @@ describe('isFieldWidget', () => {
         __typename: 'FieldConfiguration',
         configurationType: WidgetConfigurationType.FIELD,
         fieldMetadataId: 'fm-1',
-        layout: 'FIELD',
+        fieldDisplayMode: FieldDisplayMode.FIELD,
       },
     } as PageLayoutWidget;
 

@@ -796,8 +796,6 @@ type Workspace {
   fastModel: String!
   smartModel: String!
   aiAdditionalInstructions: String
-  autoEnableNewAiModels: Boolean!
-  disabledAiModelIds: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean!
   routerModel: String!
@@ -1158,6 +1156,15 @@ type EmailsConfiguration {
 
 type FieldConfiguration {
   configurationType: WidgetConfigurationType!
+  fieldMetadataId: String!
+  fieldDisplayMode: FieldDisplayMode!
+}
+
+"""Display mode for field configuration widgets"""
+enum FieldDisplayMode {
+  CARD
+  FIELD
+  VIEW
 }
 
 type FieldRichTextConfiguration {
@@ -1547,6 +1554,7 @@ enum FeatureFlagKey {
   IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
+  IS_USAGE_ANALYTICS_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
   IS_DIRECT_GRAPHQL_EXECUTION_ENABLED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
@@ -2443,48 +2451,49 @@ type ClientAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  inferenceProvider: InferenceProvider!
+  modelFamilyLabel: String
+  sdkPackage: String
   inputCostPerMillionTokensInCredits: Float!
   outputCostPerMillionTokensInCredits: Float!
   nativeCapabilities: NativeModelCapabilities
-  deprecated: Boolean
+  isDeprecated: Boolean
   isRecommended: Boolean
+  providerName: String
+  dataResidency: String
 }
 
 enum ModelFamily {
-  OPENAI
-  ANTHROPIC
-  GOOGLE
+  GPT
+  CLAUDE
+  GEMINI
   MISTRAL
-  XAI
-}
-
-enum InferenceProvider {
-  NONE
-  OPENAI
-  ANTHROPIC
-  BEDROCK
-  GOOGLE
-  MISTRAL
-  OPENAI_COMPATIBLE
-  XAI
-  GROQ
+  GROK
 }
 
 type AdminAIModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
-  inferenceProvider: InferenceProvider!
+  modelFamilyLabel: String
+  sdkPackage: String
   isAvailable: Boolean!
   isAdminEnabled: Boolean!
-  deprecated: Boolean
+  isDeprecated: Boolean
   isRecommended: Boolean
+  contextWindowTokens: Float
+  maxOutputTokens: Float
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
+  providerName: String
+  providerLabel: String
+  name: String
+  dataResidency: String
 }
 
 type AdminAIModels {
-  autoEnableNewModels: Boolean!
   models: [AdminAIModelConfig!]!
+  defaultSmartModelId: String
+  defaultFastModelId: String
 }
 
 type Billing {
@@ -2587,6 +2596,7 @@ enum ConfigVariableType {
   ARRAY
   STRING
   ENUM
+  JSON
 }
 
 type ConfigVariablesGroupData {
@@ -2746,6 +2756,25 @@ type AdminPanelHealthServiceData {
   queues: [AdminPanelWorkerQueueHealth!]
 }
 
+type ModelsDevModelSuggestion {
+  modelId: String!
+  name: String!
+  inputCostPerMillionTokens: Float!
+  outputCostPerMillionTokens: Float!
+  cachedInputCostPerMillionTokens: Float
+  cacheCreationCostPerMillionTokens: Float
+  contextWindowTokens: Float!
+  maxOutputTokens: Float!
+  modalities: [String!]!
+  supportsReasoning: Boolean!
+}
+
+type ModelsDevProviderSuggestion {
+  id: String!
+  modelCount: Float!
+  npm: String!
+}
+
 type QueueMetricsDataPoint {
   x: Float!
   y: Float!
@@ -2888,6 +2917,31 @@ type MarketplaceApp {
   defaultRole: MarketplaceAppDefaultRole
   sourcePackage: String
   isFeatured: Boolean!
+}
+
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
+}
+
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
 }
 
 type PublicDomain {
@@ -3076,10 +3130,20 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
+  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
+  getView(id: String!): View
+  getViewSorts(viewId: String): [ViewSort!]!
+  getViewSort(id: String!): ViewSort
+  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
+  getViewFieldGroup(id: String!): ViewFieldGroup
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
   findManyLogicFunctions: [LogicFunction!]!
   getAvailablePackages(input: LogicFunctionIdInput!): JSON!
   getLogicFunctionSourceCode(input: LogicFunctionIdInput!): String
+  commandMenuItems: [CommandMenuItem!]!
+  commandMenuItem(id: UUID!): CommandMenuItem
+  frontComponents: [FrontComponent!]!
+  frontComponent(id: UUID!): FrontComponent
   objectRecordCounts: [ObjectRecordCount!]!
   object(
     """The id of the record to find."""
@@ -3094,12 +3158,6 @@ type Query {
   ): ObjectConnection!
   getViewFields(viewId: String!): [ViewField!]!
   getViewField(id: String!): ViewField
-  getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
-  getView(id: String!): View
-  getViewSorts(viewId: String): [ViewSort!]!
-  getViewSort(id: String!): ViewSort
-  getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
-  getViewFieldGroup(id: String!): ViewFieldGroup
   index(
     """The id of the record to find."""
     id: UUID!
@@ -3111,10 +3169,6 @@ type Query {
     """Specify to filter the records returned."""
     filter: IndexFilter! = {}
   ): IndexConnection!
-  commandMenuItems: [CommandMenuItem!]!
-  commandMenuItem(id: UUID!): CommandMenuItem
-  frontComponents: [FrontComponent!]!
-  frontComponent(id: UUID!): FrontComponent
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   billingPortalSession(returnUrlPath: String): BillingSession!
@@ -3202,6 +3256,9 @@ type Query {
   getDatabaseConfigVariable(key: String!): ConfigVariable!
   getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
   findAllApplicationRegistrations: [ApplicationRegistration!]!
+  getAiProviders: JSON!
+  getModelsDevProviders: [ModelsDevProviderSuggestion!]!
+  getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
@@ -3209,6 +3266,7 @@ type Query {
   findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
 }
 
 input LogicFunctionIdInput {
@@ -3286,6 +3344,7 @@ enum EventLogTable {
   WORKSPACE_EVENT
   PAGEVIEW
   OBJECT_EVENT
+  USAGE_EVENT
 }
 
 input EventLogFiltersInput {
@@ -3316,6 +3375,12 @@ input BarChartDataInput {
   configuration: JSON!
 }
 
+input UsageAnalyticsInput {
+  periodStart: DateTime
+  periodEnd: DateTime
+  userWorkspaceId: String
+}
+
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
@@ -3340,18 +3405,6 @@ type Mutation {
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
-  deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
-  createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
-  executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
-  updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
-  createOneObject(input: CreateOneObjectInput!): Object!
-  deleteOneObject(input: DeleteOneObjectInput!): Object!
-  updateOneObject(input: UpdateOneObjectInput!): Object!
-  updateViewField(input: UpdateViewFieldInput!): ViewField!
-  createViewField(input: CreateViewFieldInput!): ViewField!
-  createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
-  deleteViewField(input: DeleteViewFieldInput!): ViewField!
-  destroyViewField(input: DestroyViewFieldInput!): ViewField!
   createView(input: CreateViewInput!): View!
   updateView(id: String!, input: UpdateViewInput!): View!
   deleteView(id: String!): Boolean!
@@ -3366,12 +3419,24 @@ type Mutation {
   deleteViewFieldGroup(input: DeleteViewFieldGroupInput!): ViewFieldGroup!
   destroyViewFieldGroup(input: DestroyViewFieldGroupInput!): ViewFieldGroup!
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
+  deleteOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
+  createOneLogicFunction(input: CreateLogicFunctionFromSourceInput!): LogicFunction!
+  executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
+  updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
   createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   deleteCommandMenuItem(id: UUID!): CommandMenuItem!
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
+  createOneObject(input: CreateOneObjectInput!): Object!
+  deleteOneObject(input: DeleteOneObjectInput!): Object!
+  updateOneObject(input: UpdateOneObjectInput!): Object!
+  updateViewField(input: UpdateViewFieldInput!): ViewField!
+  createViewField(input: CreateViewFieldInput!): ViewField!
+  createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
+  deleteViewField(input: DeleteViewFieldInput!): ViewField!
+  destroyViewField(input: DestroyViewFieldInput!): ViewField!
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3488,11 +3553,17 @@ type Mutation {
   userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
+  setAdminAiModelRecommended(modelId: String!, recommended: Boolean!): Boolean!
+  setAdminDefaultAiModel(role: AiModelRole!, modelId: String!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   deleteDatabaseConfigVariable(key: String!): Boolean!
   retryJobs(queueName: String!, jobIds: [String!]!): RetryJobsResponse!
   deleteJobs(queueName: String!, jobIds: [String!]!): DeleteJobsResponse!
+  addAiProvider(providerName: String!, providerConfig: JSON!): Boolean!
+  removeAiProvider(providerName: String!): Boolean!
+  addModelToProvider(providerName: String!, modelConfig: JSON!): Boolean!
+  removeModelFromProvider(providerName: String!, modelName: String!): Boolean!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
   createPublicDomain(domain: String!): PublicDomain!
@@ -3647,135 +3718,6 @@ input UpdatePageLayoutWidgetWithIdInput {
   conditionalDisplay: JSON
 }
 
-input CreateLogicFunctionFromSourceInput {
-  id: UUID
-  universalIdentifier: UUID
-  name: String!
-  description: String
-  timeoutSeconds: Float
-  toolInputSchema: JSON
-  isTool: Boolean
-  source: JSON
-  cronTriggerSettings: JSON
-  databaseEventTriggerSettings: JSON
-  httpRouteTriggerSettings: JSON
-}
-
-input ExecuteOneLogicFunctionInput {
-  """Id of the logic function to execute"""
-  id: UUID!
-
-  """Payload in JSON format"""
-  payload: JSON!
-}
-
-input UpdateLogicFunctionFromSourceInput {
-  """Id of the logic function to update"""
-  id: UUID!
-
-  """The logic function updates"""
-  update: UpdateLogicFunctionFromSourceInputUpdates!
-}
-
-input UpdateLogicFunctionFromSourceInputUpdates {
-  name: String
-  description: String
-  timeoutSeconds: Float
-  sourceHandlerCode: String
-  toolInputSchema: JSON
-  handlerName: String
-  sourceHandlerPath: String
-  isTool: Boolean
-  cronTriggerSettings: JSON
-  databaseEventTriggerSettings: JSON
-  httpRouteTriggerSettings: JSON
-}
-
-input CreateOneObjectInput {
-  """The object to create"""
-  object: CreateObjectInput!
-}
-
-input CreateObjectInput {
-  nameSingular: String!
-  namePlural: String!
-  labelSingular: String!
-  labelPlural: String!
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  skipNameField: Boolean
-  isRemote: Boolean
-  primaryKeyColumnType: String
-  primaryKeyFieldMetadataSettings: JSON
-  isLabelSyncedWithName: Boolean
-}
-
-input DeleteOneObjectInput {
-  """The id of the record to delete."""
-  id: UUID!
-}
-
-input UpdateOneObjectInput {
-  update: UpdateObjectPayload!
-
-  """The id of the object to update"""
-  id: UUID!
-}
-
-input UpdateObjectPayload {
-  labelSingular: String
-  labelPlural: String
-  nameSingular: String
-  namePlural: String
-  description: String
-  icon: String
-  shortcut: String
-  color: String
-  isActive: Boolean
-  labelIdentifierFieldMetadataId: UUID
-  imageIdentifierFieldMetadataId: UUID
-  isLabelSyncedWithName: Boolean
-}
-
-input UpdateViewFieldInput {
-  """The id of the view field to update"""
-  id: UUID!
-
-  """The view field to update"""
-  update: UpdateViewFieldInputUpdates!
-}
-
-input UpdateViewFieldInputUpdates {
-  isVisible: Boolean
-  size: Float
-  position: Float
-  aggregateOperation: AggregateOperations
-  viewFieldGroupId: UUID
-}
-
-input CreateViewFieldInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  viewId: UUID!
-  isVisible: Boolean = true
-  size: Float = 0
-  position: Float = 0
-  aggregateOperation: AggregateOperations
-  viewFieldGroupId: UUID
-}
-
-input DeleteViewFieldInput {
-  """The id of the view field to delete."""
-  id: UUID!
-}
-
-input DestroyViewFieldInput {
-  """The id of the view field to destroy."""
-  id: UUID!
-}
-
 input CreateViewInput {
   id: UUID
   name: String!
@@ -3906,6 +3848,50 @@ input UpsertFieldsWidgetFieldInput {
   position: Float!
 }
 
+input CreateLogicFunctionFromSourceInput {
+  id: UUID
+  universalIdentifier: UUID
+  name: String!
+  description: String
+  timeoutSeconds: Float
+  toolInputSchema: JSON
+  isTool: Boolean
+  source: JSON
+  cronTriggerSettings: JSON
+  databaseEventTriggerSettings: JSON
+  httpRouteTriggerSettings: JSON
+}
+
+input ExecuteOneLogicFunctionInput {
+  """Id of the logic function to execute"""
+  id: UUID!
+
+  """Payload in JSON format"""
+  payload: JSON!
+}
+
+input UpdateLogicFunctionFromSourceInput {
+  """Id of the logic function to update"""
+  id: UUID!
+
+  """The logic function updates"""
+  update: UpdateLogicFunctionFromSourceInputUpdates!
+}
+
+input UpdateLogicFunctionFromSourceInputUpdates {
+  name: String
+  description: String
+  timeoutSeconds: Float
+  sourceHandlerCode: String
+  toolInputSchema: JSON
+  handlerName: String
+  sourceHandlerPath: String
+  isTool: Boolean
+  cronTriggerSettings: JSON
+  databaseEventTriggerSettings: JSON
+  httpRouteTriggerSettings: JSON
+}
+
 input CreateCommandMenuItemInput {
   workflowVersionId: UUID
   frontComponentId: UUID
@@ -3955,6 +3941,91 @@ input UpdateFrontComponentInput {
 input UpdateFrontComponentInputUpdates {
   name: String
   description: String
+}
+
+input CreateOneObjectInput {
+  """The object to create"""
+  object: CreateObjectInput!
+}
+
+input CreateObjectInput {
+  nameSingular: String!
+  namePlural: String!
+  labelSingular: String!
+  labelPlural: String!
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  skipNameField: Boolean
+  isRemote: Boolean
+  primaryKeyColumnType: String
+  primaryKeyFieldMetadataSettings: JSON
+  isLabelSyncedWithName: Boolean
+}
+
+input DeleteOneObjectInput {
+  """The id of the record to delete."""
+  id: UUID!
+}
+
+input UpdateOneObjectInput {
+  update: UpdateObjectPayload!
+
+  """The id of the object to update"""
+  id: UUID!
+}
+
+input UpdateObjectPayload {
+  labelSingular: String
+  labelPlural: String
+  nameSingular: String
+  namePlural: String
+  description: String
+  icon: String
+  shortcut: String
+  color: String
+  isActive: Boolean
+  labelIdentifierFieldMetadataId: UUID
+  imageIdentifierFieldMetadataId: UUID
+  isLabelSyncedWithName: Boolean
+}
+
+input UpdateViewFieldInput {
+  """The id of the view field to update"""
+  id: UUID!
+
+  """The view field to update"""
+  update: UpdateViewFieldInputUpdates!
+}
+
+input UpdateViewFieldInputUpdates {
+  isVisible: Boolean
+  size: Float
+  position: Float
+  aggregateOperation: AggregateOperations
+  viewFieldGroupId: UUID
+}
+
+input CreateViewFieldInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  viewId: UUID!
+  isVisible: Boolean = true
+  size: Float = 0
+  position: Float = 0
+  aggregateOperation: AggregateOperations
+  viewFieldGroupId: UUID
+}
+
+input DeleteViewFieldInput {
+  """The id of the view field to delete."""
+  id: UUID!
+}
+
+input DestroyViewFieldInput {
+  """The id of the view field to destroy."""
+  id: UUID!
 }
 
 input CreateAgentInput {
@@ -4282,8 +4353,6 @@ input UpdateWorkspaceInput {
   smartModel: String
   aiAdditionalInstructions: String
   editableProfileFields: [String!]
-  autoEnableNewAiModels: Boolean
-  disabledAiModelIds: [String!]
   enabledAiModelIds: [String!]
   useRecommendedModels: Boolean
 }
@@ -4465,6 +4534,11 @@ input ConnectionParameters {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
+}
+
+enum AiModelRole {
+  FAST
+  SMART
 }
 
 input CreateOneAppTokenInput {

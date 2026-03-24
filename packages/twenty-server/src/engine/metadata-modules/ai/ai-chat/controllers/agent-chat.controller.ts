@@ -66,7 +66,7 @@ export class AgentChatController {
   ) {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AgentException(
-        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
+        'No AI models are available. Configure at least one AI provider.',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }

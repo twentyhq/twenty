@@ -24,12 +24,14 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useContext } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetType,
@@ -83,17 +85,27 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
+  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
+  );
+
+  const isRecordPageLayout =
+    currentPageLayout.type === PageLayoutType.RECORD_PAGE;
+
   const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
 
   const isReorderEnabled =
-    currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
+    !isRecordPageLayout ||
+    (isRecordPageLayout && isRecordPageGlobalEditionEnabled);
 
   const isDeletingWidgetEnabled =
-    currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
+    !isRecordPageLayout ||
+    (isRecordPageLayout && isRecordPageGlobalEditionEnabled);
 
   const isWidgetEditable =
     isPageLayoutInEditMode &&
-    (currentPageLayout.type !== PageLayoutType.RECORD_PAGE ||
+    (!isRecordPageLayout ||
+      (isRecordPageLayout && isRecordPageGlobalEditionEnabled) ||
       widget.type === WidgetType.FIELDS);
 
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
@@ -141,7 +153,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   // TODO: remove once all record page layouts widgets use the editable contain in edit mode
   const shouldWrapWithEditingWrapper =
-    isWidgetEditable && variant === 'side-column';
+    isWidgetEditable &&
+    variant === 'side-column' &&
+    !isRecordPageGlobalEditionEnabled;
 
   const widgetCard = (
     <WidgetCard

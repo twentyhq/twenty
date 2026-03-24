@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { FieldsConfigurationGroupDropdown } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown';
 import { FieldsConfigurationGroupRenameInput } from '@/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput';
@@ -71,7 +71,7 @@ const StyledDropdownContainer = styled.div`
 type FieldsConfigurationGroupEditorProps = {
   group: FieldsWidgetGroup;
   index: number;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   draggableProvided: DraggableProvided;
   isDragging: boolean;
   onAddGroup?: () => void;

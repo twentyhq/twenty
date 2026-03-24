@@ -2,9 +2,11 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
-import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
-import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -190,16 +192,15 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
-        BILLING_FEATURE_USED,
+        USAGE_RECORDED,
         [
           {
-            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 1,
-            dimensions: {
-              execution_type: 'workflow_execution',
-              resource_id: 'workflow-id',
-              execution_context_1: null,
-            },
+            resourceType: UsageResourceType.WORKFLOW,
+            operationType: UsageOperationType.WORKFLOW_EXECUTION,
+            creditsUsedMicro: 1,
+            quantity: 1,
+            unit: UsageUnit.INVOCATION,
+            resourceId: 'workflow-id',
           },
         ],
         'workspace-id',
@@ -648,16 +649,15 @@ describe('WorkflowExecutorWorkspaceService', () => {
       service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
-        BILLING_FEATURE_USED,
+        USAGE_RECORDED,
         [
           {
-            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 1,
-            dimensions: {
-              execution_type: 'workflow_execution',
-              resource_id: 'workflow-id',
-              execution_context_1: null,
-            },
+            resourceType: UsageResourceType.WORKFLOW,
+            operationType: UsageOperationType.WORKFLOW_EXECUTION,
+            creditsUsedMicro: 1,
+            quantity: 1,
+            unit: UsageUnit.INVOCATION,
+            resourceId: 'workflow-id',
           },
         ],
         'workspace-id',

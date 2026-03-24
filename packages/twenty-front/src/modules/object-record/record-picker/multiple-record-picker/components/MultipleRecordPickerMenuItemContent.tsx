@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerIsSelectedComponentFamilySelector';
@@ -21,7 +21,7 @@ import { type SearchRecord } from '~/generated/graphql';
 
 type MultipleRecordPickerMenuItemContentProps = {
   searchRecord: SearchRecord;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   onChange: (morphItem: RecordPickerPickableMorphItem) => void;
 };
 

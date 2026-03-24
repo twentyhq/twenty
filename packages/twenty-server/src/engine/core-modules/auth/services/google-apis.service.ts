@@ -145,41 +145,19 @@ export class GoogleAPIsService {
 
         await workspaceDataSource.transaction(
           async (manager: WorkspaceEntityManager) => {
-            if (!existingAccountId) {
-              await this.createConnectedAccountService.createConnectedAccount({
-                workspaceId,
-                connectedAccountId: newOrExistingConnectedAccountId,
-                handle,
-                provider: ConnectedAccountProvider.GOOGLE,
-                accessToken: input.accessToken,
-                refreshToken: input.refreshToken,
-                accountOwnerId: workspaceMemberId,
-                scopes,
-                manager,
-              });
+            await this.createConnectedAccountService.createConnectedAccount({
+              workspaceId,
+              connectedAccountId: newOrExistingConnectedAccountId,
+              handle,
+              provider: ConnectedAccountProvider.GOOGLE,
+              accessToken: input.accessToken,
+              refreshToken: input.refreshToken,
+              accountOwnerId: workspaceMemberId,
+              scopes,
+              manager,
+            });
 
-              if (isMessagingEnabled && isMessagingAvailable) {
-                await this.createMessageChannelService.createMessageChannel({
-                  workspaceId,
-                  connectedAccountId: newOrExistingConnectedAccountId,
-                  handle,
-                  messageVisibility,
-                  manager,
-                  skipMessageChannelConfiguration,
-                });
-              }
-
-              if (isCalendarEnabled && isCalendarAvailable) {
-                await this.createCalendarChannelService.createCalendarChannel({
-                  workspaceId,
-                  connectedAccountId: newOrExistingConnectedAccountId,
-                  handle,
-                  calendarVisibility,
-                  manager,
-                  skipMessageChannelConfiguration,
-                });
-              }
-            } else {
+            if (existingAccountId) {
               await this.updateConnectedAccountOnReconnectService.updateConnectedAccountOnReconnect(
                 {
                   workspaceId,
@@ -210,6 +188,48 @@ export class GoogleAPIsService {
                 workspaceId,
                 newOrExistingConnectedAccountId,
               );
+            }
+
+            const existingMessageChannels =
+              await this.messageChannelDataAccessService.find(workspaceId, {
+                connectedAccountId: newOrExistingConnectedAccountId,
+              });
+
+            if (
+              isMessagingEnabled &&
+              isMessagingAvailable &&
+              existingMessageChannels.length === 0
+            ) {
+              await this.createMessageChannelService.createMessageChannel({
+                workspaceId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                messageVisibility,
+                manager,
+                skipMessageChannelConfiguration,
+              });
+            }
+
+            const existingCalendarChannels =
+              await this.calendarChannelDataAccessService.find(workspaceId, {
+                where: {
+                  connectedAccountId: newOrExistingConnectedAccountId,
+                },
+              });
+
+            if (
+              isCalendarEnabled &&
+              isCalendarAvailable &&
+              existingCalendarChannels.length === 0
+            ) {
+              await this.createCalendarChannelService.createCalendarChannel({
+                workspaceId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                calendarVisibility,
+                manager,
+                skipMessageChannelConfiguration,
+              });
             }
           },
         );

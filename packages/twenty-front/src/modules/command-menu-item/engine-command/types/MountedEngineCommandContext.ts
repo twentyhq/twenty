@@ -1,5 +1,5 @@
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   type Nullable,
@@ -10,7 +10,7 @@ import { type EngineComponentKey } from '~/generated-metadata/graphql';
 export type MountedEngineCommandState = {
   engineComponentKey: EngineComponentKey;
   contextStoreInstanceId: string;
-  objectMetadataItem: Nullable<ObjectMetadataItem>;
+  objectMetadataItem: Nullable<EnrichedObjectMetadataItem>;
   currentViewId: Nullable<string>;
   recordIndexId: Nullable<string>;
   targetedRecordsRule: ContextStoreTargetedRecordsRule;

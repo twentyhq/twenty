@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
@@ -16,7 +16,7 @@ export const recordIdentifierToObjectRecordIdentifier = ({
   objectMetadataItem,
 }: {
   recordIdentifier: RecordIdentifierDTO;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }): ObjectRecordIdentifier => {
   const avatarType = getAvatarType(objectMetadataItem.nameSingular);
 

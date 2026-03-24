@@ -1,12 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getTargetObjectMetadataIdsFromField } from './getTargetObjectMetadataIdsFromField';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getSearchableObjectMetadataItems = (
   targetFields: FieldMetadataItem[],
-  objectMetadataItems: ObjectMetadataItem[],
-): ObjectMetadataItem[] => {
+  objectMetadataItems: EnrichedObjectMetadataItem[],
+): EnrichedObjectMetadataItem[] => {
   const targetObjectIds = targetFields.flatMap(
     getTargetObjectMetadataIdsFromField,
   );

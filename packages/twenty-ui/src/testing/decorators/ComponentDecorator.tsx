@@ -4,7 +4,10 @@ import { themeCssVariables } from '@ui/theme-constants';
 
 import { ComponentStorybookLayout } from '../ComponentStorybookLayout';
 
-const getBackgroundColor = (inverted: boolean, accent: string) => {
+const getBackgroundColor = (
+  inverted: boolean,
+  accent: string,
+): string | undefined => {
   if (!inverted) return undefined;
 
   switch (accent) {

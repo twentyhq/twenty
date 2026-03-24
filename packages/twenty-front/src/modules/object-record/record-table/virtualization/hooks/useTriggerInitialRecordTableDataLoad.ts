@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
-import { useRecordIndexTableFetchMore } from '@/object-record/record-index/hooks/useRecordIndexTableFetchMore';
+import { useRecordIndexTableLazyQuery } from '@/object-record/record-index/hooks/useRecordIndexTableLazyQuery';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
@@ -39,7 +39,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
   const showAuthModal = useShowAuthModal();
 
   const { findManyRecordsLazy } =
-    useRecordIndexTableFetchMore(objectNameSingular);
+    useRecordIndexTableLazyQuery(objectNameSingular);
 
   const isInitializingVirtualTableDataLoadingCallbackState =
     useAtomComponentStateCallbackState(

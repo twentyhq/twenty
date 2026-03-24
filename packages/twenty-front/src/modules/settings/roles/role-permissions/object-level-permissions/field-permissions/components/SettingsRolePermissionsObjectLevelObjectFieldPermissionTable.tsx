@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -36,7 +36,7 @@ const StyledSearchInputContainer = styled.div`
 
 export type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableProps =
   {
-    objectMetadataItem: ObjectMetadataItem;
+    objectMetadataItem: EnrichedObjectMetadataItem;
     roleId: string;
   };
 

@@ -272,6 +272,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty',
   USER_GUIDE_WORKFLOWS_HOW_TOS_CONNECT_TO_OTHER_TOOLS_SET_UP_A_WEBHOOK_TRIGGER:
     '/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger',
+  USER_GUIDE_WORKFLOWS_HOW_TOS_CRM_AUTOMATIONS_AUTO_REPLY_TO_INBOUND_EMAILS:
+    '/user-guide/workflows/how-tos/crm-automations/auto-reply-to-inbound-emails',
   USER_GUIDE_WORKFLOWS_HOW_TOS_CRM_AUTOMATIONS_CLOSED_WON_AUTOMATIONS:
     '/user-guide/workflows/how-tos/crm-automations/closed-won-automations',
   USER_GUIDE_WORKFLOWS_HOW_TOS_CRM_AUTOMATIONS_DETECT_STALE_OPPORTUNITIES:

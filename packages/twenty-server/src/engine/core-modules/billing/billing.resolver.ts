@@ -26,7 +26,7 @@ import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-module
 import {
   INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
   toDisplayCredits,
-} from 'src/engine/core-modules/billing/utils/to-display-credits.util';
+} from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -374,7 +374,5 @@ export class BillingResolver {
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
     }
-
-    return;
   }
 }

@@ -1,5 +1,5 @@
 import { isFieldOrRelationNestedFieldDateKind } from '@/side-panel/pages/page-layout/utils/isFieldOrNestedFieldDateKind';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('isFieldOrNestedFieldDateKind', () => {
@@ -7,7 +7,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
     const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: null,
       subFieldName: null,
-      objectMetadataItem: {} as ObjectMetadataItem,
+      objectMetadataItem: {} as EnrichedObjectMetadataItem,
     });
 
     expect(result).toBe(false);
@@ -16,7 +16,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
   it('returns true for a DATE type field', () => {
     const objectMetadataItem = {
       fields: [{ id: 'date-field-id', type: FieldMetadataType.DATE }],
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: 'date-field-id',
@@ -30,7 +30,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
   it('returns false for a non-date type field', () => {
     const objectMetadataItem = {
       fields: [{ id: 'text-field-id', type: FieldMetadataType.TEXT }],
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: 'text-field-id',
@@ -50,7 +50,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
           relation: { targetObjectMetadata: { id: 'company-id' } },
         },
       ],
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const companyObjectMetadataItem = {
       id: 'company-id',
@@ -61,7 +61,7 @@ describe('isFieldOrNestedFieldDateKind', () => {
           type: FieldMetadataType.DATE,
         },
       ],
-    } as ObjectMetadataItem;
+    } as EnrichedObjectMetadataItem;
 
     const result = isFieldOrRelationNestedFieldDateKind({
       fieldId: 'relation-field-id',

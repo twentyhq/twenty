@@ -5,6 +5,7 @@ import {
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { type QueryRunner } from 'typeorm';
 
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -358,12 +359,17 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   public async validateBuildAndRunWorkspaceMigrationFromTo(
     args: WorkspaceMigrationOrchestratorBuildArgs & {
       idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
+      queryRunner?: QueryRunner;
     },
   ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
-    const { idByUniversalIdentifierByMetadataName, ...buildArgs } = args;
+    const {
+      idByUniversalIdentifierByMetadataName,
+      queryRunner: externalQueryRunner,
+      ...buildArgs
+    } = args;
 
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
@@ -396,6 +402,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         {
           workspaceId: args.workspaceId,
           workspaceMigration,
+          queryRunner: externalQueryRunner,
         },
       );
 
@@ -416,7 +423,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
-  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
+    queryRunner,
+  }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs & {
+    queryRunner?: QueryRunner;
+  }): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
@@ -443,6 +453,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
       idByUniversalIdentifierByMetadataName,
+      queryRunner,
     });
   }
 }

@@ -5,7 +5,7 @@ import { type ReactNode, useState } from 'react';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import {
@@ -29,7 +29,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeJotaiStore?: (store: Store) => void;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }) => {
   resetJotaiStore();
 

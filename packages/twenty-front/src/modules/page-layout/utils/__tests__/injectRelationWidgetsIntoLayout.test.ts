@@ -4,6 +4,7 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelationWidgetsIntoLayout';
 import {
+  FieldDisplayMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -195,7 +196,7 @@ describe('injectRelationWidgetsIntoLayout', () => {
     expect(injectedWidget.configuration).toEqual(
       expect.objectContaining({
         fieldMetadataId: 'f1',
-        layout: 'CARD',
+        fieldDisplayMode: FieldDisplayMode.CARD,
       }),
     );
   });

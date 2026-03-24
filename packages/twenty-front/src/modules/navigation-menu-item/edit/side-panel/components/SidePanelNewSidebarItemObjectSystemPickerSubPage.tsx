@@ -8,7 +8,7 @@ import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/
 import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelSystemObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -55,7 +55,9 @@ export const SidePanelNewSidebarItemObjectSystemPickerSubPage = () => {
       objectMetadataIdsWithDisplayableViews,
     });
 
-  const handleSelectObject = (objectMetadataItem: ObjectMetadataItem) => {
+  const handleSelectObject = (
+    objectMetadataItem: EnrichedObjectMetadataItem,
+  ) => {
     if (objectMetadataIdsInWorkspace.has(objectMetadataItem.id)) {
       return;
     }

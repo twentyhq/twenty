@@ -266,7 +266,7 @@ describe('GoogleAPIsService', () => {
 
       expect(
         createMessageChannelService.createMessageChannel,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalled();
     });
   });
 });
