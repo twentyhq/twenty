@@ -1,14 +1,19 @@
 import type { PartialBlock } from '@blocknote/core';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 
 const extractTextFromBlock = (block: PartialBlock): string => {
-  if (!block.content) return '';
+  if (!isDefined(block.content) || !isArray(block.content)) return '';
 
-  if (!isArray(block.content)) return '';
-
-  return (block.content as Array<{ type: string; text?: string; content?: Array<{ type: string; text?: string }> }>)
+  return (
+    block.content as Array<{
+      type: string;
+      text?: string;
+      content?: Array<{ type: string; text?: string }>;
+    }>
+  )
     .map((inline) => {
       if (inline.type === 'text') {
         return inline.text ?? '';
@@ -26,8 +31,5 @@ const extractTextFromBlock = (block: PartialBlock): string => {
 export const getActivityPreview = (activityBody: string | null): string => {
   const blocks = parseInitialBlocknote(activityBody) ?? [];
 
-  return blocks
-    .map(extractTextFromBlock)
-    .filter(isNonEmptyString)
-    .join('\n');
+  return blocks.map(extractTextFromBlock).filter(isNonEmptyString).join('\n');
 };
