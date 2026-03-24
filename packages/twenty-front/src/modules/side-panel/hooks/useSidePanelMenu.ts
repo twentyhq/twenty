@@ -5,6 +5,7 @@ import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/side-panel/utils/emitSidePanelOpenEvent';
@@ -80,6 +81,7 @@ export const useSidePanelMenu = () => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
     store.set(sidePanelSearchState.atom, '');
+    store.set(sidePanelSearchObjectFilterState.atom, null);
 
     if (isSidePanelOpened) {
       closeSidePanelMenu();

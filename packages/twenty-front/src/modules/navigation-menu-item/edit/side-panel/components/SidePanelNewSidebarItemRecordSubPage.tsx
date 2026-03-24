@@ -1,11 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { SidePanelNewSidebarItemRecordItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -13,8 +15,8 @@ import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
-import { SidePanelNewSidebarItemRecordItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { SearchDocument } from '~/generated/graphql';
@@ -38,6 +40,9 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
   const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);
   const coreClient = useApolloCoreClient();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const [selectedObjectNameSingular, setSelectedObjectNameSingular] = useState<
+    string | null
+  >(null);
 
   const nonReadableObjectMetadataItemsNameSingular = objectMetadataItems
     .filter(
@@ -57,9 +62,14 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
         searchInput: deferredRecordSearchInput ?? '',
         limit: MAX_SEARCH_RESULTS,
         excludedObjectNameSingulars: [
-          'workspaceMember',
+          CoreObjectNameSingular.WorkspaceMember,
           ...nonReadableObjectMetadataItemsNameSingular,
         ],
+        ...(isDefined(selectedObjectNameSingular)
+          ? {
+              includedObjectNameSingulars: [selectedObjectNameSingular],
+            }
+          : {}),
       },
     },
   );
@@ -90,6 +100,12 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
       searchPlaceholder={t`Search records...`}
       searchValue={recordSearchInput}
       onSearchChange={setRecordSearchInput}
+      rightElement={
+        <SidePanelObjectFilterDropdown
+          selectedObjectNameSingular={selectedObjectNameSingular}
+          onSelectObject={setSelectedObjectNameSingular}
+        />
+      }
     >
       <SidePanelAddToNavigationDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
