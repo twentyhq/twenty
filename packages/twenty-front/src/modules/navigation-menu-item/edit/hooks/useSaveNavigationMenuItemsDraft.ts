@@ -13,8 +13,8 @@ import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
+import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { buildUpdateInputsFromDraft } from '@/navigation-menu-item/edit/utils/buildUpdateInputsFromDraft';
-import { getDeleteAfterLayoutChangeIds } from '@/navigation-menu-item/edit/utils/getDeleteAfterLayoutChangeIds';
 import { getObjectMetadataColorUpdates } from '@/navigation-menu-item/edit/utils/getObjectMetadataColorUpdates';
 import { partitionCreatesAndRecreates } from '@/navigation-menu-item/edit/utils/partitionCreatesAndRecreates';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -89,10 +89,11 @@ export const useSaveNavigationMenuItemsDraft = () => {
     await syncObjectColorsFromDraft();
 
     const applyDeletesAfterLayoutChange = async () => {
-      const deleteAfterLayoutChangeIds = getDeleteAfterLayoutChangeIds({
-        draft,
-        currentItems,
-      });
+      const workspaceItems = filterWorkspaceNavigationMenuItems(currentItems);
+      const draftIds = new Set(draft.map((item) => item.id));
+      const deleteAfterLayoutChangeIds = workspaceItems
+        .filter((workspaceItem) => !draftIds.has(workspaceItem.id))
+        .map((workspaceItem) => workspaceItem.id);
 
       if (deleteAfterLayoutChangeIds.length === 0) {
         return;
