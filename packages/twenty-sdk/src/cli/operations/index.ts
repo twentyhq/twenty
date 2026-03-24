@@ -20,10 +20,6 @@ export type { AppUninstallOptions } from './uninstall';
 export { functionExecute } from './execute';
 export type { FunctionExecuteOptions } from './execute';
 
-// Init
-export { executeInit } from '@/cli/commands/init';
-export type { InitOptions } from '@/cli/commands/init';
-
 // Shared types and error codes
 export {
   APP_ERROR_CODES,
