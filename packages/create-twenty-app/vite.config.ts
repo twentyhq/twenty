@@ -1,4 +1,5 @@
 import { builtinModules } from 'node:module';
+import fs from 'fs-extra';
 import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -35,6 +36,20 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   return `${moduleDirectory}.${extension}`;
 };
 
+const copyAssetPlugin = (targets: { src: string; dest: string }[]) => {
+  return {
+    name: 'copy-assets',
+    closeBundle: async () => {
+      for (const target of targets) {
+        await fs.copy(
+          path.resolve(__dirname, target.src),
+          path.resolve(__dirname, target.dest),
+        );
+      }
+    },
+  };
+};
+
 export default defineConfig(() => {
   const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
 
@@ -46,6 +61,12 @@ export default defineConfig(() => {
         root: __dirname,
       }),
       dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
+      copyAssetPlugin([
+        {
+          src: 'src/constants/base-application',
+          dest: 'dist/constants/base-application',
+        },
+      ]),
     ],
     build: {
       outDir: 'dist',
@@ -57,9 +78,7 @@ export default defineConfig(() => {
           }
 
           if (
-            builtinModules.some(
-              (mod) => id === mod || id.startsWith(mod + '/'),
-            )
+            builtinModules.some((mod) => id === mod || id.startsWith(mod + '/'))
           ) {
             return true;
           }

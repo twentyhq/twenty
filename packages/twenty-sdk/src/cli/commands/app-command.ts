@@ -10,7 +10,6 @@ import { DeployCommand } from './deploy';
 import { LogicFunctionExecuteCommand } from './exec';
 import { LogicFunctionLogsCommand } from './logs';
 import { EntityAddCommand } from './add';
-import { registerInitCommand } from './init';
 import { registerRemoteCommands } from './remote';
 import { registerServerCommands } from './server';
 import { SyncableEntity } from 'twenty-shared/application';
@@ -93,7 +92,6 @@ export const registerCommands = (program: Command): void => {
       }
     });
 
-  registerInitCommand(program);
   registerRemoteCommands(program);
   registerServerCommands(program);
 
