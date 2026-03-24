@@ -84,9 +84,14 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
         return null;
       }
 
+      const isEditModeItem =
+        item.conditionalAvailabilityExpression?.includes(
+          'isPageInEditMode',
+        ) ?? false;
+
       const isPinned =
         item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK &&
-        !contextStoreIsPageInEditMode &&
+        (!contextStoreIsPageInEditMode || isEditModeItem) &&
         item.isPinned;
 
       const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);

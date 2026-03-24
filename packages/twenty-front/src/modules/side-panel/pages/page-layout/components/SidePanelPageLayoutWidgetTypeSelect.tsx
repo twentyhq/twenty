@@ -192,13 +192,14 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
         removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
 
-      const newWidget = createPageLayoutRecordTableWidget();
-      setPageLayoutEditingWidgetId(newWidget.id);
+      const newRecordTableWidget = createPageLayoutRecordTableWidget();
+
+      setPageLayoutEditingWidgetId(newRecordTableWidget.id);
     }
 
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutRecordTableSettings,
-      focusTitleInput: true,
+      focusTitleInput: false,
     });
   };
 

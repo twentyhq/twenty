@@ -113,7 +113,6 @@ export const SidePanelPageLayoutRecordTableSettings = () => {
                         <RecordTableFieldsDropdownContent
                           viewId={viewId}
                           objectMetadataId={widgetInEditMode.objectMetadataId!}
-                          dropdownId="record-table-fields"
                         />
                       }
                       dropdownPlacement="bottom-end"

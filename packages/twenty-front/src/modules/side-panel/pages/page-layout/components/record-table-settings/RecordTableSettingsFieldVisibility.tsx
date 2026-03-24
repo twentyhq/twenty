@@ -1,8 +1,10 @@
-import { useRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFields';
+import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
+import { useReorderRecordTableWidgetFields } from '@/page-layout/widgets/record-table/hooks/useReorderRecordTableWidgetFields';
+import { useToggleRecordTableWidgetFieldVisibility } from '@/page-layout/widgets/record-table/hooks/useToggleRecordTableWidgetFieldVisibility';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { styled } from '@linaria/react';
 import { type DropResult } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
@@ -30,22 +32,31 @@ type RecordTableSettingsFieldVisibilityProps = {
 export const RecordTableSettingsFieldVisibility = ({
   viewId,
 }: RecordTableSettingsFieldVisibilityProps) => {
-  const {
-    viewFieldItems,
-    toggleRecordTableWidgetFieldVisibility,
-    reorderRecordTableWidgetFields,
-  } = useRecordTableWidgetViewFields(viewId);
+  const { recordTableWidgetViewFieldItems } =
+    useRecordTableWidgetViewFieldItems(viewId);
+
+  const { toggleRecordTableWidgetFieldVisibility } =
+    useToggleRecordTableWidgetFieldVisibility();
+
+  const { reorderRecordTableWidgetFields } =
+    useReorderRecordTableWidgetFields();
 
   const { getIcon } = useIcons();
 
   const visibleFieldItems = useMemo(
-    () => viewFieldItems.filter((item) => item.viewField.isVisible),
-    [viewFieldItems],
+    () =>
+      recordTableWidgetViewFieldItems.filter(
+        (item) => item.viewField.isVisible,
+      ),
+    [recordTableWidgetViewFieldItems],
   );
 
   const hiddenFieldItems = useMemo(
-    () => viewFieldItems.filter((item) => !item.viewField.isVisible),
-    [viewFieldItems],
+    () =>
+      recordTableWidgetViewFieldItems.filter(
+        (item) => !item.viewField.isVisible,
+      ),
+    [recordTableWidgetViewFieldItems],
   );
 
   const handleDragEnd = (result: DropResult) => {

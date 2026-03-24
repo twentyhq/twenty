@@ -7,7 +7,8 @@ import { RecordTableWidthEffect } from '@/object-record/record-table/components/
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
-import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
@@ -36,8 +37,12 @@ export interface RecordTableEmptyProps {
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
-    isRecordTableColumnHeadersReadOnlyComponentState,
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
   );
 
   const recordTableWidth = useAtomComponentStateValue(
@@ -71,10 +76,15 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
     visibleRecordFields,
   });
 
-  const leftColumnsWidth = isRecordTableColumnHeadersReadOnly
+  const dragColumnWidth = isRecordTableDragColumnHidden
     ? 0
-    : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH +
-      RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
+    : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
+
+  const checkboxColumnWidth = isRecordTableCheckboxColumnHidden
+    ? 0
+    : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH;
+
+  const leftColumnsWidth = dragColumnWidth + checkboxColumnWidth;
 
   const emptyTableContainerComputedWidth =
     visibleRecordFieldsWidth +
@@ -89,7 +99,7 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   );
 
   const columnWidthStyles = useMemo(
-    () => getRecordTableColumnWidthInlineStyles(visibleRecordFields),
+    () => getRecordTableColumnWidthInlineStyles({ visibleRecordFields }),
     [visibleRecordFields],
   );
 

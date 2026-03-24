@@ -4,7 +4,8 @@ import {
   getRecordTableColumnWidthInlineStyles,
   RecordTableStyleWrapper,
 } from '@/object-record/record-table/components/RecordTableStyleWrapper';
-import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -130,17 +131,26 @@ export const RecordTableContent = ({
     [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState],
   );
 
-  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
-    isRecordTableColumnHeadersReadOnlyComponentState,
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
   );
 
   const columnWidthStyles = useMemo(
     () =>
-      getRecordTableColumnWidthInlineStyles(
+      getRecordTableColumnWidthInlineStyles({
         visibleRecordFields,
-        isRecordTableColumnHeadersReadOnly,
-      ),
-    [visibleRecordFields, isRecordTableColumnHeadersReadOnly],
+        isDragColumnHidden: isRecordTableDragColumnHidden,
+        isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
+      }),
+    [
+      visibleRecordFields,
+      isRecordTableDragColumnHidden,
+      isRecordTableCheckboxColumnHidden,
+    ],
   );
 
   return (

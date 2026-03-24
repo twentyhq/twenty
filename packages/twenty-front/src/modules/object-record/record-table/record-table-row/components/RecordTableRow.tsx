@@ -8,6 +8,8 @@ import { RecordTableDraggableTr } from '@/object-record/record-table/record-tabl
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -36,6 +38,14 @@ export const RecordTableRow = ({
     recordTableId,
   );
 
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
+  );
+
   return (
     <RecordTableDraggableTr
       recordId={recordId}
@@ -48,8 +58,8 @@ export const RecordTableRow = ({
           <RecordTableRowArrowKeysEffect />
         </>
       )}
-      <RecordTableCellDragAndDrop />
-      <RecordTableCellCheckbox />
+      {!isRecordTableDragColumnHidden && <RecordTableCellDragAndDrop />}
+      {!isRecordTableCheckboxColumnHidden && <RecordTableCellCheckbox />}
       <RecordTableFieldsCells />
       <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />

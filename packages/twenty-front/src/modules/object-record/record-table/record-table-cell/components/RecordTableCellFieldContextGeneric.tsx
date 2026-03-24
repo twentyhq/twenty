@@ -9,9 +9,9 @@ import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junctio
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
@@ -42,7 +42,7 @@ export const RecordTableCellFieldContextGeneric = ({
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-  const updateRecord = useContext(RecordUpdateContext);
+  const updateRecord = useContext(RecordTableUpdateContext);
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
@@ -96,7 +96,7 @@ export const RecordTableCellFieldContextGeneric = ({
         fieldMetadataItemId: recordField.fieldMetadataItemId,
         recordId,
         fieldDefinition: fieldDefinition,
-        useUpdateRecord: () => [updateRecord, {}],
+        useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
         isLabelIdentifier: isLabelIdentifierField({
           fieldMetadataItem: {
             id: fieldDefinition.fieldMetadataId,

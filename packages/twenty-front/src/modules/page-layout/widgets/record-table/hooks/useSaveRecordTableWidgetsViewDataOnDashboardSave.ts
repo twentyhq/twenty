@@ -7,7 +7,6 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { useMapRecordFieldToViewFieldWithCurrentAggregateOperation } from '@/page-layout/widgets/record-table/hooks/useMapRecordFieldToViewFieldWithCurrentAggregateOperation';
 import { computeViewFieldsToCreateAndUpdate } from '@/page-layout/widgets/record-table/utils/computeViewFieldsToCreateAndUpdate';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { usePerformViewFilterAPIPersist } from '@/views/hooks/internal/usePerformViewFilterAPIPersist';
 import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
@@ -30,9 +29,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
-export const useSaveRecordTableWidgetsViewDataOnDashboardSave = (
-  pageLayoutId: string,
-) => {
+export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
   const {
     performViewFilterAPICreate,
     performViewFilterAPIUpdate,
@@ -57,16 +54,15 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = (
   const { mapRecordFieldToViewFieldWithCurrentAggregateOperation } =
     useMapRecordFieldToViewFieldWithCurrentAggregateOperation();
 
-  const pageLayoutDraftCallbackState = useAtomComponentStateCallbackState(
-    pageLayoutDraftComponentState,
-    pageLayoutId,
-  );
-
   const store = useStore();
 
-  const saveRecordTableWidgetsViewDataOnDashboardSave =
-    useCallback(async () => {
-      const pageLayoutDraft = store.get(pageLayoutDraftCallbackState);
+  const saveRecordTableWidgetsViewDataOnDashboardSave = useCallback(
+    async (pageLayoutId: string) => {
+      const pageLayoutDraft = store.get(
+        pageLayoutDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
       const views = store.get(viewsSelector.atom);
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
@@ -146,12 +142,6 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = (
           newViewFilterGroups,
         );
 
-        await performViewFilterGroupAPICreate(
-          viewFilterGroupsToCreate,
-          currentView,
-        );
-        await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
-
         const newViewFilters = currentRecordFilters.map(
           mapRecordFilterToViewFilter,
         );
@@ -169,6 +159,62 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = (
           existingViewFilters,
           newViewFilters,
         );
+
+        const newViewSorts = currentRecordSorts.map(mapRecordSortToViewSort);
+        const existingViewSorts = currentView.viewSorts ?? [];
+
+        const viewSortsToCreate = getViewSortsToCreate(
+          existingViewSorts,
+          newViewSorts,
+        );
+        const viewSortsToUpdate = getViewSortsToUpdate(
+          existingViewSorts,
+          newViewSorts,
+        );
+        const viewSortsToDelete = getViewSortsToDelete(
+          existingViewSorts,
+          newViewSorts,
+        );
+
+        const currentRecordFields = store.get(
+          currentRecordFieldsComponentState.atomFamily({
+            instanceId: recordIndexId,
+          }),
+        );
+
+        const newViewFields = currentRecordFields.map(
+          mapRecordFieldToViewFieldWithCurrentAggregateOperation,
+        );
+
+        const { viewFieldsToCreate, viewFieldsToUpdate } =
+          computeViewFieldsToCreateAndUpdate({
+            newViewFields,
+            existingViewFields: currentView.viewFields ?? [],
+            viewId,
+          });
+
+        const hasNoRecordTableWidgetChanges =
+          viewFilterGroupsToCreate.length === 0 &&
+          viewFilterGroupsToUpdate.length === 0 &&
+          viewFilterGroupsToDelete.length === 0 &&
+          viewFiltersToCreate.length === 0 &&
+          viewFiltersToUpdate.length === 0 &&
+          viewFiltersToDelete.length === 0 &&
+          viewSortsToCreate.length === 0 &&
+          viewSortsToUpdate.length === 0 &&
+          viewSortsToDelete.length === 0 &&
+          viewFieldsToCreate.length === 0 &&
+          viewFieldsToUpdate.length === 0;
+
+        if (hasNoRecordTableWidgetChanges) {
+          continue;
+        }
+
+        await performViewFilterGroupAPICreate(
+          viewFilterGroupsToCreate,
+          currentView,
+        );
+        await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
 
         await performViewFilterAPIDelete(
           viewFiltersToDelete.map((viewFilter) => ({
@@ -207,22 +253,6 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = (
           viewFilterGroupsToDelete.map((viewFilterGroup) => viewFilterGroup.id),
         );
 
-        const newViewSorts = currentRecordSorts.map(mapRecordSortToViewSort);
-        const existingViewSorts = currentView.viewSorts ?? [];
-
-        const viewSortsToCreate = getViewSortsToCreate(
-          existingViewSorts,
-          newViewSorts,
-        );
-        const viewSortsToUpdate = getViewSortsToUpdate(
-          existingViewSorts,
-          newViewSorts,
-        );
-        const viewSortsToDelete = getViewSortsToDelete(
-          existingViewSorts,
-          newViewSorts,
-        );
-
         await performViewSortAPICreate(
           viewSortsToCreate.map((viewSort) => ({
             input: {
@@ -249,31 +279,14 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = (
           })),
         );
 
-        const currentRecordFields = store.get(
-          currentRecordFieldsComponentState.atomFamily({
-            instanceId: recordIndexId,
-          }),
-        );
-
-        const newViewFields = currentRecordFields.map(
-          mapRecordFieldToViewFieldWithCurrentAggregateOperation,
-        );
-
-        const { viewFieldsToCreate, viewFieldsToUpdate } =
-          computeViewFieldsToCreateAndUpdate({
-            newViewFields,
-            existingViewFields: currentView.viewFields ?? [],
-            viewId,
-          });
-
         await Promise.all([
           performViewFieldAPICreate({ inputs: viewFieldsToCreate }),
           performViewFieldAPIUpdate(viewFieldsToUpdate),
         ]);
       }
-    }, [
+    },
+    [
       store,
-      pageLayoutDraftCallbackState,
       mapRecordFieldToViewFieldWithCurrentAggregateOperation,
       performViewFieldAPICreate,
       performViewFieldAPIUpdate,
@@ -286,7 +299,8 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = (
       performViewSortAPICreate,
       performViewSortAPIUpdate,
       performViewSortAPIDelete,
-    ]);
+    ],
+  );
 
   return { saveRecordTableWidgetsViewDataOnDashboardSave };
 };

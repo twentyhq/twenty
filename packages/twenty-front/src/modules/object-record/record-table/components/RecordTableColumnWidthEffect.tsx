@@ -6,7 +6,8 @@ import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/cons
 import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableColumnWithGroupLastEmptyColumnWidthVariableName';
 import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-record/record-table/constants/RecordTableLabelIdentifierColumnWidthOnMobile';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
@@ -36,8 +37,12 @@ export const RecordTableColumnWidthEffect = () => {
     recordTableWidthComponentState,
   );
 
-  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
-    isRecordTableColumnHeadersReadOnlyComponentState,
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
   );
 
   useEffect(() => {
@@ -49,7 +54,8 @@ export const RecordTableColumnWidthEffect = () => {
       recordFields: visibleRecordFields,
       shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
       tableWidth: recordTableWidth,
-      hideLeftColumns: isRecordTableColumnHeadersReadOnly,
+      isDragColumnHidden: isRecordTableDragColumnHidden,
+      isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
     });
 
     const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable(
@@ -59,10 +65,15 @@ export const RecordTableColumnWidthEffect = () => {
       },
     );
 
-    const leftColumnsWidth = isRecordTableColumnHeadersReadOnly
+    const dragColumnWidth = isRecordTableDragColumnHidden
       ? 0
-      : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
-        RECORD_TABLE_COLUMN_CHECKBOX_WIDTH;
+      : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
+
+    const checkboxColumnWidth = isRecordTableCheckboxColumnHidden
+      ? 0
+      : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH;
+
+    const leftColumnsWidth = dragColumnWidth + checkboxColumnWidth;
 
     const totalTableBodyWidth =
       visibleRecordFieldsWidth +
@@ -118,7 +129,8 @@ export const RecordTableColumnWidthEffect = () => {
     visibleRecordFields,
     recordTableWidth,
     shouldCompactRecordTableFirstColumn,
-    isRecordTableColumnHeadersReadOnly,
+    isRecordTableDragColumnHidden,
+    isRecordTableCheckboxColumnHidden,
     recordTableId,
   ]);
 

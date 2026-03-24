@@ -5,15 +5,15 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useEffect } from 'react';
 
-type StandaloneRecordTableContextStoreInitEffectProps = {
+type RecordTableWidgetContextStoreInitEffectProps = {
   objectMetadataItemId: string;
   viewId: string;
 };
 
-export const StandaloneRecordTableContextStoreInitEffect = ({
+export const RecordTableWidgetContextStoreInitEffect = ({
   objectMetadataItemId,
   viewId,
-}: StandaloneRecordTableContextStoreInitEffectProps) => {
+}: RecordTableWidgetContextStoreInitEffectProps) => {
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );

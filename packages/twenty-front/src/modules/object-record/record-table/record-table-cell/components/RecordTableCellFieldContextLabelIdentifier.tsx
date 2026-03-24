@@ -3,10 +3,10 @@ import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordF
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { shouldCompactRecordIndexLabelIdentifierComponentState } from '@/object-record/record-index/states/shouldCompactRecordIndexLabelIdentifierComponentState';
-import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
@@ -44,7 +44,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 
   const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
-  const updateRecord = useContext(RecordUpdateContext);
+  const updateRecord = useContext(RecordTableUpdateContext);
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -58,7 +58,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
       value={{
         recordId,
         fieldDefinition,
-        useUpdateRecord: () => [updateRecord, {}],
+        useUpdateRecord: updateRecord ? () => [updateRecord, {}] : undefined,
         isLabelIdentifier: true,
         isLabelIdentifierCompact: shouldCompactRecordIndexLabelIdentifier,
         displayedMaxRows: 1,

@@ -922,6 +922,7 @@ enum WidgetType {
   WORKFLOW_VERSION
   WORKFLOW_RUN
   FRONT_COMPONENT
+  RECORD_TABLE
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -949,7 +950,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -989,6 +990,7 @@ enum WidgetConfigurationType {
   WORKFLOW_VERSION
   WORKFLOW_RUN
   FRONT_COMPONENT
+  RECORD_TABLE
 }
 
 type StandaloneRichTextConfiguration {
@@ -1196,6 +1198,11 @@ type TimelineConfiguration {
 
 type ViewConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+type RecordTableConfiguration {
+  configurationType: WidgetConfigurationType!
+  viewId: String
 }
 
 type WorkflowConfiguration {

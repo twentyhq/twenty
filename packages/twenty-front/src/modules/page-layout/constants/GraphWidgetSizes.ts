@@ -24,8 +24,4 @@ export const GRAPH_WIDGET_SIZES: Partial<
     default: { w: 6, h: 10 },
     minimum: { w: 4, h: 4 },
   },
-  [WidgetConfigurationType.RECORD_TABLE]: {
-    default: { w: 6, h: 6 },
-    minimum: { w: 4, h: 4 },
-  },
 };

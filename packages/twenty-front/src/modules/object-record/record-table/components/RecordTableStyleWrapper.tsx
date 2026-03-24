@@ -36,10 +36,15 @@ const columnFieldWidthRules = Array.from(
   }`,
 ).join('\n');
 
-export const getRecordTableColumnWidthInlineStyles = (
-  visibleRecordFields: RecordField[],
-  isReadOnlyLeftColumns?: boolean,
-): Record<string, string> => {
+export const getRecordTableColumnWidthInlineStyles = ({
+  visibleRecordFields,
+  isDragColumnHidden,
+  isCheckboxColumnHidden,
+}: {
+  visibleRecordFields: RecordField[];
+  isDragColumnHidden?: boolean;
+  isCheckboxColumnHidden?: boolean;
+}): Record<string, string> => {
   const style: Record<string, string> = {};
 
   for (let i = 0; i < visibleRecordFields.length; i++) {
@@ -47,11 +52,11 @@ export const getRecordTableColumnWidthInlineStyles = (
       `${visibleRecordFields[i].size}px`;
   }
 
-  style[RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR] = isReadOnlyLeftColumns
+  style[RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR] = isDragColumnHidden
     ? '0px'
     : `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px`;
 
-  style[RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR] = isReadOnlyLeftColumns
+  style[RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR] = isCheckboxColumnHidden
     ? '0px'
     : `${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`;
 
@@ -72,53 +77,45 @@ const StyledTable = styled.div<{
 
   width: 100%;
 
-  div.header-cell:nth-of-type(n + 5) {
+  div.header-cell {
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsNormal};
   }
 
-  div.header-cell:nth-of-type(1) {
+  div.header-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-
     left: 0px;
-
     position: sticky;
-
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
-  div.header-cell:nth-of-type(2) {
+  div.header-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-
     left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
-
     top: 0;
-
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
-  div.header-cell:nth-of-type(3) {
+  div.header-cell.${getRecordTableColumnFieldWidthClassName(0)} {
     background-color: ${themeCssVariables.background.primary};
     left: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
         var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
     );
     position: sticky;
-
     right: 0;
-
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
-  div.table-cell:nth-of-type(1) {
+  div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     left: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
-  div.table-cell:nth-of-type(2) {
+  div.table-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
     left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
@@ -134,7 +131,7 @@ const StyledTable = styled.div<{
     ${HorizontalScrollBoxShadowCSS}
   }
 
-  div.table-cell:nth-of-type(3) {
+  div.table-cell.${getRecordTableColumnFieldWidthClassName(0)} {
     left: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
         var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
@@ -149,14 +146,12 @@ const StyledTable = styled.div<{
     max-width: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     min-width: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     width: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
-    overflow: hidden;
   }
 
   div.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
     max-width: var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR});
     min-width: var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR});
     width: var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR});
-    overflow: hidden;
   }
 
   div.${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME} {
