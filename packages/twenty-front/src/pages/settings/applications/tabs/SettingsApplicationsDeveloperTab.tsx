@@ -100,7 +100,7 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const syncCommands = [
     // oxlint-disable-next-line lingui/no-unlocalized-strings
-    'yarn twenty app:dev',
+    'yarn twenty dev',
   ];
 
   const syncCopyButton = (
