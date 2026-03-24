@@ -98,7 +98,7 @@ export const MultiItemFieldInput = <T,>({
       }
 
       onChange(updatedItems);
-      onClickOutside(items, event);
+      onClickOutside(updatedItems, event);
     },
     listenerId: instanceId,
   });
