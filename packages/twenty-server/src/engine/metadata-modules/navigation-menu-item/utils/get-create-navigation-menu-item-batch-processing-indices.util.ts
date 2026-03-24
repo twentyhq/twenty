@@ -14,6 +14,10 @@ export const getCreateNavigationMenuItemBatchProcessingIndices = ({
   inputs: CreateNavigationMenuItemInput[];
   existingIds: Set<string>;
 }): number[] => {
+  if (inputs.length <= 1) {
+    return inputs.map((_, index) => index);
+  }
+
   const folderIndices: number[] = [];
   const nonFolderIndices: number[] = [];
 
