@@ -220,10 +220,10 @@ check_file_contains \
   "packages/twenty-front/src/modules/navigation-menu-item/common/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts" \
   "'policy'" \
   "Omnia member workspace list must include Policies"
-check_file_contains \
+check_file_not_contains \
   "packages/twenty-front/src/modules/navigation-menu-item/display/dnd/components/OmniaMemberWorkspaceNavigationMenuItems.tsx" \
   "ignoreShowInSidebar" \
-  "Curated member workspace section must bypass upstream showInSidebar filtering for fixed items"
+  "Curated member workspace section must respect showInSidebar permission for per-role sidebar filtering"
 check_file_contains \
   "packages/twenty-front/src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx" \
   "isOmniaMemberWorkspaceObject" \
@@ -835,6 +835,10 @@ check_file_contains \
   "packages/twenty-front/src/modules/settings/roles/graphql/fragments/objectPermissionFragment.ts" \
   "editWindowMinutes" \
   "ObjectPermission fragment must query editWindowMinutes"
+check_file_contains \
+  "packages/twenty-front/src/modules/settings/roles/graphql/fragments/objectPermissionFragment.ts" \
+  "showInSidebar" \
+  "ObjectPermission fragment must query showInSidebar for per-role sidebar filtering"
 
 # ==========================================================
 # Unique Constraints & Field Uniqueness

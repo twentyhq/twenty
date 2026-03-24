@@ -299,7 +299,7 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `packages/twenty-front/src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx`   | "Edit navigation sidebar" gated behind `LAYOUTS` permission so members can't see it                                             |
 | `packages/twenty-front/src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItemsDispatcher.tsx`              | Restores admin/member split: only `LAYOUTS` users get editable workspace navigation; members use the fixed Omnia workspace list |
 | `packages/twenty-front/src/modules/navigation-menu-item/components/WorkspaceNavigationMenuItems.tsx`                        | Re-gates workspace sidebar editing behind `PermissionFlagType.LAYOUTS`                                                          |
-| `packages/twenty-front/src/modules/navigation-menu-item/components/OmniaMemberWorkspaceNavigationMenuItems.tsx`             | **NEW** — Fixed member workspace section showing Leads, Calls, Policies, Notes, Tasks in that order                             |
+| `packages/twenty-front/src/modules/navigation-menu-item/components/OmniaMemberWorkspaceNavigationMenuItems.tsx`             | **NEW** — Fixed member workspace section showing Leads, Calls, Policies, Notes, Tasks in that order; respects `showInSidebar` permission |
 | `packages/twenty-front/src/modules/navigation-menu-item/utils/getOmniaMemberWorkspaceObjectMetadataItems.ts`                | **NEW** — Shared curated Omnia member workspace object list and ordering                                                        |
 | `packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx`                            | Keeps curated member workspace items out of the Opened section so Notes/Tasks do not duplicate                                  |
 | `packages/twenty-front/src/modules/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems.tsx`            | Supports preserving caller-provided ordering and bypassing `showInSidebar` for curated sections                                 |
@@ -426,7 +426,7 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `settings/roles/.../SettingsRolePermissionsObjectLevelEditWindowRow.tsx` | **NEW** — Duration selector row (No limit, 5min–7 days) in object permissions form |
 | `settings/roles/.../SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx` | Added `EditWindowRow` below existing permission checkboxes |
 | `settings/roles/graphql/fragments/roleFragment.ts` | Added `editWindowMinutes` to query |
-| `settings/roles/graphql/fragments/objectPermissionFragment.ts` | Added `editWindowMinutes` to query |
+| `settings/roles/graphql/fragments/objectPermissionFragment.ts` | Added `editWindowMinutes` and `showInSidebar` to query |
 | `settings/roles/role/hooks/useSaveDraftRoleToDB.ts` | Includes `editWindowMinutes` in create/update role + object permission upsert payloads |
 
 **Shared types:**
