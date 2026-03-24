@@ -7162,10 +7162,10 @@ export default {
                 }
             ],
             "createManyNavigationMenuItems": [
-                208,
+                145,
                 {
                     "inputs": [
-                        368,
+                        369,
                         "[CreateNavigationMenuItemInput!]!"
                     ]
                 }
@@ -7180,10 +7180,10 @@ export default {
                 }
             ],
             "updateManyNavigationMenuItems": [
-                208,
+                145,
                 {
                     "inputs": [
-                        369,
+                        370,
                         "[UpdateOneNavigationMenuItemInput!]!"
                     ]
                 }
@@ -7198,7 +7198,7 @@ export default {
                 }
             ],
             "deleteManyNavigationMenuItems": [
-                208,
+                145,
                 {
                     "ids": [
                         3,
