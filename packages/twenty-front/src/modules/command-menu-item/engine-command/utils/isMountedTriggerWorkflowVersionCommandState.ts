@@ -5,5 +5,4 @@ import {
 
 export const isMountedTriggerWorkflowVersionCommandState = (
   state: MountedCommandState,
-): state is MountedTriggerWorkflowVersionCommandState =>
-  'workflowId' in state;
+): state is MountedTriggerWorkflowVersionCommandState => 'workflowId' in state;

@@ -1,6 +1,5 @@
-import { EngineCommandMenuItem } from '@/command-menu-item/display/components/EngineCommandMenuItem';
 import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/components/FrontComponentCommandMenuItem';
-import { WorkflowCommandMenuItem } from '@/command-menu-item/display/components/WorkflowCommandMenuItem';
+import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -101,50 +100,21 @@ export const useConvertBackendItemToCommandMenuItemConfig = () => {
       });
 
       const component = (() => {
-        switch (item.engineComponentKey) {
-          case EngineComponentKey.TRIGGER_WORKFLOW_VERSION:
-            return isDefined(item.workflowVersionId) ? (
-              <WorkflowCommandMenuItem
-                workflowVersionId={item.workflowVersionId}
-                commandMenuItemId={item.id}
-                availabilityType={item.availabilityType}
-                availabilityObjectMetadataId={item.availabilityObjectMetadataId}
-              />
-            ) : null;
-          case EngineComponentKey.FRONT_COMPONENT_RENDERER: {
-            if (!isDefined(item.frontComponentId)) {
-              return null;
-            }
-
-            if (item.frontComponent?.isHeadless !== true) {
-              return (
-                <FrontComponentCommandMenuItem
-                  frontComponentId={item.frontComponentId}
-                />
-              );
-            }
-
-            return (
-              <EngineCommandMenuItem
-                commandMenuItemId={item.id}
-                engineComponentKey={item.engineComponentKey}
-                frontComponentId={item.frontComponentId}
-              />
-            );
-          }
-          default:
-            return isDefined(item.engineComponentKey) ? (
-              <EngineCommandMenuItem
-                commandMenuItemId={item.id}
-                engineComponentKey={item.engineComponentKey}
-              />
-            ) : null;
+        if (
+          item.engineComponentKey ===
+            EngineComponentKey.FRONT_COMPONENT_RENDERER &&
+          isDefined(item.frontComponentId) &&
+          item.frontComponent?.isHeadless !== true
+        ) {
+          return (
+            <FrontComponentCommandMenuItem
+              frontComponentId={item.frontComponentId}
+            />
+          );
         }
-      })();
 
-      if (!isDefined(component)) {
-        return;
-      }
+        return <HeadlessCommandMenuItem item={item} />;
+      })();
 
       return {
         type: resolveType(item),

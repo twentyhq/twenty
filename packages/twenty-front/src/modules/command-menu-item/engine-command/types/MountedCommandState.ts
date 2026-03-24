@@ -18,15 +18,17 @@ export type MountedCommandBaseState = {
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
 };
 
-export type MountedHeadlessFrontComponentCommandState = MountedCommandBaseState & {
-  frontComponentId: string;
-};
+export type MountedHeadlessFrontComponentCommandState =
+  MountedCommandBaseState & {
+    frontComponentId: string;
+  };
 
-export type MountedTriggerWorkflowVersionCommandState = MountedCommandBaseState & {
-  workflowId: string;
-  workflowVersionId: string;
-  payloads: Record<string, any>[];
-};
+export type MountedTriggerWorkflowVersionCommandState =
+  MountedCommandBaseState & {
+    workflowId: string;
+    workflowVersionId: string;
+    payloads: Record<string, any>[];
+  };
 
 export type MountedCommandState =
   | MountedCommandBaseState
