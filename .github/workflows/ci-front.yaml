@@ -151,40 +151,6 @@ jobs:
   #         npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
   #     - name: Checking coverage
   #       run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
-  visual-regression-dispatch:
-    needs: front-sb-build
-    if: github.event_name == 'pull_request'
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download storybook build
-        uses: actions/download-artifact@v4
-        with:
-          name: storybook-static
-          path: storybook-static
-      - name: Package storybook
-        run: tar -czf /tmp/storybook-twenty-front.tar.gz -C storybook-static .
-      - name: Upload storybook tarball
-        uses: actions/upload-artifact@v4
-        with:
-          name: storybook-twenty-front-tarball
-          path: /tmp/storybook-twenty-front.tar.gz
-          retention-days: 1
-      - name: Dispatch to ci-privileged
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: visual-regression
-          client-payload: >-
-            {
-              "pr_number": "${{ github.event.pull_request.number }}",
-              "run_id": "${{ github.run_id }}",
-              "repo": "${{ github.repository }}",
-              "project": "twenty-front",
-              "branch": "${{ github.head_ref }}",
-              "commit": "${{ github.event.pull_request.head.sha }}"
-            }
   front-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

@@ -9,7 +9,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/common/states/isNavigationMenuItemFolderCreatingState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
@@ -51,7 +51,7 @@ const ORPHAN_DROPPABLE_ID =
 export const FavoritesSection = () => {
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const favoritesDropDisabled = useIsDropDisabledForSection(false);
 
@@ -128,12 +128,12 @@ export const FavoritesSection = () => {
         Icon={IconHeartOff}
         onClick={(event) => {
           event.stopPropagation();
-          deleteNavigationMenuItem(item.id);
+          deleteManyNavigationMenuItems([item.id]);
         }}
         accent="tertiary"
       />
     ),
-    [deleteNavigationMenuItem],
+    [deleteManyNavigationMenuItems],
   );
 
   if (

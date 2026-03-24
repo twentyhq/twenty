@@ -6,10 +6,12 @@ import { type ComponentProps, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
+import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
 import type { DraggableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDraggableData';
 import type { DropDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDropDestination';
+import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
@@ -23,9 +25,6 @@ import { toDropResult } from '@/navigation-menu-item/display/dnd/utils/navigatio
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
-
-import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
-import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
 
 type DragStartPayload = Parameters<
   NonNullable<
@@ -234,16 +233,16 @@ export const useNavigationMenuItemDndKit = (
         isSortable(source) &&
         isSortable(target)
       ) {
-        setActiveDropTargetId(resolved.effectiveDropTargetId);
-        setForbiddenDropTargetId(
-          isAddToNavDrag
-            ? computeForbiddenTargetId(source, resolved, true)
-            : computeForbiddenTargetId(source, resolved, false),
-        );
+        const forbiddenId = isAddToNavDrag
+          ? computeForbiddenTargetId(source, resolved, true)
+          : computeForbiddenTargetId(source, resolved, false);
+
+        setActiveDropTargetId(resolved.dropTargetId);
+        setForbiddenDropTargetId(forbiddenId);
         return;
       }
 
-      // Branch 2: sortable-to-droppable-slot
+      // Branch 2: sortable-to-droppable-slot (includes insert-before zones)
       if (resolved !== null && sourceIsSortable) {
         setActiveDropTargetId(resolved.effectiveDropTargetId);
         setAddToNavigationFallbackDestination(resolved.destination);
@@ -257,7 +256,7 @@ export const useNavigationMenuItemDndKit = (
         return;
       }
 
-      // Branch 3: add-to-nav drag
+      // Branch 3: add-to-nav drag over droppable
       if (resolved !== null) {
         setAddToNavigationFallbackDestination(resolved.destination);
         setActiveDropTargetId(resolved.effectiveDropTargetId);
@@ -326,20 +325,21 @@ export const useNavigationMenuItemDndKit = (
           droppableId: destGroup,
         });
       if (bothWorkspace) {
-        const insertBeforeItemId = resolved.isTargetFolder
-          ? null
-          : String(target?.id ?? '');
+        const insertBeforeItemId =
+          target?.id != null ? String(target.id) : undefined;
         applyWorkspaceReorder(
           draggableId,
           { droppableId: initialGroup, index: initialIndex },
           resolved.destination,
-          insertBeforeItemId || undefined,
+          insertBeforeItemId,
         );
         return;
       }
     }
 
     let destination: DropDestination | null = resolved?.destination ?? null;
+    const insertBeforeItemId = resolved?.insertBeforeItemId;
+
     if (
       destination == null &&
       isDefined(fallback) &&
@@ -380,6 +380,7 @@ export const useNavigationMenuItemDndKit = (
             index: data?.sourceIndex ?? 0,
           },
           destination,
+          insertBeforeItemId,
         );
       }
       return;

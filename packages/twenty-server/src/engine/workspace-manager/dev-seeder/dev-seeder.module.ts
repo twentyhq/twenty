@@ -6,6 +6,7 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -50,6 +51,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceCacheModule,
     WorkspaceMigrationModule,
     TwentyStandardApplicationModule,
+    SdkClientModule,
   ],
   exports: [DevSeederService],
   providers: [

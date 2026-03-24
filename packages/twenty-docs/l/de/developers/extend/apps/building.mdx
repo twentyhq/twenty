@@ -563,7 +563,7 @@ Hauptpunkte:
 
 * Frontend-Komponenten sind React-Komponenten, die in isolierten Kontexten innerhalb von Twenty gerendert werden.
 * Das Feld `component` verweist auf Ihre React-Komponente.
-* Komponenten werden während `yarn twenty app:dev` automatisch gebaut und synchronisiert.
+* Komponenten werden während `yarn twenty dev` automatisch gebaut und synchronisiert.
 
 Sie können neue Frontend-Komponenten auf zwei Arten erstellen:
 
@@ -607,7 +607,7 @@ Sie können neue Skills auf zwei Arten erstellen:
 
 ### Generierte typisierte Clients
 
-Zwei typisierte Clients werden von `yarn twenty app:dev` automatisch generiert und basierend auf Ihrem Arbeitsbereichs-Schema in `node_modules/twenty-sdk/generated` gespeichert:
+Zwei typisierte Clients werden von `yarn twenty dev` automatisch generiert und basierend auf Ihrem Arbeitsbereichs-Schema in `node_modules/twenty-sdk/generated` gespeichert:
 
 * **`CoreApiClient`** — fragt den `/graphql`-Endpunkt nach Arbeitsbereichsdaten ab
 * **`MetadataApiClient`** — ruft über den Endpunkt `/metadata` die Arbeitsbereichskonfiguration und Datei-Uploads ab.
@@ -622,7 +622,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Beide Clients werden von `yarn twenty app:dev` automatisch neu generiert, sobald sich Ihre Objekte oder Felder ändern.
+Beide Clients werden von `yarn twenty dev` automatisch neu generiert, sobald sich Ihre Objekte oder Felder ändern.
 
 #### Laufzeit-Anmeldedaten in Logikfunktionen
 

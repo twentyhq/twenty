@@ -46,6 +46,7 @@ import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrati
 import { MakeWorkflowSearchableCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-workflow-searchable.command';
 import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
+import { GenerateApplicationSdkClientsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-generate-application-sdk-clients.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -106,6 +107,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
     protected readonly deleteOrphanNavigationMenuItemsCommand: DeleteOrphanNavigationMenuItemsCommand,
     protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
+    protected readonly generateApplicationSdkClientsCommand: GenerateApplicationSdkClientsCommand,
     protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
     protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
     protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
@@ -177,6 +179,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillSelectFieldOptionIdsCommand,
       this.updateStandardIndexViewNamesCommand,
       this.makeWorkflowSearchableCommand,
+      this.generateApplicationSdkClientsCommand,
     ];
 
     this.allCommands = {

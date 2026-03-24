@@ -14,33 +14,32 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SidePanelPages } from 'twenty-shared/types';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 const getAddMenuItemInsertionContext = (
   selectedItem: { id: string; folderId?: string | null },
-  workspaceNavigationMenuItems: Array<{
-    id: string;
-    folderId?: string | null;
-    userWorkspaceId?: string | null;
-  }>,
+  workspaceNavigationMenuItems: NavigationMenuItem[],
   offset: 0 | 1,
 ): AddMenuItemInsertionContext | null => {
   const targetFolderId = selectedItem.folderId ?? null;
-  const itemsInFolder = workspaceNavigationMenuItems.filter(
-    (item) =>
-      (item.folderId ?? null) === targetFolderId &&
-      !isDefined(item.userWorkspaceId),
-  );
-  const selectedIndexInFolder = itemsInFolder.findIndex(
+  const itemsInFolderSorted = workspaceNavigationMenuItems
+    .filter(
+      (item) =>
+        (item.folderId ?? null) === targetFolderId &&
+        !isDefined(item.userWorkspaceId),
+    )
+    .sort((a, b) => a.position - b.position);
+  const selectedIndexSorted = itemsInFolderSorted.findIndex(
     (item) => item.id === selectedItem.id,
   );
 
-  if (selectedIndexInFolder < 0) {
+  if (selectedIndexSorted < 0) {
     return null;
   }
 
   return {
     targetFolderId,
-    targetIndex: selectedIndexInFolder + offset,
+    targetIndex: selectedIndexSorted + offset,
     disableDrag: true,
   };
 };

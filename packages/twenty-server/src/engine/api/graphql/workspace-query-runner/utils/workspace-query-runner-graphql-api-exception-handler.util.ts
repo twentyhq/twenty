@@ -1,4 +1,4 @@
-import { type QueryFailedError } from 'typeorm';
+import { QueryFailedError } from 'typeorm';
 
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
@@ -23,12 +23,12 @@ import { twentyORMGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { workflowQueryValidationGraphqlApiExceptionHandler } from 'src/modules/workflow/common/utils/workflow-query-validation-graphql-api-exception-handler.util';
 
-interface QueryFailedErrorWithCode extends QueryFailedError {
+export interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;
 }
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
-  error: QueryFailedErrorWithCode,
+  error: Error | QueryFailedError,
 ) => {
   switch (true) {
     case error instanceof RecordTransformerException:

@@ -1,10 +1,11 @@
-import { RECORD_TABLE_HTML_ID } from '@/object-record/record-table/constants/RecordTableHtmlId';
+import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 
 export const updateRecordTableCSSVariable = (
+  recordTableId: string,
   cssVariableName: string,
   newValue: string,
 ) => {
   document
-    .querySelector<HTMLDivElement>(`#${RECORD_TABLE_HTML_ID}`)
+    .querySelector<HTMLDivElement>(`#${getRecordTableHtmlId(recordTableId)}`)
     ?.style.setProperty(cssVariableName, newValue);
 };

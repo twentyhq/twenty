@@ -135,6 +135,16 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
         tabUniversalIdentifiers.has(widget.pageLayoutTabUniversalIdentifier),
       );
 
+    const {
+      flatViewMaps: existingFlatViewMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatViewMaps',
+      'flatViewFieldMaps',
+      'flatViewFieldGroupMaps',
+    ]);
+
     const viewUniversalIdentifiers = new Set<string>();
 
     const viewsToCreate = Object.values(
@@ -143,6 +153,16 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
       .filter(isDefined)
       .filter((view) => {
         if (view.type !== ViewType.FIELDS_WIDGET) {
+          return false;
+        }
+
+        if (
+          isDefined(
+            existingFlatViewMaps.byUniversalIdentifier[
+              view.universalIdentifier
+            ],
+          )
+        ) {
           return false;
         }
 
@@ -155,16 +175,30 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
       standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((viewField) =>
-        viewUniversalIdentifiers.has(viewField.viewUniversalIdentifier),
+      .filter(
+        (viewField) =>
+          viewUniversalIdentifiers.has(viewField.viewUniversalIdentifier) &&
+          !isDefined(
+            existingFlatViewFieldMaps.byUniversalIdentifier[
+              viewField.universalIdentifier
+            ],
+          ),
       );
 
     const viewFieldGroupsToCreate = Object.values(
       standardAllFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((viewFieldGroup) =>
-        viewUniversalIdentifiers.has(viewFieldGroup.viewUniversalIdentifier),
+      .filter(
+        (viewFieldGroup) =>
+          viewUniversalIdentifiers.has(
+            viewFieldGroup.viewUniversalIdentifier,
+          ) &&
+          !isDefined(
+            existingFlatViewFieldGroupMaps.byUniversalIdentifier[
+              viewFieldGroup.universalIdentifier
+            ],
+          ),
       );
 
     const validateAndBuildResult =

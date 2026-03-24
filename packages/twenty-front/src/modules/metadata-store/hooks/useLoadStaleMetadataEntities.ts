@@ -1,4 +1,4 @@
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
 import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayoutWithRelated';
@@ -53,7 +53,7 @@ const hasOverlap = (
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
   const store = useStore();
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const loadStaleMetadataEntities = useCallback(
     async (staleEntityKeys: MetadataEntityKey[]) => {

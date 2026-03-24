@@ -563,7 +563,7 @@ export default defineFrontComponent({
 
 * Ön uç bileşenleri, Twenty içinde yalıtılmış bağlamlarda görüntülenen React bileşenleridir.
 * `component` alanı, React bileşeninize referans verir.
-* Bileşenler, `yarn twenty app:dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
+* Bileşenler, `yarn twenty dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
 
 Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
@@ -607,7 +607,7 @@ Yeni yetenekleri iki şekilde oluşturabilirsiniz:
 
 ### Oluşturulan tiplendirilmiş istemciler
 
-Çalışma alanı şemanıza göre `yarn twenty app:dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/generated` içine kaydedilir:
+Çalışma alanı şemanıza göre `yarn twenty dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/generated` içine kaydedilir:
 
 * **`CoreApiClient`** — çalışma alanı verileri için `/graphql` uç noktasını sorgular
 * **`MetadataApiClient`** — çalışma alanı yapılandırması ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
@@ -622,7 +622,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Her iki istemci de, nesneleriniz veya alanlarınız değiştiğinde, `yarn twenty app:dev` tarafından otomatik olarak yeniden oluşturulur.
+Her iki istemci de, nesneleriniz veya alanlarınız değiştiğinde, `yarn twenty dev` tarafından otomatik olarak yeniden oluşturulur.
 
 #### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 

@@ -28,13 +28,13 @@ Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketpla
 1. **Construiește-ți aplicația** — CLI compilează sursele TypeScript și generează manifestul aplicației:
 
 ```bash filename="Terminal"
-yarn twenty app:build
+yarn twenty build
 ```
 
 2. **Publică pe npm** — publică pachetul construit în registrul npm:
 
 ```bash filename="Terminal"
-npx twenty app:publish
+npx twenty publish
 ```
 
 ### Descoperire automată
@@ -65,14 +65,14 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty app:build
+      - run: npx twenty build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `npx twenty app:build`, apoi `npm publish` din `.twenty/output`.
+Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `npx twenty build`, apoi `npm publish` din `.twenty/output`.
 
 <Tip>
 **npm provenance** este opțională, dar recomandată. Publicarea cu `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru instrucțiuni de configurare.
@@ -87,7 +87,7 @@ Pentru aplicațiile pe care nu le dorești disponibile public — instrumente pr
 Construiește-ți aplicația și implementeaz-o pe un server specific, într-un singur pas:
 
 ```bash filename="Terminal"
-npx twenty app:publish --server <server-url>
+npx twenty publish --server <server-url>
 ```
 
 Orice spațiu de lucru de pe acel server poate apoi instala și actualiza aplicația din pagina de setări **Applications**.
@@ -97,7 +97,7 @@ Orice spațiu de lucru de pe acel server poate apoi instala și actualiza aplica
 Pentru a lansa o actualizare:
 
 1. Actualizează câmpul `version` din `package.json`
-2. Trimite un tarball nou cu `npx twenty app:publish --server <server-url>`
+2. Trimite un tarball nou cu `npx twenty publish --server <server-url>`
 3. Spațiile de lucru de pe acel server vor vedea actualizarea disponibilă în setările lor
 
 <Note>
@@ -110,7 +110,7 @@ Twenty organizează aplicațiile în trei categorii, în funcție de modul în c
 
 | Categorie      | Cum funcționează                                                                                                                  | Vizibilă în marketplace? |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| **Dezvoltare** | Aplicații în modul de dezvoltare local, rulate prin `yarn twenty app:dev`. Folosite pentru construire și testare.                 | Nu                       |
+| **Dezvoltare** | Aplicații în modul de dezvoltare local, rulate prin `yarn twenty dev`. Folosite pentru construire și testare.                     | Nu                       |
 | **Publicat**   | Aplicații publicate pe npm cu prefixul `twenty-app-`. Listate în marketplace pentru ca orice spațiu de lucru să le poată instala. | Da                       |
 | **Intern**     | Aplicații implementate prin tarball pe un server specific. Disponibile doar pentru spațiile de lucru de pe acel server.           | Nu                       |
 
