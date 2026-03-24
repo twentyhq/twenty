@@ -7,7 +7,11 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useEffect } from 'react';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { MockLink } from '@apollo/client/testing';
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import gql from 'graphql-tag';
 import { expect, userEvent, within } from 'storybook/test';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
