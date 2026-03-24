@@ -3,14 +3,12 @@ import { CommandLink } from '@/command-menu-item/display/components/CommandLink'
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
@@ -28,33 +26,26 @@ export const useSidePanelSearchRecords = () => {
   const coreClient = useApolloCoreClient();
 
   const [deferredSidePanelSearch] = useDebounce(sidePanelSearch, 300);
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
 
-  const nonReadableObjectMetadataItemsNameSingular = useMemo(() => {
-    return Object.values(objectMetadataItems)
-      .filter((objectMetadataItem) => {
-        const objectPermission = getObjectPermissionsFromMapByObjectMetadataId({
-          objectPermissionsByObjectMetadataId,
-          objectMetadataId: objectMetadataItem.id,
-        });
+  const searchableObjectNameSingulars = useMemo(
+    () =>
+      readableObjectMetadataItems
+        .filter((item) => item.isSearchable)
+        .map((item) => item.nameSingular),
+    [readableObjectMetadataItems],
+  );
 
-        return !objectPermission?.canReadObjectRecords;
-      })
-      .map((objectMetadataItem) => objectMetadataItem.nameSingular);
-  }, [objectMetadataItems, objectPermissionsByObjectMetadataId]);
+  const includedObjectNameSingulars = isDefined(sidePanelSearchObjectFilter)
+    ? [sidePanelSearchObjectFilter]
+    : searchableObjectNameSingulars;
 
   const { data: searchData, loading } = useQuery(SearchDocument, {
     client: coreClient,
     variables: {
       searchInput: deferredSidePanelSearch ?? '',
       limit: MAX_SEARCH_RESULTS,
-      excludedObjectNameSingulars: nonReadableObjectMetadataItemsNameSingular,
-      ...(isDefined(sidePanelSearchObjectFilter)
-        ? {
-            includedObjectNameSingulars: [sidePanelSearchObjectFilter],
-          }
-        : {}),
+      includedObjectNameSingulars,
     },
   });
 
@@ -84,7 +75,7 @@ export const useSidePanelSearchRecords = () => {
           ),
           shouldBeRegistered: () => true,
           description:
-            objectMetadataItems.find(
+            readableObjectMetadataItems.find(
               (item) => item.nameSingular === searchRecord.objectNameSingular,
             )?.labelSingular ?? searchRecord.objectNameSingular,
         };
@@ -130,7 +121,7 @@ export const useSidePanelSearchRecords = () => {
         };
       },
     );
-  }, [searchData, openRecordInSidePanel, objectMetadataItems]);
+  }, [searchData, openRecordInSidePanel, readableObjectMetadataItems]);
 
   return {
     loading,

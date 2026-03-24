@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
@@ -8,9 +8,7 @@ import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/u
 import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
 import { SidePanelNewSidebarItemRecordItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -34,24 +32,25 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
   );
   const disableDrag = addMenuItemInsertionContext?.disableDrag === true;
   const { currentDraft } = useDraftNavigationMenuItems();
-  const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
   const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);
   const coreClient = useApolloCoreClient();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const [selectedObjectNameSingular, setSelectedObjectNameSingular] = useState<
     string | null
   >(null);
 
-  const nonReadableObjectMetadataItemsNameSingular = objectMetadataItems
-    .filter(
-      (objectMetadataItem) =>
-        !getObjectPermissionsFromMapByObjectMetadataId({
-          objectPermissionsByObjectMetadataId,
-          objectMetadataId: objectMetadataItem.id,
-        })?.canReadObjectRecords,
-    )
-    .map((objectMetadataItem) => objectMetadataItem.nameSingular);
+  const searchableObjectNameSingulars = useMemo(
+    () =>
+      readableObjectMetadataItems
+        .filter((item) => item.isSearchable)
+        .map((item) => item.nameSingular),
+    [readableObjectMetadataItems],
+  );
+
+  const includedObjectNameSingulars = isDefined(selectedObjectNameSingular)
+    ? [selectedObjectNameSingular]
+    : searchableObjectNameSingulars;
 
   const { data: searchData, loading: recordSearchLoading } = useQuery(
     SearchDocument,
@@ -60,12 +59,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
       variables: {
         searchInput: deferredRecordSearchInput ?? '',
         limit: MAX_SEARCH_RESULTS,
-        excludedObjectNameSingulars: nonReadableObjectMetadataItemsNameSingular,
-        ...(isDefined(selectedObjectNameSingular)
-          ? {
-              includedObjectNameSingulars: [selectedObjectNameSingular],
-            }
-          : {}),
+        includedObjectNameSingulars,
       },
     },
   );

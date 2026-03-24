@@ -7,7 +7,7 @@ import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -28,17 +28,17 @@ const ObjectFilterDropdownContent = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [filterSearch, setFilterSearch] = useState('');
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const { closeDropdown } = useCloseDropdown();
 
-  const filteredObjectItems = useMemo(
+  const searchableObjectItems = useMemo(
     () =>
-      activeObjectMetadataItems.filter(
+      readableObjectMetadataItems.filter(
         (item) =>
           item.isSearchable &&
           item.labelPlural.toLowerCase().includes(filterSearch.toLowerCase()),
       ),
-    [activeObjectMetadataItems, filterSearch],
+    [readableObjectMetadataItems, filterSearch],
   );
 
   const handleSelect = (objectNameSingular: string | null) => {
@@ -61,7 +61,7 @@ const ObjectFilterDropdownContent = ({
           selected={selectedObjectNameSingular === null}
           onClick={() => handleSelect(null)}
         />
-        {filteredObjectItems.map((objectMetadataItem) => {
+        {searchableObjectItems.map((objectMetadataItem) => {
           const ObjectIcon = getIcon(objectMetadataItem.icon);
           const iconColor = getStandardObjectIconColor(
             objectMetadataItem.nameSingular,
