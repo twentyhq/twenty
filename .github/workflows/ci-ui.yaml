@@ -95,40 +95,6 @@ jobs:
           npx http-server packages/twenty-ui/storybook-static --port 6007 --silent &
           timeout 30 bash -c 'until curl -sf http://localhost:6007 > /dev/null 2>&1; do sleep 1; done'
           npx nx storybook:test twenty-ui
-  visual-regression-dispatch:
-    needs: ui-sb-build
-    if: github.event_name == 'pull_request'
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download storybook build
-        uses: actions/download-artifact@v4
-        with:
-          name: storybook-twenty-ui
-          path: storybook-static
-      - name: Package storybook
-        run: tar -czf /tmp/storybook-twenty-ui.tar.gz -C storybook-static .
-      - name: Upload storybook tarball
-        uses: actions/upload-artifact@v4
-        with:
-          name: storybook-twenty-ui-tarball
-          path: /tmp/storybook-twenty-ui.tar.gz
-          retention-days: 1
-      - name: Dispatch to ci-privileged
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: visual-regression
-          client-payload: >-
-            {
-              "pr_number": "${{ github.event.pull_request.number }}",
-              "run_id": "${{ github.run_id }}",
-              "repo": "${{ github.repository }}",
-              "project": "twenty-ui",
-              "branch": "${{ github.head_ref }}",
-              "commit": "${{ github.event.pull_request.head.sha }}"
-            }
   ci-ui-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
