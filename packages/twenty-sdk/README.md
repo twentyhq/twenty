@@ -74,7 +74,7 @@ In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` i
 
 Manage a local Twenty dev server (all-in-one Docker image).
 
-- `twenty server start` — Start the local server (pulls image if needed).
+- `twenty server start` — Start the local server (pulls image if needed). Automatically configures the `local` remote.
   - Options:
     - `-p, --port <port>`: HTTP port (default: `2020`).
 - `twenty server stop` — Stop the local server.
@@ -116,6 +116,7 @@ Manage remote server connections and authentication.
     - `--url <url>`: Server URL (alternative to positional arg).
     - `--as <name>`: Name for this remote (otherwise derived from URL hostname).
     - `--local`: Connect to local development server (`http://localhost:2020`) via OAuth.
+    - `--port <port>`: Port for local server (use with `--local`).
   - Behavior: If `nameOrUrl` matches an existing remote name, re-authenticates it. Otherwise, creates a new remote and authenticates via OAuth (with API key fallback).
 
 - `twenty remote remove <name>` — Remove a remote and its credentials.
@@ -326,6 +327,18 @@ Notes:
 - `twenty remote add --as my-remote` saves under a custom name.
 - `twenty remote switch` sets the `defaultRemote` field, used when `-r` is not specified.
 - `twenty remote list` shows all configured remotes and their authentication status.
+
+## How to use a local Twenty instance
+
+If you're already running a local Twenty instance, you can connect to it instead of using Docker. Pass the port your local server is listening on (default: `3000`):
+
+```bash
+# During scaffolding
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding
+twenty remote add --local --port 3000
+```
 
 ## Troubleshooting
 

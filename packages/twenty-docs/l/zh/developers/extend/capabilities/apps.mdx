@@ -78,6 +78,18 @@ npx create-twenty-app@latest my-app
 npx create-twenty-app@latest my-app --minimal
 ```
 
+### 如何使用本地 Twenty 实例
+
+如果你已经在本地运行一个 Twenty 实例，你可以连接到它，而不是使用 Docker。 指定本地服务器正在监听的端口（默认：`3000`）：
+
+```bash filename="Terminal"
+# 在脚手架过程中
+npx create-twenty-app@latest my-app --port 3000
+
+# 或在脚手架之后
+yarn twenty remote add --local --port 3000
+```
+
 从这里您可以：
 
 ```bash filename="Terminal"

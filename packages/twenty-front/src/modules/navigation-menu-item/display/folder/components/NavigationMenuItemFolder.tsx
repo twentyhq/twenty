@@ -30,6 +30,7 @@ type NavigationMenuItemFolderProps = Pick<
   | 'selectedNavigationMenuItemId'
   | 'onNavigationMenuItemClick'
   | 'readOnly'
+  | 'orphanIndex'
 >;
 
 export const NavigationMenuItemFolder = ({
@@ -42,6 +43,7 @@ export const NavigationMenuItemFolder = ({
   selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   readOnly = false,
+  orphanIndex,
 }: NavigationMenuItemFolderProps) => {
   const folderId = item.id;
   const folderName = item.name ?? 'Folder';
@@ -88,6 +90,7 @@ export const NavigationMenuItemFolder = ({
         isDragging={isDragging}
         selectedNavigationMenuItemId={selectedNavigationMenuItemId}
         onNavigationMenuItemClick={onNavigationMenuItemClick}
+        orphanIndex={orphanIndex}
       />
     </Suspense>
   );

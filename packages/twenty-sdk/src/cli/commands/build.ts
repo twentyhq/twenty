@@ -15,8 +15,7 @@ export class AppBuildCommand {
     await checkSdkVersionCompatibility(appPath);
 
     console.log(chalk.blue('Building application...'));
-    console.log(chalk.gray(`App path: ${appPath}`));
-    console.log('');
+    console.log(chalk.gray(`App path: ${appPath}\n`));
 
     const result = await appBuild({
       appPath,
