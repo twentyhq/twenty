@@ -3,7 +3,6 @@ import { styled } from '@linaria/react';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
 import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
@@ -11,26 +10,16 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
-import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { Checkbox } from 'twenty-ui/input';
 
-const StyledContainer = styled.div<{
-  shouldDisplayBorderBottom: boolean;
-}>`
+const StyledContainer = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.primary};
-  border-bottom: ${({ shouldDisplayBorderBottom }) =>
-    shouldDisplayBorderBottom
-      ? `1px solid ${themeCssVariables.border.color.light}`
-      : 'none'};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
   justify-content: center;
@@ -41,7 +30,6 @@ const StyledContainer = styled.div<{
 const StyledColumnHeaderCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
 
-  box-sizing: border-box;
   cursor: pointer;
 
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
@@ -85,37 +73,6 @@ export const RecordTableHeaderCheckboxColumn = () => {
     }
   };
 
-  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
-    isRecordTableRowActiveComponentFamilyState,
-    0,
-  );
-
-  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
-    isRecordTableRowFocusedComponentFamilyState,
-    0,
-  );
-
-  const isRecordTableRowFocusActive = useAtomComponentStateValue(
-    isRecordTableRowFocusActiveComponentState,
-  );
-
-  const isFirstRowActiveOrFocused =
-    isRecordTableRowActive ||
-    (isRecordTableRowFocused && isRecordTableRowFocusActive);
-
-  const isRecordTableScrolledVertically = useAtomComponentStateValue(
-    isRecordTableScrolledVerticallyComponentState,
-  );
-
-  const hasRecordGroups = useAtomComponentSelectorValue(
-    hasRecordGroupsComponentSelector,
-  );
-
-  const shouldDisplayBorderBottom =
-    hasRecordGroups ||
-    !isFirstRowActiveOrFocused ||
-    isRecordTableScrolledVertically;
-
   return (
     <StyledColumnHeaderCell
       className={cx(
@@ -123,10 +80,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
         RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME,
       )}
     >
-      <StyledContainer
-        shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-        data-select-disable
-      >
+      <StyledContainer data-select-disable>
         <Checkbox
           hoverable
           checked={checked}

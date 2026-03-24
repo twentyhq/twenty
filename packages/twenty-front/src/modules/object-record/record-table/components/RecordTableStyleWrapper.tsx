@@ -19,6 +19,11 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export { HorizontalScrollBoxShadowCSS, VerticalScrollBoxShadowCSS };
 
+export const RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR =
+  '--record-table-drag-drop-width';
+export const RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR =
+  '--record-table-checkbox-width';
+
 const MAX_COLUMNS = 100;
 
 const columnFieldWidthRules = Array.from(
@@ -31,15 +36,29 @@ const columnFieldWidthRules = Array.from(
   }`,
 ).join('\n');
 
-export const getRecordTableColumnWidthInlineStyles = (
-  visibleRecordFields: RecordField[],
-): Record<string, string> => {
+export const getRecordTableColumnWidthInlineStyles = ({
+  visibleRecordFields,
+  isDragColumnHidden,
+  isCheckboxColumnHidden,
+}: {
+  visibleRecordFields: RecordField[];
+  isDragColumnHidden?: boolean;
+  isCheckboxColumnHidden?: boolean;
+}): Record<string, string> => {
   const style: Record<string, string> = {};
 
   for (let i = 0; i < visibleRecordFields.length; i++) {
     style[`--record-table-column-field-${i}`] =
       `${visibleRecordFields[i].size}px`;
   }
+
+  style[RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR] = isDragColumnHidden
+    ? '0px'
+    : `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px`;
+
+  style[RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR] = isCheckboxColumnHidden
+    ? '0px'
+    : `${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`;
 
   return style;
 };
@@ -58,64 +77,65 @@ const StyledTable = styled.div<{
 
   width: 100%;
 
-  div.header-cell:nth-of-type(n + 5) {
+  div.header-cell {
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsNormal};
   }
 
-  div.header-cell:nth-of-type(1) {
+  div.header-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-
     left: 0px;
-
     position: sticky;
-
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
-  div.header-cell:nth-of-type(2) {
+  div.header-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-
-    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
-
     top: 0;
-
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
-  div.header-cell:nth-of-type(3) {
+  div.header-cell.${getRecordTableColumnFieldWidthClassName(0)} {
     background-color: ${themeCssVariables.background.primary};
-    left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+    left: calc(
+      var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
+        var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
+    );
     position: sticky;
-
     right: 0;
-
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
-  div.table-cell:nth-of-type(1) {
+  div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     left: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
-  div.table-cell:nth-of-type(2) {
-    left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  div.table-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
+    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell-0-0 {
-    left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+    left: calc(
+      var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
+        var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
+    );
     position: sticky;
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
-  div.table-cell:nth-of-type(3) {
-    left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+  div.table-cell.${getRecordTableColumnFieldWidthClassName(0)} {
+    left: calc(
+      var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
+        var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
+    );
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
 
@@ -123,15 +143,15 @@ const StyledTable = styled.div<{
   }
 
   div.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
-    max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-    width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+    max-width: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    min-width: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    width: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
   }
 
   div.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
-    max-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-    width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+    max-width: var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR});
+    min-width: var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR});
+    width: var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR});
   }
 
   div.${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME} {

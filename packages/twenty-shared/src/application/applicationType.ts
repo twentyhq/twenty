@@ -22,5 +22,4 @@ export type ApplicationManifest = SyncableEntityOptions & {
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;
-  apiClientChecksum: string | null;
 };

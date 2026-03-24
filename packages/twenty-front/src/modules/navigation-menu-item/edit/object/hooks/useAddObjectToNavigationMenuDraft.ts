@@ -7,18 +7,26 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/sta
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
+export type AddObjectToNavigationMenuDraftParams = {
+  objectMetadataId: string;
+  currentDraft: NavigationMenuItem[];
+  targetFolderId?: string | null;
+  targetIndex?: number;
+  color?: string | null;
+};
+
 export const useAddObjectToNavigationMenuDraft = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
 
-  const addObjectToDraft = (
-    objectMetadataId: string,
-    currentDraft: NavigationMenuItem[],
-    targetFolderId?: string | null,
-    targetIndex?: number,
-    color?: string | null,
-  ): string => {
+  const addObjectToDraft = ({
+    objectMetadataId,
+    currentDraft,
+    targetFolderId,
+    targetIndex,
+    color,
+  }: AddObjectToNavigationMenuDraftParams): string => {
     const folderId = targetFolderId ?? null;
 
     const itemsInFolder = currentDraft.filter(

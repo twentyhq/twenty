@@ -1,40 +1,38 @@
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
-import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconColumnInsertRight } from 'twenty-ui/display';
 
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
 type OpenAddItemToFolderPageParams = {
-  targetFolderId: string;
-  targetIndex: number;
+  folderId: string;
+  position: number;
   resetNavigationStack?: boolean;
 };
 
 export const useOpenAddItemToFolderPage = () => {
   const { t } = useLingui();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
+  const setPendingInsertionNavigationMenuItem = useSetAtomState(
+    pendingInsertionNavigationMenuItemState,
   );
-  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeState,
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
   );
 
   const openAddItemToFolderPage = ({
-    targetFolderId,
-    targetIndex,
+    folderId,
+    position,
     resetNavigationStack = true,
   }: OpenAddItemToFolderPageParams) => {
-    setSelectedNavigationMenuItemInEditMode(null);
-    setAddMenuItemInsertionContext({
-      targetFolderId,
-      targetIndex,
-    });
+    setPendingInsertionNavigationMenuItem({ folderId, position });
+    setSelectedNavigationMenuItemIdInEditMode(null);
     navigateSidePanel({
       page: SidePanelPages.NavigationMenuAddItem,
-      pageTitle: t`New sidebar item`,
+      pageTitle: t`New menu item`,
       pageIcon: IconColumnInsertRight,
       resetNavigationStack,
     });

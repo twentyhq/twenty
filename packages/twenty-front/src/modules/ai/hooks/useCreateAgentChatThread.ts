@@ -8,7 +8,7 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-import { focusEditorAfterMigrateState } from '@/ai/states/focusEditorAfterMigrateState';
+import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
@@ -60,7 +60,7 @@ export const useCreateAgentChatThread = () => {
           [newThreadId]: newDraft,
           [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
         }));
-        store.set(focusEditorAfterMigrateState.atom, true);
+        store.set(shouldFocusChatEditorState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
         store.set(threadIdCreatedFromDraftState.atom, newThreadId);
       } else {

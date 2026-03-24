@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard page layout metadata related entity ids 1`] = `
 {
@@ -340,21 +340,24 @@ exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard pa
     },
   },
   "workflowRunRecordPage": {
-    "id": "00000000-0000-0000-0000-000000000093",
+    "id": "00000000-0000-0000-0000-000000000094",
     "tabs": {
       "flow": {
-        "id": "00000000-0000-0000-0000-000000000096",
+        "id": "00000000-0000-0000-0000-000000000098",
         "widgets": {
           "workflowRun": {
-            "id": "00000000-0000-0000-0000-000000000097",
+            "id": "00000000-0000-0000-0000-000000000099",
           },
         },
       },
       "home": {
-        "id": "00000000-0000-0000-0000-000000000094",
+        "id": "00000000-0000-0000-0000-000000000095",
         "widgets": {
           "fields": {
-            "id": "00000000-0000-0000-0000-000000000095",
+            "id": "00000000-0000-0000-0000-000000000096",
+          },
+          "workflow": {
+            "id": "00000000-0000-0000-0000-000000000097",
           },
         },
       },
@@ -364,10 +367,10 @@ exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard pa
     "id": "00000000-0000-0000-0000-000000000088",
     "tabs": {
       "flow": {
-        "id": "00000000-0000-0000-0000-000000000091",
+        "id": "00000000-0000-0000-0000-000000000092",
         "widgets": {
           "workflowVersion": {
-            "id": "00000000-0000-0000-0000-000000000092",
+            "id": "00000000-0000-0000-0000-000000000093",
           },
         },
       },
@@ -376,6 +379,9 @@ exports[`getStandardPageLayoutMetadataRelatedEntityIds should return standard pa
         "widgets": {
           "fields": {
             "id": "00000000-0000-0000-0000-000000000090",
+          },
+          "workflow": {
+            "id": "00000000-0000-0000-0000-000000000091",
           },
         },
       },

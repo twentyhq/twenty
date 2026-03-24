@@ -32,7 +32,7 @@ has_schema=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
 
 if [ "$has_schema" = "f" ]; then
   echo "Database appears to be empty, running initial setup..."
-  NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
+  NODE_OPTIONS="--max-old-space-size=1500" node ./dist/scripts/setup-db.js
 fi
 
 # Always run migrations (idempotent — skips already-applied ones)

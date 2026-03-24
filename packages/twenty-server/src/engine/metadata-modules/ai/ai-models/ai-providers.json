@@ -13,9 +13,7 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "gpt-5.3-codex",
@@ -26,10 +24,7 @@
         "cachedInputCostPerMillionTokens": 0.175,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -41,9 +36,7 @@
         "cachedInputCostPerMillionTokens": 0.125,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -54,9 +47,7 @@
         "outputCostPerMillionTokens": 120,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 272000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -68,9 +59,7 @@
         "cachedInputCostPerMillionTokens": 0.08,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "codex-mini-latest",
@@ -92,9 +81,7 @@
         "cachedInputCostPerMillionTokens": 0.125,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -105,9 +92,7 @@
         "outputCostPerMillionTokens": 15,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "gpt-5.2-chat-latest",
@@ -118,9 +103,7 @@
         "cachedInputCostPerMillionTokens": 0.175,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -132,10 +115,7 @@
         "cachedInputCostPerMillionTokens": 0.175,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -147,9 +127,7 @@
         "cachedInputCostPerMillionTokens": 2.5,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -161,9 +139,7 @@
         "cachedInputCostPerMillionTokens": 7.5,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -175,9 +151,7 @@
         "cachedInputCostPerMillionTokens": 0.13,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -189,9 +163,7 @@
         "cachedInputCostPerMillionTokens": 0.5,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -203,10 +175,7 @@
         "cachedInputCostPerMillionTokens": 0.175,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 32000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -218,9 +187,7 @@
         "cachedInputCostPerMillionTokens": 0.5,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -232,9 +199,7 @@
         "cachedInputCostPerMillionTokens": 0.03,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "gpt-5.1-codex-mini",
@@ -245,9 +210,7 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -259,9 +222,7 @@
         "cachedInputCostPerMillionTokens": 0.175,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -273,9 +234,7 @@
         "cachedInputCostPerMillionTokens": 0.5,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "o3-pro",
@@ -285,9 +244,7 @@
         "outputCostPerMillionTokens": 80,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -298,9 +255,7 @@
         "outputCostPerMillionTokens": 30,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "gpt-5",
@@ -311,9 +266,7 @@
         "cachedInputCostPerMillionTokens": 0.125,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -325,9 +278,7 @@
         "cachedInputCostPerMillionTokens": 0.28,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -339,9 +290,7 @@
         "cachedInputCostPerMillionTokens": 0.1,
         "contextWindowTokens": 1047576,
         "maxOutputTokens": 32768,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "gpt-5.4",
@@ -358,10 +307,7 @@
         },
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -377,9 +323,7 @@
         },
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -390,9 +334,7 @@
         "outputCostPerMillionTokens": 600,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 100000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -404,9 +346,7 @@
         "cachedInputCostPerMillionTokens": 0.125,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -417,9 +357,7 @@
         "outputCostPerMillionTokens": 168,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -442,9 +380,7 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "gpt-5-mini",
@@ -455,9 +391,7 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -469,9 +403,7 @@
         "cachedInputCostPerMillionTokens": 0.02,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -483,9 +415,7 @@
         "cachedInputCostPerMillionTokens": 0.125,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -506,9 +436,7 @@
         "cachedInputCostPerMillionTokens": 0.005,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -520,9 +448,7 @@
         "cachedInputCostPerMillionTokens": 1.25,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "gpt-5.4-mini",
@@ -533,9 +459,7 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       }
     ]
@@ -555,10 +479,7 @@
         "cacheCreationCostPerMillionTokens": 6.25,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -571,10 +492,7 @@
         "cacheCreationCostPerMillionTokens": 1,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "pdf"
-        ]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "claude-opus-4-1",
@@ -586,10 +504,7 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 32000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -602,10 +517,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "pdf"
-        ]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "claude-3-sonnet-20240229",
@@ -617,10 +529,7 @@
         "cacheCreationCostPerMillionTokens": 0.3,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image",
-          "pdf"
-        ]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "claude-opus-4-6",
@@ -632,10 +541,7 @@
         "cacheCreationCostPerMillionTokens": 6.25,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -648,10 +554,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -664,10 +567,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -680,10 +580,7 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 32000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -696,10 +593,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -712,10 +606,7 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 32000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -728,10 +619,7 @@
         "cacheCreationCostPerMillionTokens": 1,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "pdf"
-        ]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "claude-3-5-sonnet-20240620",
@@ -743,10 +631,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "pdf"
-        ]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "claude-3-7-sonnet-latest",
@@ -758,10 +643,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -774,10 +656,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -790,10 +669,7 @@
         "cacheCreationCostPerMillionTokens": 0.3,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image",
-          "pdf"
-        ]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "claude-haiku-4-5-20251001",
@@ -805,10 +681,7 @@
         "cacheCreationCostPerMillionTokens": 1.25,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -821,10 +694,7 @@
         "cacheCreationCostPerMillionTokens": 1.25,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -837,10 +707,7 @@
         "cacheCreationCostPerMillionTokens": 6.25,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -853,10 +720,7 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image",
-          "pdf"
-        ]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "claude-sonnet-4-5",
@@ -868,10 +732,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -884,10 +745,7 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -900,10 +758,7 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 32000,
-        "modalities": [
-          "image",
-          "pdf"
-        ],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       }
     ]
@@ -922,12 +777,7 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -945,12 +795,7 @@
         },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "video",
-          "audio",
-          "pdf"
-        ],
+        "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -962,12 +807,7 @@
         "cachedInputCostPerMillionTokens": 0.31,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -979,12 +819,7 @@
         "cachedInputCostPerMillionTokens": 0.0375,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -996,12 +831,7 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1013,12 +843,7 @@
         "cachedInputCostPerMillionTokens": 0.31,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1030,12 +855,7 @@
         "cachedInputCostPerMillionTokens": 0.0375,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1047,12 +867,7 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1065,12 +880,7 @@
         "cacheCreationCostPerMillionTokens": 1,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "video",
-          "audio",
-          "pdf"
-        ],
+        "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1081,11 +891,7 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 8000,
-        "modalities": [
-          "image",
-          "audio",
-          "video"
-        ],
+        "modalities": ["image", "audio", "video"],
         "supportsReasoning": true
       },
       {
@@ -1103,12 +909,7 @@
         },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "video",
-          "audio",
-          "pdf"
-        ],
+        "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1119,10 +920,7 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 131072,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "audio",
-          "video"
-        ],
+        "modalities": ["audio", "video"],
         "supportsReasoning": true
       },
       {
@@ -1134,12 +932,7 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1157,12 +950,7 @@
         },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "video",
-          "audio",
-          "pdf"
-        ],
+        "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1174,12 +962,7 @@
         "cachedInputCostPerMillionTokens": 0.075,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1191,12 +974,7 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1208,11 +986,7 @@
         "cachedInputCostPerMillionTokens": 0.01,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "audio",
-          "video"
-        ]
+        "modalities": ["image", "audio", "video"]
       },
       {
         "name": "gemini-3-pro-preview",
@@ -1229,12 +1003,7 @@
         },
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 64000,
-        "modalities": [
-          "image",
-          "video",
-          "audio",
-          "pdf"
-        ],
+        "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1245,12 +1014,7 @@
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ]
+        "modalities": ["image", "audio", "video", "pdf"]
       },
       {
         "name": "gemini-1.5-flash",
@@ -1261,11 +1025,7 @@
         "cachedInputCostPerMillionTokens": 0.01875,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "audio",
-          "video"
-        ]
+        "modalities": ["image", "audio", "video"]
       },
       {
         "name": "gemini-flash-lite-latest",
@@ -1276,12 +1036,7 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1293,12 +1048,7 @@
         "cachedInputCostPerMillionTokens": 0.31,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ],
+        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1310,12 +1060,7 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "audio",
-          "video",
-          "pdf"
-        ]
+        "modalities": ["image", "audio", "video", "pdf"]
       },
       {
         "name": "gemini-1.5-pro",
@@ -1326,11 +1071,7 @@
         "cachedInputCostPerMillionTokens": 0.3125,
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 8192,
-        "modalities": [
-          "image",
-          "audio",
-          "video"
-        ]
+        "modalities": ["image", "audio", "video"]
       }
     ]
   },
@@ -1356,9 +1097,7 @@
         "outputCostPerMillionTokens": 0,
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "devstral-medium-latest",
@@ -1386,9 +1125,7 @@
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "mistral-medium-2505",
@@ -1398,9 +1135,7 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 131072,
         "maxOutputTokens": 131072,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "codestral-latest",
@@ -1438,9 +1173,7 @@
         "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "ministral-3b-latest",
@@ -1468,9 +1201,7 @@
         "outputCostPerMillionTokens": 0.15,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "open-mixtral-8x7b",
@@ -1489,9 +1220,7 @@
         "outputCostPerMillionTokens": 6,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "mistral-nemo",
@@ -1519,9 +1248,7 @@
         "outputCostPerMillionTokens": 1.5,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "mistral-medium-2508",
@@ -1531,9 +1258,7 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "mistral-large-2411",
@@ -1552,9 +1277,7 @@
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "open-mixtral-8x22b",
@@ -1573,9 +1296,7 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 16384,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "devstral-small-2507",
@@ -1642,9 +1363,7 @@
         "cachedInputCostPerMillionTokens": 2,
         "contextWindowTokens": 8192,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "grok-3",
@@ -1676,9 +1395,7 @@
         "cachedInputCostPerMillionTokens": 2,
         "contextWindowTokens": 8192,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "grok-4-1-fast-non-reasoning",
@@ -1689,9 +1406,7 @@
         "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "grok-beta",
@@ -1723,9 +1438,7 @@
         "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -1758,9 +1471,7 @@
         "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -1772,9 +1483,7 @@
         "cachedInputCostPerMillionTokens": 2,
         "contextWindowTokens": 8192,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "grok-3-mini-latest",
@@ -1824,9 +1533,7 @@
         },
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": [
-          "image"
-        ],
+        "modalities": ["image"],
         "supportsReasoning": true
       },
       {
@@ -1848,9 +1555,7 @@
         "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "grok-vision-beta",
@@ -1861,9 +1566,7 @@
         "cachedInputCostPerMillionTokens": 5,
         "contextWindowTokens": 8192,
         "maxOutputTokens": 4096,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "grok-4.20-0309-non-reasoning",
@@ -1880,9 +1583,7 @@
         },
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": [
-          "image"
-        ]
+        "modalities": ["image"]
       },
       {
         "name": "grok-3-fast",
