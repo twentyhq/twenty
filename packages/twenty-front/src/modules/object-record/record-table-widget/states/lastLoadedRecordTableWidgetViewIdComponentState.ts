@@ -2,7 +2,10 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export const lastLoadedRecordTableWidgetViewIdComponentState =
-  createAtomComponentState<string | null>({
+  createAtomComponentState<{
+    viewId: string;
+    objectMetadataItemUpdatedAt: string;
+  } | null>({
     key: 'lastLoadedRecordTableWidgetViewIdComponentState',
     defaultValue: null,
     componentInstanceContext: ContextStoreComponentInstanceContext,

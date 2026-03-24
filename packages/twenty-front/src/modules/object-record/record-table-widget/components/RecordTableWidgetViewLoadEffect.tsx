@@ -42,13 +42,20 @@ export const RecordTableWidgetViewLoadEffect = ({
       return;
     }
 
-    if (viewId === lastLoadedRecordTableWidgetViewId) {
+    if (
+      viewId === lastLoadedRecordTableWidgetViewId?.viewId &&
+      objectMetadataItem.updatedAt ===
+        lastLoadedRecordTableWidgetViewId?.objectMetadataItemUpdatedAt
+    ) {
       return;
     }
 
     loadRecordIndexStates(viewFromViewId, objectMetadataItem);
 
-    setLastLoadedRecordTableWidgetViewId(viewId);
+    setLastLoadedRecordTableWidgetViewId({
+      viewId,
+      objectMetadataItemUpdatedAt: objectMetadataItem.updatedAt,
+    });
   }, [
     viewId,
     lastLoadedRecordTableWidgetViewId,
