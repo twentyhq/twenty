@@ -11,6 +11,7 @@ import { IdentifyObjectPermissionMetadataCommand } from 'src/database/commands/u
 import { IdentifyPermissionFlagMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-permission-flag-metadata.command';
 import { MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-object-permission-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeWorkflowSearchableCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-workflow-searchable.command';
 import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
@@ -68,6 +69,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
     UpdateStandardIndexViewNamesCommand,
+    MakeWorkflowSearchableCommand,
   ],
   exports: [
     IdentifyPermissionFlagMetadataCommand,
@@ -84,6 +86,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
     UpdateStandardIndexViewNamesCommand,
+    MakeWorkflowSearchableCommand,
   ],
 })
 export class V1_20_UpgradeVersionCommandModule {}
