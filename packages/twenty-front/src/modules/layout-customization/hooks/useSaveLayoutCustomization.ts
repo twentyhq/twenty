@@ -4,7 +4,7 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/sta
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/edit/hooks/useSaveNavigationMenuItemsDraft';
-import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
+import { useSavePageLayoutWidgetsData } from '@/page-layout/hooks/useSavePageLayoutWidgetsData';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -35,7 +35,7 @@ export const useSaveLayoutCustomization = () => {
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
-  const { saveFieldsWidgetGroups } = useSaveFieldsWidgetGroups();
+  const { savePageLayoutWidgetsData } = useSavePageLayoutWidgetsData();
 
   const featureFlags = useFeatureFlagsMap();
   const isRecordPageLayoutEditingEnabled =
@@ -143,7 +143,7 @@ export const useSaveLayoutCustomization = () => {
           }
         }
 
-        await saveFieldsWidgetGroups(pageLayoutId);
+        await savePageLayoutWidgetsData(pageLayoutId);
       }
 
       if (hasAnyFailure) {
@@ -165,7 +165,7 @@ export const useSaveLayoutCustomization = () => {
   }, [
     saveDraft,
     updatePageLayoutWithTabsAndWidgets,
-    saveFieldsWidgetGroups,
+    savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,
     enqueueErrorSnackBar,
     isRecordPageLayoutEditingEnabled,

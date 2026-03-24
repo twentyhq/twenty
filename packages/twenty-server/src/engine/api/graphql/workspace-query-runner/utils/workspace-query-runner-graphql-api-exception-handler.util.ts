@@ -1,4 +1,4 @@
-import { type QueryFailedError } from 'typeorm';
+import { QueryFailedError } from 'typeorm';
 
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
@@ -28,7 +28,7 @@ export interface QueryFailedErrorWithCode extends QueryFailedError {
 }
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
-  error: QueryFailedErrorWithCode,
+  error: Error | QueryFailedError,
 ) => {
   switch (true) {
     case error instanceof RecordTransformerException:

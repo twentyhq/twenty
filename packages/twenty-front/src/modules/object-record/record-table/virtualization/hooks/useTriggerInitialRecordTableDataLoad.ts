@@ -127,11 +127,13 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         resetVirtualizedRowTreadmill();
 
         updateRecordTableCSSVariable(
+          recordTableId,
           RECORD_TABLE_VERTICAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
           'hidden',
         );
 
         updateRecordTableCSSVariable(
+          recordTableId,
           RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME,
           'hidden',
         );
@@ -226,6 +228,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       upsertRecordsInStore,
       loadRecordsToVirtualRows,
       reapplyRowSelection,
+      recordTableId,
     ],
   );
 

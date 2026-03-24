@@ -40,10 +40,7 @@ import { graphQLBackfillNullsFromSelectedFields } from 'src/engine/api/graphql/d
 import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
 import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
-import {
-  QueryFailedErrorWithCode,
-  workspaceQueryRunnerGraphqlApiExceptionHandler,
-} from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { CreateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/create-many-resolver.factory';
 import { CreateOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/create-one-resolver.factory';
@@ -283,10 +280,14 @@ export class DirectExecutionService {
     );
   }
 
-  private formatError(
-    error: QueryFailedErrorWithCode,
-    req: Request,
-  ): GraphQLFormattedError {
+  private formatError(error: unknown, req: Request): GraphQLFormattedError {
+    if (!(error instanceof Error)) {
+      return {
+        message: 'Internal server error',
+        extensions: { code: 'INTERNAL_SERVER_ERROR' },
+      };
+    }
+
     try {
       workspaceQueryRunnerGraphqlApiExceptionHandler(error);
     } catch (graphqlError) {
@@ -307,9 +308,7 @@ export class DirectExecutionService {
     }
 
     return {
-      message: isDefined(error.message)
-        ? error.message
-        : 'Internal server error',
+      message: error.message,
       extensions: { code: 'INTERNAL_SERVER_ERROR' },
     };
   }

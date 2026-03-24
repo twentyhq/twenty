@@ -1,6 +1,7 @@
 **/**/.env
 .DS_Store
 /.idea
+.claude/settings.json
 **/**/node_modules/
 .cache
 
