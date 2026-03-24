@@ -142,7 +142,7 @@ jobs:
             echo "Still waiting... (${count}/300s) [HTTP ${status}]"
             sleep 1
           done
-  ci-test-docker-status-check:
+  ci-test-docker-compose-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
