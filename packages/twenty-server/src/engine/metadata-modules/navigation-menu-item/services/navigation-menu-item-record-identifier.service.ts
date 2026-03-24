@@ -71,7 +71,11 @@ export class NavigationMenuItemRecordIdentifierService {
             authContext: context.authContext,
             userWorkspaceRoleMap: context.userWorkspaceRoleMap,
             apiKeyRoleMap: context.apiKeyRoleMap,
-          }) ?? { shouldBypassPermissionChecks: true as const };
+          });
+
+          if (!rolePermissionConfig) {
+            return null;
+          }
 
           const repository = await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,

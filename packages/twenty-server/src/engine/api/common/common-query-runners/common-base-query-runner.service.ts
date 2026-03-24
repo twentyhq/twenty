@@ -133,7 +133,6 @@ export abstract class CommonBaseQueryRunnerService<
       async () =>
         this.executeQueryAndEnrichResults(
           processedArgs,
-          authContext,
           queryRunnerContext,
           commonQueryParser,
         ),
@@ -198,13 +197,11 @@ export abstract class CommonBaseQueryRunnerService<
 
   private async executeQueryAndEnrichResults(
     processedArgs: CommonExtendedInput<Args>,
-    authContext: WorkspaceAuthContext,
     queryRunnerContext: CommonBaseQueryRunnerContext,
     commonQueryParser: GraphqlQueryParser,
   ): Promise<Output> {
     const extendedQueryRunnerContext =
       await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
-        authContext,
         queryRunnerContext,
       );
 
@@ -216,7 +213,7 @@ export abstract class CommonBaseQueryRunnerService<
     return this.enrichResultsWithGettersAndHooks({
       results,
       operationName: this.operationName,
-      authContext,
+      authContext: extendedQueryRunnerContext.authContext,
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
@@ -296,7 +293,6 @@ export abstract class CommonBaseQueryRunnerService<
   }
 
   private async prepareExtendedQueryRunnerContextWithGlobalDatasource(
-    authContext: WorkspaceAuthContext,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const context = getWorkspaceContext();
@@ -326,7 +322,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     return {
       ...queryRunnerContext,
-      authContext,
+      authContext: context.authContext,
       workspaceDataSource: globalWorkspaceDataSource,
       rolePermissionConfig,
       repository,
