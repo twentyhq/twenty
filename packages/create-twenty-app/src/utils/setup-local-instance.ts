@@ -26,9 +26,7 @@ const isServerReady = async (port: number): Promise<boolean> => {
 const detectRunningServer = async (
   preferredPort?: number,
 ): Promise<number | null> => {
-  const ports = preferredPort
-    ? [preferredPort, ...LOCAL_PORTS.filter((p) => p !== preferredPort)]
-    : LOCAL_PORTS;
+  const ports = preferredPort ? [preferredPort] : LOCAL_PORTS;
 
   for (const port of ports) {
     if (await isServerReady(port)) {

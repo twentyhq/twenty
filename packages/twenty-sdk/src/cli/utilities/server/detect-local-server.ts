@@ -22,9 +22,7 @@ export const checkServerHealth = async (port: number): Promise<boolean> => {
 export const detectLocalServer = async (
   preferredPort?: number,
 ): Promise<string | null> => {
-  const ports = preferredPort
-    ? [preferredPort, ...LOCAL_PORTS.filter((p) => p !== preferredPort)]
-    : LOCAL_PORTS;
+  const ports = preferredPort ? [preferredPort] : LOCAL_PORTS;
 
   for (const port of ports) {
     if (await checkServerHealth(port)) {
