@@ -156,11 +156,15 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           npx --no-install twenty remote add --token $SEED_API_KEY --url http://localhost:3000
 
-      - name: Build scaffolded app
+      - name: Deploy scaffolded app
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty build
-          test -d .twenty/output
+          npx --no-install twenty deploy
+
+      - name: Install scaffolded app
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          npx --no-install twenty install
 
       - name: Execute hello-world logic function
         run: |
@@ -172,7 +176,7 @@ jobs:
       - name: Execute create-hello-world-company logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          EXEC_OUTPUT=$(npx --no-install twenty function:execute --functionName create-hello-world-company)
+          EXEC_OUTPUT=$(npx --no-install twenty exec --functionName create-hello-world-company)
           echo "$EXEC_OUTPUT"
           echo "$EXEC_OUTPUT" | grep -q "Created company"
 

@@ -47,7 +47,7 @@ describe('scaffoldIntegrationTest', () => {
       const content = await fs.readFile(testPath, 'utf8');
 
       expect(content).toContain(
-        "import { appBuild, appUninstall } from 'twenty-sdk/cli'",
+        "import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli'",
       );
       expect(content).toContain(
         "import { MetadataApiClient } from 'twenty-client-sdk/metadata'",
@@ -56,6 +56,8 @@ describe('scaffoldIntegrationTest', () => {
         "import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config'",
       );
       expect(content).toContain('appBuild');
+      expect(content).toContain('appDeploy');
+      expect(content).toContain('appInstall');
       expect(content).toContain('appUninstall');
       expect(content).toContain('new MetadataApiClient()');
       expect(content).toContain('findManyApplications');

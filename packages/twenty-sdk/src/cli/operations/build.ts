@@ -4,6 +4,8 @@ import path from 'path';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
+import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -70,6 +72,13 @@ const innerAppBuild = async (
       },
     };
   }
+
+  const updatedManifest = manifestUpdateChecksums({
+    manifest,
+    builtFileInfos: buildResult.builtFileInfos,
+  });
+
+  await writeManifestToOutput(appPath, updatedManifest);
 
   const outputDir = path.join(appPath, '.twenty', 'output');
 
