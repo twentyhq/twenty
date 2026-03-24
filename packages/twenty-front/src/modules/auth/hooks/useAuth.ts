@@ -161,11 +161,17 @@ export const useAuth = () => {
     store.set(loginTokenState.atom, null);
     store.set(signInUpStepState.atom, SignInUpStep.Init);
 
-    await client.clearStore();
-    setLastAuthenticateWorkspaceDomain(null);
-    await loadMockedMinimalMetadata();
-    navigate(AppPath.SignInUp);
-    store.set(isAppEffectRedirectEnabledState.atom, true);
+    try {
+      await client.clearStore();
+      setLastAuthenticateWorkspaceDomain(null);
+      await loadMockedMinimalMetadata();
+    } catch (error) {
+      // oxlint-disable-next-line no-console
+      console.error('Error during session cleanup:', error);
+    } finally {
+      navigate(AppPath.SignInUp);
+      store.set(isAppEffectRedirectEnabledState.atom, true);
+    }
   }, [
     clearSseClient,
     client,
