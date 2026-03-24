@@ -32,7 +32,7 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn twenty app:dev
+yarn twenty dev
 ```
 
 İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
@@ -64,7 +64,7 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
 yarn twenty help
@@ -167,7 +167,7 @@ export default defineObject({
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn twenty app:dev`, `node_modules/twenty-sdk/generated` içinde iki tiplendirilmiş API istemcisini otomatik olarak oluşturur: `CoreApiClient` (`/graphql` üzerinden çalışma alanı verileri için) ve `MetadataApiClient` (çalışma alanı yapılandırması ve `/metadata` üzerinden dosya yüklemeleri için).
+* `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 * `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz, rolleriniz, yetenekleriniz ve daha fazlası için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
@@ -221,7 +221,7 @@ Ardından bir `twenty` betiği ekleyin:
 }
 ```
 
-Artık tüm komutları `yarn twenty <command>` üzerinden çalıştırabilirsiniz; örn. `yarn twenty app:dev`, `yarn twenty help` vb.
+Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
 
 ## Yerel bir Twenty örneği nasıl kullanılır?
 
@@ -239,7 +239,7 @@ yarn twenty remote add --local --port 3000
 
 * Kimlik doğrulama hataları: `yarn twenty auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
 * Sunucuya bağlanılamıyor: API URL’sini ve Twenty sunucusunun erişilebilir olduğunu doğrulayın.
-* Türler veya istemci eksik/eski: `yarn twenty app:dev` komutunu yeniden çalıştırın — tiplendirilmiş istemciyi otomatik olarak oluşturur.
-* Geliştirme modu eşitlenmiyor: `yarn twenty app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
+* Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
+* Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
 
 Discord Yardım Kanalı: https://discord.com/channels/1130383047699738754/1130386664812982322

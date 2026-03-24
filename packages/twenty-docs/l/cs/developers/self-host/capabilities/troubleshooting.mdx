@@ -167,6 +167,10 @@ plugins: [
 
 Spusťte `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` v databázovém kontejneru pro získání přístupu k administračnímu panelu.
 
+#### Při spuštění workflow dojde k chybě "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
+
+V produkčním prostředí jsou logické funkce ve výchozím nastavení zakázané. Nastavte proměnnou prostředí `LOGIC_FUNCTION_TYPE` na `LOCAL` nebo `LAMBDA`, abyste je povolili. Toto lze nakonfigurovat pomocí proměnných prostředí nebo prostřednictvím proměnných databáze v administračním panelu. Podrobnosti najdete v [průvodci nastavením Logic Functions](/l/cs/developers/self-host/capabilities/setup#logic-functions-available-drivers).
+
 ### Docker Compose jedním kliknutím
 
 #### Nelze se přihlásit

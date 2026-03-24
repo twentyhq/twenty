@@ -1703,7 +1703,7 @@
                   "l/cs/developers/extend/api",
                   "l/cs/developers/extend/webhooks",
                   {
-                    "group": "Apps",
+                    "group": "Aplikace",
                     "pages": [
                       "l/cs/developers/extend/apps/getting-started",
                       "l/cs/developers/extend/apps/building",
