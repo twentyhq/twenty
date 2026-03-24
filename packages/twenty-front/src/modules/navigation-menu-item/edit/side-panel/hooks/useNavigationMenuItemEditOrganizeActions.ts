@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { type PendingInsertionNavigationMenuItem } from '@/navigation-menu-item/common/types/PendingInsertionNavigationMenuItem';
 import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
@@ -18,7 +19,7 @@ const computeInsertionPosition = (
   selectedItem: { id: string; folderId?: string | null },
   workspaceNavigationMenuItems: NavigationMenuItem[],
   offset: 0 | 1,
-): { folderId: string | null; position: number } | null => {
+): PendingInsertionNavigationMenuItem | null => {
   const folderId = selectedItem.folderId ?? null;
   const itemsInFolderSorted = workspaceNavigationMenuItems
     .filter(

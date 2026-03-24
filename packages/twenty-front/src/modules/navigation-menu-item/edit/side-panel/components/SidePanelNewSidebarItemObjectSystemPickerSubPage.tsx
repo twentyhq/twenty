@@ -11,8 +11,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelSystemObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useState } from 'react';
 import { useIcons } from 'twenty-ui/display';
@@ -29,12 +28,10 @@ export const SidePanelNewSidebarItemObjectSystemPickerSubPage = () => {
     useOpenNavigationMenuItemInSidePanel();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const pendingInsertionNavigationMenuItem = useAtomStateValue(
-    pendingInsertionNavigationMenuItemState,
-  );
-  const setPendingInsertionNavigationMenuItem = useSetAtomState(
-    pendingInsertionNavigationMenuItemState,
-  );
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
   const {
     views,
     objectMetadataIdsWithIndexView,

@@ -152,7 +152,8 @@ export const NavigationMenuItemFolderDnd = ({
   const isAddMenuItemToThisFolderActive =
     isDefined(pendingInsertionNavigationMenuItem) &&
     pendingInsertionNavigationMenuItem.folderId === folderId &&
-    sidePanelPage === SidePanelPages.NavigationMenuAddItem;
+    (sidePanelPage === SidePanelPages.NavigationMenuAddItem ||
+      sidePanelPage === SidePanelPages.NavigationMenuItemEdit);
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const folderHeaderDroppableId = `${config.folderHeaderPrefix}${folderId}`;

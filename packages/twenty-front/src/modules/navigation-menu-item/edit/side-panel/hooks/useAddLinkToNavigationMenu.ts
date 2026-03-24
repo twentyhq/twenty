@@ -7,8 +7,8 @@ import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/ho
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAddLinkToNavigationMenu = () => {
   const { t } = useLingui();
@@ -19,12 +19,10 @@ export const useAddLinkToNavigationMenu = () => {
   );
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
-  const pendingInsertionNavigationMenuItem = useAtomStateValue(
-    pendingInsertionNavigationMenuItemState,
-  );
-  const setPendingInsertionNavigationMenuItem = useSetAtomState(
-    pendingInsertionNavigationMenuItemState,
-  );
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
 
   const currentDraft = isDefined(navigationMenuItemsDraft)
     ? navigationMenuItemsDraft

@@ -8,6 +8,7 @@ import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-ite
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -15,12 +16,10 @@ export const WorkspaceSectionAddMenuItemButton = () => {
   const { t } = useLingui();
   const { navigateSidePanel } = useNavigateSidePanel();
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const pendingInsertionNavigationMenuItem = useAtomStateValue(
-    pendingInsertionNavigationMenuItemState,
-  );
-  const setPendingInsertionNavigationMenuItem = useSetAtomState(
-    pendingInsertionNavigationMenuItemState,
-  );
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
 
   const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
     selectedNavigationMenuItemInEditModeState,

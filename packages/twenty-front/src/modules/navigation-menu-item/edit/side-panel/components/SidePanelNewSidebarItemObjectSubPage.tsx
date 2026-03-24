@@ -13,8 +13,7 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { SidePanelObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { useIcons } from 'twenty-ui/display';
 
@@ -30,12 +29,10 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
     useOpenNavigationMenuItemInSidePanel();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const pendingInsertionNavigationMenuItem = useAtomStateValue(
-    pendingInsertionNavigationMenuItemState,
-  );
-  const setPendingInsertionNavigationMenuItem = useSetAtomState(
-    pendingInsertionNavigationMenuItemState,
-  );
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
   const {
     views,
     objectMetadataIdsWithIndexView,
