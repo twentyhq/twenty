@@ -196,10 +196,6 @@ export class DevModeOrchestrator {
       });
 
       this.skipTypecheck = false;
-
-      await this.uploadFilesStep.copyAndUploadApiClientFiles(
-        this.state.appPath,
-      );
     }
   }
 

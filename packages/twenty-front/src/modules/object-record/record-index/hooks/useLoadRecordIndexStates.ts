@@ -7,6 +7,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -32,6 +33,7 @@ import { type View } from '@/views/types/View';
 import { getFilterableFields } from '@/views/utils/getFilterableFields';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -132,6 +134,10 @@ export const useLoadRecordIndexStates = () => {
         allFilterableFields,
       );
 
+      const recordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
+        view.viewFilterGroups ?? [],
+      );
+
       const contextStoreFilters = mapViewFiltersToFilters(
         view.viewFilters,
         filterableFieldMetadataItems,
@@ -170,6 +176,10 @@ export const useLoadRecordIndexStates = () => {
         });
       const currentRecordFiltersAtom =
         currentRecordFiltersComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
+      const currentRecordFilterGroupsAtom =
+        currentRecordFilterGroupsComponentState.atomFamily({
           instanceId: recordIndexId,
         });
       const currentRecordSortsAtom =
@@ -237,6 +247,7 @@ export const useLoadRecordIndexStates = () => {
           batchSet(hasInitializedFieldsAtom, true);
 
           batchSet(currentRecordFiltersAtom, recordFilters);
+          batchSet(currentRecordFilterGroupsAtom, recordFilterGroups);
           batchSet(hasInitializedFiltersAtom, true);
 
           batchSet(currentRecordSortsAtom, view.viewSorts);

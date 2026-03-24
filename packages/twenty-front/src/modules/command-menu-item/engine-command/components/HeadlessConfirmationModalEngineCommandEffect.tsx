@@ -4,8 +4,8 @@ import { type ReactNode, useEffect } from 'react';
 import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalResultBrowserEventName';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
 import { type CommandMenuConfirmationModalResultBrowserEventDetail } from '@/command-menu-item/confirmation-modal/types/CommandMenuConfirmationModalResultBrowserEventDetail';
-import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
-import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
+import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ButtonAccent } from 'twenty-ui/input';
 
@@ -26,10 +26,11 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
 }: HeadlessConfirmationModalEngineCommandEffectProps) => {
   const { isInitializedRef, setIsInitialized } =
     useIsHeadlessEngineCommandEffectInitialized();
-  const engineCommandId = useAvailableComponentInstanceIdOrThrow(
-    EngineCommandComponentInstanceContext,
+
+  const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
+    CommandComponentInstanceContext,
   );
-  const unmountEngineCommand = useUnmountEngineCommand();
+  const unmountCommand = useUnmountCommand();
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
     setIsInitialized(true);
 
     openConfirmationModal({
-      caller: { type: 'engineCommand', engineCommandId },
+      caller: { type: 'commandMenuItem', commandMenuItemId },
       title,
       subtitle,
       confirmButtonText,
@@ -49,7 +50,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   }, [
     isInitializedRef,
     setIsInitialized,
-    engineCommandId,
+    commandMenuItemId,
     openConfirmationModal,
     title,
     subtitle,
@@ -65,8 +66,8 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       const caller = customEvent.detail.caller;
 
       if (
-        caller.type !== 'engineCommand' ||
-        caller.engineCommandId !== engineCommandId
+        caller.type !== 'commandMenuItem' ||
+        caller.commandMenuItemId !== commandMenuItemId
       ) {
         return;
       }
@@ -75,7 +76,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
         await execute();
       }
 
-      unmountEngineCommand(engineCommandId);
+      unmountCommand(commandMenuItemId);
     };
 
     window.addEventListener(
@@ -89,7 +90,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
         handleConfirmationResult,
       );
     };
-  }, [engineCommandId, execute, unmountEngineCommand]);
+  }, [execute, commandMenuItemId, unmountCommand]);
 
   return null;
 };

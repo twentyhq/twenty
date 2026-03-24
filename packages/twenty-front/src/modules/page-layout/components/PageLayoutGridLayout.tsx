@@ -127,16 +127,6 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     tabListInstanceId,
   });
 
-  const handleLayoutChangeWithoutPendingPlaceholder = (
-    currentLayout: Layout[],
-    allLayouts: Layouts,
-  ) => {
-    handleLayoutChange(
-      currentLayout,
-      filterPendingPlaceholderFromLayouts(allLayouts),
-    );
-  };
-
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
@@ -160,6 +150,16 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
 
   const hasPendingPlaceholder = isDefined(pageLayoutDraggedArea);
+
+  const handleLayoutChangeWithoutPendingPlaceholder = (
+    currentLayout: Layout[],
+    allLayouts: Layouts,
+  ) => {
+    handleLayoutChange(
+      currentLayout,
+      filterPendingPlaceholderFromLayouts(allLayouts),
+    );
+  };
 
   const baseLayouts = isLayoutEmpty
     ? EMPTY_LAYOUT

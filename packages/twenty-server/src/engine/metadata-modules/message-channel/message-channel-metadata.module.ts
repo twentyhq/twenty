@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -15,7 +14,6 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
 @Module({
   imports: [
     TypeOrmModule.forFeature([MessageChannelEntity]),
-    AuthModule,
     PermissionsModule,
     FeatureFlagModule,
     ConnectedAccountMetadataModule,

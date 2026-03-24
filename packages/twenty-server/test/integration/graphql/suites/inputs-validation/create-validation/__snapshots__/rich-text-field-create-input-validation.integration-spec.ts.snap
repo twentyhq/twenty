@@ -2,4 +2,12 @@
 
 exports[`Create input validation - RICH_TEXT Gql create input - failure RICH_TEXT - should fail with : {"richTextField":"not-a-rich-text"} 1`] = `"Expected type "RichTextCreateInput" to be an object."`;
 
-exports[`Create input validation - RICH_TEXT Rest create input - failure RICH_TEXT - should fail with : {"richTextField":"not-a-rich-text"} 1`] = `"["Invalid rich text v2 value 'not-a-rich-text' for field \\"richTextField\\" - Should be an object"]"`;
+exports[`Create input validation - RICH_TEXT Gql create input - failure RICH_TEXT - should fail with : {"richTextField":{"blocknote":"[{\\"id\\":\\"1\\",\\"type\\":\\"paragraph\\",\\"props\\":{},\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"test\\"},\\"children\\":[]}]"}} 1`] = `"Invalid blocknote value for field "richTextField.blocknote" - must contain valid JSON"`;
+
+exports[`Create input validation - RICH_TEXT Gql create input - failure RICH_TEXT - should fail with : {"richTextField":{"blocknote":"invalid-json"}} 1`] = `"Invalid blocknote value for field "richTextField.blocknote" - must contain valid JSON"`;
+
+exports[`Create input validation - RICH_TEXT Rest create input - failure RICH_TEXT - should fail with : {"richTextField":"not-a-rich-text"} 1`] = `"["Invalid object value 'not-a-rich-text' for field \\"richTextField\\""]"`;
+
+exports[`Create input validation - RICH_TEXT Rest create input - failure RICH_TEXT - should fail with : {"richTextField":{"blocknote":"[{\\"id\\":\\"1\\",\\"type\\":\\"paragraph\\",\\"props\\":{},\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"test\\"},\\"children\\":[]}]"}} 1`] = `"["Invalid blocknote value for field \\"richTextField.blocknote\\" - must contain valid JSON"]"`;
+
+exports[`Create input validation - RICH_TEXT Rest create input - failure RICH_TEXT - should fail with : {"richTextField":{"blocknote":"invalid-json"}} 1`] = `"["Invalid blocknote value for field \\"richTextField.blocknote\\" - must contain valid JSON"]"`;
