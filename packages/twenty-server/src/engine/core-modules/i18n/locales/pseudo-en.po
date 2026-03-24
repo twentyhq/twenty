@@ -1259,9 +1259,19 @@ msgstr ""
 msgid "Failed to duplicate dashboard."
 msgstr ""
 
+#. js-lingui-id: MIto3A
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "Failed to extract SDK client archive."
+msgstr ""
+
 #. js-lingui-id: Ol/51Z
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Failed to extract tarball."
+msgstr ""
+
+#. js-lingui-id: CO40Hk
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "Failed to generate SDK client."
 msgstr ""
 
 #. js-lingui-id: HfhmrS
@@ -1515,6 +1525,11 @@ msgstr ""
 #. js-lingui-id: v+527c
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} was not uploaded for this field. Please re-upload the file."
+msgstr ""
+
+#. js-lingui-id: OR7oBd
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "File not found in SDK client archive."
 msgstr ""
 
 #. js-lingui-id: weWV3g
@@ -3846,6 +3861,11 @@ msgstr ""
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
+msgstr ""
+
+#. js-lingui-id: eKi1df
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "SDK client archive not found. The SDK client may not have been generated for this application."
 msgstr ""
 
 #. js-lingui-id: PdVIJC
