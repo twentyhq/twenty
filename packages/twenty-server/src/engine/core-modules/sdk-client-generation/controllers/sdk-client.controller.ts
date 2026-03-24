@@ -10,16 +10,16 @@ import {
 import { Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  ALLOWED_SDK_MODULES,
+  type SdkModuleName,
+} from 'src/engine/core-modules/sdk-client-generation/constants/allowed-sdk-modules';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client-generation/sdk-client-generation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const ALLOWED_SDK_MODULES = ['core', 'metadata'] as const;
-
-type SdkModuleName = (typeof ALLOWED_SDK_MODULES)[number];
 
 @Controller('rest/sdk-client')
 @UseGuards(WorkspaceAuthGuard)
@@ -34,10 +34,10 @@ export class SdkClientController {
   async getSdkModule(
     @Res() res: Response,
     @Param('applicationId') applicationId: string,
-    @Param('moduleName') moduleName: string,
+    @Param('moduleName') moduleName: SdkModuleName,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (!ALLOWED_SDK_MODULES.includes(moduleName as SdkModuleName)) {
+    if (!ALLOWED_SDK_MODULES.includes(moduleName)) {
       throw new NotFoundException(
         `SDK module "${moduleName}" not found. Allowed: ${ALLOWED_SDK_MODULES.join(', ')}`,
       );
@@ -57,10 +57,10 @@ export class SdkClientController {
     }
 
     const fileBuffer =
-      await this.sdkClientGenerationService.readFileFromArchive({
+      await this.sdkClientGenerationService.getClientModuleFromArchive({
         workspaceId: workspace.id,
         applicationUniversalIdentifier: application.universalIdentifier,
-        filePath: `dist/${moduleName}.mjs`,
+        moduleName,
       });
 
     res.setHeader('Content-Type', 'application/javascript');

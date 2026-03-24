@@ -37,7 +37,7 @@ exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
 
-const fetchTextOrThrow = async (
+const fetchComponentSource = async (
   url: string,
   headers?: Record<string, string>,
 ): Promise<string> => {
@@ -108,7 +108,7 @@ const render: WorkerExports['render'] = async (
     ? { Authorization: `Bearer ${renderContext.applicationAccessToken}` }
     : undefined;
 
-  const componentSource = await fetchTextOrThrow(
+  const componentSource = await fetchComponentSource(
     renderContext.componentUrl,
     authHeaders,
   );

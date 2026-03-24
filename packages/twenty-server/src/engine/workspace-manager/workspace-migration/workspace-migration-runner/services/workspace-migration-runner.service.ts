@@ -216,10 +216,9 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.time('Runner', 'Transaction execution');
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       const allMetadataEvents: MetadataEvent[] = [];
 
       for (const action of actions) {

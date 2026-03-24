@@ -21,6 +21,7 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { type SdkModuleName } from 'src/engine/core-modules/sdk-client-generation/constants/allowed-sdk-modules';
 import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/sdk-client-generation/constants/sdk-client-package-dirname';
 import {
   SdkClientGenerationException,
@@ -123,17 +124,17 @@ export class SdkClientGenerationService {
     return streamToBuffer(archiveStream);
   }
 
-  // Reads a single file from the generated SDK archive (e.g. 'dist/core.mjs').
-  // Used to serve individual SDK modules to the frontend worker.
-  async readFileFromArchive({
+  async getClientModuleFromArchive({
     workspaceId,
     applicationUniversalIdentifier,
-    filePath,
+    moduleName,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    filePath: string;
+    moduleName: SdkModuleName;
   }): Promise<Buffer> {
+    const filePath = `dist/${moduleName}.mjs`;
+
     const archiveBuffer = await this.downloadArchiveBuffer({
       workspaceId,
       applicationUniversalIdentifier,
@@ -148,7 +149,7 @@ export class SdkClientGenerationService {
 
     if (!entry) {
       throw new SdkClientGenerationException(
-        `File "${filePath}" not found in SDK client archive for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}"`,
+        `Module "${moduleName}" not found in SDK client archive for application "${applicationUniversalIdentifier}" in workspace "${workspaceId}"`,
         SdkClientGenerationExceptionCode.FILE_NOT_FOUND_IN_ARCHIVE,
       );
     }
