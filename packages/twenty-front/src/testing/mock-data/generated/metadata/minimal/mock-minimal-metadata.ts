@@ -88,7 +88,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelPlural": "Companies",
       "icon": "IconBuildingSkyscraper",
       "isCustom": false,
-      "isActive": true,
+      "isActive": false,
       "isSystem": false,
       "isRemote": false
     },
@@ -256,7 +256,7 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelPlural": "Opportunities",
       "icon": "IconTargetArrow",
       "isCustom": false,
-      "isActive": true,
+      "isActive": false,
       "isSystem": false,
       "isRemote": false
     },

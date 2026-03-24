@@ -476,6 +476,16 @@ npx nx typecheck twenty-ui     # AudioLink etc.
 | `packages/twenty-ui/.../AudioLink.tsx`                    | `@ui/theme-constants` (for `ThemeContext`)                                                               | Was `@ui/theme`                                                                     |
 | `settings/.../EditWindowRow.tsx`                          | `twenty-ui/theme-constants` (for `ThemeContext`)                                                         | Was `twenty-ui/theme`                                                               |
 
+## Mock Data (Deactivated Objects)
+
+Mock metadata loaded during sign-out (`useLoadMockedMinimalMetadata`) must match Omnia's workspace state. Company and Opportunity are deactivated in Omnia but active in upstream Twenty.
+
+| File | Modification |
+| --- | --- |
+| `testing/mock-data/generated/metadata/objects/mock-objects-metadata.ts` | Set `isActive: false` for Company and Opportunity objects |
+| `testing/mock-data/generated/metadata/minimal/mock-minimal-metadata.ts` | Set `isActive: false` for Company and Opportunity objects |
+| `testing/mock-data/generated/metadata/views/mock-views-data.ts` | Removed Company TABLE view, Opportunity TABLE view, and Opportunity KANBAN view |
+
 ## Post-Merge Checklist
 
 After every upstream merge:

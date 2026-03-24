@@ -1000,6 +1000,17 @@ check_file_contains \
   "deploy-eks.yaml must pass APP_VERSION build arg for upgrade migrations"
 
 echo ""
+echo "--- Mock Data (Deactivated Objects) ---"
+check_file_not_contains \
+  "packages/twenty-front/src/testing/mock-data/generated/metadata/views/mock-views-data.ts" \
+  '"name": "All Companies"' \
+  "mock-views-data.ts must not contain Company views"
+check_file_not_contains \
+  "packages/twenty-front/src/testing/mock-data/generated/metadata/views/mock-views-data.ts" \
+  '"name": "All Opportunities"' \
+  "mock-views-data.ts must not contain Opportunity TABLE view"
+
+echo ""
 
 # ==========================================================
 # Summary
