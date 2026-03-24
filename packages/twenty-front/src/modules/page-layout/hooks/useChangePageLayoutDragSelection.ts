@@ -22,6 +22,10 @@ export const useChangePageLayoutDragSelection = (
 
   const changePageLayoutDragSelection = useCallback(
     (cellId: string, selected: boolean) => {
+      if (!cellId.startsWith('cell-')) {
+        return;
+      }
+
       store.set(pageLayoutSelectedCellsState, (prev) => {
         const newSet = new Set(prev);
         if (selected) {

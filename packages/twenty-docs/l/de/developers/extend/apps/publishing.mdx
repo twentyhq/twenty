@@ -72,7 +72,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty build`, then `npm publish` from `.twenty/output`.
+Für andere CI-Systeme (GitLab CI, CircleCI usw.) gelten die gleichen drei Befehle: `yarn install`, `npx twenty build` und anschließend `npm publish` aus `.twenty/output`.
 
 <Tip>
 **npm-Provenance** ist optional, wird jedoch empfohlen. Das Veröffentlichen mit `--provenance` fügt Ihrem npm-Eintrag ein Vertrauensabzeichen hinzu, sodass Nutzer überprüfen können, dass das Paket aus einem bestimmten Commit in einer öffentlichen CI-Pipeline gebaut wurde. Siehe die [npm-Provenance-Dokumentation](https://docs.npmjs.com/generating-provenance-statements) für Einrichtungshinweise.
@@ -97,7 +97,7 @@ Jeder Arbeitsbereich auf diesem Server kann die App anschließend über die Seit
 So veröffentlichen Sie ein Update:
 
 1. Erhöhen Sie das Feld `version` in Ihrer `package.json`
-2. Push a new tarball with `npx twenty publish --server <server-url>`
+2. Pushen Sie einen neuen Tarball mit `npx twenty publish --server <server-url>`
 3. Arbeitsbereiche auf diesem Server sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
 
 <Note>
@@ -110,7 +110,7 @@ Twenty organisiert Apps in drei Kategorien, basierend auf ihrer Vertriebsart:
 
 | Kategorie          | Wie es funktioniert                                                                                                                  | Im Marktplatz sichtbar? |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| **Entwicklung**    | Local dev mode apps running via `yarn twenty dev`. Zum Erstellen und Testen verwendet.                                               | Nein                    |
+| **Entwicklung**    | Lokale Apps im Entwicklungsmodus, die über `yarn twenty dev` ausgeführt werden. Zum Erstellen und Testen verwendet.                  | Nein                    |
 | **Veröffentlicht** | Auf npm veröffentlichte Apps mit dem Präfix `twenty-app-`. Im Marktplatz gelistet, damit jeder Arbeitsbereich sie installieren kann. | Ja                      |
 | **Intern**         | Apps, die per Tarball auf einen bestimmten Server bereitgestellt werden. Nur für Arbeitsbereiche auf diesem Server verfügbar.        | Nein                    |
 

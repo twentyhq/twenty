@@ -10,6 +10,10 @@ export const getSidePanelSubPageTitle = (
       return t`Filters`;
     case SidePanelSubPages.PageLayoutFieldsLayout:
       return t`Layout`;
+    case SidePanelSubPages.PageLayoutRecordTableFilter:
+      return t`Filters`;
+    case SidePanelSubPages.PageLayoutRecordTableSort:
+      return t`Sorts`;
     case SidePanelSubPages.NewSidebarItemViewObjectPicker:
       return t`Pick an object`;
     case SidePanelSubPages.NewSidebarItemViewPicker:

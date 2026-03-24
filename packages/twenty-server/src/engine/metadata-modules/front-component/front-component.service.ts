@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Readable } from 'stream';
+import { Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
