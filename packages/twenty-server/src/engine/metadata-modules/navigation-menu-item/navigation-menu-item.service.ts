@@ -275,9 +275,14 @@ export class NavigationMenuItemService {
       );
 
     if (validateAndBuildResult.status === 'fail') {
+      const creationErrorMessage =
+        inputs.length === 1
+          ? 'Multiple validation errors occurred while creating navigation menu item'
+          : 'Multiple validation errors occurred while creating navigation menu items';
+
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while creating navigation menu items',
+        creationErrorMessage,
       );
     }
 
@@ -427,9 +432,14 @@ export class NavigationMenuItemService {
       );
 
     if (validateAndBuildResult.status === 'fail') {
+      const updateErrorMessage =
+        inputs.length === 1
+          ? 'Multiple validation errors occurred while updating navigation menu item'
+          : 'Multiple validation errors occurred while updating navigation menu items';
+
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating navigation menu items',
+        updateErrorMessage,
       );
     }
 
