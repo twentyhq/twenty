@@ -29,22 +29,22 @@ describe('formatAddressDisplay', () => {
       'addressCity',
       'addressState',
     ]);
-    expect(result).toBe('123 Main St,New York,NY');
+    expect(result).toBe('123 Main St, New York, NY');
   });
 
   it('should format address with all fields when subFields is null', () => {
     const result = formatAddressDisplay(mockAddressValue, null);
-    expect(result).toBe('123 Main St,Apt 4B,New York,NY,10001,United States');
+    expect(result).toBe('123 Main St, Apt 4B, New York, NY, 10001, United States');
   });
 
   it('should format address with all fields when subFields is undefined', () => {
     const result = formatAddressDisplay(mockAddressValue, undefined);
-    expect(result).toBe('123 Main St,Apt 4B,New York,NY,10001,United States');
+    expect(result).toBe('123 Main St, Apt 4B, New York, NY, 10001, United States');
   });
 
   it('should format address with all fields when subFields is empty array', () => {
     const result = formatAddressDisplay(mockAddressValue, []);
-    expect(result).toBe('123 Main St,Apt 4B,New York,NY,10001,United States');
+    expect(result).toBe('123 Main St, Apt 4B, New York, NY, 10001, United States');
   });
 
   it('should handle address with some empty fields', () => {
@@ -66,7 +66,7 @@ describe('formatAddressDisplay', () => {
       'addressState',
       'addressPostcode',
     ]);
-    expect(result).toBe('456 Oak Ave,Boston,02101');
+    expect(result).toBe('456 Oak Ave, Boston, 02101');
   });
 
   it('should handle single field selection', () => {
