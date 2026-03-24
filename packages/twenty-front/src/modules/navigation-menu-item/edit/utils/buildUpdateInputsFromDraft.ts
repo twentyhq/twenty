@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import {
   type NavigationMenuItem,
   type UpdateOneNavigationMenuItemInput,
@@ -6,8 +6,6 @@ import {
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
-
-const HTTP_PROTOCOL_REGEX = /^https?:\/\//i;
 
 export const buildUpdateInputsFromDraft = ({
   draft,
@@ -78,11 +76,7 @@ export const buildUpdateInputsFromDraft = ({
     }
     if (linkChanged && isNavigationMenuItemLink(draftItem)) {
       const linkUrl = (draftItem.link ?? '').trim();
-      updatePayload.link = linkUrl
-        ? HTTP_PROTOCOL_REGEX.test(linkUrl)
-          ? linkUrl
-          : `https://${linkUrl}`
-        : null;
+      updatePayload.link = linkUrl ? ensureAbsoluteUrl(linkUrl) : null;
     }
     if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
       updatePayload.icon = draftItem.icon ?? null;

@@ -3,8 +3,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { type ObjectMetadataColorUpdate } from '@/navigation-menu-item/edit/types/ObjectMetadataColorUpdate';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+
+type ObjectMetadataColorUpdate = {
+  idToUpdate: string;
+  color: string;
+};
 
 export const getObjectMetadataColorUpdates = ({
   draft,

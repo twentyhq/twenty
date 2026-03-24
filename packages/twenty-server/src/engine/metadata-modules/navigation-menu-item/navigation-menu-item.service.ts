@@ -246,15 +246,12 @@ export class NavigationMenuItemService {
       flatNavigationMenuItemsToCreate.push(flatNavigationMenuItemToCreate);
     }
 
-    const flatNavigationMenuItemByOriginalInputIndex = new Map<
-      number,
-      FlatNavigationMenuItem
-    >();
+    const flatNavigationMenuItemsByInputIndex: FlatNavigationMenuItem[] =
+      new Array(inputs.length);
 
     processingIndices.forEach((originalIndex, orderIndex) => {
-      const flatEntity = flatNavigationMenuItemsToCreate[orderIndex];
-
-      flatNavigationMenuItemByOriginalInputIndex.set(originalIndex, flatEntity);
+      flatNavigationMenuItemsByInputIndex[originalIndex] =
+        flatNavigationMenuItemsToCreate[orderIndex];
     });
 
     const validateAndBuildResult =
@@ -275,14 +272,9 @@ export class NavigationMenuItemService {
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      const creationErrorMessage =
-        inputs.length === 1
-          ? 'Multiple validation errors occurred while creating navigation menu item'
-          : 'Multiple validation errors occurred while creating navigation menu items';
-
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        creationErrorMessage,
+        'Multiple validation errors occurred while creating navigation menu items',
       );
     }
 
@@ -294,24 +286,14 @@ export class NavigationMenuItemService {
         },
       );
 
-    return inputs.map((_, originalInputIndex) => {
-      const flatNavigationMenuItemToCreate =
-        flatNavigationMenuItemByOriginalInputIndex.get(originalInputIndex);
-
-      if (!isDefined(flatNavigationMenuItemToCreate)) {
-        throw new NavigationMenuItemException(
-          'Failed to resolve created navigation menu item in batch',
-          NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-        );
-      }
-
-      return fromFlatNavigationMenuItemToNavigationMenuItemDto(
+    return flatNavigationMenuItemsByInputIndex.map((flatEntity) =>
+      fromFlatNavigationMenuItemToNavigationMenuItemDto(
         findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: flatNavigationMenuItemToCreate.id,
+          flatEntityId: flatEntity.id,
           flatEntityMaps: recomputedFlatNavigationMenuItemMaps,
         }),
-      );
-    });
+      ),
+    );
   }
 
   async update({
@@ -432,14 +414,9 @@ export class NavigationMenuItemService {
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      const updateErrorMessage =
-        inputs.length === 1
-          ? 'Multiple validation errors occurred while updating navigation menu item'
-          : 'Multiple validation errors occurred while updating navigation menu items';
-
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        updateErrorMessage,
+        'Multiple validation errors occurred while updating navigation menu items',
       );
     }
 

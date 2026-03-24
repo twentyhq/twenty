@@ -7,27 +7,52 @@ import {
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 
-const orderFolderCreateInputs = ({
-  folders,
+export const getCreateNavigationMenuItemBatchProcessingIndices = ({
+  inputs,
   existingIds,
 }: {
-  folders: CreateNavigationMenuItemInput[];
+  inputs: CreateNavigationMenuItemInput[];
   existingIds: Set<string>;
-}): CreateNavigationMenuItemInput[] => {
-  const result: CreateNavigationMenuItemInput[] = [];
-  let remaining = [...folders];
+}): number[] => {
+  const folderIndices: number[] = [];
+  const nonFolderIndices: number[] = [];
+
+  inputs.forEach((input, index) => {
+    if (input.type === NavigationMenuItemType.FOLDER) {
+      if (!isDefined(input.id)) {
+        throw new NavigationMenuItemException(
+          'Folder navigation menu items in a batch create must include an id',
+          NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        );
+      }
+      folderIndices.push(index);
+    } else {
+      nonFolderIndices.push(index);
+    }
+  });
+
+  if (folderIndices.length <= 1) {
+    return [...folderIndices, ...nonFolderIndices];
+  }
+
+  // Topological sort: process parent folders before children
+  const ordered: number[] = [];
+  const remaining = [...folderIndices];
 
   while (remaining.length > 0) {
-    const readyIndex = remaining.findIndex((folder) => {
+    const readyIndex = remaining.findIndex((inputIndex) => {
+      const folder = inputs[inputIndex];
+
       if (!isDefined(folder.folderId)) {
         return true;
       }
 
-      if (existingIds.has(folder.folderId)) {
-        return true;
-      }
-
-      return result.some((readyItem) => readyItem.id === folder.folderId);
+      return (
+        existingIds.has(folder.folderId) ||
+        ordered.some(
+          (orderedIndex) => inputs[orderedIndex].id === folder.folderId,
+        )
+      );
     });
 
     if (readyIndex === -1) {
@@ -37,74 +62,8 @@ const orderFolderCreateInputs = ({
       );
     }
 
-    const [ready] = remaining.splice(readyIndex, 1);
-
-    result.push(ready);
+    ordered.push(remaining.splice(readyIndex, 1)[0]);
   }
 
-  return result;
-};
-
-export const getCreateNavigationMenuItemBatchProcessingIndices = ({
-  inputs,
-  existingIds,
-}: {
-  inputs: CreateNavigationMenuItemInput[];
-  existingIds: Set<string>;
-}): number[] => {
-  if (inputs.length === 1) {
-    return [0];
-  }
-
-  const folderIndices: number[] = [];
-  const nonFolderIndices: number[] = [];
-
-  inputs.forEach((input, index) => {
-    if (input.type === NavigationMenuItemType.FOLDER) {
-      folderIndices.push(index);
-    } else {
-      nonFolderIndices.push(index);
-    }
-  });
-
-  const folderInputs = folderIndices.map((index) => inputs[index]);
-
-  for (const folderInput of folderInputs) {
-    if (!isDefined(folderInput.id)) {
-      throw new NavigationMenuItemException(
-        'Folder navigation menu items in a batch create must include an id',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      );
-    }
-  }
-
-  const orderedFolders = orderFolderCreateInputs({
-    folders: folderInputs,
-    existingIds,
-  });
-
-  const folderInputIdToIndex = new Map<string, number>();
-
-  for (const index of folderIndices) {
-    const input = inputs[index];
-
-    if (isDefined(input.id)) {
-      folderInputIdToIndex.set(input.id, index);
-    }
-  }
-
-  const orderedFolderIndices = orderedFolders.map((folderInput) => {
-    const index = folderInputIdToIndex.get(folderInput.id!);
-
-    if (!isDefined(index)) {
-      throw new NavigationMenuItemException(
-        'Failed to resolve folder index in batch create',
-        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-      );
-    }
-
-    return index;
-  });
-
-  return [...orderedFolderIndices, ...nonFolderIndices];
+  return [...ordered, ...nonFolderIndices];
 };

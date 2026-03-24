@@ -1,14 +1,13 @@
-import { useMutation } from '@apollo/client/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type CreateNavigationMenuItemInput,
-  CreateNavigationMenuItemDocument,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -38,11 +37,9 @@ export const useCreateNavigationMenuItem = () => {
   const { navigationMenuItems, currentWorkspaceMemberId } =
     useNavigationMenuItemsData();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
-
-  const [createNavigationMenuItemMutation] = useMutation(
-    CreateNavigationMenuItemDocument,
-  );
+  const { addToDraft, removeFromDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
+  const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
 
   const createNavigationMenuItem = async (
     targetRecord: ObjectRecord,
@@ -66,69 +63,49 @@ export const useCreateNavigationMenuItem = () => {
 
     const position = maxPosition + 1;
 
-    if (isView) {
-      const input: CreateNavigationMenuItemInput = {
-        id,
-        type: NavigationMenuItemType.VIEW,
-        viewId: targetRecord.id,
-        userWorkspaceId: currentWorkspaceMemberId,
-        folderId,
-        position,
-      };
+    const input: CreateNavigationMenuItemInput = isView
+      ? {
+          id,
+          type: NavigationMenuItemType.VIEW,
+          viewId: targetRecord.id,
+          userWorkspaceId: currentWorkspaceMemberId,
+          folderId,
+          position,
+        }
+      : (() => {
+          const objectMetadataItem = objectMetadataItems.find(
+            (item) => item.nameSingular === targetObjectNameSingular,
+          );
 
-      addToDraft({
-        key: 'navigationMenuItems',
-        items: [buildOptimisticNavigationMenuItem({ ...input, id })],
-      });
+          if (!isDefined(objectMetadataItem)) {
+            throw new Error(
+              `Object metadata item not found for nameSingular: ${targetObjectNameSingular}`,
+            );
+          }
+
+          return {
+            id,
+            type: NavigationMenuItemType.RECORD,
+            targetRecordId: targetRecord.id,
+            targetObjectMetadataId: objectMetadataItem.id,
+            userWorkspaceId: currentWorkspaceMemberId,
+            folderId,
+            position,
+          };
+        })();
+
+    addToDraft({
+      key: 'navigationMenuItems',
+      items: [buildOptimisticNavigationMenuItem({ ...input, id })],
+    });
+    applyChanges();
+
+    try {
+      await createManyNavigationMenuItems([input]);
+    } catch (error) {
+      removeFromDraft({ key: 'navigationMenuItems', itemIds: [id] });
       applyChanges();
-
-      const result = await createNavigationMenuItemMutation({
-        variables: { input },
-      });
-
-      const created = result.data?.createNavigationMenuItem;
-
-      if (isDefined(created)) {
-        addToDraft({ key: 'navigationMenuItems', items: [created] });
-        applyChanges();
-      }
-    } else {
-      const objectMetadataItem = objectMetadataItems.find(
-        (item) => item.nameSingular === targetObjectNameSingular,
-      );
-
-      if (!isDefined(objectMetadataItem)) {
-        throw new Error(
-          `Object metadata item not found for nameSingular: ${targetObjectNameSingular}`,
-        );
-      }
-
-      const input: CreateNavigationMenuItemInput = {
-        id,
-        type: NavigationMenuItemType.RECORD,
-        targetRecordId: targetRecord.id,
-        targetObjectMetadataId: objectMetadataItem.id,
-        userWorkspaceId: currentWorkspaceMemberId,
-        folderId,
-        position,
-      };
-
-      addToDraft({
-        key: 'navigationMenuItems',
-        items: [buildOptimisticNavigationMenuItem({ ...input, id })],
-      });
-      applyChanges();
-
-      const result = await createNavigationMenuItemMutation({
-        variables: { input },
-      });
-
-      const created = result.data?.createNavigationMenuItem;
-
-      if (isDefined(created)) {
-        addToDraft({ key: 'navigationMenuItems', items: [created] });
-        applyChanges();
-      }
+      throw error;
     }
   };
 

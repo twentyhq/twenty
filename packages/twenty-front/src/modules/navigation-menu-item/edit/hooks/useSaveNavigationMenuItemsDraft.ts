@@ -1,68 +1,27 @@
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
-import { useMutation } from '@apollo/client/react';
-import {
-  CreateManyNavigationMenuItemsDocument,
-  DeleteManyNavigationMenuItemsDocument,
-  type NavigationMenuItem,
-  UpdateManyNavigationMenuItemsDocument,
-} from '~/generated-metadata/graphql';
-
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
+import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { buildUpdateInputsFromDraft } from '@/navigation-menu-item/edit/utils/buildUpdateInputsFromDraft';
 import { getObjectMetadataColorUpdates } from '@/navigation-menu-item/edit/utils/getObjectMetadataColorUpdates';
-import { partitionCreatesAndRecreates } from '@/navigation-menu-item/edit/utils/partitionCreatesAndRecreates';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
-  const {
-    addToDraft,
-    updateInDraft,
-    removeFromDraft,
-    replaceDraft,
-    applyChanges,
-  } = useMetadataStore();
-  const [createManyNavigationMenuItemsMutation] = useMutation(
-    CreateManyNavigationMenuItemsDocument,
-  );
-  const [deleteManyNavigationMenuItemsMutation] = useMutation(
-    DeleteManyNavigationMenuItemsDocument,
-  );
-  const [updateManyNavigationMenuItemsMutation] = useMutation(
-    UpdateManyNavigationMenuItemsDocument,
-  );
+  const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
+  const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const store = useStore();
 
   const saveDraft = useCallback(async () => {
-    const runWithNavigationMenuRollback = async (
-      action: () => Promise<void>,
-    ) => {
-      const previousNavigationMenuItems = store.get(
-        navigationMenuItemsSelector.atom,
-      );
-
-      try {
-        await action();
-      } catch (error) {
-        replaceDraft(
-          'navigationMenuItems',
-          previousNavigationMenuItems as NavigationMenuItem[],
-        );
-        applyChanges();
-
-        throw error;
-      }
-    };
-
     const draft = store.get(navigationMenuItemsDraftState.atom);
     const currentItems = store.get(navigationMenuItemsSelector.atom);
 
@@ -72,147 +31,75 @@ export const useSaveNavigationMenuItemsDraft = () => {
 
     const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
-    const syncObjectColorsFromDraft = async () => {
-      const colorUpdates = getObjectMetadataColorUpdates({
-        draft,
-        objectMetadataItems,
+    const colorUpdates = getObjectMetadataColorUpdates({
+      draft,
+      objectMetadataItems,
+    });
+
+    for (const { idToUpdate, color } of colorUpdates) {
+      await updateOneObjectMetadataItem({
+        idToUpdate,
+        updatePayload: { color },
       });
+    }
 
-      for (const { idToUpdate, color } of colorUpdates) {
-        await updateOneObjectMetadataItem({
-          idToUpdate,
-          updatePayload: { color },
-        });
-      }
-    };
+    const workspaceItems = filterWorkspaceNavigationMenuItems(currentItems);
+    const draftIds = new Set(draft.map((item) => item.id));
 
-    await syncObjectColorsFromDraft();
+    const deleteAfterLayoutChangeIds = workspaceItems
+      .filter((workspaceItem) => !draftIds.has(workspaceItem.id))
+      .map((workspaceItem) => workspaceItem.id);
 
-    const applyDeletesAfterLayoutChange = async () => {
-      const workspaceItems = filterWorkspaceNavigationMenuItems(currentItems);
-      const draftIds = new Set(draft.map((item) => item.id));
-      const deleteAfterLayoutChangeIds = workspaceItems
-        .filter((workspaceItem) => !draftIds.has(workspaceItem.id))
-        .map((workspaceItem) => workspaceItem.id);
+    await deleteManyNavigationMenuItems(deleteAfterLayoutChangeIds);
 
-      if (deleteAfterLayoutChangeIds.length === 0) {
-        return;
-      }
+    const currentIds = new Set(workspaceItems.map((item) => item.id));
+    const workspaceItemsById = new Map(
+      workspaceItems.map((item) => [item.id, item]),
+    );
 
-      await runWithNavigationMenuRollback(async () => {
-        removeFromDraft({
-          key: 'navigationMenuItems',
-          itemIds: deleteAfterLayoutChangeIds,
-        });
-        applyChanges();
-        await deleteManyNavigationMenuItemsMutation({
-          variables: { ids: deleteAfterLayoutChangeIds },
-        });
-      });
-    };
+    const itemsToCreate = draft.filter((item) => !currentIds.has(item.id));
 
-    await applyDeletesAfterLayoutChange();
+    const idsToRecreate = draft.filter((item) => {
+      const original = workspaceItemsById.get(item.id);
 
-    const { workspaceItemsById, idsToCreate, idsToRecreate } =
-      partitionCreatesAndRecreates({ draft, currentItems });
-
-    const applyRecreateDeletes = async () => {
-      const recreateIds = idsToRecreate.map((item) => item.id);
-
-      if (recreateIds.length === 0) {
-        return;
+      if (!original) {
+        return false;
       }
 
-      await runWithNavigationMenuRollback(async () => {
-        removeFromDraft({
-          key: 'navigationMenuItems',
-          itemIds: recreateIds,
-        });
-        applyChanges();
-        await deleteManyNavigationMenuItemsMutation({
-          variables: { ids: recreateIds },
-        });
-      });
-    };
-
-    await applyRecreateDeletes();
-
-    const applyCreates = async () => {
-      const itemsToCreate = [...idsToCreate, ...idsToRecreate];
-      const resolveFolderId = (draftFolderId: string): string => draftFolderId;
-
-      const createInputs = itemsToCreate.map((draftItem) =>
-        buildCreateNavigationMenuItemInput(draftItem, resolveFolderId),
+      return (
+        original.viewId !== item.viewId ||
+        original.targetObjectMetadataId !== item.targetObjectMetadataId ||
+        original.targetRecordId !== item.targetRecordId
       );
+    });
 
-      if (createInputs.length === 0) {
-        return;
-      }
+    const recreateIds = idsToRecreate.map((item) => item.id);
 
-      const createResult = await createManyNavigationMenuItemsMutation({
-        variables: { inputs: createInputs },
-      });
-      const createdItems = createResult.data?.createManyNavigationMenuItems;
+    await deleteManyNavigationMenuItems(recreateIds);
 
-      if (isDefined(createdItems) && createdItems.length > 0) {
-        addToDraft({
-          key: 'navigationMenuItems',
-          items: createdItems as NavigationMenuItem[],
-        });
-        applyChanges();
-      }
-    };
+    const allItemsToCreate = [...itemsToCreate, ...idsToRecreate];
+    const resolveFolderId = (draftFolderId: string): string => draftFolderId;
 
-    await applyCreates();
+    const createInputs = allItemsToCreate.map((draftItem) =>
+      buildCreateNavigationMenuItemInput(draftItem, resolveFolderId),
+    );
 
-    const applyUpdates = async () => {
-      const idsToRecreateSet = new Set(idsToRecreate.map((item) => item.id));
-      const resolveFolderId = (draftFolderId: string): string => draftFolderId;
+    await createManyNavigationMenuItems(createInputs);
 
-      const updateInputs = buildUpdateInputsFromDraft({
-        draft,
-        workspaceItemsById,
-        idsToRecreateSet,
-        resolveFolderId,
-      });
+    const idsToRecreateSet = new Set(recreateIds);
 
-      if (updateInputs.length === 0) {
-        return;
-      }
+    const updateInputs = buildUpdateInputsFromDraft({
+      draft,
+      workspaceItemsById,
+      idsToRecreateSet,
+      resolveFolderId,
+    });
 
-      const optimisticItems = updateInputs.map(({ id, update }) => ({
-        id,
-        ...update,
-      })) as NavigationMenuItem[];
-
-      await runWithNavigationMenuRollback(async () => {
-        updateInDraft('navigationMenuItems', optimisticItems);
-        applyChanges();
-        const updateResult = await updateManyNavigationMenuItemsMutation({
-          variables: { inputs: updateInputs },
-        });
-        const updatedItems = updateResult.data?.updateManyNavigationMenuItems;
-
-        if (isDefined(updatedItems) && updatedItems.length > 0) {
-          addToDraft({
-            key: 'navigationMenuItems',
-            items: updatedItems as NavigationMenuItem[],
-          });
-          applyChanges();
-        }
-      });
-    };
-
-    await applyUpdates();
+    await updateManyNavigationMenuItems(updateInputs);
   }, [
-    addToDraft,
-    updateInDraft,
-    applyChanges,
-    removeFromDraft,
-    replaceDraft,
-    createManyNavigationMenuItemsMutation,
-    deleteManyNavigationMenuItemsMutation,
-    updateManyNavigationMenuItemsMutation,
+    createManyNavigationMenuItems,
+    deleteManyNavigationMenuItems,
+    updateManyNavigationMenuItems,
     updateOneObjectMetadataItem,
     store,
   ]);
