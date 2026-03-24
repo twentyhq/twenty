@@ -22,7 +22,8 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useStore } from 'jotai';
 
 export const useSaveNavigationMenuItemsDraft = () => {
-  const { addToDraft, removeFromDraft, applyChanges } = useMetadataStore();
+  const { addToDraft, removeFromDraft, replaceDraft, applyChanges } =
+    useMetadataStore();
   const [createManyNavigationMenuItemsMutation] = useMutation(
     CreateManyNavigationMenuItemsDocument,
   );
@@ -37,6 +38,26 @@ export const useSaveNavigationMenuItemsDraft = () => {
   const store = useStore();
 
   const saveDraft = useCallback(async () => {
+    const runWithNavigationMenuRollback = async (
+      action: () => Promise<void>,
+    ) => {
+      const previousNavigationMenuItems = store.get(
+        navigationMenuItemsSelector.atom,
+      );
+
+      try {
+        await action();
+      } catch (error) {
+        replaceDraft(
+          'navigationMenuItems',
+          previousNavigationMenuItems as NavigationMenuItem[],
+        );
+        applyChanges();
+
+        throw error;
+      }
+    };
+
     const draft = store.get(navigationMenuItemsDraftState.atom);
     const currentItems = store.get(navigationMenuItemsSelector.atom);
 
@@ -72,13 +93,15 @@ export const useSaveNavigationMenuItemsDraft = () => {
         return;
       }
 
-      removeFromDraft({
-        key: 'navigationMenuItems',
-        itemIds: deleteAfterLayoutChangeIds,
-      });
-      applyChanges();
-      await deleteManyNavigationMenuItemsMutation({
-        variables: { ids: deleteAfterLayoutChangeIds },
+      await runWithNavigationMenuRollback(async () => {
+        removeFromDraft({
+          key: 'navigationMenuItems',
+          itemIds: deleteAfterLayoutChangeIds,
+        });
+        applyChanges();
+        await deleteManyNavigationMenuItemsMutation({
+          variables: { ids: deleteAfterLayoutChangeIds },
+        });
       });
     };
 
@@ -94,13 +117,15 @@ export const useSaveNavigationMenuItemsDraft = () => {
         return;
       }
 
-      removeFromDraft({
-        key: 'navigationMenuItems',
-        itemIds: recreateIds,
-      });
-      applyChanges();
-      await deleteManyNavigationMenuItemsMutation({
-        variables: { ids: recreateIds },
+      await runWithNavigationMenuRollback(async () => {
+        removeFromDraft({
+          key: 'navigationMenuItems',
+          itemIds: recreateIds,
+        });
+        applyChanges();
+        await deleteManyNavigationMenuItemsMutation({
+          variables: { ids: recreateIds },
+        });
       });
     };
 
@@ -154,24 +179,25 @@ export const useSaveNavigationMenuItemsDraft = () => {
         ...update,
       })) as NavigationMenuItem[];
 
-      addToDraft({
-        key: 'navigationMenuItems',
-        items: optimisticItems,
-      });
-      applyChanges();
-
-      const updateResult = await updateManyNavigationMenuItemsMutation({
-        variables: { inputs: updateInputs },
-      });
-      const updatedItems = updateResult.data?.updateManyNavigationMenuItems;
-
-      if (isDefined(updatedItems) && updatedItems.length > 0) {
+      await runWithNavigationMenuRollback(async () => {
         addToDraft({
           key: 'navigationMenuItems',
-          items: updatedItems as NavigationMenuItem[],
+          items: optimisticItems,
         });
         applyChanges();
-      }
+        const updateResult = await updateManyNavigationMenuItemsMutation({
+          variables: { inputs: updateInputs },
+        });
+        const updatedItems = updateResult.data?.updateManyNavigationMenuItems;
+
+        if (isDefined(updatedItems) && updatedItems.length > 0) {
+          addToDraft({
+            key: 'navigationMenuItems',
+            items: updatedItems as NavigationMenuItem[],
+          });
+          applyChanges();
+        }
+      });
     };
 
     await applyUpdates();
@@ -179,6 +205,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
     addToDraft,
     applyChanges,
     removeFromDraft,
+    replaceDraft,
     createManyNavigationMenuItemsMutation,
     deleteManyNavigationMenuItemsMutation,
     updateManyNavigationMenuItemsMutation,
