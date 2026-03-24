@@ -13474,6 +13474,16 @@ msgstr "그룹 {groupValue} 표시"
 msgid "Show hidden groups"
 msgstr "숨겨진 그룹 표시"
 
+#. js-lingui-id: 74/nsw
+#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
+msgid "show in sidebar"
+msgstr ""
+
+#. js-lingui-id: OVFeC4
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
+msgid "Show in Sidebar"
+msgstr ""
+
 #. js-lingui-id: qi+g0a
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Show only rows with errors"

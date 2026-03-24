@@ -1236,6 +1236,7 @@ export type CreateRoleInput = {
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
+  showAllObjectsInSidebar?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CreateSkillInput = {
