@@ -286,26 +286,34 @@ export class ObjectPermissionService {
             newObjectPermission.objectMetadataId,
         );
 
+      const resolvedCanRead =
+        newObjectPermission.canReadObjectRecords !== undefined
+          ? newObjectPermission.canReadObjectRecords
+          : existingObjectRecordPermission?.canReadObjectRecords;
       const hasReadPermissionAfterUpdate =
-        newObjectPermission.canReadObjectRecords ??
-        existingObjectRecordPermission?.canReadObjectRecords ??
-        flatRole.canReadAllObjectRecords;
+        resolvedCanRead ?? flatRole.canReadAllObjectRecords;
 
       if (hasReadPermissionAfterUpdate === false) {
+        const resolvedCanUpdate =
+          newObjectPermission.canUpdateObjectRecords !== undefined
+            ? newObjectPermission.canUpdateObjectRecords
+            : existingObjectRecordPermission?.canUpdateObjectRecords;
         const hasUpdatePermissionAfterUpdate =
-          newObjectPermission.canUpdateObjectRecords ??
-          existingObjectRecordPermission?.canUpdateObjectRecords ??
-          flatRole.canUpdateAllObjectRecords;
+          resolvedCanUpdate ?? flatRole.canUpdateAllObjectRecords;
 
+        const resolvedCanSoftDelete =
+          newObjectPermission.canSoftDeleteObjectRecords !== undefined
+            ? newObjectPermission.canSoftDeleteObjectRecords
+            : existingObjectRecordPermission?.canSoftDeleteObjectRecords;
         const hasSoftDeletePermissionAfterUpdate =
-          newObjectPermission.canSoftDeleteObjectRecords ??
-          existingObjectRecordPermission?.canSoftDeleteObjectRecords ??
-          flatRole.canSoftDeleteAllObjectRecords;
+          resolvedCanSoftDelete ?? flatRole.canSoftDeleteAllObjectRecords;
 
+        const resolvedCanDestroy =
+          newObjectPermission.canDestroyObjectRecords !== undefined
+            ? newObjectPermission.canDestroyObjectRecords
+            : existingObjectRecordPermission?.canDestroyObjectRecords;
         const hasDestroyPermissionAfterUpdate =
-          newObjectPermission.canDestroyObjectRecords ??
-          existingObjectRecordPermission?.canDestroyObjectRecords ??
-          flatRole.canDestroyAllObjectRecords;
+          resolvedCanDestroy ?? flatRole.canDestroyAllObjectRecords;
 
         if (
           hasUpdatePermissionAfterUpdate ||
