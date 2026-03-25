@@ -28,9 +28,10 @@ const COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES = `
       id
       name
 `;
-const expectRestrictedFieldIsNotExposed = ({
+const expectEmployeesIsAccessible = ({
   response,
   operationName,
+  expectedEmployees,
 }: {
   response: any;
   operationName:
@@ -38,6 +39,7 @@ const expectRestrictedFieldIsNotExposed = ({
     | 'createCompany'
     | 'updateCompanies'
     | 'updateCompany';
+  expectedEmployees?: number;
 }) => {
   expect(response.body.errors).toBeUndefined();
   expect(response.body.data).toBeDefined();
@@ -48,7 +50,11 @@ const expectRestrictedFieldIsNotExposed = ({
       : response.body.data[operationName]?.[0];
 
   expect(result).toBeDefined();
-  expect(result.employees).toBeNull();
+  if (typeof expectedEmployees === 'number') {
+    expect(result.employees).toBe(expectedEmployees);
+  } else {
+    expect(typeof result.employees).toBe('number');
+  }
 };
 
 describe('Field update permissions restrictions', () => {
@@ -308,7 +314,7 @@ describe('Field update permissions restrictions', () => {
   //   });
   // });
 
-  describe('should hide restricted fields when creating', () => {
+  describe('should allow employees field when creating', () => {
     beforeEach(async () => {
       await restrictUpdateAccessToCompanyEmployee(
         customRoleId,
@@ -331,9 +337,10 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectRestrictedFieldIsNotExposed({
+      expectEmployeesIsAccessible({
         response,
         operationName: 'createCompanies',
+        expectedEmployees: 15,
       });
     });
 
@@ -347,13 +354,14 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectRestrictedFieldIsNotExposed({
+      expectEmployeesIsAccessible({
         response,
         operationName: 'createCompany',
+        expectedEmployees: 25,
       });
     });
   });
-  describe('should hide restricted fields in update operation responses', () => {
+  describe('should allow employees field in update operation responses', () => {
     beforeEach(async () => {
       await restrictReadAccessToCompanyEmployee(
         customRoleId,
@@ -374,7 +382,7 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectRestrictedFieldIsNotExposed({
+      expectEmployeesIsAccessible({
         response,
         operationName: 'updateCompanies',
       });
@@ -391,7 +399,7 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectRestrictedFieldIsNotExposed({
+      expectEmployeesIsAccessible({
         response,
         operationName: 'updateCompany',
       });
