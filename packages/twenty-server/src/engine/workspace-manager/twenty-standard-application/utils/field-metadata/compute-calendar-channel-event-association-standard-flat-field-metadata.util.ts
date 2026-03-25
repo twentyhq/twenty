@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -35,8 +37,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: 'Id',
-      description: 'Id',
+      label: i18nLabel(msg`Id`),
+      description: i18nLabel(msg`Id`),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
@@ -54,8 +56,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Creation date',
-      description: 'Creation date',
+      label: i18nLabel(msg`Creation date`),
+      description: i18nLabel(msg`Creation date`),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
@@ -74,8 +76,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Last update',
-      description: 'Last time the record was changed',
+      label: i18nLabel(msg`Last update`),
+      description: i18nLabel(msg`Last time the record was changed`),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
@@ -94,8 +96,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: 'Deleted at',
-      description: 'Date when the record was deleted',
+      label: i18nLabel(msg`Deleted at`),
+      description: i18nLabel(msg`Date when the record was deleted`),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
@@ -113,8 +115,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: 'Created by',
-      description: 'The creator of the record',
+      label: i18nLabel(msg`Created by`),
+      description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
       isUIReadOnly: true,
@@ -136,8 +138,10 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: 'Updated by',
-      description: 'The workspace member who last updated the record',
+      label: i18nLabel(msg`Updated by`),
+      description: i18nLabel(
+        msg`The workspace member who last updated the record`,
+      ),
       icon: 'IconUserCircle',
       isSystem: true,
       isUIReadOnly: true,
@@ -159,8 +163,10 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: 'Position',
-      description: 'Calendar channel event association record position',
+      label: i18nLabel(msg`Position`),
+      description: i18nLabel(
+        msg`Calendar channel event association record position`,
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -177,8 +183,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: 'Search vector',
-      description: 'Field used for full-text search',
+      label: i18nLabel(msg`Search vector`),
+      description: i18nLabel(msg`Field used for full-text search`),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
@@ -200,8 +206,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'eventExternalId',
       type: FieldMetadataType.TEXT,
-      label: 'Event external ID',
-      description: 'Event external ID',
+      label: i18nLabel(msg`Event external ID`),
+      description: i18nLabel(msg`Event external ID`),
       icon: 'IconCalendar',
       isNullable: true,
       isUIReadOnly: true,
@@ -217,8 +223,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'recurringEventExternalId',
       type: FieldMetadataType.TEXT,
-      label: 'Recurring Event ID',
-      description: 'Recurring Event ID',
+      label: i18nLabel(msg`Recurring Event ID`),
+      description: i18nLabel(msg`Recurring Event ID`),
       icon: 'IconHistory',
       isNullable: true,
       isUIReadOnly: true,
@@ -235,8 +241,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'calendarChannel',
-      label: 'Channel ID',
-      description: 'Channel ID',
+      label: i18nLabel(msg`Channel ID`),
+      description: i18nLabel(msg`Channel ID`),
       icon: 'IconCalendar',
       isNullable: false,
       isUIReadOnly: true,
@@ -260,8 +266,8 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'calendarEvent',
-      label: 'Event ID',
-      description: 'Event ID',
+      label: i18nLabel(msg`Event ID`),
+      description: i18nLabel(msg`Event ID`),
       icon: 'IconCalendar',
       isNullable: false,
       isUIReadOnly: true,
