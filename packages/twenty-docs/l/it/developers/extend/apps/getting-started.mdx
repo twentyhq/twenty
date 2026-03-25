@@ -20,7 +20,7 @@ Le app ti permettono di estendere Twenty con oggetti, campi, funzioni logiche, c
 ## Prerequisiti
 
 * Node.js 24+ e Yarn 4
-* Uno spazio di lavoro Twenty e una chiave API (creane una su https://app.twenty.com/settings/api-webhooks)
+* Docker (per il server di sviluppo locale di Twenty)
 
 ## Per iniziare
 
@@ -32,13 +32,13 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn twenty app:dev
+yarn twenty dev
 ```
 
 Lo strumento di scaffolding supporta due modalità per controllare quali file di esempio vengono inclusi:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -64,7 +64,7 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
 yarn twenty help
@@ -167,7 +167,7 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty app:dev` genererà automaticamente due client API tipizzati in `node_modules/twenty-sdk/generated`: `CoreApiClient` (per i dati dell'area di lavoro tramite `/graphql`) e `MetadataApiClient` (per la configurazione dell'area di lavoro e il caricamento di file tramite `/metadata`).
+* `yarn twenty dev` genererà automaticamente due client API tipizzati in `node_modules/twenty-sdk/generated`: `CoreApiClient` (per i dati dell'area di lavoro tramite `/graphql`) e `MetadataApiClient` (per la configurazione dell'area di lavoro e il caricamento di file tramite `/metadata`).
 * `yarn twenty entity:add` aggiungerà file di definizione delle entità sotto `src/` per i tuoi oggetti, funzioni, componenti front-end, ruoli, competenze e altro ancora.
 
 ## Autenticazione
@@ -221,13 +221,25 @@ Quindi aggiungi uno script `twenty`:
 }
 ```
 
-Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty help`, ecc.
+Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty dev`, `yarn twenty help`, ecc.
+
+## Come utilizzare un'istanza locale di Twenty
+
+Se stai già eseguendo un'istanza di Twenty in locale (ad es. tramite `npx nx start twenty-server`), puoi connetterti ad essa invece di usare Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## Risoluzione dei problemi
 
 * Errori di autenticazione: esegui `yarn twenty auth:login` e assicurati che la tua chiave API abbia i permessi richiesti.
 * Impossibile connettersi al server: verifica l'URL dell'API e che il server Twenty sia raggiungibile.
-* Tipi o client mancanti/obsoleti: riavvia `yarn twenty app:dev` — genera automaticamente il client tipizzato.
-* Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty app:dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
+* Tipi o client mancanti/obsoleti: riavvia `yarn twenty dev` — genera automaticamente il client tipizzato.
+* Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
 
 Canale di supporto su Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

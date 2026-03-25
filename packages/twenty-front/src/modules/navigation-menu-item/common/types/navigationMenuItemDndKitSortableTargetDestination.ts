@@ -5,4 +5,5 @@ export type SortableTargetDestination = {
   effectiveDropTargetId: string;
   isTargetFolder: boolean;
   dropTargetId: string;
+  insertBeforeItemId?: string;
 };

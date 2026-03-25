@@ -11,6 +11,8 @@ export { appBuild } from './build';
 export type { AppBuildOptions, AppBuildResult } from './build';
 export { appDeploy } from './deploy';
 export type { AppDeployOptions, AppDeployResult } from './deploy';
+export { appInstall } from './install';
+export type { AppInstallOptions } from './install';
 export { appPublish } from './publish';
 export type { AppPublishOptions, AppPublishResult } from './publish';
 export { appUninstall } from './uninstall';

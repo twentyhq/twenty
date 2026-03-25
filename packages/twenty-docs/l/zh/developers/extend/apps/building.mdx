@@ -563,7 +563,7 @@ export default defineFrontComponent({
 
 * 前端组件是在 Twenty 中的隔离上下文中渲染的 React 组件。
 * `component` 字段引用你的 React 组件。
-* 组件会在 `yarn twenty app:dev` 期间自动构建并同步。
+* 组件会在 `yarn twenty dev` 期间自动构建并同步。
 
 你可以通过两种方式创建新的前端组件：
 
@@ -607,7 +607,7 @@ export default defineSkill({
 
 ### 生成的类型化客户端
 
-两个类型化客户端由 `yarn twenty app:dev` 自动生成（基于你的工作区架构），并存放在 `node_modules/twenty-sdk/generated`：
+两个类型化客户端会由 `yarn twenty dev` 基于你的工作区架构自动生成，并存放在 `node_modules/twenty-sdk/generated`：
 
 * **`CoreApiClient`** — 查询 `/graphql` 端点以获取工作区数据
 * **`MetadataApiClient`** — 查询 `/metadata` 端点以获取工作区配置并处理文件上传
@@ -622,7 +622,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-每当你的对象或字段发生变化时，`yarn twenty app:dev` 都会自动重新生成这两个客户端。
+每当你的对象或字段发生变化时，`yarn twenty dev` 都会自动重新生成这两个客户端。
 
 #### 逻辑函数中的运行时凭据
 

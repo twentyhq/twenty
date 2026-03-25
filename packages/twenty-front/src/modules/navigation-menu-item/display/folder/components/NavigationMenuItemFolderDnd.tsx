@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
@@ -17,6 +16,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
@@ -24,9 +24,7 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
@@ -34,6 +32,7 @@ import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
   NavigationMenuItemDroppableSlot,
 } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
+import { NavigationMenuItemInsertBeforeDroppableZone } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemInsertBeforeDroppableZone';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
 import { NavigationMenuItemFolderLayout } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderLayout';
@@ -41,10 +40,11 @@ import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigati
 import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
 import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
-import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage';
+import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { useFavoritesFolderEdit } from '@/navigation-menu-item/edit/folder/hooks/useFavoritesFolderEdit';
+import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -86,8 +86,8 @@ type NavigationMenuItemFolderDndProps = {
   isEditInPlace: boolean;
   editModeProps?: EditModeProps;
   isDragging: boolean;
-  selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
+  orphanIndex?: number;
 };
 
 export const NavigationMenuItemFolderDnd = ({
@@ -100,8 +100,8 @@ export const NavigationMenuItemFolderDnd = ({
   isEditInPlace,
   editModeProps,
   isDragging: isDraggingProp,
-  selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
+  orphanIndex,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -130,7 +130,7 @@ export const NavigationMenuItemFolderDnd = ({
     NavigationDropTargetContext,
   );
 
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const favoritesEdit = useFavoritesFolderEdit({
     folderId,
     folderName,
@@ -141,10 +141,10 @@ export const NavigationMenuItemFolderDnd = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
-  );
+  const isFolderEditHighlighted = useIsNavigationMenuItemEditHighlighted({
+    id: folderId,
+    folderId: null,
+  });
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const folderHeaderDroppableId = `${config.folderHeaderPrefix}${folderId}`;
@@ -243,8 +243,22 @@ export const NavigationMenuItemFolderDnd = ({
     />
   );
 
+  const showInsertBeforeZone =
+    isDragging && orphanIndex !== undefined && !isEditInPlace;
+
   const wrappedHeader = (
-    <div ref={setSortableDropTargetRef ?? undefined}>
+    <div
+      ref={setSortableDropTargetRef ?? undefined}
+      style={{ position: 'relative' }}
+    >
+      {showInsertBeforeZone && (
+        <NavigationMenuItemInsertBeforeDroppableZone
+          orphanDroppableId={config.orphanDroppableId}
+          orphanIndex={orphanIndex}
+          itemId={folderId}
+          disabled={dropDisabled}
+        />
+      )}
       <NavigationMenuItemDroppableSlot
         droppableId={folderHeaderDroppableId}
         index={0}
@@ -267,8 +281,8 @@ export const NavigationMenuItemFolderDnd = ({
 
   const handleAddMenuItemToFolder = useCallback(() => {
     openAddItemToFolderPage({
-      targetFolderId: folderId,
-      targetIndex: navigationMenuItems.length,
+      folderId,
+      position: navigationMenuItems.length,
       resetNavigationStack: true,
     });
   }, [folderId, navigationMenuItems.length, openAddItemToFolderPage]);
@@ -298,7 +312,7 @@ export const NavigationMenuItemFolderDnd = ({
   return (
     <>
       <StyledFolderContainer
-        $isSelectedInEditMode={isWorkspace && isSelectedInEditMode}
+        $isSelectedInEditMode={isWorkspace && isFolderEditHighlighted}
         data-drag-over-header={isDragOverFolderHeader ? 'true' : undefined}
         data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
       >
@@ -344,7 +358,9 @@ export const NavigationMenuItemFolderDnd = ({
                           Icon={IconHeartOff}
                           onClick={(event) => {
                             event.stopPropagation();
-                            deleteNavigationMenuItem(navigationMenuItem.id);
+                            deleteManyNavigationMenuItems([
+                              navigationMenuItem.id,
+                            ]);
                           }}
                           accent="tertiary"
                         />
@@ -352,9 +368,6 @@ export const NavigationMenuItemFolderDnd = ({
                     }
                     onNavigationMenuItemClick={
                       isWorkspace ? onNavigationMenuItemClick : undefined
-                    }
-                    selectedNavigationMenuItemId={
-                      isWorkspace ? selectedNavigationMenuItemId : undefined
                     }
                   />
                 </NavigationMenuItemSortableItem>
@@ -369,7 +382,7 @@ export const NavigationMenuItemFolderDnd = ({
                 folderId={folderId}
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
-                compact={!(isWorkspace && isLayoutCustomizationModeEnabled)}
+                compact={isCompact}
                 dropTargetIdOverride={getDndKitDropTargetId(
                   folderContentDroppableId,
                   navigationMenuItems.length,
@@ -382,10 +395,7 @@ export const NavigationMenuItemFolderDnd = ({
                   onClick={handleAddMenuItemToFolder}
                   triggerEvent="CLICK"
                   variant="tertiary"
-                  isSelectedInEditMode={
-                    sidePanelPage === SidePanelPages.NavigationMenuAddItem &&
-                    addMenuItemInsertionContext?.targetFolderId === folderId
-                  }
+                  isSelectedInEditMode={false}
                   subItemState={getNavigationSubItemLeftAdornment({
                     index: navigationMenuItems.length,
                     arrayLength: folderContentLength,

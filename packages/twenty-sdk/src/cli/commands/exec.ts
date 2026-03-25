@@ -33,8 +33,7 @@ export class LogicFunctionExecuteCommand {
       : (functionUniversalIdentifier ?? functionName);
 
     console.log(chalk.blue(`🚀 Executing function "${identifier}"...`));
-    console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}`));
-    console.log('');
+    console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}\n`));
 
     const executeOptions = postInstall
       ? { appPath, postInstall: true as const, payload: parsedPayload }
@@ -58,8 +57,7 @@ export class LogicFunctionExecuteCommand {
           break;
         }
         case FUNCTION_ERROR_CODES.FUNCTION_NOT_FOUND: {
-          console.error(chalk.red(result.error.message));
-          console.log('');
+          console.error(chalk.red(result.error.message), '\n');
 
           const availableFunctions = (result.error.details
             ?.availableFunctions ?? []) as Array<{
@@ -106,30 +104,26 @@ export class LogicFunctionExecuteCommand {
       `${chalk.bold('Status:')} ${statusColor(executionResult.status)}`,
     );
 
-    console.log(`${chalk.bold('Duration:')} ${executionResult.duration}ms`);
+    console.log(`${chalk.bold('Duration:')} ${executionResult.duration}ms\n`);
 
     if (isDefined(executionResult.data)) {
-      console.log('');
       console.log(chalk.bold('Data:'));
       console.log(chalk.white(JSON.stringify(executionResult.data, null, 2)));
     }
 
     if (executionResult.error) {
-      console.log('');
       console.log(chalk.bold.red('Error:'));
       console.log(chalk.red(`  Type: ${executionResult.error.errorType}`));
       console.log(
-        chalk.red(`  Message: ${executionResult.error.errorMessage}`),
+        chalk.red(`  Message: ${executionResult.error.errorMessage}\n`),
       );
       if (executionResult.error.stackTrace) {
-        console.log('');
         console.log(chalk.gray('Stack trace:'));
         console.log(chalk.gray(executionResult.error.stackTrace));
       }
     }
 
     if (executionResult.logs) {
-      console.log('');
       console.log(chalk.bold('Logs:'));
       console.log(chalk.gray(executionResult.logs));
     }

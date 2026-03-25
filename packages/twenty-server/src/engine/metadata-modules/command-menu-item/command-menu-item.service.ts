@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
@@ -88,7 +87,6 @@ export class CommandMenuItemService {
   async create(
     input: CreateCommandMenuItemInput,
     workspaceId: string,
-    queryRunner?: QueryRunner,
   ): Promise<CommandMenuItemDTO> {
     const { flatObjectMetadataMaps, flatFrontComponentMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -126,7 +124,6 @@ export class CommandMenuItemService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          queryRunner,
         },
       );
 
@@ -156,7 +153,6 @@ export class CommandMenuItemService {
   async update(
     input: UpdateCommandMenuItemInput,
     workspaceId: string,
-    queryRunner?: QueryRunner,
   ): Promise<CommandMenuItemDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -195,7 +191,6 @@ export class CommandMenuItemService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          queryRunner,
         },
       );
 
@@ -222,11 +217,7 @@ export class CommandMenuItemService {
     );
   }
 
-  async delete(
-    id: string,
-    workspaceId: string,
-    queryRunner?: QueryRunner,
-  ): Promise<CommandMenuItemDTO> {
+  async delete(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -260,7 +251,6 @@ export class CommandMenuItemService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          queryRunner,
         },
       );
 

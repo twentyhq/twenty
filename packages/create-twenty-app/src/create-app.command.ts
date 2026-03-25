@@ -1,3 +1,4 @@
+import { basename } from 'path';
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
@@ -28,14 +29,15 @@ type CreateAppOptions = {
   displayName?: string;
   description?: string;
   skipLocalInstance?: boolean;
+  port?: number;
 };
 
 export class CreateAppCommand {
   async execute(options: CreateAppOptions = {}): Promise<void> {
-    try {
-      const { appName, appDisplayName, appDirectory, appDescription } =
-        await this.getAppInfos(options);
+    const { appName, appDisplayName, appDirectory, appDescription } =
+      await this.getAppInfos(options);
 
+    try {
       const exampleOptions = this.resolveExampleOptions(
         options.mode ?? 'exhaustive',
       );
@@ -46,7 +48,6 @@ export class CreateAppCommand {
 
       await fs.ensureDir(appDirectory);
 
-      console.log(chalk.gray('  Scaffolding project files...'));
       await copyBaseApplicationProject({
         appName,
         appDisplayName,
@@ -55,17 +56,14 @@ export class CreateAppCommand {
         exampleOptions,
       });
 
-      console.log(chalk.gray('  Installing dependencies...'));
       await install(appDirectory);
 
-      console.log(chalk.gray('  Initializing git repository...'));
       await tryGitInit(appDirectory);
 
       let localResult: LocalInstanceResult = { running: false };
 
       if (!options.skipLocalInstance) {
-        // Auto-detect a running server first
-        localResult = await setupLocalInstance(appDirectory);
+        localResult = await setupLocalInstance(appDirectory, options.port);
 
         if (localResult.running && localResult.serverUrl) {
           await this.connectToLocal(appDirectory, localResult.serverUrl);
@@ -75,7 +73,7 @@ export class CreateAppCommand {
       this.logSuccess(appDirectory, localResult);
     } catch (error) {
       console.error(
-        chalk.red('Initialization failed:'),
+        chalk.red('\nCreate application failed:'),
         error instanceof Error ? error.message : error,
       );
       process.exit(1);
@@ -193,10 +191,10 @@ export class CreateAppCommand {
     appDirectory: string;
     appName: string;
   }): void {
-    console.log(chalk.blue('Creating Twenty Application'));
-    console.log(chalk.gray(`  Directory: ${appDirectory}`));
-    console.log(chalk.gray(`  Name: ${appName}`));
-    console.log('');
+    console.log(
+      chalk.blue('\n', 'Creating Twenty Application\n'),
+      chalk.gray(`- Directory: ${appDirectory}\n`, `- Name: ${appName}\n`),
+    );
   }
 
   private async connectToLocal(
@@ -204,18 +202,14 @@ export class CreateAppCommand {
     serverUrl: string,
   ): Promise<void> {
     try {
-      execSync(
-        `npx nx run twenty-sdk:start -- remote add ${serverUrl} --as local`,
-        {
-          cwd: appDirectory,
-          stdio: 'inherit',
-        },
-      );
-      console.log(chalk.green('Authenticated with local Twenty instance.'));
+      execSync(`yarn twenty remote add ${serverUrl} --as local`, {
+        cwd: appDirectory,
+        stdio: 'inherit',
+      });
     } catch {
       console.log(
         chalk.yellow(
-          'Authentication skipped. Run `npx nx run twenty-sdk:start -- remote add --local` manually.',
+          'Authentication skipped. Run `yarn twenty remote add --local` manually.',
         ),
       );
     }
@@ -225,23 +219,21 @@ export class CreateAppCommand {
     appDirectory: string,
     localResult: LocalInstanceResult,
   ): void {
-    const dirName = appDirectory.split('/').reverse()[0] ?? '';
+    const dirName = basename(appDirectory);
 
-    console.log(chalk.green('Application created!'));
-    console.log('');
-    console.log(chalk.blue('Next steps:'));
-    console.log(chalk.gray(`  cd ${dirName}`));
+    console.log(chalk.blue('\nApplication created. Next steps:'));
+    console.log(chalk.gray(`- cd ${dirName}`));
 
     if (!localResult.running) {
       console.log(
         chalk.gray(
-          '  yarn twenty remote add --local  # Authenticate with Twenty',
+          '- yarn twenty remote add --local  # Authenticate with Twenty',
         ),
       );
     }
 
     console.log(
-      chalk.gray('  yarn twenty dev                  # Start dev mode'),
+      chalk.gray('- yarn twenty dev                  # Start dev mode'),
     );
   }
 }

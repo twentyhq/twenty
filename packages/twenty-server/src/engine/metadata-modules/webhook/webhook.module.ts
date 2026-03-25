@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatWebhookModule } from 'src/engine/metadata-modules/flat-webhook/flat-webhook.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -23,7 +23,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     WorkspaceCacheStorageModule,
     ApplicationModule,
-    AuthModule,
+    TokenModule,
     PermissionsModule,
     FlatWebhookModule,
   ],
