@@ -5,21 +5,19 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/components';
 import {
   CommandBlock,
   H2Title,
   IconApps,
-  IconChevronRight,
   IconCopy,
   IconFileInfo,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { Tag } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
@@ -29,12 +27,6 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]} 0;
-`;
-
-const StyledRowRightContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const SOURCE_TYPE_BADGE_CONFIG: Record<
@@ -60,7 +52,6 @@ const SOURCE_TYPE_BADGE_CONFIG: Record<
 };
 
 export const SettingsApplicationsDeveloperTab = () => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 

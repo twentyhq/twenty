@@ -529,6 +529,30 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
     });
 
+    it('should return nextStepIds for a skipped iterator instead of entering the loop', async () => {
+      const step = {
+        id: 'iterator-1',
+        type: WorkflowActionType.ITERATOR,
+        nextStepIds: ['after-loop'],
+        settings: {
+          input: {
+            initialLoopStepIds: ['loop-step-1'],
+          },
+        },
+      } as WorkflowAction;
+
+      const result = await service.getNextStepIdsToExecute({
+        executedStep: step,
+        executedStepOutput: {
+          shouldSkipStepExecution: true,
+        },
+      });
+
+      expect(result).toEqual({
+        nextStepIdsToExecute: ['after-loop'],
+      });
+    });
+
     it('should return nextStepIdsToFailSafely for all branches when if-else is fail-safe', async () => {
       const step = {
         id: 'if-else-1',

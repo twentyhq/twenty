@@ -10309,6 +10309,9 @@ export default {
             "isLabelSyncedWithName": [
                 6
             ],
+            "isSearchable": [
+                6
+            ],
             "__typename": [
                 1
             ]
