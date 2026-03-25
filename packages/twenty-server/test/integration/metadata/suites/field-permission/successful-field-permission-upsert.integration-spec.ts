@@ -130,7 +130,7 @@ describe('Field permission upsert should succeed', () => {
             objectMetadataId: customObjectMetadataId,
             fieldMetadataId: oneFieldMetadataId,
             canReadFieldValue: false,
-            canUpdateFieldValue: true,
+            canUpdateFieldValue: false,
           },
         ],
       },
@@ -142,7 +142,7 @@ describe('Field permission upsert should succeed', () => {
       fieldMetadataId: oneFieldMetadataId,
       roleId: createdRoleId,
       canReadFieldValue: false,
-      canUpdateFieldValue: true,
+      canUpdateFieldValue: false,
     });
   });
 
