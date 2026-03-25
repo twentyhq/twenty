@@ -219,9 +219,9 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    try {
-      const allMetadataEvents: MetadataEvent[] = [];
+    const allMetadataEvents: MetadataEvent[] = [];
 
+    try {
       for (const action of actions) {
         const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
@@ -248,23 +248,6 @@ export class WorkspaceMigrationRunnerService {
       await queryRunner.commitTransaction();
 
       this.logger.timeEnd('Runner', 'Transaction execution');
-
-      await this.invalidateCache({
-        allFlatEntityMapsKeys,
-        workspaceId,
-      });
-
-      const hasSchemaMetadataChanged =
-        allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
-        allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
-
-      this.logger.timeEnd('Runner', 'Total execution');
-
-      return {
-        allFlatEntityMaps,
-        metadataEvents: allMetadataEvents,
-        hasSchemaMetadataChanged,
-      };
     } catch (error) {
       await queryRunner.rollbackTransaction().catch((rollbackError) =>
         // oxlint-disable-next-line no-console
@@ -300,5 +283,29 @@ export class WorkspaceMigrationRunnerService {
     } finally {
       await queryRunner.release();
     }
+
+    try {
+      await this.invalidateCache({
+        allFlatEntityMapsKeys,
+        workspaceId,
+      });
+    } catch (cacheError) {
+      this.logger.error(
+        `Cache invalidation failed after committed transaction: ${cacheError}`,
+        'Runner',
+      );
+    }
+
+    const hasSchemaMetadataChanged =
+      allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
+      allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
+
+    this.logger.timeEnd('Runner', 'Total execution');
+
+    return {
+      allFlatEntityMaps,
+      metadataEvents: allMetadataEvents,
+      hasSchemaMetadataChanged,
+    };
   };
 }
