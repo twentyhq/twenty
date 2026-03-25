@@ -3,13 +3,14 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -28,9 +29,8 @@ type NavigationMenuItemFolderSubItemProps = {
   onClick?: () => void;
   onNavigationMenuItemClick?: (params: {
     item: NavigationMenuItem;
-    objectMetadataItem?: ObjectMetadataItem;
+    objectMetadataItem?: EnrichedObjectMetadataItem;
   }) => void;
-  selectedNavigationMenuItemId?: string | null;
 };
 
 export const NavigationMenuItemFolderSubItem = ({
@@ -42,8 +42,9 @@ export const NavigationMenuItemFolderSubItem = ({
   rightOptions,
   onClick,
   onNavigationMenuItemClick,
-  selectedNavigationMenuItemId,
 }: NavigationMenuItemFolderSubItemProps) => {
+  const isEditHighlightedInNavigationMenu =
+    useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
@@ -108,13 +109,14 @@ export const NavigationMenuItemFolderSubItem = ({
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
       )}
-      iconColor={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
+      iconColor={getNavigationMenuItemColor(
+        navigationMenuItem,
+        objectMetadataItem ?? undefined,
+      )}
       to={isDragging || handleClick ? undefined : computedLink}
       onClick={handleClick}
       active={index === selectedNavigationMenuItemIndex}
-      isSelectedInEditMode={
-        selectedNavigationMenuItemId === navigationMenuItem.id
-      }
+      isSelectedInEditMode={isEditHighlightedInNavigationMenu}
       subItemState={getNavigationSubItemLeftAdornment({
         index,
         arrayLength,

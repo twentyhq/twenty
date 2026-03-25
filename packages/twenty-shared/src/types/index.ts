@@ -14,6 +14,10 @@ export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
+export { CalendarChannelContactAutoCreationPolicy } from './CalendarChannelContactAutoCreationPolicy';
+export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
+export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
+export { CalendarChannelVisibility } from './CalendarChannelVisibility';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
 export { CommandMenuContextApiPageType } from './CommandMenuContextApiPageType';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
@@ -125,6 +129,14 @@ export type { IsExactly } from './IsExactly';
 export type { IsNever } from './IsNever.type';
 export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
+export { MessageChannelContactAutoCreationPolicy } from './MessageChannelContactAutoCreationPolicy';
+export { MessageChannelPendingGroupEmailsAction } from './MessageChannelPendingGroupEmailsAction';
+export { MessageChannelSyncStage } from './MessageChannelSyncStage';
+export { MessageChannelSyncStatus } from './MessageChannelSyncStatus';
+export { MessageChannelType } from './MessageChannelType';
+export { MessageChannelVisibility } from './MessageChannelVisibility';
+export { MessageFolderImportPolicy } from './MessageFolderImportPolicy';
+export { MessageFolderPendingSyncAction } from './MessageFolderPendingSyncAction';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignature';
 export type { ModifiedProperties } from './ModifiedProperties';
@@ -162,6 +174,7 @@ export type {
   BarChartConfiguration,
   LineChartConfiguration,
   ViewConfiguration,
+  RecordTableConfiguration,
   FieldConfiguration,
   FieldsConfiguration,
   FieldRichTextConfiguration,

@@ -166,6 +166,10 @@ plugins: [
 
 Führen Sie den folgenden Befehl im Datenbankcontainer aus, um Zugriff auf das Admin-Panel zu erhalten: `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';`
 
+#### Beim Ausführen eines Workflows schlägt die Workflow-Ausführung fehl mit "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
+
+In der Produktion sind Logikfunktionen standardmäßig deaktiviert. Setzen Sie die Umgebungsvariable `LOGIC_FUNCTION_TYPE` auf `LOCAL` oder `LAMBDA`, um sie zu aktivieren. Dies kann über Umgebungsvariablen oder über die Datenbankvariablen des Admin-Panels konfiguriert werden. Details finden Sie im [Leitfaden zur Einrichtung von Logikfunktionen](/l/de/developers/self-host/capabilities/setup#logic-functions-available-drivers).
+
 ### 1-Klick Docker Compose
 
 #### Kann mich nicht einloggen

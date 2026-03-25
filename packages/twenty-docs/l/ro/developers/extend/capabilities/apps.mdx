@@ -21,19 +21,51 @@ Aplicațiile vă permit să construiți și să gestionați personalizările Twe
 ## Cerințe
 
 * Node.js 24+ și Yarn 4
-* Un spațiu de lucru Twenty și o cheie API (creați una la https://app.twenty.com/settings/api-webhooks)
+* Docker (pentru serverul local de dezvoltare Twenty)
 
 ## Începeți
 
-Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă și începeți să dezvoltați:
+Creează o aplicație nouă folosind generatorul oficial. Poate porni automat o instanță Twenty locală pentru tine:
 
 ```bash filename="Terminal"
-# Creează scheletul unei aplicații noi (include toate exemplele în mod implicit)
+# Creează scheletul unei aplicații noi — CLI-ul îți va oferi opțiunea de a porni un server Twenty local
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Pornește modul de dezvoltare: sincronizează automat modificările locale cu spațiul tău de lucru
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### Gestionarea serverului local
+
+SDK-ul include comenzi pentru a gestiona un server local de dezvoltare Twenty (imagine Docker all-in-one cu PostgreSQL, Redis, server și worker):
+
+```bash filename="Terminal"
+# Pornește serverul local (descarcă imaginea dacă este necesar)
+yarn twenty server start
+
+# Verifică starea serverului
+yarn twenty server status
+
+# Afișează în timp real jurnalele serverului
+yarn twenty server logs
+
+# Oprește serverul
+yarn twenty server stop
+
+# Resetează toate datele și pornește de la zero
+yarn twenty server reset
+```
+
+Serverul local vine preconfigurat cu un spațiu de lucru și un utilizator (`tim@apple.dev` / `tim@apple.dev`), astfel încât să poți începe să dezvolți imediat, fără nicio configurare manuală.
+
+### Autentificare
+
+Conectează-ți aplicația la serverul local folosind OAuth:
+
+```bash filename="Terminal"
+# Autentifică-te prin OAuth (se deschide browserul)
+yarn twenty remote add --local
 ```
 
 Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:
@@ -46,34 +78,46 @@ npx create-twenty-app@latest my-app
 npx create-twenty-app@latest my-app --minimal
 ```
 
+### Cum să folosești o instanță Twenty locală
+
+Dacă rulezi deja o instanță Twenty locală, te poți conecta la ea în loc să folosești Docker. Specifică portul pe care ascultă serverul tău local (implicit: `3000`):
+
+```bash filename="Terminal"
+# During scaffolding
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding
+yarn twenty remote add --local --port 3000
+```
+
 De aici puteți:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adaugă o entitate nouă în aplicația ta (ghidat)
 yarn twenty entity:add
 
-# Watch your application's function logs
+# Urmărește jurnalele funcțiilor aplicației tale
 yarn twenty function:logs
 
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
+# Execută o funcție după nume
+yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
 
-# Execute the pre-install function
+# Execută funcția de pre-instalare
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# Execută funcția post-instalare
 yarn twenty function:execute --postInstall
 
-# Build the app for distribution
-yarn twenty app:build
+# Construiește aplicația pentru distribuire
+yarn twenty build
 
-# Publish the app to npm or a Twenty server
-yarn twenty app:publish
+# Publică aplicația pe npm sau pe un server Twenty
+yarn twenty publish
 
-# Uninstall the application from the current workspace
-yarn twenty app:uninstall
+# Dezinstalează aplicația din spațiul de lucru curent
+yarn twenty uninstall
 
-# Display commands' help
+# Afișează ajutorul pentru comenzi
 yarn twenty help
 ```
 
@@ -177,7 +221,7 @@ export default defineObject({
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn twenty app:dev` va genera automat doi clienți API tipizați în `node_modules/twenty-sdk/clients`: `CoreApiClient` (pentru datele spațiului de lucru prin `/graphql`) și `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`).
+* `yarn twenty dev` va genera automat doi clienți API tipizați în `node_modules/twenty-sdk/clients`: `CoreApiClient` (pentru datele spațiului de lucru prin `/graphql`) și `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`).
 * `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end, rolurile, abilitățile și altele.
 
 ## Autentificare
@@ -506,7 +550,7 @@ Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta 
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/clients';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -552,7 +596,7 @@ export default defineLogicFunction({
     //   updatedFields: ['name'],
     // },
   ],
-});
+});},{
 ```
 
 Tipuri comune de declanșatoare:
@@ -751,7 +795,7 @@ Pentru a marca o funcție logică drept instrument, setați `isTool: true` și f
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -836,7 +880,7 @@ Puncte cheie:
 
 * Componentele Front sunt componente React care sunt randate în contexte izolate în cadrul Twenty.
 * Câmpul `component` face referire la componenta React.
-* Componentele sunt construite și sincronizate automat în timpul `yarn twenty app:dev`.
+* Componentele sunt construite și sincronizate automat în timpul `yarn twenty dev`.
 
 Puteți crea componente Front noi în două moduri:
 
@@ -1164,14 +1208,14 @@ Puteți crea agenți noi în două moduri:
 
 ### Generated typed clients
 
-Doi clienți tipizați sunt generați automat de `yarn twenty app:dev` și stocați în `node_modules/twenty-sdk/clients`, pe baza schemei spațiului tău de lucru:
+Doi clienți tipizați sunt generați automat de `yarn twenty dev` și stocați în `node_modules/twenty-sdk/clients`, pe baza schemei spațiului tău de lucru:
 
 * **`CoreApiClient`** — queries the `/graphql` endpoint for workspace data
 * **`MetadataApiClient`** — interoghează endpointul `/metadata` pentru configurarea spațiului de lucru și încărcarea fișierelor
 
 ```typescript
-import { CoreApiClient } from 'twenty-sdk/clients';
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -1180,7 +1224,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-`CoreApiClient` este regenerat automat de `yarn twenty app:dev` ori de câte ori obiectele sau câmpurile tale se schimbă. `MetadataApiClient` este livrat preconstruit împreună cu SDK-ul.
+`CoreApiClient` este regenerat automat de `yarn twenty dev` ori de câte ori obiectele sau câmpurile tale se schimbă. `MetadataApiClient` este livrat preconstruit împreună cu SDK-ul.
 
 #### Acreditări la runtime în funcțiile de logică
 
@@ -1200,7 +1244,7 @@ Notițe:
 `MetadataApiClient` include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier ale obiectelor din spațiul tău de lucru. Deoarece clienții GraphQL standard nu acceptă în mod nativ încărcarea fișierelor multipart, clientul oferă această metodă dedicată care implementează, sub capotă, [specificația cererilor GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -1251,11 +1295,11 @@ Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de
 Once you've developed your app with `app:dev`, use `app:build` to compile it into a distributable package.
 
 ```bash filename="Terminal"
-# Build the app (output goes to .twenty/output/)
-yarn twenty app:build
+# Construiește aplicația (rezultatul este plasat în .twenty/output/)
+yarn twenty build
 
-# Build and create a tarball (.tgz) for distribution
-yarn twenty app:build --tarball
+# Construiește și creează un pachet tar (.tgz) pentru distribuire
+yarn twenty build --tarball
 ```
 
 The build process:
@@ -1294,11 +1338,11 @@ Folosește `app:publish` pentru a distribui aplicația — fie în registrul npm
 ### Publicare pe npm (implicit)
 
 ```bash filename="Terminal"
-# Publicare pe npm (necesită autentificare npm)
-yarn twenty app:publish
+# Publică pe npm (necesită autentificare npm)
+yarn twenty publish
 
-# Publicare cu un dist-tag (de ex. beta, next)
-yarn twenty app:publish --tag beta
+# Publică cu un dist-tag (de ex. beta, next)
+yarn twenty publish --tag beta
 ```
 
 Aceasta construiește aplicația și rulează `npm publish` din directorul `.twenty/output/`. Pachetul publicat poate fi apoi instalat din marketplace-ul Twenty de către orice spațiu de lucru.
@@ -1306,8 +1350,8 @@ Aceasta construiește aplicația și rulează `npm publish` din directorul `.twe
 ### Publicare pe un server Twenty
 
 ```bash filename="Terminal"
-# Publicare direct pe un server Twenty
-yarn twenty app:publish --server https://app.twenty.com
+# Publică direct pe un server Twenty
+yarn twenty publish --server https://app.twenty.com
 ```
 
 Aceasta construiește aplicația cu un tarball, o încarcă pe server prin mutația GraphQL `uploadAppTarball` și declanșează instalarea într-un singur pas. Acest lucru este util pentru implementări private sau pentru testare pe un server specific.
@@ -1371,13 +1415,13 @@ Apoi adăugați un script `twenty`:
 }
 ```
 
-Acum poți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty help`, etc.
+Acum poți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty dev`, `yarn twenty help`, etc.
 
 ## Depanare
 
 * Erori de autentificare: rulați `yarn twenty auth:login` și asigurați-vă că cheia API are permisiunile necesare.
 * Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
-* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
-* Modul dev nu sincronizează: asigurați-vă că `yarn twenty app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
+* Tipuri sau client lipsă/învechite: repornește `yarn twenty dev` — acesta generează automat clientul tipizat.
+* Modul dev nu sincronizează: asigură-te că `yarn twenty dev` rulează și că modificările nu sunt ignorate de mediul tău.
 
 Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

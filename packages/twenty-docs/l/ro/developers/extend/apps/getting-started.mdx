@@ -20,7 +20,7 @@ Aplicațiile vă permit să extindeți Twenty cu obiecte personalizate, câmpuri
 ## Cerințe
 
 * Node.js 24+ și Yarn 4
-* Un spațiu de lucru Twenty și o cheie API (creați una la https://app.twenty.com/settings/api-webhooks)
+* Docker (pentru serverul local de dezvoltare Twenty)
 
 ## Începeți
 
@@ -32,13 +32,13 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn twenty app:dev
+yarn twenty dev
 ```
 
 Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -64,7 +64,7 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
 yarn twenty help
@@ -167,7 +167,7 @@ export default defineObject({
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn twenty app:dev` va genera automat doi clienți API tipizați în `node_modules/twenty-sdk/generated`: `CoreApiClient` (pentru datele spațiului de lucru prin `/graphql`) și `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`).
+* `yarn twenty dev` va genera automat doi clienți API tipizați în `node_modules/twenty-sdk/generated`: `CoreApiClient` (pentru datele spațiului de lucru prin `/graphql`) și `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`).
 * `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end, rolurile, abilitățile și altele.
 
 ## Autentificare
@@ -221,13 +221,25 @@ Apoi adăugați un script `twenty`:
 }
 ```
 
-Acum puteți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty app:dev`, `yarn twenty help`, etc.
+Acum poți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty dev`, `yarn twenty help`, etc.
+
+## Cum să folosești o instanță Twenty locală
+
+Dacă rulezi deja local o instanță Twenty (de exemplu prin `npx nx start twenty-server`), te poți conecta la ea în loc să folosești Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## Depanare
 
 * Erori de autentificare: rulați `yarn twenty auth:login` și asigurați-vă că cheia API are permisiunile necesare.
 * Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
-* Tipuri sau client lipsă/învechite: reporniți `yarn twenty app:dev` — acesta generează automat clientul tipizat.
-* Modul dev nu sincronizează: asigurați-vă că `yarn twenty app:dev` rulează și că modificările nu sunt ignorate de mediul dvs.
+* Tipuri sau client lipsă/învechite: repornește `yarn twenty dev` — acesta generează automat clientul tipizat.
+* Modul dev nu sincronizează: asigură-te că `yarn twenty dev` rulează și că modificările nu sunt ignorate de mediul tău.
 
 Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

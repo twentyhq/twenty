@@ -3,10 +3,10 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 type MessagingResetChannelCommandOptions = {
@@ -24,6 +24,7 @@ export class MessagingResetChannelCommand extends CommandRunner {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
     private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
   ) {
@@ -39,21 +40,14 @@ export class MessagingResetChannelCommand extends CommandRunner {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
-
       this.logger.log(
         `No message channel ID provided, resetting all message channels in workspace ${workspaceId}`,
       );
 
-      const messageChannels = await messageChannelRepository.find({
-        where: {
-          ...(isDefined(messageChannelId) ? { id: messageChannelId } : {}),
-        },
-      });
+      const messageChannels = await this.messageChannelDataAccessService.find(
+        workspaceId,
+        isDefined(messageChannelId) ? { id: messageChannelId } : {},
+      );
 
       if (messageChannels.length === 0) {
         this.logger.log(

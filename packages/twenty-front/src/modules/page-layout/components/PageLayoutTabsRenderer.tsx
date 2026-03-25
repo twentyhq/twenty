@@ -1,5 +1,5 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -96,7 +96,7 @@ export const PageLayoutTabsRenderer = () => {
   );
 
   const isSystemObject =
-    (metadataStore.current as ObjectMetadataItem[]).find(
+    (metadataStore.current as FlatObjectMetadataItem[]).find(
       (item) =>
         item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
     )?.isSystem ?? false;
@@ -172,6 +172,7 @@ export const PageLayoutTabsRenderer = () => {
             <PageLayoutTabList
               tabs={sortedTabs}
               behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
+              isInSidePanel={isInSidePanel}
               componentInstanceId={tabListInstanceId}
               onAddTab={handleAddTab}
               isReorderEnabled={canEnableTabEditing}

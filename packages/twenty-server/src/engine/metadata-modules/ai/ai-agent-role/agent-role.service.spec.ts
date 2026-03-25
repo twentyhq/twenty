@@ -8,7 +8,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
@@ -83,7 +83,7 @@ describe('AiAgentRoleService', () => {
       name: 'Test Agent',
       description: 'Test agent for unit tests',
       prompt: 'You are a test agent',
-      modelId: 'gpt-4o' as ModelId,
+      modelId: 'openai/gpt-4o' as ModelId,
       workspaceId: testWorkspaceId,
       createdAt: new Date(),
       updatedAt: new Date(),

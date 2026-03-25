@@ -1,10 +1,9 @@
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
-import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
+import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
 import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayoutWithRelated';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
-import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useApolloClient } from '@apollo/client/react';
@@ -54,7 +53,7 @@ const hasOverlap = (
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
   const store = useStore();
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const loadStaleMetadataEntities = useCallback(
     async (staleEntityKeys: MetadataEntityKey[]) => {
@@ -72,13 +71,8 @@ export const useLoadStaleMetadataEntities = () => {
               fetchPolicy: 'network-only',
             })
             .then((result) => {
-              const compositeObjects =
-                mapPaginatedObjectMetadataItemsToObjectMetadataItems({
-                  pagedObjectMetadataItems: result.data,
-                });
-
               const { flatObjects, flatFields, flatIndexes } =
-                splitObjectMetadataItemWithRelated(compositeObjects);
+                splitObjectMetadataGqlResponse(result.data);
 
               replaceDraft('objectMetadataItems', flatObjects);
               replaceDraft('fieldMetadataItems', flatFields);

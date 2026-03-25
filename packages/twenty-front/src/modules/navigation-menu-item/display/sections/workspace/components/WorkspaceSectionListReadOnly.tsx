@@ -42,7 +42,6 @@ export const WorkspaceSectionListReadOnly = ({
           isDragging={false}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
-          selectedNavigationMenuItemId={null}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
           readOnly
         />

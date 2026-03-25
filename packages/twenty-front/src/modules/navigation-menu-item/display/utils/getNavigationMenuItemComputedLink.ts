@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -8,7 +8,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getNavigationMenuItemComputedLink = (
   item: NavigationMenuItem,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
 ): string => {
   switch (item.type) {

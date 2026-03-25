@@ -37,6 +37,11 @@ export class MessagingMessageOutboundService {
           sendMessageInput,
           connectedAccount,
         );
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
+        throw new Error(
+          `Provider ${connectedAccount.provider} does not support sending messages`,
+        );
       default:
         assertUnreachable(
           connectedAccount.provider,
@@ -64,6 +69,11 @@ export class MessagingMessageOutboundService {
         return this.imapSmtpMessageOutboundService.createDraft(
           sendMessageInput,
           connectedAccount,
+        );
+      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.SAML:
+        throw new Error(
+          `Provider ${connectedAccount.provider} does not support creating drafts`,
         );
       default:
         assertUnreachable(

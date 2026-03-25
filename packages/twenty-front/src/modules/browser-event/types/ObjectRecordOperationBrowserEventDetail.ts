@@ -1,7 +1,7 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
 
 export type ObjectRecordOperationBrowserEventDetail = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   operation: ObjectRecordOperation;
 };

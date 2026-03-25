@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AdvancedFilterSidePanelCreateRootFilterButton } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton';
 import { AdvancedFilterSidePanelRecordFilterColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterColumn';
 import { AdvancedFilterSidePanelRecordFilterGroupColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterGroupColumn';
@@ -30,7 +30,7 @@ const StyledChildContainer = styled.div`
 export type AdvancedFilterSidePanelContainerProps = {
   readonly?: boolean;
   onUpdate?: () => void;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   VariablePicker?: VariablePickerComponent;
   isWorkflowFindRecords?: boolean;
 };

@@ -1,0 +1,121 @@
+---
+title: الرد التلقائي على رسائل البريد الإلكتروني الواردة
+description: أنشئ سير عمل يستخدم الذكاء الاصطناعي لفرز رسائل البريد الإلكتروني الواردة وإرسال ردود ضمن سلسلة المحادثة تلقائيًا.
+---
+
+استجب لرسائل البريد الإلكتروني الواردة خلال ثوانٍ — وليس ساعات. يستخدم سير العمل هذا وكيلاً للذكاء الاصطناعي لتصفية الضوضاء (النشرات الإخبارية، الرسائل غير المرغوب فيها، الردود التلقائية) وصياغة رد مخصص للرسائل الحقيقية، ثم يرسله كرد مُسلسل داخل المحادثة الأصلية.
+
+## كيف يعمل تسلسل رسائل البريد الإلكتروني
+
+تحمل كل رسالة بريد إلكتروني ترويسة `Message-ID` مخفية — بصمة فريدة يعيّنها خادم بريد المرسل. عند الرد على بريد إلكتروني، يقوم عميل البريد لديك بتعيين ترويسة `In-Reply-To` التي تُشير إلى تلك البصمة. بهذه الطريقة يقوم Gmail وOutlook وكل عميل آخر بتجميع الرسائل في سلاسل المحادثات.
+
+في Twenty، تُخزَّن تلك البصمة كـ `headerMessageId` على كائن Message. يلتقطه سير العمل لديك ويمرّره إلى حقل In-Reply-To لإجراء Send Email.
+
+## بناء سير العمل
+
+### الخطوة 1: إنشاء سير عمل جديد
+
+توجّه إلى **Settings -> Workflows** وانقر **+ New Workflow**.
+
+### الخطوة 2: التشغيل عند الرسائل الواردة
+
+اختر **When a Record is Created** ثم **Messages**.
+
+في كل مرة يصل فيها بريد إلكتروني إلى Twenty، يُشغَّل هذا.
+
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+
+### الخطوة 3: البحث عن المُرسِل
+
+أضِف إجراء **Search Records**.
+
+عنوان المُرسِل ليس في الرسالة نفسها — بل في سجل Message Participant المرتبط.
+
+| الحقل      | القيمة                             |
+| ---------- | ---------------------------------- |
+| **الكائن** | المشاركون في الرسالة               |
+| **تصفية**  | Message **يساوي** `{{trigger.id}}` |
+| **تصفية**  | Role **يساوي** From                |
+| **الحد**   | 1                                  |
+
+سيمنحك هذا بريد المُرسِل الإلكتروني في `handle` واسمه في `displayName`.
+
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+
+### الخطوة 4: الفرز بالذكاء الاصطناعي وصياغة الرد
+
+أضِف إجراء **AI Agent**. تقوم هذه الخطوة الواحدة بأمرين: تقرر ما إذا كان البريد الإلكتروني يستحق الرد، وإن كان كذلك، تصوغ ردًا.
+
+استخدم موجهًا مثل:
+
+```
+You are an email triage assistant for a sales team. Read the following
+inbound email and decide if it deserves a reply.
+
+Subject: {{trigger.subject}}
+Body: {{trigger.text}}
+From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
+
+If this email is spam, a newsletter, an automated notification, or
+otherwise does not need a human reply, respond with exactly: SKIP
+
+Otherwise, write a short, professional reply (3-4 sentences max) that:
+- Acknowledges their specific message
+- Lets them know someone from the team will follow up shortly
+- Is warm but not overly casual
+
+Respond with only the reply text, no subject line or greeting prefix.
+```
+
+يُنتِج AI Agent استجابته في الحقل `response` الذي يمكن للخطوات التالية الرجوع إليه.
+
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+
+### الخطوة 5: التفريع بناءً على قرار الذكاء الاصطناعي
+
+أضِف إجراء **If/Else** للتحقق مما إذا كان الذكاء الاصطناعي قرر الرد أم التخطي.
+
+| الحقل              | القيمة                                      |
+| ------------------ | ------------------------------------------- |
+| **الشرط**          | AI Agent `response` **لا يحتوي على** `SKIP` |
+| **إذا كان صحيحًا** | المتابعة إلى Send Email                     |
+| **وإلا**           | لا تفعل شيئًا (ينتهي سير العمل)             |
+
+يتم تجاهل الرسائل غير المرغوب فيها والنشرات البريدية والرسائل المُنشأة تلقائيًا. كل ما عدا ذلك ينتقل إلى الخطوة التالية.
+
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+
+### الخطوة 6: إرسال رد ضمن سلسلة المحادثة
+
+أضِف إجراء **Send Email** على فرع "if true". انقر **Advanced options** ثم **Add In-Reply-To**.
+
+| الحقل           | القيمة                                 |
+| --------------- | -------------------------------------- |
+| **إلى**         | `{{Find Sender.first.handle}}`         |
+| **الموضوع**     | `Re: {{trigger.subject}}`              |
+| **المحتوى**     | `{{AI Triage & Draft Reply.response}}` |
+| **In-Reply-To** | `{{trigger.headerMessageId}}`          |
+
+حقل In-Reply-To هو ما يجعل هذا ردًا بدلًا من محادثة جديدة. سيراه المستلِم ضمن سلسلة تحت البريد الأصلي في Gmail أو Outlook أو أي عميل آخر.
+
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+
+<Tip>
+**In-Reply-To** يتوقّع `message.headerMessageId` من المشغّل — إنها البصمة الفريدة للبريد الإلكتروني، وليست عنوان المستلم. إذا تركته فارغًا، فسيُرسَل البريد الإلكتروني على أي حال، ولكن كرسالة مستقلة.
+</Tip>
+
+<Warning>
+يستخدم Gmail سطر الموضوع لتجميع الرسائل في سلاسل المحادثات. يجب أن يبدأ الموضوع بـ `Re:` (بما في ذلك النقطتان والمسافة) ليعرض Gmail الرد داخل سلسلة المحادثة الأصلية. بدون ذلك، سيظهر الرد كمحادثة منفصلة — حتى إذا تم تعيين ترويسة In-Reply-To بشكل صحيح.
+</Warning>
+
+### الخطوة 7: الاختبار والتفعيل
+
+اضغط **Test**، ثم تحقّق من عميل البريد لديك. يجب أن يظهر الرد متداخلًا تحت الرسالة الأصلية.
+
+فعِّل عندما تكون راضيًا عنه.
+
+## أفكار للبناء عليها
+
+* **الرد على كبار الشخصيات فقط** — أضِف فرعًا يتحقق من مجال المُرسِل أو مما إذا كان موجودًا كجهة اتصال في Twenty
+* **التوجيه حسب النية** — استخدم موجهات AI Agent منفصلة للتعامل مع استفسارات المبيعات بشكل مختلف عن طلبات الدعم
+* **الإثراء قبل الرد** — أضِف خطوة Search Records لجلب شركة المُرسِل أو سجل الصفقات إلى الموجه الخاص بالذكاء الاصطناعي للحصول على ردود أكثر تخصيصًا

@@ -21,19 +21,51 @@ Le app ti consentono di creare e gestire le personalizzazioni di Twenty **come c
 ## Prerequisiti
 
 * Node.js 24+ e Yarn 4
-* Uno spazio di lavoro Twenty e una chiave API (creane una su https://app.twenty.com/settings/api-webhooks)
+* Docker (per il server di sviluppo locale di Twenty)
 
 ## Per iniziare
 
-Crea una nuova app utilizzando lo scaffolder ufficiale, quindi autenticati e inizia a sviluppare:
+Crea una nuova app utilizzando lo scaffolder ufficiale. Può avviare automaticamente un'istanza locale di Twenty per te:
 
 ```bash filename="Terminal"
-# Crea lo scaffold di una nuova app (include tutti gli esempi per impostazione predefinita)
+# Crea lo scaffold di una nuova app — la CLI offrirà di avviare un server locale di Twenty
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Avvia la modalità di sviluppo: sincronizza automaticamente le modifiche locali con il tuo workspace
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### Gestione del server locale
+
+L'SDK include comandi per gestire un server di sviluppo locale di Twenty (immagine Docker all-in-one con PostgreSQL, Redis, server e worker):
+
+```bash filename="Terminal"
+# Avvia il server locale (scarica l'immagine se necessario)
+yarn twenty server start
+
+# Verifica lo stato del server
+yarn twenty server status
+
+# Segui i log del server
+yarn twenty server logs
+
+# Arresta il server
+yarn twenty server stop
+
+# Reimposta tutti i dati e riparti da zero
+yarn twenty server reset
+```
+
+Il server locale è preconfigurato con uno spazio di lavoro e un utente (`tim@apple.dev` / `tim@apple.dev`), così puoi iniziare a sviluppare immediatamente senza alcuna configurazione manuale.
+
+### Autenticazione
+
+Collega la tua app al server locale tramite OAuth:
+
+```bash filename="Terminal"
+# Autenticati tramite OAuth (apre il browser)
+yarn twenty remote add --local
 ```
 
 Lo strumento di scaffolding supporta due modalità per controllare quali file di esempio vengono inclusi:
@@ -44,6 +76,18 @@ npx create-twenty-app@latest my-app
 
 # Minimale: solo i file principali (application-config.ts e default-role.ts)
 npx create-twenty-app@latest my-app --minimal
+```
+
+### Come utilizzare un'istanza locale di Twenty
+
+Se stai già eseguendo un'istanza locale di Twenty, puoi connetterti ad essa invece di usare Docker. Indica la porta su cui il tuo server locale è in ascolto (predefinita: `3000`):
+
+```bash filename="Terminal"
+# Durante lo scaffolding
+npx create-twenty-app@latest my-app --port 3000
+
+# Oppure dopo lo scaffolding
+yarn twenty remote add --local --port 3000
 ```
 
 Da qui puoi:
@@ -65,13 +109,13 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Compila l'app per la distribuzione
-yarn twenty app:build
+yarn twenty build
 
 # Pubblica l'app su npm o su un server Twenty
-yarn twenty app:publish
+yarn twenty publish
 
 # Disinstalla l'applicazione dallo spazio di lavoro corrente
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Mostra l'aiuto dei comandi
 yarn twenty help
@@ -177,7 +221,7 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty app:dev` genererà automaticamente due client API tipizzati in `node_modules/twenty-sdk/clients`: `CoreApiClient` (per i dati dell'area di lavoro tramite `/graphql`) e `MetadataApiClient` (per la configurazione dell'area di lavoro e il caricamento di file tramite `/metadata`).
+* `yarn twenty dev` genererà automaticamente due client API tipizzati in `node_modules/twenty-sdk/clients`: `CoreApiClient` (per i dati dell'area di lavoro tramite `/graphql`) e `MetadataApiClient` (per la configurazione dell'area di lavoro e il caricamento di file tramite `/metadata`).
 * `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Autenticazione
@@ -506,7 +550,7 @@ Ogni file di funzione usa `defineLogicFunction()` per esportare una configurazio
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/clients';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -530,7 +574,7 @@ export default defineLogicFunction({
   timeoutSeconds: 2,
   handler,
   triggers: [
-    // Public HTTP route trigger '/s/post-card/create'
+    // Trigger di route HTTP pubblica '/s/post-card/create'
     {
       universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
       type: 'route',
@@ -538,13 +582,13 @@ export default defineLogicFunction({
       httpMethod: 'GET',
       isAuthRequired: false,
     },
-    // Cron trigger (CRON pattern)
+    // Trigger Cron (pattern CRON)
     // {
     //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
     //   type: 'cron',
     //   pattern: '0 0 1 1 *',
     // },
-    // Database event trigger
+    // Trigger di evento del database
     // {
     //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
     //   type: 'databaseEvent',
@@ -751,7 +795,7 @@ Per contrassegnare una funzione logica come strumento, imposta `isTool: true` e 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -760,8 +804,8 @@ const handler = async (params: { companyName: string; domain?: string }) => {
     createTask: {
       __args: {
         data: {
-          title: `Enrich data for ${params.companyName}`,
-          body: `Domain: ${params.domain ?? 'unknown'}`,
+          title: `Arricchisci i dati per ${params.companyName}`,
+          body: `Dominio: ${params.domain ?? 'sconosciuto'}`,
         },
       },
       id: true,
@@ -774,7 +818,7 @@ const handler = async (params: { companyName: string; domain?: string }) => {
 export default defineLogicFunction({
   universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   name: 'enrich-company',
-  description: 'Enrich a company record with external data',
+  description: 'Arricchisci un record aziendale con dati esterni',
   timeoutSeconds: 10,
   handler,
   isTool: true,
@@ -783,11 +827,11 @@ export default defineLogicFunction({
     properties: {
       companyName: {
         type: 'string',
-        description: 'The name of the company to enrich',
+        description: 'Il nome dell\'azienda da arricchire',
       },
       domain: {
         type: 'string',
-        description: 'The company website domain (optional)',
+        description: 'Il dominio del sito web dell\'azienda (facoltativo)',
       },
     },
     required: ['companyName'],
@@ -836,7 +880,7 @@ Punti chiave:
 
 * I componenti front-end sono componenti React che eseguono il rendering in contesti isolati all'interno di Twenty.
 * Il campo `component` fa riferimento al tuo componente React.
-* I componenti vengono compilati e sincronizzati automaticamente durante `yarn twenty app:dev`.
+* I componenti vengono compilati e sincronizzati automaticamente durante `yarn twenty dev`.
 
 Puoi creare nuovi componenti front-end in due modi:
 
@@ -1164,23 +1208,23 @@ Puoi creare nuovi agenti in due modi:
 
 ### Client tipizzati generati
 
-Due client tipizzati sono generati automaticamente da `yarn twenty app:dev` e salvati in `node_modules/twenty-sdk/clients` in base allo schema della tua area di lavoro:
+Due client tipizzati sono generati automaticamente da `yarn twenty dev` e salvati in `node_modules/twenty-sdk/clients` in base allo schema della tua area di lavoro:
 
 * **`CoreApiClient`** — interroga l'endpoint `/graphql` per i dati dell'area di lavoro
 * **`MetadataApiClient`** — interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro e il caricamento dei file
 
 ```typescript
-import { CoreApiClient } from 'twenty-sdk/clients';
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
-const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });},{
 ```
 
-`CoreApiClient` viene rigenerato automaticamente da `yarn twenty app:dev` ogni volta che i tuoi oggetti o campi cambiano. `MetadataApiClient` è fornito pronto all'uso con l'SDK.
+`CoreApiClient` viene rigenerato automaticamente da `yarn twenty dev` ogni volta che i tuoi oggetti o campi cambiano. `MetadataApiClient` è fornito pronto all'uso con l'SDK.
 
 #### Credenziali di runtime nelle funzioni logiche
 
@@ -1200,7 +1244,7 @@ Note:
 Il `MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file sugli oggetti del tuo spazio di lavoro. Poiché i client GraphQL standard non supportano nativamente il caricamento di file multipart, il client fornisce questo metodo dedicato che implementa la [specifica della richiesta GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec) dietro le quinte.
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -1208,10 +1252,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+  fileBuffer,                                         // contenuto del file come Buffer
+  'invoice.pdf',                                      // nome del file
+  'application/pdf',                                  // Tipo MIME (predefinito: 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // identificatore universale del campo
 );
 
 console.log(uploadedFile);
@@ -1252,10 +1296,10 @@ Una volta che hai sviluppato la tua app con `app:dev`, usa `app:build` per compi
 
 ```bash filename="Terminal"
 # Compila l'app (l'output va in .twenty/output/)
-yarn twenty app:build
+yarn twenty build
 
 # Compila e crea un tarball (.tgz) per la distribuzione
-yarn twenty app:build --tarball
+yarn twenty build --tarball
 ```
 
 Il processo di compilazione:
@@ -1295,10 +1339,10 @@ Usa `app:publish` per distribuire la tua app — al registro npm oppure direttam
 
 ```bash filename="Terminal"
 # Pubblica su npm (richiede l'accesso a npm)
-yarn twenty app:publish
+yarn twenty publish
 
 # Pubblica con un dist-tag (ad es. beta, next)
-yarn twenty app:publish --tag beta
+yarn twenty publish --tag beta
 ```
 
 Questo compila l'app ed esegue `npm publish` dalla directory `.twenty/output/`. Il pacchetto pubblicato può quindi essere installato dal marketplace di Twenty da qualsiasi area di lavoro.
@@ -1307,7 +1351,7 @@ Questo compila l'app ed esegue `npm publish` dalla directory `.twenty/output/`. 
 
 ```bash filename="Terminal"
 # Pubblica direttamente su un server Twenty
-yarn twenty app:publish --server https://app.twenty.com
+yarn twenty publish --server https://app.twenty.com
 ```
 
 Questo compila l'app con un tarball, lo carica sul server tramite la mutation GraphQL `uploadAppTarball` e avvia l'installazione in un unico passaggio. Questo è utile per distribuzioni private o per effettuare test su un server specifico.
@@ -1371,13 +1415,13 @@ Quindi aggiungi uno script `twenty`:
 }
 ```
 
-Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty app:dev`, `yarn twenty help`, ecc.
+Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty dev`, `yarn twenty help`, ecc.
 
 ## Risoluzione dei problemi
 
 * Errori di autenticazione: esegui `yarn twenty auth:login` e assicurati che la tua chiave API abbia i permessi richiesti.
 * Impossibile connettersi al server: verifica l'URL dell'API e che il server Twenty sia raggiungibile.
-* Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
-* Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty app:dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
+* Tipi o client mancanti/obsoleti: riavvia `yarn twenty dev` — genera automaticamente il client tipizzato.
+* Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
 
 Canale di supporto su Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

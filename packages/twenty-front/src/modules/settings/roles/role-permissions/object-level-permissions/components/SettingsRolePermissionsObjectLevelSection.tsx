@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
@@ -37,7 +37,7 @@ type SettingsRolePermissionsObjectLevelSectionProps = {
   roleId: string;
   isEditable: boolean;
   fromAgentId?: string;
-  objectMetadataItemsFromMarketplaceApp?: ObjectMetadataItem[];
+  objectMetadataItemsFromMarketplaceApp?: EnrichedObjectMetadataItem[];
 };
 
 export const SettingsRolePermissionsObjectLevelSection = ({

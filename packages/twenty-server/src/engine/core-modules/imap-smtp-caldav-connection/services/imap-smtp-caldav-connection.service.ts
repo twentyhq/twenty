@@ -6,6 +6,7 @@ import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import {
   type AccountType,
   type ConnectionParameters,
@@ -21,6 +22,7 @@ export class ImapSmtpCaldavService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
   ) {}
 
   async testImapConnection(
@@ -188,20 +190,15 @@ export class ImapSmtpCaldavService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
+        const connectedAccount =
+          await this.connectedAccountDataAccessService.findOne(workspaceId, {
+            where: {
+              id: connectionId,
+              provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+            },
+          });
 
-        const connectedAccount = await connectedAccountRepository.findOne({
-          where: {
-            id: connectionId,
-            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-          },
-        });
-
-        return connectedAccount;
+        return connectedAccount as ConnectedAccountWorkspaceEntity | null;
       },
       authContext,
     );

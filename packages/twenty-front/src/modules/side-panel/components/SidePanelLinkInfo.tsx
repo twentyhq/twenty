@@ -5,7 +5,7 @@ import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/com
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/hooks/useUpdateLinkInDraft';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
@@ -21,8 +21,8 @@ export const SidePanelLinkInfo = () => {
       sidePanelShouldFocusTitleInputComponentState,
       sidePanelPageInfo.instanceId,
     );
-  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
   );
   const items = useNavigationMenuItemSectionItems();
   const { updateLinkInDraft } = useUpdateLinkInDraft();
@@ -30,11 +30,11 @@ export const SidePanelLinkInfo = () => {
   const defaultLabel = t`Link label`;
   const placeholder = t`Link label`;
 
-  const selectedItem = selectedNavigationMenuItemInEditMode
+  const selectedItem = selectedNavigationMenuItemIdInEditMode
     ? items.find(
         (item) =>
           item.type === NavigationMenuItemType.LINK &&
-          item.id === selectedNavigationMenuItemInEditMode,
+          item.id === selectedNavigationMenuItemIdInEditMode,
       )
     : undefined;
 

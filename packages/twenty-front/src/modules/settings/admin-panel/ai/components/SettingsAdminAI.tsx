@@ -1,206 +1,213 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
+
+import { useMutation, useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { Tag } from 'twenty-ui/components';
+import { H2Title, IconBolt, IconLock, IconRobot } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
 
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
+import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelsTable';
+import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
+import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
+import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
+import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
+import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
+import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
+import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
+import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { t } from '@lingui/core/macro';
-import { H2Title, IconArchive, IconPlug, IconRobot } from 'twenty-ui/display';
-import { SearchInput } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import {
-  CreateDatabaseConfigVariableDocument,
-  GetAdminAiModelsDocument,
-  SetAdminAiModelEnabledDocument,
+  AiModelRole,
+  type AdminAiModelConfig,
 } from '~/generated-metadata/graphql';
-import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
-import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
 export const SettingsAdminAI = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showUnconfigured, setShowUnconfigured] = useState(false);
-  const [showDeprecated, setShowDeprecated] = useState(false);
   const { refetch: refetchClientConfig } = useClientConfig();
 
-  const { data } = useQuery(GetAdminAiModelsDocument);
-  const [createConfigVariable] = useMutation(
-    CreateDatabaseConfigVariableDocument,
-  );
-  const [setModelEnabled] = useMutation(SetAdminAiModelEnabledDocument);
+  const { data, loading: isLoadingModels } = useQuery<{
+    getAdminAiModels: {
+      defaultSmartModelId?: string | null;
+      defaultFastModelId?: string | null;
+      models: AdminAiModelConfig[];
+    };
+  }>(GET_ADMIN_AI_MODELS);
 
-  const autoEnableNewModels =
-    data?.getAdminAiModels?.autoEnableNewModels ?? true;
+  const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED);
+  const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL);
+
+  const { data: providersData, loading: isLoadingProviders } =
+    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
 
   const models = data?.getAdminAiModels?.models ?? [];
 
-  const handleAutoEnableToggle = async (checked: boolean) => {
-    try {
-      await createConfigVariable({
-        variables: {
-          key: 'AI_AUTO_ENABLE_NEW_MODELS',
-          value: checked,
-        },
-        refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
-      });
+  const providerItems = useMemo(
+    () => parseProviderItems(providersData?.getAiProviders ?? {}),
+    [providersData],
+  );
 
-      await refetchClientConfig();
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update auto-enable setting`,
-      });
-    }
-  };
+  const catalogProviders = useMemo(
+    () =>
+      providerItems
+        .filter((provider) => provider.source === AI_PROVIDER_SOURCE.CATALOG)
+        .sort((a, b) => (a.label ?? a.id).localeCompare(b.label ?? b.id)),
+    [providerItems],
+  );
 
-  const handleModelToggle = async (
+  const customProviders = providerItems.filter(
+    (provider) => provider.source === AI_PROVIDER_SOURCE.CUSTOM,
+  );
+
+  if (isLoadingProviders || isLoadingModels) {
+    return <SettingsAdminTabSkeletonLoader />;
+  }
+
+  const handleRecommendedToggle = async (
     modelId: string,
-    isCurrentlyEnabled: boolean,
+    isCurrentlyRecommended: boolean,
   ) => {
     try {
-      await setModelEnabled({
-        variables: {
-          modelId,
-          enabled: !isCurrentlyEnabled,
-        },
+      await setModelRecommended({
+        variables: { modelId, recommended: !isCurrentlyRecommended },
         refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
       });
-
       await refetchClientConfig();
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
+        message: t`Failed to update model recommendation`,
       });
     }
   };
 
-  let filteredModels = models;
+  const defaultSmartModelId = data?.getAdminAiModels?.defaultSmartModelId;
+  const defaultFastModelId = data?.getAdminAiModels?.defaultFastModelId;
 
-  if (!showUnconfigured) {
-    filteredModels = filteredModels.filter((model) => model.isAvailable);
-  }
+  const enabledModels = models.filter(
+    (model) => model.isAvailable && model.isAdminEnabled && !model.isDeprecated,
+  );
 
-  if (!showDeprecated) {
-    filteredModels = filteredModels.filter((model) => !model.deprecated);
-  }
+  const availableModelOptions = enabledModels.map((model) => ({
+    value: model.modelId,
+    label: model.label,
+    Icon: getModelIcon(model.modelFamily, model.providerName),
+  }));
 
-  if (searchQuery.trim().length > 0) {
-    const query = searchQuery.toLowerCase();
-
-    filteredModels = filteredModels.filter(
-      (model) =>
-        model.label.toLowerCase().includes(query) ||
-        (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
-        model.inferenceProvider.toLowerCase().includes(query),
-    );
-  }
-
-  const getModelDescription = (
-    modelFamily: string | null | undefined,
-    isAvailable: boolean,
-    isDeprecated: boolean | null | undefined,
+  const handleDefaultModelChange = async (
+    role: AiModelRole,
+    modelId: string,
   ) => {
-    const providerLabel = getModelProviderLabel(modelFamily);
-
-    if (isDeprecated === true) {
-      return providerLabel ? t`${providerLabel} — Deprecated` : t`Deprecated`;
+    try {
+      await setDefaultModel({
+        variables: { role, modelId },
+        refetchQueries: [{ query: GET_ADMIN_AI_MODELS }],
+      });
+      await refetchClientConfig();
+    } catch {
+      enqueueErrorSnackBar({
+        message: t`Failed to update default model`,
+      });
     }
-
-    if (!isAvailable) {
-      return providerLabel
-        ? t`${providerLabel} — API key not configured`
-        : t`API key not configured`;
-    }
-
-    return providerLabel;
   };
 
   return (
     <>
       <Section>
         <H2Title
-          title={t`Admin Model Controls`}
-          description={t`Server-wide AI model availability settings`}
+          title={t`Providers`}
+          description={t`Built-in providers activated by API key. Click to manage models.`}
         />
 
-        <Card rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconRobot}
-            title={t`Automatically enable new models`}
-            description={t`When enabled, newly added models are available to all workspaces by default`}
-            checked={autoEnableNewModels}
-            onChange={handleAutoEnableToggle}
-          />
-        </Card>
+        <SettingsAdminAiProviderListCard
+          providers={catalogProviders}
+          showAddButton={false}
+        />
       </Section>
 
       <Section>
         <H2Title
-          title={t`All Models`}
-          description={t`Toggle model availability across all workspaces`}
+          title={t`Custom Providers`}
+          description={t`Add custom endpoints, private gateways, or additional regions.`}
+          adornment={
+            <Tag
+              text={t`Enterprise`}
+              color="transparent"
+              Icon={IconLock}
+              variant="border"
+            />
+          }
         />
 
-        <SearchInput
-          placeholder={t`Search a model...`}
-          value={searchQuery}
-          onChange={setSearchQuery}
-          filterDropdown={(filterButton) => (
-            <Dropdown
-              dropdownId="admin-ai-models-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconPlug}
-                      onToggleChange={() =>
-                        setShowUnconfigured(!showUnconfigured)
-                      }
-                      toggled={showUnconfigured}
-                      text={t`Unconfigured models`}
-                      toggleSize="small"
-                    />
-                    <MenuItemToggle
-                      LeftIcon={IconArchive}
-                      onToggleChange={() => setShowDeprecated(!showDeprecated)}
-                      toggled={showDeprecated}
-                      text={t`Deprecated models`}
-                      toggleSize="small"
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
-          )}
+        <SettingsAdminAiProviderListCard
+          providers={customProviders}
+          showAddButton
         />
-
-        <Card rounded>
-          {filteredModels.map((model, index) => (
-            <SettingsOptionCardContentToggle
-              key={model.modelId}
-              Icon={getModelIcon(model.modelFamily)}
-              title={model.label}
-              description={getModelDescription(
-                model.modelFamily,
-                model.isAvailable,
-                model.deprecated,
-              )}
-              checked={model.isAdminEnabled}
-              onChange={() =>
-                handleModelToggle(model.modelId, model.isAdminEnabled)
-              }
-              disabled={!model.isAvailable || model.deprecated === true}
-              divider={index < filteredModels.length - 1}
-            />
-          ))}
-        </Card>
       </Section>
+
+      {availableModelOptions.length > 0 && (
+        <Section>
+          <H2Title
+            title={t`Default Models`}
+            description={t`Configure the default AI models for all workspaces`}
+          />
+
+          <Card rounded>
+            <SettingsOptionCardContentSelect
+              Icon={IconRobot}
+              title={t`Smart Model`}
+              description={t`Default model for chats and complex reasoning`}
+            >
+              <Select
+                dropdownId="admin-smart-model-select"
+                value={defaultSmartModelId ?? undefined}
+                onChange={(value: string) =>
+                  handleDefaultModelChange(AiModelRole.SMART, value)
+                }
+                options={availableModelOptions}
+                selectSizeVariant="small"
+                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+              />
+            </SettingsOptionCardContentSelect>
+            <SettingsOptionCardContentSelect
+              Icon={IconBolt}
+              title={t`Fast Model`}
+              description={t`Default model for lightweight tasks`}
+            >
+              <Select
+                dropdownId="admin-fast-model-select"
+                value={defaultFastModelId ?? undefined}
+                onChange={(value: string) =>
+                  handleDefaultModelChange(AiModelRole.FAST, value)
+                }
+                options={availableModelOptions}
+                selectSizeVariant="small"
+                dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+              />
+            </SettingsOptionCardContentSelect>
+          </Card>
+        </Section>
+      )}
+
+      {enabledModels.length > 0 && (
+        <Section>
+          <H2Title
+            title={t`Recommended Models`}
+            description={t`Select which models appear as recommended in the workspace model picker`}
+          />
+
+          <SettingsAdminAiModelsTable
+            models={enabledModels}
+            onToggle={handleRecommendedToggle}
+            checkedField="isRecommended"
+            anchorPrefix="recommended-model-row"
+          />
+        </Section>
+      )}
     </>
   );
 };

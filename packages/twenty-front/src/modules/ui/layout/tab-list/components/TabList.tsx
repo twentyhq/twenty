@@ -12,6 +12,7 @@ import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TabButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 
@@ -22,6 +23,16 @@ const StyledContainer = styled.div`
   position: relative;
   user-select: none;
   width: 100%;
+
+  &::after {
+    background-color: ${themeCssVariables.border.color.light};
+    bottom: 0;
+    content: '';
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
 `;
 
 const StyledDropdownContainer = styled.div`

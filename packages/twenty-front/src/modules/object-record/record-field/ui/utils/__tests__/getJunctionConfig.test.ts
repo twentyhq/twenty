@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -40,15 +40,15 @@ const createMockField = (
   }) as FieldMetadataItem;
 
 const createMockObjectMetadata = (
-  overrides: Partial<ObjectMetadataItem>,
-): ObjectMetadataItem =>
+  overrides: Partial<EnrichedObjectMetadataItem>,
+): EnrichedObjectMetadataItem =>
   ({
     id: 'default-object-id',
     nameSingular: 'defaultObject',
     namePlural: 'defaultObjects',
     fields: [],
     ...overrides,
-  }) as ObjectMetadataItem;
+  }) as EnrichedObjectMetadataItem;
 
 describe('getJunctionConfig', () => {
   describe('basic scenarios', () => {

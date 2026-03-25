@@ -21,19 +21,51 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 ## المتطلبات الأساسية
 
 * Node.js 24+ وYarn 4
-* مساحة عمل Twenty ومفتاح واجهة برمجة التطبيقات (أنشئ واحدًا على https://app.twenty.com/settings/api-webhooks)
+* Docker (لخادم تطوير Twenty المحلي)
 
 ## البدء
 
-أنشئ تطبيقًا جديدًا باستخدام المُهيئ الرسمي، ثم قم بالمصادقة وابدأ التطوير:
+أنشئ تطبيقًا جديدًا باستخدام المولّد الرسمي. يمكنه بدء مثيل محلي من Twenty تلقائيًا لك:
 
 ```bash filename="Terminal"
-# إنشاء تطبيق جديد (يتضمن جميع الأمثلة افتراضيًا)
+# إنشاء تطبيق جديد — ستعرض واجهة سطر الأوامر خيار بدء خادم Twenty محلي
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # ابدأ وضع التطوير: يُزامن التغييرات المحلية تلقائيًا مع مساحة العمل الخاصة بك
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### إدارة الخادم المحلي
+
+يتضمن SDK أوامر لإدارة خادم تطوير Twenty محلي (صورة Docker متكاملة تتضمن PostgreSQL وRedis والخادم والعامل):
+
+```bash filename="Terminal"
+# ابدأ الخادم المحلي (يسحب الصورة إذا لزم الأمر)
+yarn twenty server start
+
+# تحقّق من حالة الخادم
+yarn twenty server status
+
+# بثّ سجلات الخادم
+yarn twenty server logs
+
+# أوقف الخادم
+yarn twenty server stop
+
+# أعد ضبط جميع البيانات وابدأ من جديد
+yarn twenty server reset
+```
+
+يأتي الخادم المحلي مهيأً مسبقًا بمساحة عمل ومستخدم (`tim@apple.dev` / `tim@apple.dev`)، بحيث يمكنك البدء في التطوير فورًا دون أي إعداد يدوي.
+
+### المصادقة
+
+وصّل تطبيقك بالخادم المحلي باستخدام OAuth:
+
+```bash filename="Terminal"
+# المصادقة عبر OAuth (يفتح المتصفح)
+yarn twenty remote add --local
 ```
 
 يدعم المُنشئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
@@ -44,6 +76,18 @@ npx create-twenty-app@latest my-app
 
 # الأدنى: الملفات الأساسية فقط (application-config.ts و default-role.ts)
 npx create-twenty-app@latest my-app --minimal
+```
+
+### كيفية استخدام مثيل محلي من Twenty
+
+إذا كنت تقوم بتشغيل مثيل محلي من Twenty بالفعل، فيمكنك الاتصال به بدلًا من استخدام Docker. مرِّر المنفذ الذي يستمع عليه الخادم المحلي لديك (القيمة الافتراضية: `3000`):
+
+```bash filename="Terminal"
+# During scaffolding
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding
+yarn twenty remote add --local --port 3000
 ```
 
 من هنا يمكنك:
@@ -65,13 +109,13 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # ابنِ التطبيق للتوزيع
-yarn twenty app:build
+yarn twenty build
 
 # انشر التطبيق إلى npm أو إلى خادم Twenty
-yarn twenty app:publish
+yarn twenty publish
 
 # أزل تثبيت التطبيق من مساحة العمل الحالية
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # اعرض مساعدة الأوامر
 yarn twenty help
@@ -177,7 +221,7 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* سيقوم `yarn twenty app:dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/clients`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
+* سيقوم `yarn twenty dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/clients`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
 * `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
@@ -506,7 +550,7 @@ export default defineRole({
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/clients';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -530,7 +574,7 @@ export default defineLogicFunction({
   timeoutSeconds: 2,
   handler,
   triggers: [
-    // Public HTTP route trigger '/s/post-card/create'
+    // مشغّل مسار HTTP عام '/s/post-card/create'
     {
       universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
       type: 'route',
@@ -538,13 +582,13 @@ export default defineLogicFunction({
       httpMethod: 'GET',
       isAuthRequired: false,
     },
-    // Cron trigger (CRON pattern)
+    // مُشغّل كرون (نمط CRON)
     // {
     //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
     //   type: 'cron',
     //   pattern: '0 0 1 1 *',
     // },
-    // Database event trigger
+    // مُشغّل حدث قاعدة البيانات
     // {
     //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
     //   type: 'databaseEvent',
@@ -751,7 +795,7 @@ const handler = async (event: RoutePayload) => {
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -792,7 +836,7 @@ export default defineLogicFunction({
     },
     required: ['companyName'],
   },
-});
+});},{
 ```
 
 النقاط الرئيسية:
@@ -836,7 +880,7 @@ export default defineFrontComponent({
 
 * المكوّنات الأمامية هي مكوّنات React تُعرَض ضمن سياقات معزولة داخل Twenty.
 * يشير الحقل `component` إلى مكوّن React الخاص بك.
-* يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn twenty app:dev`.
+* يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn twenty dev`.
 
 يمكنك إنشاء مكوّنات أمامية جديدة بطريقتين:
 
@@ -1164,23 +1208,23 @@ export default defineAgent({
 
 ### عملاء مُولَّدون مضبوطو الأنواع
 
-يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/clients` استنادًا إلى مخطط مساحة العمل لديك:
+يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty dev` وتخزينهما في `node_modules/twenty-sdk/clients` استنادًا إلى مخطط مساحة العمل لديك:
 
 * **`CoreApiClient`** — يُجري استعلامات إلى نقطة النهاية `/graphql` للحصول على بيانات مساحة العمل
 * **`MetadataApiClient`** — يستعلم عن نقطة النهاية `/metadata` لتكوين مساحة العمل وتحميل الملفات.
 
 ```typescript
-import { CoreApiClient } from 'twenty-sdk/clients';
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
-const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });},{
 ```
 
-`CoreApiClient` يُعاد توليده تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك. `MetadataApiClient` يأتي مُجهزًا مسبقًا مع SDK.
+`CoreApiClient` يُعاد توليده تلقائيًا بواسطة `yarn twenty dev` كلما تغيّرت كائناتك أو حقولك. `MetadataApiClient` يأتي مُجهزًا مسبقًا مع SDK.
 
 #### بيانات الاعتماد وقت التشغيل في الوظائف المنطقية
 
@@ -1200,7 +1244,7 @@ const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id
 يتضمن `MetadataApiClient` طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع ملف ضمن كائنات مساحة العمل الخاصة بك. نظرًا لأن عملاء GraphQL القياسيون لا يدعمون تحميل الملفات متعددة الأجزاء افتراضيًا، يوفر العميل هذه الطريقة المخصصة التي تطبق [مواصفة طلب GraphQL متعدد الأجزاء](https://github.com/jaydenseric/graphql-multipart-request-spec) في الخلفية.
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -1208,10 +1252,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+  fileBuffer,                                         // محتوى الملف كـ Buffer
+  'invoice.pdf',                                      // اسم الملف
+  'application/pdf',                                  // نوع MIME (القيمة الافتراضية 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // المعرّف العالمي للحقل
 );
 
 console.log(uploadedFile);
@@ -1252,10 +1296,10 @@ uploadFile(
 
 ```bash filename="Terminal"
 # ابنِ التطبيق (الإخراج يذهب إلى .twenty/output/)
-yarn twenty app:build
+yarn twenty build
 
 # ابنِ وأنشئ ملف tarball (.tgz) للتوزيع
-yarn twenty app:build --tarball
+yarn twenty build --tarball
 ```
 
 عملية البناء:
@@ -1294,11 +1338,11 @@ yarn twenty app:build --tarball
 ### النشر إلى npm (الإعداد الافتراضي)
 
 ```bash filename="Terminal"
-# Publish to npm (requires npm login)
-yarn twenty app:publish
+# انشر إلى npm (يتطلب تسجيل الدخول إلى npm)
+yarn twenty publish
 
-# Publish with a dist-tag (e.g. beta, next)
-yarn twenty app:publish --tag beta
+# انشر باستخدام وسم توزيع (مثل beta، next)
+yarn twenty publish --tag beta
 ```
 
 يقوم هذا ببناء التطبيق وتشغيل `npm publish` من دليل `.twenty/output/`. بعد ذلك يمكن تثبيت الحزمة المنشورة من سوق Twenty بواسطة أي مساحة عمل.
@@ -1306,8 +1350,8 @@ yarn twenty app:publish --tag beta
 ### النشر إلى خادم Twenty
 
 ```bash filename="Terminal"
-# Publish directly to a Twenty server
-yarn twenty app:publish --server https://app.twenty.com
+# انشر مباشرةً إلى خادم Twenty
+yarn twenty publish --server https://app.twenty.com
 ```
 
 يقوم هذا ببناء التطبيق مع أرشيف tar، ويرفعه إلى الخادم عبر العملية `uploadAppTarball` في GraphQL، ويبدأ التثبيت في خطوة واحدة. يكون هذا مفيدًا لعمليات النشر الخاصة أو للاختبار مقابل خادم محدّد.
@@ -1371,13 +1415,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-الآن يمكنك تشغيل جميع الأوامر عبر `yarn twenty <command>`، مثلًا: `yarn twenty app:dev`، `yarn twenty help`، إلخ.
+الآن يمكنك تشغيل جميع الأوامر عبر `yarn twenty <command>`، مثلًا: `yarn twenty dev`، `yarn twenty help`، إلخ.
 
 ## استكشاف الأخطاء وإصلاحها
 
 * أخطاء المصادقة: شغّل `yarn twenty auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
 * يتعذّر الاتصال بالخادم: تحقق من عنوان URL لواجهة البرمجة وأن خادم Twenty قابل للوصول.
-* الأنواع أو العميل مفقود/قديم: أعد تشغيل `yarn twenty app:dev` — فهو ينشئ العميل مضبوط الأنواع بشكل تلقائي.
-* وضع التطوير لا يزامن: تأكد من أن `yarn twenty app:dev` قيد التشغيل وأن التغييرات ليست متجاهلة من بيئتك.
+* الأنواع أو العميل مفقود/قديم: أعد تشغيل `yarn twenty dev` — فهو يولِّد العميل مضبوط الأنواع تلقائيًا.
+* وضع التطوير لا يزامن: تأكد من أن `yarn twenty dev` قيد التشغيل وأن التغييرات غير متجاهلة في بيئتك.
 
 قناة المساعدة على Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

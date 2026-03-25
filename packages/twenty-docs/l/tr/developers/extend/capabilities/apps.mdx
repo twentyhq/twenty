@@ -21,19 +21,51 @@ Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi 
 ## Ön Gereksinimler
 
 * Node.js 24+ ve Yarn 4
-* Bir Twenty çalışma alanı ve bir API anahtarı (https://app.twenty.com/settings/api-webhooks adresinde oluşturun)
+* Docker (yerel Twenty geliştirme sunucusu için)
 
 ## Başlarken
 
-Resmi scaffolder aracını kullanarak yeni bir uygulama oluşturun, ardından kimlik doğrulaması yapıp geliştirmeye başlayın:
+Resmi iskelet oluşturucusunu kullanarak yeni bir uygulama oluşturun. Sizin için otomatik olarak yerel bir Twenty örneğini başlatabilir:
 
 ```bash filename="Terminal"
-# Yeni bir uygulamanın iskeletini oluşturun (varsayılan olarak tüm örnekleri içerir)
+# Yeni bir uygulamanın iskeletini oluşturun — CLI yerel bir Twenty sunucusunu başlatmayı önerecektir
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# Geliştirme modunu başlatın: yerel değişiklikleri otomatik olarak çalışma alanınızla senkronize eder
-yarn twenty app:dev
+# Geliştirme modunu başlatın: yerel değişiklikleri çalışma alanınızla otomatik olarak senkronize eder
+yarn twenty dev
+```
+
+### Yerel Sunucu Yönetimi
+
+SDK, yerel bir Twenty geliştirme sunucusunu yönetmek için komutlar içerir (PostgreSQL, Redis, sunucu ve worker içeren hepsi bir arada Docker imajı):
+
+```bash filename="Terminal"
+# Yerel sunucuyu başlatın (gerekirse imajı indirir)
+yarn twenty server start
+
+# Sunucu durumunu kontrol edin
+yarn twenty server status
+
+# Sunucu günlüklerini akış olarak görüntüleyin
+yarn twenty server logs
+
+# Sunucuyu durdurun
+yarn twenty server stop
+
+# Tüm verileri sıfırlayın ve temiz bir başlangıç yapın
+yarn twenty server reset
+```
+
+Yerel sunucu, bir çalışma alanı ve kullanıcıyla (`tim@apple.dev` / `tim@apple.dev`) önceden yapılandırılmış olarak gelir; böylece herhangi bir manuel kurulum gerektirmeden hemen geliştirmeye başlayabilirsiniz.
+
+### Kimlik Doğrulama
+
+Uygulamanızı OAuth kullanarak yerel sunucuya bağlayın:
+
+```bash filename="Terminal"
+# Authenticate via OAuth (opens browser)
+yarn twenty remote add --local
 ```
 
 İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
@@ -46,6 +78,18 @@ npx create-twenty-app@latest my-app
 npx create-twenty-app@latest my-app --minimal
 ```
 
+### Yerel bir Twenty örneği nasıl kullanılır?
+
+Zaten yerel olarak bir Twenty örneği çalıştırıyorsanız, Docker kullanmak yerine ona bağlanabilirsiniz. Yerel sunucunuzun dinlediği bağlantı noktasını belirtin (varsayılan: `3000`):
+
+```bash filename="Terminal"
+# During scaffolding
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding
+yarn twenty remote add --local --port 3000
+```
+
 Buradan şunları yapabilirsiniz:
 
 ```bash filename="Terminal"
@@ -56,7 +100,7 @@ yarn twenty entity:add
 yarn twenty function:logs
 
 # Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
+yarn twenty function:execute -n my-function -p '{\"name\": \"test\"}'
 
 # Execute the pre-install function
 yarn twenty function:execute --preInstall
@@ -65,16 +109,16 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Build the app for distribution
-yarn twenty app:build
+yarn twenty build
 
 # Publish the app to npm or a Twenty server
-yarn twenty app:publish
+yarn twenty publish
 
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
-yarn twenty help
+yarn twenty help},{
 ```
 
 Ayrıca bkz.: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) ve [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) için CLI başvuru sayfaları.
@@ -177,7 +221,7 @@ export default defineObject({
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn twenty app:dev`, `node_modules/twenty-sdk/clients` içinde iki tiplendirilmiş API istemcisini otomatik olarak oluşturur: `CoreApiClient` (`/graphql` üzerinden çalışma alanı verileri için) ve `MetadataApiClient` (çalışma alanı yapılandırması ve `/metadata` üzerinden dosya yüklemeleri için).
+* `yarn twenty dev`, `node_modules/twenty-sdk/clients` içinde iki tiplendirilmiş API istemcisini otomatik olarak oluşturur: `CoreApiClient` (`/graphql` üzerinden çalışma alanı verileri için) ve `MetadataApiClient` (çalışma alanı yapılandırması ve `/metadata` üzerinden dosya yüklemeleri için).
 * `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz, rolleriniz, yetenekleriniz ve daha fazlası için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
@@ -506,13 +550,13 @@ Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren 
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/clients';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
   const name = 'name' in params.queryStringParameters
-    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
-    : 'Hello world';
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Merhaba dünya'
+    : 'Merhaba dünya';
 
   const result = await client.mutation({
     createPostCard: {
@@ -530,7 +574,7 @@ export default defineLogicFunction({
   timeoutSeconds: 2,
   handler,
   triggers: [
-    // Public HTTP route trigger '/s/post-card/create'
+    // Herkese açık HTTP rota tetikleyicisi '/s/post-card/create'
     {
       universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
       type: 'route',
@@ -538,13 +582,13 @@ export default defineLogicFunction({
       httpMethod: 'GET',
       isAuthRequired: false,
     },
-    // Cron trigger (CRON pattern)
+    // Cron tetikleyicisi (CRON deseni)
     // {
     //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
     //   type: 'cron',
     //   pattern: '0 0 1 1 *',
     // },
-    // Database event trigger
+    // Veritabanı olay tetikleyicisi
     // {
     //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
     //   type: 'databaseEvent',
@@ -751,7 +795,7 @@ Bir mantık işlevini bir araç olarak işaretlemek için `isTool: true` olarak 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -760,8 +804,8 @@ const handler = async (params: { companyName: string; domain?: string }) => {
     createTask: {
       __args: {
         data: {
-          title: `Enrich data for ${params.companyName}`,
-          body: `Domain: ${params.domain ?? 'unknown'}`,
+          title: `${params.companyName} için verileri zenginleştir`,
+          body: `Alan adı: ${params.domain ?? 'bilinmiyor'}`,
         },
       },
       id: true,
@@ -774,7 +818,7 @@ const handler = async (params: { companyName: string; domain?: string }) => {
 export default defineLogicFunction({
   universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   name: 'enrich-company',
-  description: 'Enrich a company record with external data',
+  description: 'Bir şirket kaydını harici verilerle zenginleştir',
   timeoutSeconds: 10,
   handler,
   isTool: true,
@@ -783,11 +827,11 @@ export default defineLogicFunction({
     properties: {
       companyName: {
         type: 'string',
-        description: 'The name of the company to enrich',
+        description: 'Zenginleştirilecek şirketin adı',
       },
       domain: {
         type: 'string',
-        description: 'The company website domain (optional)',
+        description: 'Şirket web sitesi alan adı (isteğe bağlı)',
       },
     },
     required: ['companyName'],
@@ -836,7 +880,7 @@ export default defineFrontComponent({
 
 * Ön uç bileşenleri, Twenty içinde yalıtılmış bağlamlarda görüntülenen React bileşenleridir.
 * `component` alanı, React bileşeninize referans verir.
-* Bileşenler, `yarn twenty app:dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
+* Bileşenler, `yarn twenty dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
 
 Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
@@ -1164,23 +1208,23 @@ Yeni ajanları iki şekilde oluşturabilirsiniz:
 
 ### Oluşturulan tiplendirilmiş istemciler
 
-Çalışma alanı şemanıza göre `yarn twenty app:dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/clients` içine kaydedilir:
+Çalışma alanı şemanıza göre `yarn twenty dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/clients` içine kaydedilir:
 
 * **`CoreApiClient`** — çalışma alanı verileri için `/graphql` uç noktasını sorgular
 * **`MetadataApiClient`** — çalışma alanı yapılandırması ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
 
 ```typescript
-import { CoreApiClient } from 'twenty-sdk/clients';
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
-const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });},{
 ```
 
-`CoreApiClient`, nesneleriniz veya alanlarınız değiştiğinde `yarn twenty app:dev` tarafından otomatik olarak yeniden oluşturulur. `MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir.
+`CoreApiClient`, nesneleriniz veya alanlarınız değiştiğinde `yarn twenty dev` tarafından otomatik olarak yeniden oluşturulur. `MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir.
 
 #### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 
@@ -1200,7 +1244,7 @@ Notlar:
 `MetadataApiClient`, çalışma alanı nesnelerinizdeki dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -1208,10 +1252,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+  fileBuffer,                                         // dosya içeriği (Buffer olarak)
+  'invoice.pdf',                                      // dosya adı
+  'application/pdf',                                  // MIME türü (varsayılan: 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // alanın evrensel tanımlayıcısı
 );
 
 console.log(uploadedFile);
@@ -1252,10 +1296,10 @@ Uygulamanızı `app:dev` ile geliştirdikten sonra, `app:build` kullanarak onu d
 
 ```bash filename="Terminal"
 # Build the app (output goes to .twenty/output/)
-yarn twenty app:build
+yarn twenty build
 
 # Build and create a tarball (.tgz) for distribution
-yarn twenty app:build --tarball
+yarn twenty build --tarball
 ```
 
 Derleme süreci:
@@ -1295,10 +1339,10 @@ Uygulamanızı dağıtmak için `app:publish` komutunu kullanın — npm kayıt 
 
 ```bash filename="Terminal"
 # Publish to npm (requires npm login)
-yarn twenty app:publish
+yarn twenty publish
 
 # Publish with a dist-tag (e.g. beta, next)
-yarn twenty app:publish --tag beta
+yarn twenty publish --tag beta
 ```
 
 Bu, uygulamayı derler ve `.twenty/output/` dizininden `npm publish` çalıştırır. Yayımlanan paket daha sonra Twenty pazar yerinden herhangi bir çalışma alanı tarafından kurulabilir.
@@ -1307,7 +1351,7 @@ Bu, uygulamayı derler ve `.twenty/output/` dizininden `npm publish` çalıştı
 
 ```bash filename="Terminal"
 # Publish directly to a Twenty server
-yarn twenty app:publish --server https://app.twenty.com
+yarn twenty publish --server https://app.twenty.com
 ```
 
 Bu, uygulamayı bir tarball ile derler, `uploadAppTarball` GraphQL mutasyonu aracılığıyla sunucuya yükler ve tek adımda kurulumu tetikler. Bu, özel dağıtımlar veya belirli bir sunucuya karşı test yapmak için kullanışlıdır.
@@ -1371,13 +1415,13 @@ Ardından bir `twenty` betiği ekleyin:
 }
 ```
 
-Artık tüm komutları `yarn twenty <command>` üzerinden çalıştırabilirsiniz; örn. `yarn twenty app:dev`, `yarn twenty help` vb.
+Artık tüm komutları `yarn twenty <command>` üzerinden çalıştırabilirsiniz; örn. `yarn twenty dev`, `yarn twenty help` vb.
 
 ## Sorun Giderme
 
 * Kimlik doğrulama hataları: `yarn twenty auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
 * Sunucuya bağlanılamıyor: API URL’sini ve Twenty sunucusunun erişilebilir olduğunu doğrulayın.
-* Türler veya istemci eksik/eski: `yarn twenty app:dev` komutunu yeniden çalıştırın — tip tanımlı istemciyi otomatik olarak oluşturur.
-* Geliştirme modu eşitlenmiyor: `yarn twenty app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
+* Türler veya istemci eksik/eski: `yarn twenty dev` komutunu yeniden çalıştırın — tiplendirilmiş istemciyi otomatik olarak oluşturur.
+* Geliştirme modu eşitlenmiyor: `yarn twenty dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
 
 Discord Yardım Kanalı: https://discord.com/channels/1130383047699738754/1130386664812982322

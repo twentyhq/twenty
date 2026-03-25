@@ -21,19 +21,51 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 ## 先决条件
 
 * Node.js 24+ 和 Yarn 4
-* 一个 Twenty 工作空间和一个 API 密钥（在 https://app.twenty.com/settings/api-webhooks 创建）
+* Docker (用于本地 Twenty 开发服务器)
 
 ## 开始使用
 
-使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
+使用官方脚手架创建一个新应用。 它可以为你自动启动一个本地 Twenty 实例：
 
 ```bash filename="Terminal"
-# 创建一个新应用脚手架（默认包含所有示例）
+# Scaffold a new app — the CLI will offer to start a local Twenty server
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
-# 启动开发模式：会将本地更改自动同步到你的工作区
-yarn twenty app:dev
+# Start dev mode: automatically syncs local changes to your workspace
+yarn twenty dev
+```
+
+### 本地服务器管理
+
+该 SDK 包含用于管理本地 Twenty 开发服务器的命令（该服务器是一体化 Docker 镜像，内含 PostgreSQL、Redis、服务器和工作进程）：
+
+```bash filename="Terminal"
+# Start the local server (pulls the image if needed)
+yarn twenty server start
+
+# Check server status
+yarn twenty server status
+
+# Stream server logs
+yarn twenty server logs
+
+# Stop the server
+yarn twenty server stop
+
+# Reset all data and start fresh
+yarn twenty server reset
+```
+
+本地服务器预置了一个工作区和用户 (`tim@apple.dev` / `tim@apple.dev`)，因此你可以无需任何手动设置即可立即开始开发。
+
+### 身份验证
+
+使用 OAuth 将你的应用连接到本地服务器：
+
+```bash filename="Terminal"
+# 通过 OAuth 进行身份验证 (将打开浏览器)
+yarn twenty remote add --local
 ```
 
 脚手架工具支持两种模式，用于控制包含哪些示例文件：
@@ -46,34 +78,46 @@ npx create-twenty-app@latest my-app
 npx create-twenty-app@latest my-app --minimal
 ```
 
+### 如何使用本地 Twenty 实例
+
+如果你已经在本地运行一个 Twenty 实例，你可以连接到它，而不是使用 Docker。 指定本地服务器正在监听的端口（默认：`3000`）：
+
+```bash filename="Terminal"
+# 在脚手架过程中
+npx create-twenty-app@latest my-app --port 3000
+
+# 或在脚手架之后
+yarn twenty remote add --local --port 3000
+```
+
 从这里您可以：
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# 向你的应用添加一个新实体（引导式）
 yarn twenty entity:add
 
-# Watch your application's function logs
+# 监听你的应用函数日志
 yarn twenty function:logs
 
-# Execute a function by name
+# 按名称执行一个函数
 yarn twenty function:execute -n my-function -p '{"name": "test"}'
 
-# Execute the pre-install function
+# 执行安装前函数
 yarn twenty function:execute --preInstall
 
-# Execute the post-install function
+# 执行安装后函数
 yarn twenty function:execute --postInstall
 
-# Build the app for distribution
-yarn twenty app:build
+# 为分发构建应用
+yarn twenty build
 
-# Publish the app to npm or a Twenty server
-yarn twenty app:publish
+# 将应用发布到 npm 或 Twenty 服务器
+yarn twenty publish
 
-# Uninstall the application from the current workspace
-yarn twenty app:uninstall
+# 从当前工作区卸载该应用
+yarn twenty uninstall
 
-# Display commands' help
+# 显示命令帮助
 yarn twenty help
 ```
 
@@ -177,7 +221,7 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:dev` 会在 `node_modules/twenty-sdk/clients` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
+* `yarn twenty dev` 会在 `node_modules/twenty-sdk/clients` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
 * `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## 身份验证
@@ -506,7 +550,7 @@ export default defineRole({
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/clients';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -552,7 +596,7 @@ export default defineLogicFunction({
     //   updatedFields: ['name'],
     // },
   ],
-});
+});},{
 ```
 
 常见触发器类型：
@@ -751,7 +795,7 @@ const handler = async (event: RoutePayload) => {
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -836,7 +880,7 @@ export default defineFrontComponent({
 
 * 前端组件是在 Twenty 中的隔离上下文中渲染的 React 组件。
 * `component` 字段引用你的 React 组件。
-* 组件会在 `yarn twenty app:dev` 期间自动构建并同步。
+* 组件会在 `yarn twenty dev` 期间自动构建并同步。
 
 你可以通过两种方式创建新的前端组件：
 
@@ -1164,14 +1208,14 @@ export default defineAgent({
 
 ### 生成的类型化客户端
 
-两个类型化客户端由 `yarn twenty app:dev` 自动生成（基于你的工作区架构），并存放在 `node_modules/twenty-sdk/clients`：
+两个类型化客户端由 `yarn twenty dev` 自动生成（基于你的工作区架构），并存放在 `node_modules/twenty-sdk/clients`：
 
 * **`CoreApiClient`** — 查询 `/graphql` 端点以获取工作区数据
 * **`MetadataApiClient`** — 查询 `/metadata` 端点以获取工作区配置并处理文件上传
 
 ```typescript
-import { CoreApiClient } from 'twenty-sdk/clients';
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
@@ -1180,7 +1224,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-每当你的对象或字段发生变化时，`yarn twenty app:dev` 都会自动重新生成 `CoreApiClient`。 `MetadataApiClient` 随 SDK 一并提供，已预构建。
+每当你的对象或字段发生变化时，`yarn twenty dev` 都会自动重新生成 `CoreApiClient`。 `MetadataApiClient` 随 SDK 一并提供，已预构建。
 
 #### 逻辑函数中的运行时凭据
 
@@ -1200,7 +1244,7 @@ const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id
 `MetadataApiClient` 包含一个 `uploadFile` 方法，用于将文件附加到你的工作区对象的文件类型字段。 由于标准 GraphQL 客户端不原生支持多部分文件上传，该客户端提供了一个专用方法，在底层实现了 [GraphQL 多部分请求规范](https://github.com/jaydenseric/graphql-multipart-request-spec)。
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -1252,10 +1296,10 @@ Once you've developed your app with `app:dev`, use `app:build` to compile it int
 
 ```bash filename="Terminal"
 # Build the app (output goes to .twenty/output/)
-yarn twenty app:build
+yarn twenty build
 
 # Build and create a tarball (.tgz) for distribution
-yarn twenty app:build --tarball
+yarn twenty build --tarball
 ```
 
 The build process:
@@ -1295,10 +1339,10 @@ The build process:
 
 ```bash filename="Terminal"
 # Publish to npm (requires npm login)
-yarn twenty app:publish
+yarn twenty publish
 
 # Publish with a dist-tag (e.g. beta, next)
-yarn twenty app:publish --tag beta
+yarn twenty publish --tag beta
 ```
 
 这会构建应用，并在 `.twenty/output/` 目录下运行 `npm publish`。 发布后的软件包可由任何工作区从 Twenty 市场进行安装。
@@ -1307,7 +1351,7 @@ yarn twenty app:publish --tag beta
 
 ```bash filename="Terminal"
 # Publish directly to a Twenty server
-yarn twenty app:publish --server https://app.twenty.com
+yarn twenty publish --server https://app.twenty.com
 ```
 
 这会以 tar 包方式构建应用，通过 `uploadAppTarball` GraphQL 变更将其上传到服务器，并在一步中触发安装。 这对于私有部署或针对特定服务器进行测试非常有用。
@@ -1371,13 +1415,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty help` 等。
+现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty dev`、`yarn twenty help` 等。
 
 ## 故障排除
 
 * 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* 类型或客户端缺失/过期：重启 `yarn twenty app:dev` — 它会自动生成类型化客户端。
-* 开发模式未同步：确保 `yarn twenty app:dev` 正在运行，并且你的环境不会忽略变更。
+* 类型或客户端缺失/过期：重启 `yarn twenty dev` — 它会自动生成类型化客户端。
+* 开发模式未同步：确保 `yarn twenty dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

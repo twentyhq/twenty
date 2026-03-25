@@ -3,6 +3,7 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
@@ -11,6 +12,7 @@ import {
   CalendarChannelSyncStage,
   type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 
 export type CalendarEventListFetchJobData = {
@@ -25,6 +27,7 @@ export type CalendarEventListFetchJobData = {
 export class CalendarEventListFetchJob {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly calendarFetchEventsService: CalendarFetchEventsService,
   ) {}
@@ -36,19 +39,14 @@ export class CalendarEventListFetchJob {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-          workspaceId,
-          'calendarChannel',
-        );
-
-      const calendarChannel = await calendarChannelRepository.findOne({
-        where: {
-          id: calendarChannelId,
-          isSyncEnabled: true,
-        },
-        relations: ['connectedAccount'],
-      });
+      const calendarChannel =
+        await this.calendarChannelDataAccessService.findOne(workspaceId, {
+          where: {
+            id: calendarChannelId,
+            isSyncEnabled: true,
+          },
+          relations: ['connectedAccount'],
+        });
 
       if (!calendarChannel) {
         return;
@@ -61,11 +59,10 @@ export class CalendarEventListFetchJob {
         return;
       }
 
+      const syncStageStartedAt = calendarChannel.syncStageStartedAt;
+
       if (
-        isThrottled(
-          calendarChannel.syncStageStartedAt,
-          calendarChannel.throttleFailureCount,
-        )
+        isThrottled(syncStageStartedAt, calendarChannel.throttleFailureCount)
       ) {
         await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
           [calendarChannel.id],
@@ -77,8 +74,8 @@ export class CalendarEventListFetchJob {
       }
 
       await this.calendarFetchEventsService.fetchCalendarEvents(
-        calendarChannel,
-        calendarChannel.connectedAccount,
+        calendarChannel as unknown as CalendarChannelWorkspaceEntity,
+        calendarChannel.connectedAccount as unknown as ConnectedAccountWorkspaceEntity,
         workspaceId,
       );
     }, authContext);

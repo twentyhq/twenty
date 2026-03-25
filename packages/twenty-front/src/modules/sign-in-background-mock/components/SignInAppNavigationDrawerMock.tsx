@@ -45,7 +45,7 @@ export const SignInAppNavigationDrawerMock = ({
               label={t`Search`}
               Icon={IconSearch}
               onClick={() => {}}
-              keyboard={[getOsControlSymbol(), 'K']}
+              modifier={{ keyboard: [getOsControlSymbol(), 'K'] }}
             />
             <NavigationDrawerItem
               label={t`Settings`}
@@ -58,7 +58,6 @@ export const SignInAppNavigationDrawerMock = ({
       )}
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Workspace`}
-        isRemote={false}
         objectMetadataItems={objectMetadataItems.filter((item) =>
           WORKSPACE_FAVORITES.includes(item.nameSingular),
         )}

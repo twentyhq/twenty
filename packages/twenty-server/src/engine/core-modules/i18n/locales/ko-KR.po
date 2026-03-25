@@ -554,6 +554,11 @@ msgstr ""
 msgid "Calendar channel is misconfigured."
 msgstr "캘린더 채널이 잘못 구성되었습니다."
 
+#. js-lingui-id: 3J2x1Q
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "Calendar channel not found."
+msgstr ""
+
 #. js-lingui-id: 1t3DGy
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Calendar event not found."
@@ -651,11 +656,6 @@ msgstr "워크스페이스 커스텀 애플리케이션에서 생성하지 않�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "삭제할 수 없습니다. 먼저 레이블 식별자 필드를 업데이트하십시오"
-
-#. js-lingui-id: FrNWt0
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot disable non-active workflow version"
-msgstr "활성화되지 않은 워크플로우 버전을 비활성화할 수 없습니다"
 
 #. js-lingui-id: lDTqT7
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -920,6 +920,7 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "{objectMetadataNameSingular}의 {connectFieldName}에 대해서는 연결이 허용되지 않습니다."
 
 #. js-lingui-id: /OJTzk
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Connected account not found."
 msgstr "연결된 계정을 찾을 수 없음."
@@ -1176,6 +1177,16 @@ msgstr ""
 msgid "Empty field permissions are not allowed."
 msgstr "빈 필드 권한은 허용되지 않습니다."
 
+#. js-lingui-id: g2om8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Engine component key is required"
+msgstr ""
+
+#. js-lingui-id: BmtSAK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "engineComponentKey is required"
+msgstr ""
+
 #. js-lingui-id: ArAFBo
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Enterprise validity token is not valid."
@@ -1206,16 +1217,6 @@ msgstr "오류"
 #. js-lingui-id: b3ictS
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
-msgstr ""
-
-#. js-lingui-id: gyqLlt
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflow version, front component or engine component key is required"
-msgstr ""
-
-#. js-lingui-id: ucm3bq
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflowVersionId, frontComponentUniversalIdentifier or engineComponentKey is required"
 msgstr ""
 
 #. js-lingui-id: AiFXmG
@@ -1263,9 +1264,19 @@ msgstr "레코드 삭제 실패."
 msgid "Failed to duplicate dashboard."
 msgstr "대시보드 복제에 실패했습니다."
 
+#. js-lingui-id: MIto3A
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "Failed to extract SDK client archive."
+msgstr ""
+
 #. js-lingui-id: Ol/51Z
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Failed to extract tarball."
+msgstr ""
+
+#. js-lingui-id: CO40Hk
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "Failed to generate SDK client."
 msgstr ""
 
 #. js-lingui-id: HfhmrS
@@ -1521,6 +1532,11 @@ msgstr ""
 msgid "File {fileId} was not uploaded for this field. Please re-upload the file."
 msgstr ""
 
+#. js-lingui-id: OR7oBd
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "File not found in SDK client archive."
+msgstr ""
+
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
@@ -1579,6 +1595,21 @@ msgstr "금요일"
 msgid "Front component is not ready."
 msgstr ""
 
+#. js-lingui-id: A7aUMa
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Front component is required for front component renderer items"
+msgstr ""
+
+#. js-lingui-id: 0aXgXb
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Front component must not be set for this item type"
+msgstr ""
+
+#. js-lingui-id: AfxLzg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Front component must not be set for workflow trigger items"
+msgstr ""
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1597,6 +1628,21 @@ msgstr ""
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
+msgstr ""
+
+#. js-lingui-id: 4wM9Cs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_RENDERER"
+msgstr ""
+
+#. js-lingui-id: N6YN7J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
+msgstr ""
+
+#. js-lingui-id: z8/E1J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr ""
 
 #. js-lingui-id: pouguB
@@ -1774,6 +1820,11 @@ msgstr "잘못된 감사 유형입니다."
 msgid "Invalid CALDAV credentials. Please check your username and password."
 msgstr "잘못된 CALDAV 자격 증명입니다. 사용자 이름과 비밀번호를 확인하십시오."
 
+#. js-lingui-id: cizVEW
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "Invalid calendar channel input."
+msgstr ""
+
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid calling code {callingCode}"
@@ -1865,6 +1916,11 @@ msgstr ""
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "Invalid connected account ID."
 msgstr "잘못된 연결된 계정 ID입니다."
+
+#. js-lingui-id: DH8Ofc
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+msgid "Invalid connected account input."
+msgstr ""
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -2017,6 +2073,16 @@ msgstr "잘못된 레이블 형식입니다."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid limit parameter."
 msgstr "잘못된 limit 매개변수입니다."
+
+#. js-lingui-id: fNaXqL
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Invalid message channel input."
+msgstr ""
+
+#. js-lingui-id: zUyPBT
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "Invalid message folder input."
+msgstr ""
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2328,6 +2394,8 @@ msgid "Invalid value for position: \"{inspectedValue}\""
 msgstr ""
 
 #. js-lingui-id: Sf+6YJ
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr ""
@@ -2678,6 +2746,16 @@ msgstr "5월"
 #: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
 msgstr "메시지 채널을 찾을 수 없음"
+
+#. js-lingui-id: vjIbbe
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message channel not found."
+msgstr ""
+
+#. js-lingui-id: BZbxut
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "Message folder not found."
+msgstr ""
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
@@ -3789,6 +3867,11 @@ msgstr ""
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "토요일"
+
+#. js-lingui-id: eKi1df
+#: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
+msgid "SDK client archive not found. The SDK client may not have been generated for this application."
+msgstr ""
 
 #. js-lingui-id: PdVIJC
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
@@ -5057,12 +5140,6 @@ msgstr ""
 msgid "Widget row exceeds grid height"
 msgstr ""
 
-#. js-lingui-id: F+TRXG
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
-msgid "Widget type FIELD is not supported yet."
-msgstr ""
-
 #. js-lingui-id: rL2haJ
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
@@ -5120,6 +5197,36 @@ msgstr "워크플로우 버전에 트리거가 포함되어 있지 않습니다"
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "워크플로우 버전이 임시 상태가 아닙니다"
+
+#. js-lingui-id: 4OOQwW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Workflow version is required for workflow trigger items"
+msgstr ""
+
+#. js-lingui-id: LrPIBF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Workflow version must not be set for front component renderer items"
+msgstr ""
+
+#. js-lingui-id: f9Rp2t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Workflow version must not be set for this item type"
+msgstr ""
+
+#. js-lingui-id: m34s12
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
+msgstr ""
+
+#. js-lingui-id: +67q2u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
+msgstr ""
+
+#. js-lingui-id: lscvqN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "workflowVersionId must not be set when engineComponentKey is FRONT_COMPONENT_RENDERER"
+msgstr ""
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
@@ -5288,6 +5395,26 @@ msgstr "시스템 객체에 대한 권한을 설정할 수 없습니다. 이들�
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "자신의 역할은 업데이트할 수 없습니다."
+
+#. js-lingui-id: p6uSBj
+#: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
+msgid "You do not have access to this calendar channel."
+msgstr ""
+
+#. js-lingui-id: FUPyWG
+#: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+msgid "You do not have access to this connected account."
+msgstr ""
+
+#. js-lingui-id: R5GUVK
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "You do not have access to this message channel."
+msgstr ""
+
+#. js-lingui-id: dmOWfL
+#: src/engine/metadata-modules/message-folder/message-folder.exception.ts
+msgid "You do not have access to this message folder."
+msgstr ""
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts

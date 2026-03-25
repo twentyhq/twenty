@@ -40,8 +40,6 @@ export type CurrentWorkspace = Pick<
   | 'smartModel'
   | 'aiAdditionalInstructions'
   | 'editableProfileFields'
-  | 'autoEnableNewAiModels'
-  | 'disabledAiModelIds'
   | 'enabledAiModelIds'
   | 'useRecommendedModels'
 > & {

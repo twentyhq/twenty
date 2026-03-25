@@ -7,16 +7,16 @@ import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/comp
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 
 type SidePanelObjectMenuItemProps = {
-  objectMetadataItem: ObjectMetadataItem;
-  onSelect: (objectMetadataItem: ObjectMetadataItem) => void;
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  onSelect: (objectMetadataItem: EnrichedObjectMetadataItem) => void;
   variant: 'add' | 'edit';
   dragIndex?: number;
   disableDrag?: boolean;
@@ -42,7 +42,7 @@ export const SidePanelObjectMenuItem = ({
     { objectMetadataItemId: objectMetadataItem.id },
   );
   const Icon = getIcon(objectMetadataItem.icon);
-  const iconColor = getStandardObjectIconColor(objectMetadataItem.nameSingular);
+  const iconColor = getObjectColorWithFallback(objectMetadataItem);
   const isDisabled = isAlreadyInNavbar || !isDefined(defaultViewId);
 
   const handleClick = () => {
