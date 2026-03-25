@@ -11,9 +11,39 @@ import {
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
-import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
+import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { validateGroupByFieldOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-group-by-field.util';
+
+const buildChartFieldValidationException = (
+  message: string,
+  widgetTitle?: string | null,
+): PageLayoutWidgetException => {
+  const prefix = isDefined(widgetTitle) ? `Chart "${widgetTitle}": ` : '';
+  const fullMessage = prefix + message;
+
+  return new PageLayoutWidgetException(
+    fullMessage,
+    PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+    {
+      userFriendlyMessage: msg`${fullMessage}`,
+    },
+  );
+};
+
+const validateGroupByFieldAsChartFieldOrThrow = (
+  params: Parameters<typeof validateGroupByFieldOrThrow>[0],
+  widgetTitle?: string | null,
+): void => {
+  try {
+    validateGroupByFieldOrThrow(params);
+  } catch (error) {
+    throw buildChartFieldValidationException(
+      error instanceof Error ? error.message : String(error),
+      widgetTitle,
+    );
+  }
+};
 
 export const validateChartConfigurationFieldReferencesOrThrow = ({
   widgetConfiguration,
@@ -36,56 +66,62 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
     return;
   }
 
-  try {
-    if (!isDefined(widgetObjectMetadataId)) {
-      throw new Error('objectMetadataId is required for graph widgets.');
-    }
-
-    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: widgetObjectMetadataId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(objectMetadata) || !objectMetadata.isActive) {
-      throw new Error(
-        `objectMetadataId "${widgetObjectMetadataId}" not found.`,
-      );
-    }
-
-    const allFields = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((field) => field.isActive);
-
-    const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
-
-    allFields.forEach((field) => {
-      const existing = fieldsByObjectId.get(field.objectMetadataId) ?? [];
-
-      existing.push(field);
-      fieldsByObjectId.set(field.objectMetadataId, existing);
-    });
-
-    const aggregateField = findActiveFlatFieldMetadataById(
-      widgetConfiguration.aggregateFieldMetadataId,
-      flatFieldMetadataMaps,
+  if (!isDefined(widgetObjectMetadataId)) {
+    throw buildChartFieldValidationException(
+      'objectMetadataId is required for graph widgets.',
+      widgetTitle,
     );
+  }
 
-    if (!isDefined(aggregateField)) {
-      throw new Error(
-        `aggregateFieldMetadataId "${widgetConfiguration.aggregateFieldMetadataId}" not found.`,
-      );
-    }
+  const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: widgetObjectMetadataId,
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
-    if (aggregateField.objectMetadataId !== widgetObjectMetadataId) {
-      throw new Error(
-        `aggregateFieldMetadataId must belong to objectMetadataId "${widgetObjectMetadataId}".`,
-      );
-    }
+  if (!isDefined(objectMetadata) || !objectMetadata.isActive) {
+    throw buildChartFieldValidationException(
+      `objectMetadataId "${widgetObjectMetadataId}" not found.`,
+      widgetTitle,
+    );
+  }
 
-    switch (widgetConfiguration.configurationType) {
-      case WidgetConfigurationType.BAR_CHART:
-      case WidgetConfigurationType.LINE_CHART: {
-        validateGroupByFieldOrThrow({
+  const allFields = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
+    .filter(isDefined)
+    .filter((field) => field.isActive);
+
+  const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
+
+  allFields.forEach((field) => {
+    const existing = fieldsByObjectId.get(field.objectMetadataId) ?? [];
+
+    existing.push(field);
+    fieldsByObjectId.set(field.objectMetadataId, existing);
+  });
+
+  const aggregateField = findActiveFlatFieldMetadataById(
+    widgetConfiguration.aggregateFieldMetadataId,
+    flatFieldMetadataMaps,
+  );
+
+  if (!isDefined(aggregateField)) {
+    throw buildChartFieldValidationException(
+      `aggregateFieldMetadataId "${widgetConfiguration.aggregateFieldMetadataId}" not found.`,
+      widgetTitle,
+    );
+  }
+
+  if (aggregateField.objectMetadataId !== widgetObjectMetadataId) {
+    throw buildChartFieldValidationException(
+      `aggregateFieldMetadataId must belong to objectMetadataId "${widgetObjectMetadataId}".`,
+      widgetTitle,
+    );
+  }
+
+  switch (widgetConfiguration.configurationType) {
+    case WidgetConfigurationType.BAR_CHART:
+    case WidgetConfigurationType.LINE_CHART: {
+      validateGroupByFieldAsChartFieldOrThrow(
+        {
           fieldId: widgetConfiguration.primaryAxisGroupByFieldMetadataId,
           subFieldName: widgetConfiguration.primaryAxisGroupBySubFieldName,
           paramName: 'primaryAxisGroupByFieldMetadataId',
@@ -93,22 +129,24 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
           flatFieldMetadataMaps,
           allFields,
           fieldsByObjectId,
-        });
+        },
+        widgetTitle,
+      );
 
-        if (isDefined(widgetConfiguration.secondaryAxisGroupBySubFieldName)) {
-          if (
-            !isDefined(widgetConfiguration.secondaryAxisGroupByFieldMetadataId)
-          ) {
-            throw new Error(
-              'secondaryAxisGroupByFieldMetadataId is required when secondaryAxisGroupBySubFieldName is provided.',
-            );
-          }
-        }
-
+      if (isDefined(widgetConfiguration.secondaryAxisGroupBySubFieldName)) {
         if (
-          isDefined(widgetConfiguration.secondaryAxisGroupByFieldMetadataId)
+          !isDefined(widgetConfiguration.secondaryAxisGroupByFieldMetadataId)
         ) {
-          validateGroupByFieldOrThrow({
+          throw buildChartFieldValidationException(
+            'secondaryAxisGroupByFieldMetadataId is required when secondaryAxisGroupBySubFieldName is provided.',
+            widgetTitle,
+          );
+        }
+      }
+
+      if (isDefined(widgetConfiguration.secondaryAxisGroupByFieldMetadataId)) {
+        validateGroupByFieldAsChartFieldOrThrow(
+          {
             fieldId: widgetConfiguration.secondaryAxisGroupByFieldMetadataId,
             subFieldName: widgetConfiguration.secondaryAxisGroupBySubFieldName,
             paramName: 'secondaryAxisGroupByFieldMetadataId',
@@ -116,12 +154,15 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
             flatFieldMetadataMaps,
             allFields,
             fieldsByObjectId,
-          });
-        }
-        break;
+          },
+          widgetTitle,
+        );
       }
-      case WidgetConfigurationType.PIE_CHART: {
-        validateGroupByFieldOrThrow({
+      break;
+    }
+    case WidgetConfigurationType.PIE_CHART: {
+      validateGroupByFieldAsChartFieldOrThrow(
+        {
           fieldId: widgetConfiguration.groupByFieldMetadataId,
           subFieldName: widgetConfiguration.groupBySubFieldName,
           paramName: 'groupByFieldMetadataId',
@@ -129,61 +170,45 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
           flatFieldMetadataMaps,
           allFields,
           fieldsByObjectId,
+        },
+        widgetTitle,
+      );
+      break;
+    }
+    case WidgetConfigurationType.AGGREGATE_CHART:
+    default:
+      break;
+  }
+
+  if (isDefined(widgetConfiguration.filter?.recordFilters)) {
+    for (const recordFilter of widgetConfiguration.filter.recordFilters) {
+      const filterField = findActiveFlatFieldMetadataById(
+        recordFilter.fieldMetadataId,
+        flatFieldMetadataMaps,
+      );
+
+      if (!isDefined(filterField)) {
+        const inactiveOrMissingField = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: recordFilter.fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
         });
-        break;
-      }
-      case WidgetConfigurationType.AGGREGATE_CHART:
-      default:
-        break;
-    }
 
-    if (isDefined(widgetConfiguration.filter?.recordFilters)) {
-      for (const recordFilter of widgetConfiguration.filter.recordFilters) {
-        const filterField = findActiveFlatFieldMetadataById(
-          recordFilter.fieldMetadataId,
-          flatFieldMetadataMaps,
+        const fieldLabel = inactiveOrMissingField
+          ? `"${inactiveOrMissingField.label}"`
+          : `field id "${recordFilter.fieldMetadataId}"`;
+
+        throw buildChartFieldValidationException(
+          `One of the chart filters uses ${fieldLabel}, but it was deleted. Please remove or replace this filter rule.`,
+          widgetTitle,
         );
+      }
 
-        if (!isDefined(filterField)) {
-          const inactiveOrMissingField = findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: recordFilter.fieldMetadataId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          });
-
-          const fieldLabel = inactiveOrMissingField
-            ? `"${inactiveOrMissingField.label}"`
-            : `field id "${recordFilter.fieldMetadataId}"`;
-
-          throw new Error(
-            `One of the chart filters uses ${fieldLabel}, but it was deleted. Please remove or replace this filter rule.`,
-          );
-        }
-
-        if (filterField.objectMetadataId !== widgetObjectMetadataId) {
-          throw new Error(
-            `Filter field "${recordFilter.fieldMetadataId}" must belong to objectMetadataId "${widgetObjectMetadataId}".`,
-          );
-        }
+      if (filterField.objectMetadataId !== widgetObjectMetadataId) {
+        throw buildChartFieldValidationException(
+          `Filter field "${recordFilter.fieldMetadataId}" must belong to objectMetadataId "${widgetObjectMetadataId}".`,
+          widgetTitle,
+        );
       }
     }
-  } catch (error) {
-    if (error instanceof PageLayoutWidgetException) {
-      throw error;
-    }
-
-    const chartContextPrefix = isDefined(widgetTitle)
-      ? `Chart "${widgetTitle}": `
-      : '';
-    const chartValidationMessage =
-      chartContextPrefix +
-      (error instanceof Error ? error.message : String(error));
-
-    throw new PageLayoutWidgetException(
-      chartValidationMessage,
-      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      {
-        userFriendlyMessage: msg`${chartValidationMessage}`,
-      },
-    );
   }
 };
