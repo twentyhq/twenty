@@ -18,8 +18,8 @@ export const useAiModelOptions = (): SelectOption<string>[] => {
       label: isAutoSelectModelId(model.modelId)
         ? model.label
         : model.modelFamilyLabel
-            ? `${model.label} (${model.modelFamilyLabel})`
-            : model.label,
+          ? `${model.label} (${model.modelFamilyLabel})`
+          : model.label,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };

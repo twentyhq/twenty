@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { Select } from '@/ui/input/components/Select';
-import { type DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
 import { t } from '@lingui/core/macro';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { type SelectOption } from 'twenty-ui/input';
@@ -18,29 +17,21 @@ export const DateTimeSettingsCalendarStartDaySelect = ({
 }: DateTimeSettingsCalendarStartDaySelectProps) => {
   const systemCalendarStartDay = CalendarStartDay[detectCalendarStartDay()];
 
-  const options: SelectOption<CalendarStartDay>[] = useMemo(() => {
-    const systemDayLabel =
-      systemCalendarStartDay === CalendarStartDay.SUNDAY
-        ? t`System settings - Sunday`
-        : systemCalendarStartDay === CalendarStartDay.MONDAY
-          ? t`System settings - Monday`
-          : t`System settings - Saturday`;
+  const systemDayContextualText =
+    systemCalendarStartDay === CalendarStartDay.SUNDAY
+      ? t`Sunday`
+      : systemCalendarStartDay === CalendarStartDay.MONDAY
+        ? t`Monday`
+        : t`Saturday`;
 
-    const allowedDaysWeek: DayNameWithIndex[] = [
-      {
-        day: systemDayLabel,
-        index: CalendarStartDay.SYSTEM,
-      },
-      { day: t`Sunday`, index: CalendarStartDay.SUNDAY },
-      { day: t`Monday`, index: CalendarStartDay.MONDAY },
-      { day: t`Saturday`, index: CalendarStartDay.SATURDAY },
-    ];
-
-    return allowedDaysWeek.map(({ day, index }) => ({
-      label: day,
-      value: index as CalendarStartDay,
-    }));
-  }, [systemCalendarStartDay]);
+  const options: SelectOption<CalendarStartDay>[] = useMemo(
+    () => [
+      { label: t`Sunday`, value: CalendarStartDay.SUNDAY },
+      { label: t`Monday`, value: CalendarStartDay.MONDAY },
+      { label: t`Saturday`, value: CalendarStartDay.SATURDAY },
+    ],
+    [],
+  );
 
   return (
     <Select
@@ -50,6 +41,11 @@ export const DateTimeSettingsCalendarStartDaySelect = ({
       fullWidth
       dropdownWidthAuto
       value={value}
+      pinnedOption={{
+        label: t`System settings`,
+        value: CalendarStartDay.SYSTEM,
+        contextualText: systemDayContextualText,
+      }}
       options={options}
       onChange={onChange}
     />

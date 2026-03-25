@@ -39,9 +39,9 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 @Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(
+  RestApiExceptionFilter,
   AgentRestApiExceptionFilter,
   BillingRestApiExceptionFilter,
-  RestApiExceptionFilter,
 )
 export class AgentChatController {
   constructor(

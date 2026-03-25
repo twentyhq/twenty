@@ -49,6 +49,7 @@ export type SelectProps<Value extends SelectValue> = {
   value?: Value;
   withSearchInput?: boolean;
   needIconCheck?: boolean;
+  pinnedOption?: SelectOption<Value>;
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
@@ -88,6 +89,7 @@ export const Select = <Value extends SelectValue>({
   value,
   withSearchInput,
   needIconCheck,
+  pinnedOption,
   callToActionButton,
   dropdownOffset,
   hasRightElement,
@@ -97,6 +99,10 @@ export const Select = <Value extends SelectValue>({
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const selectedOption = useMemo(() => {
+    if (isDefined(pinnedOption) && pinnedOption.value === value) {
+      return pinnedOption;
+    }
+
     const fromMatchingOption = options.find(
       ({ value: optionValue }) => optionValue === value,
     );
@@ -114,7 +120,7 @@ export const Select = <Value extends SelectValue>({
     }
 
     return null;
-  }, [emptyOption, options, value]);
+  }, [emptyOption, options, pinnedOption, value]);
 
   const filteredOptions = useMemo(
     () =>
@@ -129,6 +135,7 @@ export const Select = <Value extends SelectValue>({
   const isDisabled =
     disabledFromProps ||
     (options.length <= 1 &&
+      !isDefined(pinnedOption) &&
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
@@ -200,6 +207,25 @@ export const Select = <Value extends SelectValue>({
               {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
                 <DropdownMenuSeparator />
               )}
+              {isDefined(pinnedOption) && (
+                <DropdownMenuItemsContainer scrollable={false}>
+                  <MenuItemSelect
+                    LeftIcon={pinnedOption.Icon}
+                    text={pinnedOption.label}
+                    contextualText={pinnedOption.contextualText}
+                    selected={selectedOption.value === pinnedOption.value}
+                    needIconCheck={needIconCheck}
+                    onClick={() => {
+                      onChange?.(pinnedOption.value);
+                      onBlur?.();
+                      closeDropdown(dropdownId);
+                    }}
+                  />
+                </DropdownMenuItemsContainer>
+              )}
+              {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
+                <DropdownMenuSeparator />
+              )}
               {isNonEmptyArray(filteredOptions) && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
@@ -220,6 +246,7 @@ export const Select = <Value extends SelectValue>({
                         <MenuItemSelect
                           LeftIcon={option.Icon}
                           text={option.label}
+                          contextualText={option.contextualText}
                           selected={selectedOption.value === option.value}
                           focused={selectedItemId === option.label}
                           needIconCheck={needIconCheck}

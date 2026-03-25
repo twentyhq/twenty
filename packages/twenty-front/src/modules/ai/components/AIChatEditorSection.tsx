@@ -124,29 +124,31 @@ export const AIChatEditorSection = () => {
     (model) => model.modelId === currentWorkspace?.smartModel,
   );
 
-  const defaultLabel = workspaceSmartModel?.label
-    ? t`${workspaceSmartModel.label} (default)`
-    : t`Default`;
+  const resolvedDefaultModelId = enabledModels.find(
+    (model) =>
+      model.label === workspaceSmartModel?.label &&
+      model.providerName === workspaceSmartModel?.providerName,
+  )?.modelId;
 
-  const modelsWithoutDefault = enabledModels.filter(
-    (model) => model.label !== workspaceSmartModel?.label,
-  );
+  const defaultPinnedOption = workspaceSmartModel
+    ? {
+        value: null as string | null,
+        label: workspaceSmartModel.label,
+        Icon: getModelIcon(
+          workspaceSmartModel.modelFamily,
+          workspaceSmartModel.providerName,
+        ),
+        contextualText: t`default`,
+      }
+    : undefined;
 
-  const smartModelOptions = [
-    {
-      value: null,
-      label: defaultLabel,
-      Icon: getModelIcon(
-        workspaceSmartModel?.modelFamily,
-        workspaceSmartModel?.providerName,
-      ),
-    },
-    ...modelsWithoutDefault.map((model) => ({
-      value: model.modelId,
+  const smartModelOptions = enabledModels
+    .filter((model) => model.modelId !== resolvedDefaultModelId)
+    .map((model) => ({
+      value: model.modelId as string | null,
       label: model.label,
       Icon: getModelIcon(model.modelFamily, model.providerName),
-    })),
-  ];
+    }));
 
   return (
     <>
@@ -172,6 +174,7 @@ export const AIChatEditorSection = () => {
                 value={selectedModelId}
                 onChange={setAgentChatUserSelectedModel}
                 options={smartModelOptions}
+                pinnedOption={defaultPinnedOption}
                 selectSizeVariant="small"
                 withSearchInput
                 dropdownOffset={{ x: 0, y: 8 }}
