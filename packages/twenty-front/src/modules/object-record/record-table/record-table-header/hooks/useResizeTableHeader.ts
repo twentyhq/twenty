@@ -7,6 +7,8 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
@@ -69,6 +71,16 @@ export const useResizeTableHeader = () => {
     recordTableId,
   );
 
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+    recordTableId,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
+    recordTableId,
+  );
+
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
       resetTableRowSelection();
@@ -98,6 +110,7 @@ export const useResizeTableHeader = () => {
       );
 
       updateRecordTableCSSVariable(
+        recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(recordFieldIndex),
         `${newWidth}px`,
       );
@@ -106,11 +119,14 @@ export const useResizeTableHeader = () => {
         recordFields: visibleRecordFields,
         shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
         tableWidth: recordTableWidth,
+        isDragColumnHidden: isRecordTableDragColumnHidden,
+        isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
       });
 
       const newLastColumnWidth = lastColumnWidth - newResizeOffset;
 
       updateRecordTableCSSVariable(
+        recordTableId,
         RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
         `${newLastColumnWidth}px`,
       );
@@ -121,6 +137,7 @@ export const useResizeTableHeader = () => {
       );
 
       updateRecordTableCSSVariable(
+        recordTableId,
         RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME,
         `${newGroupSectionLastColumnWidth}px`,
       );
@@ -130,9 +147,12 @@ export const useResizeTableHeader = () => {
     [
       initialPointerPositionX,
       recordField,
+      recordTableId,
       visibleRecordFields,
       shouldCompactRecordTableFirstColumn,
       recordTableWidth,
+      isRecordTableDragColumnHidden,
+      isRecordTableCheckboxColumnHidden,
       setResizeFieldOffset,
     ],
   );

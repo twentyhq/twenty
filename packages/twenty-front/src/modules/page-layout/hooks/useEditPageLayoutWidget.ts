@@ -66,6 +66,16 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         return;
       }
 
+      if (widgetType === WidgetType.RECORD_TABLE) {
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutRecordTableSettings,
+          pageTitle: t`Edit Record Table`,
+          resetNavigationStack: true,
+        });
+        setPageLayoutEditingWidgetId(widgetId);
+        return;
+      }
+
       setSidePanelPage(SidePanelPages.Root);
       closeSidePanelMenu();
     },

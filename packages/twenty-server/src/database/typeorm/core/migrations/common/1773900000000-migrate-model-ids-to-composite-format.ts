@@ -25,14 +25,15 @@ export class MigrateModelIdsToCompositeFormat1773900000000
           OR array_length("enabledAiModelIds", 1) > 0`,
     );
 
-    // Clear agent-specific model IDs so they fall back to workspace defaults
+    // Reset agent model IDs to the sentinel so they fall back to workspace defaults
     await queryRunner.query(
-      `UPDATE "core"."agent" SET "modelId" = NULL WHERE "modelId" IS NOT NULL`,
+      `UPDATE "core"."agent"
+       SET "modelId" = 'default-smart-model'
+       WHERE "modelId" != 'default-smart-model'`,
     );
   }
 
   public async down(_queryRunner: QueryRunner): Promise<void> {
-    // No reversal needed — sentinel defaults and NULLed agent modelIds
-    // are safe to leave in place.
+    // No reversal needed — sentinel defaults are safe to leave in place.
   }
 }

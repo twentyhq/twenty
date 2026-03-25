@@ -89,18 +89,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/groq@npm:^3.0.24":
-  version: 3.0.24
-  resolution: "@ai-sdk/groq@npm:3.0.24"
-  dependencies:
-    "@ai-sdk/provider": "npm:3.0.8"
-    "@ai-sdk/provider-utils": "npm:4.0.15"
-  peerDependencies:
-    zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/10e2b017f52006fcbcd4c46b78a3f02e3b3df3f337982d1669785df1492ca9a8793276403c5bff2c59bfd11ff1f6c58bcc1d3c49738bffd7ba13f527e85137b6
-  languageName: node
-  linkType: hard
-
 "@ai-sdk/mistral@npm:^3.0.20":
   version: 3.0.25
   resolution: "@ai-sdk/mistral@npm:3.0.25"
@@ -56440,6 +56428,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-client-sdk@workspace:*, twenty-client-sdk@workspace:packages/twenty-client-sdk":
+  version: 0.0.0-use.local
+  resolution: "twenty-client-sdk@workspace:packages/twenty-client-sdk"
+  dependencies:
+    "@genql/cli": "npm:^3.0.3"
+    "@genql/runtime": "npm:^2.10.0"
+    esbuild: "npm:^0.25.0"
+    graphql: "npm:^16.8.1"
+    twenty-shared: "workspace:*"
+    typescript: "npm:^5.9.2"
+    vite: "npm:^7.0.0"
+    vite-plugin-dts: "npm:^4.5.4"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^4.0.18"
+  languageName: unknown
+  linkType: soft
+
 "twenty-docs@workspace:packages/twenty-docs":
   version: 0.0.0-use.local
   resolution: "twenty-docs@workspace:packages/twenty-docs"
@@ -56642,6 +56647,7 @@ __metadata:
     tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
+    twenty-client-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     typescript: "npm:^5.9.2"
@@ -56663,7 +56669,6 @@ __metadata:
     "@ai-sdk/amazon-bedrock": "npm:^3.0.83"
     "@ai-sdk/anthropic": "npm:^3.0.46"
     "@ai-sdk/google": "npm:^3.0.30"
-    "@ai-sdk/groq": "npm:^3.0.24"
     "@ai-sdk/mistral": "npm:^3.0.20"
     "@ai-sdk/openai": "npm:^3.0.30"
     "@ai-sdk/provider-utils": "npm:^4.0.15"
@@ -56864,6 +56869,7 @@ __metadata:
     tsconfig-paths: "npm:^4.2.0"
     tsdav: "npm:^2.1.5"
     tslib: "npm:2.8.1"
+    twenty-client-sdk: "workspace:*"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
     type-fest: "npm:4.10.1"

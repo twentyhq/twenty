@@ -70,6 +70,7 @@ export const registerRemoteCommands = (program: Command): void => {
     .description('Add a new remote or re-authenticate an existing one')
     .option('--as <name>', 'Name for this remote')
     .option('--local', 'Connect to local development server')
+    .option('--port <port>', 'Port for local server (use with --local)')
     .option('--token <token>', 'API key for non-interactive auth')
     .option('--url <url>', 'Server URL (alternative to positional arg)')
     .action(
@@ -78,6 +79,7 @@ export const registerRemoteCommands = (program: Command): void => {
         options: {
           as?: string;
           local?: boolean;
+          port?: string;
           token?: string;
           url?: string;
         },
@@ -87,7 +89,12 @@ export const registerRemoteCommands = (program: Command): void => {
 
         if (options.local) {
           const remoteName = options.as ?? 'local';
-          const localUrl = await detectLocalServer();
+          const preferredPort = options.port
+            ? parseInt(options.port, 10)
+            : undefined;
+          const localUrl = preferredPort
+            ? `http://localhost:${preferredPort}`
+            : await detectLocalServer();
 
           if (!localUrl) {
             console.error(
@@ -102,7 +109,6 @@ export const registerRemoteCommands = (program: Command): void => {
           console.log(chalk.gray(`Found server at ${localUrl}`));
           ConfigService.setActiveRemote(remoteName);
           await authenticate(localUrl, options.token);
-          console.log(chalk.green(`✓ Authenticated remote "${remoteName}".`));
 
           return;
         }
@@ -116,7 +122,6 @@ export const registerRemoteCommands = (program: Command): void => {
 
           ConfigService.setActiveRemote(nameOrUrl);
           await authenticate(config.apiUrl, options.token);
-          console.log(chalk.green(`✓ Re-authenticated remote "${nameOrUrl}".`));
 
           return;
         }
@@ -156,8 +161,6 @@ export const registerRemoteCommands = (program: Command): void => {
         if (defaultRemote === 'local') {
           await configService.setDefaultRemote(name);
         }
-
-        console.log(chalk.green(`✓ Authenticated remote "${name}".`));
       },
     );
 
@@ -196,8 +199,8 @@ export const registerRemoteCommands = (program: Command): void => {
         );
       }
 
-      console.log('');
       console.log(
+        '\n',
         chalk.gray("Use 'twenty remote switch <name>' to change default"),
       );
     });

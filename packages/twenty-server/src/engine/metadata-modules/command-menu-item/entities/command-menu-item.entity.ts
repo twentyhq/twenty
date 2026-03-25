@@ -30,8 +30,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'availabilityObjectMetadataId',
 ])
 @Check(
-  'CHK_CMD_MENU_ITEM_WF_OR_FC_OR_ENGINE_KEY',
-  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL AND "engineComponentKey" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "engineComponentKey" IS NOT NULL)',
+  'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
+  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL)`,
 )
 export class CommandMenuItemEntity
   extends SyncableEntity
@@ -53,12 +53,8 @@ export class CommandMenuItemEntity
   @JoinColumn({ name: 'frontComponentId' })
   frontComponent: Relation<FrontComponentEntity> | null;
 
-  @Column({
-    type: 'enum',
-    enum: Object.values(EngineComponentKey),
-    nullable: true,
-  })
-  engineComponentKey: EngineComponentKey | null;
+  @Column({ type: 'varchar', nullable: false })
+  engineComponentKey: EngineComponentKey;
 
   @Column({ nullable: false })
   label: string;

@@ -1,3 +1,4 @@
+import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
 import { ArgsTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/args-type/args-type.generator';
 import { CompositeFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/composite-field-metadata-gql-enum-type.generator';
 import { EnumFieldMetadataGqlEnumTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/enum-types/enum-field-metadata-gql-enum-type.generator';
@@ -26,42 +27,152 @@ import { GroupByConnectionGqlObjectTypeGenerator } from 'src/engine/api/graphql/
 import { ObjectMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-gql-object-type.generator';
 import { ObjectMetadataWithRelationsGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/object-metadata-with-relations-gql-object-type.generator';
 import { RelationFieldMetadataGqlObjectTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/object-types/relation-field-metadata-gql-object-type.generator';
-import { OrphanedTypesGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/orphaned-types.generator';
 import { MutationTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/mutation-type.generator';
 import { QueryTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/query-type.generator';
 import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/root-type.generator';
+import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
+import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 
-export const workspaceSchemaBuilderTypeGenerators = [
-  CompositeFieldMetadataGqlEnumTypeGenerator,
-  EnumFieldMetadataGqlEnumTypeGenerator,
-  CompositeFieldMetadataGqlInputTypeGenerator,
-  CompositeFieldMetadataCreateGqlInputTypeGenerator,
-  CompositeFieldMetadataUpdateGqlInputTypeGenerator,
-  CompositeFieldMetadataFilterGqlInputTypeGenerator,
-  CompositeFieldMetadataOrderByGqlInputTypeGenerator,
-  CompositeFieldMetadataGroupByGqlInputTypeGenerator,
-  RelationFieldMetadataGqlInputTypeGenerator,
-  RelationFieldMetadataGqlObjectTypeGenerator,
-  ObjectMetadataGqlInputTypeGenerator,
-  ObjectMetadataCreateGqlInputTypeGenerator,
-  ObjectMetadataUpdateGqlInputTypeGenerator,
-  ObjectMetadataFilterGqlInputTypeGenerator,
-  ObjectMetadataOrderByGqlInputTypeGenerator,
-  ObjectMetadataGroupByGqlInputTypeGenerator,
-  ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator,
-  ObjectMetadataOrderByBaseGenerator,
-  GroupByDateGranularityInputTypeGenerator,
-  CompositeFieldMetadataGqlObjectTypeGenerator,
-  ObjectMetadataGqlObjectTypeGenerator,
-  RelationConnectGqlInputTypeGenerator,
-  ConnectionGqlObjectTypeGenerator,
-  EdgeGqlObjectTypeGenerator,
-  GroupByConnectionGqlObjectTypeGenerator,
-  ObjectMetadataWithRelationsGqlObjectTypeGenerator,
-  AggregationObjectTypeGenerator,
-  ArgsTypeGenerator,
-  RootTypeGenerator,
-  QueryTypeGenerator,
-  MutationTypeGenerator,
-  OrphanedTypesGenerator,
-];
+export const instantiateTypeGenerators = (
+  gqlTypesStorage: GqlTypesStorage,
+  typeMapperService: TypeMapperService,
+  workspaceResolverBuilderService: WorkspaceResolverBuilderService,
+) => {
+  const argsTypeGenerator = new ArgsTypeGenerator(gqlTypesStorage);
+
+  const relationFieldMetadataGqlObjectTypeGenerator =
+    new RelationFieldMetadataGqlObjectTypeGenerator(typeMapperService);
+
+  const relationFieldMetadataGqlInputTypeGenerator =
+    new RelationFieldMetadataGqlInputTypeGenerator(
+      typeMapperService,
+      gqlTypesStorage,
+    );
+
+  const compositeFieldMetadataCreateGqlInputTypeGenerator =
+    new CompositeFieldMetadataCreateGqlInputTypeGenerator(
+      gqlTypesStorage,
+      typeMapperService,
+    );
+  const compositeFieldMetadataUpdateGqlInputTypeGenerator =
+    new CompositeFieldMetadataUpdateGqlInputTypeGenerator(
+      gqlTypesStorage,
+      typeMapperService,
+    );
+  const compositeFieldMetadataFilterGqlInputTypeGenerator =
+    new CompositeFieldMetadataFilterGqlInputTypeGenerator(
+      gqlTypesStorage,
+      typeMapperService,
+    );
+  const compositeFieldMetadataOrderByGqlInputTypeGenerator =
+    new CompositeFieldMetadataOrderByGqlInputTypeGenerator(
+      gqlTypesStorage,
+      typeMapperService,
+    );
+  const compositeFieldMetadataGroupByGqlInputTypeGenerator =
+    new CompositeFieldMetadataGroupByGqlInputTypeGenerator(
+      gqlTypesStorage,
+      typeMapperService,
+    );
+
+  const objectMetadataOrderByBaseGenerator =
+    new ObjectMetadataOrderByBaseGenerator(
+      gqlTypesStorage,
+      relationFieldMetadataGqlInputTypeGenerator,
+      typeMapperService,
+    );
+
+  const rootTypeGenerator = new RootTypeGenerator(
+    gqlTypesStorage,
+    argsTypeGenerator,
+    workspaceResolverBuilderService,
+  );
+
+  return {
+    enumFieldMetadataGqlEnumTypeGenerator:
+      new EnumFieldMetadataGqlEnumTypeGenerator(gqlTypesStorage),
+    compositeFieldMetadataGqlEnumTypeGenerator:
+      new CompositeFieldMetadataGqlEnumTypeGenerator(gqlTypesStorage),
+    compositeFieldMetadataGqlObjectTypeGenerator:
+      new CompositeFieldMetadataGqlObjectTypeGenerator(
+        gqlTypesStorage,
+        typeMapperService,
+      ),
+    compositeFieldMetadataGqlInputTypeGenerator:
+      new CompositeFieldMetadataGqlInputTypeGenerator(
+        compositeFieldMetadataCreateGqlInputTypeGenerator,
+        compositeFieldMetadataUpdateGqlInputTypeGenerator,
+        compositeFieldMetadataFilterGqlInputTypeGenerator,
+        compositeFieldMetadataOrderByGqlInputTypeGenerator,
+        compositeFieldMetadataGroupByGqlInputTypeGenerator,
+      ),
+    objectMetadataGqlObjectTypeGenerator:
+      new ObjectMetadataGqlObjectTypeGenerator(
+        relationFieldMetadataGqlObjectTypeGenerator,
+        gqlTypesStorage,
+        typeMapperService,
+      ),
+    objectMetadataGqlInputTypeGenerator:
+      new ObjectMetadataGqlInputTypeGenerator(
+        new ObjectMetadataCreateGqlInputTypeGenerator(
+          gqlTypesStorage,
+          relationFieldMetadataGqlInputTypeGenerator,
+          typeMapperService,
+        ),
+        new ObjectMetadataUpdateGqlInputTypeGenerator(
+          gqlTypesStorage,
+          relationFieldMetadataGqlInputTypeGenerator,
+          typeMapperService,
+        ),
+        new ObjectMetadataFilterGqlInputTypeGenerator(
+          gqlTypesStorage,
+          relationFieldMetadataGqlInputTypeGenerator,
+          typeMapperService,
+        ),
+        new ObjectMetadataOrderByGqlInputTypeGenerator(
+          gqlTypesStorage,
+          objectMetadataOrderByBaseGenerator,
+        ),
+        new ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator(
+          gqlTypesStorage,
+          relationFieldMetadataGqlInputTypeGenerator,
+          objectMetadataOrderByBaseGenerator,
+          typeMapperService,
+        ),
+        new ObjectMetadataGroupByGqlInputTypeGenerator(
+          gqlTypesStorage,
+          relationFieldMetadataGqlInputTypeGenerator,
+          typeMapperService,
+        ),
+      ),
+    edgeGqlObjectTypeGenerator: new EdgeGqlObjectTypeGenerator(gqlTypesStorage),
+    connectionGqlObjectTypeGenerator: new ConnectionGqlObjectTypeGenerator(
+      new AggregationObjectTypeGenerator(),
+      gqlTypesStorage,
+    ),
+    groupByConnectionGqlObjectTypeGenerator:
+      new GroupByConnectionGqlObjectTypeGenerator(gqlTypesStorage),
+    objectMetadataWithRelationsGqlObjectTypeGenerator:
+      new ObjectMetadataWithRelationsGqlObjectTypeGenerator(
+        argsTypeGenerator,
+        gqlTypesStorage,
+      ),
+    relationConnectGqlInputTypeGenerator:
+      new RelationConnectGqlInputTypeGenerator(
+        typeMapperService,
+        gqlTypesStorage,
+      ),
+    groupByDateGranularityInputTypeGenerator:
+      new GroupByDateGranularityInputTypeGenerator(gqlTypesStorage),
+    queryTypeGenerator: new QueryTypeGenerator(
+      rootTypeGenerator,
+      gqlTypesStorage,
+    ),
+    mutationTypeGenerator: new MutationTypeGenerator(
+      rootTypeGenerator,
+      gqlTypesStorage,
+    ),
+  };
+};
+
+export type TypeGenerators = ReturnType<typeof instantiateTypeGenerators>;

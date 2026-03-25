@@ -563,7 +563,7 @@ Pontos-chave:
 
 * Componentes de front-end são componentes React que renderizam em contextos isolados dentro do Twenty.
 * O campo `component` faz referência ao seu componente React.
-* Os componentes são compilados e sincronizados automaticamente durante `yarn twenty app:dev`.
+* Os componentes são compilados e sincronizados automaticamente durante `yarn twenty dev`.
 
 Você pode criar novos componentes de front-end de duas formas:
 
@@ -607,7 +607,7 @@ Você pode criar novas habilidades de duas formas:
 
 ### Clientes tipados gerados
 
-Dois clientes tipados são gerados automaticamente pelo `yarn twenty app:dev` e armazenados em `node_modules/twenty-sdk/generated` com base no esquema do seu espaço de trabalho:
+Dois clientes tipados são gerados automaticamente pelo `yarn twenty dev` e armazenados em `node_modules/twenty-sdk/generated` com base no esquema do seu espaço de trabalho:
 
 * **`CoreApiClient`** — consulta o endpoint `/graphql` para dados do espaço de trabalho
 * **`MetadataApiClient`** — consulta o endpoint `/metadata` para obter a configuração do espaço de trabalho e o carregamento de arquivos
@@ -622,7 +622,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Ambos os clientes são regenerados automaticamente pelo `yarn twenty app:dev` sempre que seus objetos ou campos forem alterados.
+Ambos os clientes são regenerados automaticamente pelo `yarn twenty dev` sempre que seus objetos ou campos forem alterados.
 
 #### Credenciais em tempo de execução em funções de lógica
 

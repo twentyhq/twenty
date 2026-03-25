@@ -73,6 +73,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
+    const userWorkspaceId =
+      executionContext.authContext.type === 'user'
+        ? executionContext.authContext.userWorkspaceId
+        : null;
+
     const { result, usage, cacheCreationTokens } =
       await this.aiAgentExecutionService.executeAgent({
         agent,
@@ -89,6 +94,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       { usage, cacheCreationTokens },
       workspaceId,
       agent?.id || null,
+      userWorkspaceId,
     );
 
     return {

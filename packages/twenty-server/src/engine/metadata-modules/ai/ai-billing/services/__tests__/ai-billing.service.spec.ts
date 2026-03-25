@@ -1,7 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
-import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -334,16 +336,17 @@ describe('AiBillingService', () => {
       expect(
         mockWorkspaceEventEmitter.emitCustomBatchEvent,
       ).toHaveBeenCalledWith(
-        BILLING_FEATURE_USED,
+        USAGE_RECORDED,
         [
           {
-            eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
-            value: 7500,
-            dimensions: {
-              execution_type: 'ai_token',
-              resource_id: 'agent-id-123',
-              execution_context_1: 'gpt-4o',
-            },
+            resourceType: UsageResourceType.AI,
+            operationType: UsageOperationType.AI_TOKEN,
+            creditsUsedMicro: 7500,
+            quantity: 1500,
+            unit: UsageUnit.TOKEN,
+            resourceId: 'agent-id-123',
+            resourceContext: 'gpt-4o',
+            userWorkspaceId: null,
           },
         ],
         'workspace-1',

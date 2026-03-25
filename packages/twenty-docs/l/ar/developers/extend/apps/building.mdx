@@ -563,7 +563,7 @@ export default defineFrontComponent({
 
 * المكوّنات الأمامية هي مكوّنات React تُعرَض ضمن سياقات معزولة داخل Twenty.
 * يشير الحقل `component` إلى مكوّن React الخاص بك.
-* يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn twenty app:dev`.
+* يتم بناء المكوّنات ومزامنتها تلقائيًا أثناء `yarn twenty dev`.
 
 يمكنك إنشاء مكوّنات أمامية جديدة بطريقتين:
 
@@ -607,7 +607,7 @@ export default defineSkill({
 
 ### عملاء مُولَّدون مضبوطو الأنواع
 
-يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty app:dev` وتخزينهما في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك:
+يتم توليد عميلين مضبوطي الأنواع تلقائيًا بواسطة `yarn twenty dev` وتخزينهما في `node_modules/twenty-sdk/generated` استنادًا إلى مخطط مساحة العمل لديك:
 
 * **`CoreApiClient`** — يُجري استعلامات إلى نقطة النهاية `/graphql` للحصول على بيانات مساحة العمل
 * **`MetadataApiClient`** — يستعلم عن نقطة النهاية `/metadata` لتكوين مساحة العمل وتحميل الملفات.
@@ -622,7 +622,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-يُعاد توليد كلا العميلين تلقائيًا بواسطة `yarn twenty app:dev` كلما تغيّرت كائناتك أو حقولك.
+يُعاد توليد كلا العميلين تلقائيًا بواسطة `yarn twenty dev` كلما تغيّرت كائناتك أو حقولك.
 
 #### بيانات الاعتماد وقت التشغيل في الدوال المنطقية
 

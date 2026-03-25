@@ -35,7 +35,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -64,12 +65,10 @@ export class SearchService {
     filter,
     after,
     workspaceId,
-    rolePermissionConfig,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     workspaceId: string;
-    rolePermissionConfig?: RolePermissionConfig;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -90,6 +89,14 @@ export class SearchService {
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
           return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
             async () => {
+              const context = getWorkspaceContext();
+              const rolePermissionConfig =
+                resolveRolePermissionConfig({
+                  authContext: context.authContext,
+                  userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+                  apiKeyRoleMap: context.apiKeyRoleMap,
+                }) ?? undefined;
+
               const repository =
                 await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
                   workspaceId,

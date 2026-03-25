@@ -5,7 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
@@ -25,7 +25,7 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateInDraft, applyChanges } = useMetadataStore();
+  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const setLastFieldMetadataItemUpdate = useSetAtomState(
     lastFieldMetadataItemUpdateState,

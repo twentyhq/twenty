@@ -7,6 +7,7 @@ import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upg
 import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
 import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
+import { GenerateApplicationSdkClientsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-generate-application-sdk-clients.command';
 import { IdentifyObjectPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-object-permission-metadata.command';
 import { IdentifyPermissionFlagMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-permission-flag-metadata.command';
 import { MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-object-permission-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -16,8 +17,10 @@ import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-vers
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -31,11 +34,13 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       WorkspaceEntity,
+      ApplicationEntity,
       ConnectedAccountEntity,
       MessageChannelEntity,
       CalendarChannelEntity,
@@ -52,6 +57,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationRegistrationModule,
     WorkspaceMigrationModule,
     FeatureFlagModule,
+    SdkClientModule,
+    WorkflowCommonModule,
   ],
   providers: [
     IdentifyPermissionFlagMetadataCommand,
@@ -64,6 +71,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillPageLayoutsCommand,
     BackfillSelectFieldOptionIdsCommand,
     DeleteOrphanNavigationMenuItemsCommand,
+    GenerateApplicationSdkClientsCommand,
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
@@ -80,6 +88,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillPageLayoutsCommand,
     BackfillSelectFieldOptionIdsCommand,
     DeleteOrphanNavigationMenuItemsCommand,
+    GenerateApplicationSdkClientsCommand,
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,

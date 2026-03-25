@@ -6,6 +6,7 @@ const StyledHeaderCell = styled.div<{
   zIndex?: number;
   shouldDisplayBorderBottom: boolean;
   isResizing: boolean;
+  isReadOnly: boolean;
 }>`
   background-color: ${themeCssVariables.background.primary};
   border-bottom: ${({ shouldDisplayBorderBottom }) =>
@@ -16,7 +17,8 @@ const StyledHeaderCell = styled.div<{
 
   color: ${themeCssVariables.font.color.tertiary};
 
-  cursor: ${({ isResizing }) => (isResizing ? 'col-resize' : 'pointer')};
+  cursor: ${({ isResizing, isReadOnly }) =>
+    isReadOnly ? 'default' : isResizing ? 'col-resize' : 'pointer'};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
   max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
@@ -27,15 +29,15 @@ const StyledHeaderCell = styled.div<{
   text-align: left;
 
   &:hover {
-    background: ${({ isResizing }) =>
-      isResizing
+    background: ${({ isResizing, isReadOnly }) =>
+      isReadOnly || isResizing
         ? themeCssVariables.background.primary
         : themeCssVariables.background.secondary};
   }
 
   &:active {
-    background: ${({ isResizing }) =>
-      isResizing
+    background: ${({ isResizing, isReadOnly }) =>
+      isReadOnly || isResizing
         ? themeCssVariables.background.primary
         : themeCssVariables.background.tertiary};
   }

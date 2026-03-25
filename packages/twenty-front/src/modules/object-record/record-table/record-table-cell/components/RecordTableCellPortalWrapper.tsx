@@ -1,5 +1,7 @@
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableCellPortalContexts } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalContexts';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { getRecordTableCellId } from '@/object-record/record-table/utils/getRecordTableCellId';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,8 +12,16 @@ export const RecordTableCellPortalWrapper = ({
   position: TableCellPosition;
   children: React.ReactNode;
 }) => {
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const cellId = getRecordTableCellId(
+    recordTableId,
+    position.column,
+    position.row,
+  );
+
   const tableCellAnchorElement = document.body.querySelector<HTMLAnchorElement>(
-    `#record-table-cell-${position.column}-${position.row}`,
+    `#${cellId}`,
   );
 
   if (!isDefined(tableCellAnchorElement)) {

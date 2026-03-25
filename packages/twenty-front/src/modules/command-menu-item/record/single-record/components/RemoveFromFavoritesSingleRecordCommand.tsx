@@ -1,9 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { Command } from '@/command-menu-item/display/components/Command';
 import { useSelectedRecordIdOrThrow } from '@/command-menu-item/record/single-record/hooks/useSelectedRecordIdOrThrow';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { isDefined } from 'twenty-shared/utils';
 
 export const RemoveFromFavoritesSingleRecordCommand = () => {
   const recordId = useSelectedRecordIdOrThrow();
@@ -12,7 +13,7 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
 
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   const foundNavigationMenuItem = [
     ...navigationMenuItems,
@@ -28,7 +29,7 @@ export const RemoveFromFavoritesSingleRecordCommand = () => {
       return;
     }
 
-    deleteNavigationMenuItem(foundNavigationMenuItem.id);
+    deleteManyNavigationMenuItems([foundNavigationMenuItem.id]);
   };
 
   return <Command onClick={handleClick} />;
