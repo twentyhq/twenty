@@ -68,6 +68,10 @@ export class FrontComponentDTO {
   @Field()
   isHeadless: boolean;
 
+  @IsBoolean()
+  @Field()
+  usesSdkClient: boolean;
+
   @Field(() => ApplicationTokenPairDTO, { nullable: true })
   applicationTokenPair?: ApplicationTokenPairDTO;
 }

@@ -9,17 +9,32 @@ describe('validateRichTextFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when value is an empty object', () => {
+    it('should return value when value is an empty object', () => {
       const result = validateRichTextFieldOrThrow({}, 'testField');
 
-      expect(result).toBeNull();
+      expect(result).toEqual({});
     });
 
     it('should return the value when it has valid subfields', () => {
       const value = {
-        blocknote: 'some blocknote content',
+        blocknote:
+          '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
         markdown: '# Heading\nContent',
       };
+      const result = validateRichTextFieldOrThrow(value, 'testField');
+
+      expect(result).toEqual(value);
+    });
+
+    it('should return the value when blocknote is null', () => {
+      const value = { blocknote: null, markdown: 'test' };
+      const result = validateRichTextFieldOrThrow(value, 'testField');
+
+      expect(result).toEqual(value);
+    });
+
+    it('should return the value when only markdown is provided', () => {
+      const value = { markdown: '# Heading' };
       const result = validateRichTextFieldOrThrow(value, 'testField');
 
       expect(result).toEqual(value);
@@ -46,7 +61,29 @@ describe('validateRichTextFieldOrThrow', () => {
         CommonQueryRunnerException,
       );
       expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
-        /Should have only blocknote, markdown subfields/,
+        /Invalid subfield.*invalidField.*rich text field/,
+      );
+    });
+
+    it('should throw when blocknote contains invalid JSON', () => {
+      const value = { blocknote: 'not-valid-json' };
+
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        CommonQueryRunnerException,
+      );
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        /must contain valid JSON/,
+      );
+    });
+
+    it('should throw when blocknote is valid JSON but not an array', () => {
+      const value = { blocknote: '{"type":"paragraph"}' };
+
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        CommonQueryRunnerException,
+      );
+      expect(() => validateRichTextFieldOrThrow(value, 'testField')).toThrow(
+        /must be a JSON array of blocks/,
       );
     });
   });

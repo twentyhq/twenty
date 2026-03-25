@@ -1,0 +1,245 @@
+---
+title: Začínáme
+description: Vytvořte svou první aplikaci Twenty během několika minut.
+---
+
+<Warning>
+Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
+</Warning>
+
+Aplikace vám umožňují rozšířit Twenty o vlastní objekty, pole, logické funkce, AI schopnosti a komponenty uživatelského rozhraní — vše je spravováno jako kód.
+
+**Co můžete dělat už dnes:**
+
+* Definujte vlastní objekty a pole jako kód (spravovaný datový model)
+* Vytvářejte logické funkce s vlastními spouštěči (HTTP routy, cron, databázové události)
+* Definujte dovednosti agentů AI
+* Vytvářejte frontendové komponenty, které se vykreslují uvnitř uživatelského rozhraní Twenty
+* Nasazujte stejnou aplikaci do více pracovních prostorů
+
+## Předpoklady
+
+* Node.js 24+ a Yarn 4
+* Docker (pro místní vývojový server Twenty)
+
+## Začínáme
+
+Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a začněte vyvíjet:
+
+```bash filename="Terminal"
+# Scaffold a new app (includes all examples by default)
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# Start dev mode: automatically syncs local changes to your workspace
+yarn twenty dev
+```
+
+Nástroj pro generování kostry podporuje dva režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+```
+
+Odtud můžete:
+
+```bash filename="Terminal"
+# Add a new entity to your application (guided)
+yarn twenty entity:add
+
+# Watch your application's function logs
+yarn twenty function:logs
+
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute the pre-install function
+yarn twenty function:execute --preInstall
+
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
+yarn twenty uninstall
+
+# Display commands' help
+yarn twenty help
+```
+
+Viz také: referenční stránky CLI pro [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) a [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+
+## Struktura projektu (vytvořená scaffolderem)
+
+Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
+
+* Zkopíruje minimální základní aplikaci do `my-twenty-app/`
+* Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
+* Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
+* Vygeneruje základní soubory (konfigurace aplikace, výchozí role funkcí, předinstalační a postinstalační funkce) a k nim ukázkové soubory podle zvoleného režimu generování kostry
+
+Čerstvě vygenerovaná aplikace s výchozím režimem `--exhaustive` vypadá takto:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    install-state.gz
+  .oxlintrc.json
+  tsconfig.json
+  README.md
+  public/                           # Public assets folder (images, fonts, etc.)
+  src/
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
+  ├── logic-functions/
+  │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
+  │   └── post-install.ts               # Post-install logic function
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
+```
+
+S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`).
+
+V kostce:
+
+* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skript `twenty`, který deleguje na lokální `twenty` CLI. Spusťte `yarn twenty help` pro výpis všech dostupných příkazů.
+* **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
+* **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
+* **.oxlintrc.json** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
+* **README.md**: Krátké README v kořeni aplikace se základními pokyny.
+* **public/**: Složka pro ukládání veřejných prostředků (obrázky, písma, statické soubory), které bude vaše aplikace poskytovat. Soubory umístěné zde se během synchronizace nahrají a jsou za běhu dostupné.
+* **src/**: Hlavní místo, kde definujete svou aplikaci jako kód
+
+### Detekce entit
+
+SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`export default define<Entity>({...})`**. Každý typ entity má odpovídající pomocnou funkci exportovanou z `twenty-sdk`:
+
+| Pomocná funkce                   | Typ entity                                                |
+| -------------------------------- | --------------------------------------------------------- |
+| `defineObject`                   | Definice vlastních objektů                                |
+| `defineLogicFunction`            | Definice logických funkcí                                 |
+| `definePreInstallLogicFunction`  | Předinstalační logická funkce (spouští se před instalací) |
+| `definePostInstallLogicFunction` | Postinstalační logická funkce (spouští se po instalaci)   |
+| `defineFrontComponent`           | Definice frontendových komponent                          |
+| `defineRole`                     | Definice rolí                                             |
+| `defineField`                    | Rozšíření polí u existujících objektů                     |
+| `defineView`                     | Definice uložených zobrazení                              |
+| `defineNavigationMenuItem`       | Definice položek navigační nabídky                        |
+| `defineSkill`                    | Definice dovedností agenta AI                             |
+
+<Note>
+**Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
+</Note>
+
+Příklad detekované entity:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
+
+Pozdější příkazy přidají další soubory a složky:
+
+* `yarn twenty dev` automaticky vygeneruje dva typované API klienty v `node_modules/twenty-sdk/generated`: `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) a `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`).
+* `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
+
+## Ověření
+
+Při prvním spuštění `yarn twenty auth:login` budete vyzváni k zadání:
+
+* URL API (výchozí je http://localhost:3000 nebo váš aktuální profil pracovního prostoru)
+* Klíč API
+
+Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twenty/config.json`. Můžete spravovat více profilů a přepínat mezi nimi.
+
+### Správa pracovních prostorů
+
+```bash filename="Terminal"
+# Login interactively (recommended)
+yarn twenty auth:login
+
+# Login to a specific workspace profile
+yarn twenty auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn twenty auth:list
+
+# Switch the default workspace (interactive)
+yarn twenty auth:switch
+
+# Switch to a specific workspace
+yarn twenty auth:switch production
+
+# Check current authentication status
+yarn twenty auth:status
+```
+
+Jakmile přepnete pracovní prostor pomocí `yarn twenty auth:switch`, všechny následující příkazy budou tento pracovní prostor používat jako výchozí. Můžete jej stále dočasně přepsat pomocí `--workspace <name>`.
+
+## Ruční nastavení (bez scaffolderu)
+
+Ačkoli pro nejlepší začátky doporučujeme použít `create-twenty-app`, projekt můžete nastavit i ručně. Neinstalujte CLI globálně. Místo toho přidejte `twenty-sdk` jako lokální závislost a přidejte jeden skript do souboru package.json:
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+Poté přidejte skript `twenty`:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty dev`, `yarn twenty help` atd.
+
+## Jak používat lokální instanci Twenty
+
+Pokud již lokálně provozujete instanci Twenty (např. pomocí `npx nx start twenty-server`), můžete se k ní připojit namísto použití Dockeru:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
+
+## Řešení potíží
+
+* Chyby ověření: spusťte `yarn twenty auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
+* Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
+* Typy nebo klient chybí nebo jsou zastaralé: restartujte `yarn twenty dev` — automaticky generuje typovaného klienta.
+* Režim vývoje se nesynchronizuje: ujistěte se, že běží `yarn twenty dev` a že vaše prostředí změny neignoruje.
+
+Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322
