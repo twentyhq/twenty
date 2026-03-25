@@ -1748,6 +1748,7 @@ export type Field = {
   morphRelations?: Maybe<Array<Relation>>;
   name: Scalars['String'];
   object?: Maybe<Object>;
+  objectMetadataId: Scalars['UUID'];
   options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
   settings?: Maybe<Scalars['JSON']>;
@@ -1794,6 +1795,7 @@ export type FieldFilter = {
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
+  objectMetadataId?: InputMaybe<UuidFilterComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
 };
 
@@ -5239,6 +5241,7 @@ export type UpdateFieldInput = {
   label?: InputMaybe<Scalars['String']>;
   morphRelationsUpdatePayload?: InputMaybe<Array<Scalars['JSON']>>;
   name?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
   universalIdentifier?: InputMaybe<Scalars['String']>;
