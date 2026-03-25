@@ -1,8 +1,10 @@
 import request from 'supertest';
 
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
 const client = request(`http://localhost:${APP_PORT}`);
 
-const queryData = {
+const objectsQuery = {
   query: `
     query ObjectsI18n {
       objects(paging: { first: 100 }) {
@@ -28,12 +30,30 @@ type ObjectNode = {
   isCustom: boolean;
 };
 
-const makeLocalizedRequest = (locale: string) =>
+const updateWorkspaceMemberLocale = (locale: string) =>
+  client
+    .post('/graphql')
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .send({
+      query: `
+        mutation UpdateWorkspaceMemberLocale($id: ID!, $locale: String!) {
+          updateWorkspaceMember(id: $id, data: { locale: $locale }) {
+            id
+            locale
+          }
+        }
+      `,
+      variables: {
+        id: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        locale,
+      },
+    });
+
+const queryMetadataObjects = () =>
   client
     .post('/metadata')
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-    .set('x-locale', locale)
-    .send(queryData);
+    .send(objectsQuery);
 
 const findObjectByName = (
   edges: Array<{ node: ObjectNode }>,
@@ -42,8 +62,12 @@ const findObjectByName = (
   edges.find((edge) => edge.node.nameSingular === nameSingular)?.node;
 
 describe('object metadata i18n', () => {
-  it('should return English labels with x-locale: en', async () => {
-    const response = await makeLocalizedRequest('en');
+  afterAll(async () => {
+    await updateWorkspaceMemberLocale('en');
+  });
+
+  it('should return English labels when user locale is en', async () => {
+    const response = await queryMetadataObjects();
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
@@ -57,8 +81,10 @@ describe('object metadata i18n', () => {
     expect(company!.description).toBe('A company');
   });
 
-  it('should return French labels with x-locale: fr-FR', async () => {
-    const response = await makeLocalizedRequest('fr-FR');
+  it('should return French labels when user locale is fr-FR', async () => {
+    await updateWorkspaceMemberLocale('fr-FR');
+
+    const response = await queryMetadataObjects();
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
