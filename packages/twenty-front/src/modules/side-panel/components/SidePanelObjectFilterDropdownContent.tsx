@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { IconCube, useIcons } from 'twenty-ui/display';
 import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
@@ -42,38 +42,31 @@ export const SidePanelObjectFilterDropdownContent = ({
 
   const searchFilter = filterSearch.toLowerCase();
 
-  const displayedObjects = useMemo(
-    () =>
-      readableObjectMetadataItems.filter((item) => {
-        if (
-          OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
-            item.nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
-          )
-        ) {
-          return false;
-        }
+  const displayedObjects = readableObjectMetadataItems.filter((item) => {
+    if (
+      OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
+        item.nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
+      )
+    ) {
+      return false;
+    }
 
-        if (!sidePanelShowHiddenObjects && !item.isSearchable) {
-          return false;
-        }
+    if (!sidePanelShowHiddenObjects && !item.isSearchable) {
+      return false;
+    }
 
-        return item.labelPlural.toLowerCase().includes(searchFilter);
-      }),
-    [readableObjectMetadataItems, sidePanelShowHiddenObjects, searchFilter],
-  );
+    return item.labelPlural.toLowerCase().includes(searchFilter);
+  });
 
   const handleSelect = (objectNameSingular: string | null) => {
     onSelectObject(objectNameSingular);
     closeDropdown(OBJECT_FILTER_DROPDOWN_ID);
   };
 
-  const selectableItemIdArray = useMemo(
-    () => [
-      ALL_OBJECTS_ITEM_ID,
-      ...displayedObjects.map((item) => item.nameSingular),
-    ],
-    [displayedObjects],
-  );
+  const selectableItemIdArray = [
+    ALL_OBJECTS_ITEM_ID,
+    ...displayedObjects.map((item) => item.nameSingular),
+  ];
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,

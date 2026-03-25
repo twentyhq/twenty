@@ -1,5 +1,5 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
@@ -12,6 +12,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
+
 import { IconEye, IconSearch, useIcons } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -114,13 +115,11 @@ export const SettingsObjectSearchSection = ({
     [objectMetadataItem],
   );
 
-  const filteredIndexedFields = useMemo(() => {
-    if (!searchTerm) return indexedFields;
-    const normalized = searchTerm.toLowerCase();
-    return indexedFields.filter((entry) =>
-      entry.label.toLowerCase().includes(normalized),
-    );
-  }, [indexedFields, searchTerm]);
+  const filteredIndexedFields = searchTerm
+    ? indexedFields.filter((entry) =>
+        entry.label.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    : indexedFields;
 
   const handleToggleSearchable = async (value: boolean) => {
     setIsSearchable(value);
@@ -172,12 +171,10 @@ export const SettingsObjectSearchSection = ({
                     color={theme.font.color.primary}
                     gap={theme.spacing[2]}
                   >
-                    {FieldIcon && (
-                      <FieldIcon
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                      />
-                    )}
+                    <FieldIcon
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
                     <StyledNameLabel>{entry.label}</StyledNameLabel>
                   </TableCell>
                   <TableCell>{entry.weight}</TableCell>
