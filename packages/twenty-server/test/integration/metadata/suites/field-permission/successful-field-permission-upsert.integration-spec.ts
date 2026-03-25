@@ -12,6 +12,8 @@ describe('Field permission upsert should succeed', () => {
   let createdRoleId: string;
   let customObjectMetadataId: string;
   let oneFieldMetadataId: string;
+  let objectWithNoObjectPermissionMetadataId: string;
+  let objectWithNoObjectPermissionFieldMetadataId: string;
 
   beforeAll(async () => {
     const { data: roleData } = await createOneRole({
@@ -50,6 +52,21 @@ describe('Field permission upsert should succeed', () => {
     customObjectMetadataId = createOneObject.id;
     jestExpectToBeDefined(customObjectMetadataId);
 
+    const {
+      data: { createOneObject: createOneObjectWithNoObjectPermission },
+    } = await createOneObjectMetadata({
+      input: {
+        nameSingular: 'testFieldPermissionNoObjPerm',
+        namePlural: 'testFieldPermissionNoObjPerms',
+        labelSingular: 'Test Field Permission No Obj Perm',
+        labelPlural: 'Test Field Permission No Obj Perms',
+        icon: 'IconSettings',
+      },
+    });
+    objectWithNoObjectPermissionMetadataId =
+      createOneObjectWithNoObjectPermission.id;
+    jestExpectToBeDefined(objectWithNoObjectPermissionMetadataId);
+
     await upsertObjectPermissions({
       expectToFail: false,
       input: {
@@ -77,6 +94,21 @@ describe('Field permission upsert should succeed', () => {
     jestExpectToBeDefined(fields);
     expect(fields?.length).toBeGreaterThan(0);
     oneFieldMetadataId = fields[0].node.id;
+
+    const { fields: fieldsNoObjectPermission } = await findManyFieldsMetadata({
+      expectToFail: false,
+      input: {
+        filter: {
+          objectMetadataId: { eq: objectWithNoObjectPermissionMetadataId },
+        },
+        paging: { first: 1 },
+      },
+      gqlFields: 'id',
+    });
+    jestExpectToBeDefined(fieldsNoObjectPermission);
+    expect(fieldsNoObjectPermission?.length).toBeGreaterThan(0);
+    objectWithNoObjectPermissionFieldMetadataId =
+      fieldsNoObjectPermission[0].node.id;
   });
 
   afterAll(async () => {
@@ -90,6 +122,12 @@ describe('Field permission upsert should succeed', () => {
       await deleteOneObjectMetadata({
         expectToFail: false,
         input: { idToDelete: customObjectMetadataId },
+      });
+    }
+    if (isDefined(objectWithNoObjectPermissionMetadataId)) {
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: objectWithNoObjectPermissionMetadataId },
       });
     }
   });
@@ -166,6 +204,32 @@ describe('Field permission upsert should succeed', () => {
     expect(data?.upsertFieldPermissions?.[0]).toMatchObject({
       objectMetadataId: customObjectMetadataId,
       fieldMetadataId: oneFieldMetadataId,
+      roleId: createdRoleId,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    });
+  });
+
+  it('should upsert even when object permission is not found for role on object', async () => {
+    const { data } = await upsertFieldPermissions({
+      expectToFail: false,
+      input: {
+        roleId: createdRoleId,
+        fieldPermissions: [
+          {
+            objectMetadataId: objectWithNoObjectPermissionMetadataId,
+            fieldMetadataId: objectWithNoObjectPermissionFieldMetadataId,
+            canReadFieldValue: false,
+            canUpdateFieldValue: false,
+          },
+        ],
+      },
+    });
+
+    expect(data?.upsertFieldPermissions).toHaveLength(1);
+    expect(data?.upsertFieldPermissions?.[0]).toMatchObject({
+      objectMetadataId: objectWithNoObjectPermissionMetadataId,
+      fieldMetadataId: objectWithNoObjectPermissionFieldMetadataId,
       roleId: createdRoleId,
       canReadFieldValue: false,
       canUpdateFieldValue: false,

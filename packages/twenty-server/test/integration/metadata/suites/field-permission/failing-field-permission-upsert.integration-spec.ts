@@ -25,8 +25,6 @@ type GlobalTestContext = {
   systemObjectMetadataId: string;
   nonSystemObjectMetadataId: string;
   oneFieldMetadataId: string;
-  objectPermissionNotFoundObjectId: string;
-  objectPermissionNotFoundFieldMetadataId: string;
 };
 
 type TestContext = {
@@ -70,7 +68,7 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
     {
       title: 'when role is not editable (system role)',
       context: {
-        input: (globalContext) => ({
+        input: (globalContext: GlobalTestContext) => ({
           roleId: globalContext.nonEditableRoleId,
           fieldPermissions: [
             {
@@ -86,7 +84,7 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
     {
       title: 'when objectMetadataId does not exist',
       context: {
-        input: (globalContext) => ({
+        input: (globalContext: GlobalTestContext) => ({
           roleId: globalContext.editableRoleId,
           fieldPermissions: [
             {
@@ -102,7 +100,7 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
     {
       title: 'when fieldMetadataId does not exist',
       context: {
-        input: (globalContext) => ({
+        input: (globalContext: GlobalTestContext) => ({
           roleId: globalContext.editableRoleId,
           fieldPermissions: [
             {
@@ -118,7 +116,7 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
     {
       title: 'when object is system object',
       context: {
-        input: (globalContext) => ({
+        input: (globalContext: GlobalTestContext) => ({
           roleId: globalContext.editableRoleId,
           fieldPermissions: [
             {
@@ -134,7 +132,7 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
     {
       title: 'when canReadFieldValue is true (only restriction allowed)',
       context: {
-        input: (globalContext) => ({
+        input: (globalContext: GlobalTestContext) => ({
           roleId: globalContext.editableRoleId,
           fieldPermissions: [
             {
@@ -150,7 +148,7 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
     {
       title: 'when canUpdateFieldValue is true (only restriction allowed)',
       context: {
-        input: (globalContext) => ({
+        input: (globalContext: GlobalTestContext) => ({
           roleId: globalContext.editableRoleId,
           fieldPermissions: [
             {
@@ -158,23 +156,6 @@ const failingFieldPermissionUpsertTestCases: EachTestingContext<TestContext>[] =
               fieldMetadataId: globalContext.oneFieldMetadataId,
               canReadFieldValue: false,
               canUpdateFieldValue: true,
-            },
-          ],
-        }),
-      },
-    },
-    {
-      title: 'when object permission is not found for role on object',
-      context: {
-        input: (globalContext) => ({
-          roleId: globalContext.editableRoleId,
-          fieldPermissions: [
-            {
-              objectMetadataId: globalContext.objectPermissionNotFoundObjectId,
-              fieldMetadataId:
-                globalContext.objectPermissionNotFoundFieldMetadataId,
-              canReadFieldValue: false,
-              canUpdateFieldValue: false,
             },
           ],
         }),
@@ -188,8 +169,6 @@ describe('Field permission upsert should fail', () => {
   let systemObjectMetadataId: string;
   let nonSystemObjectMetadataId: string;
   let oneFieldMetadataId: string;
-  let objectPermissionNotFoundObjectId: string;
-  let objectPermissionNotFoundFieldMetadataId: string;
 
   beforeAll(async () => {
     const { data: roleData } = await createOneRole({
@@ -292,33 +271,6 @@ describe('Field permission upsert should fail', () => {
       },
     });
 
-    const {
-      data: { createOneObject },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'testFieldPermissionNoObjPerm',
-        namePlural: 'testFieldPermissionNoObjPerms',
-        labelSingular: 'Test Field Permission No Obj Perm',
-        labelPlural: 'Test Field Permission No Obj Perms',
-        icon: 'IconSettings',
-      },
-    });
-    objectPermissionNotFoundObjectId = createOneObject.id;
-    jestExpectToBeDefined(objectPermissionNotFoundObjectId);
-
-    const { fields: fieldsNoPerm } = await findManyFieldsMetadata({
-      expectToFail: false,
-      input: {
-        filter: {
-          objectMetadataId: { eq: objectPermissionNotFoundObjectId },
-        },
-        paging: { first: 1 },
-      },
-      gqlFields: 'id',
-    });
-    jestExpectToBeDefined(fieldsNoPerm);
-    expect(fieldsNoPerm?.length).toBeGreaterThan(0);
-    objectPermissionNotFoundFieldMetadataId = fieldsNoPerm[0].node.id;
   });
 
   afterAll(async () => {
@@ -326,12 +278,6 @@ describe('Field permission upsert should fail', () => {
       await deleteOneRole({
         expectToFail: false,
         input: { idToDelete: editableRoleId },
-      });
-    }
-    if (isDefined(objectPermissionNotFoundObjectId)) {
-      await deleteOneObjectMetadata({
-        expectToFail: false,
-        input: { idToDelete: objectPermissionNotFoundObjectId },
       });
     }
   });
@@ -345,10 +291,6 @@ describe('Field permission upsert should fail', () => {
         systemObjectMetadataId: systemObjectMetadataId ?? '',
         nonSystemObjectMetadataId: nonSystemObjectMetadataId ?? '',
         oneFieldMetadataId: oneFieldMetadataId ?? '',
-        objectPermissionNotFoundObjectId:
-          objectPermissionNotFoundObjectId ?? '',
-        objectPermissionNotFoundFieldMetadataId:
-          objectPermissionNotFoundFieldMetadataId ?? '',
       };
       const input = context.input(globalContext);
 
