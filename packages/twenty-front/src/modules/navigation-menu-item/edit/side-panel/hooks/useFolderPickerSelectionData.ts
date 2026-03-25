@@ -5,7 +5,7 @@ import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/ed
 import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItemsWorkspaceFolders';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -41,8 +41,8 @@ const excludeCurrentFolder = <T extends { id: string }>(
 export const useFolderPickerSelectionData = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
-  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
   );
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const selectedItemType = selectedItem?.type ?? null;
@@ -51,7 +51,7 @@ export const useFolderPickerSelectionData = () => {
 
   const selectedFolderId =
     selectedItemType === NavigationMenuItemType.FOLDER
-      ? selectedNavigationMenuItemInEditMode
+      ? selectedNavigationMenuItemIdInEditMode
       : null;
   const currentFolderId =
     selectedItemType === NavigationMenuItemType.FOLDER
@@ -86,8 +86,8 @@ export const useFolderPickerSelectionData = () => {
     : excludeCurrentFolder(workspaceFolders, currentFolderId);
 
   const handleSelectFolder = (folderId: string | null) => {
-    if (isDefined(selectedNavigationMenuItemInEditMode)) {
-      moveToFolder(selectedNavigationMenuItemInEditMode, folderId);
+    if (isDefined(selectedNavigationMenuItemIdInEditMode)) {
+      moveToFolder(selectedNavigationMenuItemIdInEditMode, folderId);
       closeSidePanelMenu();
     }
   };

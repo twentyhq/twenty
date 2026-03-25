@@ -574,7 +574,7 @@ export default defineLogicFunction({
   timeoutSeconds: 2,
   handler,
   triggers: [
-    // Public HTTP route trigger '/s/post-card/create'
+    // مشغّل مسار HTTP عام '/s/post-card/create'
     {
       universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
       type: 'route',
@@ -582,13 +582,13 @@ export default defineLogicFunction({
       httpMethod: 'GET',
       isAuthRequired: false,
     },
-    // Cron trigger (CRON pattern)
+    // مُشغّل كرون (نمط CRON)
     // {
     //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
     //   type: 'cron',
     //   pattern: '0 0 1 1 *',
     // },
-    // Database event trigger
+    // مُشغّل حدث قاعدة البيانات
     // {
     //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
     //   type: 'databaseEvent',
@@ -836,7 +836,7 @@ export default defineLogicFunction({
     },
     required: ['companyName'],
   },
-});
+});},{
 ```
 
 النقاط الرئيسية:
@@ -1221,7 +1221,7 @@ const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
-const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });},{
 ```
 
 `CoreApiClient` يُعاد توليده تلقائيًا بواسطة `yarn twenty dev` كلما تغيّرت كائناتك أو حقولك. `MetadataApiClient` يأتي مُجهزًا مسبقًا مع SDK.
@@ -1252,10 +1252,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+  fileBuffer,                                         // محتوى الملف كـ Buffer
+  'invoice.pdf',                                      // اسم الملف
+  'application/pdf',                                  // نوع MIME (القيمة الافتراضية 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // المعرّف العالمي للحقل
 );
 
 console.log(uploadedFile);

@@ -111,6 +111,7 @@ const StyledItem = styled.button<StyledItemProps>`
   height: ${themeCssVariables.spacing[7]};
   margin-top: ${({ indentationLevel }) =>
     indentationLevel === 2 ? '2px' : '0'};
+  min-width: 0;
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${({ hasRightOptions }) =>
