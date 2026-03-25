@@ -202,6 +202,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
     setIsLoading(true);
     try {
       if (isDefined(apiKey)) {
+        if (!isNonEmptyString(apiKeyName)) {
+          enqueueErrorSnackBar({
+            message: t`API key name cannot be empty`,
+          });
+          return;
+        }
         const newExpiresAt = computeNewExpirationDate(
           apiKey.expiresAt,
           apiKey.createdAt,
