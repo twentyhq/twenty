@@ -1,7 +1,5 @@
 import { v4 } from 'uuid';
 
-import { type AllMetadataName } from 'twenty-shared/metadata';
-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -25,8 +23,12 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
 >): UniversalFlatFieldPermission & { id: string } => {
   const now = new Date().toISOString();
 
-  const resolved = resolveEntityRelationUniversalIdentifiers({
-    metadataName: 'fieldPermission' as AllMetadataName,
+  const {
+    roleUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    fieldMetadataUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'fieldPermission',
     foreignKeyValues: {
       roleId,
       objectMetadataId: fieldPermissionInput.objectMetadataId,
@@ -37,17 +39,7 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     },
-  }) as {
-    roleUniversalIdentifier: string;
-    objectMetadataUniversalIdentifier: string;
-    fieldMetadataUniversalIdentifier: string;
-  };
-
-  const {
-    roleUniversalIdentifier,
-    objectMetadataUniversalIdentifier,
-    fieldMetadataUniversalIdentifier,
-  } = resolved;
+  });
 
   return {
     id: v4(),
