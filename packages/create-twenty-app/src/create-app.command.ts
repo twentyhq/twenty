@@ -70,9 +70,7 @@ export class CreateAppCommand {
           serverResult = startResult.data;
           await this.connectToLocal(serverResult.url);
         } else {
-          console.log(
-            chalk.yellow(`\n${startResult.error.message}`),
-          );
+          console.log(chalk.yellow(`\n${startResult.error.message}`));
         }
       }
 
