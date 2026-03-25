@@ -38,28 +38,6 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
       });
     }
 
-    if (isDefined(req.application)) {
-      if (
-        isDefined(req.user) &&
-        isDefined(req.userWorkspaceId) &&
-        isDefined(req.workspaceMemberId) &&
-        isDefined(req.workspaceMember)
-      ) {
-        return buildUserAuthContext({
-          workspace: req.workspace!,
-          userWorkspaceId: req.userWorkspaceId,
-          user: req.user,
-          workspaceMemberId: req.workspaceMemberId,
-          workspaceMember: req.workspaceMember,
-        });
-      }
-
-      return buildApplicationAuthContext({
-        workspace: req.workspace!,
-        application: req.application,
-      });
-    }
-
     if (
       isDefined(req.userWorkspaceId) &&
       isDefined(req.workspaceMemberId) &&
@@ -72,6 +50,13 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
         user: req.user,
         workspaceMemberId: req.workspaceMemberId,
         workspaceMember: req.workspaceMember,
+      });
+    }
+
+    if (isDefined(req.application)) {
+      return buildApplicationAuthContext({
+        workspace: req.workspace!,
+        application: req.application,
       });
     }
 
