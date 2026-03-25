@@ -52,12 +52,12 @@ msgstr ""
 #. js-lingui-id: kZR6+h
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A company"
-msgstr ""
+msgstr "公司"
 
 #. js-lingui-id: +aeifv
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A connected account"
-msgstr ""
+msgstr "連接帳戶"
 
 #. js-lingui-id: cOSBjW
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -92,7 +92,7 @@ msgstr "具有此名稱的欄位已存在。"
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "A front component with this name already exists."
-msgstr ""
+msgstr "具有此名稱的前端元件已存在。"
 
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -157,7 +157,7 @@ msgstr "缺少必要的設定。"
 #. js-lingui-id: FVCXUT
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
 msgid "A required field is missing."
-msgstr ""
+msgstr "缺少必要的欄位。"
 
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
@@ -168,22 +168,22 @@ msgstr "此標籤的角色已存在。"
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "A skill with this name already exists"
-msgstr ""
+msgstr "具有此名稱的技能已存在"
 
 #. js-lingui-id: jX0IPx
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
-msgstr ""
+msgstr "具有此名稱的技能已存在。"
 
 #. js-lingui-id: 73tqJw
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A system field has invalid properties."
-msgstr ""
+msgstr "系統欄位具有無效的屬性。"
 
 #. js-lingui-id: WYnYE1
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A system field is missing."
-msgstr ""
+msgstr "缺少系統欄位。"
 
 #. js-lingui-id: mkFXEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -223,7 +223,7 @@ msgstr "發生檢視欄位錯誤。"
 #. js-lingui-id: 4oDFCk
 #: src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception.ts
 msgid "A view field group error occurred."
-msgstr ""
+msgstr "發生檢視欄位群組錯誤。"
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
@@ -248,7 +248,7 @@ msgstr "發生檢視排序錯誤。"
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
-msgstr ""
+msgstr "具有此組態的 Webhook 已存在。"
 
 #. js-lingui-id: ZIN9Ga
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -283,7 +283,7 @@ msgstr ""
 #. js-lingui-id: qjrxU8
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Access denied."
-msgstr ""
+msgstr "拒絕存取。"
 
 #. js-lingui-id: GDKKxT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
@@ -376,22 +376,22 @@ msgstr "名稱為 \"{name}\" 的代理程式已存在"
 #. js-lingui-id: wqJIjz
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate field is required for graph widget"
-msgstr ""
+msgstr "圖表小工具必須指定彙總欄位"
 
 #. js-lingui-id: /Z4Wk1
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate field metadata is required for graph widget \"{widgetTitle}\""
-msgstr ""
+msgstr "圖表小工具 \"{widgetTitle}\" 必須提供彙總欄位的中繼資料"
 
 #. js-lingui-id: uhRAsd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate operation is required for graph widget"
-msgstr ""
+msgstr "圖表小工具必須指定彙總運算"
 
 #. js-lingui-id: YCzwBK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate operation is required for graph widget \"{widgetTitle}\""
-msgstr ""
+msgstr "圖表小工具 \"{widgetTitle}\" 必須指定彙總運算"
 
 #. js-lingui-id: W58PBh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -539,7 +539,7 @@ msgstr ""
 #. js-lingui-id: ue106l
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application is not installed in this workspace. Install it first."
-msgstr ""
+msgstr "此工作區未安裝應用程式。請先安裝。"
 
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
@@ -554,17 +554,17 @@ msgstr "找不到應用程式。"
 #. js-lingui-id: DE/icK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration not found."
-msgstr ""
+msgstr "找不到應用程式註冊。"
 
 #. js-lingui-id: eiOt+9
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
-msgstr ""
+msgstr "找不到應用程式註冊變數。"
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application upgrade failed."
-msgstr ""
+msgstr "應用程式升級失敗。"
 
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
@@ -733,12 +733,12 @@ msgstr ""
 #. js-lingui-id: aepsXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require an Enterprise subscription."
-msgstr ""
+msgstr "稽核日誌需要企業版訂閱。"
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require ClickHouse to be configured."
-msgstr ""
+msgstr "稽核日誌需要先設定 ClickHouse。"
 
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -770,7 +770,7 @@ msgstr "需要身分驗證。"
 #. js-lingui-id: bWAwB6
 #: src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter.ts
 msgid "Authentication required."
-msgstr ""
+msgstr "需要身分驗證。"
 
 #. js-lingui-id: cvSznK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -853,17 +853,17 @@ msgstr ""
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist handle already exists."
-msgstr ""
+msgstr "封鎖清單的識別碼已存在。"
 
 #. js-lingui-id: Hbe5jq
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist handle is required."
-msgstr ""
+msgstr "必須提供封鎖清單的識別碼。"
 
 #. js-lingui-id: xYLtTf
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist item not found."
-msgstr ""
+msgstr "找不到封鎖清單項目。"
 
 #. js-lingui-id: w4auss
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -889,7 +889,7 @@ msgstr ""
 #. js-lingui-id: Ara8xP
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body is required for standalone rich text widget"
-msgstr ""
+msgstr "獨立的豐富文字小工具必須提供內文"
 
 #. js-lingui-id: I6oEwz
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
@@ -909,7 +909,7 @@ msgstr ""
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
 msgid "Bulk update of blocklist entries is not allowed."
-msgstr ""
+msgstr "不允許批次更新封鎖清單項目。"
 
 #. js-lingui-id: 8mVqF7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -919,7 +919,7 @@ msgstr ""
 #. js-lingui-id: AjVXBS
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Calendar"
-msgstr ""
+msgstr "日曆"
 
 #. js-lingui-id: Nh6GTX
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -954,7 +954,7 @@ msgstr "行事曆通道設定錯誤。"
 #. js-lingui-id: 3J2x1Q
 #: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
 msgid "Calendar channel not found."
-msgstr ""
+msgstr "找不到行事曆頻道。"
 
 #. js-lingui-id: fH0CrF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
@@ -1087,7 +1087,7 @@ msgstr "由於存在關聯記錄，無法完成操作。"
 #. js-lingui-id: 6Sk/wo
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Cannot create blocklist entry for another workspace member."
-msgstr ""
+msgstr "無法為其他工作區成員建立封鎖清單項目。"
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1114,7 +1114,7 @@ msgstr "無法刪除標準代理程式"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot delete standard skill"
-msgstr ""
+msgstr "無法刪除標準技能"
 
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1125,7 +1125,7 @@ msgstr "無法刪除最後一位管理員使用者。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "Cannot delete the only view for this object"
-msgstr ""
+msgstr "無法刪除此物件的唯一檢視"
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
@@ -1155,62 +1155,62 @@ msgstr "不能有多個活動的工作流版本"
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Cannot modify predicate belonging to a different object."
-msgstr ""
+msgstr "無法修改屬於不同對象的條件。"
 
 #. js-lingui-id: xO923u
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Cannot modify predicate belonging to a different role."
-msgstr ""
+msgstr "無法修改屬於不同角色的條件。"
 
 #. js-lingui-id: eiujBX
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Cannot modify predicate group belonging to a different object."
-msgstr ""
+msgstr "無法修改屬於不同物件的條件群組。"
 
 #. js-lingui-id: 3niIR5
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Cannot modify predicate group belonging to a different role."
-msgstr ""
+msgstr "無法修改屬於不同角色的條件群組。"
 
 #. js-lingui-id: Su850d
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its object"
-msgstr ""
+msgstr "無法修改條件群組以變更其物件"
 
 #. js-lingui-id: /lHFxo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its object from {existingObjectMetadataIdentifier} to {updatedObjectMetadataIdentifier}"
-msgstr ""
+msgstr "無法修改條件群組以將其物件從 {existingObjectMetadataIdentifier} 變更為 {updatedObjectMetadataIdentifier}"
 
 #. js-lingui-id: jm1hwE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its role"
-msgstr ""
+msgstr "無法修改條件群組以變更其角色"
 
 #. js-lingui-id: yxykz2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its role from {existingRoleIdentifier} to {updatedRoleIdentifier}"
-msgstr ""
+msgstr "無法修改條件群組以將其角色從 {existingRoleIdentifier} 變更為 {updatedRoleIdentifier}"
 
 #. js-lingui-id: HDo5ie
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its object"
-msgstr ""
+msgstr "無法修改條件以變更其物件"
 
 #. js-lingui-id: ku/9og
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its object from {existingObjectMetadataIdentifier} to {updatedObjectMetadataIdentifier}"
-msgstr ""
+msgstr "無法修改條件以將其物件從 {existingObjectMetadataIdentifier} 變更為 {updatedObjectMetadataIdentifier}"
 
 #. js-lingui-id: 7JaPm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its role"
-msgstr ""
+msgstr "無法修改條件以變更其角色"
 
 #. js-lingui-id: uoi9Wy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} to {updatedRoleIdentifier}"
-msgstr ""
+msgstr "無法修改條件以將其角色從 {existingRoleIdentifier} 變更為 {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1242,7 +1242,7 @@ msgstr "無法更新標準代理程式"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
-msgstr ""
+msgstr "無法更新標準技能屬性（僅允許啟用/停用）"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1269,18 +1269,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Circular dependency detected in navigation menu item hierarchy"
-msgstr ""
+msgstr "在導覽選單項目階層中偵測到循環相依關係"
 
 #. js-lingui-id: /WTI79
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Circular dependency detected in navigation menu item hierarchy."
-msgstr ""
+msgstr "在導覽選單項目階層中偵測到循環相依關係."
 
 #. js-lingui-id: 9uirl8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Circular dependency detected in view filter group hierarchy"
-msgstr ""
+msgstr "在視圖篩選組階層中偵測到循環相依關係"
 
 #. js-lingui-id: 3wV73y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -1308,12 +1308,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item not found"
-msgstr ""
+msgstr "找不到命令選單項目"
 
 #. js-lingui-id: GQ9t8D
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Command menu item not found."
-msgstr ""
+msgstr "找不到命令選單項目。"
 
 #. js-lingui-id: QeCopv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1357,22 +1357,22 @@ msgstr ""
 #. js-lingui-id: yU57/s
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for fields widget"
-msgstr ""
+msgstr "欄位小工具需要設定"
 
 #. js-lingui-id: tj1Qu0
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for fields widget \"{widgetTitle}\""
-msgstr ""
+msgstr "欄位小工具「{widgetTitle}」需要設定"
 
 #. js-lingui-id: 3UUjIe
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for front component widget"
-msgstr ""
+msgstr "前端元件小工具需要設定"
 
 #. js-lingui-id: tBK3H8
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for front component widget \"{title}\""
-msgstr ""
+msgstr "前端元件小工具 \"{title}\" 需要設定"
 
 #. js-lingui-id: wOVBIH
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
@@ -1382,7 +1382,7 @@ msgstr ""
 #. js-lingui-id: 9fX6Jd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for graph widget \"{widgetTitle}\""
-msgstr ""
+msgstr "圖表小工具「{widgetTitle}」需要設定"
 
 #. js-lingui-id: heMezC
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util.ts
@@ -1392,7 +1392,7 @@ msgstr ""
 #. js-lingui-id: liZHXq
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for iframe widget \"{widgetTitle}\""
-msgstr ""
+msgstr "iframe 小工具「{widgetTitle}」需要設定"
 
 #. js-lingui-id: viS7/+
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
@@ -1402,17 +1402,17 @@ msgstr ""
 #. js-lingui-id: rVKk74
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for standalone rich text widget \"{widgetTitle}\""
-msgstr ""
+msgstr "獨立豐富文字小工具 \"{widgetTitle}\" 需要設定"
 
 #. js-lingui-id: XZ4djQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Configuration is required for widget"
-msgstr ""
+msgstr "小工具需要設定"
 
 #. js-lingui-id: FCKoEz
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Configuration is required for widget \"{widgetTitle}\""
-msgstr ""
+msgstr "小工具「{widgetTitle}」需要設定"
 
 #. js-lingui-id: oH0/eJ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
@@ -1425,7 +1425,7 @@ msgstr ""
 #. js-lingui-id: TsoT/4
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Configuration type is required for widget \"{title}\""
-msgstr ""
+msgstr "小工具 \"{title}\" 需要設定類型"
 
 #. js-lingui-id: SlSmjG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
@@ -1505,7 +1505,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
 msgid "Content cannot be empty"
-msgstr ""
+msgstr "內容不能為空"
 
 #. js-lingui-id: M73whl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -1526,17 +1526,17 @@ msgstr "在關係字段（{fieldName}）上檢測到相互矛盾的字段權限�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "Correct direction is required"
-msgstr ""
+msgstr "需要正確的排序方向"
 
 #. js-lingui-id: Fep47m
 #: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
 msgid "Could not find {targetMetadataName} for given {foreignKey}"
-msgstr ""
+msgstr "找不到給定的 {foreignKey} 所對應的 {targetMetadataName}"
 
 #. js-lingui-id: qs7GyL
 #: src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util.ts
 msgid "Could not find {targetMetadataName} for given {universalForeignKey}"
-msgstr ""
+msgstr "找不到給定的 {universalForeignKey} 所對應的 {targetMetadataName}"
 
 #. js-lingui-id: LZf/L8
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
@@ -1562,7 +1562,7 @@ msgstr ""
 #. js-lingui-id: KwGZ0m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Could not found updated field metadata"
-msgstr ""
+msgstr "找不到已更新欄位的元數據"
 
 #. js-lingui-id: NCIYDF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1962,7 +1962,7 @@ msgstr "複製選項 {field}"
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Either workflow version or front component is required."
-msgstr ""
+msgstr "需要提供工作流程版本或前端元件其中之一。"
 
 #. js-lingui-id: O3oNi5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -2022,7 +2022,7 @@ msgstr "電子郵件為必填."
 #. js-lingui-id: 3wAyvl
 #: src/utils/get-domain-name-by-email.ts
 msgid "Email is required. Please provide a valid email address."
-msgstr ""
+msgstr "必須提供電子郵件地址。請提供有效的電子郵件地址。"
 
 #. js-lingui-id: y+BSWq
 #: src/engine/core-modules/user/user.exception.ts
@@ -2048,7 +2048,7 @@ msgstr "不需要電子郵件驗證。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Emails"
-msgstr ""
+msgstr "電子郵件"
 
 #. js-lingui-id: gqv5ZL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -2069,12 +2069,12 @@ msgstr ""
 #. js-lingui-id: g2om8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Engine component key is required"
-msgstr ""
+msgstr "需要引擎元件鍵值"
 
 #. js-lingui-id: BmtSAK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "engineComponentKey is required"
-msgstr ""
+msgstr "需要 engineComponentKey"
 
 #. js-lingui-id: ZzZwe/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -2084,7 +2084,7 @@ msgstr ""
 #. js-lingui-id: ArAFBo
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Enterprise validity token is not valid."
-msgstr ""
+msgstr "企業驗證權杖無效。"
 
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
@@ -2176,7 +2176,7 @@ msgstr ""
 #. js-lingui-id: b3ictS
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
-msgstr ""
+msgstr "只能提供 \"groups\" 或 \"fields\" 其中之一"
 
 #. js-lingui-id: QQlMid
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -2227,7 +2227,7 @@ msgstr "無法創建評估。請再試一次。"
 #. js-lingui-id: RjuW0j
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Failed to create front component."
-msgstr ""
+msgstr "建立前端元件失敗。"
 
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -2242,7 +2242,7 @@ msgstr "建立記錄失敗。"
 #. js-lingui-id: mWj8el
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
-msgstr ""
+msgstr "刪除檔案 {fileId} 失敗"
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -2262,17 +2262,17 @@ msgstr "複製儀表板失敗."
 #. js-lingui-id: MIto3A
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "Failed to extract SDK client archive."
-msgstr ""
+msgstr "解壓縮 SDK 用戶端封存檔失敗。"
 
 #. js-lingui-id: Ol/51Z
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Failed to extract tarball."
-msgstr ""
+msgstr "無法解壓縮 tarball。"
 
 #. js-lingui-id: CO40Hk
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "Failed to generate SDK client."
-msgstr ""
+msgstr "產生 SDK 用戶端失敗。"
 
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -2282,7 +2282,7 @@ msgstr "無法載入隊列工作。請稍後再試。"
 #. js-lingui-id: ruD0s1
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "Failed to receive real time updates."
-msgstr ""
+msgstr "無法接收即時更新。"
 
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -2595,22 +2595,22 @@ msgstr ""
 #. js-lingui-id: p6JTHU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
 msgid "Field type POSITION must be a system field"
-msgstr ""
+msgstr "欄位類型為 POSITION 的欄位必須是系統欄位。"
 
 #. js-lingui-id: VDesPB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
 msgid "Field type POSITION must be named \"position\""
-msgstr ""
+msgstr "欄位類型為 POSITION 的欄位必須命名為 \"position\"。"
 
 #. js-lingui-id: 7cWO6W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be a system field"
-msgstr ""
+msgstr "欄位類型為 TS_VECTOR 的欄位必須是系統欄位。"
 
 #. js-lingui-id: hoCDqQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
-msgstr ""
+msgstr "欄位類型為 TS_VECTOR 的欄位必須命名為 \"searchVector\""
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -2688,17 +2688,17 @@ msgstr "建立檢視排序需要 FieldMetadataId。"
 #. js-lingui-id: VgGXR3
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
-msgstr ""
+msgstr "必須提供 fieldMetadataId 或 fieldMetadataUniversalIdentifier"
 
 #. js-lingui-id: 9HjeLQ
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Fields widget has no associated view"
-msgstr ""
+msgstr "欄位小工具沒有關聯的檢視"
 
 #. js-lingui-id: 8sAaBn
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Fields widget not found"
-msgstr ""
+msgstr "找不到欄位小工具"
 
 #. js-lingui-id: J2eKUI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -2708,7 +2708,7 @@ msgstr ""
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
-msgstr ""
+msgstr "檔案 {fileId} 已與永久檔案欄位關聯。請重新上傳該檔案。"
 
 #. js-lingui-id: v+527c
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
@@ -2723,7 +2723,7 @@ msgstr ""
 #. js-lingui-id: OR7oBd
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "File not found in SDK client archive."
-msgstr ""
+msgstr "在 SDK 用戶端封存檔中找不到檔案。"
 
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -2735,17 +2735,17 @@ msgstr "找不到檔案。"
 #. js-lingui-id: sER+bs
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Files"
-msgstr ""
+msgstr "檔案"
 
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
-msgstr ""
+msgstr "唯一欄位不支援 Files 欄位"
 
 #. js-lingui-id: ylQd2j
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Flow"
-msgstr ""
+msgstr "流程"
 
 #. js-lingui-id: GnvDRp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -2761,7 +2761,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Folder name is required"
-msgstr ""
+msgstr "需要資料夾名稱"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -2796,28 +2796,28 @@ msgstr ""
 #. js-lingui-id: Wed+Kp
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Front component is not ready."
-msgstr ""
+msgstr "前端元件尚未就緒。"
 
 #. js-lingui-id: A7aUMa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component is required for front component renderer items"
-msgstr ""
+msgstr "前端元件渲染器項目需要前端元件"
 
 #. js-lingui-id: 0aXgXb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for this item type"
-msgstr ""
+msgstr "此項目類型不得設定前端元件"
 
 #. js-lingui-id: AfxLzg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for workflow trigger items"
-msgstr ""
+msgstr "工作流程觸發項目不得設定前端元件"
 
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 msgid "Front component name is required"
-msgstr ""
+msgstr "需要前端元件名稱"
 
 #. js-lingui-id: VZiHPV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2825,28 +2825,28 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 msgid "Front component not found"
-msgstr ""
+msgstr "找不到前端元件"
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
-msgstr ""
+msgstr "找不到前端元件。"
 
 #. js-lingui-id: 4wM9Cs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_RENDERER"
-msgstr ""
+msgstr "當 engineComponentKey 為 FRONT_COMPONENT_RENDERER 時，必須提供 frontComponentId"
 
 #. js-lingui-id: N6YN7J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
-msgstr ""
+msgstr "對於引擎元件鍵 {engineComponentKey} 不得設定 frontComponentId"
 
 #. js-lingui-id: z8/E1J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
-msgstr ""
+msgstr "當 engineComponentKey 為 TRIGGER_WORKFLOW_VERSION 時，不得設定 frontComponentId"
 
 #. js-lingui-id: oQA+cA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -2952,7 +2952,7 @@ msgstr ""
 #. js-lingui-id: i0qMbr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Home"
-msgstr ""
+msgstr "首頁"
 
 #. js-lingui-id: NNJnBi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -3101,7 +3101,7 @@ msgstr "具有相同名稱的索引已存在"
 #. js-lingui-id: D6Tjt0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same universal identifier already exists"
-msgstr ""
+msgstr "具有相同通用識別碼的索引已存在"
 
 #. js-lingui-id: 9Lkkre
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -3167,7 +3167,7 @@ msgstr "CALDAV 憑證無效。請檢查您的使用者名稱和密碼。"
 #. js-lingui-id: cizVEW
 #: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
 msgid "Invalid calendar channel input."
-msgstr ""
+msgstr "無效的行事曆頻道輸入。"
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -3187,7 +3187,7 @@ msgstr "驗證碼無效。請再試一次。"
 #. js-lingui-id: lyfeGa
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
-msgstr ""
+msgstr "無效的命令選單項目輸入。"
 
 #. js-lingui-id: C25VTR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
@@ -3197,22 +3197,22 @@ msgstr ""
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget"
-msgstr ""
+msgstr "欄位小工具的設定類型無效"
 
 #. js-lingui-id: luyinP
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget \"{widgetTitle}\". Expected FIELDS, got {actualString}"
-msgstr ""
+msgstr "欄位小工具「{widgetTitle}」的設定類型無效。預期為 FIELDS，實際為 {actualString}。"
 
 #. js-lingui-id: /xPxQo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Invalid configuration type for front component widget"
-msgstr ""
+msgstr "前端元件小工具的設定類型無效"
 
 #. js-lingui-id: 8G4vdK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Invalid configuration type for front component widget \"{title}\". Expected FRONT_COMPONENT, got {configurationTypeString}"
-msgstr ""
+msgstr "前端元件小工具「{title}」的設定類型無效。預期為 FRONT_COMPONENT，實際為 {configurationTypeString}。"
 
 #. js-lingui-id: PXgd1R
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
@@ -3242,19 +3242,19 @@ msgstr ""
 #. js-lingui-id: 9uz7OL
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
 msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle}\". Expected STANDALONE_RICH_TEXT, got {configurationTypeString}"
-msgstr ""
+msgstr "獨立豐富文字小工具 \"{widgetTitle}\" 的設定類型無效。預期為 STANDALONE_RICH_TEXT，實際為 {configurationTypeString}。"
 
 #. js-lingui-id: IptMRL
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget"
-msgstr ""
+msgstr "小工具的設定類型無效"
 
 #. js-lingui-id: nFIvYZ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget \"{widgetTitle}\". Expected {expectedString}, got {actualString}"
-msgstr ""
+msgstr "小工具「{widgetTitle}」的設定類型無效。預期為 {expectedString}，實際為 {actualString}。"
 
 #. js-lingui-id: jUt31O
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -3264,7 +3264,7 @@ msgstr "無效的已連結帳戶 ID。"
 #. js-lingui-id: DH8Ofc
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 msgid "Invalid connected account input."
-msgstr ""
+msgstr "無效的已連結帳戶輸入。"
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -3295,12 +3295,12 @@ msgstr "無效的電子郵件地址。"
 #. js-lingui-id: Lq9KTr
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
-msgstr ""
+msgstr "無效的電子郵件或網域。"
 
 #. js-lingui-id: pOHI+b
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "Invalid enterprise key."
-msgstr ""
+msgstr "無效的企業金鑰。"
 
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
@@ -3315,7 +3315,7 @@ msgstr "無效的欄位輸入。"
 #. js-lingui-id: dqt3x1
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Invalid file folder."
-msgstr ""
+msgstr "無效的資料夾。"
 
 #. js-lingui-id: d6DMa/
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -3325,12 +3325,12 @@ msgstr "無效的檔案 ID。"
 #. js-lingui-id: +ECOke
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter : {nameSingular} object doesn't have any \"{key}\" field."
-msgstr ""
+msgstr "無效的篩選 : {nameSingular} 物件沒有任何 \"{key}\" 欄位。"
 
 #. js-lingui-id: kFbvma
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util.ts
 msgid "Invalid filter : Operator \"{operator}\" is not valid for this \"{fieldName}\" {fieldType} field"
-msgstr ""
+msgstr "無效的篩選 : 運算子 \"{operator}\" 對此 \"{fieldName}\" {fieldType} 欄位無效"
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -3343,32 +3343,32 @@ msgstr "無效的篩選參數。"
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
-msgstr ""
+msgstr "無效的篩選值：\"{value}\""
 
 #. js-lingui-id: +GVjEm
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires an array"
-msgstr ""
+msgstr "無效的篩選: \"{operator}\" 運算子需要陣列"
 
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
-msgstr ""
+msgstr "無效的篩選: \"isEmptyArray\" 運算子需要布林值"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: exactly one operator per field is required"
-msgstr ""
+msgstr "無效的篩選: 每個欄位必須且只能有一個運算子"
 
 #. js-lingui-id: gdJXPD
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: filter value must be an object"
-msgstr ""
+msgstr "無效的篩選器：篩選值必須是物件"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
-msgstr ""
+msgstr "無效的前端元件輸入。"
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -3394,7 +3394,7 @@ msgstr "無效的身分提供者類型。"
 #. js-lingui-id: xfXYBX
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Invalid input for application registration."
-msgstr ""
+msgstr "應用程式註冊的輸入無效。"
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -3421,12 +3421,12 @@ msgstr "無效的限制參數。"
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
-msgstr ""
+msgstr "無效的訊息頻道輸入。"
 
 #. js-lingui-id: zUyPBT
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Invalid message folder input."
-msgstr ""
+msgstr "無效的訊息資料夾輸入。"
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3448,7 +3448,7 @@ msgstr "不合法的形變關係輸入"
 #. js-lingui-id: isIEpm
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Invalid navigation menu item input."
-msgstr ""
+msgstr "無效的導覽選單項目輸入。"
 
 #. js-lingui-id: 5ZHOkh
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -3489,13 +3489,13 @@ msgstr "提供的參數無效。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Invalid permission flag value"
-msgstr ""
+msgstr "無效的權限旗標值"
 
 #. js-lingui-id: mMHHVP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Invalid permission setting"
-msgstr ""
+msgstr "無效的權限設定"
 
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -3561,17 +3561,17 @@ msgstr "無效的角色目標資料。"
 #. js-lingui-id: ppA1Aq
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Invalid row level permission predicate data."
-msgstr ""
+msgstr "無效的資料列層級權限條件資料。"
 
 #. js-lingui-id: nwC2sc
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Invalid row level permission predicate group data."
-msgstr ""
+msgstr "無效的資料列層級權限條件群組資料。"
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Invalid seed project configuration."
-msgstr ""
+msgstr "種子專案配置無效。"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3581,7 +3581,7 @@ msgstr "在排程觸發器提供的設定類型無效"
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Invalid skill input."
-msgstr ""
+msgstr "無效的技能輸入。"
 
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -3612,12 +3612,12 @@ msgstr "無效的訂閱。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Invalid target URL provided"
-msgstr ""
+msgstr "提供的目標 URL 無效"
 
 #. js-lingui-id: 9mW6V7
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
-msgstr ""
+msgstr "目標 URL 無效。請提供有效的 HTTP 或 HTTPS URL。"
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3632,7 +3632,7 @@ msgstr "無效的雙重驗證設定。"
 #. js-lingui-id: brtxSP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid universal identifier {universalIdentifier}"
-msgstr ""
+msgstr "無效的通用識別碼 {universalIdentifier}"
 
 #. js-lingui-id: SzaGv7
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
@@ -3642,7 +3642,7 @@ msgstr "無效的 URL 格式。"
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
 msgid "Invalid UUID format."
-msgstr ""
+msgstr "無效的 UUID 格式。"
 
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -3652,108 +3652,108 @@ msgstr "無效的驗證權杖。"
 #. js-lingui-id: xvTxwi
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
-msgstr ""
+msgstr "FILES 欄位 \"{fieldName}\" 的值 \"{inspectedValue}\" 無效 - 應為具有 \"fileId\" 和 \"label\" 屬性的物件陣列。"
 
 #. js-lingui-id: XOA98j
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-operator-filter-value-or-throw.util.ts
 msgid "Invalid value for \"is\" operator"
-msgstr ""
+msgstr "\"is\" 運算子的值無效"
 
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
-msgstr ""
+msgstr "執行者的值無效。"
 
 #. js-lingui-id: Y2KtrW
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
 msgid "Invalid value for address."
-msgstr ""
+msgstr "地址的值無效。"
 
 #. js-lingui-id: D9hzmE
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 msgid "Invalid value for currency."
-msgstr ""
+msgstr "貨幣的值無效。"
 
 #. js-lingui-id: MnHbVB
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
-msgstr ""
+msgstr "無效的日期時間值: \"{inspectedValue}\". 預期格式: 'YYYY-MM-DDTHH:mm:ssZ'"
 
 #. js-lingui-id: U4Wdjc
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
-msgstr ""
+msgstr "無效的日期值: \"{inspectedValue}\". 預期格式: 'YYYY-MM-DD'"
 
 #. js-lingui-id: mANTdg
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
 msgid "Invalid value for emails."
-msgstr ""
+msgstr "電子郵件的值無效。"
 
 #. js-lingui-id: tfoEIq
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Invalid value for FILES field \"{fieldName}\" - {errorMessage}"
-msgstr ""
+msgstr "FILES 欄位 \"{fieldName}\" 的值無效 - {errorMessage}"
 
 #. js-lingui-id: SF3Mp4
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
 msgid "Invalid value for full name."
-msgstr ""
+msgstr "全名的值無效。"
 
 #. js-lingui-id: UiMJoF
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
 msgid "Invalid value for JSON: \"{inspectedValue}\""
-msgstr ""
+msgstr "JSON 的值無效：\"{inspectedValue}\""
 
 #. js-lingui-id: BgSFod
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
 msgid "Invalid value for JSON."
-msgstr ""
+msgstr "JSON 的值無效。"
 
 #. js-lingui-id: GFYy9y
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
 msgid "Invalid value for links."
-msgstr ""
+msgstr "連結的值無效。"
 
 #. js-lingui-id: Q6jO3x
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
 msgid "Invalid value for multi-select: \"{inspectedValue}\""
-msgstr ""
+msgstr "多選的值無效：\"{inspectedValue}\""
 
 #. js-lingui-id: WHM6K7
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
-msgstr ""
+msgstr "數字的值無效：\"{inspectedValue}\""
 
 #. js-lingui-id: oLqCzh
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
 msgid "Invalid value for phones."
-msgstr ""
+msgstr "電話的值無效。"
 
 #. js-lingui-id: GLmyCK
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
 msgid "Invalid value for position: \"{inspectedValue}\""
-msgstr ""
+msgstr "位置的值無效：\"{inspectedValue}\""
 
 #. js-lingui-id: Sf+6YJ
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
-msgstr ""
+msgstr "豐富文字的值無效。"
 
 #. js-lingui-id: 9lVA5C
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
 msgid "Invalid value for select: \"{inspectedValue}\""
-msgstr ""
+msgstr "選項的值無效：\"{inspectedValue}\""
 
 #. js-lingui-id: ZjemzY
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
-msgstr ""
+msgstr "UUID 的值無效：\"{inspectedValue}\""
 
 #. js-lingui-id: Og/MZQ
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
@@ -3764,7 +3764,7 @@ msgstr ""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
 msgid "Invalid value: \"{inspectedValue}\""
-msgstr ""
+msgstr "無效的值：\"{inspectedValue}\""
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -3779,22 +3779,22 @@ msgstr "驗證碼無效。請再試一次。"
 #. js-lingui-id: bKmxhF
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid viewId for fields widget"
-msgstr ""
+msgstr "欄位小工具的 viewId 無效"
 
 #. js-lingui-id: DpWmTi
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid viewId for fields widget \"{widgetTitle}\". Expected a valid UUID"
-msgstr ""
+msgstr "欄位小工具「{widgetTitle}」的 viewId 無效。預期為有效的 UUID"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid webhook input."
-msgstr ""
+msgstr "無效的 Webhook 輸入。"
 
 #. js-lingui-id: c4NCfN
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Invalid widget configuration."
-msgstr ""
+msgstr "小工具配置無效。"
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -3824,7 +3824,7 @@ msgstr "無效的工作流程狀態。"
 #. js-lingui-id: v+ozTr
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "Invalid workflow step input."
-msgstr ""
+msgstr "無效的工作流程步驟輸入。"
 
 #. js-lingui-id: GRz5NM
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -3900,7 +3900,7 @@ msgstr ""
 #. js-lingui-id: 1bOGPq
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENTERPRISE_KEY to your .env file manually."
-msgstr ""
+msgstr "您的伺服器上 IS_CONFIG_VARIABLES_IN_DB_ENABLED 為 false。請手動將 ENTERPRISE_KEY 新增到您的 .env 檔案中。"
 
 #. js-lingui-id: rjyWPb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3960,27 +3960,27 @@ msgstr "七月"
 #. js-lingui-id: ADIjmK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction configuration is only valid for ONE_TO_MANY relations"
-msgstr ""
+msgstr "聯結設定僅適用於 ONE_TO_MANY 關係"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be a MANY_TO_ONE relation"
-msgstr ""
+msgstr "聯結目標欄位必須是 MANY_TO_ONE 關係"
 
 #. js-lingui-id: hLEiPe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be a relation field"
-msgstr ""
+msgstr "聯結目標欄位必須是關聯欄位"
 
 #. js-lingui-id: P+Gspf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be on the junction object"
-msgstr ""
+msgstr "聯結目標欄位必須位於聯結物件上"
 
 #. js-lingui-id: qONLh7
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field not found"
-msgstr ""
+msgstr "找不到聯結目標欄位。"
 
 #. js-lingui-id: zeEQd/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4063,7 +4063,7 @@ msgstr "標籤識別符視圖欄位必須可見"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Label is required"
-msgstr ""
+msgstr "標籤是必需的"
 
 #. js-lingui-id: 6bWuI/
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -4200,7 +4200,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "link is required for LINK type"
-msgstr ""
+msgstr "LINK 類型需要連結"
 
 #. js-lingui-id: wR9USP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4239,17 +4239,17 @@ msgstr ""
 #. js-lingui-id: V5AXjr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function already exists"
-msgstr ""
+msgstr "邏輯函式已存在"
 
 #. js-lingui-id: mZvaAV
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Logic function execution failed."
-msgstr ""
+msgstr "邏輯函式執行失敗。"
 
 #. js-lingui-id: 6fc1FV
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Logic function execution is disabled."
-msgstr ""
+msgstr "邏輯函式執行已停用。"
 
 #. js-lingui-id: hk3cgp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -4257,18 +4257,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function not found"
-msgstr ""
+msgstr "找不到邏輯函式"
 
 #. js-lingui-id: 6Rq45N
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Logic function not found."
-msgstr ""
+msgstr "找不到邏輯函式."
 
 #. js-lingui-id: Lf8I7I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function with same universal identifier already exists"
-msgstr ""
+msgstr "具有相同通用識別碼的邏輯函式已存在"
 
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4278,12 +4278,12 @@ msgstr "三月"
 #. js-lingui-id: Dq8Em0
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "Max number of files is {filesFieldMaxNumberOfValues}"
-msgstr ""
+msgstr "最大檔案數為 {filesFieldMaxNumberOfValues}"
 
 #. js-lingui-id: J9favo
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Max number of files is {maxNumberOfValues} for field \"{fieldName}\""
-msgstr ""
+msgstr "欄位 \"{fieldName}\" 的最大檔案數為 {maxNumberOfValues}"
 
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
@@ -4293,7 +4293,7 @@ msgstr "最大記錄數為{QUERY_MAX_RECORDS}。"
 #. js-lingui-id: b85bAt
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to {FILES_FIELD_MAX_NUMBER_OF_VALUES}"
-msgstr ""
+msgstr "maxNumberOfValues 必須在設定中定義，且為大於 0 且小於或等於 {FILES_FIELD_MAX_NUMBER_OF_VALUES} 的數字。"
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4389,7 +4389,7 @@ msgstr "消息頻道未找到"
 #. js-lingui-id: vjIbbe
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message channel not found."
-msgstr ""
+msgstr "未找到訊息頻道。"
 
 #. js-lingui-id: Wrf8X3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -4431,7 +4431,7 @@ msgstr ""
 #. js-lingui-id: BZbxut
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Message folder not found."
-msgstr ""
+msgstr "未找到訊息資料夾."
 
 #. js-lingui-id: DQJN0M
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -4591,7 +4591,7 @@ msgstr ""
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
 msgid "Metadata validation failed"
-msgstr ""
+msgstr "元數據驗證失敗"
 
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
@@ -4606,7 +4606,7 @@ msgstr "已停用 Microsoft API 身分驗證。"
 #. js-lingui-id: oqzqZq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 msgid "Migration execution failed."
-msgstr ""
+msgstr "移轉執行失敗。"
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -4749,18 +4749,18 @@ msgstr "名稱與標籤不同步。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item cannot be its own parent"
-msgstr ""
+msgstr "導覽選單項目不能為其自身的父項目"
 
 #. js-lingui-id: t38VAr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item hierarchy exceeds maximum depth of {NAVIGATION_MENU_ITEM_MAX_DEPTH}"
-msgstr ""
+msgstr "導覽選單項目階層超過最大深度 {NAVIGATION_MENU_ITEM_MAX_DEPTH}"
 
 #. js-lingui-id: E+iJnK
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item hierarchy exceeds maximum depth."
-msgstr ""
+msgstr "導覽選單項目階層超過最大深度。"
 
 #. js-lingui-id: s+CGNO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -4768,18 +4768,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item not found"
-msgstr ""
+msgstr "找不到導覽選單項目"
 
 #. js-lingui-id: p5qcyl
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item not found."
-msgstr ""
+msgstr "找不到導覽選單項目。"
 
 #. js-lingui-id: Ii6d/e
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item type is required"
-msgstr ""
+msgstr "需要導覽選單項目類型"
 
 #. js-lingui-id: t6LpHj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -4799,7 +4799,7 @@ msgstr ""
 #. js-lingui-id: 1UzENP
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #. js-lingui-id: LnV8zi
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -4814,7 +4814,7 @@ msgstr "數據庫事件觸發中未提供事件名稱"
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "No identifier to search by was found."
-msgstr ""
+msgstr "找不到可用於搜尋的識別碼。"
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -4844,7 +4844,7 @@ msgstr "沒有任何記錄受到影響。"
 #. js-lingui-id: iHQYLb
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
-msgstr ""
+msgstr "未為此應用程式指派任何角色。"
 
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4854,7 +4854,7 @@ msgstr "在該工作區中找不到此使用者的角色。"
 #. js-lingui-id: ISCcTE
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "No role found for user."
-msgstr ""
+msgstr "找不到使用者角色。"
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -4884,7 +4884,7 @@ msgstr "未找到有效的身份驗證上下文。"
 #. js-lingui-id: AzXrd9
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "No workspace found with password auth enabled."
-msgstr ""
+msgstr "找不到已啟用密碼驗證的工作區。"
 
 #. js-lingui-id: EdQY6l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -4898,7 +4898,7 @@ msgstr ""
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
-msgstr ""
+msgstr "未設置"
 
 #. js-lingui-id: mu1gVr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -4917,7 +4917,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Note"
-msgstr ""
+msgstr "備註"
 
 #. js-lingui-id: GGlkb7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
@@ -4961,7 +4961,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Notes"
-msgstr ""
+msgstr "備註"
 
 #. js-lingui-id: fXBE74
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -5070,19 +5070,19 @@ msgstr "找不到物件。"
 #. js-lingui-id: 4ib9PY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission already exists"
-msgstr ""
+msgstr "物件權限已存在"
 
 #. js-lingui-id: iCx6+2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission for this role and object already exists"
-msgstr ""
+msgstr "此角色與該物件的物件權限已存在"
 
 #. js-lingui-id: Wrwici
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission not found"
-msgstr ""
+msgstr "找不到物件權限"
 
 #. js-lingui-id: Qy6mMO
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5092,18 +5092,18 @@ msgstr "找不到物件權限。"
 #. js-lingui-id: 8KDEDj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission to delete not found"
-msgstr ""
+msgstr "找不到要刪除的物件權限"
 
 #. js-lingui-id: nA3bja
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission to update not found"
-msgstr ""
+msgstr "找不到要更新的物件權限"
 
 #. js-lingui-id: wVLH1M
 #. placeholder {0}: flatObjectPermissionToValidate.universalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission with universal identifier {0} already exists"
-msgstr ""
+msgstr "具有通用識別碼 {0} 的物件權限已存在"
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5141,7 +5141,7 @@ msgstr "找不到要更新的對象"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object with same universal identifier already exists"
-msgstr ""
+msgstr "具有相同通用識別碼的物件已存在"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -5156,22 +5156,22 @@ msgstr "十月"
 #. js-lingui-id: Tp2ptT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util.ts
 msgid "On delete action is only supported for many to one relations"
-msgstr ""
+msgstr "On delete 動作僅支援多對一關聯"
 
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
-msgstr ""
+msgstr "找不到一或多筆記錄。"
 
 #. js-lingui-id: kx632Q
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more redirect URIs are invalid."
-msgstr ""
+msgstr "一個或多個重新導向 URI 無效。"
 
 #. js-lingui-id: PUBUbK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more requested scopes are invalid."
-msgstr ""
+msgstr "一個或多個請求的權限範圍無效。"
 
 #. js-lingui-id: J6n7sl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -5433,7 +5433,7 @@ msgstr "找不到要更新的頁面版面配置小工具"
 #. js-lingui-id: hGYqrE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget with universal identifier {flatPageLayoutWidgetUniversalIdentifier} already exists"
-msgstr ""
+msgstr "具有通用識別碼 {flatPageLayoutWidgetUniversalIdentifier} 的頁面版面配置小工具已存在"
 
 #. js-lingui-id: G1fWNt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -5447,7 +5447,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Parent navigation menu item not found"
-msgstr ""
+msgstr "找不到父層導覽選單項目"
 
 #. js-lingui-id: Xsgh7b
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -5455,7 +5455,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Parent row level permission predicate group not found"
-msgstr ""
+msgstr "找不到父級資料列層級權限條件群組"
 
 #. js-lingui-id: 6OzP7Y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
@@ -5463,17 +5463,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
-msgstr ""
+msgstr "找不到父視圖篩選組"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
-msgstr ""
+msgstr "密碼強度不足。"
 
 #. js-lingui-id: cd6AP5
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
-msgstr ""
+msgstr "重設密碼權杖已經產生。請等待 {timeToWait} 後再產生。"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -5520,35 +5520,35 @@ msgstr ""
 #. js-lingui-id: fxC+On
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag already exists"
-msgstr ""
+msgstr "權限旗標已存在"
 
 #. js-lingui-id: qG245w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag for this role and setting already exists"
-msgstr ""
+msgstr "此角色與設定的權限旗標已存在"
 
 #. js-lingui-id: 2mZr45
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag not found"
-msgstr ""
+msgstr "找不到權限旗標"
 
 #. js-lingui-id: dqLRwc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag to delete not found"
-msgstr ""
+msgstr "找不到刪除權限旗標"
 
 #. js-lingui-id: SMgh5j
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag to update not found"
-msgstr ""
+msgstr "找不到更新權限旗標"
 
 #. js-lingui-id: VuCvJL
 #. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag with universal identifier {0} already exists"
-msgstr ""
+msgstr "具有通用識別碼 {0} 的權限旗標已存在"
 
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5589,7 +5589,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
-msgstr ""
+msgstr "請提供有效的HTTP或HTTPS URL"
 
 #. js-lingui-id: RDvKTq
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -5604,7 +5604,7 @@ msgstr "請選擇有效的連接類型（IMAP、SMTP或CalDAV）並重試。"
 #. js-lingui-id: sa9Q+R
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Please select at least 2 records to merge."
-msgstr ""
+msgstr "請至少選取 2 筆記錄以進行合併。"
 
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -5615,7 +5615,7 @@ msgstr "請使用公司電子郵件網域。"
 #: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
 #: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
 msgid "Please use Settings to remove a workspace member."
-msgstr ""
+msgstr "請使用「設定」移除工作區成員。"
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -5664,7 +5664,7 @@ msgstr ""
 #. js-lingui-id: c7uZDh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
-msgstr ""
+msgstr "位置的 layoutMode \"{layoutMode}\" 與分頁的 layoutMode \"{tabLayoutMode}\" 不相符"
 
 #. js-lingui-id: rFj1tD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -5672,7 +5672,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Position must be a finite number"
-msgstr ""
+msgstr "位置必須為有限數值"
 
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -5768,7 +5768,7 @@ msgstr "公共域名URL未定義。請設置PUBLIC_DOMAIN_URL環境變量"
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Query execution failed."
-msgstr ""
+msgstr "查詢執行失敗。"
 
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5798,7 +5798,7 @@ msgstr ""
 #. js-lingui-id: EESfI5
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Record does not satisfy security constraints."
-msgstr ""
+msgstr "記錄不符合安全性限制。"
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5934,7 +5934,7 @@ msgstr "無法將角色指派給此實體。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Role is not editable"
-msgstr ""
+msgstr "角色不可編輯"
 
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5983,7 +5983,7 @@ msgstr "找不到角色。"
 #. js-lingui-id: K+Gn31
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target already exists"
-msgstr ""
+msgstr "角色目標已存在"
 
 #. js-lingui-id: ctpIGF
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -6012,7 +6012,7 @@ msgstr "找不到角色目標。"
 #. js-lingui-id: +fwgt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this universal identifier already exists"
-msgstr ""
+msgstr "具有此通用識別碼的角色目標已存在"
 
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -6037,18 +6037,18 @@ msgstr "路由路徑已存在."
 #. js-lingui-id: /ruB5e
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate already exists"
-msgstr ""
+msgstr "資料列層級權限條件已存在"
 
 #. js-lingui-id: RwBHMj
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Row level permission predicate feature is disabled."
-msgstr ""
+msgstr "資料列層級權限條件功能已停用。"
 
 #. js-lingui-id: lG+q53
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group already exists"
-msgstr ""
+msgstr "資料列層級權限條件群組已存在"
 
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6056,51 +6056,51 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate group not found"
-msgstr ""
+msgstr "找不到資料列層級權限條件群組"
 
 #. js-lingui-id: HBfLro
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Row level permission predicate group not found."
-msgstr ""
+msgstr "找不到資料列層級權限條件群組。"
 
 #. js-lingui-id: vMP7nZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group to delete not found"
-msgstr ""
+msgstr "找不到要刪除的資料列層級權限條件群組"
 
 #. js-lingui-id: NhW7fb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group to update not found"
-msgstr ""
+msgstr "找不到要更新的資料列層級權限條件群組"
 
 #. js-lingui-id: j4iZI5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group with this universal identifier already exists"
-msgstr ""
+msgstr "具有此通用識別碼的資料列層級權限條件群組已存在"
 
 #. js-lingui-id: fEazMl
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Row level permission predicate not found."
-msgstr ""
+msgstr "找不到資料列層級權限條件。"
 
 #. js-lingui-id: zdTUvE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate to delete not found"
-msgstr ""
+msgstr "找不到要刪除的資料列層級權限條件"
 
 #. js-lingui-id: aeNy7i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate to update not found"
-msgstr ""
+msgstr "找不到要更新的資料列層級權限條件"
 
 #. js-lingui-id: B4yoLq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this universal identifier already exists"
-msgstr ""
+msgstr "具有此通用識別碼的資料列層級權限條件已存在"
 
 #. js-lingui-id: RiQMUh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -6132,7 +6132,7 @@ msgstr ""
 #. js-lingui-id: eKi1df
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "SDK client archive not found. The SDK client may not have been generated for this application."
-msgstr ""
+msgstr "找不到 SDK 用戶端封存檔。可能尚未為此應用程式產生 SDK 用戶端。"
 
 #. js-lingui-id: PdVIJC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -6216,17 +6216,17 @@ msgstr "單一登入身分驗證失敗。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Skill not found"
-msgstr ""
+msgstr "找不到技能"
 
 #. js-lingui-id: 68ze54
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Skill not found."
-msgstr ""
+msgstr "找不到技能。"
 
 #. js-lingui-id: e6udqn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "Skill with name \"{name}\" already exists"
-msgstr ""
+msgstr "名稱為 \"{name}\" 的技能已存在"
 
 #. js-lingui-id: TEERTx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -6251,7 +6251,7 @@ msgstr "找不到某些工作區成員資格。他們可能不再有權訪問此
 #. js-lingui-id: Oa7nLQ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Source channel mismatch."
-msgstr ""
+msgstr "來源通道不相符。"
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -6297,7 +6297,7 @@ msgstr "標準對象無法刪除"
 #. js-lingui-id: H8j7uw
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Standard skills cannot be modified."
-msgstr ""
+msgstr "無法修改標準技能。"
 
 #. js-lingui-id: D3iCkb
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -6433,38 +6433,38 @@ msgstr ""
 #. js-lingui-id: Bhmfez
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} has invalid {property}"
-msgstr ""
+msgstr "系統欄位 {expectedFieldName} 的 {property} 無效"
 
 #. js-lingui-id: 1gOTOh
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} is missing"
-msgstr ""
+msgstr "缺少系統欄位 {expectedFieldName}"
 
 #. js-lingui-id: q1oDDx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "System fields cannot be deleted"
-msgstr ""
+msgstr "系統欄位無法刪除"
 
 #. js-lingui-id: oEsYJM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "System fields cannot be updated"
-msgstr ""
+msgstr "系統欄位無法更新"
 
 #. js-lingui-id: /ojawH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be deleted"
-msgstr ""
+msgstr "系統對象無法刪除"
 
 #. js-lingui-id: sndTPB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be updated"
-msgstr ""
+msgstr "系統對象無法更新"
 
 #. js-lingui-id: aF4zgq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be updated directly. Use standardOverrides for cosmetic changes."
-msgstr ""
+msgstr "系統物件無法直接更新。針對外觀變更，請使用 standardOverrides。"
 
 #. js-lingui-id: 8UWeLh
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6505,35 +6505,35 @@ msgstr "找不到 {connectFieldName} 的目標對象元數據"
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not belong to the expected object"
-msgstr ""
+msgstr "目標關聯欄位不屬於預期的物件"
 
 #. js-lingui-id: wG8PVB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference the source object"
-msgstr ""
+msgstr "目標關聯欄位未引用來源物件"
 
 #. js-lingui-id: xLsFda
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference this field"
-msgstr ""
+msgstr "目標關聯欄位未引用此欄位"
 
 #. js-lingui-id: /HKzKW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Target URL is required"
-msgstr ""
+msgstr "目標 URL 是必需的"
 
 #. js-lingui-id: L3vVWc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "targetObjectMetadataId is required for OBJECT type"
-msgstr ""
+msgstr "OBJECT 類型需要 targetObjectMetadataId"
 
 #. js-lingui-id: NGynR3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "targetRecordId and targetObjectMetadataId are required for RECORD type"
-msgstr ""
+msgstr "RECORD 類型需要 targetRecordId 和 targetObjectMetadataId"
 
 #. js-lingui-id: Q3P/4s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6599,7 +6599,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Tasks"
-msgstr ""
+msgstr "任務"
 
 #. js-lingui-id: HlDeG3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -6641,7 +6641,7 @@ msgstr ""
 #. js-lingui-id: 2kFzQB
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Temporary file cannot be downloaded."
-msgstr ""
+msgstr "暫存檔無法下載。"
 
 #. js-lingui-id: 3WYP3r
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6699,12 +6699,12 @@ msgstr "API金鑰未分配有效角色。請檢查API金鑰配置。"
 #. js-lingui-id: MQn14a
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
-msgstr ""
+msgstr "應用程式的來源通道與預期的類型不相符。"
 
 #. js-lingui-id: IU78DA
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr ""
+msgstr "應用程式未分配有效角色。請檢查您的應用程式配置。"
 
 #. js-lingui-id: qnNFrW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -6807,7 +6807,7 @@ msgstr "您嘗試設置權限的字段找不到。它可能已被刪除。"
 #. js-lingui-id: bAGU1r
 #: src/engine/core-modules/file/utils/extract-file-info.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
-msgstr ""
+msgstr "檔案副檔名與檔案內容不相符。請確認您的檔案未損毀，且具有正確的副檔名。"
 
 #. js-lingui-id: W3raza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
@@ -6833,12 +6833,12 @@ msgstr ""
 #. js-lingui-id: tl8xOZ
 #: src/utils/get-domain-name-by-email.ts
 msgid "The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com)."
-msgstr ""
+msgstr "提供的電子郵件地址缺少網域。請使用標準的電子郵件格式 (例如，user@example.com)。"
 
 #. js-lingui-id: h8R4RO
 #: src/utils/get-domain-name-by-email.ts
 msgid "The provided email address is not valid. Please use a standard email format (e.g., user@example.com)."
-msgstr ""
+msgstr "提供的電子郵件地址無效。請使用標準的電子郵件格式 (例如，user@example.com)。"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -6860,7 +6860,7 @@ msgstr "找不到您正在尋找的角色。可能已被刪除或者您可能無
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "The role you are trying to modify could not be found."
-msgstr ""
+msgstr "您嘗試修改的角色找不到。"
 
 #. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -6870,7 +6870,7 @@ msgstr "您嘗試修改的角色找不到。它可能已被刪除或者您可能
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
-msgstr ""
+msgstr "您輸入的伺服器位址不允許使用。請使用公開的伺服器位址。"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -6944,12 +6944,12 @@ msgstr ""
 #. js-lingui-id: mTxjri
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "There is an issue with your invitation. Please try again."
-msgstr ""
+msgstr "您的邀請有問題。請再試一次。"
 
 #. js-lingui-id: gH+wBS
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "There is an issue with your token. Please try again."
-msgstr ""
+msgstr "您的權杖有問題。請再試一次。"
 
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -7073,7 +7073,7 @@ msgstr "此物件無法修改。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "This object permission is already set for the role"
-msgstr ""
+msgstr "此物件權限已為該角色設定"
 
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -7094,7 +7094,7 @@ msgstr "不支援此操作。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
-msgstr ""
+msgstr "此權限已為該角色設定"
 
 #. js-lingui-id: Y5C3uK
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -7120,7 +7120,7 @@ msgstr "此記錄已存在。請檢查您的數據並重試。"
 #: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
-msgstr ""
+msgstr "此記錄不存在或已被刪除。"
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
@@ -7162,12 +7162,12 @@ msgstr "此子網域已被使用。"
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "This type of record cannot be merged."
-msgstr ""
+msgstr "此類型的記錄無法合併。"
 
 #. js-lingui-id: nZbise
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This universal identifier is already claimed by another registration."
-msgstr ""
+msgstr "此通用識別碼已被其他註冊使用。"
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -7221,7 +7221,7 @@ msgstr ""
 #. js-lingui-id: cklVjM
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Timeline"
-msgstr ""
+msgstr "時間軸"
 
 #. js-lingui-id: az1boY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -7333,7 +7333,7 @@ msgstr ""
 #. js-lingui-id: tEb/hR
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Transformation failed."
-msgstr ""
+msgstr "轉換失敗。"
 
 #. js-lingui-id: VD8J6l
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
@@ -7373,12 +7373,12 @@ msgstr ""
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Udpated field is not a morph relation or a relation"
-msgstr ""
+msgstr "已更新的欄位不是多型關聯或一般關聯"
 
 #. js-lingui-id: SpmRxi
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Unable to retrieve the application package."
-msgstr ""
+msgstr "無法取得應用程式套件。"
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -7419,7 +7419,7 @@ msgstr "不支持的欄位元數據類型{fieldType}"
 #. js-lingui-id: B4Eu7x
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Unsupported field metadata type."
-msgstr ""
+msgstr "不支援的欄位中繼資料類型。"
 
 #. js-lingui-id: s+1Ldg
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
@@ -7530,7 +7530,7 @@ msgstr ""
 #: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
 #: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
 msgid "User id is required."
-msgstr ""
+msgstr "需要使用者 ID。"
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
@@ -7636,37 +7636,37 @@ msgstr "查看欄位已存在。"
 #. js-lingui-id: pkIuNd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View field group already exists"
-msgstr ""
+msgstr "檢視欄位群組已存在"
 
 #. js-lingui-id: rej7zQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View field group parent view not found"
-msgstr ""
+msgstr "找不到檢視欄位群組的父檢視"
 
 #. js-lingui-id: uO9NF0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field-group/utils/from-delete-view-field-group-input-to-flat-view-field-group-or-throw.util.ts
 msgid "View field group to delete not found"
-msgstr ""
+msgstr "找不到要刪除的檢視欄位群組"
 
 #. js-lingui-id: Durlx6
 #: src/engine/metadata-modules/flat-view-field-group/utils/from-destroy-view-field-group-input-to-flat-view-field-group-or-throw.util.ts
 msgid "View field group to destroy not found"
-msgstr ""
+msgstr "找不到要銷毀的檢視欄位群組"
 
 #. js-lingui-id: KpmBDs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field-group/utils/from-update-view-field-group-input-to-flat-view-field-group-to-update-or-throw.util.ts
 msgid "View field group to update not found"
-msgstr ""
+msgstr "找不到要更新的檢視欄位群組"
 
 #. js-lingui-id: oKThPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View field group with this universal identifier already exists"
-msgstr ""
+msgstr "具有此通用識別碼的檢視欄位群組已存在"
 
 #. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -7676,7 +7676,7 @@ msgstr "查看欄位的元數據已經存在"
 #. js-lingui-id: mdX5P2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata with this universal identifier already exists"
-msgstr ""
+msgstr "具有此通用識別碼的視圖欄位中繼資料已存在"
 
 #. js-lingui-id: 7LMaUn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -7724,29 +7724,29 @@ msgstr "視圖欄位要更新的父視圖對象未找到"
 #. js-lingui-id: Zqbr+6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "View field with same fieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists"
-msgstr ""
+msgstr "具有相同 fieldMetadataUniversalIdentifier 與 viewUniversalIdentifier 的視圖欄位已存在"
 
 #. js-lingui-id: sbHaOg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter already exists"
-msgstr ""
+msgstr "視圖篩選器已存在"
 
 #. js-lingui-id: Ii4ysu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group already exists"
-msgstr ""
+msgstr "視圖篩選器群組已存在"
 
 #. js-lingui-id: ENVlLK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group cannot be its own parent"
-msgstr ""
+msgstr "視圖篩選組不能為其自身的父組"
 
 #. js-lingui-id: tir/7Q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group hierarchy exceeds maximum depth of {VIEW_FILTER_GROUP_MAX_DEPTH}"
-msgstr ""
+msgstr "視圖篩選組階層超過最大深度 {VIEW_FILTER_GROUP_MAX_DEPTH}"
 
 #. js-lingui-id: eUPMYZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -7758,12 +7758,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group not found"
-msgstr ""
+msgstr "找不到視圖篩選組"
 
 #. js-lingui-id: inVepb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group with this universal identifier already exists"
-msgstr ""
+msgstr "具有此通用識別碼的視圖篩選器群組已存在"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -7791,7 +7791,7 @@ msgstr "找不到要更新的篩選器視圖"
 #. js-lingui-id: bM1MKh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter with this universal identifier already exists"
-msgstr ""
+msgstr "具有此通用識別碼的視圖篩選器已存在"
 
 #. js-lingui-id: MGbEFN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
@@ -7801,7 +7801,7 @@ msgstr "查看群組的元數據已經存在"
 #. js-lingui-id: c1XRE3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 msgid "View group metadata with universal identifier {flatViewGroupUniversalIdentifier} already exists"
-msgstr ""
+msgstr "具有通用識別碼 {flatViewGroupUniversalIdentifier} 的視圖群組中繼資料已存在"
 
 #. js-lingui-id: JdAvYa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
@@ -7859,7 +7859,7 @@ msgstr "找不到視圖"
 #. js-lingui-id: BHDATQ
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "View not found after upsert"
-msgstr ""
+msgstr "執行 upsert 後找不到檢視"
 
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
@@ -7870,52 +7870,52 @@ msgstr "找不到檢視."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort already exists"
-msgstr ""
+msgstr "視圖排序已存在"
 
 #. js-lingui-id: 3zMs+f
 #: src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util.ts
 #: src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util.ts
 #: src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util.ts
 msgid "View sort not found"
-msgstr ""
+msgstr "未找到視圖排序"
 
 #. js-lingui-id: k/ykpJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort to delete not found"
-msgstr ""
+msgstr "找不到要刪除的視圖排序"
 
 #. js-lingui-id: wEyUsU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort to update not found"
-msgstr ""
+msgstr "找不到要更新的視圖排序"
 
 #. js-lingui-id: VXQpJ+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort to update parent view not found"
-msgstr ""
+msgstr "找不到要更新的視圖排序的父視圖"
 
 #. js-lingui-id: RP+pKP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with id {flatViewSortId} already exists"
-msgstr ""
+msgstr "id為{flatViewSortId}的視圖排序已存在"
 
 #. js-lingui-id: InEqWf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with invalid direction"
-msgstr ""
+msgstr "視圖排序的方向無效"
 
 #. js-lingui-id: ezJrlG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with invalid direction, should be ASC or DESC"
-msgstr ""
+msgstr "視圖排序的方向無效，應為 ASC 或 DESC"
 
 #. js-lingui-id: 9/BbL9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with same fieldMetadataId and viewId already exists"
-msgstr ""
+msgstr "具有相同 fieldMetadataId 和 viewId 的視圖排序已存在"
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -7935,7 +7935,7 @@ msgstr "找不到要更新的視圖"
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "View with same universal identifier already exists"
-msgstr ""
+msgstr "具有相同通用識別碼的視圖已存在"
 
 #. js-lingui-id: aeqysn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
@@ -7947,7 +7947,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "viewId is required for VIEW type"
-msgstr ""
+msgstr "VIEW 類型需要 viewId"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -8018,7 +8018,7 @@ msgstr "我們遇到了連接您的電子郵件帳戶問題。請檢查您的設
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Webhook not found"
-msgstr ""
+msgstr "找不到 Webhook"
 
 #. js-lingui-id: b8g3PG
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -8052,22 +8052,22 @@ msgstr ""
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
-msgstr ""
+msgstr "元件索引必須為非負整數"
 
 #. js-lingui-id: znCTbL
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be an integer"
-msgstr ""
+msgstr "元件索引必須為整數"
 
 #. js-lingui-id: 09IBNJ
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Widget not found."
-msgstr ""
+msgstr "找不到小工具。"
 
 #. js-lingui-id: MPdWmx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Widget position type must match the tab layout mode"
-msgstr ""
+msgstr "元件位置類型必須符合分頁佈局模式"
 
 #. js-lingui-id: D5gHL1
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
@@ -8120,7 +8120,7 @@ msgstr ""
 #. js-lingui-id: R67jts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Workflow not found."
-msgstr ""
+msgstr "找不到工作流程。"
 
 #. js-lingui-id: y9tnFx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
@@ -8140,7 +8140,7 @@ msgstr ""
 #. js-lingui-id: TgOSaQ
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Workflow run cannot be stopped in its current status"
-msgstr ""
+msgstr "無法在目前狀態下停止工作流程執行"
 
 #. js-lingui-id: 3Iz+qz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -8231,7 +8231,7 @@ msgstr "工作流版本不在草稿狀態"
 #. js-lingui-id: 4OOQwW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version is required for workflow trigger items"
-msgstr ""
+msgstr "工作流程觸發項目必須提供工作流程版本"
 
 #. js-lingui-id: CocTJJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -8241,12 +8241,12 @@ msgstr ""
 #. js-lingui-id: LrPIBF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for front component renderer items"
-msgstr ""
+msgstr "前端元件渲染器項目不得設定工作流程版本"
 
 #. js-lingui-id: f9Rp2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for this item type"
-msgstr ""
+msgstr "此項目類型不得設定工作流程版本"
 
 #. js-lingui-id: 9l+pJT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -8286,23 +8286,23 @@ msgstr ""
 #. js-lingui-id: m34s12
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
-msgstr ""
+msgstr "當 engineComponentKey 為 TRIGGER_WORKFLOW_VERSION 時，必須提供 workflowVersionId"
 
 #. js-lingui-id: +67q2u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
-msgstr ""
+msgstr "對於引擎元件鍵 {engineComponentKey} 不得設定 workflowVersionId"
 
 #. js-lingui-id: lscvqN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set when engineComponentKey is FRONT_COMPONENT_RENDERER"
-msgstr ""
+msgstr "當 engineComponentKey 為 FRONT_COMPONENT_RENDERER 時，不得設定 workflowVersionId"
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 msgid "Workspace {workspaceId} is not found."
-msgstr ""
+msgstr "找不到工作區 {workspaceId}。"
 
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -8312,7 +8312,7 @@ msgstr "工作區建立僅限於管理員"
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
-msgstr ""
+msgstr "工作區不存在。"
 
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -8347,7 +8347,7 @@ msgstr ""
 #. js-lingui-id: SWTQfb
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Workspace member cannot be updated."
-msgstr ""
+msgstr "無法更新工作區成員。"
 
 #. js-lingui-id: 5VCX7o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8439,7 +8439,7 @@ msgstr ""
 #. js-lingui-id: VddeYt
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Wrong extension for file."
-msgstr ""
+msgstr "檔案的副檔名不正確。"
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -8449,7 +8449,7 @@ msgstr "密碼錯誤"
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
-msgstr ""
+msgstr "密碼錯誤."
 
 #. js-lingui-id: 0gv+T2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -8465,22 +8465,22 @@ msgstr ""
 #. js-lingui-id: l75CjT
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
-msgstr ""
+msgstr "您未獲授權執行此操作。"
 
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
-msgstr ""
+msgstr "一次最多可合併 {MUTATION_MAX_MERGE_RECORDS} 筆記錄。"
 
 #. js-lingui-id: 5r5YRW
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "You can only update one record with files field at once."
-msgstr ""
+msgstr "一次只能更新一筆包含檔案欄位的記錄。"
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
@@ -8521,22 +8521,22 @@ msgstr "您不能更新您自己的角色。"
 #. js-lingui-id: p6uSBj
 #: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
 msgid "You do not have access to this calendar channel."
-msgstr ""
+msgstr "您無權限存取此行事曆頻道。"
 
 #. js-lingui-id: FUPyWG
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 msgid "You do not have access to this connected account."
-msgstr ""
+msgstr "您無權限存取此已連結帳戶。"
 
 #. js-lingui-id: R5GUVK
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "You do not have access to this message channel."
-msgstr ""
+msgstr "您無權限存取此訊息頻道。"
 
 #. js-lingui-id: dmOWfL
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "You do not have access to this message folder."
-msgstr ""
+msgstr "您無權限存取此訊息資料夾。"
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts
@@ -8551,7 +8551,7 @@ msgstr "您沒有權限存取此工作流程。"
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "您沒有權限建立工作區層級的導覽選單項目。請聯絡您的工作區管理員以取得存取權限。"
 
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
@@ -8561,7 +8561,7 @@ msgstr "您無權將此用戶從工作區中刪除。請聯繫您的工作區管
 #. js-lingui-id: NuG0g3
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to delete workspace-level navigation menu items. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "您沒有權限刪除工作區層級的導覽選單項目。請聯絡您的工作區管理員以取得存取權限。"
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
@@ -8589,12 +8589,12 @@ msgstr "您無權更新這些欄位：{fieldsList}。請聯繫您的工作區管
 #. js-lingui-id: RZzKii
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to update workspace-level navigation menu items. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "您沒有權限更新工作區層級的導覽選單項目。請聯絡您的工作區管理員以取得存取權限。"
 
 #. js-lingui-id: ZPo5fR
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
 msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "您沒有權限上傳個人頭像。請聯絡您的工作區管理員以取得存取權限。"
 
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -8614,7 +8614,7 @@ msgstr "您的點數已用盡。請升級您的方案以繼續。"
 #. js-lingui-id: nq15cs
 #: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
 msgid "You must be authenticated to manage blocklist."
-msgstr ""
+msgstr "您必須經過身份驗證才能管理封鎖清單。"
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -8635,7 +8635,7 @@ msgstr "您的計費訂閱已損壞。請聯繫支持。"
 #. js-lingui-id: hDEOuv
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
-msgstr ""
+msgstr "您的 CalDAV 伺服器不支援增量同步 (RFC 6578)。請使用相容的提供者，例如 Nextcloud、iCloud 或 Fastmail。"
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts

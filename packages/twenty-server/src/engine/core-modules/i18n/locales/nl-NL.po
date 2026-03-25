@@ -52,7 +52,7 @@ msgstr ""
 #. js-lingui-id: kZR6+h
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A company"
-msgstr ""
+msgstr "Een bedrijf"
 
 #. js-lingui-id: +aeifv
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -62,7 +62,7 @@ msgstr ""
 #. js-lingui-id: cOSBjW
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A dashboard"
-msgstr ""
+msgstr "Een dashboard"
 
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
@@ -92,7 +92,7 @@ msgstr "Er bestaat al een veld met deze naam."
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "A front component with this name already exists."
-msgstr ""
+msgstr "Er bestaat al een frontcomponent met deze naam."
 
 #. js-lingui-id: +aAI33
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -117,12 +117,12 @@ msgstr "Er is een netwerkfout opgetreden bij het openen van de kalender."
 #. js-lingui-id: bufuBA
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A note"
-msgstr ""
+msgstr "Een notitie"
 
 #. js-lingui-id: 6kUkZW
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A note target"
-msgstr ""
+msgstr "Een doel voor notities"
 
 #. js-lingui-id: MtcxLV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
@@ -137,7 +137,7 @@ msgstr "Er is een fout opgetreden bij de betalingsverwerking."
 #. js-lingui-id: Io42ej
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A person"
-msgstr ""
+msgstr "Een persoon"
 
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -157,7 +157,7 @@ msgstr "Een vereiste configuratie ontbreekt."
 #. js-lingui-id: FVCXUT
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
 msgid "A required field is missing."
-msgstr ""
+msgstr "Een verplicht veld ontbreekt."
 
 #. js-lingui-id: Q2De+v
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
@@ -168,32 +168,32 @@ msgstr "Er bestaat al een rol met dit label."
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "A skill with this name already exists"
-msgstr ""
+msgstr "Er bestaat al een vaardigheid met deze naam"
 
 #. js-lingui-id: jX0IPx
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
-msgstr ""
+msgstr "Er bestaat al een vaardigheid met deze naam."
 
 #. js-lingui-id: 73tqJw
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A system field has invalid properties."
-msgstr ""
+msgstr "Een systeemveld heeft ongeldige eigenschappen."
 
 #. js-lingui-id: WYnYE1
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A system field is missing."
-msgstr ""
+msgstr "Een systeemveld ontbreekt."
 
 #. js-lingui-id: mkFXEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A task"
-msgstr ""
+msgstr "Een taak"
 
 #. js-lingui-id: hk2NzW
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A task target"
-msgstr ""
+msgstr "Een doel voor taken"
 
 #. js-lingui-id: c1qcYo
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -223,7 +223,7 @@ msgstr "Er is een fout opgetreden in het weergaveveld."
 #. js-lingui-id: 4oDFCk
 #: src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception.ts
 msgid "A view field group error occurred."
-msgstr ""
+msgstr "Er is een fout opgetreden in de weergaveveldgroep."
 
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
@@ -248,7 +248,7 @@ msgstr "Er is een fout opgetreden in de weergavesortering."
 #. js-lingui-id: SMhyGZ
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "A webhook with this configuration already exists."
-msgstr ""
+msgstr "Er bestaat al een webhook met deze configuratie."
 
 #. js-lingui-id: ZIN9Ga
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -258,7 +258,7 @@ msgstr ""
 #. js-lingui-id: YwBCp8
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A workflow automated trigger"
-msgstr ""
+msgstr "Een workflow geautomatiseerde trigger"
 
 #. js-lingui-id: 1+xDbI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -268,12 +268,12 @@ msgstr ""
 #. js-lingui-id: N0g7rp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A workflow version"
-msgstr ""
+msgstr "Een workflow versie"
 
 #. js-lingui-id: HpZ/I5
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A workspace member"
-msgstr ""
+msgstr "Een werkruimte lid"
 
 #. js-lingui-id: bzMKg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -283,12 +283,12 @@ msgstr ""
 #. js-lingui-id: qjrxU8
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Access denied."
-msgstr ""
+msgstr "Toegang geweigerd."
 
 #. js-lingui-id: GDKKxT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 msgid "Access Token"
-msgstr ""
+msgstr "Toegangstoken"
 
 #. js-lingui-id: Bk+qoW
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -300,17 +300,17 @@ msgstr "Toegangstoken niet gevonden."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Account Owner"
-msgstr ""
+msgstr "Accounteigenaar"
 
 #. js-lingui-id: loqL/f
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Account owner for companies"
-msgstr ""
+msgstr "Accounteigenaar voor bedrijven"
 
 #. js-lingui-id: HZosRi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Account Owner For Companies"
-msgstr ""
+msgstr "Accounteigenaar Voor Bedrijven"
 
 #. js-lingui-id: 48AxkT
 #: src/engine/workspace-manager/workspace-cleaner/services/cleaner.workspace-service.ts
@@ -333,17 +333,17 @@ msgstr "Actie vereist om wachtwoord in te stellen"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Active"
-msgstr ""
+msgstr "Actief"
 
 #. js-lingui-id: Du6bPw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 #. js-lingui-id: Knl3c9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Address of the company"
-msgstr ""
+msgstr "Adres van het bedrijf"
 
 #. js-lingui-id: VmatbA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -376,27 +376,27 @@ msgstr "Agent met de naam \"{name}\" bestaat al"
 #. js-lingui-id: wqJIjz
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate field is required for graph widget"
-msgstr ""
+msgstr "Aggregatieveld is vereist voor grafiekwidget"
 
 #. js-lingui-id: /Z4Wk1
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate field metadata is required for graph widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Metagegevens van aggregatieveld zijn vereist voor grafiekwidget \"{widgetTitle}\""
 
 #. js-lingui-id: uhRAsd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate operation is required for graph widget"
-msgstr ""
+msgstr "Aggregatiebewerking is vereist voor grafiekwidget"
 
 #. js-lingui-id: YCzwBK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate operation is required for graph widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Aggregatiebewerking is vereist voor grafiekwidget \"{widgetTitle}\""
 
 #. js-lingui-id: W58PBh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
-msgstr ""
+msgstr "Geaggregeerde / gefilterde gebeurtenis die op de tijdlijn wordt weergegeven"
 
 #. js-lingui-id: WG8+0x
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -411,7 +411,7 @@ msgstr ""
 #. js-lingui-id: hehnjM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Amount"
-msgstr ""
+msgstr "Bedrag"
 
 #. js-lingui-id: pZEIPj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util.ts
@@ -426,7 +426,7 @@ msgstr "Er bestaat al een agent met deze naam."
 #. js-lingui-id: MjyFvC
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "An attachment"
-msgstr ""
+msgstr "Een bijlage"
 
 #. js-lingui-id: eW83iC
 #: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
@@ -473,7 +473,7 @@ msgstr "Er bestaat al een object met deze naam."
 #. js-lingui-id: bZq8rL
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "An opportunity"
-msgstr ""
+msgstr "Een kans"
 
 #. js-lingui-id: Tstlpf
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -509,7 +509,7 @@ msgstr "Er is een onbekende kalenderfout opgetreden."
 #. js-lingui-id: JKWicb
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
-msgstr ""
+msgstr "Jaarlijks Terugkerende Inkomsten: De daadwerkelijke of geschatte jaarlijkse inkomsten van het bedrijf"
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
@@ -539,7 +539,7 @@ msgstr ""
 #. js-lingui-id: ue106l
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application is not installed in this workspace. Install it first."
-msgstr ""
+msgstr "De applicatie is niet geïnstalleerd in deze werkruimte. Installeer deze eerst."
 
 #. js-lingui-id: ltvmAF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
@@ -554,12 +554,12 @@ msgstr "Applicatie niet gevonden."
 #. js-lingui-id: DE/icK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration not found."
-msgstr ""
+msgstr "Applicatieregistratie niet gevonden."
 
 #. js-lingui-id: eiOt+9
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration variable not found."
-msgstr ""
+msgstr "Applicatieregistratievariabele niet gevonden."
 
 #. js-lingui-id: QtRMs/
 #: src/engine/core-modules/application/application.exception.ts
@@ -630,17 +630,17 @@ msgstr ""
 #. js-lingui-id: Ek7xGj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Assigned tasks"
-msgstr ""
+msgstr "Toegewezen taken"
 
 #. js-lingui-id: ojKCLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgid "Assignee"
-msgstr ""
+msgstr "Toegewezene"
 
 #. js-lingui-id: Max2GU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Associated User Id"
-msgstr ""
+msgstr "Geassocieerde gebruiker-ID"
 
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -650,7 +650,7 @@ msgstr "Er is minstens één relatie vereist"
 #. js-lingui-id: UY1vmE
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Attachment"
-msgstr ""
+msgstr "Bijlage"
 
 #. js-lingui-id: btKdFz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -660,17 +660,17 @@ msgstr ""
 #. js-lingui-id: u3pBxa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Attachment file category"
-msgstr ""
+msgstr "Categorie van bijlagebestand"
 
 #. js-lingui-id: gfGYcl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Attachment full path"
-msgstr ""
+msgstr "Volledige pad van de bijlage"
 
 #. js-lingui-id: wjocwa
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Attachment name"
-msgstr ""
+msgstr "Naam van de bijlage"
 
 #. js-lingui-id: F990we
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -698,7 +698,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Attachments"
-msgstr ""
+msgstr "Bijlagen"
 
 #. js-lingui-id: iVnA89
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -713,7 +713,7 @@ msgstr ""
 #. js-lingui-id: 2AEUIb
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 msgid "Attachments linked to the dashboard"
-msgstr ""
+msgstr "Bijlagen gekoppeld aan het dashboard"
 
 #. js-lingui-id: kw0mLu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -723,22 +723,22 @@ msgstr ""
 #. js-lingui-id: 83l3Yd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgid "Attachments linked to the workflow"
-msgstr ""
+msgstr "Bijlagen gekoppeld aan de workflow"
 
 #. js-lingui-id: /rTz0M
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Audio"
-msgstr ""
+msgstr "Audio"
 
 #. js-lingui-id: aepsXP
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require an Enterprise subscription."
-msgstr ""
+msgstr "Auditlogs vereisen een Enterprise-abonnement."
 
 #. js-lingui-id: PKMDuT
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "Audit logs require ClickHouse to be configured."
-msgstr ""
+msgstr "Auditlogs vereisen dat ClickHouse is geconfigureerd."
 
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -749,7 +749,7 @@ msgstr "Augustus"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 msgid "Auth failed at"
-msgstr ""
+msgstr "Authenticatie mislukt op"
 
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -770,7 +770,7 @@ msgstr "Authenticatie is vereist."
 #. js-lingui-id: bWAwB6
 #: src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter.ts
 msgid "Authentication required."
-msgstr ""
+msgstr "Authenticatie is vereist."
 
 #. js-lingui-id: cvSznK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -780,22 +780,22 @@ msgstr ""
 #. js-lingui-id: 2mtBXs
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgid "Automated Triggers"
-msgstr ""
+msgstr "Geautomatiseerde triggers"
 
 #. js-lingui-id: RpExX0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Automatically create People records when receiving or sending emails"
-msgstr ""
+msgstr "Automatisch personenrecords aanmaken bij het ontvangen of verzenden van e-mails"
 
 #. js-lingui-id: lXxdId
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Automatically create records for people you participated with in an event."
-msgstr ""
+msgstr "Zelf automatisch records aanmaken voor mensen met wie je hebt deelgenomen aan een evenement."
 
 #. js-lingui-id: kfcRb0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
 
 #. js-lingui-id: qDKGpf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -805,7 +805,7 @@ msgstr ""
 #. js-lingui-id: S/mJUR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Avatar Url"
-msgstr ""
+msgstr "Avatar-URL"
 
 #. js-lingui-id: /xLNEx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -847,23 +847,23 @@ msgstr "Factureringsabonnement niet gevonden."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Blocklist"
-msgstr ""
+msgstr "Blokkadelijst"
 
 #. js-lingui-id: 0j1d4L
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist handle already exists."
-msgstr ""
+msgstr "De handle voor de blokkeerlijst bestaat al."
 
 #. js-lingui-id: Hbe5jq
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist handle is required."
-msgstr ""
+msgstr "De handle voor de blokkeerlijst is vereist."
 
 #. js-lingui-id: xYLtTf
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist item not found."
-msgstr ""
+msgstr "Blokkeerlijstitem niet gevonden."
 
 #. js-lingui-id: w4auss
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -873,63 +873,63 @@ msgstr ""
 #. js-lingui-id: Tv2hxv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Blocklisted handles"
-msgstr ""
+msgstr "Geblokkeerde handelsnamen"
 
 #. js-lingui-id: L5JhJe
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Blocklists"
-msgstr ""
+msgstr "Blokkadelijsten"
 
 #. js-lingui-id: bGQplw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 msgid "Body"
-msgstr ""
+msgstr "Inhoud"
 
 #. js-lingui-id: Ara8xP
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body is required for standalone rich text widget"
-msgstr ""
+msgstr "Inhoud is vereist voor zelfstandige richtextwidget"
 
 #. js-lingui-id: I6oEwz
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body is required for standalone rich text widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Inhoud is vereist voor zelfstandige richtextwidget \"{widgetTitle}\""
 
 #. js-lingui-id: YCGofH
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object"
-msgstr ""
+msgstr "Inhoud moet een object zijn"
 
 #. js-lingui-id: TaToDK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Inhoud moet een object zijn voor widget \"{widgetTitle}\""
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
 msgid "Bulk update of blocklist entries is not allowed."
-msgstr ""
+msgstr "Bulkupdate van blokkeerlijstvermeldingen is niet toegestaan."
 
 #. js-lingui-id: 8mVqF7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgid "Cached record name"
-msgstr ""
+msgstr "Cached recordnaam"
 
 #. js-lingui-id: AjVXBS
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Calendar"
-msgstr ""
+msgstr "Kalender"
 
 #. js-lingui-id: Nh6GTX
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Calendar Channel"
-msgstr ""
+msgstr "Kalenderkanaal"
 
 #. js-lingui-id: jfNQ0m
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Calendar Channel Event Association"
-msgstr ""
+msgstr "Kalenderkanaal gebeurtenisassociatie"
 
 #. js-lingui-id: 5ePwMy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -944,7 +944,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Calendar Channel Event Associations"
-msgstr ""
+msgstr "Kalenderkanaal gebeurtenisassociaties"
 
 #. js-lingui-id: bQS4UN
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -954,7 +954,7 @@ msgstr "Kalenderkanaal is onjuist geconfigureerd."
 #. js-lingui-id: 3J2x1Q
 #: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
 msgid "Calendar channel not found."
-msgstr ""
+msgstr "Kalenderkanaal niet gevonden."
 
 #. js-lingui-id: fH0CrF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
@@ -967,12 +967,12 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 msgid "Calendar Channels"
-msgstr ""
+msgstr "Kalenderkanalen"
 
 #. js-lingui-id: bRk+FR
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Calendar event"
-msgstr ""
+msgstr "Kalenderevenement"
 
 #. js-lingui-id: 25OS5Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
@@ -997,7 +997,7 @@ msgstr "Kalenderevenement niet gevonden."
 #. js-lingui-id: N2kMfO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Calendar event participant"
-msgstr ""
+msgstr "Deelnemer kalenderevenement"
 
 #. js-lingui-id: B/QIsg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1008,7 +1008,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Calendar event participants"
-msgstr ""
+msgstr "Deelnemers kalenderevenement"
 
 #. js-lingui-id: ZI2UyM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1016,7 +1016,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Calendar Event Participants"
-msgstr ""
+msgstr "Deelnemers aan kalenderevenement"
 
 #. js-lingui-id: u0R1Ba
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -1027,7 +1027,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Calendar events"
-msgstr ""
+msgstr "Kalenderevenementen"
 
 #. js-lingui-id: RyVA/3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
@@ -1087,7 +1087,7 @@ msgstr "Kan bewerking niet voltooien vanwege gerelateerde records."
 #. js-lingui-id: 6Sk/wo
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Cannot create blocklist entry for another workspace member."
-msgstr ""
+msgstr "Kan geen blokkeerlijstvermelding aanmaken voor een ander werkruimtelid."
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1114,7 +1114,7 @@ msgstr "Kan standaardagent niet verwijderen"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot delete standard skill"
-msgstr ""
+msgstr "Kan standaardvaardigheid niet verwijderen"
 
 #. js-lingui-id: /olFYI
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1125,7 +1125,7 @@ msgstr "Kan de laatste beheerder niet verwijderen."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "Cannot delete the only view for this object"
-msgstr ""
+msgstr "De enige weergave voor dit object kan niet worden verwijderd"
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
@@ -1155,62 +1155,62 @@ msgstr "Kan niet meer dan één actieve workflowversie hebben."
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Cannot modify predicate belonging to a different object."
-msgstr ""
+msgstr "Predicaat kan niet worden gewijzigd aangezien het tot een ander object behoort."
 
 #. js-lingui-id: xO923u
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Cannot modify predicate belonging to a different role."
-msgstr ""
+msgstr "Predicaat kan niet worden gewijzigd aangezien het tot een andere rol behoort."
 
 #. js-lingui-id: eiujBX
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Cannot modify predicate group belonging to a different object."
-msgstr ""
+msgstr "Predicatengroep kan niet worden gewijzigd aangezien deze tot een ander object behoort."
 
 #. js-lingui-id: 3niIR5
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Cannot modify predicate group belonging to a different role."
-msgstr ""
+msgstr "Predicatengroep kan niet worden gewijzigd aangezien deze tot een andere rol behoort."
 
 #. js-lingui-id: Su850d
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its object"
-msgstr ""
+msgstr "Predicatengroep kan niet worden gewijzigd om het object ervan te wijzigen"
 
 #. js-lingui-id: /lHFxo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its object from {existingObjectMetadataIdentifier} to {updatedObjectMetadataIdentifier}"
-msgstr ""
+msgstr "Predicatengroep kan niet worden gewijzigd om het object ervan te wijzigen van {existingObjectMetadataIdentifier} naar {updatedObjectMetadataIdentifier}"
 
 #. js-lingui-id: jm1hwE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its role"
-msgstr ""
+msgstr "Predicatengroep kan niet worden gewijzigd om de rol ervan te wijzigen"
 
 #. js-lingui-id: yxykz2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Cannot modify predicate group to change its role from {existingRoleIdentifier} to {updatedRoleIdentifier}"
-msgstr ""
+msgstr "Predicatengroep kan niet worden gewijzigd om de rol ervan te wijzigen van {existingRoleIdentifier} naar {updatedRoleIdentifier}"
 
 #. js-lingui-id: HDo5ie
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its object"
-msgstr ""
+msgstr "Predicaat kan niet worden gewijzigd om het object ervan te wijzigen"
 
 #. js-lingui-id: ku/9og
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its object from {existingObjectMetadataIdentifier} to {updatedObjectMetadataIdentifier}"
-msgstr ""
+msgstr "Predicaat kan niet worden gewijzigd om het object ervan te wijzigen van {existingObjectMetadataIdentifier} naar {updatedObjectMetadataIdentifier}"
 
 #. js-lingui-id: 7JaPm8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its role"
-msgstr ""
+msgstr "Predicaat kan niet worden gewijzigd om de rol ervan te wijzigen"
 
 #. js-lingui-id: uoi9Wy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} to {updatedRoleIdentifier}"
-msgstr ""
+msgstr "Predicaat kan niet worden gewijzigd om de rol ervan te wijzigen van {existingRoleIdentifier} naar {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1242,7 +1242,7 @@ msgstr "Kan standaardagent niet bijwerken"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
-msgstr ""
+msgstr "Kan eigenschappen van standaardvaardigheid niet bijwerken (alleen activering/deactivering toegestaan)"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1258,39 +1258,39 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgid "Channel ID"
-msgstr ""
+msgstr "Kanaal-ID"
 
 #. js-lingui-id: Ubg/B+
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Channel Type"
-msgstr ""
+msgstr "Kanaaltype"
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Circular dependency detected in navigation menu item hierarchy"
-msgstr ""
+msgstr "Circulaire afhankelijkheid gedetecteerd in de hiërarchie van navigatiemenu-items"
 
 #. js-lingui-id: /WTI79
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Circular dependency detected in navigation menu item hierarchy."
-msgstr ""
+msgstr "Circulaire afhankelijkheid gedetecteerd in de hiërarchie van navigatiemenu-items."
 
 #. js-lingui-id: 9uirl8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Circular dependency detected in view filter group hierarchy"
-msgstr ""
+msgstr "Circulaire afhankelijkheid gedetecteerd in de hiërarchie van weergavefiltergroepen"
 
 #. js-lingui-id: 3wV73y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "City"
-msgstr ""
+msgstr "Stad"
 
 #. js-lingui-id: NRF7pg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Close date"
-msgstr ""
+msgstr "Sluitingsdatum"
 
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -1300,7 +1300,7 @@ msgstr "Uitvoering van codestap mislukt."
 #. js-lingui-id: 96YB1a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Color Scheme"
-msgstr ""
+msgstr "Kleurenschema"
 
 #. js-lingui-id: xBSqqt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -1308,12 +1308,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Command menu item not found"
-msgstr ""
+msgstr "Opdrachtmenu-item niet gevonden"
 
 #. js-lingui-id: GQ9t8D
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Command menu item not found."
-msgstr ""
+msgstr "Opdrachtmenu-item niet gevonden."
 
 #. js-lingui-id: QeCopv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1323,7 +1323,7 @@ msgstr ""
 #. js-lingui-id: s2QZS6
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Companies"
-msgstr ""
+msgstr "Bedrijven"
 
 #. js-lingui-id: 7i8j3G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1331,17 +1331,17 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Company"
-msgstr ""
+msgstr "Bedrijf"
 
 #. js-lingui-id: yA1de7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Company record position"
-msgstr ""
+msgstr "Bedrijfsrecordpositie"
 
 #. js-lingui-id: qqWcBV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgid "Completed"
-msgstr ""
+msgstr "Voltooid"
 
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1352,17 +1352,17 @@ msgstr "Samengesteld type niet gevonden."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Conference Solution"
-msgstr ""
+msgstr "Conferentieoplossing"
 
 #. js-lingui-id: yU57/s
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for fields widget"
-msgstr ""
+msgstr "Configuratie is vereist voor veldenwidget"
 
 #. js-lingui-id: tj1Qu0
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for fields widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Configuratie is vereist voor veldenwidget \"{widgetTitle}\""
 
 #. js-lingui-id: 3UUjIe
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util.ts
@@ -1377,42 +1377,42 @@ msgstr ""
 #. js-lingui-id: wOVBIH
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for graph widget"
-msgstr ""
+msgstr "Configuratie is vereist voor grafiekwidget"
 
 #. js-lingui-id: 9fX6Jd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for graph widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Configuratie is vereist voor grafiekwidget \"{widgetTitle}\""
 
 #. js-lingui-id: heMezC
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for iframe widget"
-msgstr ""
+msgstr "Configuratie is vereist voor iframewidget"
 
 #. js-lingui-id: liZHXq
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for iframe widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Configuratie is vereist voor iframewidget \"{widgetTitle}\""
 
 #. js-lingui-id: viS7/+
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for standalone rich text widget"
-msgstr ""
+msgstr "Configuratie is vereist voor zelfstandige richtextwidget"
 
 #. js-lingui-id: rVKk74
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
 msgid "Configuration is required for standalone rich text widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Configuratie is vereist voor zelfstandige richtextwidget \"{widgetTitle}\""
 
 #. js-lingui-id: XZ4djQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Configuration is required for widget"
-msgstr ""
+msgstr "Configuratie is vereist voor widget"
 
 #. js-lingui-id: FCKoEz
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Configuration is required for widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Configuratie is vereist voor widget \"{widgetTitle}\""
 
 #. js-lingui-id: oH0/eJ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
@@ -1420,19 +1420,19 @@ msgstr ""
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Configuration type is required"
-msgstr ""
+msgstr "Configuratietype is vereist"
 
 #. js-lingui-id: TsoT/4
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Configuration type is required for widget \"{title}\""
-msgstr ""
+msgstr "Configuratietype is vereist voor widget \"{title}\""
 
 #. js-lingui-id: SlSmjG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
 msgid "Configuration type is required for widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Configuratietype is vereist voor widget \"{widgetTitle}\""
 
 #. js-lingui-id: n8EtHV
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -1471,7 +1471,7 @@ msgstr "Verbinden is niet toegestaan voor {connectFieldName} op {objectMetadataN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Connected Account"
-msgstr ""
+msgstr "Gekoppelde account"
 
 #. js-lingui-id: /OJTzk
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
@@ -1488,29 +1488,29 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Connected accounts"
-msgstr ""
+msgstr "Gekoppelde accounts"
 
 #. js-lingui-id: AMDUqA
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Connected Accounts"
-msgstr ""
+msgstr "Gekoppelde Accounts"
 
 #. js-lingui-id: bA6O5B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Contact auto creation policy"
-msgstr ""
+msgstr "Beleid voor automatisch aanmaken van contacten"
 
 #. js-lingui-id: rx63gq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
 msgid "Content cannot be empty"
-msgstr ""
+msgstr "Inhoud mag niet leeg zijn"
 
 #. js-lingui-id: M73whl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgid "Context"
-msgstr ""
+msgstr "Context"
 
 #. js-lingui-id: YPzDDR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -1526,17 +1526,17 @@ msgstr "Tegenstrijdige veldrechten zijn gedetecteerd op een relatieveld ({fieldN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "Correct direction is required"
-msgstr ""
+msgstr "Correcte richting is vereist"
 
 #. js-lingui-id: Fep47m
 #: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
 msgid "Could not find {targetMetadataName} for given {foreignKey}"
-msgstr ""
+msgstr "Kan {targetMetadataName} niet vinden voor de opgegeven {foreignKey}"
 
 #. js-lingui-id: qs7GyL
 #: src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util.ts
 msgid "Could not find {targetMetadataName} for given {universalForeignKey}"
-msgstr ""
+msgstr "Kan {targetMetadataName} niet vinden voor de opgegeven {universalForeignKey}"
 
 #. js-lingui-id: LZf/L8
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
@@ -1562,7 +1562,7 @@ msgstr ""
 #. js-lingui-id: KwGZ0m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Could not found updated field metadata"
-msgstr ""
+msgstr "Kon bijgewerkte veldmetagegevens niet vinden."
 
 #. js-lingui-id: NCIYDF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1595,7 +1595,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Created by"
-msgstr ""
+msgstr "Gemaakt door"
 
 #. js-lingui-id: 2ZhYYy
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
@@ -1666,18 +1666,18 @@ msgstr "Aangemaakte veldmetadata, metadata bovenliggende object niet gevonden"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Creation date"
-msgstr ""
+msgstr "Aanmaakdatum"
 
 #. js-lingui-id: CJXWmO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Creation DateTime"
-msgstr ""
+msgstr "Aanmaakdatum en -tijd"
 
 #. js-lingui-id: 6Oaeoc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgid "Cron"
-msgstr ""
+msgstr "Cron"
 
 #. js-lingui-id: umhXiy
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -1687,7 +1687,7 @@ msgstr "Cron-patroon '{pattern}' is ongeldig."
 #. js-lingui-id: Mikszu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 msgid "Custom Connection Parameters"
-msgstr ""
+msgstr "Aangepaste Verbindingsparameters"
 
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -1707,13 +1707,13 @@ msgstr "Aangepast object mist een labelidentificatieveld."
 #. js-lingui-id: 876pfE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Customer"
-msgstr ""
+msgstr "Klant"
 
 #. js-lingui-id: 7p5kLi
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Dashboard"
-msgstr ""
+msgstr "Dashboard"
 
 #. js-lingui-id: jlbLNx
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
@@ -1723,22 +1723,22 @@ msgstr "Dashboard niet gevonden."
 #. js-lingui-id: Lddz0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 msgid "Dashboard page layout"
-msgstr ""
+msgstr "Dashboard pagina-indeling"
 
 #. js-lingui-id: FrOkwR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 msgid "Dashboard record Position"
-msgstr ""
+msgstr "Dashboard-recordpositie"
 
 #. js-lingui-id: xGgnPh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 msgid "Dashboard title"
-msgstr ""
+msgstr "Dashboard titel"
 
 #. js-lingui-id: w6iIMm
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Dashboards"
-msgstr ""
+msgstr "Dashboards"
 
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -1763,7 +1763,7 @@ msgstr ""
 #. js-lingui-id: Lhd0oQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Date format"
-msgstr ""
+msgstr "Datumformaat"
 
 #. js-lingui-id: 1lL5Iu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1797,7 +1797,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Date when the record was deleted"
-msgstr ""
+msgstr "Datum waarop het record is verwijderd"
 
 #. js-lingui-id: yiROdD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1885,19 +1885,19 @@ msgstr "Standaardwaarden moeten uniek zijn"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Deleted at"
-msgstr ""
+msgstr "Verwijderd op"
 
 #. js-lingui-id: Nu4oKW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Description"
-msgstr ""
+msgstr "Beschrijving"
 
 #. js-lingui-id: MRB7nI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Direction"
-msgstr ""
+msgstr "Richting"
 
 #. js-lingui-id: 0gS7M5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -1905,7 +1905,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgid "Display Name"
-msgstr ""
+msgstr "Weergavenaam"
 
 #. js-lingui-id: IymH4t
 #: src/engine/core-modules/public-domain/public-domain.service.ts
@@ -1925,7 +1925,7 @@ msgstr "Domein is al geregistreerd als openbaar domein."
 #. js-lingui-id: wMncXq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Domain Name"
-msgstr ""
+msgstr "Domeinnaam"
 
 #. js-lingui-id: DPfwMq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -1946,7 +1946,7 @@ msgstr ""
 #. js-lingui-id: YOowcq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgid "Due Date"
-msgstr ""
+msgstr "Vervaldatum"
 
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -1962,12 +1962,12 @@ msgstr "Gekopieerde optie {field}"
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Either workflow version or front component is required."
-msgstr ""
+msgstr "Een workflowversie of een frontcomponent is vereist."
 
 #. js-lingui-id: O3oNi5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
@@ -2022,7 +2022,7 @@ msgstr "E-mail is vereist."
 #. js-lingui-id: 3wAyvl
 #: src/utils/get-domain-name-by-email.ts
 msgid "Email is required. Please provide a valid email address."
-msgstr ""
+msgstr "E-mail is verplicht. Voer een geldig e-mailadres in."
 
 #. js-lingui-id: y+BSWq
 #: src/engine/core-modules/user/user.exception.ts
@@ -2048,12 +2048,12 @@ msgstr "E-mailverificatie is niet vereist."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Emails"
-msgstr ""
+msgstr "E-mails"
 
 #. js-lingui-id: gqv5ZL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Employees"
-msgstr ""
+msgstr "Werknemers"
 
 #. js-lingui-id: aVGG1u
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -2064,17 +2064,17 @@ msgstr "Lege veldmachtigingen zijn niet toegestaan."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "End Date"
-msgstr ""
+msgstr "Einddatum"
 
 #. js-lingui-id: g2om8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Engine component key is required"
-msgstr ""
+msgstr "Sleutel van de enginecomponent is vereist"
 
 #. js-lingui-id: BmtSAK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "engineComponentKey is required"
-msgstr ""
+msgstr "engineComponentKey is vereist"
 
 #. js-lingui-id: ZzZwe/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -2084,7 +2084,7 @@ msgstr ""
 #. js-lingui-id: ArAFBo
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Enterprise validity token is not valid."
-msgstr ""
+msgstr "Enterprise-geldigheidstoken is ongeldig."
 
 #. js-lingui-id: qpXqpa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
@@ -2111,13 +2111,13 @@ msgstr "Fout"
 #. js-lingui-id: kJDmsI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgid "Event details"
-msgstr ""
+msgstr "Evenementdetails"
 
 #. js-lingui-id: 0JhmlM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgid "Event external ID"
-msgstr ""
+msgstr "Extern evenement-ID"
 
 #. js-lingui-id: aZJLAR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -2125,19 +2125,19 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgid "Event ID"
-msgstr ""
+msgstr "Evenement-ID"
 
 #. js-lingui-id: PYs3rP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgid "Event name"
-msgstr ""
+msgstr "Evenementnaam"
 
 #. js-lingui-id: aicVfT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Event Participants"
-msgstr ""
+msgstr "Evenementdeelnemers"
 
 #. js-lingui-id: 8B2x9+
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -2155,45 +2155,45 @@ msgstr ""
 #. js-lingui-id: LxOGsB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgid "Event workspace member"
-msgstr ""
+msgstr "Evenementwerkruimtelid"
 
 #. js-lingui-id: tst44n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Events"
-msgstr ""
+msgstr "Evenementen"
 
 #. js-lingui-id: fHL+iH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Events linked to the person"
-msgstr ""
+msgstr "Evenementen gekoppeld aan de persoon"
 
 #. js-lingui-id: 3/O8MM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Events linked to the workspace member"
-msgstr ""
+msgstr "Evenementen gekoppeld aan het werkruimtelid"
 
 #. js-lingui-id: b3ictS
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
-msgstr ""
+msgstr "Precies één van \"groups\" of \"fields\" moet worden opgegeven"
 
 #. js-lingui-id: QQlMid
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Exclude group emails"
-msgstr ""
+msgstr "Groepse-mails uitsluiten"
 
 #. js-lingui-id: kenYGr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Exclude non professional emails"
-msgstr ""
+msgstr "Niet-professionele e-mails uitsluiten"
 
 #. js-lingui-id: Lo5U0b
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgid "Executed by"
-msgstr ""
+msgstr "Uitgevoerd door"
 
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -2211,7 +2211,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Failed"
-msgstr ""
+msgstr "Mislukt"
 
 #. js-lingui-id: 0xypR7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -2227,7 +2227,7 @@ msgstr "Het aanmaken van een evaluatie is mislukt. Probeer het opnieuw."
 #. js-lingui-id: RjuW0j
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Failed to create front component."
-msgstr ""
+msgstr "Kon frontcomponent niet maken."
 
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -2242,7 +2242,7 @@ msgstr "Aanmaken van record mislukt."
 #. js-lingui-id: mWj8el
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
-msgstr ""
+msgstr "Niet gelukt om bestand {fileId} te verwijderen"
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -2262,17 +2262,17 @@ msgstr "Het dupliceren van het dashboard is mislukt."
 #. js-lingui-id: MIto3A
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "Failed to extract SDK client archive."
-msgstr ""
+msgstr "Uitpakken van SDK-clientarchief mislukt."
 
 #. js-lingui-id: Ol/51Z
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Failed to extract tarball."
-msgstr ""
+msgstr "Uitpakken van tarball mislukt."
 
 #. js-lingui-id: CO40Hk
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "Failed to generate SDK client."
-msgstr ""
+msgstr "Genereren van SDK-client mislukt."
 
 #. js-lingui-id: HfhmrS
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -2282,7 +2282,7 @@ msgstr "Kon de wachtrijtaken niet laden. Probeer het later opnieuw."
 #. js-lingui-id: ruD0s1
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "Failed to receive real time updates."
-msgstr ""
+msgstr "Het ontvangen van realtime-updates is mislukt."
 
 #. js-lingui-id: /E7MoD
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -2318,78 +2318,78 @@ msgstr ""
 #. js-lingui-id: 6Ki4Pv
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Favorite"
-msgstr ""
+msgstr "Favoriet"
 
 #. js-lingui-id: aKUOPp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite company"
-msgstr ""
+msgstr "Favoriet bedrijf"
 
 #. js-lingui-id: Aj026i
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite dashboard"
-msgstr ""
+msgstr "Favoriete dashboard"
 
 #. js-lingui-id: TDlZ/o
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite Folder"
-msgstr ""
+msgstr "Favoriete Map"
 
 #. js-lingui-id: WDVfUH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 msgid "Favorite folder position"
-msgstr ""
+msgstr "Positie favoriete map"
 
 #. js-lingui-id: SStz54
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Favorite Folders"
-msgstr ""
+msgstr "Favoriete Mappen"
 
 #. js-lingui-id: dz/fFp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite note"
-msgstr ""
+msgstr "Favoriete notitie"
 
 #. js-lingui-id: RRr9Bp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite opportunity"
-msgstr ""
+msgstr "Favoriete kans"
 
 #. js-lingui-id: RM6B6V
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite person"
-msgstr ""
+msgstr "Favoriete persoon"
 
 #. js-lingui-id: oVA9vM
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite position"
-msgstr ""
+msgstr "Favoriete positie"
 
 #. js-lingui-id: OaQVQH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite task"
-msgstr ""
+msgstr "Favoriete taak"
 
 #. js-lingui-id: l+lx2f
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite workflow"
-msgstr ""
+msgstr "Favoriete workflow"
 
 #. js-lingui-id: BPBnux
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite workflow run"
-msgstr ""
+msgstr "Favoriete workflow-uitvoering"
 
 #. js-lingui-id: 5X6Vlz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite workflow version"
-msgstr ""
+msgstr "Favoriete workflowversie"
 
 #. js-lingui-id: FDpezg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Favorite workspace member"
-msgstr ""
+msgstr "Favoriete werkruimtelid"
 
 #. js-lingui-id: X9kySA
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2405,62 +2405,62 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Favorites"
-msgstr ""
+msgstr "Favorieten"
 
 #. js-lingui-id: 0CzeFL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 msgid "Favorites in this folder"
-msgstr ""
+msgstr "Favorieten in deze map"
 
 #. js-lingui-id: zQponA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the company"
-msgstr ""
+msgstr "Favorieten gekoppeld aan het bedrijf"
 
 #. js-lingui-id: VaKLrB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the contact"
-msgstr ""
+msgstr "Favorieten gekoppeld aan het contact"
 
 #. js-lingui-id: 5zuBdE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the dashboard"
-msgstr ""
+msgstr "Favorieten gekoppeld aan het dashboard"
 
 #. js-lingui-id: GOfcBt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the note"
-msgstr ""
+msgstr "Favorieten gekoppeld aan de notitie"
 
 #. js-lingui-id: 9zd8hg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the opportunity"
-msgstr ""
+msgstr "Favorieten gekoppeld aan de kans"
 
 #. js-lingui-id: L5ccWD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the task"
-msgstr ""
+msgstr "Favorieten gekoppeld aan de taak"
 
 #. js-lingui-id: ee0tmj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the workflow"
-msgstr ""
+msgstr "Favorieten gekoppeld aan de workflow"
 
 #. js-lingui-id: zar5jz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the workflow run"
-msgstr ""
+msgstr "Favorieten gekoppeld aan de workflow-uitvoering"
 
 #. js-lingui-id: 499/sw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the workflow version"
-msgstr ""
+msgstr "Favorieten gekoppeld aan de workflowversie"
 
 #. js-lingui-id: rgmtb4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Favorites linked to the workspace member"
-msgstr ""
+msgstr "Favorieten gekoppeld aan het werkruimtelid"
 
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -2595,22 +2595,22 @@ msgstr ""
 #. js-lingui-id: p6JTHU
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
 msgid "Field type POSITION must be a system field"
-msgstr ""
+msgstr "Veldtype POSITION moet een systeemveld zijn"
 
 #. js-lingui-id: VDesPB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util.ts
 msgid "Field type POSITION must be named \"position\""
-msgstr ""
+msgstr "Veldtype POSITION moet \"position\" heten"
 
 #. js-lingui-id: 7cWO6W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be a system field"
-msgstr ""
+msgstr "Veldtype TS_VECTOR moet een systeemveld zijn"
 
 #. js-lingui-id: hoCDqQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
-msgstr ""
+msgstr "Veldtype TS_VECTOR moet \"searchVector\" heten"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -2688,42 +2688,42 @@ msgstr "FieldMetadataId is vereist om een weergavesortering te maken."
 #. js-lingui-id: VgGXR3
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "fieldMetadataId or fieldMetadataUniversalIdentifier must be provided"
-msgstr ""
+msgstr "fieldMetadataId of fieldMetadataUniversalIdentifier moet worden opgegeven"
 
 #. js-lingui-id: 9HjeLQ
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Fields widget has no associated view"
-msgstr ""
+msgstr "Fields-widget heeft geen gekoppelde view"
 
 #. js-lingui-id: 8sAaBn
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Fields widget not found"
-msgstr ""
+msgstr "Fields-widget niet gevonden"
 
 #. js-lingui-id: J2eKUI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "File"
-msgstr ""
+msgstr "Bestand"
 
 #. js-lingui-id: ycn/wp
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
-msgstr ""
+msgstr "Het bestand {fileId} is al gekoppeld aan een permanent bestandenveld. Upload het bestand opnieuw."
 
 #. js-lingui-id: v+527c
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "File {fileId} was not uploaded for this field. Please re-upload the file."
-msgstr ""
+msgstr "Het bestand {fileId} is niet geüpload voor dit veld. Upload het bestand opnieuw."
 
 #. js-lingui-id: i+AQUz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "File category"
-msgstr ""
+msgstr "Bestandscategorie"
 
 #. js-lingui-id: OR7oBd
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "File not found in SDK client archive."
-msgstr ""
+msgstr "Bestand niet gevonden in SDK-clientarchief."
 
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -2735,17 +2735,17 @@ msgstr "Bestand niet gevonden."
 #. js-lingui-id: sER+bs
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Files"
-msgstr ""
+msgstr "Bestanden"
 
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
-msgstr ""
+msgstr "Het veldtype Bestanden wordt niet ondersteund voor unieke velden"
 
 #. js-lingui-id: ylQd2j
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Flow"
-msgstr ""
+msgstr "Stroom"
 
 #. js-lingui-id: GnvDRp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -2755,13 +2755,13 @@ msgstr ""
 #. js-lingui-id: cqQyPB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 msgid "Folder name"
-msgstr ""
+msgstr "Mapnaam"
 
 #. js-lingui-id: Fzrzfe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Folder name is required"
-msgstr ""
+msgstr "Mapnaam is vereist"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -2796,28 +2796,28 @@ msgstr ""
 #. js-lingui-id: Wed+Kp
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Front component is not ready."
-msgstr ""
+msgstr "Frontcomponent is niet gereed."
 
 #. js-lingui-id: A7aUMa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component is required for front component renderer items"
-msgstr ""
+msgstr "Frontcomponent is vereist voor items van de frontcomponent-renderer"
 
 #. js-lingui-id: 0aXgXb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for this item type"
-msgstr ""
+msgstr "Frontcomponent mag niet worden ingesteld voor dit itemtype"
 
 #. js-lingui-id: AfxLzg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for workflow trigger items"
-msgstr ""
+msgstr "Frontcomponent mag niet worden ingesteld voor workflow-triggeritems"
 
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 msgid "Front component name is required"
-msgstr ""
+msgstr "Naam van de frontcomponent is vereist"
 
 #. js-lingui-id: VZiHPV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2825,33 +2825,33 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 msgid "Front component not found"
-msgstr ""
+msgstr "Frontcomponent niet gevonden"
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
-msgstr ""
+msgstr "Frontcomponent niet gevonden."
 
 #. js-lingui-id: 4wM9Cs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_RENDERER"
-msgstr ""
+msgstr "frontComponentId is vereist wanneer engineComponentKey FRONT_COMPONENT_RENDERER is"
 
 #. js-lingui-id: N6YN7J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
-msgstr ""
+msgstr "frontComponentId mag niet worden ingesteld voor engine component key {engineComponentKey}"
 
 #. js-lingui-id: z8/E1J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
-msgstr ""
+msgstr "frontComponentId mag niet worden ingesteld wanneer engineComponentKey TRIGGER_WORKFLOW_VERSION is"
 
 #. js-lingui-id: oQA+cA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Full path"
-msgstr ""
+msgstr "Volledige pad"
 
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -2892,17 +2892,17 @@ msgstr "Google API-authenticatie is uitgeschakeld."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Grid position is required"
-msgstr ""
+msgstr "Rasterpositie is vereist"
 
 #. js-lingui-id: 7Arr+N
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-pie-chart-configuration.util.ts
 msgid "Group by field is required for pie chart"
-msgstr ""
+msgstr "Groeperingsveld is vereist voor cirkeldiagram"
 
 #. js-lingui-id: G5/lsy
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-pie-chart-configuration.util.ts
 msgid "Group by field is required for pie chart widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Groeperingsveld is vereist voor cirkeldiagramwidget \"{widgetTitle}\""
 
 #. js-lingui-id: eBU3Ir
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -2917,7 +2917,7 @@ msgstr ""
 #. js-lingui-id: TkE8dW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 msgid "handle"
-msgstr ""
+msgstr "handvat"
 
 #. js-lingui-id: Nf7oXL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -2931,13 +2931,13 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgid "Handle"
-msgstr ""
+msgstr "Handvat"
 
 #. js-lingui-id: GvgxWx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 msgid "Handle Aliases"
-msgstr ""
+msgstr "Handvat aliassen"
 
 #. js-lingui-id: CDiGGx
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -2947,23 +2947,23 @@ msgstr "Handle-aliasen zijn vereist."
 #. js-lingui-id: VehAU2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgid "Header message Id"
-msgstr ""
+msgstr "Headerbericht-ID"
 
 #. js-lingui-id: i0qMbr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Home"
-msgstr ""
+msgstr "Home"
 
 #. js-lingui-id: NNJnBi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "iCal UID"
-msgstr ""
+msgstr "iCal UID"
 
 #. js-lingui-id: CiyiKN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "ICP"
-msgstr ""
+msgstr "ICP"
 
 #. js-lingui-id: dFb5Nt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -3027,7 +3027,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #. js-lingui-id: yEFb1B
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -3048,12 +3048,12 @@ msgstr "Indien gedefinieerd, moet de standaardwaarde minstens een waarde bevatte
 #. js-lingui-id: hG89Ed
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Image"
-msgstr ""
+msgstr "Afbeelding"
 
 #. js-lingui-id: /LCAwL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgid "In progress"
-msgstr ""
+msgstr "In vooruitgang"
 
 #. js-lingui-id: RAMaAx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -3101,7 +3101,7 @@ msgstr "Index met dezelfde naam bestaat al"
 #. js-lingui-id: D6Tjt0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same universal identifier already exists"
-msgstr ""
+msgstr "Index met dezelfde universele identifier bestaat al"
 
 #. js-lingui-id: 9Lkkre
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -3167,7 +3167,7 @@ msgstr "Ongeldige CALDAV-inloggegevens. Controleer uw gebruikersnaam en wachtwoo
 #. js-lingui-id: cizVEW
 #: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
 msgid "Invalid calendar channel input."
-msgstr ""
+msgstr "Ongeldige invoer voor kalenderkanaal."
 
 #. js-lingui-id: X7+bC6
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -3187,74 +3187,74 @@ msgstr "Ongeldige captcha. Probeer het opnieuw."
 #. js-lingui-id: lyfeGa
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
-msgstr ""
+msgstr "Ongeldige invoer voor het opdrachtmenu-item."
 
 #. js-lingui-id: C25VTR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
-msgstr ""
+msgstr "Ongeldige configuratie voor widget \"{widgetTitle}\": grafiektype {chartType} vereist de featureflag IS_DASHBOARD_V2_ENABLED"
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget"
-msgstr ""
+msgstr "Ongeldig configuratietype voor veldenwidget"
 
 #. js-lingui-id: luyinP
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget \"{widgetTitle}\". Expected FIELDS, got {actualString}"
-msgstr ""
+msgstr "Ongeldig configuratietype voor veldenwidget \"{widgetTitle}\". Verwacht FIELDS, gekregen {actualString}"
 
 #. js-lingui-id: /xPxQo
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Invalid configuration type for front component widget"
-msgstr ""
+msgstr "Ongeldig configuratietype voor frontcomponentwidget"
 
 #. js-lingui-id: 8G4vdK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Invalid configuration type for front component widget \"{title}\". Expected FRONT_COMPONENT, got {configurationTypeString}"
-msgstr ""
+msgstr "Ongeldig configuratietype voor frontcomponentwidget \"{title}\". Verwacht FRONT_COMPONENT, gekregen {configurationTypeString}"
 
 #. js-lingui-id: PXgd1R
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
 msgid "Invalid configuration type for graph widget"
-msgstr ""
+msgstr "Ongeldig configuratietype voor grafiekwidget"
 
 #. js-lingui-id: g4PB8S
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
 msgid "Invalid configuration type for graph widget \"{widgetTitle}\". Expected one of {expectedConfigurationTypes}, got {configurationTypeString}"
-msgstr ""
+msgstr "Ongeldig configuratietype voor grafiekwidget \"{widgetTitle}\". Verwacht een van {expectedConfigurationTypes}, gekregen {configurationTypeString}"
 
 #. js-lingui-id: KZhbBk
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
 msgid "Invalid configuration type for iframe widget"
-msgstr ""
+msgstr "Ongeldig configuratietype voor iframewidget"
 
 #. js-lingui-id: SKoxDC
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
 msgid "Invalid configuration type for iframe widget \"{widgetTitle}\". Expected IFRAME, got {configurationTypeString}"
-msgstr ""
+msgstr "Ongeldig configuratietype voor iframewidget \"{widgetTitle}\". Verwacht IFRAME, gekregen {configurationTypeString}"
 
 #. js-lingui-id: JmuFK8
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
 msgid "Invalid configuration type for standalone rich text widget"
-msgstr ""
+msgstr "Ongeldig configuratietype voor zelfstandige richtextwidget"
 
 #. js-lingui-id: 9uz7OL
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
 msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle}\". Expected STANDALONE_RICH_TEXT, got {configurationTypeString}"
-msgstr ""
+msgstr "Ongeldig configuratietype voor zelfstandige richtextwidget \"{widgetTitle}\". Verwacht STANDALONE_RICH_TEXT, gekregen {configurationTypeString}"
 
 #. js-lingui-id: IptMRL
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget"
-msgstr ""
+msgstr "Ongeldig configuratietype voor widget"
 
 #. js-lingui-id: nFIvYZ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util.ts
 msgid "Invalid configuration type for widget \"{widgetTitle}\". Expected {expectedString}, got {actualString}"
-msgstr ""
+msgstr "Ongeldig configuratietype voor widget \"{widgetTitle}\". Verwacht {expectedString}, gekregen {actualString}"
 
 #. js-lingui-id: jUt31O
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -3264,7 +3264,7 @@ msgstr "Ongeldige ID van gekoppeld account."
 #. js-lingui-id: DH8Ofc
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 msgid "Invalid connected account input."
-msgstr ""
+msgstr "Ongeldige invoer voor gekoppeld account."
 
 #. js-lingui-id: 1PtrY0
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
@@ -3295,12 +3295,12 @@ msgstr "Ongeldig e-mailadres."
 #. js-lingui-id: Lq9KTr
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Invalid email or domain."
-msgstr ""
+msgstr "Ongeldig e-mailadres of domein."
 
 #. js-lingui-id: pOHI+b
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "Invalid enterprise key."
-msgstr ""
+msgstr "Ongeldige Enterprise-sleutel."
 
 #. js-lingui-id: YtFgT4
 #: src/engine/core-modules/feature-flag/feature-flag.exception.ts
@@ -3315,7 +3315,7 @@ msgstr "Ongeldige veldinvoer."
 #. js-lingui-id: dqt3x1
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Invalid file folder."
-msgstr ""
+msgstr "Ongeldige bestandsmap."
 
 #. js-lingui-id: d6DMa/
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -3325,12 +3325,12 @@ msgstr "Ongeldige bestands-ID."
 #. js-lingui-id: +ECOke
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter : {nameSingular} object doesn't have any \"{key}\" field."
-msgstr ""
+msgstr "Ongeldig filter : het {nameSingular}-object heeft geen \"{key}\"-veld."
 
 #. js-lingui-id: kFbvma
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util.ts
 msgid "Invalid filter : Operator \"{operator}\" is not valid for this \"{fieldName}\" {fieldType} field"
-msgstr ""
+msgstr "Ongeldig filter : Operator \"{operator}\" is niet geldig voor dit \"{fieldName}\"-veld van het type {fieldType}"
 
 #. js-lingui-id: 1yoHmO
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -3343,32 +3343,32 @@ msgstr "Ongeldige filterparameter."
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Invalid filter value: \"{value}\""
-msgstr ""
+msgstr "Ongeldige filterwaarde: \"{value}\""
 
 #. js-lingui-id: +GVjEm
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires an array"
-msgstr ""
+msgstr "Ongeldig filter: de operator \"{operator}\" vereist een array"
 
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
-msgstr ""
+msgstr "Ongeldig filter: de operator \"isEmptyArray\" vereist een booleaanse waarde"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: exactly one operator per field is required"
-msgstr ""
+msgstr "Ongeldig filter: precies één operator per veld is vereist"
 
 #. js-lingui-id: gdJXPD
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: filter value must be an object"
-msgstr ""
+msgstr "Ongeldig filter: filterwaarde moet een object zijn"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
-msgstr ""
+msgstr "Ongeldige invoer voor de frontcomponent."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -3394,7 +3394,7 @@ msgstr "Ongeldig type identiteitsprovider."
 #. js-lingui-id: xfXYBX
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Invalid input for application registration."
-msgstr ""
+msgstr "Ongeldige invoer voor de applicatieregistratie."
 
 #. js-lingui-id: t7SpQO
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -3421,12 +3421,12 @@ msgstr "Ongeldige limietparameter."
 #. js-lingui-id: fNaXqL
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Invalid message channel input."
-msgstr ""
+msgstr "Ongeldige invoer voor berichtkanaal."
 
 #. js-lingui-id: zUyPBT
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Invalid message folder input."
-msgstr ""
+msgstr "Ongeldige invoer voor berichtenmap."
 
 #. js-lingui-id: iBBCnf
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3448,7 +3448,7 @@ msgstr "Ongeldige morfologierelatie-invoer"
 #. js-lingui-id: isIEpm
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Invalid navigation menu item input."
-msgstr ""
+msgstr "Ongeldige invoer voor het navigatiemenu-item."
 
 #. js-lingui-id: 5ZHOkh
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -3489,13 +3489,13 @@ msgstr "Ongeldige parameters opgegeven."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Invalid permission flag value"
-msgstr ""
+msgstr "Ongeldige waarde voor de machtigingsvlag"
 
 #. js-lingui-id: mMHHVP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Invalid permission setting"
-msgstr ""
+msgstr "Ongeldige machtigingsinstelling"
 
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -3561,17 +3561,17 @@ msgstr "Ongeldige roldoelgegevens."
 #. js-lingui-id: ppA1Aq
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Invalid row level permission predicate data."
-msgstr ""
+msgstr "Ongeldige gegevens voor de toegangsvoorwaarde op rijniveau."
 
 #. js-lingui-id: nwC2sc
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Invalid row level permission predicate group data."
-msgstr ""
+msgstr "Ongeldige gegevens voor de groep voor toegangsvoorwaarden op rijniveau."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Invalid seed project configuration."
-msgstr ""
+msgstr "Ongeldige seedprojectconfiguratie."
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3581,7 +3581,7 @@ msgstr "Ongeldig instellingstype opgegeven in cron-trigger."
 #. js-lingui-id: TulNnA
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Invalid skill input."
-msgstr ""
+msgstr "Ongeldige vaardigheidsinvoer."
 
 #. js-lingui-id: U3r7gv
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -3612,12 +3612,12 @@ msgstr "Ongeldig abonnement."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Invalid target URL provided"
-msgstr ""
+msgstr "Ongeldige doel-URL opgegeven"
 
 #. js-lingui-id: 9mW6V7
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid target URL. Please provide a valid HTTP or HTTPS URL."
-msgstr ""
+msgstr "Ongeldige doel-URL. Geef een geldige HTTP- of HTTPS-URL op."
 
 #. js-lingui-id: sHcAMD
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -3632,7 +3632,7 @@ msgstr "Ongeldige configuratie voor twee-factor-authenticatie."
 #. js-lingui-id: brtxSP
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid universal identifier {universalIdentifier}"
-msgstr ""
+msgstr "Ongeldige universele identifier {universalIdentifier}"
 
 #. js-lingui-id: SzaGv7
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
@@ -3642,7 +3642,7 @@ msgstr "Ongeldig URL-formaat."
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
 msgid "Invalid UUID format."
-msgstr ""
+msgstr "Ongeldig UUID-formaat."
 
 #. js-lingui-id: RyBgV/
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -3652,108 +3652,108 @@ msgstr "Ongeldig validatietoken."
 #. js-lingui-id: xvTxwi
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Invalid value \"{inspectedValue}\" for FILES field \"{fieldName}\" - It should be an array of objects with \"fileId\" and \"label\" properties."
-msgstr ""
+msgstr "Ongeldige waarde \"{inspectedValue}\" voor het FILES-veld \"{fieldName}\" - Dit moet een array van objecten zijn met de eigenschappen \"fileId\" en \"label\"."
 
 #. js-lingui-id: XOA98j
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-operator-filter-value-or-throw.util.ts
 msgid "Invalid value for \"is\" operator"
-msgstr ""
+msgstr "Ongeldige waarde voor de operator \"is\""
 
 #. js-lingui-id: 56bPee
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util.ts
 msgid "Invalid value for actor."
-msgstr ""
+msgstr "Ongeldige waarde voor actor."
 
 #. js-lingui-id: Y2KtrW
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-address-field-or-throw.util.ts
 msgid "Invalid value for address."
-msgstr ""
+msgstr "Ongeldige waarde voor adres."
 
 #. js-lingui-id: D9hzmE
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 msgid "Invalid value for currency."
-msgstr ""
+msgstr "Ongeldige waarde voor valuta."
 
 #. js-lingui-id: MnHbVB
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util.ts
 msgid "Invalid value for date-time: \"{inspectedValue}\". Expected format: 'YYYY-MM-DDTHH:mm:ssZ'"
-msgstr ""
+msgstr "Ongeldige waarde voor datum-tijd: \"{inspectedValue}\". Verwacht formaat: 'YYYY-MM-DDTHH:mm:ssZ'"
 
 #. js-lingui-id: U4Wdjc
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-field-or-throw.util.ts
 msgid "Invalid value for date: \"{inspectedValue}\". Expected format: 'YYYY-MM-DD'"
-msgstr ""
+msgstr "Ongeldige waarde voor datum: \"{inspectedValue}\". Verwacht formaat: 'YYYY-MM-DD'"
 
 #. js-lingui-id: mANTdg
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util.ts
 msgid "Invalid value for emails."
-msgstr ""
+msgstr "Ongeldige waarde voor e-mailadressen."
 
 #. js-lingui-id: tfoEIq
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Invalid value for FILES field \"{fieldName}\" - {errorMessage}"
-msgstr ""
+msgstr "Ongeldige waarde voor het FILES-veld \"{fieldName}\" - {errorMessage}"
 
 #. js-lingui-id: SF3Mp4
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util.ts
 msgid "Invalid value for full name."
-msgstr ""
+msgstr "Ongeldige waarde voor volledige naam."
 
 #. js-lingui-id: UiMJoF
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
 msgid "Invalid value for JSON: \"{inspectedValue}\""
-msgstr ""
+msgstr "Ongeldige waarde voor JSON: \"{inspectedValue}\""
 
 #. js-lingui-id: BgSFod
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util.ts
 msgid "Invalid value for JSON."
-msgstr ""
+msgstr "Ongeldige waarde voor JSON."
 
 #. js-lingui-id: GFYy9y
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util.ts
 msgid "Invalid value for links."
-msgstr ""
+msgstr "Ongeldige waarde voor links."
 
 #. js-lingui-id: Q6jO3x
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util.ts
 msgid "Invalid value for multi-select: \"{inspectedValue}\""
-msgstr ""
+msgstr "Ongeldige waarde voor multi-select: \"{inspectedValue}\""
 
 #. js-lingui-id: WHM6K7
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util.ts
 msgid "Invalid value for number: \"{inspectedValue}\""
-msgstr ""
+msgstr "Ongeldige waarde voor getal: \"{inspectedValue}\""
 
 #. js-lingui-id: oLqCzh
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-phones-field-or-throw.util.ts
 msgid "Invalid value for phones."
-msgstr ""
+msgstr "Ongeldige waarde voor telefoonnummers."
 
 #. js-lingui-id: GLmyCK
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util.ts
 msgid "Invalid value for position: \"{inspectedValue}\""
-msgstr ""
+msgstr "Ongeldige waarde voor positie: \"{inspectedValue}\""
 
 #. js-lingui-id: Sf+6YJ
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
-msgstr ""
+msgstr "Ongeldige waarde voor rich text."
 
 #. js-lingui-id: 9lVA5C
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
 msgid "Invalid value for select: \"{inspectedValue}\""
-msgstr ""
+msgstr "Ongeldige waarde voor select: \"{inspectedValue}\""
 
 #. js-lingui-id: ZjemzY
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
 msgid "Invalid value for UUID: \"{inspectedValue}\""
-msgstr ""
+msgstr "Ongeldige waarde voor UUID: \"{inspectedValue}\""
 
 #. js-lingui-id: Og/MZQ
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
@@ -3764,7 +3764,7 @@ msgstr ""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-boolean-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util.ts
 msgid "Invalid value: \"{inspectedValue}\""
-msgstr ""
+msgstr "Ongeldige waarde: \"{inspectedValue}\""
 
 #. js-lingui-id: I4caYo
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -3779,22 +3779,22 @@ msgstr "Ongeldige verificatiecode. Probeer het opnieuw."
 #. js-lingui-id: bKmxhF
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid viewId for fields widget"
-msgstr ""
+msgstr "Ongeldige viewId voor veldenwidget"
 
 #. js-lingui-id: DpWmTi
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid viewId for fields widget \"{widgetTitle}\". Expected a valid UUID"
-msgstr ""
+msgstr "Ongeldige viewId voor veldenwidget \"{widgetTitle}\". Verwacht een geldige UUID"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid webhook input."
-msgstr ""
+msgstr "Ongeldige webhook-invoer."
 
 #. js-lingui-id: c4NCfN
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Invalid widget configuration."
-msgstr ""
+msgstr "Ongeldige widgetconfiguratie."
 
 #. js-lingui-id: bznmUY
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -3824,7 +3824,7 @@ msgstr "Ongeldige workflowstatus."
 #. js-lingui-id: v+ozTr
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "Invalid workflow step input."
-msgstr ""
+msgstr "Ongeldige invoer voor de workflowstap."
 
 #. js-lingui-id: GRz5NM
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -3855,7 +3855,7 @@ msgstr "Ongeldige workflowversie."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Is canceled"
-msgstr ""
+msgstr "Is geannuleerd"
 
 #. js-lingui-id: k+g9Uh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -3863,25 +3863,25 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Is Contact Auto Creation Enabled"
-msgstr ""
+msgstr "Is automatisch contact maken ingeschakeld"
 
 #. js-lingui-id: uBx1xd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Is Full Day"
-msgstr ""
+msgstr "Is hele dag"
 
 #. js-lingui-id: 3iAfL2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgid "Is Organizer"
-msgstr ""
+msgstr "Is organisator"
 
 #. js-lingui-id: VrHWrH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "Verzonden Map"
 
 #. js-lingui-id: Mqzqb8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -3889,18 +3889,18 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Is Sync Enabled"
-msgstr ""
+msgstr "Is synchronisatie ingeschakeld"
 
 #. js-lingui-id: BHCUSr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Gesynchroniseerd"
 
 #. js-lingui-id: 1bOGPq
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENTERPRISE_KEY to your .env file manually."
-msgstr ""
+msgstr "IS_CONFIG_VARIABLES_IN_DB_ENABLED staat op false op uw server. Voeg ENTERPRISE_KEY handmatig toe aan uw .env-bestand."
 
 #. js-lingui-id: rjyWPb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -3910,7 +3910,7 @@ msgstr "Januari"
 #. js-lingui-id: 27z+FV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Job Title"
-msgstr ""
+msgstr "Functietitel"
 
 #. js-lingui-id: cCj4vg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -3960,27 +3960,27 @@ msgstr "Juli"
 #. js-lingui-id: ADIjmK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction configuration is only valid for ONE_TO_MANY relations"
-msgstr ""
+msgstr "Koppelingsconfiguratie is alleen geldig voor ONE_TO_MANY-relaties"
 
 #. js-lingui-id: bpqhFq
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be a MANY_TO_ONE relation"
-msgstr ""
+msgstr "Het koppelingsdoelveld moet een MANY_TO_ONE-relatie zijn"
 
 #. js-lingui-id: hLEiPe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be a relation field"
-msgstr ""
+msgstr "Het koppelingsdoelveld moet een relatieveld zijn"
 
 #. js-lingui-id: P+Gspf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field must be on the junction object"
-msgstr ""
+msgstr "Het koppelingsdoelveld moet zich op het koppelingsobject bevinden"
 
 #. js-lingui-id: qONLh7
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
 msgid "Junction target field not found"
-msgstr ""
+msgstr "Koppelingsdoelveld niet gevonden"
 
 #. js-lingui-id: zeEQd/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4063,7 +4063,7 @@ msgstr "Labelidentificatie-aankoop moet zichtbaar zijn"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Label is required"
-msgstr ""
+msgstr "Label is vereist."
 
 #. js-lingui-id: 6bWuI/
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -4189,18 +4189,18 @@ msgstr ""
 #. js-lingui-id: 0x2TQ/
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart"
-msgstr ""
+msgstr "Indeling is vereist voor staafdiagram"
 
 #. js-lingui-id: qBrKIA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Indeling is vereist voor staafdiagramwidget \"{widgetTitle}\""
 
 #. js-lingui-id: oDC0sf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "link is required for LINK type"
-msgstr ""
+msgstr "Link is vereist voor het type LINK"
 
 #. js-lingui-id: wR9USP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -4239,17 +4239,17 @@ msgstr ""
 #. js-lingui-id: V5AXjr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function already exists"
-msgstr ""
+msgstr "Logische functie bestaat al"
 
 #. js-lingui-id: mZvaAV
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Logic function execution failed."
-msgstr ""
+msgstr "Uitvoering van logische functie mislukt."
 
 #. js-lingui-id: 6fc1FV
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Logic function execution is disabled."
-msgstr ""
+msgstr "Uitvoering van logische functies is uitgeschakeld."
 
 #. js-lingui-id: hk3cgp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -4257,18 +4257,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function not found"
-msgstr ""
+msgstr "Logische functie niet gevonden"
 
 #. js-lingui-id: 6Rq45N
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Logic function not found."
-msgstr ""
+msgstr "Logische functie niet gevonden."
 
 #. js-lingui-id: Lf8I7I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function with same universal identifier already exists"
-msgstr ""
+msgstr "Logische functie met dezelfde universele identifier bestaat al"
 
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4278,12 +4278,12 @@ msgstr "Maart"
 #. js-lingui-id: Dq8Em0
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "Max number of files is {filesFieldMaxNumberOfValues}"
-msgstr ""
+msgstr "Maximaal aantal bestanden is {filesFieldMaxNumberOfValues}"
 
 #. js-lingui-id: J9favo
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Max number of files is {maxNumberOfValues} for field \"{fieldName}\""
-msgstr ""
+msgstr "Maximaal aantal bestanden is {maxNumberOfValues} voor het veld \"{fieldName}\""
 
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
@@ -4293,7 +4293,7 @@ msgstr "Het maximale aantal records om in te voegen is {QUERY_MAX_RECORDS}."
 #. js-lingui-id: b85bAt
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to {FILES_FIELD_MAX_NUMBER_OF_VALUES}"
-msgstr ""
+msgstr "maxNumberOfValues moet in de instellingen gedefinieerd zijn en een getal groter dan 0 en kleiner dan of gelijk aan {FILES_FIELD_MAX_NUMBER_OF_VALUES} zijn"
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -4389,7 +4389,7 @@ msgstr "Berichtkanaal niet gevonden"
 #. js-lingui-id: vjIbbe
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message channel not found."
-msgstr ""
+msgstr "Berichtkanaal niet gevonden."
 
 #. js-lingui-id: Wrf8X3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -4431,7 +4431,7 @@ msgstr ""
 #. js-lingui-id: BZbxut
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "Message folder not found."
-msgstr ""
+msgstr "Berichtmap niet gevonden."
 
 #. js-lingui-id: DQJN0M
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -4591,7 +4591,7 @@ msgstr ""
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
 msgid "Metadata validation failed"
-msgstr ""
+msgstr "Metadatavalidatie mislukt"
 
 #. js-lingui-id: akOVAq
 #: src/engine/metadata-modules/workspace-metadata-version/exceptions/workspace-metadata-version.exception.ts
@@ -4606,7 +4606,7 @@ msgstr "Microsoft API-authenticatie is uitgeschakeld."
 #. js-lingui-id: oqzqZq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 msgid "Migration execution failed."
-msgstr ""
+msgstr "Migratieuitvoering mislukt."
 
 #. js-lingui-id: G6wJK8
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -4749,18 +4749,18 @@ msgstr "Namen zijn niet gesynchroniseerd met labels"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item cannot be its own parent"
-msgstr ""
+msgstr "Navigatiemenu-item kan niet zijn eigen bovenliggende item zijn"
 
 #. js-lingui-id: t38VAr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item hierarchy exceeds maximum depth of {NAVIGATION_MENU_ITEM_MAX_DEPTH}"
-msgstr ""
+msgstr "Hiërarchie van navigatiemenu-items overschrijdt de maximale diepte van {NAVIGATION_MENU_ITEM_MAX_DEPTH}"
 
 #. js-lingui-id: E+iJnK
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item hierarchy exceeds maximum depth."
-msgstr ""
+msgstr "Hiërarchie van navigatiemenu-items overschrijdt de maximale diepte."
 
 #. js-lingui-id: s+CGNO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -4768,18 +4768,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item not found"
-msgstr ""
+msgstr "Navigatiemenu-item niet gevonden"
 
 #. js-lingui-id: p5qcyl
 #: src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception.ts
 msgid "Navigation menu item not found."
-msgstr ""
+msgstr "Navigatiemenu-item niet gevonden."
 
 #. js-lingui-id: Ii6d/e
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Navigation menu item type is required"
-msgstr ""
+msgstr "Type navigatiemenu-item is vereist"
 
 #. js-lingui-id: t6LpHj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -4799,7 +4799,7 @@ msgstr ""
 #. js-lingui-id: 1UzENP
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "No"
-msgstr ""
+msgstr "Nee"
 
 #. js-lingui-id: LnV8zi
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -4814,7 +4814,7 @@ msgstr "Geen gebeurtenisnaam opgegeven in databasedgebeurtenis-trigger."
 #. js-lingui-id: 6GG2MJ
 #: src/engine/core-modules/search/exceptions/search.exception.ts
 msgid "No identifier to search by was found."
-msgstr ""
+msgstr "Er is geen identificator gevonden om mee te zoeken."
 
 #. js-lingui-id: 9bu19u
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -4844,7 +4844,7 @@ msgstr "Er zijn geen records gewijzigd."
 #. js-lingui-id: iHQYLb
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
-msgstr ""
+msgstr "Er is geen rol aan de applicatie toegewezen."
 
 #. js-lingui-id: 5ZMHXg
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -4854,7 +4854,7 @@ msgstr "Geen rol gevonden voor deze gebruiker in de werkruimte."
 #. js-lingui-id: ISCcTE
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "No role found for user."
-msgstr ""
+msgstr "Geen rol gevonden voor de gebruiker."
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -4884,7 +4884,7 @@ msgstr "Geen geldige authenticatiecontext gevonden."
 #. js-lingui-id: AzXrd9
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "No workspace found with password auth enabled."
-msgstr ""
+msgstr "Geen werkruimte gevonden met wachtwoordauthenticatie ingeschakeld."
 
 #. js-lingui-id: EdQY6l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -4898,7 +4898,7 @@ msgstr ""
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
-msgstr ""
+msgstr "Niet ingesteld"
 
 #. js-lingui-id: mu1gVr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -4917,7 +4917,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Note"
-msgstr ""
+msgstr "Notitie"
 
 #. js-lingui-id: GGlkb7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
@@ -4961,7 +4961,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Notes"
-msgstr ""
+msgstr "Notities"
 
 #. js-lingui-id: fXBE74
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -5070,19 +5070,19 @@ msgstr "Object niet gevonden."
 #. js-lingui-id: 4ib9PY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission already exists"
-msgstr ""
+msgstr "Objectmachtiging bestaat al"
 
 #. js-lingui-id: iCx6+2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission for this role and object already exists"
-msgstr ""
+msgstr "Objectmachtiging voor deze rol en dit object bestaat al"
 
 #. js-lingui-id: Wrwici
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission not found"
-msgstr ""
+msgstr "Objectmachtiging niet gevonden"
 
 #. js-lingui-id: Qy6mMO
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5092,18 +5092,18 @@ msgstr "Objectmachtiging niet gevonden."
 #. js-lingui-id: 8KDEDj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission to delete not found"
-msgstr ""
+msgstr "Objectmachtiging voor verwijderen niet gevonden"
 
 #. js-lingui-id: nA3bja
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission to update not found"
-msgstr ""
+msgstr "Objectmachtiging voor bijwerken niet gevonden"
 
 #. js-lingui-id: wVLH1M
 #. placeholder {0}: flatObjectPermissionToValidate.universalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Object permission with universal identifier {0} already exists"
-msgstr ""
+msgstr "Objectmachtiging met universele identifier {0} bestaat al"
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5141,7 +5141,7 @@ msgstr "Object om te actualiseren niet gevonden"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object with same universal identifier already exists"
-msgstr ""
+msgstr "Object met dezelfde universele identifier bestaat al"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -5161,17 +5161,17 @@ msgstr ""
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
-msgstr ""
+msgstr "Een of meer records zijn niet gevonden."
 
 #. js-lingui-id: kx632Q
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more redirect URIs are invalid."
-msgstr ""
+msgstr "Een of meer redirect-URI's zijn ongeldig."
 
 #. js-lingui-id: PUBUbK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more requested scopes are invalid."
-msgstr ""
+msgstr "Een of meer aangevraagde scopes zijn ongeldig."
 
 #. js-lingui-id: J6n7sl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -5433,7 +5433,7 @@ msgstr "Paginalay-outwidget om bij te werken niet gevonden"
 #. js-lingui-id: hGYqrE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Page layout widget with universal identifier {flatPageLayoutWidgetUniversalIdentifier} already exists"
-msgstr ""
+msgstr "Paginalay-outwidget met universele identifier {flatPageLayoutWidgetUniversalIdentifier} bestaat al"
 
 #. js-lingui-id: G1fWNt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -5447,7 +5447,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Parent navigation menu item not found"
-msgstr ""
+msgstr "Bovenliggend navigatiemenu-item niet gevonden"
 
 #. js-lingui-id: Xsgh7b
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
@@ -5455,7 +5455,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Parent row level permission predicate group not found"
-msgstr ""
+msgstr "Bovenliggende groep voor toegangsvoorwaarden op rijniveau niet gevonden"
 
 #. js-lingui-id: 6OzP7Y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
@@ -5463,17 +5463,17 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "Parent view filter group not found"
-msgstr ""
+msgstr "Bovenliggende weergavefiltergroep niet gevonden"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Password is too weak."
-msgstr ""
+msgstr "Wachtwoord is te zwak."
 
 #. js-lingui-id: cd6AP5
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Password reset token has already been generated. Please wait for {timeToWait} to generate again."
-msgstr ""
+msgstr "Het token voor het opnieuw instellen van het wachtwoord is al gegenereerd. Wacht {timeToWait} voordat u het opnieuw kunt genereren."
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -5520,35 +5520,35 @@ msgstr ""
 #. js-lingui-id: fxC+On
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag already exists"
-msgstr ""
+msgstr "Machtigingsvlag bestaat al"
 
 #. js-lingui-id: qG245w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag for this role and setting already exists"
-msgstr ""
+msgstr "Machtigingsvlag voor deze rol en instelling bestaat al"
 
 #. js-lingui-id: 2mZr45
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag not found"
-msgstr ""
+msgstr "Machtigingsvlag niet gevonden"
 
 #. js-lingui-id: dqLRwc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag to delete not found"
-msgstr ""
+msgstr "Machtigingsvlag voor verwijderen niet gevonden"
 
 #. js-lingui-id: SMgh5j
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag to update not found"
-msgstr ""
+msgstr "Machtigingsvlag voor bijwerken niet gevonden"
 
 #. js-lingui-id: VuCvJL
 #. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "Permission flag with universal identifier {0} already exists"
-msgstr ""
+msgstr "Machtigingsvlag met universele identifier {0} bestaat al"
 
 #. js-lingui-id: vcvSI3
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5589,7 +5589,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Please provide a valid HTTP or HTTPS URL"
-msgstr ""
+msgstr "Geef een geldige HTTP- of HTTPS-URL op"
 
 #. js-lingui-id: RDvKTq
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -5604,7 +5604,7 @@ msgstr "Selecteer een geldig verbindingstype (IMAP, SMTP of CalDAV) en probeer h
 #. js-lingui-id: sa9Q+R
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Please select at least 2 records to merge."
-msgstr ""
+msgstr "Selecteer minimaal 2 records om samen te voegen."
 
 #. js-lingui-id: RAkwUZ
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -5615,7 +5615,7 @@ msgstr "Gebruik een zakelijk e-maildomein."
 #: src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook.ts
 #: src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook.ts
 msgid "Please use Settings to remove a workspace member."
-msgstr ""
+msgstr "Gebruik Instellingen om een werkruimtelid te verwijderen."
 
 #. js-lingui-id: f8ypJ4
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -5664,7 +5664,7 @@ msgstr ""
 #. js-lingui-id: c7uZDh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
-msgstr ""
+msgstr "De lay-outmodus van de positie \"{layoutMode}\" komt niet overeen met de lay-outmodus van het tabblad \"{tabLayoutMode}\""
 
 #. js-lingui-id: rFj1tD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -5672,7 +5672,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "Position must be a finite number"
-msgstr ""
+msgstr "Positie moet een eindig getal zijn"
 
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -5692,22 +5692,22 @@ msgstr ""
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Primary axis group by field is required for bar chart"
-msgstr ""
+msgstr "Groeperingsveld voor primaire as is vereist voor staafdiagram"
 
 #. js-lingui-id: CV1zCG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Primary axis group by field is required for bar chart widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Groeperingsveld voor primaire as is vereist voor staafdiagramwidget \"{widgetTitle}\""
 
 #. js-lingui-id: SdXGbu
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-line-chart-configuration.util.ts
 msgid "Primary axis group by field is required for line chart"
-msgstr ""
+msgstr "Groeperingsveld voor primaire as is vereist voor lijndiagram"
 
 #. js-lingui-id: v874L+
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-line-chart-configuration.util.ts
 msgid "Primary axis group by field is required for line chart widget \"{widgetTitle}\""
-msgstr ""
+msgstr "Groeperingsveld voor primaire as is vereist voor lijndiagramwidget \"{widgetTitle}\""
 
 #. js-lingui-id: t/0e9D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util.ts
@@ -5768,7 +5768,7 @@ msgstr "Publieke domein-URL is niet gedefinieerd. Stel de omgeving variabele PUB
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Query execution failed."
-msgstr ""
+msgstr "Query-uitvoering mislukt."
 
 #. js-lingui-id: 9QTny9
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5798,7 +5798,7 @@ msgstr ""
 #. js-lingui-id: EESfI5
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Record does not satisfy security constraints."
-msgstr ""
+msgstr "Het record voldoet niet aan de beveiligingsbeperkingen."
 
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5934,7 +5934,7 @@ msgstr "Rol kan niet aan deze entiteit worden toegewezen."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "Role is not editable"
-msgstr ""
+msgstr "Rol is niet bewerkbaar"
 
 #. js-lingui-id: zeffu9
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -5983,7 +5983,7 @@ msgstr "Rol niet gevonden."
 #. js-lingui-id: K+Gn31
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target already exists"
-msgstr ""
+msgstr "Roldoel bestaat al"
 
 #. js-lingui-id: ctpIGF
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -6012,7 +6012,7 @@ msgstr "Roldoel niet gevonden."
 #. js-lingui-id: +fwgt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this universal identifier already exists"
-msgstr ""
+msgstr "Roldoel met deze universele identifier bestaat al"
 
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -6037,7 +6037,7 @@ msgstr "Routepad bestaat al."
 #. js-lingui-id: /ruB5e
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate already exists"
-msgstr ""
+msgstr "Toegangsvoorwaarde op rijniveau bestaat al"
 
 #. js-lingui-id: RwBHMj
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -6048,7 +6048,7 @@ msgstr ""
 #. js-lingui-id: lG+q53
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group already exists"
-msgstr ""
+msgstr "Groep voor toegangsvoorwaarden op rijniveau bestaat al"
 
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6056,51 +6056,51 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate group not found"
-msgstr ""
+msgstr "Groep voor toegangsvoorwaarden op rijniveau niet gevonden"
 
 #. js-lingui-id: HBfLro
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Row level permission predicate group not found."
-msgstr ""
+msgstr "Groep voor toegangsvoorwaarden op rijniveau niet gevonden."
 
 #. js-lingui-id: vMP7nZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group to delete not found"
-msgstr ""
+msgstr "Te verwijderen groep voor toegangsvoorwaarden op rijniveau niet gevonden"
 
 #. js-lingui-id: NhW7fb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group to update not found"
-msgstr ""
+msgstr "Te wijzigen groep voor toegangsvoorwaarden op rijniveau niet gevonden"
 
 #. js-lingui-id: j4iZI5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
 msgid "Row level permission predicate group with this universal identifier already exists"
-msgstr ""
+msgstr "Groep voor toegangsvoorwaarden op rijniveau met deze universele identifier bestaat al"
 
 #. js-lingui-id: fEazMl
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Row level permission predicate not found."
-msgstr ""
+msgstr "Toegangsvoorwaarde op rijniveau niet gevonden."
 
 #. js-lingui-id: zdTUvE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate to delete not found"
-msgstr ""
+msgstr "Te verwijderen toegangsvoorwaarde op rijniveau niet gevonden"
 
 #. js-lingui-id: aeNy7i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate to update not found"
-msgstr ""
+msgstr "Te wijzigen toegangsvoorwaarde op rijniveau niet gevonden"
 
 #. js-lingui-id: B4yoLq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Row level permission predicate with this universal identifier already exists"
-msgstr ""
+msgstr "Toegangsvoorwaarde op rijniveau met deze universele identifier bestaat al"
 
 #. js-lingui-id: RiQMUh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -6132,7 +6132,7 @@ msgstr ""
 #. js-lingui-id: eKi1df
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "SDK client archive not found. The SDK client may not have been generated for this application."
-msgstr ""
+msgstr "SDK-clientarchief niet gevonden. De SDK-client is mogelijk niet gegenereerd voor deze applicatie."
 
 #. js-lingui-id: PdVIJC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -6216,17 +6216,17 @@ msgstr "Single sign-on-authenticatie mislukt."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Skill not found"
-msgstr ""
+msgstr "Vaardigheid niet gevonden"
 
 #. js-lingui-id: 68ze54
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Skill not found."
-msgstr ""
+msgstr "Vaardigheid niet gevonden."
 
 #. js-lingui-id: e6udqn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
 msgid "Skill with name \"{name}\" already exists"
-msgstr ""
+msgstr "Vaardigheid met de naam \"{name}\" bestaat al"
 
 #. js-lingui-id: TEERTx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -6251,7 +6251,7 @@ msgstr "Sommige lidmaatschappen van deze werkruimte konden niet worden gevonden.
 #. js-lingui-id: Oa7nLQ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Source channel mismatch."
-msgstr ""
+msgstr "Bronkanaal komt niet overeen."
 
 #. js-lingui-id: OmgwCE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -6297,7 +6297,7 @@ msgstr "Standaardobjecten kunnen niet worden verwijderd"
 #. js-lingui-id: H8j7uw
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "Standard skills cannot be modified."
-msgstr ""
+msgstr "Standaardvaardigheden kunnen niet worden gewijzigd."
 
 #. js-lingui-id: D3iCkb
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -6433,38 +6433,38 @@ msgstr ""
 #. js-lingui-id: Bhmfez
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} has invalid {property}"
-msgstr ""
+msgstr "Systeemveld {expectedFieldName} heeft een ongeldige {property}"
 
 #. js-lingui-id: 1gOTOh
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util.ts
 msgid "System field {expectedFieldName} is missing"
-msgstr ""
+msgstr "Systeemveld {expectedFieldName} ontbreekt"
 
 #. js-lingui-id: q1oDDx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "System fields cannot be deleted"
-msgstr ""
+msgstr "Systeemvelden kunnen niet worden verwijderd"
 
 #. js-lingui-id: oEsYJM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "System fields cannot be updated"
-msgstr ""
+msgstr "Systeemvelden kunnen niet worden bijgewerkt"
 
 #. js-lingui-id: /ojawH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be deleted"
-msgstr ""
+msgstr "Systeemobjecten kunnen niet worden verwijderd"
 
 #. js-lingui-id: sndTPB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be updated"
-msgstr ""
+msgstr "Systeemobjecten kunnen niet worden bijgewerkt"
 
 #. js-lingui-id: aF4zgq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "System objects cannot be updated directly. Use standardOverrides for cosmetic changes."
-msgstr ""
+msgstr "Systeemobjecten kunnen niet direct worden bijgewerkt. Gebruik standardOverrides voor cosmetische wijzigingen."
 
 #. js-lingui-id: 8UWeLh
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6505,35 +6505,35 @@ msgstr "Doelobjectmetadata niet gevonden voor {connectFieldName}"
 #. js-lingui-id: 1ssKrE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not belong to the expected object"
-msgstr ""
+msgstr "Doelrelatieveld behoort niet tot het verwachte object"
 
 #. js-lingui-id: wG8PVB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference the source object"
-msgstr ""
+msgstr "Doelrelatieveld verwijst niet naar het bronobject"
 
 #. js-lingui-id: xLsFda
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Target relation field does not reference this field"
-msgstr ""
+msgstr "Doelrelatieveld verwijst niet naar dit veld"
 
 #. js-lingui-id: /HKzKW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Target URL is required"
-msgstr ""
+msgstr "Doel-URL is vereist"
 
 #. js-lingui-id: L3vVWc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "targetObjectMetadataId is required for OBJECT type"
-msgstr ""
+msgstr "targetObjectMetadataId is vereist voor het type OBJECT"
 
 #. js-lingui-id: NGynR3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "targetRecordId and targetObjectMetadataId are required for RECORD type"
-msgstr ""
+msgstr "targetRecordId en targetObjectMetadataId zijn vereist voor het type RECORD"
 
 #. js-lingui-id: Q3P/4s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -6599,7 +6599,7 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Tasks"
-msgstr ""
+msgstr "Taken"
 
 #. js-lingui-id: HlDeG3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -6641,7 +6641,7 @@ msgstr ""
 #. js-lingui-id: 2kFzQB
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Temporary file cannot be downloaded."
-msgstr ""
+msgstr "Tijdelijk bestand kan niet worden gedownload."
 
 #. js-lingui-id: 3WYP3r
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6699,12 +6699,12 @@ msgstr "De API-sleutel heeft geen geldige rol toegewezen. Controleer uw API-sleu
 #. js-lingui-id: MQn14a
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
-msgstr ""
+msgstr "Het bronkanaal van de app komt niet overeen met het verwachte type."
 
 #. js-lingui-id: IU78DA
 #: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
-msgstr ""
+msgstr "Aan de applicatie is geen geldige rol toegewezen. Controleer uw applicatieconfiguratie."
 
 #. js-lingui-id: qnNFrW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -6807,7 +6807,7 @@ msgstr "Het veld waarvoor u rechten probeert in te stellen kon niet worden gevon
 #. js-lingui-id: bAGU1r
 #: src/engine/core-modules/file/utils/extract-file-info.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
-msgstr ""
+msgstr "De bestandsextensie komt niet overeen met de inhoud van het bestand. Controleer of je bestand niet beschadigd is en de juiste extensie heeft."
 
 #. js-lingui-id: W3raza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
@@ -6833,12 +6833,12 @@ msgstr ""
 #. js-lingui-id: tl8xOZ
 #: src/utils/get-domain-name-by-email.ts
 msgid "The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com)."
-msgstr ""
+msgstr "Bij het opgegeven e-mailadres ontbreekt een domein. Gebruik een standaard e-mailformaat (bijv. user@example.com)."
 
 #. js-lingui-id: h8R4RO
 #: src/utils/get-domain-name-by-email.ts
 msgid "The provided email address is not valid. Please use a standard email format (e.g., user@example.com)."
-msgstr ""
+msgstr "Het opgegeven e-mailadres is niet geldig. Gebruik een standaard e-mailformaat (bijv. user@example.com)."
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -6860,7 +6860,7 @@ msgstr "De rol die u zoekt kon niet worden gevonden. Het is mogelijk verwijderd 
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "The role you are trying to modify could not be found."
-msgstr ""
+msgstr "De rol die u probeert te wijzigen, kon niet worden gevonden."
 
 #. js-lingui-id: HRcugS
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -6870,7 +6870,7 @@ msgstr "De rol die u probeert te wijzigen kon niet worden gevonden. Het is mogel
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
-msgstr ""
+msgstr "Het ingevoerde serveradres is niet toegestaan. Gebruik een openbaar serveradres."
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -6944,12 +6944,12 @@ msgstr ""
 #. js-lingui-id: mTxjri
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
 msgid "There is an issue with your invitation. Please try again."
-msgstr ""
+msgstr "Er is een probleem met uw uitnodiging. Probeer het opnieuw."
 
 #. js-lingui-id: gH+wBS
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "There is an issue with your token. Please try again."
-msgstr ""
+msgstr "Er is een probleem met uw token. Probeer het opnieuw."
 
 #. js-lingui-id: Kfwq7n
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -6989,7 +6989,7 @@ msgstr "Aan deze API-sleutel is geen rol toegewezen."
 #. js-lingui-id: FY4xDH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "This chart type requires the Dashboard V2 feature to be enabled"
-msgstr ""
+msgstr "Dit grafiektype vereist dat de functie Dashboard V2 is ingeschakeld"
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -7073,7 +7073,7 @@ msgstr "Dit object kan niet worden gewijzigd."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "This object permission is already set for the role"
-msgstr ""
+msgstr "Deze objectmachtiging is al ingesteld voor de rol"
 
 #. js-lingui-id: 7ZdJO2
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -7094,7 +7094,7 @@ msgstr "Deze bewerking wordt niet ondersteund."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
-msgstr ""
+msgstr "Deze machtiging is al ingesteld voor de rol"
 
 #. js-lingui-id: Y5C3uK
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
@@ -7120,7 +7120,7 @@ msgstr "Deze record bestaat al. Controleer uw gegevens en probeer het opnieuw."
 #: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
-msgstr ""
+msgstr "Dit record bestaat niet of is verwijderd."
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
@@ -7162,12 +7162,12 @@ msgstr "Dit subdomein is al in gebruik."
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "This type of record cannot be merged."
-msgstr ""
+msgstr "Dit type record kan niet worden samengevoegd."
 
 #. js-lingui-id: nZbise
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This universal identifier is already claimed by another registration."
-msgstr ""
+msgstr "Deze universele identificator is al geclaimd door een andere registratie."
 
 #. js-lingui-id: GEN5Cv
 #: src/engine/core-modules/workspace-invitation/workspace-invitation.exception.ts
@@ -7221,7 +7221,7 @@ msgstr ""
 #. js-lingui-id: cklVjM
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Timeline"
-msgstr ""
+msgstr "Tijdlijn"
 
 #. js-lingui-id: az1boY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -7333,7 +7333,7 @@ msgstr ""
 #. js-lingui-id: tEb/hR
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Transformation failed."
-msgstr ""
+msgstr "Transformatie mislukt."
 
 #. js-lingui-id: VD8J6l
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
@@ -7373,12 +7373,12 @@ msgstr ""
 #. js-lingui-id: Qx95XY
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Udpated field is not a morph relation or a relation"
-msgstr ""
+msgstr "Het bijgewerkte veld is geen morph-relatie of relatie."
 
 #. js-lingui-id: SpmRxi
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Unable to retrieve the application package."
-msgstr ""
+msgstr "Kan het applicatiepakket niet ophalen."
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -7419,13 +7419,13 @@ msgstr "Niet-ondersteund veld metadatatype {fieldType}"
 #. js-lingui-id: B4Eu7x
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 msgid "Unsupported field metadata type."
-msgstr ""
+msgstr "Niet-ondersteund veldmetadatatype."
 
 #. js-lingui-id: s+1Ldg
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Unsupported page layout widget type {widgetType}"
-msgstr ""
+msgstr "Niet-ondersteund paginalay-outwidgettype {widgetType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -7480,12 +7480,12 @@ msgstr "Bijgewerkte veldnaam is niet gesynchroniseerd met label"
 #. js-lingui-id: Gjk0so
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-url.util.ts
 msgid "URL must be a string"
-msgstr ""
+msgstr "URL moet een tekenreeks zijn"
 
 #. js-lingui-id: yV6160
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-url.util.ts
 msgid "URL must be a string for widget \"{widgetTitle}\""
-msgstr ""
+msgstr "URL moet een tekenreeks zijn voor widget \"{widgetTitle}\""
 
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -7530,7 +7530,7 @@ msgstr ""
 #: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
 #: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
 msgid "User id is required."
-msgstr ""
+msgstr "Gebruikers-ID is vereist."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
@@ -7636,37 +7636,37 @@ msgstr "Beeldveld bestaat al."
 #. js-lingui-id: pkIuNd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View field group already exists"
-msgstr ""
+msgstr "Weergaveveldgroep bestaat al"
 
 #. js-lingui-id: rej7zQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View field group parent view not found"
-msgstr ""
+msgstr "Bovenliggende weergave van weergaveveldgroep niet gevonden"
 
 #. js-lingui-id: uO9NF0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field-group/utils/from-delete-view-field-group-input-to-flat-view-field-group-or-throw.util.ts
 msgid "View field group to delete not found"
-msgstr ""
+msgstr "Weergaveveldgroep om te verwijderen niet gevonden"
 
 #. js-lingui-id: Durlx6
 #: src/engine/metadata-modules/flat-view-field-group/utils/from-destroy-view-field-group-input-to-flat-view-field-group-or-throw.util.ts
 msgid "View field group to destroy not found"
-msgstr ""
+msgstr "Weergaveveldgroep om te vernietigen niet gevonden"
 
 #. js-lingui-id: KpmBDs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field-group/utils/from-update-view-field-group-input-to-flat-view-field-group-to-update-or-throw.util.ts
 msgid "View field group to update not found"
-msgstr ""
+msgstr "Weergaveveldgroep om bij te werken niet gevonden"
 
 #. js-lingui-id: oKThPN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 msgid "View field group with this universal identifier already exists"
-msgstr ""
+msgstr "Weergaveveldgroep met deze universele identifier bestaat al"
 
 #. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -7676,7 +7676,7 @@ msgstr "Metagegevens van weergaveveld bestaan al"
 #. js-lingui-id: mdX5P2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata with this universal identifier already exists"
-msgstr ""
+msgstr "Metagegevens van weergaveveld met deze universele identifier bestaan al"
 
 #. js-lingui-id: 7LMaUn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -7724,29 +7724,29 @@ msgstr "Weergaveveld om bovenliggend weergaveobject bij te werken niet gevonden"
 #. js-lingui-id: Zqbr+6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "View field with same fieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists"
-msgstr ""
+msgstr "Weergaveveld met dezelfde fieldMetadataUniversalIdentifier en viewUniversalIdentifier bestaat al"
 
 #. js-lingui-id: sbHaOg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter already exists"
-msgstr ""
+msgstr "Weergavefilter bestaat al"
 
 #. js-lingui-id: Ii4ysu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group already exists"
-msgstr ""
+msgstr "Weergavefiltergroep bestaat al"
 
 #. js-lingui-id: ENVlLK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group cannot be its own parent"
-msgstr ""
+msgstr "Weergavefiltergroep kan niet zijn eigen bovenliggende groep zijn"
 
 #. js-lingui-id: tir/7Q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group hierarchy exceeds maximum depth of {VIEW_FILTER_GROUP_MAX_DEPTH}"
-msgstr ""
+msgstr "Hiërarchie van weergavefiltergroepen overschrijdt de maximale diepte van {VIEW_FILTER_GROUP_MAX_DEPTH}"
 
 #. js-lingui-id: eUPMYZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -7758,12 +7758,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group not found"
-msgstr ""
+msgstr "Weergavefiltergroep niet gevonden"
 
 #. js-lingui-id: inVepb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 msgid "View filter group with this universal identifier already exists"
-msgstr ""
+msgstr "Weergavefiltergroep met deze universele identifier bestaat al"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
@@ -7791,7 +7791,7 @@ msgstr "Weergavefilter om bij te werken niet gevonden"
 #. js-lingui-id: bM1MKh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter with this universal identifier already exists"
-msgstr ""
+msgstr "Weergavefilter met deze universele identifier bestaat al"
 
 #. js-lingui-id: MGbEFN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
@@ -7801,7 +7801,7 @@ msgstr "Metagegevens van weergavegroep bestaan al"
 #. js-lingui-id: c1XRE3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 msgid "View group metadata with universal identifier {flatViewGroupUniversalIdentifier} already exists"
-msgstr ""
+msgstr "Metagegevens van weergavegroep met universele identifier {flatViewGroupUniversalIdentifier} bestaan al"
 
 #. js-lingui-id: JdAvYa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
@@ -7859,7 +7859,7 @@ msgstr "Beeld niet gevonden"
 #. js-lingui-id: BHDATQ
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "View not found after upsert"
-msgstr ""
+msgstr "Weergave niet gevonden na upsert"
 
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
@@ -7870,52 +7870,52 @@ msgstr "Weergave niet gevonden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort already exists"
-msgstr ""
+msgstr "Weergavesortering bestaat al"
 
 #. js-lingui-id: 3zMs+f
 #: src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util.ts
 #: src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util.ts
 #: src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util.ts
 msgid "View sort not found"
-msgstr ""
+msgstr "Weergavesortering niet gevonden"
 
 #. js-lingui-id: k/ykpJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort to delete not found"
-msgstr ""
+msgstr "Weergavesortering om te verwijderen niet gevonden"
 
 #. js-lingui-id: wEyUsU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort to update not found"
-msgstr ""
+msgstr "Weergavesortering om bij te werken niet gevonden"
 
 #. js-lingui-id: VXQpJ+
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort to update parent view not found"
-msgstr ""
+msgstr "Weergavesortering om bovenliggende weergave bij te werken niet gevonden"
 
 #. js-lingui-id: RP+pKP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with id {flatViewSortId} already exists"
-msgstr ""
+msgstr "Weergavesortering met id {flatViewSortId} bestaat al"
 
 #. js-lingui-id: InEqWf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with invalid direction"
-msgstr ""
+msgstr "Weergavesortering met ongeldige richting"
 
 #. js-lingui-id: ezJrlG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with invalid direction, should be ASC or DESC"
-msgstr ""
+msgstr "Weergavesortering met ongeldige richting, moet ASC of DESC zijn"
 
 #. js-lingui-id: 9/BbL9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 msgid "View sort with same fieldMetadataId and viewId already exists"
-msgstr ""
+msgstr "Weergavesortering met dezelfde fieldMetadataId en viewId bestaat al"
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -7935,7 +7935,7 @@ msgstr "Weergave om bij te werken niet gevonden"
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "View with same universal identifier already exists"
-msgstr ""
+msgstr "Weergave met dezelfde universele identifier bestaat al"
 
 #. js-lingui-id: aeqysn
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
@@ -7947,7 +7947,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 msgid "viewId is required for VIEW type"
-msgstr ""
+msgstr "viewId is vereist voor het type VIEW"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -8018,7 +8018,7 @@ msgstr "We ondervonden een probleem bij de verbinding met uw e-mailaccount. Cont
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
 msgid "Webhook not found"
-msgstr ""
+msgstr "Webhook niet gevonden"
 
 #. js-lingui-id: b8g3PG
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -8039,7 +8039,7 @@ msgstr "Welkom bij Twenty: Bevestig alstublieft uw e-mail"
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget extends beyond grid height"
-msgstr ""
+msgstr "Widget overschrijdt rasterhoogte"
 
 #. js-lingui-id: PFI4iS
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
@@ -8047,39 +8047,39 @@ msgstr ""
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
-msgstr ""
+msgstr "Widget overschrijdt rasterbreedte"
 
 #. js-lingui-id: +9R1ka
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be a non-negative integer"
-msgstr ""
+msgstr "De widgetindex moet een niet-negatief geheel getal zijn"
 
 #. js-lingui-id: znCTbL
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
 msgid "Widget index must be an integer"
-msgstr ""
+msgstr "De widgetindex moet een geheel getal zijn"
 
 #. js-lingui-id: 09IBNJ
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Widget not found."
-msgstr ""
+msgstr "Widget niet gevonden."
 
 #. js-lingui-id: MPdWmx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 msgid "Widget position type must match the tab layout mode"
-msgstr ""
+msgstr "Het type widgetpositie moet overeenkomen met de lay-outmodus van het tabblad"
 
 #. js-lingui-id: D5gHL1
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget row exceeds grid height"
-msgstr ""
+msgstr "Widgetrij overschrijdt rasterhoogte"
 
 #. js-lingui-id: rL2haJ
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service.ts
 msgid "Widget type VIEW is not supported yet."
-msgstr ""
+msgstr "Widgettype VIEW wordt nog niet ondersteund."
 
 #. js-lingui-id: bLt/0J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8120,7 +8120,7 @@ msgstr ""
 #. js-lingui-id: R67jts
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Workflow not found."
-msgstr ""
+msgstr "Workflow niet gevonden."
 
 #. js-lingui-id: y9tnFx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
@@ -8140,7 +8140,7 @@ msgstr ""
 #. js-lingui-id: TgOSaQ
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Workflow run cannot be stopped in its current status"
-msgstr ""
+msgstr "Workflowuitvoering kan niet worden gestopt in de huidige status"
 
 #. js-lingui-id: 3Iz+qz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -8231,7 +8231,7 @@ msgstr "Workflowversie is niet in conceptstatus."
 #. js-lingui-id: 4OOQwW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version is required for workflow trigger items"
-msgstr ""
+msgstr "Workflowversie is vereist voor workflow-triggeritems"
 
 #. js-lingui-id: CocTJJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -8241,12 +8241,12 @@ msgstr ""
 #. js-lingui-id: LrPIBF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for front component renderer items"
-msgstr ""
+msgstr "Workflowversie mag niet worden ingesteld voor items van de frontcomponent-renderer"
 
 #. js-lingui-id: f9Rp2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for this item type"
-msgstr ""
+msgstr "Workflowversie mag niet worden ingesteld voor dit itemtype"
 
 #. js-lingui-id: 9l+pJT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -8286,23 +8286,23 @@ msgstr ""
 #. js-lingui-id: m34s12
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
-msgstr ""
+msgstr "workflowVersionId is vereist wanneer engineComponentKey TRIGGER_WORKFLOW_VERSION is"
 
 #. js-lingui-id: +67q2u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
-msgstr ""
+msgstr "workflowVersionId mag niet worden ingesteld voor engine component key {engineComponentKey}"
 
 #. js-lingui-id: lscvqN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set when engineComponentKey is FRONT_COMPONENT_RENDERER"
-msgstr ""
+msgstr "workflowVersionId mag niet worden ingesteld wanneer engineComponentKey FRONT_COMPONENT_RENDERER is"
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 msgid "Workspace {workspaceId} is not found."
-msgstr ""
+msgstr "Werkruimte {workspaceId} is niet gevonden."
 
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -8312,7 +8312,7 @@ msgstr "Werkruimte aanmaken is beperkt tot beheerders"
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Workspace does not exist."
-msgstr ""
+msgstr "Werkruimte bestaat niet."
 
 #. js-lingui-id: oLh4c+
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -8347,7 +8347,7 @@ msgstr ""
 #. js-lingui-id: SWTQfb
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Workspace member cannot be updated."
-msgstr ""
+msgstr "Werkruimtelid kan niet worden bijgewerkt."
 
 #. js-lingui-id: 5VCX7o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8372,7 +8372,7 @@ msgstr ""
 #. js-lingui-id: JYc1v3
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
 msgid "Workspace not found"
-msgstr ""
+msgstr "Werkruimte niet gevonden"
 
 #. js-lingui-id: eQwIyW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -8439,7 +8439,7 @@ msgstr ""
 #. js-lingui-id: VddeYt
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Wrong extension for file."
-msgstr ""
+msgstr "Onjuiste bestandsextensie."
 
 #. js-lingui-id: fV2Bu6
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -8449,7 +8449,7 @@ msgstr "Verkeerd wachtwoord."
 #. js-lingui-id: RksBK0
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password."
-msgstr ""
+msgstr "Verkeerd wachtwoord."
 
 #. js-lingui-id: 0gv+T2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -8465,22 +8465,22 @@ msgstr ""
 #. js-lingui-id: l75CjT
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
-msgstr ""
+msgstr "U bent niet gemachtigd om deze actie uit te voeren."
 
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
-msgstr ""
+msgstr "U kunt tot {MUTATION_MAX_MERGE_RECORDS} records tegelijk samenvoegen."
 
 #. js-lingui-id: 5r5YRW
 #: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
 msgid "You can only update one record with files field at once."
-msgstr ""
+msgstr "Je kunt slechts één record met het bestandenveld tegelijk bijwerken."
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
@@ -8521,22 +8521,22 @@ msgstr "Je kunt je eigen rol niet bijwerken."
 #. js-lingui-id: p6uSBj
 #: src/engine/metadata-modules/calendar-channel/calendar-channel.exception.ts
 msgid "You do not have access to this calendar channel."
-msgstr ""
+msgstr "Je hebt geen toegang tot dit kalenderkanaal."
 
 #. js-lingui-id: FUPyWG
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
 msgid "You do not have access to this connected account."
-msgstr ""
+msgstr "Je hebt geen toegang tot dit gekoppelde account."
 
 #. js-lingui-id: R5GUVK
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "You do not have access to this message channel."
-msgstr ""
+msgstr "Je hebt geen toegang tot dit berichtenkanaal."
 
 #. js-lingui-id: dmOWfL
 #: src/engine/metadata-modules/message-folder/message-folder.exception.ts
 msgid "You do not have access to this message folder."
-msgstr ""
+msgstr "Je hebt geen toegang tot deze berichtenmap."
 
 #. js-lingui-id: EFQeXU
 #: src/engine/guards/settings-permission.guard.ts
@@ -8551,7 +8551,7 @@ msgstr "Je hebt geen toestemming om toegang te krijgen tot deze workflow."
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "U heeft geen toestemming om navigatiemenu-items op werkruimteniveau aan te maken. Neem contact op met uw werkruimtebeheerder voor toegang."
 
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
@@ -8561,7 +8561,7 @@ msgstr "U heeft geen toestemming om deze gebruiker uit de werkruimte te verwijde
 #. js-lingui-id: NuG0g3
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to delete workspace-level navigation menu items. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "U heeft geen toestemming om navigatiemenu-items op werkruimteniveau te verwijderen. Neem contact op met uw werkruimtebeheerder voor toegang."
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
@@ -8589,12 +8589,12 @@ msgstr "U heeft geen toestemming om deze velden bij te werken: {fieldsList}. Nee
 #. js-lingui-id: RZzKii
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to update workspace-level navigation menu items. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "U heeft geen toestemming om navigatiemenu-items op werkruimteniveau bij te werken. Neem contact op met uw werkruimtebeheerder voor toegang."
 
 #. js-lingui-id: ZPo5fR
 #: src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard.ts
 msgid "You do not have permission to upload profile pictures. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "U heeft geen toestemming om profielfoto's te uploaden. Neem contact op met uw werkruimtebeheerder voor toegang."
 
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -8614,7 +8614,7 @@ msgstr "Je hebt je credits opgebruikt. Upgrade je abonnement om verder te gaan."
 #. js-lingui-id: nq15cs
 #: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
 msgid "You must be authenticated to manage blocklist."
-msgstr ""
+msgstr "U moet geauthenticeerd zijn om de blokkeerlijst te beheren."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -8635,7 +8635,7 @@ msgstr "Uw factureringsabonnement is beschadigd. Neem contact op met ondersteuni
 #. js-lingui-id: hDEOuv
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
-msgstr ""
+msgstr "Uw CalDAV-server ondersteunt geen incrementele synchronisatie (RFC 6578). Gebruik een compatibele provider zoals Nextcloud, iCloud of Fastmail."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
