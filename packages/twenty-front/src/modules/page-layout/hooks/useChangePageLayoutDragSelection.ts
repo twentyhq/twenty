@@ -1,0 +1,43 @@
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
+
+export const useChangePageLayoutDragSelection = (
+  pageLayoutIdFromProps?: string,
+) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
+  const pageLayoutSelectedCellsState = useAtomComponentStateCallbackState(
+    pageLayoutSelectedCellsComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
+
+  const changePageLayoutDragSelection = useCallback(
+    (cellId: string, selected: boolean) => {
+      if (!cellId.startsWith('cell-')) {
+        return;
+      }
+
+      store.set(pageLayoutSelectedCellsState, (prev) => {
+        const newSet = new Set(prev);
+        if (selected) {
+          newSet.add(cellId);
+        } else {
+          newSet.delete(cellId);
+        }
+        return newSet;
+      });
+    },
+    [pageLayoutSelectedCellsState, store],
+  );
+
+  return { changePageLayoutDragSelection };
+};

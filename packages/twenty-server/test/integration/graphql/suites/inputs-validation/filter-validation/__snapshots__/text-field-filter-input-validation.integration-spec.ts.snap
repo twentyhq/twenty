@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - TEXT Gql filter input - failure TEXT field type - should fail with filter : {"textField":{"iregex":"^test$"}} 1`] = `"Operator "iregex" is not valid for field "textField" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`Filter input validation - TEXT Gql filter input - failure TEXT field type - should fail with filter : {"textField":{"regex":"^test$"}} 1`] = `"Operator "regex" is not valid for field "textField" of type TEXT - Allowed operators: eq, neq, gt, gte, lt, lte, in, is, like, ilike, startsWith, endsWith"`;
+
+exports[`Filter input validation - TEXT Rest filter input - failure TEXT field type - should fail with filter : "textField[iregex]:\\"^test$\\"" 1`] = `
+[
+  "'filter' invalid for 'textField[iregex]:"^test$"', comparator iregex not in eq, neq, in, containsAny, is, gt, gte, lt, lte, startsWith, endsWith, like, ilike",
+]
+`;
+
+exports[`Filter input validation - TEXT Rest filter input - failure TEXT field type - should fail with filter : "textField[regex]:\\"^test$\\"" 1`] = `
+[
+  "'filter' invalid for 'textField[regex]:"^test$"', comparator regex not in eq, neq, in, containsAny, is, gt, gte, lt, lte, startsWith, endsWith, like, ilike",
+]
+`;

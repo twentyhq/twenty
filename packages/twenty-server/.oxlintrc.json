@@ -1,0 +1,85 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "import", "unicorn"],
+  "jsPlugins": ["../twenty-oxlint-rules/dist/oxlint-plugin.mjs"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    ".local-storage",
+    "src/engine/workspace-manager/dev-seeder/data/constants/**",
+    "src/engine/workspace-manager/dev-seeder/data/seeds/**",
+    "src/utils/email-providers.ts",
+    "src/engine/core-modules/i18n/locales/generated/**",
+    "src/engine/core-modules/logic-function/logic-function-resource/constants/seed-project/src/index.ts"
+  ],
+  "rules": {
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "no-console": ["warn", { "allow": ["group", "groupCollapsed", "groupEnd"] }],
+    "no-control-regex": "off",
+    "no-debugger": "error",
+    "no-duplicate-imports": "error",
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "no-redeclare": "off",
+    "no-restricted-imports": ["error", {
+      "patterns": [
+        {
+          "group": ["**../"],
+          "message": "Relative imports are not allowed."
+        },
+        {
+          "group": ["lodash"],
+          "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
+        }
+      ]
+    }],
+
+    "import/no-duplicates": "error",
+
+    "typescript/no-redeclare": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/consistent-type-imports": "off",
+    "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-empty-object-type": ["error", {
+      "allowInterfaces": "with-single-extends"
+    }],
+    "typescript/no-empty-function": "off",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": ["warn", {
+      "vars": "all",
+      "varsIgnorePattern": "^_",
+      "args": "after-used",
+      "argsIgnorePattern": "^_"
+    }],
+
+    "twenty/inject-workspace-repository": "warn",
+    "twenty/rest-api-methods-should-be-guarded": "error",
+    "twenty/graphql-resolvers-should-be-guarded": "error",
+    "twenty/enforce-module-boundaries": ["error", {
+      "depConstraints": [
+        {
+          "sourceTag": "scope:backend",
+          "onlyDependOnLibsWithTags": ["scope:shared", "scope:backend"]
+        }
+      ]
+    }]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.spec.ts", "**/*.integration-spec.ts", "**/__tests__/**", "**/test/**"],
+      "rules": {
+        "typescript/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["**/constants/*.ts", "**/*.constants.ts"],
+      "rules": {
+        "twenty/max-consts-per-file": "off"
+      }
+    }
+  ]
+}

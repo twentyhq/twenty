@@ -1,0 +1,10 @@
+{
+  "name": "twenty-utils",
+  "private": true,
+  "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
+    "danger:ci": "danger ci --use-github-checks --failOnErrors",
+    "danger:congratulate": "danger ci --dangerfile ./congratulate-dangerfile.ts --use-github-checks --failOnErrors",
+    "release": "node release.js"
+  }
+}

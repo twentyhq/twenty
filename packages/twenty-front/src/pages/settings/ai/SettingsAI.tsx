@@ -1,0 +1,121 @@
+import { styled } from '@linaria/react';
+import { Link } from 'react-router-dom';
+
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+
+import { t } from '@lingui/core/macro';
+import {
+  H2Title,
+  IconCpu,
+  IconFileText,
+  IconSettingsBolt,
+  IconSparkles,
+  IconTool,
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Card, Section } from 'twenty-ui/layout';
+import { SettingsAIMCP } from './components/SettingsAIMCP';
+import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
+import { SettingsSkillsTable } from './components/SettingsSkillsTable';
+import { SettingsToolsTable } from './components/SettingsToolsTable';
+import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
+
+const StyledLinkContainer = styled.div`
+  > a {
+    text-decoration: none;
+  }
+`;
+
+export const SettingsAI = () => {
+  const activeTabId = useAtomComponentStateValue(
+    activeTabIdComponentState,
+    SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
+  );
+
+  const tabs = [
+    {
+      id: SETTINGS_AI_TABS.TABS_IDS.MODELS,
+      title: t`Models`,
+      Icon: IconCpu,
+    },
+    {
+      id: SETTINGS_AI_TABS.TABS_IDS.SKILLS,
+      title: t`Skills`,
+      Icon: IconSparkles,
+    },
+    {
+      id: SETTINGS_AI_TABS.TABS_IDS.TOOLS,
+      title: t`Tools`,
+      Icon: IconTool,
+    },
+    {
+      id: SETTINGS_AI_TABS.TABS_IDS.MORE,
+      title: t`More`,
+      Icon: IconSettingsBolt,
+    },
+  ];
+
+  const isModelsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
+  const isSkillsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
+  const isToolsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
+  const isMoreTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MORE;
+
+  return (
+    <SubMenuTopBarContainer
+      title={t`AI`}
+      links={[
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        { children: t`AI` },
+      ]}
+    >
+      <SettingsPageContainer>
+        <TabList
+          tabs={tabs}
+          componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
+        />
+        {isModelsTab && <SettingsAIModelsTab />}
+        {isSkillsTab && <SettingsSkillsTable />}
+        {isToolsTab && <SettingsToolsTable />}
+        {isMoreTab && (
+          <>
+            <Section>
+              <H2Title
+                title={t`System Prompt`}
+                description={t`View and customize AI instructions`}
+              />
+              <Card rounded>
+                <SettingsOptionCardContentButton
+                  Icon={IconFileText}
+                  title={t`System Prompt`}
+                  description={t`View the AI system prompt and add custom instructions`}
+                  Button={
+                    <StyledLinkContainer>
+                      <Link to={getSettingsPath(SettingsPath.AIPrompts)}>
+                        <Button
+                          title={t`Configure`}
+                          variant="secondary"
+                          size="small"
+                        />
+                      </Link>
+                    </StyledLinkContainer>
+                  }
+                />
+              </Card>
+            </Section>
+            <SettingsAIMCP />
+          </>
+        )}
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
+  );
+};

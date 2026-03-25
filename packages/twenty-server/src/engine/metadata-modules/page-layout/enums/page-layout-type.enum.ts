@@ -1,0 +1,5 @@
+export enum PageLayoutType {
+  RECORD_INDEX = 'RECORD_INDEX',
+  RECORD_PAGE = 'RECORD_PAGE',
+  DASHBOARD = 'DASHBOARD',
+}

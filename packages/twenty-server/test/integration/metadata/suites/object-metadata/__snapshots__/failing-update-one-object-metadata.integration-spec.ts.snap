@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Object metadata update should fail when labelIdentifier is not a TEXT or NAME field 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_OBJECT_INPUT",
+                "message": "labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible",
+                "userFriendlyMessage": "Field cannot be used as label identifier",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "namePlural": "whatevers",
+              "nameSingular": "whatever",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "objectMetadata",
+            "type": "update",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 objectMetadata",
+      "summary": {
+        "objectMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while updating object",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Object metadata update should fail when labelIdentifier is not a known field metadata id 1`] = `
+[
+  {
+    "eventId": Any<String>,
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "subCode": "ENTITY_NOT_FOUND",
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "Could not find flat entity in maps",
+    "name": "InternalServerError",
+  },
+]
+`;
+
+exports[`Object metadata update should fail when labelIdentifier is not a uuid 1`] = `
+[
+  {
+    "extensions": {
+      "code": "GRAPHQL_VALIDATION_FAILED",
+      "http": {
+        "status": 400,
+      },
+      "userFriendlyMessage": "An error occurred.",
+      "value": "not-a-uuid",
+    },
+    "message": "Invalid UUID: 'not-a-uuid'",
+    "name": "ValidationError",
+  },
+]
+`;

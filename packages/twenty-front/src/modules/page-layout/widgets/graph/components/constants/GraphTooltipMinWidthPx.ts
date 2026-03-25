@@ -1,0 +1,1 @@
+export const GRAPH_TOOLTIP_MIN_WIDTH_PX = 160;

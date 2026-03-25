@@ -1,0 +1,326 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Standard field metadata update should succeed Atomic update test suite when setting isActive to false 1`] = `
+{
+  "defaultValue": "'NEW'",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": false,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "options": [
+    {
+      "color": "red",
+      "id": Any<String>,
+      "label": "New",
+      "position": 0,
+      "value": "NEW",
+    },
+    {
+      "color": "purple",
+      "id": Any<String>,
+      "label": "Screening",
+      "position": 1,
+      "value": "SCREENING",
+    },
+    {
+      "color": "sky",
+      "id": Any<String>,
+      "label": "Meeting",
+      "position": 2,
+      "value": "MEETING",
+    },
+    {
+      "color": "turquoise",
+      "id": Any<String>,
+      "label": "Proposal",
+      "position": 3,
+      "value": "PROPOSAL",
+    },
+    {
+      "color": "yellow",
+      "id": Any<String>,
+      "label": "Customer",
+      "position": 4,
+      "value": "CUSTOMER",
+    },
+  ],
+  "standardOverrides": null,
+}
+`;
+
+exports[`Standard field metadata update should succeed Atomic update test suite when updating defaultValue 1`] = `
+{
+  "defaultValue": "'SCREENING'",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": true,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "options": [
+    {
+      "color": "red",
+      "id": Any<String>,
+      "label": "New",
+      "position": 0,
+      "value": "NEW",
+    },
+    {
+      "color": "purple",
+      "id": Any<String>,
+      "label": "Screening",
+      "position": 1,
+      "value": "SCREENING",
+    },
+    {
+      "color": "sky",
+      "id": Any<String>,
+      "label": "Meeting",
+      "position": 2,
+      "value": "MEETING",
+    },
+    {
+      "color": "turquoise",
+      "id": Any<String>,
+      "label": "Proposal",
+      "position": 3,
+      "value": "PROPOSAL",
+    },
+    {
+      "color": "yellow",
+      "id": Any<String>,
+      "label": "Customer",
+      "position": 4,
+      "value": "CUSTOMER",
+    },
+  ],
+  "standardOverrides": null,
+}
+`;
+
+exports[`Standard field metadata update should succeed Atomic update test suite when updating description 1`] = `
+{
+  "defaultValue": "'NEW'",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": true,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "options": [
+    {
+      "color": "red",
+      "id": Any<String>,
+      "label": "New",
+      "position": 0,
+      "value": "NEW",
+    },
+    {
+      "color": "purple",
+      "id": Any<String>,
+      "label": "Screening",
+      "position": 1,
+      "value": "SCREENING",
+    },
+    {
+      "color": "sky",
+      "id": Any<String>,
+      "label": "Meeting",
+      "position": 2,
+      "value": "MEETING",
+    },
+    {
+      "color": "turquoise",
+      "id": Any<String>,
+      "label": "Proposal",
+      "position": 3,
+      "value": "PROPOSAL",
+    },
+    {
+      "color": "yellow",
+      "id": Any<String>,
+      "label": "Customer",
+      "position": 4,
+      "value": "CUSTOMER",
+    },
+  ],
+  "standardOverrides": {
+    "description": "Updated test description for company name field",
+    "icon": null,
+    "label": null,
+  },
+}
+`;
+
+exports[`Standard field metadata update should succeed Atomic update test suite when updating icon 1`] = `
+{
+  "defaultValue": "'NEW'",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": true,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "options": [
+    {
+      "color": "red",
+      "id": Any<String>,
+      "label": "New",
+      "position": 0,
+      "value": "NEW",
+    },
+    {
+      "color": "purple",
+      "id": Any<String>,
+      "label": "Screening",
+      "position": 1,
+      "value": "SCREENING",
+    },
+    {
+      "color": "sky",
+      "id": Any<String>,
+      "label": "Meeting",
+      "position": 2,
+      "value": "MEETING",
+    },
+    {
+      "color": "turquoise",
+      "id": Any<String>,
+      "label": "Proposal",
+      "position": 3,
+      "value": "PROPOSAL",
+    },
+    {
+      "color": "yellow",
+      "id": Any<String>,
+      "label": "Customer",
+      "position": 4,
+      "value": "CUSTOMER",
+    },
+  ],
+  "standardOverrides": {
+    "description": null,
+    "icon": "IconBuildingFactory",
+    "label": null,
+  },
+}
+`;
+
+exports[`Standard field metadata update should succeed Atomic update test suite when updating label 1`] = `
+{
+  "defaultValue": "'NEW'",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": true,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "options": [
+    {
+      "color": "red",
+      "id": Any<String>,
+      "label": "New",
+      "position": 0,
+      "value": "NEW",
+    },
+    {
+      "color": "purple",
+      "id": Any<String>,
+      "label": "Screening",
+      "position": 1,
+      "value": "SCREENING",
+    },
+    {
+      "color": "sky",
+      "id": Any<String>,
+      "label": "Meeting",
+      "position": 2,
+      "value": "MEETING",
+    },
+    {
+      "color": "turquoise",
+      "id": Any<String>,
+      "label": "Proposal",
+      "position": 3,
+      "value": "PROPOSAL",
+    },
+    {
+      "color": "yellow",
+      "id": Any<String>,
+      "label": "Customer",
+      "position": 4,
+      "value": "CUSTOMER",
+    },
+  ],
+  "standardOverrides": {
+    "description": null,
+    "icon": null,
+    "label": "Business Name",
+  },
+}
+`;
+
+exports[`Standard field metadata update should succeed Atomic update test suite when updating options 1`] = `
+{
+  "defaultValue": "'NEW'",
+  "description": "Opportunity stage",
+  "icon": "IconProgressCheck",
+  "id": Any<String>,
+  "isActive": true,
+  "isCustom": false,
+  "label": "Stage",
+  "name": "stage",
+  "options": [
+    {
+      "color": "red",
+      "id": Any<String>,
+      "label": "New Lead",
+      "position": 0,
+      "value": "NEW",
+    },
+    {
+      "color": "purple",
+      "id": Any<String>,
+      "label": "Under Review",
+      "position": 1,
+      "value": "SCREENING",
+    },
+    {
+      "color": "sky",
+      "id": Any<String>,
+      "label": "Meeting",
+      "position": 2,
+      "value": "MEETING",
+    },
+    {
+      "color": "turquoise",
+      "id": Any<String>,
+      "label": "Proposal Sent",
+      "position": 3,
+      "value": "PROPOSAL",
+    },
+    {
+      "color": "yellow",
+      "id": Any<String>,
+      "label": "Customer",
+      "position": 4,
+      "value": "CUSTOMER",
+    },
+    {
+      "color": "green",
+      "id": Any<String>,
+      "label": "Closed",
+      "position": 5,
+      "value": "CLOSED",
+    },
+  ],
+  "standardOverrides": null,
+}
+`;

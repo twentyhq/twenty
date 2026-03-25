@@ -1,0 +1,1 @@
+export const CALENDAR_EVENT_IMPORT_BATCH_SIZE = 100;

@@ -1,0 +1,149 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  type Relation,
+  UpdateDateColumn,
+} from 'typeorm';
+
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+
+@Entity({ name: 'application', schema: 'core' })
+@ObjectType('Application')
+@Index('IDX_APPLICATION_WORKSPACE_ID', ['workspaceId'])
+@Index(
+  'IDX_APPLICATION_UNIVERSAL_IDENTIFIER_WORKSPACE_ID_UNIQUE',
+  ['universalIdentifier', 'workspaceId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL AND "universalIdentifier" IS NOT NULL',
+  },
+)
+export class ApplicationEntity extends WorkspaceRelatedEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  universalIdentifier: string;
+
+  @Column({ nullable: false, type: 'text' })
+  name: string;
+
+  @Column({ nullable: true, type: 'text' })
+  description: string | null;
+
+  // TODO should not be nullable
+  @Column({ nullable: true, type: 'text' })
+  version: string | null;
+
+  @Column({ type: 'text', default: ApplicationRegistrationSourceType.LOCAL })
+  sourceType: ApplicationRegistrationSourceType;
+
+  @Column({ nullable: false, type: 'text' })
+  sourcePath: string;
+
+  @Column({ nullable: true, type: 'text' })
+  packageJsonChecksum: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  packageJsonFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'packageJsonFileId' })
+  packageJsonFile: Relation<FileEntity> | null;
+
+  @Column({ nullable: true, type: 'text' })
+  yarnLockChecksum: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  yarnLockFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'yarnLockFileId' })
+  yarnLockFile: Relation<FileEntity> | null;
+
+  @Column({ type: 'jsonb', nullable: false, default: {} })
+  availablePackages: Record<string, string>;
+
+  @Column({ nullable: true, type: 'uuid' })
+  logicFunctionLayerId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  defaultRoleId: string | null;
+
+  @Field(() => RoleDTO, { nullable: true })
+  defaultRole: RoleDTO | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  settingsCustomTabFrontComponentId: string | null;
+
+  @Column({ nullable: false, type: 'boolean', default: true })
+  canBeUninstalled: boolean;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  isSdkLayerStale: boolean;
+
+  @Column({ nullable: true, type: 'uuid' })
+  applicationRegistrationId: string | null;
+
+  @ManyToOne(() => ApplicationRegistrationEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationRegistrationId' })
+  applicationRegistration: Relation<ApplicationRegistrationEntity> | null;
+
+  @OneToMany(() => AgentEntity, (agent) => agent.application, {
+    onDelete: 'CASCADE',
+  })
+  agents: Relation<AgentEntity[]>;
+
+  @OneToMany(
+    () => LogicFunctionEntity,
+    (logicFunction) => logicFunction.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  logicFunctions: Relation<LogicFunctionEntity[]>;
+
+  @OneToMany(() => ObjectMetadataEntity, (object) => object.application, {
+    onDelete: 'CASCADE',
+  })
+  objects: Relation<ObjectMetadataEntity[]>;
+
+  @OneToMany(
+    () => ApplicationVariableEntity,
+    (applicationVariable) => applicationVariable.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  applicationVariables: Relation<ApplicationVariableEntity[]>;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date | null;
+}

@@ -1,0 +1,185 @@
+{
+  "name": "twenty-ui",
+  "private": true,
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "style": "./dist/style.css",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "@prettier/sync": "^0.5.2",
+    "@types/babel__preset-env": "^7",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.15",
+    "@wyw-in-js/babel-preset": "^0.6.0",
+    "babel-plugin-inline-import": "^3.0.0",
+    "babel-plugin-inline-react-svg": "^2.0.2",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "tsx": "^4.19.3",
+    "vite-plugin-checker": "^0.10.2",
+    "vite-plugin-dts": "3.8.1",
+    "vite-plugin-svgr": "^4.3.0"
+  },
+  "dependencies": {
+    "@linaria/react": "^6.2.1",
+    "@monaco-editor/react": "^4.7.0",
+    "@sniptt/guards": "^0.2.0",
+    "@tabler/icons-react": "^3.31.0",
+    "date-fns": "^2.30.0",
+    "framer-motion": "^11.18.0",
+    "glob": "^11.1.0",
+    "hex-rgb": "^5.0.0",
+    "jotai": "^2.17.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-responsive": "^9.0.2",
+    "react-router-dom": "^6.4.4",
+    "react-tooltip": "^5.13.1",
+    "twenty-shared": "workspace:*",
+    "zod": "^4.1.11"
+  },
+  "peerDependencies": {
+    "monaco-editor": ">= 0.25.0 < 1"
+  },
+  "scripts": {
+    "build": "npx vite build"
+  },
+  "files": [
+    "dist",
+    "accessibility",
+    "assets",
+    "components",
+    "display",
+    "feedback",
+    "input",
+    "json-visualizer",
+    "layout",
+    "navigation",
+    "testing",
+    "theme",
+    "theme-constants",
+    "utilities"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/style.css",
+    "./theme-light.css": "./dist/theme-light.css",
+    "./theme-dark.css": "./dist/theme-dark.css",
+    "./accessibility": {
+      "types": "./dist/accessibility/index.d.ts",
+      "import": "./dist/accessibility.mjs",
+      "require": "./dist/accessibility.cjs"
+    },
+    "./assets": {
+      "types": "./dist/assets/index.d.ts",
+      "import": "./dist/assets.mjs",
+      "require": "./dist/assets.cjs"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components.mjs",
+      "require": "./dist/components.cjs"
+    },
+    "./display": {
+      "types": "./dist/display/index.d.ts",
+      "import": "./dist/display.mjs",
+      "require": "./dist/display.cjs"
+    },
+    "./feedback": {
+      "types": "./dist/feedback/index.d.ts",
+      "import": "./dist/feedback.mjs",
+      "require": "./dist/feedback.cjs"
+    },
+    "./input": {
+      "types": "./dist/input/index.d.ts",
+      "import": "./dist/input.mjs",
+      "require": "./dist/input.cjs"
+    },
+    "./json-visualizer": {
+      "types": "./dist/json-visualizer/index.d.ts",
+      "import": "./dist/json-visualizer.mjs",
+      "require": "./dist/json-visualizer.cjs"
+    },
+    "./layout": {
+      "types": "./dist/layout/index.d.ts",
+      "import": "./dist/layout.mjs",
+      "require": "./dist/layout.cjs"
+    },
+    "./navigation": {
+      "types": "./dist/navigation/index.d.ts",
+      "import": "./dist/navigation.mjs",
+      "require": "./dist/navigation.cjs"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.cjs"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme.mjs",
+      "require": "./dist/theme.cjs"
+    },
+    "./theme-constants": {
+      "types": "./dist/theme-constants/index.d.ts",
+      "import": "./dist/theme-constants.mjs",
+      "require": "./dist/theme-constants.cjs"
+    },
+    "./utilities": {
+      "types": "./dist/utilities/index.d.ts",
+      "import": "./dist/utilities.mjs",
+      "require": "./dist/utilities.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "accessibility": [
+        "dist/accessibility/index.d.ts"
+      ],
+      "assets": [
+        "dist/assets/index.d.ts"
+      ],
+      "components": [
+        "dist/components/index.d.ts"
+      ],
+      "display": [
+        "dist/display/index.d.ts"
+      ],
+      "feedback": [
+        "dist/feedback/index.d.ts"
+      ],
+      "input": [
+        "dist/input/index.d.ts"
+      ],
+      "json-visualizer": [
+        "dist/json-visualizer/index.d.ts"
+      ],
+      "layout": [
+        "dist/layout/index.d.ts"
+      ],
+      "navigation": [
+        "dist/navigation/index.d.ts"
+      ],
+      "testing": [
+        "dist/testing/index.d.ts"
+      ],
+      "theme": [
+        "dist/theme/index.d.ts"
+      ],
+      "theme-constants": [
+        "dist/theme-constants/index.d.ts"
+      ],
+      "utilities": [
+        "dist/utilities/index.d.ts"
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - DATE Gql filter input - failure DATE field type - should fail with filter : {"dateField":{"eq":"not-a-date"}} 1`] = `"Invalid value 'not-a-date' for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`Filter input validation - DATE Gql filter input - failure DATE field type - should fail with filter : {"dateField":{"eq":[]}} 1`] = `"Invalid value [] for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`Filter input validation - DATE Gql filter input - failure DATE field type - should fail with filter : {"dateField":{"eq":{}}} 1`] = `"Invalid value {} for date field "dateField". Expected format: 'YYYY-MM-DD'"`;
+
+exports[`Filter input validation - DATE Rest filter input - failure DATE field type - should fail with filter : "dateField[eq]:\\"[]\\"" 1`] = `
+[
+  "Invalid value '[]' for date field "dateField". Expected format: 'YYYY-MM-DD'",
+]
+`;
+
+exports[`Filter input validation - DATE Rest filter input - failure DATE field type - should fail with filter : "dateField[eq]:\\"{}\\"" 1`] = `
+[
+  "Invalid value '{}' for date field "dateField". Expected format: 'YYYY-MM-DD'",
+]
+`;
+
+exports[`Filter input validation - DATE Rest filter input - failure DATE field type - should fail with filter : "dateField[eq]:\\"not-a-date\\"" 1`] = `
+[
+  "Invalid value 'not-a-date' for date field "dateField". Expected format: 'YYYY-MM-DD'",
+]
+`;

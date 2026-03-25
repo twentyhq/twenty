@@ -1,0 +1,60 @@
+diff --git a/src/types/connection/cursor/page-info.type.js b/src/types/connection/cursor/page-info.type.js
+index 00d836d..8eef442 100644
+--- a/src/types/connection/cursor/page-info.type.js
++++ b/src/types/connection/cursor/page-info.type.js
+@@ -39,7 +39,6 @@ const getOrCreatePageInfoType = () => {
+         tslib_1.__metadata("design:type", String)
+     ], PageInfoTypeImpl.prototype, "endCursor", void 0);
+     PageInfoTypeImpl = tslib_1.__decorate([
+-        (0, graphql_1.Directive)('@shareable'),
+         (0, graphql_1.ObjectType)('PageInfo'),
+         tslib_1.__metadata("design:paramtypes", [Boolean, Boolean, String, String])
+     ], PageInfoTypeImpl);
+diff --git a/src/types/connection/offset/offset-connection.type.js b/src/types/connection/offset/offset-connection.type.js
+index b47564f..d33f391 100644
+--- a/src/types/connection/offset/offset-connection.type.js
++++ b/src/types/connection/offset/offset-connection.type.js
+@@ -64,7 +64,6 @@ function getOrCreateOffsetConnectionType(TItemClass, opts) {
+             tslib_1.__metadata("design:paramtypes", [])
+         ], AbstractConnection.prototype, "totalCount", null);
+         AbstractConnection = AbstractConnection_1 = tslib_1.__decorate([
+-            (0, graphql_1.Directive)('@shareable'),
+             (0, graphql_1.ObjectType)(connectionName),
+             tslib_1.__metadata("design:paramtypes", [Object, Array, Function])
+         ], AbstractConnection);
+diff --git a/src/types/connection/offset/offset-page-info.type.js b/src/types/connection/offset/offset-page-info.type.js
+index 4803306..d459b16 100644
+--- a/src/types/connection/offset/offset-page-info.type.js
++++ b/src/types/connection/offset/offset-page-info.type.js
+@@ -25,7 +25,6 @@ const getOrCreateOffsetPageInfoType = () => {
+         tslib_1.__metadata("design:type", Boolean)
+     ], PageInfoTypeImpl.prototype, "hasPreviousPage", void 0);
+     PageInfoTypeImpl = tslib_1.__decorate([
+-        (0, graphql_1.Directive)('@shareable'),
+         (0, graphql_1.ObjectType)('OffsetPageInfo'),
+         tslib_1.__metadata("design:paramtypes", [Boolean, Boolean])
+     ], PageInfoTypeImpl);
+diff --git a/src/types/delete-many-reponse.type.js b/src/types/delete-many-reponse.type.js
+index 4de72de..b42f05f 100644
+--- a/src/types/delete-many-reponse.type.js
++++ b/src/types/delete-many-reponse.type.js
+@@ -16,7 +16,6 @@ const DeleteManyResponseType = () => {
+         tslib_1.__metadata("design:type", Number)
+     ], DeleteManyResponseTypeImpl.prototype, "deletedCount", void 0);
+     DeleteManyResponseTypeImpl = tslib_1.__decorate([
+-        (0, graphql_1.Directive)('@shareable'),
+         (0, graphql_1.ObjectType)('DeleteManyResponse')
+     ], DeleteManyResponseTypeImpl);
+     deleteManyResponseType = DeleteManyResponseTypeImpl;
+diff --git a/src/types/update-many-response.type.js b/src/types/update-many-response.type.js
+index c525d14..74be84f 100644
+--- a/src/types/update-many-response.type.js
++++ b/src/types/update-many-response.type.js
+@@ -16,7 +16,6 @@ const UpdateManyResponseType = () => {
+         tslib_1.__metadata("design:type", Number)
+     ], UpdateManyResponseTypeImpl.prototype, "updatedCount", void 0);
+     UpdateManyResponseTypeImpl = tslib_1.__decorate([
+-        (0, graphql_1.Directive)('@shareable'),
+         (0, graphql_1.ObjectType)('UpdateManyResponse')
+     ], UpdateManyResponseTypeImpl);
+     updateManyResponseType = UpdateManyResponseTypeImpl;

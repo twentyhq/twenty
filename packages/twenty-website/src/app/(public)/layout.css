@@ -1,0 +1,126 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-smooth: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  word-wrap: break-word;
+  font-family: var(--font-gabarito);
+}
+
+@media (max-width: 810px) {
+    body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 53px;
+}
+
+.warning {
+  color: rgb(94, 30, 4);
+}
+
+a {
+  color: rgb(129, 129, 129);
+  &:hover {
+    color: #000;
+  }
+}
+
+@media (max-width: 1199px) {
+  nav {
+    display: none;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+nav.toc {
+  width: 20%;
+  position: fixed;
+  top: 135px;
+  right: 0;
+  font-family: var(--font-gabarito);
+  font-size: 12px;
+}
+
+nav.toc ol {
+  list-style-type: none;
+  margin-top: 0px;
+}
+
+nav.toc li {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.toc-link {
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.toc-link.toc-link-h2 {
+  color: rgb(129, 129, 129);
+  margin-left: -16px;
+}
+
+.toc-link.toc-link-h2:hover,.toc-link.toc-link-h3:hover, .toc-link.toc-link-h4:hover, .toc-link.toc-link-h5:hover {
+  background: #1414140a;
+}
+
+.toc-link.toc-link-h2:active,.toc-link.toc-link-h3:active, .toc-link.toc-link-h4:active, .toc-link.toc-link-h5:active {
+  background: #1414140f;
+}
+
+
+.toc-link.toc-link-h3 {
+  color: rgb(129, 129, 129);
+  margin-left: -40px;
+}
+
+.toc-link.toc-link-h4 {
+  color: rgb(129, 129, 129);
+  margin-left: -64px;
+}
+
+.toc-link.toc-link-h5 {
+  color: rgb(129, 129, 129);
+  margin-left: -88px;
+}
+
+nav.toc a {
+  color: #141414;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 12px;
+}
+
+strong,
+  b {
+    color: #141414;
+    -webkit-font-smoothing: auto;
+    font-family: var(--font-inter);
+    font-weight: 500;
+    text-decoration: none;
+}

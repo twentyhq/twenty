@@ -1,0 +1,191 @@
+import { Injectable } from '@nestjs/common';
+
+import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  type FlatPageLayoutWidgetTypeValidatorForCreation,
+  type FlatPageLayoutWidgetTypeValidatorForUpdate,
+} from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-type-validator.type';
+import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
+import { rejectWidgetType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/reject-widget-type.util';
+import { validateFieldsFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util';
+import { validateFrontComponentFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-creation.util';
+import { validateFrontComponentFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-flat-page-layout-widget-for-update.util';
+import { validateGraphFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util';
+import { validateGraphFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-update.util';
+import { validateIframeFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util';
+import { validateIframeFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-update.util';
+import { validateSimpleRecordPageWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-creation.util';
+import { validateSimpleRecordPageWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-simple-record-page-widget-for-update.util';
+import { validateStandaloneRichTextFlatPageLayoutWidgetForCreation } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util';
+import { validateStandaloneRichTextFlatPageLayoutWidgetForUpdate } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-update.util';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+
+export type GenericValidateFlatPageLayoutWidgetTypeSpecificitiesArgs =
+  UniversalFlatEntityValidationArgs<'pageLayoutWidget'> & {
+    update?: UniversalFlatEntityUpdate<'pageLayoutWidget'>;
+  };
+
+export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs =
+  UniversalFlatEntityValidationArgs<'pageLayoutWidget'>;
+
+export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs =
+  UniversalFlatEntityValidationArgs<'pageLayoutWidget'> & {
+    update: UniversalFlatEntityUpdate<'pageLayoutWidget'>;
+  };
+
+@Injectable()
+export class FlatPageLayoutWidgetTypeValidatorService {
+  constructor() {}
+
+  private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_CREATION_HASHMAP: FlatPageLayoutWidgetTypeValidatorForCreation =
+    {
+      VIEW: rejectWidgetType(
+        WidgetType.VIEW,
+        'Widget type VIEW is not supported yet.',
+        msg`Widget type VIEW is not supported yet.`,
+      ),
+      IFRAME: validateIframeFlatPageLayoutWidgetForCreation,
+      FIELD: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.FIELD,
+      ),
+      FIELDS: validateFieldsFlatPageLayoutWidgetForCreation,
+      GRAPH: validateGraphFlatPageLayoutWidgetForCreation,
+      STANDALONE_RICH_TEXT:
+        validateStandaloneRichTextFlatPageLayoutWidgetForCreation,
+      FRONT_COMPONENT: validateFrontComponentFlatPageLayoutWidgetForCreation,
+      TIMELINE: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.TIMELINE,
+      ),
+      TASKS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.TASKS,
+      ),
+      NOTES: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.NOTES,
+      ),
+      FILES: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.FILES,
+      ),
+      EMAILS: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.EMAILS,
+      ),
+      CALENDAR: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.CALENDAR,
+      ),
+      FIELD_RICH_TEXT: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.FIELD_RICH_TEXT,
+      ),
+      WORKFLOW: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.WORKFLOW,
+      ),
+      WORKFLOW_VERSION: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.WORKFLOW_VERSION,
+      ),
+      WORKFLOW_RUN: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.WORKFLOW_RUN,
+      ),
+      RECORD_TABLE: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.RECORD_TABLE,
+      ),
+    };
+
+  private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP: FlatPageLayoutWidgetTypeValidatorForUpdate =
+    {
+      VIEW: rejectWidgetType(
+        WidgetType.VIEW,
+        'Widget type VIEW is not supported yet.',
+        msg`Widget type VIEW is not supported yet.`,
+      ),
+      IFRAME: validateIframeFlatPageLayoutWidgetForUpdate,
+      FIELD: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.FIELD,
+      ),
+      FIELDS: () => [],
+      GRAPH: validateGraphFlatPageLayoutWidgetForUpdate,
+      STANDALONE_RICH_TEXT:
+        validateStandaloneRichTextFlatPageLayoutWidgetForUpdate,
+      FRONT_COMPONENT: validateFrontComponentFlatPageLayoutWidgetForUpdate,
+      TIMELINE: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.TIMELINE,
+      ),
+      TASKS: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.TASKS,
+      ),
+      NOTES: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.NOTES,
+      ),
+      FILES: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.FILES,
+      ),
+      EMAILS: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.EMAILS,
+      ),
+      CALENDAR: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.CALENDAR,
+      ),
+      FIELD_RICH_TEXT: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.FIELD_RICH_TEXT,
+      ),
+      WORKFLOW: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.WORKFLOW,
+      ),
+      WORKFLOW_VERSION: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.WORKFLOW_VERSION,
+      ),
+      WORKFLOW_RUN: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.WORKFLOW_RUN,
+      ),
+      RECORD_TABLE: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.RECORD_TABLE,
+      ),
+    };
+
+  public validateFlatPageLayoutWidgetTypeSpecificitiesForCreation(
+    args: ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs,
+  ): FlatPageLayoutWidgetValidationError[] {
+    const { flatEntityToValidate } = args;
+    const widgetType = flatEntityToValidate.type;
+    const pageLayoutWidgetTypeValidator =
+      this.PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_CREATION_HASHMAP[widgetType];
+
+    if (!isDefined(pageLayoutWidgetTypeValidator)) {
+      return [
+        {
+          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          message: `Unsupported page layout widget type ${widgetType}`,
+          value: widgetType,
+          userFriendlyMessage: msg`Unsupported page layout widget type ${widgetType}`,
+        },
+      ];
+    }
+
+    return pageLayoutWidgetTypeValidator(args);
+  }
+
+  public validateFlatPageLayoutWidgetTypeSpecificitiesForUpdate(
+    args: ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs,
+  ): FlatPageLayoutWidgetValidationError[] {
+    const { flatEntityToValidate } = args;
+    const widgetType = flatEntityToValidate.type;
+    const pageLayoutWidgetTypeValidator =
+      this.PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP[widgetType];
+
+    if (!isDefined(pageLayoutWidgetTypeValidator)) {
+      return [
+        {
+          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          message: `Unsupported page layout widget type ${widgetType}`,
+          value: widgetType,
+          userFriendlyMessage: msg`Unsupported page layout widget type ${widgetType}`,
+        },
+      ];
+    }
+
+    return pageLayoutWidgetTypeValidator(args);
+  }
+}

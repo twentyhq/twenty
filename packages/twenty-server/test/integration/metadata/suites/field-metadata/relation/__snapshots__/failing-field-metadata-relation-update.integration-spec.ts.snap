@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Field metadata relation update should fail relation when name is not in camel case 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "New Name",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "New Name",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "update",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation update should fail relation when updating ONE_TO_MANY relation with onDelete action 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "On delete action is only supported for many to one relations",
+                "userFriendlyMessage": "On delete action is only supported for many to one relations",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "staff",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "update",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;

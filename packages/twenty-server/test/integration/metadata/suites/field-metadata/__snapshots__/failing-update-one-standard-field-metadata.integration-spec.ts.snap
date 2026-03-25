@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Standard field metadata update should be ignored when trying to update isLabelSyncedWithName on standard field 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FIELD_MUTATION_NOT_ALLOWED",
+    "userFriendlyMessage": "This field cannot be modified.",
+  },
+  "message": "Cannot edit standard field metadata properties: isLabelSyncedWithName",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Standard field metadata update should be ignored when trying to update name on standard field 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FIELD_MUTATION_NOT_ALLOWED",
+    "userFriendlyMessage": "This field cannot be modified.",
+  },
+  "message": "Cannot edit standard field metadata properties: name",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Standard field metadata update should be ignored when trying to update several forbidden properties 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FIELD_MUTATION_NOT_ALLOWED",
+    "userFriendlyMessage": "This field cannot be modified.",
+  },
+  "message": "Cannot edit standard field metadata properties: isLabelSyncedWithName, name",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Standard field with standard unique index update should fail on isUnique change should fail when trying to remove unique constraint on standard field with standard index 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [],
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Cannot delete unique index that have not been created by the workspace custom application",
+              "userFriendlyMessage": "Cannot delete unique index that have not been created by the workspace custom application",
+            },
+          ],
+          "flatEntityMinimalInformation": {},
+          "type": "update_field",
+        },
+      ],
+      "index": [],
+      "objectMetadata": [],
+      "pageLayout": [],
+      "pageLayoutTab": [],
+      "pageLayoutWidget": [],
+      "role": [],
+      "roleTarget": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidAgent": 0,
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidPageLayout": 0,
+      "invalidPageLayoutTab": 0,
+      "invalidPageLayoutWidget": 0,
+      "invalidRole": 0,
+      "invalidRoleTarget": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Validation errors occurred while updating field",
+  "name": "GraphQLError",
+}
+`;

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "sourceMaps": true,
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true
+    },
+    "baseUrl": "./../../",
+    "experimental": {
+      "plugins": [
+        ["@lingui/swc-plugin", {
+          "stripNonEssentialFields": false
+        }]
+      ]
+    }
+  },
+  "minify": false
+}

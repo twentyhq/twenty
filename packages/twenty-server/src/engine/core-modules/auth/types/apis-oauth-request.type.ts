@@ -1,0 +1,24 @@
+import { type Request } from 'express';
+
+import { type CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { type MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+
+export type APIsOAuthRequest = Omit<
+  Request,
+  'user' | 'workspace' | 'workspaceMetadataVersion'
+> & {
+  user: {
+    firstName?: string | null;
+    lastName?: string | null;
+    emails: { value: string }[];
+    picture: string | null;
+    workspaceInviteHash?: string;
+    accessToken: string;
+    refreshToken: string;
+    transientToken: string;
+    redirectLocation?: string;
+    calendarVisibility?: CalendarChannelVisibility;
+    messageVisibility?: MessageChannelVisibility;
+    skipMessageChannelConfiguration?: boolean;
+  };
+};

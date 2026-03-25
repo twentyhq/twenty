@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update AGGREGATE_CHART widget configuration validation failures when updating to AGGREGATE_CHART with invalid UUID 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "aggregateFieldMetadataId: aggregateFieldMetadataId must be a UUID",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update AGGREGATE_CHART widget configuration validation failures when updating to AGGREGATE_CHART with missing required fields 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "aggregateFieldMetadataId: aggregateFieldMetadataId should not be empty, aggregateFieldMetadataId must be a UUID; aggregateOperation: aggregateOperation should not be empty, aggregateOperation must be one of the following values: MIN, MAX, AVG, SUM, COUNT, COUNT_UNIQUE_VALUES, COUNT_EMPTY, COUNT_NOT_EMPTY, COUNT_TRUE, COUNT_FALSE, PERCENTAGE_EMPTY, PERCENTAGE_NOT_EMPTY",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update BAR_CHART widget configuration validation failures when updating to BAR_CHART with missing group by field (horizontal) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "primaryAxisGroupByFieldMetadataId: primaryAxisGroupByFieldMetadataId should not be empty, primaryAxisGroupByFieldMetadataId must be a UUID; layout: layout should not be empty, layout must be one of the following values: VERTICAL, HORIZONTAL",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update BAR_CHART widget configuration validation failures when updating to BAR_CHART with missing group by field (vertical) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "primaryAxisGroupByFieldMetadataId: primaryAxisGroupByFieldMetadataId should not be empty, primaryAxisGroupByFieldMetadataId must be a UUID; layout: layout should not be empty, layout must be one of the following values: VERTICAL, HORIZONTAL",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update Edge case configuration validation failures when updating configuration to null 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "Invalid configuration: not an object",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update Edge case configuration validation failures when updating configuration with missing configurationType 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "Invalid configuration: missing configuration type",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update Edge case configuration validation failures when updating configuration with unsupported configurationType 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "Invalid configuration type: UNSUPPORTED_TYPE",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update IFRAME widget configuration validation failures when updating IFRAME configuration with empty URL 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "url: url must be a URL address",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update IFRAME widget configuration validation failures when updating IFRAME configuration with invalid URL 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "url: url must be a URL address",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update STANDALONE_RICH_TEXT widget configuration validation failures when updating to STANDALONE_RICH_TEXT with missing body 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "body: body should not be empty",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail Widget configuration validation failures on update STANDALONE_RICH_TEXT widget configuration validation failures when updating to STANDALONE_RICH_TEXT with wrong body type 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Invalid page layout widget data.",
+  },
+  "message": "body: nested property body must be either object or array",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget update should fail when updating a non-existent page layout widget 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Page layout widget with ID "ed3752e3-db7f-42ff-82c0-2757a5410044" not found",
+  "name": "NotFoundError",
+}
+`;

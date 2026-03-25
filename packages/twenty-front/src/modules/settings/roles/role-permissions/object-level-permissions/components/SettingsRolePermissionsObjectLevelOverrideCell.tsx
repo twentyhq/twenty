@@ -1,0 +1,89 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { objectPermissionKeyToHumanReadable } from '@/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText';
+import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
+import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
+
+const StyledContainer = styled.div`
+  display: flex;
+`;
+
+type SettingsRolePermissionsObjectLevelOverrideCellProps = {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectPermissionKey: SettingsRoleObjectPermissionKey;
+  roleId: string;
+  objectLabel: string;
+};
+
+export const SettingsRolePermissionsObjectLevelOverrideCell = ({
+  objectMetadataItem,
+  objectPermissionKey,
+  roleId,
+  objectLabel,
+}: SettingsRolePermissionsObjectLevelOverrideCellProps) => {
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+
+  const roleLabel = settingsDraftRole.label;
+
+  const permissionMappings =
+    SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING;
+
+  const objectPermission = settingsDraftRole.objectPermissions?.find(
+    (objectPermission) =>
+      objectPermission.objectMetadataId === objectMetadataItem.id,
+  );
+
+  const permissionValue = objectPermission?.[objectPermissionKey];
+
+  const isOverridden = (
+    objectPermissionKey: SettingsRoleObjectPermissionKey,
+  ) => {
+    const rolePermission = permissionMappings[objectPermissionKey];
+
+    return (
+      isDefined(permissionValue) &&
+      !!settingsDraftRole[rolePermission] !== !!permissionValue
+    );
+  };
+
+  if (!isOverridden(objectPermissionKey)) {
+    return null;
+  }
+
+  const humanReadableAction =
+    objectPermissionKeyToHumanReadable(objectPermissionKey);
+
+  const containerId = `object-level-permission-override-${roleId}-${objectPermissionKey}-${objectMetadataItem.id}`;
+
+  return (
+    <>
+      <StyledContainer id={containerId}>
+        <PermissionIcon
+          permission={objectPermissionKey}
+          state={permissionValue === false ? 'revoked' : 'granted'}
+        />
+      </StyledContainer>
+      <AppTooltip
+        anchorSelect={`#${containerId}`}
+        content={
+          permissionValue === false
+            ? t`${roleLabel} can't ${humanReadableAction} ${objectLabel} records`
+            : t`${roleLabel} can ${humanReadableAction} ${objectLabel} records`
+        }
+        delay={TooltipDelay.shortDelay}
+        noArrow
+        place="bottom"
+        positionStrategy="fixed"
+      />
+    </>
+  );
+};

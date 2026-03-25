@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`failing createOne unique field metadata should fail for composite type without unique subfields (FULL_NAME) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_INVALID_TYPE_FOR_UNIQUE",
+              "message": "Unique index cannot be created for field uniqueFullName of type FULL_NAME",
+              "userFriendlyMessage": "FULL_NAME fields cannot be unique.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_UNIQUE_98d410e804d758f9bcceb154dde",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 index",
+    "summary": {
+      "index": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne unique field metadata should fail when field has custom default value 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_INVALID_DEFAULT_VALUE",
+              "message": "Unique index cannot be created for field uniqueFieldWithDefault of type TEXT",
+              "userFriendlyMessage": "TEXT fields cannot have a default value.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_UNIQUE_a1b02809c523cdc853d35fbc413",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 index",
+    "summary": {
+      "index": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;

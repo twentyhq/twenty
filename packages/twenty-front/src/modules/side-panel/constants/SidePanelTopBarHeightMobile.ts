@@ -1,0 +1,1 @@
+export const SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE = 52;

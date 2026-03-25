@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":[]}} 1`] = `"String cannot represent a non string value: []"`;
+
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":{}}} 1`] = `"String cannot represent a non string value: {}"`;
+
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":2}} 1`] = `"String cannot represent a non string value: 2"`;
+
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":true}} 1`] = `"String cannot represent a non string value: true"`;
+
+exports[`Filter args validation - ARRAY Rest filter input - failure ARRAY field type - should fail with filter : "arrayField[containsAny]:\\"[]\\"" 1`] = `
+[
+  "'filter' invalid for 'containsAny' operator. Received '"[]"' but array value expected eg: 'field[containsAny]:[value_1,value_2]'",
+]
+`;
+
+exports[`Filter args validation - ARRAY Rest filter input - failure ARRAY field type - should fail with filter : "arrayField[containsAny]:\\"{}\\"" 1`] = `
+[
+  "'filter' invalid for 'containsAny' operator. Received '"{}"' but array value expected eg: 'field[containsAny]:[value_1,value_2]'",
+]
+`;
+
+exports[`Filter args validation - ARRAY Rest filter input - failure ARRAY field type - should fail with filter : "arrayField[containsAny]:\\"true\\"" 1`] = `
+[
+  "'filter' invalid for 'containsAny' operator. Received '"true"' but array value expected eg: 'field[containsAny]:[value_1,value_2]'",
+]
+`;
+
+exports[`Filter args validation - ARRAY Rest filter input - failure ARRAY field type - should fail with filter : "arrayField[containsAny]:2" 1`] = `
+[
+  "'filter' invalid for 'containsAny' operator. Received '2' but array value expected eg: 'field[containsAny]:[value_1,value_2]'",
+]
+`;

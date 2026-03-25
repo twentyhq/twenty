@@ -1,0 +1,287 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useEffect } from 'react';
+
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+
+import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { mockPerformance } from '@/object-record/record-table/components/__stories__/perf/mock';
+import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+
+const RelationFieldValueSetterEffect = () => {
+  const setRecordStore = useSetAtomFamilyState(
+    recordStoreFamilyState,
+    mockPerformance.recordId,
+  );
+
+  // oxlint-disable-next-line twenty/matching-state-variable
+  const setRelationRecordStore = useSetAtomFamilyState(
+    recordStoreFamilyState,
+    mockPerformance.relationRecordId,
+  );
+
+  const setCurrentRecordFields = useSetAtomComponentState(
+    currentRecordFieldsComponentState,
+    'recordTableId',
+  );
+
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
+
+  useEffect(() => {
+    setRecordStore(mockPerformance.entityValue);
+    setRelationRecordStore(mockPerformance.relationFieldValue);
+    setCurrentRecordFields(
+      mockPerformance.visibleTableColumns.map(
+        (tableColumn) =>
+          ({
+            fieldMetadataItemId: tableColumn.fieldMetadataId,
+            id: tableColumn.fieldMetadataId,
+            isVisible: tableColumn.isVisible,
+            position: tableColumn.position,
+            size: tableColumn.size,
+          }) satisfies RecordField,
+      ),
+    );
+
+    const { flatObjects, flatFields, flatIndexes } =
+      splitCompositeObjectMetadataItems(
+        getTestEnrichedObjectMetadataItemsMock(),
+      );
+
+    replaceDraft('objectMetadataItems', flatObjects);
+    replaceDraft('fieldMetadataItems', flatFields);
+    replaceDraft('indexMetadataItems', flatIndexes);
+    applyChanges();
+  }, [
+    setRecordStore,
+    setRelationRecordStore,
+    replaceDraft,
+    applyChanges,
+    setCurrentRecordFields,
+  ]);
+
+  return null;
+};
+
+const meta: Meta = {
+  title: 'Modules/ObjectRecord/RecordTable/RecordTableCell',
+  decorators: [
+    MemoryRouterDecorator,
+    ChipGeneratorsDecorator,
+    (Story) => {
+      const currentRecordFields = useAtomComponentStateValue(
+        currentRecordFieldsComponentState,
+        'recordTableId',
+      );
+
+      const visibleRecordFields = useAtomComponentSelectorValue(
+        visibleRecordFieldsComponentSelector,
+        'recordTableId',
+      );
+
+      const fieldMetadataItems = mockPerformance.objectMetadataItem.fields;
+
+      const fieldMetadataItemByFieldMetadataItemId = Object.fromEntries(
+        fieldMetadataItems.map((fieldMetadataItem) => [
+          fieldMetadataItem.id,
+          // TODO: update performance mocks with new data, and merge with common mocks if possible
+          fieldMetadataItem as unknown as FieldMetadataItem,
+        ]),
+      );
+
+      const recordFieldByFieldMetadataItemId = Object.fromEntries(
+        currentRecordFields.map((recordField) => [
+          recordField.fieldMetadataItemId,
+          recordField,
+        ]),
+      );
+
+      const fieldDefinitionByFieldMetadataItemId = Object.fromEntries(
+        fieldMetadataItems.map((fieldMetadataItem) => [
+          fieldMetadataItem.id,
+          formatFieldMetadataItemAsColumnDefinition({
+            // TODO: update performance mocks with new data, and merge with common mocks if possible
+            field: fieldMetadataItem as any,
+            objectMetadataItem: mockPerformance.objectMetadataItem as any,
+            position:
+              recordFieldByFieldMetadataItemId[fieldMetadataItem.id]
+                ?.position ?? 0,
+            labelWidth:
+              recordFieldByFieldMetadataItemId[fieldMetadataItem.id]?.size ?? 0,
+          }),
+        ]),
+      );
+
+      const labelIdentifierFieldMetadataItem = useAtomFamilySelectorValue(
+        labelIdentifierFieldMetadataItemSelector,
+        {
+          objectMetadataItemId: mockPerformance.objectMetadataItem.id,
+        },
+      );
+
+      return (
+        <RecordIndexContextProvider
+          value={{
+            objectPermissionsByObjectMetadataId: {},
+            indexIdentifierUrl: (_recordId: string) => '',
+            onIndexRecordsLoaded: () => {},
+            objectNamePlural: 'companies',
+            objectNameSingular: 'company',
+            // TODO: update performance mocks with new data, and merge with common mocks if possible
+            objectMetadataItem: mockPerformance.objectMetadataItem as any,
+            recordIndexId: 'recordIndexId',
+            viewBarInstanceId: 'recordIndexId',
+            fieldDefinitionByFieldMetadataItemId,
+            fieldMetadataItemByFieldMetadataItemId,
+            labelIdentifierFieldMetadataItem,
+            recordFieldByFieldMetadataItemId,
+          }}
+        >
+          <RecordComponentInstanceContextsWrapper componentInstanceId="recordTableId">
+            <RecordTableContextProvider
+              value={{
+                recordTableId: 'recordTableId',
+                viewBarId: mockPerformance.recordId,
+                // TODO: update performance mocks with new data, and merge with common mocks if possible
+                objectMetadataItem: mockPerformance.objectMetadataItem as any,
+                objectMetadataItems: [],
+                objectNameSingular:
+                  mockPerformance.objectMetadataItem.nameSingular,
+                objectPermissions: {
+                  objectMetadataId: mockPerformance.objectMetadataItem.id,
+                },
+                visibleRecordFields,
+                onRecordIdentifierClick: () => {},
+                triggerEvent: 'CLICK',
+              }}
+            >
+              <RecordTableComponentInstance recordTableId="recordTableId">
+                <RecordTableBodyContextProvider
+                  value={{
+                    onOpenTableCell: () => {},
+                    onMoveFocus: () => {},
+                    onCloseTableCell: () => {},
+                    onMoveHoverToCurrentCell: () => {},
+                    onCommandMenuDropdownOpened: () => {},
+                  }}
+                >
+                  <RecordTableRowContextProvider
+                    value={{
+                      objectNameSingular:
+                        mockPerformance.entityValue.__typename.toLocaleLowerCase(),
+                      recordId: mockPerformance.recordId,
+                      rowIndex: 0,
+                      pathToShowPage:
+                        getBasePathToShowPage({
+                          objectNameSingular:
+                            mockPerformance.entityValue.__typename.toLocaleLowerCase(),
+                        }) + mockPerformance.recordId,
+                      isSelected: false,
+                    }}
+                  >
+                    <RecordTableRowDraggableContextProvider
+                      value={{
+                        isDragging: false,
+                        dragHandleProps: null,
+                      }}
+                    >
+                      <RecordTableCellContext.Provider
+                        value={{
+                          cellPosition: { row: 0, column: 0 },
+                          recordField: {
+                            fieldMetadataItemId:
+                              mockPerformance.fieldDefinition.fieldMetadataId,
+                            id: 'test',
+                            isVisible:
+                              mockPerformance.fieldDefinition.isVisible,
+                            position: mockPerformance.fieldDefinition.position,
+                            size: mockPerformance.fieldDefinition.size,
+                          },
+                        }}
+                      >
+                        <FieldContext.Provider
+                          value={{
+                            recordId: mockPerformance.recordId,
+                            isLabelIdentifier: false,
+                            fieldDefinition: mockPerformance.fieldDefinition,
+                            isRecordFieldReadOnly: false,
+                          }}
+                        >
+                          <RelationFieldValueSetterEffect />
+                          <table>
+                            <tbody>
+                              <tr>
+                                <Story />
+                              </tr>
+                            </tbody>
+                          </table>
+                        </FieldContext.Provider>
+                      </RecordTableCellContext.Provider>
+                    </RecordTableRowDraggableContextProvider>
+                  </RecordTableRowContextProvider>
+                </RecordTableBodyContextProvider>
+              </RecordTableComponentInstance>
+            </RecordTableContextProvider>
+          </RecordComponentInstanceContextsWrapper>
+        </RecordIndexContextProvider>
+      );
+    },
+    ComponentDecorator,
+  ],
+  component: RecordTableCellFieldContextWrapper,
+  argTypes: { value: { control: 'date' } },
+  args: {
+    recordField: {
+      fieldMetadataItemId: mockPerformance.fieldDefinition.fieldMetadataId,
+      id: 'test',
+      isVisible: mockPerformance.fieldDefinition.isVisible,
+      position: mockPerformance.fieldDefinition.position,
+      size: mockPerformance.fieldDefinition.size,
+    },
+  },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<typeof RecordTableCellFieldContextWrapper>;
+
+export const Default: Story = {};
+
+export const Performance = getProfilingStory({
+  componentName: 'RecordTableCell',
+  averageThresholdInMs: 0.3,
+  numberOfRuns: 50,
+  numberOfTestsPerRun: 200,
+  warmUpRounds: 20,
+});

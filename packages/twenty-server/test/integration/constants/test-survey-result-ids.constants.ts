@@ -1,0 +1,2 @@
+export const TEST_SURVEY_RESULT_1_ID = '20202020-3d5f-4e2a-9c1b-7f8e2d3c4b5a';
+export const TEST_SURVEY_RESULT_2_ID = '20202020-4e83-41ec-93e2-fd70ff09f68c';

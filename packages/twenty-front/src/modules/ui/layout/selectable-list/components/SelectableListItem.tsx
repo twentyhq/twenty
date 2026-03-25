@@ -1,0 +1,66 @@
+import { type ReactNode, useEffect, useRef } from 'react';
+
+import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
+import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+
+const StyledListItemContainer = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+`;
+
+export type SelectableListItemProps = {
+  itemId: string;
+  children: ReactNode;
+  onEnter?: () => void;
+  className?: string;
+};
+
+export const SelectableListItem = ({
+  itemId,
+  children,
+  onEnter,
+  className,
+}: SelectableListItemProps) => {
+  const isSelectedItemId = useAtomComponentFamilyStateValue(
+    isSelectedItemIdComponentFamilyState,
+    itemId,
+  );
+
+  const listItemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isSelectedItemId || !listItemRef.current) {
+      return;
+    }
+
+    const scrollContainer = listItemRef.current.closest(
+      '[id^="scroll-wrapper-"]',
+    ) as HTMLElement | null;
+
+    if (isDefined(scrollContainer) && scrollContainer.scrollTop === 0) {
+      return;
+    }
+
+    listItemRef.current.scrollIntoView({
+      behavior: 'auto',
+      block: 'start',
+    });
+  }, [isSelectedItemId]);
+
+  return (
+    <>
+      {isSelectedItemId && isDefined(onEnter) && (
+        <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
+      )}
+      <StyledListItemContainer ref={listItemRef} className={className}>
+        {children}
+      </StyledListItemContainer>
+    </>
+  );
+};

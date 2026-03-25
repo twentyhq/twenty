@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Filter input validation - MULTI_SELECT Gql filter input - failure MULTI_SELECT field type - should fail with filter : {"multiSelectField":{"eq":"not-a-multi-select"}} 1`] = `"Value "not-a-multi-select" does not exist in "ApiInputValidationTestObjectMultiSelectFieldEnum" enum."`;
+
+exports[`Filter input validation - MULTI_SELECT Gql filter input - failure MULTI_SELECT field type - should fail with filter : {"multiSelectField":{"in":["test"]}} 1`] = `"Value "test" does not exist in "ApiInputValidationTestObjectMultiSelectFieldEnum" enum."`;
+
+exports[`Filter input validation - MULTI_SELECT Gql filter input - failure MULTI_SELECT field type - should fail with filter : {"multiSelectField":{"neq":"test"}} 1`] = `"Value "test" does not exist in "ApiInputValidationTestObjectMultiSelectFieldEnum" enum."`;
+
+exports[`Filter input validation - MULTI_SELECT Rest filter input - failure MULTI_SELECT field type - should fail with filter : "multiSelectField[eq]:\\"not-a-multi-select\\"" 1`] = `
+[
+  "Operator "eq" is not valid for field "multiSelectField" of type MULTI_SELECT - Allowed operators: containsAny, is, isEmptyArray",
+]
+`;
+
+exports[`Filter input validation - MULTI_SELECT Rest filter input - failure MULTI_SELECT field type - should fail with filter : "multiSelectField[in]:[\\"test\\"]" 1`] = `
+[
+  "Operator "in" is not valid for field "multiSelectField" of type MULTI_SELECT - Allowed operators: containsAny, is, isEmptyArray",
+]
+`;
+
+exports[`Filter input validation - MULTI_SELECT Rest filter input - failure MULTI_SELECT field type - should fail with filter : "multiSelectField[neq]:\\"test\\"" 1`] = `
+[
+  "Operator "neq" is not valid for field "multiSelectField" of type MULTI_SELECT - Allowed operators: containsAny, is, isEmptyArray",
+]
+`;

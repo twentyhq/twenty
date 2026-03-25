@@ -1,0 +1,1625 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel conflicts with an existing {name}Id on target object metadata id 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "value": "fieldNameBisId",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "fieldNameBisId",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldName" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+              "value": "fieldName",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "fieldName",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel contains only whitespace 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel exceeds maximum length 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel is empty 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetObjectMetadataId is not a valid uuid format 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "defaultTargetFieldLabel",
+                "targetObjectMetadataId": Any<String>,
+                "type": "MANY_TO_ONE",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetObjectMetadataId is unknown 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Object metadata relation target not found for relation creation payload",
+              "userFriendlyMessage": "Object targeted by field to create not found",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "defaultTargetFieldLabel",
+                "targetObjectMetadataId": Any<String>,
+                "type": "MANY_TO_ONE",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when type is a wrong value 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "defaultTargetFieldLabel",
+                "targetObjectMetadataId": Any<String>,
+                "type": "wrong",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when type is not provided 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "defaultTargetFieldLabel",
+                "targetObjectMetadataId": Any<String>,
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE when {name}Id is already used 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "value": "fieldNameBisId",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "fieldNameBisId",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "defaulttargetfieldlabel",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_747db609dd2bb7abe30d5d1926c",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "summary": {
+      "fieldMetadata": 2,
+      "index": 1,
+      "totalErrors": 3,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE when self-relation source field join column would conflict with target field name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "Parent Id",
+                "targetObjectMetadataId": Any<String>,
+                "type": "MANY_TO_ONE",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE when self-relation target join column would conflict with source field name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "Children",
+                "targetObjectMetadataId": Any<String>,
+                "type": "MANY_TO_ONE",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE when source field name conflicts with existing field name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldName" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+              "value": "fieldName",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "fieldName",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "uniqueTargetLabel",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_7ee6c7ff1e4648b0665f60cd5e4",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "summary": {
+      "fieldMetadata": 2,
+      "index": 1,
+      "totalErrors": 3,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation MANY_TO_ONE when target and source are the same object and name are the same 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "Relation Name",
+                "targetObjectMetadataId": Any<String>,
+                "type": "MANY_TO_ONE",
+              },
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel conflicts with an existing {name}Id on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "fieldNameBisId",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "IDX_28fc32819c3dc0ec7c8594219fc",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "index",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata, 1 index",
+      "summary": {
+        "fieldMetadata": 1,
+        "index": 1,
+        "totalErrors": 2,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldName" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+                "value": "fieldName",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "fieldName",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "IDX_e19260dc9ba8bb2ac7c39c6fcfd",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "index",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata, 1 index",
+      "summary": {
+        "fieldMetadata": 1,
+        "index": 1,
+        "totalErrors": 2,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel contains only whitespace 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too short",
+                "userFriendlyMessage": "Name is too short",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "IDX_78587d9d07f2ad40242e070725f",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "index",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata, 1 index",
+      "summary": {
+        "fieldMetadata": 1,
+        "index": 1,
+        "totalErrors": 2,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel exceeds maximum length 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too long",
+                "userFriendlyMessage": "Name is too long",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "IDX_94535ac037cc2cd5eb316e87a54",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "index",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata, 1 index",
+      "summary": {
+        "fieldMetadata": 1,
+        "index": 1,
+        "totalErrors": 2,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel is empty 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is too short",
+                "userFriendlyMessage": "Name is too short",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+                "value": "",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "IDX_78587d9d07f2ad40242e070725f",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "index",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata, 1 index",
+      "summary": {
+        "fieldMetadata": 1,
+        "index": 1,
+        "totalErrors": 2,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetObjectMetadataId is not a valid uuid format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": Any<String>,
+                  "type": "ONE_TO_MANY",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetObjectMetadataId is unknown 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Object metadata relation target not found for relation creation payload",
+                "userFriendlyMessage": "Object targeted by field to create not found",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": Any<String>,
+                  "type": "ONE_TO_MANY",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when type is a wrong value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": Any<String>,
+                  "type": "wrong",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when type is not provided 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "defaultTargetFieldLabel",
+                  "targetObjectMetadataId": Any<String>,
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when {name}Id is already used 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+                "value": "fieldNameBisId",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "fieldNameBisId",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_NOT_FOUND",
+                "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+                "userFriendlyMessage": "Relation field target metadata not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "defaulttargetfieldlabel",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "IDX_8f338db6589d97164642f3fe641",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "index",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 2 fieldMetadatas, 1 index",
+      "summary": {
+        "fieldMetadata": 2,
+        "index": 1,
+        "totalErrors": 3,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when self-relation source field join column would conflict with target field name 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "Parent Id",
+                  "targetObjectMetadataId": Any<String>,
+                  "type": "ONE_TO_MANY",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when self-relation target join column would conflict with source field name 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "Children",
+                  "targetObjectMetadataId": Any<String>,
+                  "type": "ONE_TO_MANY",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when source field name conflicts with existing field name 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "NOT_AVAILABLE",
+                "message": "Name "fieldName" is not available as it is already used by another field",
+                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+                "value": "fieldName",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "fieldName",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_NOT_FOUND",
+                "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+                "userFriendlyMessage": "Relation field target metadata not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "uniqueTargetLabel",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+        "index": [
+          {
+            "errors": [
+              {
+                "code": "INDEX_FIELD_NOT_FOUND",
+                "message": "Could not find index field related field metadata",
+                "userFriendlyMessage": "Field referenced in index does not exist",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "IDX_d41e56dfc90f36d133336f65736",
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "index",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 2 fieldMetadatas, 1 index",
+      "summary": {
+        "fieldMetadata": 2,
+        "index": 1,
+        "totalErrors": 3,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail relation ONE_TO_MANY when target and source are the same object and name are the same 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "FIELD_METADATA_RELATION_MALFORMED",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
+                "userFriendlyMessage": "Invalid relation creation payload",
+                "value": {
+                  "targetFieldIcon": "IconBuildingSkyscraper",
+                  "targetFieldLabel": "Relation Name",
+                  "targetObjectMetadataId": Any<String>,
+                  "type": "ONE_TO_MANY",
+                },
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating MANY_TO_ONE self-relation with same field name and label 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "manager" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "manager" is not available as it is already used by another field",
+              "value": "manager",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "manager",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata",
+    "summary": {
+      "fieldMetadata": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating ONE_TO_MANY self-relation with same field name and label 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "manager" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "manager" is not available as it is already used by another field",
+              "value": "manager",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "manager",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_772faa136925e6c4141fd45ac0e",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldMetadata, 1 index",
+    "summary": {
+      "fieldMetadata": 1,
+      "index": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating a relation field with name that conflicts with existing field name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldName" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+              "value": "fieldName",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "fieldName",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "relatedObject",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_7ee6c7ff1e4648b0665f60cd5e4",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "summary": {
+      "fieldMetadata": 2,
+      "index": 1,
+      "totalErrors": 3,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating a relation field with name that conflicts with existing join column name 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "companyId" is not available as it is already used by another join column name",
+              "userFriendlyMessage": "Name "companyId" is not available as it is already used by join column name",
+              "value": "companyId",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "companyId",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "related",
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "IDX_ed8240d8bc1e69a39dab1c17fe2",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "index",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "summary": {
+      "fieldMetadata": 2,
+      "index": 1,
+      "totalErrors": 3,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;

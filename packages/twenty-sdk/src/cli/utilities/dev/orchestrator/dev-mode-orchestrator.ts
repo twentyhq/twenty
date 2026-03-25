@@ -1,0 +1,240 @@
+import { ApiService } from '@/cli/utilities/api/api-service';
+import { ClientService } from '@/cli/utilities/client/client-service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
+import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { BuildManifestOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/build-manifest-orchestrator-step';
+import { CheckServerOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/check-server-orchestrator-step';
+import { GenerateApiClientOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/generate-api-client-orchestrator-step';
+import { RegisterAppOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/register-app-orchestrator-step';
+import {
+  StartWatchersOrchestratorStep,
+  type FileBuiltEvent,
+} from '@/cli/utilities/dev/orchestrator/steps/start-watchers-orchestrator-step';
+import { SyncApplicationOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/sync-application-orchestrator-step';
+import { UploadFilesOrchestratorStep } from '@/cli/utilities/dev/orchestrator/steps/upload-files-orchestrator-step';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
+import { emptyDir, ensureDir } from '@/cli/utilities/file/fs-utils';
+import path from 'path';
+import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+
+export type DevModeOrchestratorOptions = {
+  state: OrchestratorState;
+  debounceMs?: number;
+};
+
+export class DevModeOrchestrator {
+  private state: OrchestratorState;
+  private debounceMs: number;
+  private syncTimer: NodeJS.Timeout | null = null;
+  private serverCheckInterval: NodeJS.Timeout | null = null;
+
+  private apiService: ApiService;
+  private clientService: ClientService;
+  private skipTypecheck = true;
+  private checkServerStep: CheckServerOrchestratorStep;
+  private buildManifestStep: BuildManifestOrchestratorStep;
+  private registerAppStep: RegisterAppOrchestratorStep;
+  private uploadFilesStep: UploadFilesOrchestratorStep;
+  private generateApiClientStep: GenerateApiClientOrchestratorStep;
+  private syncApplicationStep: SyncApplicationOrchestratorStep;
+  private startWatchersStep: StartWatchersOrchestratorStep;
+
+  constructor(options: DevModeOrchestratorOptions) {
+    this.debounceMs = options.debounceMs ?? 200;
+    this.state = options.state;
+
+    this.apiService = new ApiService({ disableInterceptors: true });
+    const apiService = this.apiService;
+    const configService = new ConfigService();
+    this.clientService = new ClientService();
+    const stepDeps = { state: this.state, notify: () => this.state.notify() };
+
+    this.checkServerStep = new CheckServerOrchestratorStep({
+      ...stepDeps,
+      apiService,
+    });
+    this.buildManifestStep = new BuildManifestOrchestratorStep(stepDeps);
+    this.registerAppStep = new RegisterAppOrchestratorStep({
+      ...stepDeps,
+      apiService,
+      configService,
+    });
+    this.uploadFilesStep = new UploadFilesOrchestratorStep(stepDeps);
+    this.generateApiClientStep = new GenerateApiClientOrchestratorStep({
+      ...stepDeps,
+      clientService: this.clientService,
+      configService,
+    });
+    this.syncApplicationStep = new SyncApplicationOrchestratorStep({
+      ...stepDeps,
+      apiService,
+    });
+    this.startWatchersStep = new StartWatchersOrchestratorStep({
+      ...stepDeps,
+      scheduleSync: this.scheduleSync.bind(this),
+      onFileBuilt: this.handleFileBuilt.bind(this),
+      shouldSkipTypecheck: () => this.skipTypecheck,
+    });
+  }
+
+  async start(): Promise<void> {
+    const outputDir = path.join(this.state.appPath, OUTPUT_DIR);
+
+    await ensureDir(outputDir);
+    await emptyDir(outputDir);
+
+    await this.startWatchersStep.start();
+
+    this.serverCheckInterval = setInterval(() => {
+      void this.checkServerHealth();
+    }, 2000);
+  }
+
+  async close(): Promise<void> {
+    if (this.serverCheckInterval) {
+      clearInterval(this.serverCheckInterval);
+    }
+
+    await this.startWatchersStep.close();
+  }
+
+  getState(): OrchestratorState {
+    return this.state;
+  }
+
+  private handleFileBuilt(event: FileBuiltEvent): void {
+    if (this.state.steps.uploadFiles.output.fileUploader) {
+      this.uploadFilesStep.uploadFile(
+        event.builtPath,
+        event.sourcePath,
+        event.fileFolder,
+      );
+    }
+  }
+
+  private async checkServerHealth(): Promise<void> {
+    const wasReady = this.state.steps.checkServer.output.isReady;
+    const isReady = await this.checkServerStep.execute();
+
+    if (isReady && !wasReady) {
+      this.scheduleSync();
+    }
+  }
+
+  private scheduleSync(): void {
+    if (this.syncTimer) {
+      clearTimeout(this.syncTimer);
+    }
+
+    this.syncTimer = setTimeout(() => {
+      this.syncTimer = null;
+      void this.performSync();
+    }, this.debounceMs);
+  }
+
+  private async performSync(): Promise<void> {
+    if (this.state.pipeline.isSyncing) {
+      return;
+    }
+
+    this.state.updatePipeline({ isSyncing: true });
+
+    try {
+      await this.runSyncPipeline();
+    } catch (error) {
+      this.state.addEvent({
+        message: `Sync failed with error: ${serializeError(error)}`,
+        status: 'error',
+      });
+      this.state.updatePipeline({ status: 'error' });
+      this.state.updateAllEntitiesStatus('error');
+    } finally {
+      this.state.updatePipeline({ isSyncing: false });
+    }
+  }
+
+  private async runSyncPipeline(): Promise<void> {
+    const isReady = await this.checkServerStep.execute();
+
+    if (!isReady) {
+      return;
+    }
+
+    const buildResult = await this.buildManifestStep.execute({
+      appPath: this.state.appPath,
+    });
+
+    if (!buildResult) {
+      return;
+    }
+
+    await this.startWatchersStep.handleWatcherRestarts(buildResult);
+
+    if (!this.uploadFilesStep.isInitialized) {
+      const initialized = await this.initializePipeline(buildResult.manifest!);
+
+      if (!initialized) {
+        return;
+      }
+    }
+
+    const objectsOrFieldsChanged = this.state.hasObjectsOrFieldsChanged(
+      buildResult.manifest!,
+    );
+
+    await this.uploadFilesStep.waitForUploads();
+
+    await this.syncApplicationStep.execute({
+      manifest: buildResult.manifest!,
+      builtFileInfos: this.state.steps.uploadFiles.output.builtFileInfos,
+      appPath: this.state.appPath,
+    });
+
+    if (objectsOrFieldsChanged) {
+      await this.generateApiClientStep.execute({
+        appPath: this.state.appPath,
+      });
+
+      this.skipTypecheck = false;
+    }
+  }
+
+  private async initializePipeline(manifest: Manifest): Promise<boolean> {
+    await this.registerAppStep.execute({ manifest });
+
+    const createResult = await this.apiService.createDevelopmentApplication({
+      universalIdentifier: manifest.application.universalIdentifier,
+      name: manifest.application.displayName,
+    });
+
+    if (!createResult.success || !createResult.data) {
+      this.state.applyStepEvents([
+        {
+          message: 'Failed to create development application',
+          status: 'error',
+        },
+        { message: JSON.stringify(createResult, null, 2), status: 'error' },
+      ]);
+      this.state.updatePipeline({ status: 'error' });
+
+      return false;
+    }
+
+    this.state.steps.resolveApplication.output = {
+      applicationId: createResult.data.id,
+      universalIdentifier: createResult.data.universalIdentifier,
+    };
+    this.state.steps.resolveApplication.status = 'done';
+
+    this.state.applyStepEvents([
+      { message: 'Application created', status: 'success' },
+    ]);
+
+    this.uploadFilesStep.initialize({
+      appPath: this.state.appPath,
+      universalIdentifier: manifest.application.universalIdentifier,
+    });
+
+    return true;
+  }
+}

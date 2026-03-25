@@ -1,0 +1,516 @@
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import { writeFile } from 'node:fs/promises';
+import { join, relative } from 'path';
+import { SyncableEntity } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { convertToLabel } from '@/cli/utilities/entity/entity-label';
+import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
+import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
+import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
+import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
+import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
+import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
+import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
+import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
+import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
+import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
+import { kebabCase } from '@/cli/utilities/string/kebab-case';
+
+const APP_FOLDER = 'src';
+
+export class EntityAddCommand {
+  private lastObjectUniversalIdentifier: string | undefined;
+  private lastNameFieldUniversalIdentifier: string | undefined;
+
+  async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
+    try {
+      const entity = entityType ?? (await this.getEntity());
+
+      const entityName = this.getFolderName(entity);
+
+      const appPath = path
+        ? join(CURRENT_EXECUTION_DIRECTORY, path)
+        : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER, entityName);
+
+      await ensureDir(appPath);
+
+      const { name, file } = await this.getEntityData(entity);
+
+      const filePath = join(appPath, this.getFileName(name, entity));
+
+      if (await pathExists(filePath)) {
+        const { overwrite } = await this.handleFileExist();
+        if (!overwrite) {
+          return;
+        }
+      }
+
+      await writeFile(filePath, file);
+
+      console.log(
+        chalk.green(`✓ Created ${entityName}:`),
+        chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, filePath)),
+      );
+
+      if (entity === SyncableEntity.Object) {
+        await this.promptAndCreateViewAndNavigationMenuItem(name, path);
+      }
+    } catch (error) {
+      console.error(
+        chalk.red(`Add new entity failed:`),
+        error instanceof Error ? error.message : error,
+      );
+      process.exit(1);
+    }
+  }
+
+  private async getEntityData(entity: SyncableEntity) {
+    switch (entity) {
+      case SyncableEntity.Object: {
+        const entityData = await this.getObjectData();
+
+        const name = entityData.nameSingular;
+        const objectUniversalIdentifier = v4();
+        const nameFieldUniversalIdentifier = v4();
+
+        this.lastObjectUniversalIdentifier = objectUniversalIdentifier;
+        this.lastNameFieldUniversalIdentifier = nameFieldUniversalIdentifier;
+
+        const file = getObjectBaseFile({
+          data: entityData,
+          name,
+          universalIdentifier: objectUniversalIdentifier,
+          nameFieldUniversalIdentifier,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Field: {
+        const entityData = await this.getFieldData();
+
+        const name = entityData.name;
+
+        const file = getFieldBaseFile({
+          data: entityData,
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.LogicFunction: {
+        const name = await this.getEntityName(entity);
+
+        const file = getLogicFunctionBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.FrontComponent: {
+        const name = await this.getEntityName(entity);
+
+        const file = getFrontComponentBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Role: {
+        const name = await this.getEntityName(entity);
+
+        const file = getRoleBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Skill: {
+        const name = await this.getEntityName(entity);
+
+        const file = getSkillBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Agent: {
+        const name = await this.getEntityName(entity);
+
+        const file = getAgentBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.View: {
+        const entityData = await this.getViewData();
+
+        const name = entityData.name;
+
+        const file = getViewBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.NavigationMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getNavigationMenuItemBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.PageLayout: {
+        const name = await this.getEntityName(entity);
+
+        const file = getPageLayoutBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
+      default:
+        assertUnreachable(entity);
+    }
+  }
+
+  private async promptAndCreateViewAndNavigationMenuItem(
+    objectName: string,
+    customPath?: string,
+  ): Promise<void> {
+    const { createViewAndNavItem } = await inquirer.prompt<{
+      createViewAndNavItem: boolean;
+    }>([
+      {
+        type: 'confirm',
+        name: 'createViewAndNavItem',
+        message:
+          'Also create a view and navigation menu item for this object? (recommended)',
+        default: true,
+      },
+    ]);
+
+    if (!createViewAndNavItem || !this.lastObjectUniversalIdentifier) {
+      return;
+    }
+
+    const viewUniversalIdentifier = v4();
+
+    const viewFile = getViewBaseFile({
+      name: `all-${kebabCase(objectName)}`,
+      universalIdentifier: viewUniversalIdentifier,
+      objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      fields: this.lastNameFieldUniversalIdentifier
+        ? [
+            {
+              fieldMetadataUniversalIdentifier:
+                this.lastNameFieldUniversalIdentifier,
+              position: 0,
+              isVisible: true,
+              size: 200,
+            },
+          ]
+        : [],
+    });
+
+    const viewFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.View),
+        );
+
+    await ensureDir(viewFolderPath);
+
+    const viewFileName = `all-${kebabCase(objectName)}.ts`;
+    const viewFilePath = join(viewFolderPath, viewFileName);
+
+    if (await pathExists(viewFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await writeFile(viewFilePath, viewFile);
+
+    console.log(
+      chalk.green(`✓ Created view:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, viewFilePath)),
+    );
+
+    const navFile = getNavigationMenuItemBaseFile({
+      name: objectName,
+      type: 'OBJECT',
+      targetObjectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+    });
+
+    const navFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.NavigationMenuItem),
+        );
+
+    await ensureDir(navFolderPath);
+
+    const navFileName = `${kebabCase(objectName)}.ts`;
+    const navFilePath = join(navFolderPath, navFileName);
+
+    if (await pathExists(navFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await writeFile(navFilePath, navFile);
+
+    console.log(
+      chalk.green(`✓ Created navigation menu item:`),
+      chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, navFilePath)),
+    );
+  }
+
+  private async getEntity() {
+    const { entity } = await inquirer.prompt<{ entity: SyncableEntity }>([
+      {
+        type: 'select',
+        name: 'entity',
+        message: `What entity do you want to create?`,
+        default: '',
+        choices: Object.values(SyncableEntity),
+      },
+    ]);
+
+    return entity;
+  }
+
+  private async handleFileExist() {
+    return await inquirer.prompt<{ overwrite: boolean }>([
+      {
+        type: 'confirm',
+        name: 'overwrite',
+        message: `File already exists. Do you want to overwrite it?`,
+        default: false,
+      },
+    ]);
+  }
+
+  private async getEntityName(entity: SyncableEntity) {
+    const { name } = await inquirer.prompt<{ name: string }>([
+      {
+        type: 'input',
+        name: 'name',
+        message: `Enter a name for your new ${entity}:`,
+        default: '',
+        validate: (input) => {
+          if (input.length === 0) {
+            return `${entity} name is required`;
+          }
+
+          return true;
+        },
+      },
+    ]);
+
+    return name;
+  }
+
+  private async getFieldData() {
+    return inquirer.prompt<{
+      name: string;
+      label: string;
+      type: FieldMetadataType;
+      objectUniversalIdentifier: string;
+      description: string;
+    }>([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter a name for your field:',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'label',
+        message: 'Enter a label for your field:',
+        default: (answers: any) => {
+          return convertToLabel(answers.name);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'select',
+        name: 'type',
+        message: 'Select the field type:',
+        choices: Object.values(FieldMetadataType),
+        default: FieldMetadataType.TEXT,
+      },
+      {
+        type: 'input',
+        name: 'objectUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the object this field belongs to:',
+        default: 'fill-later',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'description',
+        message: 'Enter a description for your field (optional):',
+        default: '',
+      },
+    ]);
+  }
+
+  private async getObjectData() {
+    return inquirer.prompt<{
+      nameSingular: string;
+      namePlural: string;
+      labelSingular: string;
+      labelPlural: string;
+    }>([
+      {
+        type: 'input',
+        name: 'nameSingular',
+        message: 'Enter a name singular for your object (eg: company):',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'namePlural',
+        message: 'Enter a name plural for your object (eg: companies):',
+        default: '',
+        validate: (input: string, answers?: any) => {
+          if (input.trim() === answers?.nameSingular.trim()) {
+            return 'Name plural must be different from name singular';
+          }
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'labelSingular',
+        message: 'Enter a label singular for your object:',
+        default: (answers: any) => {
+          return convertToLabel(answers.nameSingular);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'labelPlural',
+        message: 'Enter a label plural for your object:',
+        default: (answers: any) => {
+          return convertToLabel(answers.namePlural);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+    ]);
+  }
+
+  private async getViewData() {
+    return inquirer.prompt<{
+      name: string;
+      objectUniversalIdentifier: string;
+    }>([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter a name for your view:',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'objectUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the object this view belongs to:',
+        default: 'fill-later',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+    ]);
+  }
+
+  getFolderName(entity: SyncableEntity) {
+    return `${kebabCase(entity)}s`;
+  }
+
+  getFileName(name: string, entity: SyncableEntity) {
+    switch (entity) {
+      case SyncableEntity.FrontComponent: {
+        return `${kebabCase(name)}.tsx`;
+      }
+      default: {
+        return `${kebabCase(name)}.ts`;
+      }
+    }
+  }
+}

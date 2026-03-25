@@ -1,0 +1,29 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+
+const StyledCanvasContainer = styled.div`
+  display: grid;
+  height: 100%;
+`;
+
+type PageLayoutCanvasViewerProps = {
+  widgets: PageLayoutWidget[];
+};
+
+export const PageLayoutCanvasViewer = ({
+  widgets,
+}: PageLayoutCanvasViewerProps) => {
+  const widget = widgets.at(0);
+
+  if (!isDefined(widget)) {
+    return null;
+  }
+
+  return (
+    <StyledCanvasContainer>
+      <WidgetRenderer widget={widget} />
+    </StyledCanvasContainer>
+  );
+};

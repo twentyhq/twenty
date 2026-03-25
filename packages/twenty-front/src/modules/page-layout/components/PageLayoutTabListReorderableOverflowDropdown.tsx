@@ -1,0 +1,238 @@
+import {
+  Draggable,
+  type DraggableProvided,
+  type DraggableRubric,
+  type DraggableStateSnapshot,
+  Droppable,
+} from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
+
+import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
+import { PageLayoutTabMenuItemSelectAvatar } from '@/page-layout/components/PageLayoutTabMenuItemSelectAvatar';
+import { PageLayoutTabRenderClone } from '@/page-layout/components/PageLayoutTabRenderClone';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useContext } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import {
+  FeatureFlagKey,
+  type PageLayoutType,
+} from '~/generated-metadata/graphql';
+
+const StyledOverflowDropdownListDraggableWrapper = styled.div`
+  cursor: grab;
+  display: flex;
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+type PageLayoutTabListReorderableOverflowDropdownProps = {
+  dropdownId: string;
+  hiddenTabs: SingleTabProps[];
+  hiddenTabsCount: number;
+  isActiveTabHidden: boolean;
+  activeTabId: string | null;
+  loading?: boolean;
+  onSelect: (tabId: string) => void;
+  visibleTabCount: number;
+  onClose: () => void;
+  pageLayoutType: PageLayoutType;
+};
+
+export const PageLayoutTabListReorderableOverflowDropdown = ({
+  dropdownId,
+  hiddenTabs,
+  hiddenTabsCount,
+  isActiveTabHidden,
+  activeTabId,
+  loading,
+  onSelect,
+  visibleTabCount,
+  onClose,
+  pageLayoutType,
+}: PageLayoutTabListReorderableOverflowDropdownProps) => {
+  const { theme } = useContext(ThemeContext);
+  const context = useContext(TabListComponentInstanceContext);
+  const instanceId = context?.instanceId;
+
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
+  );
+
+  const shouldShowEditButton =
+    isPageLayoutInEditMode &&
+    shouldEnableTabEditingFeatures(
+      pageLayoutType,
+      isRecordPageGlobalEditionEnabled,
+    );
+
+  const isPageLayoutTabDragging = useAtomComponentStateValue(
+    isPageLayoutTabDraggingComponentState,
+    instanceId,
+  );
+
+  const setIsPageLayoutTabDragging = useSetAtomComponentState(
+    isPageLayoutTabDraggingComponentState,
+    instanceId,
+  );
+
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+    pageLayoutId,
+  );
+
+  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
+
+  const handleClose = () => {
+    if (!isPageLayoutTabDragging) {
+      onClose();
+    }
+  };
+
+  const handleTabSelect = (tabId: string) => {
+    setIsPageLayoutTabDragging(false);
+    onSelect(tabId);
+    handleClose();
+  };
+
+  const handleEditClick = (tabId: string) => {
+    setPageLayoutTabSettingsOpenTabId(tabId);
+    navigatePageLayoutSidePanel({
+      sidePanelPage: SidePanelPages.PageLayoutTabSettings,
+    });
+    onClose();
+  };
+
+  return (
+    <Dropdown
+      dropdownId={dropdownId}
+      dropdownPlacement="bottom-end"
+      dropdownOffset={{ x: 0, y: 8 }}
+      onClickOutside={handleClose}
+      clickableComponent={
+        <PageLayoutTabListDroppableMoreButton
+          hiddenTabsCount={hiddenTabsCount}
+          isActiveTabHidden={isActiveTabHidden}
+          data-dropdown-id={dropdownId}
+        />
+      }
+      dropdownComponents={
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
+          <Droppable
+            droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+            renderClone={(
+              provided: DraggableProvided,
+              _snapshot: DraggableStateSnapshot,
+              rubric: DraggableRubric,
+            ) => {
+              const overflowIndex = rubric.source.index - visibleTabCount;
+              const tab = hiddenTabs[overflowIndex];
+
+              return (
+                <PageLayoutTabRenderClone
+                  provided={provided}
+                  tab={tab}
+                  activeTabId={activeTabId}
+                />
+              );
+            }}
+          >
+            {(provided) => (
+              <DropdownMenuItemsContainer>
+                <div
+                  ref={provided.innerRef}
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
+                  {...provided.droppableProps}
+                >
+                  {hiddenTabs.map((tab, index) => {
+                    const globalIndex = visibleTabCount + index;
+                    const disabled = tab.disabled ?? loading;
+
+                    return (
+                      <Draggable
+                        key={tab.id}
+                        draggableId={tab.id}
+                        index={globalIndex}
+                        isDragDisabled={disabled}
+                      >
+                        {(draggableProvided, draggableSnapshot) => (
+                          <StyledOverflowDropdownListDraggableWrapper
+                            ref={draggableProvided.innerRef}
+                            // oxlint-disable-next-line react/jsx-props-no-spreading
+                            {...draggableProvided.draggableProps}
+                            // oxlint-disable-next-line react/jsx-props-no-spreading
+                            {...draggableProvided.dragHandleProps}
+                            style={{
+                              ...draggableProvided.draggableProps.style,
+                              position: 'relative',
+                              left: 'auto',
+                              top: 'auto',
+                              cursor: draggableSnapshot.isDragging
+                                ? 'grabbing'
+                                : 'grab',
+                              background: draggableSnapshot.isDragging
+                                ? theme.background.transparent.light
+                                : 'none',
+                              width: 50,
+                              overflow: 'visible',
+                            }}
+                          >
+                            <div
+                              style={{
+                                minWidth:
+                                  GenericDropdownContentWidth.Medium -
+                                  theme.spacingMultiplicator * 2,
+                              }}
+                            >
+                              <PageLayoutTabMenuItemSelectAvatar
+                                tab={tab}
+                                selected={tab.id === activeTabId}
+                                onClick={
+                                  draggableSnapshot.isDragging
+                                    ? undefined
+                                    : () => handleTabSelect(tab.id)
+                                }
+                                disabled={disabled}
+                                showEditButton={shouldShowEditButton}
+                                onEditClick={handleEditClick}
+                              />
+                            </div>
+                          </StyledOverflowDropdownListDraggableWrapper>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  <div>{provided.placeholder}</div>
+                </div>
+              </DropdownMenuItemsContainer>
+            )}
+          </Droppable>
+        </DropdownContent>
+      }
+    />
+  );
+};

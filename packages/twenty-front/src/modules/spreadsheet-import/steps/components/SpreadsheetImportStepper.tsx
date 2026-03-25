@@ -1,0 +1,140 @@
+import { useCallback, useContext, useState } from 'react';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ModalContent } from 'twenty-ui/layout';
+
+import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
+import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { CircularProgressBar } from 'twenty-ui/feedback';
+import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
+import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
+import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
+import { UploadStep } from './UploadStep/UploadStep';
+import { ValidationStep } from './ValidationStep/ValidationStep';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+
+type SpreadsheetImportStepperProps = {
+  nextStep: () => void;
+  prevStep: () => void;
+};
+
+export const SpreadsheetImportStepper = ({
+  nextStep,
+  prevStep,
+}: SpreadsheetImportStepperProps) => {
+  const { theme } = useContext(ThemeContext);
+  const { initialStepState } = useSpreadsheetImportInternal();
+
+  const [currentStepState, setCurrentStepState] =
+    useState<SpreadsheetImportStep>(
+      initialStepState ?? { type: SpreadsheetImportStepType.upload },
+    );
+  const [previousStepState, setPreviousStepState] =
+    useState<SpreadsheetImportStep>(
+      initialStepState ?? { type: SpreadsheetImportStepType.upload },
+    );
+
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  const handleError = useCallback(
+    (description: string) => {
+      enqueueErrorSnackBar({
+        message: description,
+      });
+    },
+    [enqueueErrorSnackBar],
+  );
+
+  const handleBack = useCallback(() => {
+    setCurrentStepState(previousStepState);
+    prevStep();
+  }, [prevStep, previousStepState]);
+
+  switch (currentStepState.type) {
+    case SpreadsheetImportStepType.upload:
+      return (
+        <UploadStep
+          setUploadedFile={setUploadedFile}
+          currentStepState={currentStepState}
+          setPreviousStepState={setPreviousStepState}
+          setCurrentStepState={setCurrentStepState}
+          onError={handleError}
+          nextStep={nextStep}
+        />
+      );
+    case SpreadsheetImportStepType.selectSheet:
+      return (
+        <SelectSheetStep
+          sheetNames={currentStepState.workbook.SheetNames}
+          setCurrentStepState={setCurrentStepState}
+          currentStepState={currentStepState}
+          onError={handleError}
+          setPreviousStepState={setPreviousStepState}
+          onBack={handleBack}
+        />
+      );
+    case SpreadsheetImportStepType.selectHeader:
+      return (
+        <SelectHeaderStep
+          importedRows={currentStepState.data}
+          setCurrentStepState={setCurrentStepState}
+          nextStep={nextStep}
+          setPreviousStepState={setPreviousStepState}
+          onError={handleError}
+          onBack={handleBack}
+          currentStepState={currentStepState}
+        />
+      );
+    case SpreadsheetImportStepType.matchColumns:
+      return (
+        <MatchColumnsStep
+          data={currentStepState.data}
+          headerValues={currentStepState.headerValues}
+          setCurrentStepState={setCurrentStepState}
+          setPreviousStepState={setPreviousStepState}
+          currentStepState={currentStepState}
+          nextStep={nextStep}
+          onBack={handleBack}
+          onError={handleError}
+        />
+      );
+    case SpreadsheetImportStepType.validateData:
+      if (!uploadedFile) {
+        throw new Error('File not found');
+      }
+      return (
+        <ValidationStep
+          initialData={currentStepState.data}
+          importedColumns={currentStepState.importedColumns}
+          file={uploadedFile}
+          setCurrentStepState={setCurrentStepState}
+          onBack={() => {
+            handleBack();
+            setPreviousStepState(
+              initialStepState ?? { type: SpreadsheetImportStepType.upload },
+            );
+          }}
+        />
+      );
+    case SpreadsheetImportStepType.importData:
+      return (
+        <ImportDataStep
+          recordsToImportCount={currentStepState.recordsToImportCount}
+        />
+      );
+    case SpreadsheetImportStepType.loading:
+    default:
+      return (
+        <ModalContent isVerticallyCentered isHorizontallyCentered>
+          <CircularProgressBar
+            size={80}
+            barWidth={8}
+            barColor={theme.font.color.primary}
+          />
+        </ModalContent>
+      );
+  }
+};
