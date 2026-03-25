@@ -17,10 +17,7 @@ export const useAgentChatModelId = () => {
   const selectedModelId = isUserModelAvailable
     ? agentChatUserSelectedModel
     : null;
-
-  const modelIdForRequest = isDefined(selectedModelId)
-    ? selectedModelId
-    : undefined;
+  const modelIdForRequest = selectedModelId ?? undefined;
 
   return { selectedModelId, modelIdForRequest };
 };
