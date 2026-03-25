@@ -69,6 +69,10 @@ export class CreateAppCommand {
         if (startResult.success) {
           serverResult = startResult.data;
           await this.connectToLocal(serverResult.url);
+        } else {
+          console.log(
+            chalk.yellow(`\n${startResult.error.message}`),
+          );
         }
       }
 
