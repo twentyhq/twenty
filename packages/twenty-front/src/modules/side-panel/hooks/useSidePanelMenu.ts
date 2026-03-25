@@ -1,6 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
@@ -45,7 +45,7 @@ export const useSidePanelMenu = () => {
       isLayoutCustomizationModeEnabledState.atom,
     );
     const selectedNavigationItemId = store.get(
-      selectedNavigationMenuItemInEditModeState.atom,
+      selectedNavigationMenuItemIdInEditModeState.atom,
     );
     if (
       isLayoutCustomizationModeEnabled &&

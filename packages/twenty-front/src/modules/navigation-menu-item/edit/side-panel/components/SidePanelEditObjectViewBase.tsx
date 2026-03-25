@@ -1,6 +1,5 @@
-import { useObjectNavItemColor } from '@/navigation-menu-item/common/hooks/useObjectNavItemColor';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeColor';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -50,7 +49,9 @@ export const SidePanelEditObjectViewBase = ({
       ) ?? '')
     : '';
 
-  const objectColor = useObjectNavItemColor(objectNameSingular);
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
 
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const persistedNavItem = navigationMenuItems.find(
@@ -61,7 +62,7 @@ export const SidePanelEditObjectViewBase = ({
     selectedItem.color !== (persistedNavItem?.color ?? undefined);
 
   const effectiveColor = isDefined(selectedItem)
-    ? getEffectiveNavigationMenuItemColor(selectedItem, objectColor)
+    ? getNavigationMenuItemColor(selectedItem, objectMetadataItem)
     : undefined;
   const displayColor = hasUserChangedColor
     ? selectedItem.color
@@ -69,14 +70,16 @@ export const SidePanelEditObjectViewBase = ({
 
   return (
     <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-      {showColorOption && isDefined(selectedItem) && (
-        <SidePanelGroup heading={t`Customize`}>
-          <SidePanelEditColorOption
-            navigationMenuItemId={selectedItem.id}
-            color={parseThemeColor(displayColor)}
-          />
-        </SidePanelGroup>
-      )}
+      {showColorOption &&
+        isDefined(selectedItem) &&
+        objectMetadataItem?.isSystem !== true && (
+          <SidePanelGroup heading={t`Customize`}>
+            <SidePanelEditColorOption
+              navigationMenuItemId={selectedItem.id}
+              color={parseThemeColor(displayColor)}
+            />
+          </SidePanelGroup>
+        )}
       <SidePanelEditOrganizeActions
         canMoveUp={canMoveUp}
         canMoveDown={canMoveDown}

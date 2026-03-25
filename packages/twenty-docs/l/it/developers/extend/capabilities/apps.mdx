@@ -574,7 +574,7 @@ export default defineLogicFunction({
   timeoutSeconds: 2,
   handler,
   triggers: [
-    // Public HTTP route trigger '/s/post-card/create'
+    // Trigger di route HTTP pubblica '/s/post-card/create'
     {
       universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
       type: 'route',
@@ -582,13 +582,13 @@ export default defineLogicFunction({
       httpMethod: 'GET',
       isAuthRequired: false,
     },
-    // Cron trigger (CRON pattern)
+    // Trigger Cron (pattern CRON)
     // {
     //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
     //   type: 'cron',
     //   pattern: '0 0 1 1 *',
     // },
-    // Database event trigger
+    // Trigger di evento del database
     // {
     //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
     //   type: 'databaseEvent',
@@ -804,8 +804,8 @@ const handler = async (params: { companyName: string; domain?: string }) => {
     createTask: {
       __args: {
         data: {
-          title: `Enrich data for ${params.companyName}`,
-          body: `Domain: ${params.domain ?? 'unknown'}`,
+          title: `Arricchisci i dati per ${params.companyName}`,
+          body: `Dominio: ${params.domain ?? 'sconosciuto'}`,
         },
       },
       id: true,
@@ -818,7 +818,7 @@ const handler = async (params: { companyName: string; domain?: string }) => {
 export default defineLogicFunction({
   universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   name: 'enrich-company',
-  description: 'Enrich a company record with external data',
+  description: 'Arricchisci un record aziendale con dati esterni',
   timeoutSeconds: 10,
   handler,
   isTool: true,
@@ -827,11 +827,11 @@ export default defineLogicFunction({
     properties: {
       companyName: {
         type: 'string',
-        description: 'The name of the company to enrich',
+        description: 'Il nome dell\'azienda da arricchire',
       },
       domain: {
         type: 'string',
-        description: 'The company website domain (optional)',
+        description: 'Il dominio del sito web dell\'azienda (facoltativo)',
       },
     },
     required: ['companyName'],
@@ -1221,7 +1221,7 @@ const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
-const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });},{
 ```
 
 `CoreApiClient` viene rigenerato automaticamente da `yarn twenty dev` ogni volta che i tuoi oggetti o campi cambiano. `MetadataApiClient` è fornito pronto all'uso con l'SDK.
@@ -1252,10 +1252,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+  fileBuffer,                                         // contenuto del file come Buffer
+  'invoice.pdf',                                      // nome del file
+  'application/pdf',                                  // Tipo MIME (predefinito: 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // identificatore universale del campo
 );
 
 console.log(uploadedFile);

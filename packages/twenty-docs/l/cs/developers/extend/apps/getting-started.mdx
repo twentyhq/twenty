@@ -167,7 +167,7 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+* `yarn twenty dev` automaticky vygeneruje dva typované API klienty v `node_modules/twenty-sdk/generated`: `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) a `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`).
 * `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
 
 ## Ověření
@@ -221,7 +221,7 @@ Poté přidejte skript `twenty`:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
+Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty dev`, `yarn twenty help` atd.
 
 ## Jak používat lokální instanci Twenty
 
@@ -239,7 +239,7 @@ yarn twenty remote add --local --port 3000
 
 * Chyby ověření: spusťte `yarn twenty auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
 * Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
-* Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
-* Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
+* Typy nebo klient chybí nebo jsou zastaralé: restartujte `yarn twenty dev` — automaticky generuje typovaného klienta.
+* Režim vývoje se nesynchronizuje: ujistěte se, že běží `yarn twenty dev` a že vaše prostředí změny neignoruje.
 
 Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322

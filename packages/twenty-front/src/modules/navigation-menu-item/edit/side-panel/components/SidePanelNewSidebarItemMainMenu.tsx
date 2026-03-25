@@ -12,7 +12,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
@@ -42,16 +42,15 @@ export const SidePanelNewSidebarItemMainMenu = ({
   onSelectRecord,
 }: SidePanelNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
 
   const isAddingToFolder = isDefined(
-    addMenuItemInsertionContext?.targetFolderId,
+    pendingInsertionNavigationMenuItem?.folderId,
   );
-  const isDragDisabled = addMenuItemInsertionContext?.disableDrag === true;
   const selectableItemIds = isAddingToFolder
     ? MAIN_MENU_ITEM_TYPES.filter(
         (type) => type !== NavigationMenuItemType.FOLDER,
@@ -128,14 +127,13 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Folder`}
                   id={NavigationMenuItemType.FOLDER}
                   onClick={handleAddFolder}
-                  dragIndex={isDragDisabled ? undefined : 3}
+                  dragIndex={3}
                   payload={{
                     type: NavigationMenuItemType.FOLDER,
                     folderId: 'new',
                     name: t`New folder`,
                   }}
                   disabled={isAddingToFolder}
-                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
               <SelectableListItem
@@ -147,14 +145,13 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Link`}
                   id={NavigationMenuItemType.LINK}
                   onClick={handleAddLink}
-                  dragIndex={isDragDisabled ? undefined : 4}
+                  dragIndex={4}
                   payload={{
                     type: NavigationMenuItemType.LINK,
                     linkId: 'new',
                     name: t`Link label`,
                     link: 'https://www.example.com',
                   }}
-                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
             </SidePanelGroup>
