@@ -72,7 +72,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty build`, then `npm publish` from `.twenty/output`.
+Per altri sistemi CI (GitLab CI, CircleCI, ecc.), si applicano gli stessi tre comandi: `yarn install`, `npx twenty build`, quindi `npm publish` da `.twenty/output`.
 
 <Tip>
 **npm provenance** è opzionale ma consigliata. La pubblicazione con `--provenance` aggiunge un badge di attendibilità alla tua scheda npm, consentendo agli utenti di verificare che il pacchetto sia stato creato a partire da uno specifico commit in una pipeline CI pubblica. Consulta la [documentazione su npm provenance](https://docs.npmjs.com/generating-provenance-statements) per le istruzioni di configurazione.
@@ -97,7 +97,7 @@ Qualsiasi spazio di lavoro su quel server può quindi installare e aggiornare l'
 Per rilasciare un aggiornamento:
 
 1. Incrementa il campo `version` nel tuo `package.json`
-2. Push a new tarball with `npx twenty publish --server <server-url>`
+2. Esegui il push di un nuovo tarball con `npx twenty publish --server <server-url>`
 3. Gli spazi di lavoro su quel server vedranno l'aggiornamento disponibile nelle proprie impostazioni
 
 <Note>
@@ -110,7 +110,7 @@ Twenty organizza le app in tre categorie in base a come vengono distribuite:
 
 | Categoria      | Come funziona                                                                                                                             | Visibile nel marketplace? |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| **Sviluppo**   | Local dev mode apps running via `yarn twenty dev`. Usate per la compilazione e i test.                                                    | No                        |
+| **Sviluppo**   | App in modalità di sviluppo locale eseguite tramite `yarn twenty dev`. Usate per la compilazione e i test.                                | No                        |
 | **Pubblicata** | App pubblicate su npm con il prefisso `twenty-app-`. Elencate nel marketplace per l'installazione da parte di qualsiasi spazio di lavoro. | Sì                        |
 | **Interna**    | App distribuite tramite tarball su un server specifico. Disponibili solo per gli spazi di lavoro su quel server.                          | No                        |
 

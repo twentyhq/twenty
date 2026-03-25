@@ -23,6 +23,10 @@ import { twentyORMGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { workflowQueryValidationGraphqlApiExceptionHandler } from 'src/modules/workflow/common/utils/workflow-query-validation-graphql-api-exception-handler.util';
 
+export interface QueryFailedErrorWithCode extends QueryFailedError {
+  code: string;
+}
+
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error | QueryFailedError,
 ) => {

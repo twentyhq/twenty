@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -154,21 +154,18 @@ export class WorkspaceMigrationRunnerService {
   run = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-    queryRunner: externalQueryRunner,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-    queryRunner?: QueryRunner;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
+    hasSchemaMetadataChanged: boolean;
   }> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
-    const queryRunner =
-      externalQueryRunner ?? this.coreDataSource.createQueryRunner();
-    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
@@ -219,14 +216,12 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.time('Runner', 'Transaction execution');
 
-    if (!isTransactionAlreadyActive) {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-    }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const allMetadataEvents: MetadataEvent[] = [];
 
     try {
-      const allMetadataEvents: MetadataEvent[] = [];
-
       for (const action of actions) {
         const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
@@ -250,29 +245,16 @@ export class WorkspaceMigrationRunnerService {
         allMetadataEvents.push(...metadataEvents);
       }
 
-      if (!isTransactionAlreadyActive) {
-        await queryRunner.commitTransaction();
-      }
+      await queryRunner.commitTransaction();
 
       this.logger.timeEnd('Runner', 'Transaction execution');
-
-      await this.invalidateCache({
-        allFlatEntityMapsKeys,
-        workspaceId,
-      });
-
-      this.logger.timeEnd('Runner', 'Total execution');
-
-      return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
     } catch (error) {
-      if (!isTransactionAlreadyActive && queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction().catch((rollbackError) =>
-          // oxlint-disable-next-line no-console
-          console.trace(
-            `Failed to rollback transaction: ${rollbackError.message}`,
-          ),
-        );
-      }
+      await queryRunner.rollbackTransaction().catch((rollbackError) =>
+        // oxlint-disable-next-line no-console
+        console.trace(
+          `Failed to rollback transaction: ${rollbackError.message}`,
+        ),
+      );
 
       const invertedActions = [...actions].reverse();
 
@@ -299,9 +281,31 @@ export class WorkspaceMigrationRunnerService {
         code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
       });
     } finally {
-      if (!isTransactionAlreadyActive) {
-        await queryRunner.release();
-      }
+      await queryRunner.release();
     }
+
+    try {
+      await this.invalidateCache({
+        allFlatEntityMapsKeys,
+        workspaceId,
+      });
+    } catch (cacheError) {
+      this.logger.error(
+        `Cache invalidation failed after committed transaction: ${cacheError}`,
+        'Runner',
+      );
+    }
+
+    const hasSchemaMetadataChanged =
+      allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
+      allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
+
+    this.logger.timeEnd('Runner', 'Total execution');
+
+    return {
+      allFlatEntityMaps,
+      metadataEvents: allMetadataEvents,
+      hasSchemaMetadataChanged,
+    };
   };
 }

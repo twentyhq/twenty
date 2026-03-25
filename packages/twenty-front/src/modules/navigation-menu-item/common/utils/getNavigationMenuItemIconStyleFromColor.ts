@@ -1,4 +1,3 @@
-import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultIconColor.constant';
 import { getColorFromTheme } from '@/navigation-menu-item/common/utils/getColorFromTheme';
 import { COLOR_SHADE_BACKGROUND } from '@/navigation-menu-item/common/utils/navigationMenuItemIconColorShadeBackground';
 import { COLOR_SHADE_BORDER } from '@/navigation-menu-item/common/utils/navigationMenuItemIconColorShadeBorder';
@@ -9,7 +8,7 @@ import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeC
 export const getNavigationMenuItemIconStyleFromColor = (
   color: string | null | undefined,
 ): NavigationMenuItemIconStyle => {
-  const themeColor = parseThemeColor(color ?? DEFAULT_NAV_ITEM_ICON_COLOR);
+  const themeColor = parseThemeColor(color);
   return {
     backgroundColor: getColorFromTheme(themeColor, COLOR_SHADE_BACKGROUND),
     iconColor: getColorFromTheme(themeColor, COLOR_SHADE_ICON),

@@ -10,6 +10,9 @@ packages:
   'twenty-sdk':
     access: $all
     publish: $all
+  'twenty-client-sdk':
+    access: $all
+    publish: $all
   'create-twenty-app':
     access: $all
     publish: $all

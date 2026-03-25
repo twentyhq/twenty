@@ -3,12 +3,13 @@ description: >
   Starts a full Twenty instance (server, worker, database, redis) using Docker
   Compose. The server is available at http://localhost:3000 for subsequent steps
   in the caller's job.
-  Pulls the specified semver image tag from Docker Hub.
+  Accepts "latest" (pulls the latest Docker Hub image, checks out main) or a
+  semver tag (e.g., v0.40.0).
   Designed to be consumed from external repositories (e.g., twenty-app).
 
 inputs:
   twenty-version:
-    description: 'Twenty Docker Hub image tag as semver (e.g., v0.40.0, v1.0.0).'
+    description: 'Twenty Docker Hub image tag — either "latest" or a semver tag (e.g., v0.40.0).'
     required: true
   twenty-repository:
     description: 'Twenty repository to checkout docker compose files from.'
@@ -30,12 +31,19 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Validate version
+    - name: Resolve version
+      id: resolve
       shell: bash
       run: |
         VERSION="${{ inputs.twenty-version }}"
-        if ! echo "$VERSION" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
-          echo "::error::twenty-version must be a semver tag (e.g., v0.40.0). Got: '$VERSION'"
+        if [ "$VERSION" = "latest" ]; then
+          echo "docker-tag=latest" >> "$GITHUB_OUTPUT"
+          echo "git-ref=main" >> "$GITHUB_OUTPUT"
+        elif echo "$VERSION" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+          echo "docker-tag=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "git-ref=$VERSION" >> "$GITHUB_OUTPUT"
+        else
+          echo "::error::twenty-version must be \"latest\" or a semver tag (e.g., v0.40.0). Got: '$VERSION'"
           exit 1
         fi
 
@@ -43,7 +51,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: ${{ inputs.twenty-repository }}
-        ref: ${{ inputs.twenty-version }}
+        ref: ${{ steps.resolve.outputs.git-ref }}
         token: ${{ inputs.github-token }}
         sparse-checkout: |
           packages/twenty-docker
@@ -56,7 +64,7 @@ runs:
       run: |
         cp .env.example .env
         echo "" >> .env
-        echo "TAG=${{ inputs.twenty-version }}" >> .env
+        echo "TAG=${{ steps.resolve.outputs.docker-tag }}" >> .env
         echo "APP_SECRET=replace_me_with_a_random_string" >> .env
         echo "SERVER_URL=http://localhost:3000" >> .env
 

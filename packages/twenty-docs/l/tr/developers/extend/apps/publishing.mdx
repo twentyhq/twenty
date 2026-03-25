@@ -72,7 +72,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty build`, then `npm publish` from `.twenty/output`.
+Diğer CI sistemleri (GitLab CI, CircleCI, vb.) için de aynı üç komut geçerlidir: `yarn install`, `npx twenty build` ve ardından `.twenty/output` dizininden `npm publish`.
 
 <Tip>
 **npm provenance** isteğe bağlıdır ancak önerilir. `--provenance` ile yayımlamak, npm listenize bir güven rozeti ekler ve kullanıcıların paketin herkese açık bir CI ardışık düzenindeki belirli bir commit’ten oluşturulduğunu doğrulamasını sağlar. Kurulum talimatları için [npm provenance belgelerine](https://docs.npmjs.com/generating-provenance-statements) bakın.
@@ -97,7 +97,7 @@ Daha sonra, bu sunucudaki herhangi bir çalışma alanı uygulamayı **Applicati
 Bir güncelleme yayımlamak için:
 
 1. `package.json` içindeki `version` alanını artırın
-2. Push a new tarball with `npx twenty publish --server <server-url>`
+2. `npx twenty publish --server <server-url>` ile yeni bir tarball gönderin
 3. O sunucudaki çalışma alanları, ayarlarında kullanılabilir güncellemeyi görecektir.
 
 <Note>
@@ -110,7 +110,7 @@ Twenty, uygulamaları nasıl dağıtıldıklarına göre üç kategoriye ayırı
 
 | Kategori        | Nasıl Çalışır                                                                                                                       | Pazaryerinde görünür mü? |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| **Geliştirme**  | Local dev mode apps running via `yarn twenty dev`. Derleme ve test için kullanılır.                                                 | Hayır                    |
+| **Geliştirme**  | `yarn twenty dev` ile çalışan yerel geliştirme modu uygulamaları. Derleme ve test için kullanılır.                                  | Hayır                    |
 | **Yayımlanmış** | `twenty-app-` önekiyle npm’ye yayımlanan uygulamalar. Herhangi bir çalışma alanının yükleyebilmesi için pazaryerinde listelenir.    | Evet                     |
 | **Dahili**      | Bir tarball aracılığıyla belirli bir sunucuya dağıtılan uygulamalar. Yalnızca o sunucudaki çalışma alanlarının kullanımına açıktır. | Hayır                    |
 
