@@ -345,16 +345,6 @@ msgstr ""
 msgid "Address of the company"
 msgstr ""
 
-#. js-lingui-id: U3pytU
-#: src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/create-standard-flat-role-metadata.util.ts
-#~ msgid "Admin"
-#~ msgstr ""
-
-#. js-lingui-id: BACkP0
-#: src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/create-standard-flat-role-metadata.util.ts
-#~ msgid "Admin role"
-#~ msgstr ""
-
 #. js-lingui-id: VmatbA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Admin role not found."
@@ -407,11 +397,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr ""
-
-#. js-lingui-id: xNPomW
-#: src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/create-standard-flat-agent-metadata.util.ts
-#~ msgid "AI agent specialized in helping users learn how to use Twenty CRM"
-#~ msgstr ""
 
 #. js-lingui-id: WG8+0x
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -1307,11 +1292,6 @@ msgstr ""
 msgid "Close date"
 msgstr ""
 
-#. js-lingui-id: T9qjpu
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Code Interpreter"
-#~ msgstr ""
-
 #. js-lingui-id: o21Tgt
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Code step execution failed."
@@ -1622,16 +1602,6 @@ msgstr ""
 msgid "Created field metadata, parent object metadata not found"
 msgstr "Utworzono metadane pola, brak metadanych obiektu nadrzędnego"
 
-#. js-lingui-id: OLn4yE
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Creating and managing automation workflows with triggers and steps"
-#~ msgstr ""
-
-#. js-lingui-id: sOwVP+
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Creating and managing dashboards with widgets and layouts"
-#~ msgstr ""
-
 #. js-lingui-id: wPvFAD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1745,11 +1715,6 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#. js-lingui-id: DcbYuG
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Dashboard Building"
-#~ msgstr ""
-
 #. js-lingui-id: jlbLNx
 #: src/modules/dashboard/exceptions/dashboard.exception.ts
 msgid "Dashboard not found."
@@ -1774,11 +1739,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Dashboards"
 msgstr ""
-
-#. js-lingui-id: PaSlp+
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Data Manipulation"
-#~ msgstr ""
 
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -2217,16 +2177,6 @@ msgstr ""
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
 msgid "Exactly one of \"groups\" or \"fields\" must be provided"
 msgstr ""
-
-#. js-lingui-id: izooZO
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Excel & Spreadsheets"
-#~ msgstr ""
-
-#. js-lingui-id: NjNo9I
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Excel/spreadsheet creation, editing, and analysis with formulas, formatting, and visualization"
-#~ msgstr ""
 
 #. js-lingui-id: QQlMid
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -2792,11 +2742,6 @@ msgstr ""
 msgid "Files field is not supported for unique fields"
 msgstr ""
 
-#. js-lingui-id: PWrjgJ
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Finding information and gathering facts from the web"
-#~ msgstr ""
-
 #. js-lingui-id: ylQd2j
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Flow"
@@ -3003,11 +2948,6 @@ msgstr "Wymagane są aliasy identyfikatorów."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgid "Header message Id"
 msgstr ""
-
-#. js-lingui-id: OzRchT
-#: src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/create-standard-flat-agent-metadata.util.ts
-#~ msgid "Helper"
-#~ msgstr ""
 
 #. js-lingui-id: i0qMbr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -4330,11 +4270,6 @@ msgstr ""
 msgid "Logic function with same universal identifier already exists"
 msgstr ""
 
-#. js-lingui-id: kVEdtH
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Managing the data model: creating objects, fields, and relations"
-#~ msgstr ""
-
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
@@ -4652,11 +4587,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Metadata"
 msgstr ""
-
-#. js-lingui-id: U+19LT
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Metadata Building"
-#~ msgstr ""
 
 #. js-lingui-id: PslTPV
 #: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
@@ -5550,16 +5480,6 @@ msgstr ""
 msgid "Password too weak"
 msgstr "Hasło jest zbyt słabe"
 
-#. js-lingui-id: HR8Rp5
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "PDF form filling, field extraction, table parsing, and validation"
-#~ msgstr ""
-
-#. js-lingui-id: JoFAks
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "PDF Processing"
-#~ msgstr ""
-
 #. js-lingui-id: l6qKfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 msgid "Pending action for folder sync"
@@ -5754,16 +5674,6 @@ msgstr ""
 msgid "Position must be a finite number"
 msgstr ""
 
-#. js-lingui-id: voxJAv
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "PowerPoint"
-#~ msgstr ""
-
-#. js-lingui-id: syqY5K
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "PowerPoint creation, editing, templates, thumbnails, and slide manipulation"
-#~ msgstr ""
-
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Preferred color scheme"
@@ -5854,11 +5764,6 @@ msgstr "Nie znaleziono domeny publicznej."
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
 msgstr "Publiczny URL domeny nie jest zdefiniowany. Ustaw zmienną środowiskową PUBLIC_DOMAIN_URL"
-
-#. js-lingui-id: CPWemd
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Python code execution for data analysis, complex multi-step operations, and efficient bulk processing via MCP bridge"
-#~ msgstr ""
 
 #. js-lingui-id: vVCf2E
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -5970,11 +5875,6 @@ msgstr "Zdalne obiekty nie są jeszcze obsługiwane"
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
 msgstr "Żądanie wygasło, spróbuj ponownie."
-
-#. js-lingui-id: bdztP2
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Research"
-#~ msgstr ""
 
 #. js-lingui-id: KPIUoa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
@@ -6268,16 +6168,6 @@ msgstr ""
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Wektor wyszukiwania"
-
-#. js-lingui-id: psEfm3
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Searching, filtering, creating, and updating records across all objects"
-#~ msgstr ""
-
-#. js-lingui-id: zXnLU0
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Seeding demo metadata and data for workspace setup and testing purposes"
-#~ msgstr ""
 
 #. js-lingui-id: AM0pWl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
@@ -8191,16 +8081,6 @@ msgstr ""
 msgid "Widget type VIEW is not supported yet."
 msgstr ""
 
-#. js-lingui-id: s15rWF
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Word document creation, editing, template processing, and OOXML manipulation"
-#~ msgstr ""
-
-#. js-lingui-id: /GQDOS
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Word Documents"
-#~ msgstr ""
-
 #. js-lingui-id: bLt/0J
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -8226,11 +8106,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgid "Workflow automated triggers linked to the workflow."
 msgstr ""
-
-#. js-lingui-id: Vz5Itj
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Workflow Building"
-#~ msgstr ""
 
 #. js-lingui-id: KSK8fH
 #: src/modules/workflow/common/exceptions/workflow-version-edge.exception.ts
@@ -8433,11 +8308,6 @@ msgstr ""
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
 msgstr "Tworzenie przestrzeni roboczej jest ograniczone do administratorów"
-
-#. js-lingui-id: ymx93p
-#: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
-#~ msgid "Workspace Demo Seeding"
-#~ msgstr ""
 
 #. js-lingui-id: qSQPRS
 #: src/engine/core-modules/auth/services/auth.service.ts
