@@ -89,11 +89,13 @@ jobs:
 
       - name: Publish packages to local registry
         run: |
-          npm set //localhost:4873/:_authToken "ci-auth-token"
+          yarn config set npmRegistryServer http://localhost:4873
+          yarn config set unsafeHttpWhitelist --json '["localhost"]'
+          yarn config set npmAuthToken ci-auth-token
 
           for pkg in twenty-sdk twenty-client-sdk create-twenty-app; do
             cd packages/$pkg
-            yarn npm publish --registry http://localhost:4873 --tag ci
+            yarn npm publish --tag ci
             cd ../..
           done
 
