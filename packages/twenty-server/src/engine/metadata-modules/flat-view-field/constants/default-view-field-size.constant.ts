@@ -1,1 +1,0 @@
-export const DEFAULT_VIEW_FIELD_SIZE = 180;

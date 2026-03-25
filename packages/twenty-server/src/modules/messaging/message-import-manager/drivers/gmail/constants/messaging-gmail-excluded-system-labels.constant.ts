@@ -1,6 +1,0 @@
-export const MESSAGING_GMAIL_EXCLUDED_SYSTEM_LABELS = [
-  'TRASH',
-  'SPAM',
-  'DRAFT',
-  'CHAT',
-];

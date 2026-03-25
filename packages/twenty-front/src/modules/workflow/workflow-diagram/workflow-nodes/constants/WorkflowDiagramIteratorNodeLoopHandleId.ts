@@ -1,1 +1,0 @@
-export const WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID = 'loop';

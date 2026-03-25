@@ -1,1 +1,0 @@
-export const GRAPH_MAXIMUM_NUMBER_OF_GROUP_COLORS = 5;

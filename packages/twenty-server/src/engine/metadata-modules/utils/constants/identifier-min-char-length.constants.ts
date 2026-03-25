@@ -1,1 +1,0 @@
-export const IDENTIFIER_MIN_CHAR_LENGTH = 1;

@@ -1,1 +1,0 @@
-export const WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID = 'default';

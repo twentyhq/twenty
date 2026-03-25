@@ -1,1 +1,0 @@
-export const RESIZE_DRAG_THRESHOLD_PX = 5;
