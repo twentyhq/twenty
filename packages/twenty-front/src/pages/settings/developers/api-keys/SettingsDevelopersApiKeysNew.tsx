@@ -86,7 +86,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     const { data: newApiKeyData } = await createApiKey({
       variables: {
         input: {
-          name: formValues.name,
+          name: formValues.name.trim(),
           expiresAt,
           roleId: roleIdToUse,
         },
@@ -117,7 +117,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     }
   };
 
-  const canSave = !!formValues.name && !!formValues.roleId && createApiKey;
+  const canSave = !!formValues.name && !!formValues.roleId && !!createApiKey;
 
   if (rolesLoading) {
     return <SettingsSkeletonLoader />;
