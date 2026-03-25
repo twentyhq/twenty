@@ -30,24 +30,31 @@ type ObjectNode = {
   isCustom: boolean;
 };
 
-const updateWorkspaceMemberLocale = (locale: string) =>
-  client
+const updateWorkspaceMemberLocale = async (locale: string) => {
+  const response = await client
     .post('/graphql')
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({
       query: `
-        mutation UpdateWorkspaceMemberLocale($id: ID!, $locale: String!) {
-          updateWorkspaceMember(id: $id, data: { locale: $locale }) {
+        mutation UpdateWorkspaceMember(
+          $workspaceMemberId: UUID!
+          $data: WorkspaceMemberUpdateInput!
+        ) {
+          updateWorkspaceMember(id: $workspaceMemberId, data: $data) {
             id
             locale
           }
         }
       `,
       variables: {
-        id: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-        locale,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        data: { locale },
       },
     });
+
+  expect(response.body.errors).toBeUndefined();
+  expect(response.body.data.updateWorkspaceMember.locale).toBe(locale);
+};
 
 const queryMetadataObjects = () =>
   client
