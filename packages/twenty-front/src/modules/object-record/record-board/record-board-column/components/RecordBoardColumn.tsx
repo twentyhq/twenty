@@ -65,12 +65,14 @@ export const RecordBoardColumn = ({
     >
       <Droppable droppableId={recordBoardColumnId}>
         {(droppableProvided) => (
-          <StyledColumn>
+          <StyledColumn
+            ref={droppableProvided.innerRef}
+            {...droppableProvided.droppableProps}
+          >
             <DragAndDropLibraryLegacyReRenderBreaker
               memoizationId={recordBoardColumnId}
             >
               <RecordBoardColumnCardsContainer
-                droppableProvided={droppableProvided}
                 recordBoardColumnId={recordBoardColumnId}
               />
             </DragAndDropLibraryLegacyReRenderBreaker>
