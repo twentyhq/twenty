@@ -291,8 +291,8 @@ export const useGraphQLErrorHandlerHook = <
         }
 
         if (
-          !frontEndAppVersion ||
-          !backendAppVersion ||
+          !isDefined(frontEndAppVersion) ||
+          !isDefined(backendAppVersion) ||
           !semver.valid(frontEndAppVersion) ||
           !semver.valid(backendAppVersion)
         ) {

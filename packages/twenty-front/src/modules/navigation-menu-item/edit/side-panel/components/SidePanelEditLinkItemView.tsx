@@ -5,14 +5,14 @@ import { ensureAbsoluteUrl } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { extractDomainFromUrl } from '@/navigation-menu-item/display/link/utils/extractDomainFromUrl';
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import {
   type OrganizeActionsProps,
   SidePanelEditOrganizeActions,
 } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions';
 import { SidePanelEditOwnerSection } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection';
 import { getOrganizeActionsSelectableItemIds } from '@/navigation-menu-item/edit/side-panel/utils/getOrganizeActionsSelectableItemIds';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 type SidePanelEditLinkItemViewProps = OrganizeActionsProps & {
@@ -93,7 +93,6 @@ export const SidePanelEditLinkItemView = ({
         onAddAfter={onAddAfter}
         showMoveToFolder
         onMoveToFolder={onOpenFolderPicker}
-        moveToFolderHasSubMenu
       />
       <SidePanelEditOwnerSection applicationId={selectedItem.applicationId} />
     </SidePanelList>

@@ -563,7 +563,7 @@ Puncte cheie:
 
 * Componentele Front sunt componente React care sunt randate în contexte izolate în cadrul Twenty.
 * Câmpul `component` face referire la componenta React.
-* Componentele sunt construite și sincronizate automat în timpul `yarn twenty app:dev`.
+* Componentele sunt construite și sincronizate automat în timpul `yarn twenty dev`.
 
 Puteți crea componente Front noi în două moduri:
 
@@ -607,7 +607,7 @@ Puteți crea abilități noi în două moduri:
 
 ### Clienți tipizați generați
 
-Doi clienți tipizați sunt generați automat de `yarn twenty app:dev` și stocați în `node_modules/twenty-sdk/generated`, pe baza schemei spațiului tău de lucru:
+Doi clienți tipizați sunt generați automat de `yarn twenty dev` și stocați în `node_modules/twenty-sdk/generated`, pe baza schemei spațiului tău de lucru:
 
 * **`CoreApiClient`** — interoghează endpointul `/graphql` pentru datele spațiului de lucru
 * **`MetadataApiClient`** — interoghează endpointul `/metadata` pentru configurarea spațiului de lucru și încărcarea fișierelor
@@ -622,7 +622,7 @@ const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
 ```
 
-Ambii clienți sunt regenerați automat de `yarn twenty app:dev` ori de câte ori obiectele sau câmpurile tale se schimbă.
+Ambii clienți sunt regenerați automat de `yarn twenty dev` ori de câte ori obiectele sau câmpurile tale se schimbă.
 
 #### Acreditări la runtime în funcțiile de logică
 

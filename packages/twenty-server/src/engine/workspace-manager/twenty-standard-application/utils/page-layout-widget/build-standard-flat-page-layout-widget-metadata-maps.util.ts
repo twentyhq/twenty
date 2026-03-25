@@ -60,6 +60,7 @@ const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
   [WidgetType.WORKFLOW]: WidgetConfigurationType.WORKFLOW,
   [WidgetType.WORKFLOW_VERSION]: WidgetConfigurationType.WORKFLOW_VERSION,
   [WidgetType.WORKFLOW_RUN]: WidgetConfigurationType.WORKFLOW_RUN,
+  [WidgetType.RECORD_TABLE]: WidgetConfigurationType.RECORD_TABLE,
 };
 
 const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<

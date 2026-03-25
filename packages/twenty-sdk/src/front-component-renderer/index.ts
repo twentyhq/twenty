@@ -126,6 +126,9 @@ export type {
 export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
 export type { FrontComponentExecutionContext } from '../sdk/front-component-api';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
-export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
+export type {
+  HostToWorkerRenderContext,
+  SdkClientUrls,
+} from './types/HostToWorkerRenderContext';
 export type { PropertySchema } from './types/PropertySchema';
 export type { WorkerExports } from './types/WorkerExports';

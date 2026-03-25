@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import type { Command } from 'commander';
 import { AppBuildCommand } from './build';
 import { AppDevCommand } from './dev';
+import { AppInstallCommand } from './install';
 import { AppPublishCommand } from './publish';
 import { AppTypecheckCommand } from './typecheck';
 import { AppUninstallCommand } from './uninstall';
@@ -17,6 +18,7 @@ import { SyncableEntity } from 'twenty-shared/application';
 export const registerCommands = (program: Command): void => {
   const buildCommand = new AppBuildCommand();
   const devCommand = new AppDevCommand();
+  const installCommand = new AppInstallCommand();
   const publishCommand = new AppPublishCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
@@ -46,8 +48,19 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
+    .command('install [appPath]')
+    .description('Install a deployed application on the connected server')
+    .option('-r, --remote <name>', 'Install on a specific remote')
+    .action(async (appPath, options) => {
+      await installCommand.execute({
+        appPath: formatPath(appPath),
+        remote: options.remote,
+      });
+    });
+
+  program
     .command('deploy [appPath]')
-    .description('Build and deploy to a Twenty server')
+    .description('Build and upload application to a Twenty server')
     .option('-r, --remote <name>', 'Deploy to a specific remote')
     .action(async (appPath, options) => {
       await deployCommand.execute({

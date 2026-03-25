@@ -2,6 +2,7 @@ import { FrontComponentErrorEffect } from '@/front-component-renderer/remote/com
 import { FrontComponentHostCommunicationApiEffect } from '@/front-component-renderer/remote/components/FrontComponentHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/front-component-renderer/remote/components/FrontComponentUpdateContextEffect';
 import { type FrontComponentHostCommunicationApi } from '@/front-component-renderer/types/FrontComponentHostCommunicationApi';
+import { type SdkClientUrls } from '@/front-component-renderer/types/HostToWorkerRenderContext';
 import { type WorkerExports } from '@/front-component-renderer/types/WorkerExports';
 import { type FrontComponentExecutionContext } from '@/sdk/front-component-api';
 import { type ThreadWebWorker } from '@quilted/threads';
@@ -20,6 +21,7 @@ type FrontComponentContentProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
+  sdkClientUrls?: SdkClientUrls;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
@@ -30,6 +32,7 @@ export const FrontComponentRenderer = ({
   componentUrl,
   applicationAccessToken,
   apiUrl,
+  sdkClientUrls,
   executionContext,
   frontComponentHostCommunicationApi,
   onError,
@@ -50,6 +53,7 @@ export const FrontComponentRenderer = ({
         componentUrl={componentUrl}
         applicationAccessToken={applicationAccessToken}
         apiUrl={apiUrl}
+        sdkClientUrls={sdkClientUrls}
         frontComponentId={executionContext.frontComponentId}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
@@ -65,6 +69,7 @@ export const FrontComponentRenderer = ({
     setThread,
     applicationAccessToken,
     apiUrl,
+    sdkClientUrls,
     executionContext.frontComponentId,
   ]);
 

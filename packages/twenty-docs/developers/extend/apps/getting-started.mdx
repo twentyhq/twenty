@@ -31,7 +31,7 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn twenty app:dev
+yarn twenty dev
 ```
 
 The scaffolder supports two modes for controlling which example files are included:
@@ -63,7 +63,7 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
 yarn twenty help
@@ -165,7 +165,7 @@ export default defineObject({
 
 Later commands will add more files and folders:
 
-- `yarn twenty app:dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+- `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 - `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Authentication
@@ -219,7 +219,7 @@ Then add a `twenty` script:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty app:dev`, `yarn twenty help`, etc.
+Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
 
 ## How to use a local Twenty instance
 
@@ -237,7 +237,7 @@ yarn twenty remote add --local --port 3000
 
 - Authentication errors: run `yarn twenty auth:login` and ensure your API key has the required permissions.
 - Cannot connect to server: verify the API URL and that the Twenty server is reachable.
-- Types or client missing/outdated: restart `yarn twenty app:dev` — it auto-generates the typed client.
-- Dev mode not syncing: ensure `yarn twenty app:dev` is running and that changes are not ignored by your environment.
+- Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
+- Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
 
 Discord Help Channel: https://discord.com/channels/1130383047699738754/1130386664812982322

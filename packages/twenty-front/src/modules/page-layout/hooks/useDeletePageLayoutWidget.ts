@@ -4,12 +4,14 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { removeWidgetLayoutFromTab } from '@/page-layout/utils/removeWidgetLayoutFromTab';
+import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -34,6 +36,9 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
+  const { deleteViewForRecordTableWidget } =
+    useDeleteViewForRecordTableWidget();
+
   const store = useStore();
 
   const deletePageLayoutWidget = useCallback(
@@ -44,8 +49,24 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
 
       const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
-        tab.widgets.some((w) => w.id === widgetId),
+        tab.widgets.some((widget) => widget.id === widgetId),
       );
+
+      const widgetToDelete = tabWithWidget?.widgets.find(
+        (widget) => widget.id === widgetId,
+      );
+
+      if (
+        isDefined(widgetToDelete) &&
+        widgetToDelete.type === WidgetType.RECORD_TABLE &&
+        'viewId' in widgetToDelete.configuration &&
+        isDefined(widgetToDelete.configuration.viewId)
+      ) {
+        deleteViewForRecordTableWidget(
+          widgetToDelete.configuration.viewId as string,
+        );
+      }
+
       const tabId = tabWithWidget?.id;
 
       if (isDefined(tabId)) {
@@ -72,6 +93,7 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
     },
     [
       closeSidePanelMenu,
+      deleteViewForRecordTableWidget,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutEditingWidgetIdState,

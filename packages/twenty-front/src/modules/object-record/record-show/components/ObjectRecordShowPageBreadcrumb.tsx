@@ -1,7 +1,5 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -85,9 +83,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
     objectRecordId,
   );
 
-  const iconColor = isNonEmptyString(objectMetadataItem?.color)
-    ? objectMetadataItem.color
-    : getStandardObjectIconColor(objectNameSingular);
+  const iconColor = getObjectColorWithFallback(objectMetadataItem);
 
   if (loading) {
     return null;
@@ -101,10 +97,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
         }}
       >
         {isDefined(HeaderIcon) && (
-          <NavigationMenuItemStyleIcon
-            Icon={HeaderIcon}
-            color={iconColor ?? undefined}
-          />
+          <NavigationMenuItemStyleIcon Icon={HeaderIcon} color={iconColor} />
         )}
         {objectLabel}
         <span>{' / '}</span>

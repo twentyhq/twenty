@@ -1,0 +1,144 @@
+name: Visual Regression Dispatch
+
+# Uses workflow_run to dispatch visual regression to ci-privileged.
+# This runs in the context of the base repo (not the fork), so it has
+# access to secrets — making it work for external contributor PRs.
+
+on:
+  workflow_run:
+    workflows: ['CI Front', 'CI UI']
+    types: [completed]
+
+permissions:
+  actions: read
+  pull-requests: read
+
+jobs:
+  dispatch:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Determine project and artifact name
+        id: project
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const workflowName = context.payload.workflow_run.name;
+            if (workflowName === 'CI Front') {
+              core.setOutput('project', 'twenty-front');
+              core.setOutput('artifact_name', 'storybook-static');
+              core.setOutput('tarball_name', 'storybook-twenty-front-tarball');
+              core.setOutput('tarball_file', 'storybook-twenty-front.tar.gz');
+            } else if (workflowName === 'CI UI') {
+              core.setOutput('project', 'twenty-ui');
+              core.setOutput('artifact_name', 'storybook-twenty-ui');
+              core.setOutput('tarball_name', 'storybook-twenty-ui-tarball');
+              core.setOutput('tarball_file', 'storybook-twenty-ui.tar.gz');
+            } else {
+              core.setFailed(`Unexpected workflow: ${workflowName}`);
+            }
+
+      - name: Check if storybook artifact exists
+        id: check-artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifactName = '${{ steps.project.outputs.artifact_name }}';
+            const runId = context.payload.workflow_run.id;
+
+            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: runId,
+            });
+
+            const found = artifacts.artifacts.some(a => a.name === artifactName);
+            core.setOutput('exists', found ? 'true' : 'false');
+
+            if (!found) {
+              core.info(`Artifact "${artifactName}" not found in run ${runId} — storybook build was likely skipped`);
+            }
+
+      - name: Get PR number
+        if: steps.check-artifact.outputs.exists == 'true'
+        id: pr-info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const headBranch = context.payload.workflow_run.head_branch;
+            const headRepo = context.payload.workflow_run.head_repository;
+
+            // workflow_run.pull_requests is empty for fork PRs,
+            // so fall back to searching by head label (owner:branch)
+            let pullRequests = context.payload.workflow_run.pull_requests;
+            let prNumber;
+
+            if (pullRequests && pullRequests.length > 0) {
+              prNumber = pullRequests[0].number;
+            } else {
+              const headLabel = `${headRepo.owner.login}:${headBranch}`;
+              core.info(`pull_requests is empty (likely a fork PR), searching by head label: ${headLabel}`);
+
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                head: headLabel,
+                per_page: 1,
+              });
+
+              if (prs.length > 0) {
+                prNumber = prs[0].number;
+              }
+            }
+
+            if (!prNumber) {
+              core.info('No pull request found for this workflow run — skipping');
+              core.setOutput('has_pr', 'false');
+              return;
+            }
+
+            core.setOutput('pr_number', prNumber);
+            core.setOutput('has_pr', 'true');
+            core.info(`PR #${prNumber}`);
+
+      - name: Download storybook artifact from triggering run
+        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.project.outputs.artifact_name }}
+          path: storybook-static
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Package storybook
+        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
+        run: tar -czf /tmp/${{ steps.project.outputs.tarball_file }} -C storybook-static .
+
+      - name: Upload storybook tarball
+        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.project.outputs.tarball_name }}
+          path: /tmp/${{ steps.project.outputs.tarball_file }}
+          retention-days: 1
+
+      - name: Dispatch to ci-privileged
+        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          repository: twentyhq/ci-privileged
+          event-type: visual-regression
+          client-payload: >-
+            {
+              "pr_number": "${{ steps.pr-info.outputs.pr_number }}",
+              "run_id": "${{ github.run_id }}",
+              "repo": "${{ github.repository }}",
+              "project": "${{ steps.project.outputs.project }}",
+              "branch": "${{ github.event.workflow_run.head_branch }}",
+              "commit": "${{ github.event.workflow_run.head_sha }}"
+            }
