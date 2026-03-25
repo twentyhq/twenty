@@ -57,36 +57,30 @@ describe('object metadata i18n', () => {
     expect(company!.description).toBe('A company');
   });
 
-  it('should accept x-locale: fr-FR without errors', async () => {
+  it('should return French labels with x-locale: fr-FR', async () => {
     const response = await makeLocalizedRequest('fr-FR');
 
     expect(response.body.data).toBeDefined();
     expect(response.body.errors).toBeUndefined();
 
     const edges = response.body.data.objects.edges;
-
-    expect(edges.length).toBeGreaterThan(0);
-
     const company = findObjectByName(edges, 'company');
+    const person = findObjectByName(edges, 'person');
+    const opportunity = findObjectByName(edges, 'opportunity');
 
     expect(company).toBeDefined();
-    expect(company!.labelSingular).toBeDefined();
-    expect(company!.labelPlural).toBeDefined();
-  });
+    expect(company!.labelSingular).toBe('Entreprise');
+    expect(company!.labelPlural).toBe('Entreprises');
+    expect(company!.description).toBe('Une entreprise');
 
-  // French translations for standard object labels are managed by Crowdin.
-  // Once translators provide them, update these expectations:
-  //   expect(company!.labelSingular).toBe('Entreprise');
-  //   expect(company!.labelPlural).toBe('Entreprises');
-  // Until then, verify the fallback returns the English label (not a hash).
-  it('should return French labels when Crowdin translations exist', async () => {
-    const response = await makeLocalizedRequest('fr-FR');
+    expect(person).toBeDefined();
+    expect(person!.labelSingular).toBe('Personne');
+    expect(person!.labelPlural).toBe('Personnes');
+    expect(person!.description).toBe('Une personne');
 
-    const edges = response.body.data.objects.edges;
-    const company = findObjectByName(edges, 'company');
-
-    expect(company).toBeDefined();
-    expect(company!.labelSingular).toBe('Company');
-    expect(company!.labelPlural).toBe('Companies');
+    expect(opportunity).toBeDefined();
+    expect(opportunity!.labelSingular).toBe('Opportunité');
+    expect(opportunity!.labelPlural).toBe('Opportunités');
+    expect(opportunity!.description).toBe('Une opportunité');
   });
 });

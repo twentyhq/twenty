@@ -11,7 +11,6 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
-// Row shape must match UsageEventWriterService.writeToClickHouse
 const buildUsageEventRow = (
   workspaceId: string,
   overrides: Partial<{
