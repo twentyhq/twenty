@@ -6,14 +6,14 @@ import { useDebounce } from 'use-debounce';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SidePanelNewSidebarItemRecordItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordItem';
 import { useQuery } from '@apollo/client/react';
 import { SearchDocument } from '~/generated/graphql';
@@ -31,26 +31,27 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
   const [recordSearchInput, setRecordSearchInput] = useState('');
   const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);
   const coreClient = useApolloCoreClient();
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const [selectedObjectNameSingular, setSelectedObjectNameSingular] = useState<
     string | null
   >(null);
-
-  const searchableObjectNameSingulars = useMemo(
-    () =>
-      filterReadableActiveObjectMetadataItems(
-        activeObjectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-      )
-        .filter((item) => item.isSearchable)
-        .map((item) => item.nameSingular),
-    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
+  const sidePanelShowHiddenObjects = useAtomStateValue(
+    sidePanelShowHiddenObjectsState,
   );
 
-  const includedObjectNameSingulars = isDefined(selectedObjectNameSingular)
-    ? [selectedObjectNameSingular]
-    : searchableObjectNameSingulars;
+  const includedObjectNameSingulars = useMemo(() => {
+    if (isDefined(selectedObjectNameSingular)) {
+      return [selectedObjectNameSingular];
+    }
+
+    return readableObjectMetadataItems
+      .filter((item) => sidePanelShowHiddenObjects || item.isSearchable)
+      .map((item) => item.nameSingular);
+  }, [
+    readableObjectMetadataItems,
+    selectedObjectNameSingular,
+    sidePanelShowHiddenObjects,
+  ]);
 
   const { data: searchData, loading: recordSearchLoading } = useQuery(
     SearchDocument,

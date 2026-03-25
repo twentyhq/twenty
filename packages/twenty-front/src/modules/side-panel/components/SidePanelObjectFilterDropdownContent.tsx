@@ -1,21 +1,27 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
 import { IconCube, useIcons } from 'twenty-ui/display';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
 
-import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
-import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
+const ALL_OBJECTS_ITEM_ID = 'all-objects';
 
 type SidePanelObjectFilterDropdownContentProps = {
   selectedObjectNameSingular: string | null;
@@ -29,25 +35,31 @@ export const SidePanelObjectFilterDropdownContent = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [filterSearch, setFilterSearch] = useState('');
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const [sidePanelShowHiddenObjects, setSidePanelShowHiddenObjects] =
+    useAtomState(sidePanelShowHiddenObjectsState);
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const { closeDropdown } = useCloseDropdown();
 
-  const searchableObjectItems = useMemo(
+  const searchFilter = filterSearch.toLowerCase();
+
+  const displayedObjects = useMemo(
     () =>
-      filterReadableActiveObjectMetadataItems(
-        activeObjectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-      ).filter(
-        (item) =>
-          item.isSearchable &&
-          item.labelPlural.toLowerCase().includes(filterSearch.toLowerCase()),
-      ),
-    [
-      activeObjectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-      filterSearch,
-    ],
+      readableObjectMetadataItems.filter((item) => {
+        if (
+          OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
+            item.nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
+          )
+        ) {
+          return false;
+        }
+
+        if (!sidePanelShowHiddenObjects && !item.isSearchable) {
+          return false;
+        }
+
+        return item.labelPlural.toLowerCase().includes(searchFilter);
+      }),
+    [readableObjectMetadataItems, sidePanelShowHiddenObjects, searchFilter],
   );
 
   const handleSelect = (objectNameSingular: string | null) => {
@@ -55,44 +67,89 @@ export const SidePanelObjectFilterDropdownContent = ({
     closeDropdown(OBJECT_FILTER_DROPDOWN_ID);
   };
 
+  const selectableItemIdArray = useMemo(
+    () => [
+      ALL_OBJECTS_ITEM_ID,
+      ...displayedObjects.map((item) => item.nameSingular),
+    ],
+    [displayedObjects],
+  );
+
+  const selectedItemId = useAtomComponentStateValue(
+    selectedItemIdComponentState,
+    OBJECT_FILTER_DROPDOWN_ID,
+  );
+
   return (
     <DropdownContent>
       <DropdownMenuHeader>{t`Object`}</DropdownMenuHeader>
       <DropdownMenuSearchInput
         value={filterSearch}
         onChange={(event) => setFilterSearch(event.target.value)}
+        autoFocus
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <MenuItemSelectAvatar
-          avatar={<NavigationMenuItemStyleIcon Icon={IconCube} color="gray" />}
-          text={t`All Objects`}
-          selected={selectedObjectNameSingular === null}
-          onClick={() => handleSelect(null)}
-        />
-        {searchableObjectItems.map((objectMetadataItem) => {
-          const ObjectIcon = getIcon(objectMetadataItem.icon);
-          const iconColor = getStandardObjectIconColor(
-            objectMetadataItem.nameSingular,
-          );
-
-          return (
+      <SelectableList
+        selectableListInstanceId={OBJECT_FILTER_DROPDOWN_ID}
+        focusId={OBJECT_FILTER_DROPDOWN_ID}
+        selectableItemIdArray={selectableItemIdArray}
+      >
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <SelectableListItem
+            itemId={ALL_OBJECTS_ITEM_ID}
+            onEnter={() => handleSelect(null)}
+          >
             <MenuItemSelectAvatar
-              key={objectMetadataItem.id}
               avatar={
-                <NavigationMenuItemStyleIcon
-                  Icon={ObjectIcon}
-                  color={iconColor}
-                />
+                <NavigationMenuItemStyleIcon Icon={IconCube} color="gray" />
               }
-              text={objectMetadataItem.labelPlural}
-              selected={
-                selectedObjectNameSingular === objectMetadataItem.nameSingular
-              }
-              onClick={() => handleSelect(objectMetadataItem.nameSingular)}
+              text={t`All objects`}
+              selected={selectedObjectNameSingular === null}
+              onClick={() => handleSelect(null)}
+              focused={selectedItemId === ALL_OBJECTS_ITEM_ID}
             />
-          );
-        })}
+          </SelectableListItem>
+          {displayedObjects.map((objectMetadataItem) => {
+            const ObjectIcon = getIcon(objectMetadataItem.icon);
+            const iconColor = getObjectColorWithFallback(objectMetadataItem);
+
+            return (
+              <SelectableListItem
+                key={objectMetadataItem.id}
+                itemId={objectMetadataItem.nameSingular}
+                onEnter={() => handleSelect(objectMetadataItem.nameSingular)}
+              >
+                <MenuItemSelectAvatar
+                  avatar={
+                    <NavigationMenuItemStyleIcon
+                      Icon={ObjectIcon}
+                      color={iconColor}
+                    />
+                  }
+                  text={objectMetadataItem.labelPlural}
+                  selected={
+                    selectedObjectNameSingular ===
+                    objectMetadataItem.nameSingular
+                  }
+                  onClick={() => handleSelect(objectMetadataItem.nameSingular)}
+                  focused={selectedItemId === objectMetadataItem.nameSingular}
+                />
+              </SelectableListItem>
+            );
+          })}
+        </DropdownMenuItemsContainer>
+      </SelectableList>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
+        <MenuItemToggle
+          LeftIcon={IconCube}
+          onToggleChange={() =>
+            setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
+          }
+          toggled={sidePanelShowHiddenObjects}
+          text={t`Show hidden objects`}
+          toggleSize="small"
+        />
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

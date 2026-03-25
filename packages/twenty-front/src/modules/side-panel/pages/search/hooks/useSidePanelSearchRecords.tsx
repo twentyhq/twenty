@@ -3,12 +3,11 @@ import { CommandLink } from '@/command-menu-item/display/components/CommandLink'
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { t } from '@lingui/core/macro';
@@ -25,32 +24,27 @@ export const useSidePanelSearchRecords = () => {
   const sidePanelSearchObjectFilter = useAtomStateValue(
     sidePanelSearchObjectFilterState,
   );
+  const sidePanelShowHiddenObjects = useAtomStateValue(
+    sidePanelShowHiddenObjectsState,
+  );
   const coreClient = useApolloCoreClient();
 
   const [deferredSidePanelSearch] = useDebounce(sidePanelSearch, 300);
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
 
-  const readableObjectMetadataItems = useMemo(
-    () =>
-      filterReadableActiveObjectMetadataItems(
-        activeObjectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-      ),
-    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
-  );
+  const includedObjectNameSingulars = useMemo(() => {
+    if (isDefined(sidePanelSearchObjectFilter)) {
+      return [sidePanelSearchObjectFilter];
+    }
 
-  const searchableObjectNameSingulars = useMemo(
-    () =>
-      readableObjectMetadataItems
-        .filter((item) => item.isSearchable)
-        .map((item) => item.nameSingular),
-    [readableObjectMetadataItems],
-  );
-
-  const includedObjectNameSingulars = isDefined(sidePanelSearchObjectFilter)
-    ? [sidePanelSearchObjectFilter]
-    : searchableObjectNameSingulars;
+    return readableObjectMetadataItems
+      .filter((item) => sidePanelShowHiddenObjects || item.isSearchable)
+      .map((item) => item.nameSingular);
+  }, [
+    readableObjectMetadataItems,
+    sidePanelSearchObjectFilter,
+    sidePanelShowHiddenObjects,
+  ]);
 
   const { data: searchData, loading } = useQuery(SearchDocument, {
     client: coreClient,
