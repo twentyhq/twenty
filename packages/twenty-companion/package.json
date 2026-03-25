@@ -5,7 +5,7 @@
   "description": "Twenty meeting recorder",
   "main": ".webpack/main",
   "scripts": {
-    "start": "concurrently \"npm run start:server\" \"npm run start:electron\"",
+    "start": "concurrently \"yarn start:server\" \"yarn start:electron\"",
     "start:electron": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
@@ -37,10 +37,8 @@
     "node-loader": "^2.1.0",
     "style-loader": "^3.3.4"
   },
-  "overrides": {
-    "@electron/packager": {
-      "@electron/osx-sign": "github:recallai/osx-sign"
-    }
+  "resolutions": {
+    "@electron/packager/@electron/osx-sign": "github:recallai/osx-sign"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.1",
