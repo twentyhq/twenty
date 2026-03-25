@@ -401,6 +401,20 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         context.user = userContext.user;
         context.userWorkspace = userContext.userWorkspace;
         context.userWorkspaceId = userContext.userWorkspace.id;
+
+        const { flatWorkspaceMemberMaps } =
+          await this.workspaceCacheService.getOrRecompute(workspace.id, [
+            'flatWorkspaceMemberMaps',
+          ]);
+
+        const workspaceMemberId =
+          flatWorkspaceMemberMaps.idByUserId[userContext.user.id];
+
+        if (isDefined(workspaceMemberId)) {
+          context.workspaceMemberId = workspaceMemberId;
+          context.workspaceMember =
+            flatWorkspaceMemberMaps.byId[workspaceMemberId];
+        }
       }
     }
 
