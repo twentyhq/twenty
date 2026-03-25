@@ -120,7 +120,7 @@ export class PageLayoutWidgetService {
     }
   }
 
-  private async validateChartFieldReferencesIfApplicable({
+  private async validateChartFieldReferences({
     configuration,
     objectMetadataId,
     widgetTitle,
@@ -258,7 +258,7 @@ export class PageLayoutWidgetService {
       });
 
     if (isDefined(createInput.configuration)) {
-      await this.validateChartFieldReferencesIfApplicable({
+      await this.validateChartFieldReferences({
         configuration: createInput.configuration,
         objectMetadataId: createInput.objectMetadataId ?? null,
         widgetTitle: createInput.title,
@@ -392,7 +392,7 @@ export class PageLayoutWidgetService {
         processedUpdateData.title ?? existingWidget.title;
 
       if (isDefined(effectiveConfiguration)) {
-        await this.validateChartFieldReferencesIfApplicable({
+        await this.validateChartFieldReferences({
           configuration: effectiveConfiguration,
           objectMetadataId: effectiveObjectMetadataId,
           widgetTitle: effectiveWidgetTitle,

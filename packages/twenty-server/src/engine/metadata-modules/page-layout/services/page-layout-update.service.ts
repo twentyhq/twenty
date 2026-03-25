@@ -476,7 +476,7 @@ export class PageLayoutUpdateService {
     widgetsToUpdate: FlatPageLayoutWidget[];
   } {
     for (const widgetInput of widgets) {
-      this.validateChartFieldReferencesIfApplicable({
+      this.validateChartFieldReferences({
         widgetInput,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
@@ -643,7 +643,7 @@ export class PageLayoutUpdateService {
     };
   }
 
-  private validateChartFieldReferencesIfApplicable({
+  private validateChartFieldReferences({
     widgetInput,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
