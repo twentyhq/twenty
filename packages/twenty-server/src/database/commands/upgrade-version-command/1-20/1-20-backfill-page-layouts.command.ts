@@ -68,19 +68,44 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
       return;
     }
 
-    if (isDryRun) {
-      this.logger.log(
-        `[DRY RUN] Would create RECORD_PAGE page layouts and enable IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
     const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
 
+    await this.backfillStandardObjectPageLayouts({
+      workspaceId,
+      twentyStandardFlatApplication,
+      isDryRun,
+    });
+
+    await this.backfillCustomObjectPageLayouts({
+      workspaceId,
+      workspaceCustomFlatApplication,
+      isDryRun,
+    });
+
+    if (!isDryRun) {
+      await this.featureFlagService.enableFeatureFlags(
+        [FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED],
+        workspaceId,
+      );
+    }
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Successfully created page layouts and enabled IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED for workspace ${workspaceId}`,
+    );
+  }
+
+  private async backfillStandardObjectPageLayouts({
+    workspaceId,
+    twentyStandardFlatApplication,
+    isDryRun,
+  }: {
+    workspaceId: string;
+    twentyStandardFlatApplication: FlatApplication;
+    isDryRun: boolean;
+  }): Promise<void> {
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         shouldIncludeRecordPageLayouts: true,
@@ -235,6 +260,20 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
           ),
       );
 
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Found standard entities to create for workspace ${workspaceId}: ` +
+        `${pageLayoutsToCreate.length} page layout(s), ` +
+        `${pageLayoutTabsToCreate.length} tab(s), ` +
+        `${pageLayoutWidgetsToCreate.length} widget(s), ` +
+        `${viewsToCreate.length} view(s), ` +
+        `${viewFieldsToCreate.length} view field(s), ` +
+        `${viewFieldGroupsToCreate.length} view field group(s)`,
+    );
+
+    if (isDryRun) {
+      return;
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -284,28 +323,16 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
         `Failed to create standard page layouts for workspace ${workspaceId}`,
       );
     }
-
-    await this.backfillCustomObjectPageLayouts({
-      workspaceId,
-      workspaceCustomFlatApplication,
-    });
-
-    await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED],
-      workspaceId,
-    );
-
-    this.logger.log(
-      `Successfully created page layouts and enabled IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED for workspace ${workspaceId}`,
-    );
   }
 
   private async backfillCustomObjectPageLayouts({
     workspaceId,
     workspaceCustomFlatApplication,
+    isDryRun,
   }: {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
+    isDryRun: boolean;
   }): Promise<void> {
     const {
       flatObjectMetadataMaps,
@@ -350,10 +377,6 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
       return;
     }
 
-    this.logger.log(
-      `Creating page layouts for ${customObjectsWithoutPageLayout.length} custom object(s) in workspace ${workspaceId}`,
-    );
-
     const allCustomPageLayoutsToCreate: FlatPageLayout[] = [];
     const allCustomPageLayoutTabsToCreate: FlatPageLayoutTab[] = [];
     const allCustomPageLayoutWidgetsToCreate: FlatPageLayoutWidget[] = [];
@@ -393,6 +416,19 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
       allCustomPageLayoutWidgetsToCreate.push(...pageLayoutWidgets);
       allCustomViewsToCreate.push(flatRecordPageFieldsView);
       allCustomViewFieldsToCreate.push(...viewFields);
+    }
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Found custom entities to create for ${customObjectsWithoutPageLayout.length} custom object(s) in workspace ${workspaceId}: ` +
+        `${allCustomPageLayoutsToCreate.length} page layout(s), ` +
+        `${allCustomPageLayoutTabsToCreate.length} tab(s), ` +
+        `${allCustomPageLayoutWidgetsToCreate.length} widget(s), ` +
+        `${allCustomViewsToCreate.length} view(s), ` +
+        `${allCustomViewFieldsToCreate.length} view field(s)`,
+    );
+
+    if (isDryRun) {
+      return;
     }
 
     const customValidateAndBuildResult =
