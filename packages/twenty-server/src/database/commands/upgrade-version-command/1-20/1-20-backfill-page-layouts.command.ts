@@ -93,7 +93,9 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Successfully created page layouts and enabled IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED for workspace ${workspaceId}`,
+      isDryRun
+        ? `[DRY RUN] Would create page layouts and enable IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED for workspace ${workspaceId}`
+        : `Successfully created page layouts and enabled IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED for workspace ${workspaceId}`,
     );
   }
 
