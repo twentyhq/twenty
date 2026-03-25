@@ -126,16 +126,7 @@ function formatResultInternal<T>(
       : false;
 
     if (!compositePropertyArgs && !isRelation) {
-      if (isPlainObject(value)) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatResultInternal(
-          value,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          fieldMaps,
-        );
-      } else if (fieldMetadata) {
+      if (fieldMetadata) {
         // @ts-expect-error legacy noImplicitAny
         newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
       } else {
