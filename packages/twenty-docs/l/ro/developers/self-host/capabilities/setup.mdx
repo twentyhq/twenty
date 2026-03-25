@@ -297,6 +297,16 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
 </Warning>
 
+## Stocare S3
+
+<Warning>
+În mod implicit, Twenty stochează fișierele încărcate în sistemul de fișiere local. Pentru implementări în producție, utilizați S3 sau un serviciu compatibil cu S3 (MinIO, DigitalOcean Spaces etc.). pentru a vă asigura că fișierele persistă între repornirile containerelor și se scalează pe mai multe instanțe de server.
+</Warning>
+
+Setați `STORAGE_TYPE=S_3` și configurați variabilele `STORAGE_S3_*` prin panoul de administrare sau `.env`. Consultați [referința config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) pentru lista completă a variabilelor S3.
+
+Când utilizați S3 cu funcționalități dependente de CORS (de ex., descărcări de fișiere în browser), asigurați-vă că bucketul permite originea frontend-ului Twenty în configurația sa CORS.
+
 ## Funcții logice și interpretor de cod
 
 Twenty acceptă funcții logice pentru fluxuri de lucru și interpretorul de cod pentru analiza datelor cu AI. Ambele rulează cod furnizat de utilizator și necesită o configurare explicită din motive de securitate.
