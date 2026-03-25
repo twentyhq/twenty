@@ -4,19 +4,19 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { PageLayoutWidgetGroupByValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-group-by-validation.exception';
+import { PageLayoutWidgetFieldValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-field-validation.exception';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { validateCompositeSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-composite-subfield.util';
 import { validateRelationSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-relation-subfield.util';
 
 const toGroupByFieldValidationException = (
   error: unknown,
-): PageLayoutWidgetGroupByValidationException => {
-  if (error instanceof PageLayoutWidgetGroupByValidationException) {
+): PageLayoutWidgetFieldValidationException => {
+  if (error instanceof PageLayoutWidgetFieldValidationException) {
     return error;
   }
 
-  return new PageLayoutWidgetGroupByValidationException(
+  return new PageLayoutWidgetFieldValidationException(
     error instanceof Error ? error.message : String(error),
   );
 };
@@ -39,7 +39,7 @@ export const validateGroupByFieldOrThrow = ({
   fieldsByObjectId: Map<string, FlatFieldMetadata[]>;
 }): void => {
   if (!isDefined(fieldId)) {
-    throw new PageLayoutWidgetGroupByValidationException(
+    throw new PageLayoutWidgetFieldValidationException(
       `${paramName} is required.`,
     );
   }
@@ -47,13 +47,13 @@ export const validateGroupByFieldOrThrow = ({
   const field = findActiveFlatFieldMetadataById(fieldId, flatFieldMetadataMaps);
 
   if (!isDefined(field)) {
-    throw new PageLayoutWidgetGroupByValidationException(
+    throw new PageLayoutWidgetFieldValidationException(
       `${paramName} "${fieldId}" not found.`,
     );
   }
 
   if (field.objectMetadataId !== objectMetadataId) {
-    throw new PageLayoutWidgetGroupByValidationException(
+    throw new PageLayoutWidgetFieldValidationException(
       `${paramName} must belong to objectMetadataId "${objectMetadataId}".`,
     );
   }
@@ -89,7 +89,7 @@ export const validateGroupByFieldOrThrow = ({
   }
 
   if (isDefined(subFieldName)) {
-    throw new PageLayoutWidgetGroupByValidationException(
+    throw new PageLayoutWidgetFieldValidationException(
       `Field "${field.name}" does not support subfields.`,
     );
   }

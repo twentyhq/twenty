@@ -10,7 +10,7 @@ import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { PageLayoutWidgetGroupByValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-group-by-validation.exception';
+import { PageLayoutWidgetFieldValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-field-validation.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
@@ -39,7 +39,7 @@ const validateGroupByFieldAsChartFieldOrThrow = (
   try {
     validateGroupByFieldOrThrow(params);
   } catch (error) {
-    if (!(error instanceof PageLayoutWidgetGroupByValidationException)) {
+    if (!(error instanceof PageLayoutWidgetFieldValidationException)) {
       throw error;
     }
 
