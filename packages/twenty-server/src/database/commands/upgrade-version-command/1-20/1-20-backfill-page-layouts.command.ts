@@ -89,6 +89,22 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
+    const {
+      flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
+      flatViewMaps: existingFlatViewMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatPageLayoutMaps',
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+      'flatViewMaps',
+      'flatViewFieldMaps',
+      'flatViewFieldGroupMaps',
+    ]);
+
     const recordPageLayoutUniversalIdentifiers = new Set<string>();
 
     const pageLayoutsToCreate = Object.values(
@@ -103,6 +119,16 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
         recordPageLayoutUniversalIdentifiers.add(
           pageLayout.universalIdentifier,
         );
+
+        if (
+          isDefined(
+            existingFlatPageLayoutMaps.byUniversalIdentifier[
+              pageLayout.universalIdentifier
+            ],
+          )
+        ) {
+          return false;
+        }
 
         return true;
       });
@@ -124,6 +150,16 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
 
         tabUniversalIdentifiers.add(tab.universalIdentifier);
 
+        if (
+          isDefined(
+            existingFlatPageLayoutTabMaps.byUniversalIdentifier[
+              tab.universalIdentifier
+            ],
+          )
+        ) {
+          return false;
+        }
+
         return true;
       });
 
@@ -131,19 +167,17 @@ export class BackfillPageLayoutsCommand extends ActiveOrSuspendedWorkspacesMigra
       standardAllFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((widget) =>
-        tabUniversalIdentifiers.has(widget.pageLayoutTabUniversalIdentifier),
+      .filter(
+        (widget) =>
+          tabUniversalIdentifiers.has(
+            widget.pageLayoutTabUniversalIdentifier,
+          ) &&
+          !isDefined(
+            existingFlatPageLayoutWidgetMaps.byUniversalIdentifier[
+              widget.universalIdentifier
+            ],
+          ),
       );
-
-    const {
-      flatViewMaps: existingFlatViewMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatViewMaps',
-      'flatViewFieldMaps',
-      'flatViewFieldGroupMaps',
-    ]);
 
     const viewUniversalIdentifiers = new Set<string>();
 
