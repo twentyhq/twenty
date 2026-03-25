@@ -84,6 +84,24 @@ export const mockFlatObjectMetadatas: FlatObjectMetadata[] = [
     universalIdentifier: 'non-searchable-object-universal-id',
     applicationId: workspaceId,
   }),
+  getFlatObjectMetadataMock({
+    id: '20202020-6a7c-4e3f-9b2d-1d8f7a3e5c4b',
+    nameSingular: 'message',
+    namePlural: 'messages',
+    labelSingular: 'Message',
+    labelPlural: 'Messages',
+    description: 'Message',
+    icon: 'IconMessage',
+    isCustom: false,
+    isSystem: true,
+    isSearchable: false,
+    labelIdentifierFieldMetadataId: null,
+    imageIdentifierFieldMetadataId: null,
+    workspaceId,
+    fieldIds: [],
+    universalIdentifier: 'message-universal-id',
+    applicationId: workspaceId,
+  }),
 ];
 
 export const mockFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {

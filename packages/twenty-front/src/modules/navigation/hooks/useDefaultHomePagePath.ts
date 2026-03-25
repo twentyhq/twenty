@@ -2,8 +2,8 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import isEmpty from 'lodash.isempty';
@@ -17,29 +17,26 @@ export const useDefaultHomePagePath = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const { alphaSortedActiveNonSystemObjectMetadataItems } =
-    useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const readableAlphaSortedActiveNonSystemObjectMetadataItems = useMemo(() => {
-    return alphaSortedActiveNonSystemObjectMetadataItems.filter((item) => {
-      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+  const readableNonSystemObjectMetadataItems = useMemo(
+    () =>
+      filterReadableActiveObjectMetadataItems(
+        activeObjectMetadataItems,
         objectPermissionsByObjectMetadataId,
-        objectMetadataId: item.id,
-      });
-      return objectPermissions?.canReadObjectRecords;
-    });
-  }, [
-    alphaSortedActiveNonSystemObjectMetadataItems,
-    objectPermissionsByObjectMetadataId,
-  ]);
+      )
+        .filter((item) => !item.isSystem)
+        .sort((a, b) => a.nameSingular.localeCompare(b.nameSingular)),
+    [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
+  );
 
   const getActiveObjectMetadataItemMatchingId = useCallback(
     (objectMetadataId: string) => {
-      return readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
+      return readableNonSystemObjectMetadataItems.find(
         (item) => item.id === objectMetadataId,
       );
     },
-    [readableAlphaSortedActiveNonSystemObjectMetadataItems],
+    [readableNonSystemObjectMetadataItems],
   );
 
   const views = useAtomStateValue(viewsSelector);
@@ -54,8 +51,7 @@ export const useDefaultHomePagePath = () => {
   );
 
   const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
-    const [firstObjectMetadataItem] =
-      readableAlphaSortedActiveNonSystemObjectMetadataItems;
+    const [firstObjectMetadataItem] = readableNonSystemObjectMetadataItems;
 
     if (!isDefined(firstObjectMetadataItem)) {
       return null;
@@ -64,7 +60,7 @@ export const useDefaultHomePagePath = () => {
     const view = getFirstView(firstObjectMetadataItem?.id);
 
     return { objectMetadataItem: firstObjectMetadataItem, view };
-  }, [getFirstView, readableAlphaSortedActiveNonSystemObjectMetadataItems]);
+  }, [getFirstView, readableNonSystemObjectMetadataItems]);
 
   const getDefaultObjectPathInfo = useCallback(() => {
     const lastVisitedObjectMetadataItemId = store.get(
@@ -97,7 +93,7 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
-    if (isEmpty(readableAlphaSortedActiveNonSystemObjectMetadataItems)) {
+    if (isEmpty(readableNonSystemObjectMetadataItems)) {
       return getSettingsPath(SettingsPath.ProfilePage);
     }
 
@@ -118,7 +114,7 @@ export const useDefaultHomePagePath = () => {
   }, [
     currentUser,
     getDefaultObjectPathInfo,
-    readableAlphaSortedActiveNonSystemObjectMetadataItems,
+    readableNonSystemObjectMetadataItems,
   ]);
 
   return { defaultHomePagePath };
