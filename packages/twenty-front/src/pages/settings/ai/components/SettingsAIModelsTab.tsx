@@ -14,11 +14,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import {
-  H2Title,
-  IconBolt,
-  IconTwentyStar,
-} from 'twenty-ui/display';
+import { H2Title, IconBolt, IconTwentyStar } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

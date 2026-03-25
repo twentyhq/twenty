@@ -43,55 +43,55 @@ export const SettingsAgentSkillsTable = ({
 
   return (
     <Table>
-        <StyledTableHeaderRowContainer>
-          <TableRow gridTemplateColumns="1fr 120px 36px">
-            {SETTINGS_SKILL_TABLE_METADATA.fields.map(
-              (settingsSkillTableMetadataField) => (
-                <SortableTableHeader
-                  key={settingsSkillTableMetadataField.fieldName}
-                  fieldName={settingsSkillTableMetadataField.fieldName}
-                  label={t(settingsSkillTableMetadataField.fieldLabel)}
-                  tableId={SETTINGS_SKILL_TABLE_METADATA.tableId}
-                  align={settingsSkillTableMetadataField.align}
-                  initialSort={SETTINGS_SKILL_TABLE_METADATA.initialSort}
-                />
-              ),
-            )}
-            <TableHeader />
-          </TableRow>
-        </StyledTableHeaderRowContainer>
-        {showSkeleton
-          ? Array.from({ length: 3 }).map((_, index) => (
-              <Skeleton height={32} borderRadius={4} key={index} />
-            ))
-          : skills.map((skill) => (
-              <SettingsSkillTableRow
-                key={skill.id}
-                skill={skill}
-                action={
-                  skill.isActive ? (
-                    <IconChevronRight
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  ) : (
-                    <SettingsSkillInactiveMenuDropDown
-                      isCustomSkill={skill.isCustom}
-                      skillId={skill.id}
-                      onActivate={() => onActivate(skill.id)}
-                      onDelete={() => onDelete(skill.id)}
-                    />
-                  )
-                }
-                link={
-                  skill.isActive
-                    ? getSettingsPath(SettingsPath.AISkillDetail, {
-                        skillId: skill.id,
-                      })
-                    : undefined
-                }
+      <StyledTableHeaderRowContainer>
+        <TableRow gridTemplateColumns="1fr 120px 36px">
+          {SETTINGS_SKILL_TABLE_METADATA.fields.map(
+            (settingsSkillTableMetadataField) => (
+              <SortableTableHeader
+                key={settingsSkillTableMetadataField.fieldName}
+                fieldName={settingsSkillTableMetadataField.fieldName}
+                label={t(settingsSkillTableMetadataField.fieldLabel)}
+                tableId={SETTINGS_SKILL_TABLE_METADATA.tableId}
+                align={settingsSkillTableMetadataField.align}
+                initialSort={SETTINGS_SKILL_TABLE_METADATA.initialSort}
               />
-            ))}
-      </Table>
+            ),
+          )}
+          <TableHeader />
+        </TableRow>
+      </StyledTableHeaderRowContainer>
+      {showSkeleton
+        ? Array.from({ length: 3 }).map((_, index) => (
+            <Skeleton height={32} borderRadius={4} key={index} />
+          ))
+        : skills.map((skill) => (
+            <SettingsSkillTableRow
+              key={skill.id}
+              skill={skill}
+              action={
+                skill.isActive ? (
+                  <IconChevronRight
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                ) : (
+                  <SettingsSkillInactiveMenuDropDown
+                    isCustomSkill={skill.isCustom}
+                    skillId={skill.id}
+                    onActivate={() => onActivate(skill.id)}
+                    onDelete={() => onDelete(skill.id)}
+                  />
+                )
+              }
+              link={
+                skill.isActive
+                  ? getSettingsPath(SettingsPath.AISkillDetail, {
+                      skillId: skill.id,
+                    })
+                  : undefined
+              }
+            />
+          ))}
+    </Table>
   );
 };

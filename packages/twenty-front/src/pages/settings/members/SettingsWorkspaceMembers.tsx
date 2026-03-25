@@ -90,7 +90,6 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};

@@ -13,11 +13,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconChevronRight,
-  IconPlus,
-} from 'twenty-ui/display';
+import { H2Title, IconChevronRight, IconPlus } from 'twenty-ui/display';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
