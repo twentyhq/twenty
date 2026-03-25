@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { styled } from '@linaria/react';
 
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
+
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -65,10 +68,12 @@ export const SettingsAIModelsTab = () => {
       : null;
   };
 
-  const serverDefaultSmartModelOption =
-    buildDefaultModelOption(DEFAULT_SMART_MODEL);
-  const serverDefaultFastModelOption =
-    buildDefaultModelOption(DEFAULT_FAST_MODEL);
+  const serverDefaultSmartModelOption = buildDefaultModelOption(
+    AUTO_SELECT_SMART_MODEL_ID,
+  );
+  const serverDefaultFastModelOption = buildDefaultModelOption(
+    AUTO_SELECT_FAST_MODEL_ID,
+  );
 
   const modelOptions = enabledModels.map((model) => {
     const residencyFlag = model.dataResidency

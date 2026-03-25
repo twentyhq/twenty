@@ -125,8 +125,12 @@ export const AIChatEditorSection = () => {
   );
 
   const defaultLabel = workspaceSmartModel?.label
-    ? t`Default (${workspaceSmartModel.label})`
+    ? t`${workspaceSmartModel.label} (default)`
     : t`Default`;
+
+  const modelsWithoutDefault = enabledModels.filter(
+    (model) => model.label !== workspaceSmartModel?.label,
+  );
 
   const smartModelOptions = [
     {
@@ -137,7 +141,7 @@ export const AIChatEditorSection = () => {
         workspaceSmartModel?.providerName,
       ),
     },
-    ...enabledModels.map((model) => ({
+    ...modelsWithoutDefault.map((model) => ({
       value: model.modelId,
       label: model.label,
       Icon: getModelIcon(model.modelFamily, model.providerName),
