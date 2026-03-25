@@ -84,30 +84,12 @@ exports[`Field permission upsert should fail when role is not editable (system r
           "status": "fail",
           "type": "create",
         },
-        {
-          "errors": [
-            {
-              "code": "ROLE_NOT_EDITABLE",
-              "message": "Role is not editable",
-              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataUniversalIdentifier": Any<String>,
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "roleUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldPermission",
-          "status": "fail",
-          "type": "create",
-        },
       ],
     },
-    "message": "Validation failed for 2 fieldPermissions",
+    "message": "Validation failed for 1 fieldPermission",
     "summary": {
-      "fieldPermission": 2,
-      "totalErrors": 2,
+      "fieldPermission": 1,
+      "totalErrors": 1,
     },
     "userFriendlyMessage": "Metadata validation failed",
   },
