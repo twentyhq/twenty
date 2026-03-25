@@ -1,7 +1,4 @@
-import {
-  SERVER_ERROR_CODES,
-  type CommandResult,
-} from '@/cli/types';
+import { SERVER_ERROR_CODES, type CommandResult } from '@/cli/types';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import {
@@ -188,4 +185,7 @@ const innerServerStart = async (
 export const serverStart = (
   options?: ServerStartOptions,
 ): Promise<CommandResult<ServerStartResult>> =>
-  runSafe(() => innerServerStart(options), SERVER_ERROR_CODES.CONTAINER_START_FAILED);
+  runSafe(
+    () => innerServerStart(options),
+    SERVER_ERROR_CODES.CONTAINER_START_FAILED,
+  );
