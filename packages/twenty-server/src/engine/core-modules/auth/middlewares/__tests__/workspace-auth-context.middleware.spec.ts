@@ -6,7 +6,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 
-import { WorkspaceAuthContextMiddleware } from './workspace-auth-context.middleware';
+import { WorkspaceAuthContextMiddleware } from '../workspace-auth-context.middleware';
 
 const mockWorkspace = {
   id: 'workspace-id',
