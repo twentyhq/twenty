@@ -2,18 +2,18 @@ import { basename } from 'path';
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
-import {
-  type LocalInstanceResult,
-  setupLocalInstance,
-} from '@/utils/setup-local-instance';
 import { tryGitInit } from '@/utils/try-git-init';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
-import { execSync } from 'node:child_process';
 import * as path from 'path';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  authLoginOAuth,
+  setupLocalInstance,
+  type LocalInstanceResult,
+} from 'twenty-sdk/cli';
 
 import {
   type ExampleOptions,
@@ -198,14 +198,22 @@ export class CreateAppCommand {
   }
 
   private async connectToLocal(
-    appDirectory: string,
+    _appDirectory: string,
     serverUrl: string,
   ): Promise<void> {
     try {
-      execSync(`yarn twenty remote add ${serverUrl} --as local`, {
-        cwd: appDirectory,
-        stdio: 'inherit',
+      const result = await authLoginOAuth({
+        apiUrl: serverUrl,
+        remote: 'local',
       });
+
+      if (!result.success) {
+        console.log(
+          chalk.yellow(
+            'Authentication skipped. Run `yarn twenty remote add --local` manually.',
+          ),
+        );
+      }
     } catch {
       console.log(
         chalk.yellow(

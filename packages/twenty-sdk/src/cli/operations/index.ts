@@ -22,6 +22,10 @@ export type { AppUninstallOptions } from './uninstall';
 export { functionExecute } from './execute';
 export type { FunctionExecuteOptions } from './execute';
 
+// Server
+export { setupLocalInstance } from '@/cli/utilities/server/setup-local-instance';
+export type { LocalInstanceResult } from '@/cli/utilities/server/setup-local-instance';
+
 // Shared types and error codes
 export {
   APP_ERROR_CODES,
