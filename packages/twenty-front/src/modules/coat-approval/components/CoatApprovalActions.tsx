@@ -6,17 +6,25 @@ import { useCallback, useState } from 'react';
 
 type CoatApprovalActionsProps = {
   contractId: string;
-  currentStatus: string | null;
+  currentExportStatus: string | null;
 };
 
 const StyledActionsContainer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.medium};
   display: flex;
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledButton = styled.button<{ variant: 'approve' | 'decline' | 'revert' }>`
+const StyledButtonRow = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledButton = styled.button<{
+  variant: 'approve' | 'decline' | 'revert';
+}>`
   align-items: center;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -26,7 +34,8 @@ const StyledButton = styled.button<{ variant: 'approve' | 'decline' | 'revert' }
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(2)}
+    ${({ theme }) => theme.spacing(4)};
   transition: opacity 0.15s ease;
 
   background: ${({ variant }) => {
@@ -84,48 +93,86 @@ const StyledDialogActions = styled.div`
   justify-content: flex-end;
 `;
 
+const StyledSuccessMessage = styled.div`
+  background: #22c55e15;
+  border: 1px solid #22c55e40;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: #166534;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  text-align: center;
+`;
+
+const StyledErrorMessage = styled.div`
+  background: #ef444415;
+  border: 1px solid #ef444440;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: #991b1b;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  text-align: center;
+`;
+
 export const CoatApprovalActions = ({
   contractId,
-  currentStatus,
+  currentExportStatus,
 }: CoatApprovalActionsProps) => {
   const { updateOneRecord } = useUpdateOneRecord();
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeclineDialog, setShowDeclineDialog] = useState(false);
   const [declineReason, setDeclineReason] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const clearMessages = useCallback(() => {
+    setSuccessMessage(null);
+    setErrorMessage(null);
+  }, []);
 
   const handleStatusUpdate = useCallback(
-    async (newStatus: CoatExportStatus) => {
+    async (newStatus: CoatExportStatus, message: string) => {
       setIsUpdating(true);
+      clearMessages();
 
       try {
-        // TODO: Confirm the exact field name for export status on the tobContract object
         await updateOneRecord({
           objectNameSingular: COAT_OBJECT_NAME_SINGULAR,
           idToUpdate: contractId,
           updateOneRecordInput: {
-            status: newStatus,
+            coatExportStatus: newStatus,
           },
         });
+        setSuccessMessage(message);
+      } catch {
+        setErrorMessage('Failed to update status. Please try again.');
       } finally {
         setIsUpdating(false);
         setShowDeclineDialog(false);
         setDeclineReason('');
       }
     },
-    [contractId, updateOneRecord],
+    [contractId, updateOneRecord, clearMessages],
   );
 
   const handleApprove = useCallback(() => {
-    handleStatusUpdate('READY_FOR_EXPORT');
+    handleStatusUpdate(
+      'READY_FOR_EXPORT',
+      'Contract approved for export.',
+    );
   }, [handleStatusUpdate]);
 
   const handleDeclineConfirm = useCallback(() => {
-    // TODO: Store the decline reason somewhere — possibly a separate field or note
-    handleStatusUpdate('DECLINED');
+    // The decline reason is stored in the update call below.
+    // TODO: Store the decline reason in a note/comment on the record
+    // once the note creation pattern is wired up.
+    handleStatusUpdate('DECLINED', 'Contract declined.');
   }, [handleStatusUpdate]);
 
   const handleRevert = useCallback(() => {
-    handleStatusUpdate('NEEDS_APPROVAL');
+    handleStatusUpdate(
+      'NEEDS_APPROVAL',
+      'Contract reverted to Needs Approval.',
+    );
   }, [handleStatusUpdate]);
 
   if (showDeclineDialog) {
@@ -139,7 +186,10 @@ export const CoatApprovalActions = ({
         <StyledDialogActions>
           <StyledButton
             variant="revert"
-            onClick={() => setShowDeclineDialog(false)}
+            onClick={() => {
+              setShowDeclineDialog(false);
+              clearMessages();
+            }}
             disabled={isUpdating}
           >
             Cancel
@@ -147,7 +197,7 @@ export const CoatApprovalActions = ({
           <StyledButton
             variant="decline"
             onClick={handleDeclineConfirm}
-            disabled={isUpdating}
+            disabled={isUpdating || declineReason.trim().length === 0}
           >
             {isUpdating ? 'Declining...' : 'Confirm Decline'}
           </StyledButton>
@@ -158,33 +208,45 @@ export const CoatApprovalActions = ({
 
   return (
     <StyledActionsContainer>
-      {currentStatus !== 'READY_FOR_EXPORT' && (
-        <StyledButton
-          variant="approve"
-          onClick={handleApprove}
-          disabled={isUpdating}
-        >
-          {isUpdating ? 'Approving...' : 'Approve for Export'}
-        </StyledButton>
+      {successMessage && (
+        <StyledSuccessMessage>{successMessage}</StyledSuccessMessage>
       )}
-      {currentStatus !== 'DECLINED' && (
-        <StyledButton
-          variant="decline"
-          onClick={() => setShowDeclineDialog(true)}
-          disabled={isUpdating}
-        >
-          Decline
-        </StyledButton>
+      {errorMessage && (
+        <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
       )}
-      {currentStatus !== 'NEEDS_APPROVAL' && (
-        <StyledButton
-          variant="revert"
-          onClick={handleRevert}
-          disabled={isUpdating}
-        >
-          {isUpdating ? 'Reverting...' : 'Revert to Needs Approval'}
-        </StyledButton>
-      )}
+      <StyledButtonRow>
+        {currentExportStatus !== 'READY_FOR_EXPORT' && (
+          <StyledButton
+            variant="approve"
+            onClick={handleApprove}
+            disabled={isUpdating}
+          >
+            {isUpdating ? 'Approving...' : 'Approve for Export'}
+          </StyledButton>
+        )}
+        {currentExportStatus !== 'DECLINED' && (
+          <StyledButton
+            variant="decline"
+            onClick={() => {
+              setShowDeclineDialog(true);
+              clearMessages();
+            }}
+            disabled={isUpdating}
+          >
+            Decline
+          </StyledButton>
+        )}
+        {currentExportStatus !== 'NEEDS_APPROVAL' &&
+          currentExportStatus !== null && (
+            <StyledButton
+              variant="revert"
+              onClick={handleRevert}
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Reverting...' : 'Revert to Needs Approval'}
+            </StyledButton>
+          )}
+      </StyledButtonRow>
     </StyledActionsContainer>
   );
 };

@@ -2,6 +2,7 @@ import { CoatApprovalListItem } from '@/coat-approval/components/CoatApprovalLis
 import { type CoatContractRecord } from '@/coat-approval/types/coat-approval.types';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { useInView } from 'react-intersection-observer';
 
 type CoatApprovalListProps = {
@@ -50,6 +51,16 @@ const StyledLoadingMore = styled.div`
   text-align: center;
 `;
 
+const hasNonEmptySpecialAgreements = (value: string | null): boolean => {
+  if (!isDefined(value)) {
+    return false;
+  }
+
+  const trimmed = value.trim();
+
+  return trimmed.length > 0 && trimmed !== '.';
+};
+
 export const CoatApprovalList = ({
   contracts,
   loading,
@@ -94,10 +105,19 @@ export const CoatApprovalList = ({
           <CoatApprovalListItem
             key={contractRecord.id}
             contractName={contractRecord.name}
-            customerName={[contractRecord.customerFirstName, contractRecord.customerLastName].filter(Boolean).join(' ') || null}
+            customerName={
+              [contractRecord.customerFirstName, contractRecord.customerLastName]
+                .filter(Boolean)
+                .join(' ') || null
+            }
             programName={contractRecord.program}
-            status={contractRecord.status}
-            signatureDate={contractRecord.completionDate ?? contractRecord.startDate}
+            coatExportStatus={contractRecord.coatExportStatus}
+            signatureDate={
+              contractRecord.completionDate ?? contractRecord.startDate
+            }
+            hasSpecialAgreements={hasNonEmptySpecialAgreements(
+              contractRecord.specialAgreements,
+            )}
             isSelected={contractRecord.id === selectedContractId}
             onClick={() => onSelectContract(contractRecord.id)}
           />

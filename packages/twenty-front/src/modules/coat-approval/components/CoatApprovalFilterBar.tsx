@@ -1,4 +1,7 @@
-import { type CoatFilterValues } from '@/coat-approval/types/coat-approval.types';
+import {
+  type CoatFilterValues,
+  type CoatTab,
+} from '@/coat-approval/types/coat-approval.types';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { IconSearch } from 'twenty-ui/display';
@@ -6,6 +9,7 @@ import { IconSearch } from 'twenty-ui/display';
 type CoatApprovalFilterBarProps = {
   filterValues: CoatFilterValues;
   onFilterChange: (values: CoatFilterValues) => void;
+  activeTab: CoatTab;
 };
 
 const StyledFilterContainer = styled.div`
@@ -64,10 +68,14 @@ const StyledDateInput = styled.input`
 export const CoatApprovalFilterBar = ({
   filterValues,
   onFilterChange,
+  activeTab,
 }: CoatApprovalFilterBarProps) => {
   const updateFilter = (key: keyof CoatFilterValues, value: string) => {
     onFilterChange({ ...filterValues, [key]: value });
   };
+
+  // Hide export status filter on "analyze" tab since that tab already filters by status
+  const showExportStatusFilter = activeTab !== 'analyze';
 
   return (
     <StyledFilterContainer>
@@ -81,17 +89,21 @@ export const CoatApprovalFilterBar = ({
           sizeVariant="sm"
         />
       </StyledFilterInput>
-      <StyledFilterInput>
-        <StyledSelect
-          value={filterValues.exportStatus}
-          onChange={(event) => updateFilter('exportStatus', event.target.value)}
-        >
-          <option value="">All Statuses</option>
-          <option value="NEEDS_APPROVAL">Needs Approval</option>
-          <option value="READY_FOR_EXPORT">Ready for Export</option>
-          <option value="DECLINED">Declined</option>
-        </StyledSelect>
-      </StyledFilterInput>
+      {showExportStatusFilter && (
+        <StyledFilterInput>
+          <StyledSelect
+            value={filterValues.exportStatus}
+            onChange={(event) =>
+              updateFilter('exportStatus', event.target.value)
+            }
+          >
+            <option value="">All Statuses</option>
+            <option value="NEEDS_APPROVAL">Needs Approval</option>
+            <option value="READY_FOR_EXPORT">Ready for Export</option>
+            <option value="DECLINED">Declined</option>
+          </StyledSelect>
+        </StyledFilterInput>
+      )}
       <StyledFilterInput>
         <StyledSelect
           value={filterValues.programName}
@@ -101,6 +113,7 @@ export const CoatApprovalFilterBar = ({
           <option value="Schmerzfrei">Schmerzfrei</option>
           <option value="Ausbildung">Ausbildung</option>
           <option value="Blueprint">Blueprint</option>
+          <option value="Fundament">Fundament</option>
         </StyledSelect>
       </StyledFilterInput>
       <StyledFilterInput>

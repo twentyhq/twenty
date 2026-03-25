@@ -3,7 +3,10 @@ import { CoatApprovalRightPanel } from '@/coat-approval/components/CoatApprovalR
 import { INITIAL_FILTER_VALUES } from '@/coat-approval/constants/InitialFilterValues.constants';
 import { useCoatContractsList } from '@/coat-approval/hooks/useCoatContractsList';
 import { useCoatObjectExists } from '@/coat-approval/hooks/useCoatObjectExists';
-import { type CoatFilterValues } from '@/coat-approval/types/coat-approval.types';
+import {
+  type CoatFilterValues,
+  type CoatTab,
+} from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import { IconAlertTriangle } from 'twenty-ui/display';
@@ -56,6 +59,8 @@ const CoatApprovalBodyContent = ({
   selectedContractId,
   onSelectContract,
 }: CoatApprovalBodyContentProps) => {
+  const [activeTab, setActiveTab] = useState<CoatTab>('analyze');
+
   const [filterValues, setFilterValues] = useState<CoatFilterValues>(
     INITIAL_FILTER_VALUES,
   );
@@ -78,8 +83,12 @@ const CoatApprovalBodyContent = ({
     [debouncedUpdate],
   );
 
+  const handleTabChange = useCallback((tab: CoatTab) => {
+    setActiveTab(tab);
+  }, []);
+
   const { contracts, loading, fetchMoreRecords, hasNextPage } =
-    useCoatContractsList(queryFilterValues);
+    useCoatContractsList(queryFilterValues, activeTab);
 
   return (
     <StyledBodyContainer>
@@ -90,6 +99,8 @@ const CoatApprovalBodyContent = ({
         hasNextPage={hasNextPage}
         filterValues={filterValues}
         onFilterChange={handleFilterChange}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
         selectedContractId={selectedContractId}
         onSelectContract={onSelectContract}
       />

@@ -5,8 +5,9 @@ type CoatApprovalListItemProps = {
   contractName: string;
   customerName: string | null;
   programName: string | null;
-  status: string | null;
+  coatExportStatus: string | null;
   signatureDate: string | null;
+  hasSpecialAgreements: boolean;
   isSelected: boolean;
   onClick: () => void;
 };
@@ -33,8 +34,15 @@ const StyledListItem = styled.div<{ isSelected: boolean }>`
   }
 `;
 
+const StyledTopRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
 const StyledContractName = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
+  flex: 1;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
@@ -54,7 +62,7 @@ const StyledMetaRow = styled.div`
   white-space: nowrap;
 `;
 
-const StyledStatusBadge = styled.span<{ statusColor: string }>`
+const StyledExportStatusBadge = styled.span<{ statusColor: string }>`
   background: ${({ statusColor }) => statusColor}20;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ statusColor }) => statusColor};
@@ -63,7 +71,23 @@ const StyledStatusBadge = styled.span<{ statusColor: string }>`
   padding: 2px 6px;
 `;
 
-const getStatusColor = (status: string | null): string => {
+const StyledProductBadge = styled.span<{ badgeColor: string }>`
+  background: ${({ badgeColor }) => badgeColor}20;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ badgeColor }) => badgeColor};
+  flex-shrink: 0;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  padding: 2px 6px;
+`;
+
+const StyledWarningIndicator = styled.span`
+  color: #f59e0b;
+  flex-shrink: 0;
+  font-size: ${({ theme }) => theme.font.size.xs};
+`;
+
+const getExportStatusColor = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return '#22c55e';
@@ -75,7 +99,7 @@ const getStatusColor = (status: string | null): string => {
   }
 };
 
-const getStatusLabel = (status: string | null): string => {
+const getExportStatusLabel = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return 'Ready for Export';
@@ -84,8 +108,39 @@ const getStatusLabel = (status: string | null): string => {
     case 'NEEDS_APPROVAL':
       return 'Needs Approval';
     default:
-      return status ?? 'Unknown';
+      return status ?? 'New';
   }
+};
+
+type ProductBadgeInfo = {
+  label: string;
+  color: string;
+};
+
+const getProductBadge = (programName: string | null): ProductBadgeInfo => {
+  if (!isDefined(programName)) {
+    return { label: 'Unknown', color: '#6b7280' };
+  }
+
+  const lower = programName.toLowerCase();
+
+  if (lower.includes('schmerzfrei')) {
+    return { label: 'Schmerzfrei', color: '#3b82f6' };
+  }
+
+  if (lower.includes('blueprint')) {
+    return { label: 'Blueprint', color: '#22c55e' };
+  }
+
+  if (lower.includes('ausbildung')) {
+    return { label: 'Ausbildung', color: '#8b5cf6' };
+  }
+
+  if (lower.includes('fundament')) {
+    return { label: 'Fundament', color: '#f97316' };
+  }
+
+  return { label: programName, color: '#6b7280' };
 };
 
 const formatDate = (dateString: string | null): string | null => {
@@ -110,28 +165,39 @@ export const CoatApprovalListItem = ({
   contractName,
   customerName,
   programName,
-  status,
+  coatExportStatus,
   signatureDate,
+  hasSpecialAgreements,
   isSelected,
   onClick,
 }: CoatApprovalListItemProps) => {
   const formattedDate = formatDate(signatureDate);
-  const statusColor = getStatusColor(status);
+  const statusColor = getExportStatusColor(coatExportStatus);
+  const productBadge = getProductBadge(programName);
 
   return (
     <StyledListItem isSelected={isSelected} onClick={onClick}>
-      <StyledContractName>
-        {contractName || 'Untitled Contract'}
-      </StyledContractName>
+      <StyledTopRow>
+        <StyledContractName>
+          {contractName || 'Untitled Contract'}
+        </StyledContractName>
+        <StyledProductBadge badgeColor={productBadge.color}>
+          {productBadge.label}
+        </StyledProductBadge>
+      </StyledTopRow>
       <StyledMetaRow>
         {isDefined(customerName) && <span>{customerName}</span>}
-        {isDefined(programName) && <span>{programName}</span>}
       </StyledMetaRow>
       <StyledMetaRow>
-        <StyledStatusBadge statusColor={statusColor}>
-          {getStatusLabel(status)}
-        </StyledStatusBadge>
+        <StyledExportStatusBadge statusColor={statusColor}>
+          {getExportStatusLabel(coatExportStatus)}
+        </StyledExportStatusBadge>
         {isDefined(formattedDate) && <span>{formattedDate}</span>}
+        {hasSpecialAgreements && (
+          <StyledWarningIndicator title="Zusatzvereinbarung vorhanden">
+            !!
+          </StyledWarningIndicator>
+        )}
       </StyledMetaRow>
     </StyledListItem>
   );

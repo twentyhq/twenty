@@ -1,6 +1,10 @@
 import { CoatApprovalFilterBar } from '@/coat-approval/components/CoatApprovalFilterBar';
 import { CoatApprovalList } from '@/coat-approval/components/CoatApprovalList';
-import { type CoatFilterValues } from '@/coat-approval/types/coat-approval.types';
+import { CoatApprovalTabBar } from '@/coat-approval/components/CoatApprovalTabBar';
+import {
+  type CoatFilterValues,
+  type CoatTab,
+} from '@/coat-approval/types/coat-approval.types';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import styled from '@emotion/styled';
 
@@ -11,6 +15,8 @@ type CoatApprovalLeftPanelProps = {
   hasNextPage: boolean;
   filterValues: CoatFilterValues;
   onFilterChange: (values: CoatFilterValues) => void;
+  activeTab: CoatTab;
+  onTabChange: (tab: CoatTab) => void;
   selectedContractId: string | null;
   onSelectContract: (contractId: string) => void;
 };
@@ -32,14 +38,18 @@ export const CoatApprovalLeftPanel = ({
   hasNextPage,
   filterValues,
   onFilterChange,
+  activeTab,
+  onTabChange,
   selectedContractId,
   onSelectContract,
 }: CoatApprovalLeftPanelProps) => {
   return (
     <StyledLeftPanel>
+      <CoatApprovalTabBar activeTab={activeTab} onTabChange={onTabChange} />
       <CoatApprovalFilterBar
         filterValues={filterValues}
         onFilterChange={onFilterChange}
+        activeTab={activeTab}
       />
       <CoatApprovalList
         contracts={contracts}

@@ -26,12 +26,36 @@ const StyledContractTitle = styled.h2`
   margin: 0 0 ${({ theme }) => theme.spacing(3)} 0;
 `;
 
-const StyledStatusBadge = styled.span<{ statusColor: string }>`
+const StyledWarningBanner = styled.div`
+  align-items: center;
+  background: #fef3c720;
+  border: 1px solid #f59e0b40;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: #92400e;
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledExportStatusBadge = styled.span<{ statusColor: string }>`
   background: ${({ statusColor }) => statusColor}20;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ statusColor }) => statusColor};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  padding: 4px 10px;
+`;
+
+const StyledProductBadge = styled.span<{ badgeColor: string }>`
+  background: ${({ badgeColor }) => badgeColor}20;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ badgeColor }) => badgeColor};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  margin-left: ${({ theme }) => theme.spacing(2)};
   padding: 4px 10px;
 `;
 
@@ -75,7 +99,57 @@ const StyledEmptyText = styled.span`
   font-style: italic;
 `;
 
-const getStatusColor = (status: string | null): string => {
+const StyledPaymentTermsText = styled.pre`
+  background: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-family: ${({ theme }) => theme.font.family};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  line-height: 1.5;
+  margin: ${({ theme }) => theme.spacing(2)} 0 0 0;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: ${({ theme }) => theme.spacing(3)};
+  white-space: pre-wrap;
+  word-wrap: break-word;
+`;
+
+const StyledTotalRow = styled.div<{ isValid: boolean }>`
+  align-items: center;
+  background: ${({ isValid }) => (isValid ? '#22c55e15' : '#ef444415')};
+  border: 1px solid ${({ isValid }) => (isValid ? '#22c55e40' : '#ef444440')};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ isValid }) => (isValid ? '#166534' : '#991b1b')};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  justify-content: space-between;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledBadgeRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledSpecialAgreementsText = styled.div`
+  background: #fef3c720;
+  border: 1px solid #f59e0b30;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  line-height: 1.5;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(3)};
+  white-space: pre-wrap;
+  word-wrap: break-word;
+`;
+
+const getExportStatusColor = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return '#22c55e';
@@ -87,7 +161,7 @@ const getStatusColor = (status: string | null): string => {
   }
 };
 
-const getStatusLabel = (status: string | null): string => {
+const getExportStatusLabel = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return 'Ready for Export';
@@ -96,8 +170,39 @@ const getStatusLabel = (status: string | null): string => {
     case 'NEEDS_APPROVAL':
       return 'Needs Approval';
     default:
-      return status ?? 'Unknown';
+      return status ?? 'New';
   }
+};
+
+type ProductBadgeInfo = {
+  label: string;
+  color: string;
+};
+
+const getProductBadge = (programName: string | null): ProductBadgeInfo => {
+  if (!isDefined(programName)) {
+    return { label: 'Unknown', color: '#6b7280' };
+  }
+
+  const lower = programName.toLowerCase();
+
+  if (lower.includes('schmerzfrei')) {
+    return { label: 'Schmerzfrei', color: '#3b82f6' };
+  }
+
+  if (lower.includes('blueprint')) {
+    return { label: 'Blueprint', color: '#22c55e' };
+  }
+
+  if (lower.includes('ausbildung')) {
+    return { label: 'Ausbildung', color: '#8b5cf6' };
+  }
+
+  if (lower.includes('fundament')) {
+    return { label: 'Fundament', color: '#f97316' };
+  }
+
+  return { label: programName, color: '#6b7280' };
 };
 
 const formatDate = (dateString: string | null): string => {
@@ -118,7 +223,10 @@ const formatDate = (dateString: string | null): string => {
   }
 };
 
-const formatCurrency = (value: number | null, currency: string | null): string => {
+const formatCurrency = (
+  value: number | null,
+  currency: string | null,
+): string => {
   if (!isDefined(value)) {
     return 'Not available';
   }
@@ -127,18 +235,43 @@ const formatCurrency = (value: number | null, currency: string | null): string =
 };
 
 const renderValue = (value: string | number | null) => {
-  if (!isDefined(value) || (typeof value === 'string' && value.trim().length === 0)) {
+  if (
+    !isDefined(value) ||
+    (typeof value === 'string' && value.trim().length === 0)
+  ) {
     return <StyledEmptyText>Not available</StyledEmptyText>;
   }
 
   return String(value);
 };
 
+const hasNonEmptySpecialAgreements = (value: string | null): boolean => {
+  if (!isDefined(value)) {
+    return false;
+  }
+
+  const trimmed = value.trim();
+
+  return trimmed.length > 0 && trimmed !== '.';
+};
+
 export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
-  const statusColor = getStatusColor(contract.status);
+  const exportStatusColor = getExportStatusColor(contract.coatExportStatus);
+  const productBadge = getProductBadge(contract.program);
   const customerName = [contract.customerFirstName, contract.customerLastName]
     .filter(Boolean)
     .join(' ');
+  const showSpecialAgreementsWarning = hasNonEmptySpecialAgreements(
+    contract.specialAgreements,
+  );
+
+  // Build full address string
+  const addressParts = [
+    contract.customerStreet,
+    [contract.customerPostcode, contract.customerCity].filter(Boolean).join(' '),
+    contract.customerCountry,
+  ].filter(Boolean);
+  const fullAddress = addressParts.length > 0 ? addressParts.join(', ') : null;
 
   return (
     <StyledDetailContainer>
@@ -147,10 +280,21 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
           {contract.name || 'Untitled Contract'}
         </StyledContractTitle>
 
+        {showSpecialAgreementsWarning && (
+          <StyledWarningBanner>
+            Zusatzvereinbarung vorhanden -- bitte pruefen
+          </StyledWarningBanner>
+        )}
+
         <StyledSection>
-          <StyledStatusBadge statusColor={statusColor}>
-            {getStatusLabel(contract.status)}
-          </StyledStatusBadge>
+          <StyledBadgeRow>
+            <StyledExportStatusBadge statusColor={exportStatusColor}>
+              {getExportStatusLabel(contract.coatExportStatus)}
+            </StyledExportStatusBadge>
+            <StyledProductBadge badgeColor={productBadge.color}>
+              {productBadge.label}
+            </StyledProductBadge>
+          </StyledBadgeRow>
         </StyledSection>
 
         <StyledSection>
@@ -167,9 +311,10 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
             </StyledInfoValue>
 
             <StyledInfoLabel>Source</StyledInfoLabel>
-            <StyledInfoValue>
-              {renderValue(contract.source)}
-            </StyledInfoValue>
+            <StyledInfoValue>{renderValue(contract.source)}</StyledInfoValue>
+
+            <StyledInfoLabel>Status</StyledInfoLabel>
+            <StyledInfoValue>{renderValue(contract.status)}</StyledInfoValue>
 
             <StyledInfoLabel>Start Date</StyledInfoLabel>
             <StyledInfoValue>
@@ -177,8 +322,11 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
             </StyledInfoValue>
 
             <StyledInfoLabel>End Date</StyledInfoLabel>
+            <StyledInfoValue>{formatDate(contract.endDate)}</StyledInfoValue>
+
+            <StyledInfoLabel>Completion Date</StyledInfoLabel>
             <StyledInfoValue>
-              {formatDate(contract.endDate)}
+              {formatDate(contract.completionDate)}
             </StyledInfoValue>
 
             <StyledInfoLabel>Duration</StyledInfoLabel>
@@ -189,9 +337,7 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
             </StyledInfoValue>
 
             <StyledInfoLabel>Product</StyledInfoLabel>
-            <StyledInfoValue>
-              {renderValue(contract.program)}
-            </StyledInfoValue>
+            <StyledInfoValue>{renderValue(contract.program)}</StyledInfoValue>
 
             <StyledInfoLabel>Program ID</StyledInfoLabel>
             <StyledInfoValue>
@@ -201,6 +347,11 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
             <StyledInfoLabel>Value</StyledInfoLabel>
             <StyledInfoValue>
               {formatCurrency(contract.valueGrossBase, contract.currencyBase)}
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Closer</StyledInfoLabel>
+            <StyledInfoValue>
+              {renderValue(contract.closerEmail)}
             </StyledInfoValue>
 
             <StyledInfoLabel>Bexio ID</StyledInfoLabel>
@@ -215,20 +366,90 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
           <StyledInfoGrid>
             <StyledInfoLabel>Name</StyledInfoLabel>
             <StyledInfoValue>
-              {customerName || <StyledEmptyText>Not available</StyledEmptyText>}
+              {customerName || (
+                <StyledEmptyText>Not available</StyledEmptyText>
+              )}
             </StyledInfoValue>
 
             <StyledInfoLabel>Email</StyledInfoLabel>
             <StyledInfoValue>
               {renderValue(contract.customerEmail)}
             </StyledInfoValue>
+
+            <StyledInfoLabel>Phone</StyledInfoLabel>
+            <StyledInfoValue>
+              {renderValue(contract.customerPhone)}
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Gender</StyledInfoLabel>
+            <StyledInfoValue>
+              {renderValue(contract.customerGender)}
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Birthday</StyledInfoLabel>
+            <StyledInfoValue>
+              {isDefined(contract.customerBirthday)
+                ? formatDate(contract.customerBirthday)
+                : renderValue(null)}
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Address</StyledInfoLabel>
+            <StyledInfoValue>
+              {isDefined(fullAddress) ? (
+                fullAddress
+              ) : (
+                <StyledEmptyText>Not available</StyledEmptyText>
+              )}
+            </StyledInfoValue>
           </StyledInfoGrid>
         </StyledSection>
+
+        <StyledSection>
+          <StyledSectionTitle>Payment Plan</StyledSectionTitle>
+          <StyledInfoGrid>
+            <StyledInfoLabel>Contract Value</StyledInfoLabel>
+            <StyledInfoValue>
+              {formatCurrency(contract.valueGrossBase, contract.currencyBase)}
+            </StyledInfoValue>
+          </StyledInfoGrid>
+
+          {isDefined(contract.paymentTerms) &&
+          contract.paymentTerms.trim().length > 0 ? (
+            <>
+              <StyledPaymentTermsText>
+                {contract.paymentTerms}
+              </StyledPaymentTermsText>
+              <StyledTotalRow isValid={true}>
+                <span>Total (from contract value)</span>
+                <span>
+                  {formatCurrency(
+                    contract.valueGrossBase,
+                    contract.currencyBase,
+                  )}
+                </span>
+              </StyledTotalRow>
+            </>
+          ) : (
+            <StyledPaymentTermsText>
+              No payment terms available. Parsed installments will be generated
+              by the AI module.
+            </StyledPaymentTermsText>
+          )}
+        </StyledSection>
+
+        {showSpecialAgreementsWarning && (
+          <StyledSection>
+            <StyledSectionTitle>Special Agreements</StyledSectionTitle>
+            <StyledSpecialAgreementsText>
+              {contract.specialAgreements}
+            </StyledSpecialAgreementsText>
+          </StyledSection>
+        )}
       </StyledDetailContent>
 
       <CoatApprovalActions
         contractId={contract.id}
-        currentStatus={contract.status}
+        currentExportStatus={contract.coatExportStatus}
       />
     </StyledDetailContainer>
   );
