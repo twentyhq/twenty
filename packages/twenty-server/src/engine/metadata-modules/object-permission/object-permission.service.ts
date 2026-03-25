@@ -143,14 +143,21 @@ export class ObjectPermissionService {
         );
       } else {
         const effectiveCanRead =
-          desired.canReadObjectRecords ?? current.canReadObjectRecords;
+          desired.canReadObjectRecords !== undefined
+            ? desired.canReadObjectRecords
+            : current.canReadObjectRecords;
         const effectiveCanUpdate =
-          desired.canUpdateObjectRecords ?? current.canUpdateObjectRecords;
+          desired.canUpdateObjectRecords !== undefined
+            ? desired.canUpdateObjectRecords
+            : current.canUpdateObjectRecords;
         const effectiveCanSoftDelete =
-          desired.canSoftDeleteObjectRecords ??
-          current.canSoftDeleteObjectRecords;
+          desired.canSoftDeleteObjectRecords !== undefined
+            ? desired.canSoftDeleteObjectRecords
+            : current.canSoftDeleteObjectRecords;
         const effectiveCanDestroy =
-          desired.canDestroyObjectRecords ?? current.canDestroyObjectRecords;
+          desired.canDestroyObjectRecords !== undefined
+            ? desired.canDestroyObjectRecords
+            : current.canDestroyObjectRecords;
 
         const canChanged =
           effectiveCanRead !== current.canReadObjectRecords ||
