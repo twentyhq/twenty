@@ -28,6 +28,7 @@ COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
+COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
 RUN npx nx run twenty-server:lingui:extract && \
