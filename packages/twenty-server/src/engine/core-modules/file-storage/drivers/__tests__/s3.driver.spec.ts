@@ -21,7 +21,7 @@ describe('S3Driver.getPresignedUrl', () => {
     jest.clearAllMocks();
   });
 
-  it('should return null when presignEndpoint is not configured', async () => {
+  it('should return null when presigning is not enabled', async () => {
     const driver = new S3Driver({
       bucketName: 'test-bucket',
       region: 'us-east-1',
@@ -36,7 +36,34 @@ describe('S3Driver.getPresignedUrl', () => {
     expect(getSignedUrl).not.toHaveBeenCalled();
   });
 
-  it('should return a signed URL when presignEndpoint is configured', async () => {
+  it('should presign with the main client when enabled without endpoint override', async () => {
+    (getSignedUrl as jest.Mock).mockResolvedValue(
+      'https://s3.us-east-1.amazonaws.com/test-bucket/file.png?X-Amz-Signature=abc',
+    );
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+      presignEnabled: true,
+    });
+
+    const result = await driver.getPresignedUrl({
+      filePath: 'file.png',
+      responseContentType: 'image/png',
+      responseContentDisposition: 'inline',
+    });
+
+    expect(result).toBe(
+      'https://s3.us-east-1.amazonaws.com/test-bucket/file.png?X-Amz-Signature=abc',
+    );
+    expect(getSignedUrl).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.any(GetObjectCommand),
+      { expiresIn: 900 },
+    );
+  });
+
+  it('should presign with a separate client when endpoint override is provided', async () => {
     (getSignedUrl as jest.Mock).mockResolvedValue(
       'https://public.s3.com/test-bucket/some/file.png?X-Amz-Signature=abc',
     );
@@ -45,6 +72,7 @@ describe('S3Driver.getPresignedUrl', () => {
       bucketName: 'test-bucket',
       region: 'us-east-1',
       endpoint: 'http://internal-minio:9000',
+      presignEnabled: true,
       presignEndpoint: 'https://public.s3.com',
     });
 
@@ -70,7 +98,7 @@ describe('S3Driver.getPresignedUrl', () => {
     const driver = new S3Driver({
       bucketName: 'test-bucket',
       region: 'us-east-1',
-      presignEndpoint: 'https://public.s3.com',
+      presignEnabled: true,
     });
 
     await driver.getPresignedUrl({
@@ -81,9 +109,7 @@ describe('S3Driver.getPresignedUrl', () => {
     expect(getSignedUrl).toHaveBeenCalledWith(
       expect.anything(),
       expect.any(GetObjectCommand),
-      {
-        expiresIn: 3600,
-      },
+      { expiresIn: 3600 },
     );
   });
 });

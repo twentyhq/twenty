@@ -33,6 +33,7 @@ export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
   endpoint?: string;
   region: string;
+  presignEnabled?: boolean;
   presignEndpoint?: string;
 }
 
@@ -43,8 +44,14 @@ export class S3Driver implements StorageDriver {
   private readonly logger = new Logger(S3Driver.name);
 
   constructor(options: S3DriverOptions) {
-    const { bucketName, region, endpoint, presignEndpoint, ...s3Options } =
-      options;
+    const {
+      bucketName,
+      region,
+      endpoint,
+      presignEnabled,
+      presignEndpoint,
+      ...s3Options
+    } = options;
 
     if (!bucketName || !region) {
       return;
@@ -53,12 +60,10 @@ export class S3Driver implements StorageDriver {
     this.s3Client = new S3({ ...s3Options, region, endpoint });
     this.bucketName = bucketName;
 
-    if (presignEndpoint) {
-      this.presignClient = new S3({
-        ...s3Options,
-        region,
-        endpoint: presignEndpoint,
-      });
+    if (presignEnabled) {
+      this.presignClient = presignEndpoint
+        ? new S3({ ...s3Options, region, endpoint: presignEndpoint })
+        : this.s3Client;
     }
   }
 
