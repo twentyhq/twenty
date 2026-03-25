@@ -9,7 +9,6 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -28,31 +27,19 @@ const resolveFieldMetadataIdOrThrow = ({
     );
   }
 
-  const flatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow({
-    flatEntityMaps: flatFieldMetadataMaps,
-    universalIdentifier: fieldMetadataUniversalIdentifier,
-  });
-
-  return flatFieldMetadata.id;
-};
-
-const resolveFieldMetadataId = ({
-  fieldMetadataUniversalIdentifier,
-  flatFieldMetadataMaps,
-}: {
-  fieldMetadataUniversalIdentifier: string | null;
-  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
-}): string | null => {
-  if (!isDefined(fieldMetadataUniversalIdentifier)) {
-    return null;
-  }
-
   const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
     flatEntityMaps: flatFieldMetadataMaps,
     universalIdentifier: fieldMetadataUniversalIdentifier,
   });
 
-  return flatFieldMetadata?.id ?? null;
+  if (!isDefined(flatFieldMetadata)) {
+    throw new FlatEntityMapsException(
+      `Field metadata not found for universal identifier: ${fieldMetadataUniversalIdentifier}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
+  return flatFieldMetadata.id;
 };
 
 const convertUniversalFilterToChartFilter = ({
@@ -68,23 +55,15 @@ const convertUniversalFilterToChartFilter = ({
 
   return {
     ...filter,
-    recordFilters: filter.recordFilters
-      ?.map(({ fieldMetadataUniversalIdentifier, ...rest }) => {
-        const fieldMetadataId = resolveFieldMetadataId({
+    recordFilters: filter.recordFilters?.map(
+      ({ fieldMetadataUniversalIdentifier, ...rest }) => ({
+        ...rest,
+        fieldMetadataId: resolveFieldMetadataIdOrThrow({
           fieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
-        });
-
-        if (!isDefined(fieldMetadataId)) {
-          return undefined;
-        }
-
-        return {
-          ...rest,
-          fieldMetadataId,
-        };
-      })
-      .filter(isDefined),
+        }),
+      }),
+    ),
   };
 };
 

@@ -4,7 +4,7 @@ import { type GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/pag
 import { type LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { type PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 
-export type ChartFieldsForValidation =
+export type ChartReferencingFieldInConfiguration =
   | AggregateChartConfigurationDTO
   | BarChartConfigurationDTO
   | GaugeChartConfigurationDTO

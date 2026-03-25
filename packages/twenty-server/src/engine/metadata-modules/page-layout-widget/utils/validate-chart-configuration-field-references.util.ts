@@ -6,63 +6,50 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { isChartReferencingFieldInConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-referencing-field-in-configuration.util';
 import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
-import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
-import { validateGroupByField } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-group-by-field.util';
+import { validateGroupByFieldOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-group-by-field.util';
 
-export const validateChartConfigurationFieldReferences = ({
-  configuration,
-  objectMetadataId,
-  widgetType,
+export const validateChartConfigurationFieldReferencesOrThrow = ({
+  widgetConfiguration,
+  widgetObjectMetadataId,
   widgetTitle,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
 }: {
-  configuration?: AllPageLayoutWidgetConfiguration | null;
-  objectMetadataId?: string | null;
-  widgetType?: WidgetType | null;
+  widgetConfiguration?: AllPageLayoutWidgetConfiguration | null;
+  widgetObjectMetadataId?: string | null;
   widgetTitle?: string | null;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): void => {
-  if (!isDefined(configuration)) {
+  if (!isDefined(widgetConfiguration)) {
+    return;
+  }
+
+  if (!isChartReferencingFieldInConfiguration(widgetConfiguration)) {
     return;
   }
 
   try {
-    if (!isChartFieldsForValidation(configuration)) {
-      if (widgetType === WidgetType.GRAPH) {
-        throw new Error(
-          'GRAPH widgets require configurationType AGGREGATE_CHART, BAR_CHART, GAUGE_CHART, LINE_CHART, or PIE_CHART.',
-        );
-      }
-
-      return;
-    }
-
-    if (widgetType && widgetType !== WidgetType.GRAPH) {
-      throw new Error(
-        `Graph configuration is only valid for widgets of type GRAPH.`,
-      );
-    }
-
-    if (!isDefined(objectMetadataId)) {
+    if (!isDefined(widgetObjectMetadataId)) {
       throw new Error('objectMetadataId is required for graph widgets.');
     }
 
     const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: objectMetadataId,
+      flatEntityId: widgetObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
     if (!isDefined(objectMetadata) || !objectMetadata.isActive) {
-      throw new Error(`objectMetadataId "${objectMetadataId}" not found.`);
+      throw new Error(
+        `objectMetadataId "${widgetObjectMetadataId}" not found.`,
+      );
     }
 
     const allFields = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
@@ -79,49 +66,53 @@ export const validateChartConfigurationFieldReferences = ({
     });
 
     const aggregateField = findActiveFlatFieldMetadataById(
-      configuration.aggregateFieldMetadataId,
+      widgetConfiguration.aggregateFieldMetadataId,
       flatFieldMetadataMaps,
     );
 
     if (!isDefined(aggregateField)) {
       throw new Error(
-        `aggregateFieldMetadataId "${configuration.aggregateFieldMetadataId}" not found.`,
+        `aggregateFieldMetadataId "${widgetConfiguration.aggregateFieldMetadataId}" not found.`,
       );
     }
 
-    if (aggregateField.objectMetadataId !== objectMetadataId) {
+    if (aggregateField.objectMetadataId !== widgetObjectMetadataId) {
       throw new Error(
-        `aggregateFieldMetadataId must belong to objectMetadataId "${objectMetadataId}".`,
+        `aggregateFieldMetadataId must belong to objectMetadataId "${widgetObjectMetadataId}".`,
       );
     }
 
-    switch (configuration.configurationType) {
+    switch (widgetConfiguration.configurationType) {
       case WidgetConfigurationType.BAR_CHART:
       case WidgetConfigurationType.LINE_CHART: {
-        validateGroupByField({
-          fieldId: configuration.primaryAxisGroupByFieldMetadataId,
-          subFieldName: configuration.primaryAxisGroupBySubFieldName,
+        validateGroupByFieldOrThrow({
+          fieldId: widgetConfiguration.primaryAxisGroupByFieldMetadataId,
+          subFieldName: widgetConfiguration.primaryAxisGroupBySubFieldName,
           paramName: 'primaryAxisGroupByFieldMetadataId',
-          objectMetadataId,
+          objectMetadataId: widgetObjectMetadataId,
           flatFieldMetadataMaps,
           allFields,
           fieldsByObjectId,
         });
 
-        if (isDefined(configuration.secondaryAxisGroupBySubFieldName)) {
-          if (!isDefined(configuration.secondaryAxisGroupByFieldMetadataId)) {
+        if (isDefined(widgetConfiguration.secondaryAxisGroupBySubFieldName)) {
+          if (
+            !isDefined(widgetConfiguration.secondaryAxisGroupByFieldMetadataId)
+          ) {
             throw new Error(
               'secondaryAxisGroupByFieldMetadataId is required when secondaryAxisGroupBySubFieldName is provided.',
             );
           }
         }
 
-        if (isDefined(configuration.secondaryAxisGroupByFieldMetadataId)) {
-          validateGroupByField({
-            fieldId: configuration.secondaryAxisGroupByFieldMetadataId,
-            subFieldName: configuration.secondaryAxisGroupBySubFieldName,
+        if (
+          isDefined(widgetConfiguration.secondaryAxisGroupByFieldMetadataId)
+        ) {
+          validateGroupByFieldOrThrow({
+            fieldId: widgetConfiguration.secondaryAxisGroupByFieldMetadataId,
+            subFieldName: widgetConfiguration.secondaryAxisGroupBySubFieldName,
             paramName: 'secondaryAxisGroupByFieldMetadataId',
-            objectMetadataId,
+            objectMetadataId: widgetObjectMetadataId,
             flatFieldMetadataMaps,
             allFields,
             fieldsByObjectId,
@@ -130,11 +121,11 @@ export const validateChartConfigurationFieldReferences = ({
         break;
       }
       case WidgetConfigurationType.PIE_CHART: {
-        validateGroupByField({
-          fieldId: configuration.groupByFieldMetadataId,
-          subFieldName: configuration.groupBySubFieldName,
+        validateGroupByFieldOrThrow({
+          fieldId: widgetConfiguration.groupByFieldMetadataId,
+          subFieldName: widgetConfiguration.groupBySubFieldName,
           paramName: 'groupByFieldMetadataId',
-          objectMetadataId,
+          objectMetadataId: widgetObjectMetadataId,
           flatFieldMetadataMaps,
           allFields,
           fieldsByObjectId,
@@ -146,8 +137,8 @@ export const validateChartConfigurationFieldReferences = ({
         break;
     }
 
-    if (isDefined(configuration.filter?.recordFilters)) {
-      for (const recordFilter of configuration.filter.recordFilters) {
+    if (isDefined(widgetConfiguration.filter?.recordFilters)) {
+      for (const recordFilter of widgetConfiguration.filter.recordFilters) {
         const filterField = findActiveFlatFieldMetadataById(
           recordFilter.fieldMetadataId,
           flatFieldMetadataMaps,
@@ -168,9 +159,9 @@ export const validateChartConfigurationFieldReferences = ({
           );
         }
 
-        if (filterField.objectMetadataId !== objectMetadataId) {
+        if (filterField.objectMetadataId !== widgetObjectMetadataId) {
           throw new Error(
-            `Filter field "${recordFilter.fieldMetadataId}" must belong to objectMetadataId "${objectMetadataId}".`,
+            `Filter field "${recordFilter.fieldMetadataId}" must belong to objectMetadataId "${widgetObjectMetadataId}".`,
           );
         }
       }

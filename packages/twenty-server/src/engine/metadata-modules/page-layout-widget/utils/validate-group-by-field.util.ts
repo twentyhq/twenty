@@ -8,7 +8,7 @@ import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/pag
 import { validateCompositeSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-composite-subfield.util';
 import { validateRelationSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-relation-subfield.util';
 
-export const validateGroupByField = ({
+export const validateGroupByFieldOrThrow = ({
   fieldId,
   subFieldName,
   paramName,
