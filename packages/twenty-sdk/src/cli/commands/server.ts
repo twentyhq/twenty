@@ -1,11 +1,10 @@
-import { ConfigService } from '@/cli/utilities/config/config-service';
+import { serverStart } from '@/cli/operations/server-start';
 import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
 
 const CONTAINER_NAME = 'twenty-app-dev';
-const IMAGE = 'twentycrm/twenty-app-dev:latest';
 const DEFAULT_PORT = 2020;
 
 const isContainerRunning = (): boolean => {
@@ -46,20 +45,6 @@ const containerExists = (): boolean => {
   }
 };
 
-const checkDockerRunning = (): boolean => {
-  try {
-    execSync('docker info', { stdio: 'ignore' });
-
-    return true;
-  } catch {
-    console.error(
-      chalk.red('Docker is not running. Please start Docker and try again.'),
-    );
-
-    return false;
-  }
-};
-
 const validatePort = (value: string): number => {
   const port = parseInt(value, 10);
 
@@ -81,81 +66,21 @@ export const registerServerCommands = (program: Command): void => {
     .description('Start a local Twenty server')
     .option('-p, --port <port>', 'HTTP port', String(DEFAULT_PORT))
     .action(async (options: { port: string }) => {
-      let port = validatePort(options.port);
+      const port = validatePort(options.port);
 
-      if (await checkServerHealth(port)) {
-        const localUrl = `http://localhost:${port}`;
-        const configService = new ConfigService();
+      const result = await serverStart({
+        port,
+        onProgress: (message) => console.log(chalk.gray(message)),
+      });
 
-        ConfigService.setActiveRemote('local');
-        await configService.setConfig({ apiUrl: localUrl });
-
-        console.log(
-          chalk.green(`Twenty server is already running on localhost:${port}.`),
-        );
-
-        return;
-      }
-
-      if (!checkDockerRunning()) {
+      if (!result.success) {
+        console.error(chalk.red(result.error.message));
         process.exit(1);
       }
 
-      if (isContainerRunning()) {
-        console.log(chalk.gray('Container is running but not healthy yet.'));
-
-        return;
-      }
-
-      if (containerExists()) {
-        const existingPort = getContainerPort();
-
-        if (existingPort !== port) {
-          console.log(
-            chalk.yellow(
-              `Existing container uses port ${existingPort}. Run 'yarn twenty server reset' first to change ports.`,
-            ),
-          );
-        }
-
-        port = existingPort;
-
-        console.log(chalk.gray('Starting existing container...'));
-        execSync(`docker start ${CONTAINER_NAME}`, { stdio: 'ignore' });
-      } else {
-        console.log(chalk.gray('Starting Twenty container...'));
-
-        const runResult = spawnSync(
-          'docker',
-          [
-            'run',
-            '-d',
-            '--name',
-            CONTAINER_NAME,
-            '-p',
-            `${port}:3000`,
-            '-v',
-            'twenty-app-dev-data:/data/postgres',
-            '-v',
-            'twenty-app-dev-storage:/app/.local-storage',
-            IMAGE,
-          ],
-          { stdio: 'inherit' },
-        );
-
-        if (runResult.status !== 0) {
-          console.error(chalk.red('\nFailed to start Twenty container.'));
-          process.exit(runResult.status ?? 1);
-        }
-      }
-
-      const localUrl = `http://localhost:${port}`;
-      const configService = new ConfigService();
-
-      ConfigService.setActiveRemote('local');
-      await configService.setConfig({ apiUrl: localUrl });
-
-      console.log(chalk.green(`\nLocal remote configured → ${localUrl}`));
+      console.log(
+        chalk.green(`\nLocal remote configured → ${result.data.url}`),
+      );
     });
 
   server

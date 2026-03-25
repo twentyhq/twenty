@@ -23,8 +23,8 @@ export { functionExecute } from './execute';
 export type { FunctionExecuteOptions } from './execute';
 
 // Server
-export { setupLocalInstance } from '@/cli/utilities/server/setup-local-instance';
-export type { LocalInstanceResult } from '@/cli/utilities/server/setup-local-instance';
+export { serverStart } from './server-start';
+export type { ServerStartOptions, ServerStartResult } from './server-start';
 
 // Shared types and error codes
 export {

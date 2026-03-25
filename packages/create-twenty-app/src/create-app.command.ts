@@ -1,4 +1,3 @@
-import { basename } from 'path';
 import { copyBaseApplicationProject } from '@/utils/app-template';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
@@ -8,12 +7,13 @@ import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
 import * as path from 'path';
-import { isDefined } from 'twenty-shared/utils';
+import { basename } from 'path';
 import {
   authLoginOAuth,
-  setupLocalInstance,
-  type LocalInstanceResult,
+  serverStart,
+  type ServerStartResult,
 } from 'twenty-sdk/cli';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type ExampleOptions,
@@ -60,17 +60,21 @@ export class CreateAppCommand {
 
       await tryGitInit(appDirectory);
 
-      let localResult: LocalInstanceResult = { running: false };
+      let serverResult: ServerStartResult | undefined;
 
       if (!options.skipLocalInstance) {
-        localResult = await setupLocalInstance(appDirectory, options.port);
+        const startResult = await serverStart({
+          port: options.port,
+          onProgress: (message: string) => console.log(chalk.gray(message)),
+        });
 
-        if (localResult.running && localResult.serverUrl) {
-          await this.connectToLocal(appDirectory, localResult.serverUrl);
+        if (startResult.success) {
+          serverResult = startResult.data;
+          await this.connectToLocal(serverResult.url);
         }
       }
 
-      this.logSuccess(appDirectory, localResult);
+      this.logSuccess(appDirectory, serverResult);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -197,10 +201,7 @@ export class CreateAppCommand {
     );
   }
 
-  private async connectToLocal(
-    _appDirectory: string,
-    serverUrl: string,
-  ): Promise<void> {
+  private async connectToLocal(serverUrl: string): Promise<void> {
     try {
       const result = await authLoginOAuth({
         apiUrl: serverUrl,
@@ -225,14 +226,14 @@ export class CreateAppCommand {
 
   private logSuccess(
     appDirectory: string,
-    localResult: LocalInstanceResult,
+    serverResult?: ServerStartResult,
   ): void {
     const dirName = basename(appDirectory);
 
     console.log(chalk.blue('\nApplication created. Next steps:'));
     console.log(chalk.gray(`- cd ${dirName}`));
 
-    if (!localResult.running) {
+    if (!serverResult) {
       console.log(
         chalk.gray(
           '- yarn twenty remote add --local  # Authenticate with Twenty',
