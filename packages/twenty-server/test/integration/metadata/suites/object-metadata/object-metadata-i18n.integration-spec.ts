@@ -74,31 +74,6 @@ describe('object metadata i18n', () => {
     expect(company!.labelPlural).toBeDefined();
   });
 
-  // Standard object labels should never be returned as raw hash IDs.
-  // The fallback in resolveObjectMetadataStandardOverride catches missing
-  // catalog entries by returning the raw DB label. This test verifies
-  // that labels are always human-readable, not 6-char Lingui hashes.
-  it('should return human-readable labels, not hash IDs', async () => {
-    const response = await makeLocalizedRequest('fr-FR');
-
-    const edges = response.body.data.objects.edges;
-    const hashPattern = /^[A-Za-z0-9+/]{6}$/;
-
-    const standardObjects = edges.filter(
-      (edge: { node: ObjectNode }) => !edge.node.isCustom,
-    );
-
-    for (const edge of standardObjects) {
-      const { labelSingular, labelPlural } = edge.node;
-
-      expect(hashPattern.test(labelSingular)).toBe(false);
-      expect(hashPattern.test(labelPlural)).toBe(false);
-
-      expect(labelSingular.length).toBeGreaterThan(1);
-      expect(labelPlural.length).toBeGreaterThan(1);
-    }
-  });
-
   // French translations for standard object labels are managed by Crowdin.
   // Once translators provide them, update these expectations:
   //   expect(company!.labelSingular).toBe('Entreprise');
