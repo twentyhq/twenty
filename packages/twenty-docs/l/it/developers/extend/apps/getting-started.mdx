@@ -167,7 +167,7 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+* `yarn twenty dev` genererà automaticamente due client API tipizzati in `node_modules/twenty-sdk/generated`: `CoreApiClient` (per i dati dell'area di lavoro tramite `/graphql`) e `MetadataApiClient` (per la configurazione dell'area di lavoro e il caricamento di file tramite `/metadata`).
 * `yarn twenty entity:add` aggiungerà file di definizione delle entità sotto `src/` per i tuoi oggetti, funzioni, componenti front-end, ruoli, competenze e altro ancora.
 
 ## Autenticazione
@@ -221,7 +221,7 @@ Quindi aggiungi uno script `twenty`:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
+Ora puoi eseguire tutti i comandi tramite `yarn twenty <command>`, ad es. `yarn twenty dev`, `yarn twenty help`, ecc.
 
 ## Come utilizzare un'istanza locale di Twenty
 
@@ -239,7 +239,7 @@ yarn twenty remote add --local --port 3000
 
 * Errori di autenticazione: esegui `yarn twenty auth:login` e assicurati che la tua chiave API abbia i permessi richiesti.
 * Impossibile connettersi al server: verifica l'URL dell'API e che il server Twenty sia raggiungibile.
-* Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
-* Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
+* Tipi o client mancanti/obsoleti: riavvia `yarn twenty dev` — genera automaticamente il client tipizzato.
+* Modalità di sviluppo non sincronizzata: assicurati che `yarn twenty dev` sia in esecuzione e che le modifiche non vengano ignorate dal tuo ambiente.
 
 Canale di supporto su Discord: https://discord.com/channels/1130383047699738754/1130386664812982322
