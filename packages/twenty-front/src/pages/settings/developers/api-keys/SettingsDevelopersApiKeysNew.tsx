@@ -117,7 +117,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     }
   };
 
-  const canSave = !!formValues.name && !!formValues.roleId && !!createApiKey;
+  const canSave = !!formValues.name && !!formValues.roleId;
 
   if (rolesLoading) {
     return <SettingsSkeletonLoader />;
