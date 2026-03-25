@@ -30,15 +30,17 @@ export const computeFlatViewFieldsToCreate = ({
             labelIdentifierFieldMetadataUniversalIdentifier),
     )
     .sort((a, b) => {
-      const aIsLabel =
+      const aIsLabelIdentifierFieldMetadata =
         a.universalIdentifier ===
         labelIdentifierFieldMetadataUniversalIdentifier;
-      const bIsLabel =
+      const bIsLabelIdentifierFieldMetadata =
         b.universalIdentifier ===
         labelIdentifierFieldMetadataUniversalIdentifier;
 
-      if (aIsLabel && !bIsLabel) return -1;
-      if (!aIsLabel && bIsLabel) return 1;
+      if (aIsLabelIdentifierFieldMetadata && !bIsLabelIdentifierFieldMetadata)
+        return -1;
+      if (!aIsLabelIdentifierFieldMetadata && bIsLabelIdentifierFieldMetadata)
+        return 1;
 
       return 0;
     })
