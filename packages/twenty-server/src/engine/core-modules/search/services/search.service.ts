@@ -156,7 +156,10 @@ export class SearchService {
             return false;
           }
 
-          return includedObjectNameSingulars.includes(nameSingular);
+          return (
+            includedObjectNameSingulars.includes(nameSingular) &&
+            !excludedObjectNameSingulars.includes(nameSingular)
+          );
         }
 
         if (!isSearchable) {
