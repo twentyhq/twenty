@@ -79,6 +79,7 @@
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
     "vite-tsconfig-paths": "^4.2.1",
+    "twenty-client-sdk": "workspace:*",
     "zod": "^4.1.11"
   },
   "devDependencies": {
@@ -96,7 +97,6 @@
     "storybook": "^10.2.13",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
-    "twenty-client-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
