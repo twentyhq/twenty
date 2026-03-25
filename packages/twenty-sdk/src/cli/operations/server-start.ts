@@ -62,9 +62,7 @@ const checkDockerRunning = (): boolean => {
 const HEALTH_POLL_INTERVAL_MS = 2000;
 const HEALTH_TIMEOUT_MS = 180 * 1000;
 
-const waitForHealthy = async (
-  port: number,
-): Promise<boolean> => {
+const waitForHealthy = async (port: number): Promise<boolean> => {
   const startTime = Date.now();
 
   while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
@@ -72,7 +70,9 @@ const waitForHealthy = async (
       return true;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, HEALTH_POLL_INTERVAL_MS));
+    await new Promise((resolve) =>
+      setTimeout(resolve, HEALTH_POLL_INTERVAL_MS),
+    );
   }
 
   return false;
@@ -105,7 +105,10 @@ const innerServerStart = async (
 
     onProgress?.(`Twenty server detected on ${existingUrl}`);
 
-    return { success: true, data: { port: parseInt(port, 10), url: existingUrl } };
+    return {
+      success: true,
+      data: { port: parseInt(port, 10), url: existingUrl },
+    };
   }
 
   if (options.port) {
@@ -125,8 +128,7 @@ const innerServerStart = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.BUILD_FAILED,
-        message:
-          'Docker is not running. Please start Docker and try again.',
+        message: 'Docker is not running. Please start Docker and try again.',
       },
     };
   }
