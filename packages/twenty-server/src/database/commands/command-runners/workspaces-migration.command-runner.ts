@@ -178,7 +178,10 @@ export abstract class WorkspacesMigrationCommandRunner<
     }
 
     this.migrationReport.fail.forEach(({ error, workspaceId }) =>
-      this.logger.error(`Error in workspace ${workspaceId}: ${error.message}`),
+      this.logger.error(
+        `Error in workspace ${workspaceId}: ${error.message}`,
+        error.stack,
+      ),
     );
   }
 

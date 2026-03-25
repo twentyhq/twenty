@@ -31,11 +31,15 @@ export class MessagingProcessGroupEmailActionsService {
     workspaceId: string,
     pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction,
   ): Promise<void> {
-    await this.messageChannelDataAccessService.update(
-      workspaceId,
-      { id: messageChannel.id },
-      { pendingGroupEmailsAction },
-    );
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.messageChannelDataAccessService.update(
+        workspaceId,
+        { id: messageChannel.id },
+        { pendingGroupEmailsAction },
+      );
+    }, authContext);
 
     this.logger.debug(
       `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Marked message channel as pending group emails action: ${pendingGroupEmailsAction}`,

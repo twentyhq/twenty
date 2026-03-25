@@ -152,7 +152,7 @@ export class SyncMessageFoldersService {
           for (const [id, data] of foldersToUpdate.entries()) {
             await this.messageFolderDataAccessService.update(
               workspaceId,
-              { id },
+              { id, messageChannelId },
               data,
             );
           }
