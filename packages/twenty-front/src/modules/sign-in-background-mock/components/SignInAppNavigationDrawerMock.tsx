@@ -1,7 +1,7 @@
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
@@ -34,7 +34,7 @@ export const SignInAppNavigationDrawerMock = ({
 }: SignInAppNavigationDrawerMockProps) => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   return (
     <NavigationDrawer className={className} title={DEFAULT_WORKSPACE_NAME}>
@@ -45,7 +45,7 @@ export const SignInAppNavigationDrawerMock = ({
               label={t`Search`}
               Icon={IconSearch}
               onClick={() => {}}
-              keyboard={[getOsControlSymbol(), 'K']}
+              modifier={{ keyboard: [getOsControlSymbol(), 'K'] }}
             />
             <NavigationDrawerItem
               label={t`Settings`}
@@ -58,7 +58,6 @@ export const SignInAppNavigationDrawerMock = ({
       )}
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Workspace`}
-        isRemote={false}
         objectMetadataItems={objectMetadataItems.filter((item) =>
           WORKSPACE_FAVORITES.includes(item.nameSingular),
         )}

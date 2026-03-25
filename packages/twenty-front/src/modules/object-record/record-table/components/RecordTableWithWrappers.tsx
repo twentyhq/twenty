@@ -1,5 +1,4 @@
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
@@ -11,17 +10,14 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 
 type RecordTableWithWrappersProps = {
   objectNameSingular: string;
   recordTableId: string;
   viewBarId: string;
-  updateRecordMutation: (params: any) => void;
 };
 
 export const RecordTableWithWrappers = ({
-  updateRecordMutation,
   objectNameSingular,
   recordTableId,
   viewBarId,
@@ -66,10 +62,7 @@ export const RecordTableWithWrappers = ({
           <ScrollWrapper
             componentInstanceId={`record-table-scroll-${recordTableId}`}
           >
-            <RecordUpdateContext.Provider value={updateRecordMutation}>
-              <RecordTable />
-              <RecordIndexTableContainerEffect />
-            </RecordUpdateContext.Provider>
+            <RecordTable />
           </ScrollWrapper>
         </EntityDeleteContext.Provider>
       </RecordTableContextProvider>

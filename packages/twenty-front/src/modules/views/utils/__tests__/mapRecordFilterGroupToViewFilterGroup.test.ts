@@ -3,18 +3,17 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { type View } from '@/views/types/View';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewVisibility } from '~/generated-metadata/graphql';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { ViewOpenRecordIn, ViewVisibility } from '~/generated-metadata/graphql';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
 describe('mapRecordFilterGroupToViewFilterGroup', () => {
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  const mockObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
   );
 
@@ -30,10 +29,10 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
     objectMetadataId: mockObjectMetadataItem.id,
     viewFilters: [],
     viewFilterGroups: [],
-    type: ViewType.Table,
+    type: ViewType.TABLE,
     key: null,
     isCompact: false,
-    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
+    openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     viewFields: [],
     viewGroups: [],
     viewSorts: [],
@@ -44,7 +43,6 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     visibility: ViewVisibility.WORKSPACE,
-    __typename: 'View',
   };
 
   it('should correctly map single record filter group', () => {
@@ -64,7 +62,6 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
         positionInViewFilterGroup: 0,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
     ];
 
@@ -108,7 +105,6 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
         positionInViewFilterGroup: 0,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
       {
         id: 'filter-group-child-1',
@@ -116,7 +112,6 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
         positionInViewFilterGroup: 1,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
       {
         id: 'filter-group-child-2',
@@ -124,7 +119,6 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
         positionInViewFilterGroup: 2,
         viewId: 'view-1',
-        __typename: 'ViewFilterGroup',
       },
     ];
 

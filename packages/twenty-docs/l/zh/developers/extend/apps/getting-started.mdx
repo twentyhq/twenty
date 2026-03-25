@@ -1,0 +1,245 @@
+---
+title: 开始使用
+description: 几分钟内创建你的第一个 Twenty 应用。
+---
+
+<Warning>
+应用目前处于 Alpha 测试阶段。 该功能可用，但仍在演进中。
+</Warning>
+
+应用可通过自定义对象、字段、逻辑函数、AI 技能和 UI 组件来扩展 Twenty——全部以代码进行管理。
+
+**你现在可以做什么:**
+
+* 以代码定义自定义对象和字段（受管理的数据模型）
+* 使用自定义触发器（HTTP 路由、cron、数据库事件）构建逻辑函数
+* 为 AI 智能体定义技能
+* 构建在 Twenty 的 UI 中渲染的前端组件
+* 将同一个应用部署到多个工作空间
+
+## 先决条件
+
+* Node.js 24+ 和 Yarn 4
+* Docker (用于本地 Twenty 开发服务器)
+
+## 开始使用
+
+使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
+
+```bash filename="Terminal"
+# Scaffold a new app (includes all examples by default)
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# Start dev mode: automatically syncs local changes to your workspace
+yarn twenty dev
+```
+
+脚手架工具支持两种模式，用于控制包含哪些示例文件：
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+```
+
+从这里您可以：
+
+```bash filename="Terminal"
+# Add a new entity to your application (guided)
+yarn twenty entity:add
+
+# Watch your application's function logs
+yarn twenty function:logs
+
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute the pre-install function
+yarn twenty function:execute --preInstall
+
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
+yarn twenty uninstall
+
+# Display commands' help
+yarn twenty help
+```
+
+另请参阅：[create-twenty-app](https://www.npmjs.com/package/create-twenty-app) 和 [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) 的 CLI 参考页面。
+
+## 项目结构（脚手架生成）
+
+当你运行 `npx create-twenty-app@latest my-twenty-app` 时，脚手架将：
+
+* 将一个最小的基础应用复制到 `my-twenty-app/` 中
+* 添加本地 `twenty-sdk` 依赖和 Yarn 4 配置
+* 创建与 `twenty` CLI 关联的配置文件和脚本
+* 生成核心文件（应用配置、默认函数角色、安装前/安装后函数），并基于脚手架模式生成示例文件
+
+使用默认 `--exhaustive` 模式新搭建的应用如下所示：
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    install-state.gz
+  .oxlintrc.json
+  tsconfig.json
+  README.md
+  public/                           # Public assets folder (images, fonts, etc.)
+  src/
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
+  ├── logic-functions/
+  │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
+  │   └── post-install.ts               # Post-install logic function
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
+```
+
+使用 `--minimal` 时，只会创建核心文件（`application-config.ts`、`roles/default-role.ts`、`logic-functions/pre-install.ts` 和 `logic-functions/post-install.ts`）。
+
+总体来说：
+
+* **package.json**：声明应用名称、版本、引擎（Node 24+、Yarn 4），并添加 `twenty-sdk` 以及一个 `twenty` 脚本，该脚本会委托给本地的 `twenty` CLI。 运行 `yarn twenty help` 以列出所有可用命令。
+* **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
+* **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
+* **.nvmrc**：固定项目期望的 Node.js 版本。
+* **.oxlintrc.json** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
+* **README.md**：应用根目录中的简短 README，包含基本说明。
+* **public/**: 一个用于存储公共资源（图像、字体、静态文件）的文件夹，这些资源将随你的应用程序一起提供。 放置在此处的文件会在同步期间上传，并可在运行时访问。
+* **src/**：你以代码形式定义应用的主要位置
+
+### 实体检测
+
+该 SDK 通过在你的 TypeScript 文件中解析 **`export default define<Entity>({...})`** 调用来检测实体。 每种实体类型都有一个从 `twenty-sdk` 导出的对应辅助函数：
+
+| 辅助函数                             | 实体类型             |
+| -------------------------------- | ---------------- |
+| `defineObject`                   | 自定义对象定义          |
+| `defineLogicFunction`            | 逻辑函数定义           |
+| `definePreInstallLogicFunction`  | 安装前逻辑函数（在安装之前运行） |
+| `definePostInstallLogicFunction` | 安装后逻辑函数（在安装之后运行） |
+| `defineFrontComponent`           | 前端组件定义           |
+| `defineRole`                     | 角色定义             |
+| `defineField`                    | 现有对象的字段扩展        |
+| `defineView`                     | 已保存的视图定义         |
+| `defineNavigationMenuItem`       | 导航菜单项定义          |
+| `defineSkill`                    | AI 代理技能定义        |
+
+<Note>
+**文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
+</Note>
+
+已检测实体的示例：
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
+
+后续命令将添加更多文件和文件夹：
+
+* `yarn twenty dev` 会在 `node_modules/twenty-sdk/generated` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
+* `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件、角色、技能等添加实体定义文件。
+
+## 身份验证
+
+首次运行 `yarn twenty auth:login` 时，你将被提示输入：
+
+* API URL（默认为 http://localhost:3000 或你当前的工作空间配置）
+* API 密钥
+
+你的凭据按用户存储在 `~/.twenty/config.json` 中。 你可以维护多个配置文件并在它们之间切换。
+
+### 管理工作空间
+
+```bash filename="Terminal"
+# Login interactively (recommended)
+yarn twenty auth:login
+
+# Login to a specific workspace profile
+yarn twenty auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn twenty auth:list
+
+# Switch the default workspace (interactive)
+yarn twenty auth:switch
+
+# Switch to a specific workspace
+yarn twenty auth:switch production
+
+# Check current authentication status
+yarn twenty auth:status
+```
+
+使用 `yarn twenty auth:switch` 切换工作空间后，后续所有命令将默认使用该工作空间。 你仍可通过 `--workspace <name>` 临时覆盖。
+
+## 手动设置（不使用脚手架）
+
+虽然我们建议使用 `create-twenty-app` 以获得最佳的上手体验，但你也可以手动设置项目。 不要全局安装 CLI。 相反，请将 `twenty-sdk` 添加为本地依赖，并在你的 package.json 中配置一个脚本：
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+然后添加一个 `twenty` 脚本：
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty dev`、`yarn twenty help` 等。
+
+## 如何使用本地 Twenty 实例
+
+如果你已经在本地运行一个 Twenty 实例（例如通过 `npx nx start twenty-server`），你可以连接到它，而不是使用 Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
+
+## 故障排除
+
+* 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
+* 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
+* 类型或客户端缺失/过期：重启 `yarn twenty dev` — 它会自动生成类型化客户端。
+* 开发模式未同步：确保 `yarn twenty dev` 正在运行，并且你的环境不会忽略变更。
+
+Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

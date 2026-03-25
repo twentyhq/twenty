@@ -1,0 +1,689 @@
+---
+title: Crearea aplicațiilor
+description: Definiți obiecte, funcții logice, componente front-end și multe altele cu Twenty SDK.
+---
+
+<Warning>
+Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
+</Warning>
+
+## Utilizați resursele SDK (tipuri și configurare)
+
+Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare pe care le utilizați în aplicația dvs. Mai jos sunt elementele cheie cu care veți interacționa cel mai des.
+
+### Funcții ajutătoare
+
+SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. După cum este descris în [Detectarea entităților](/l/ro/developers/extend/apps/getting-started#entity-detection), trebuie să folosiți `export default define<Entity>({...})` pentru ca entitățile să fie detectate:
+
+| Funcție                          | Scop                                                                   |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| `defineApplication`              | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
+| `defineObject`                   | Definiți obiecte personalizate cu câmpuri                              |
+| `defineLogicFunction`            | Definiți funcții de logică cu handleri                                 |
+| `definePreInstallLogicFunction`  | Definește o funcție logică de pre-instalare (una per aplicație)        |
+| `definePostInstallLogicFunction` | Definește o funcție logică post-instalare (una per aplicație)          |
+| `defineFrontComponent`           | Definiți componente Front pentru interfața de utilizator personalizată |
+| `defineRole`                     | Configurați permisiunile rolurilor și accesul la obiecte               |
+| `defineField`                    | Extindeți obiectele existente cu câmpuri suplimentare                  |
+| `defineView`                     | Definește vizualizări salvate pentru obiecte                           |
+| `defineNavigationMenuItem`       | Definește linkuri de navigare în bara laterală                         |
+| `defineSkill`                    | Definiți abilități pentru agentul AI                                   |
+
+Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
+
+### Definirea obiectelor
+
+Obiectele personalizate descriu atât schema, cât și comportamentul înregistrărilor din spațiul dvs. de lucru. Utilizați `defineObject()` pentru a defini obiecte cu validare încorporată:
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+Puncte cheie:
+
+* Folosiți `defineObject()` pentru validare încorporată și suport mai bun în IDE.
+* `universalIdentifier` trebuie să fie unic și stabil între implementări.
+* Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
+* Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
+* Puteți genera obiecte noi folosind `yarn twenty entity:add`, care vă ghidează prin denumire, câmpuri și relații.
+
+<Note>
+**Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
+precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`.
+Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile personalizate proprii.
+Puteți suprascrie câmpurile implicite definind un câmp cu același nume în tabloul `fields`,
+dar acest lucru nu este recomandat.
+</Note>
+
+### Configurația aplicației (application-config.ts)
+
+Fiecare aplicație are un singur fișier `application-config.ts` care descrie:
+
+* **Cine este aplicația**: identificatori, nume de afișare și descriere.
+* **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
+* **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
+* **(Opțional) funcție de pre-instalare**: o funcție logică care rulează înainte ca aplicația să fie instalată.
+* **(Opțional) funcție post-instalare**: o funcție logică care rulează după instalarea aplicației.
+
+Folosiți `defineApplication()` pentru a defini configurația aplicației:
+
+```typescript
+// src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Notițe:
+
+* Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
+* `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
+* Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului. Vezi [Funcții de pre-instalare](#pre-install-functions) și [Funcții post-instalare](#post-install-functions).
+
+#### Roluri și permisiuni
+
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `defaultRoleUniversalIdentifier` din `application-config.ts` desemnează rolul implicit utilizat de funcțiile de logică ale aplicației.
+
+* Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
+* Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
+* Respectați principiul celui mai mic privilegiu: creați un rol dedicat doar cu permisiunile de care au nevoie funcțiile, apoi referiți identificatorul său universal.
+
+##### Rol implicit pentru funcții (*.role.ts)
+
+Când generați o aplicație nouă, CLI creează și un fișier de rol implicit. Folosiți `defineRole()` pentru a defini roluri cu validare încorporată:
+
+```typescript
+// src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+`universalIdentifier` al acestui rol este apoi referențiat în `application-config.ts` ca `defaultRoleUniversalIdentifier`. Cu alte cuvinte:
+
+* **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
+* **application-config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
+
+Notițe:
+
+* Porniți de la rolul generat, apoi restrângeți-l progresiv urmând principiul celui mai mic privilegiu.
+* Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele/câmpurile de care au nevoie funcțiile.
+* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum; adăugați doar ceea ce aveți nevoie.
+* Vedeți un exemplu funcțional în aplicația Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### Configurația funcției de logică și punctul de intrare
+
+Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
+
+```typescript
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+Tipuri comune de declanșatoare:
+
+* **route**: Expune funcția pe o rută și metodă HTTP **sub endpoint-ul `/s/`**:
+
+> de ex. `path: '/post-card/create',` -> apel pe `<APP_URL>/s/post-card/create`
+
+* **cron**: Rulează funcția pe un program folosind o expresie CRON.
+* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
+
+> de ex. `person.updated`
+
+Notițe:
+
+* Matricea `triggers` este opțională. Funcțiile fără declanșatoare pot fi folosite ca funcții utilitare apelate de alte funcții.
+* Puteți combina mai multe tipuri de declanșatoare într-o singură funcție.
+
+### Funcții de pre-instalare
+
+O funcție de pre-instalare este o funcție logică ce rulează automat înainte ca aplicația ta să fie instalată într-un spațiu de lucru. Aceasta este utilă pentru sarcini de validare, verificări ale condițiilor prealabile sau pregătirea stării spațiului de lucru înainte ca instalarea principală să continue.
+
+Când creezi scheletul unei aplicații noi cu `create-twenty-app`, ți se generează o funcție de pre-instalare la `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Poți, de asemenea, să execuți manual funcția de pre-instalare oricând folosind CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Puncte cheie:
+
+* Funcțiile de pre-instalare folosesc `definePreInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Handlerul primește un `InstallLogicFunctionPayload` cu `{ previousVersion: string }` — versiunea aplicației care a fost instalată anterior (sau un șir gol pentru instalări noi).
+* Este permisă o singură funcție de pre-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+* Proprietatea `universalIdentifier` a funcției este setată automat ca `preInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
+* Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de pregătire mai lungi.
+* Funcțiile de pre-instalare nu au nevoie de declanșatoare — sunt invocate de platformă înainte de instalare sau manual prin `function:execute --preInstall`.
+
+### Funcții post-instalare
+
+O funcție post-instalare este o funcție logică care rulează automat după instalarea aplicației într-un spațiu de lucru. Aceasta este utilă pentru sarcini de configurare unice, cum ar fi popularea cu date implicite, crearea înregistrărilor inițiale sau configurarea setărilor spațiului de lucru.
+
+Când creezi scheletul unei aplicații noi cu `create-twenty-app`, este generată o funcție post-instalare la `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Poți, de asemenea, să execuți manual funcția post-instalare oricând folosind CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Puncte cheie:
+
+* Funcțiile de post-instalare folosesc `definePostInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Handlerul primește un `InstallLogicFunctionPayload` cu `{ previousVersion: string }` — versiunea aplicației care a fost instalată anterior (sau un șir gol pentru instalări noi).
+* Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+* Proprietatea `universalIdentifier` a funcției este setată automat ca `postInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
+* Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
+* Funcțiile post-instalare nu au nevoie de declanșatoare — sunt invocate de platformă în timpul instalării sau manual prin `function:execute --postInstall`.
+
+### Payload-ul declanșatorului de rută
+
+<Warning>
+**Modificare incompatibilă (v1.16, ianuarie 2026):** Formatul payload-ului declanșatorului de rută s-a schimbat. Înainte de v1.16, parametrii de interogare (query), parametrii de cale și corpul erau trimiși direct ca payload. Începând cu v1.16, acestea sunt incluse într-un obiect structurat `RoutePayload`.
+
+**Înainte de v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
+
+**După v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
+
+**Pentru a migra funcțiile existente:** Actualizează handler-ul pentru a extrage câmpurile din `event.body`, `event.queryStringParameters` sau `event.pathParameters` în loc să le iei direct din obiectul params.
+</Warning>
+
+Când un declanșator de rută apelează funcția dvs. de logică, aceasta primește un obiect `RoutePayload` care urmează formatul AWS HTTP API v2. Importă tipul din `twenty-sdk`:
+
+```typescript
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Tipul `RoutePayload` are următoarea structură:
+
+| Proprietate                  | Tip                                   | Descriere                                                                            |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                       |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                          |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametri de cale extrași din modelul rutei (de ex., `/users/:id` → `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Corpul cererii analizat (JSON)                                                       |
+| `isBase64Encoded`            | `boolean`                             | Indică dacă corpul este codificat în base64                                          |
+| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                          |
+| `requestContext.http.path`   | `string`                              | Calea brută a cererii                                                                |
+
+### Transmiterea anteturilor HTTP
+
+În mod implicit, anteturile HTTP din cererile de intrare **nu** sunt transmise funcției dvs. de logică din motive de securitate. Pentru a accesa anumite anteturi, listează-le explicit în array-ul `forwardedRequestHeaders`:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+În handler, poți apoi accesa aceste anteturi:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  Numele anteturilor sunt normalizate la litere mici. Accesează-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
+</Note>
+
+Puteți crea funcții noi în două moduri:
+
+* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o funcție logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
+
+### Marcarea unei funcții logice drept instrument
+
+Funcțiile logice pot fi expuse ca **instrumente** pentru agenți de IA și fluxuri de lucru. Când o funcție este marcată ca instrument, poate fi descoperită de funcționalitățile de IA ale Twenty și poate fi selectată ca pas în automatizări ale fluxurilor de lucru.
+
+Pentru a marca o funcție logică drept instrument, setați `isTool: true` și furnizați un `toolInputSchema` care descrie parametrii de intrare așteptați folosind [JSON Schema](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Puncte cheie:
+
+* **`isTool`** (`boolean`, implicit: `false`): Când este setat la `true`, funcția este înregistrată ca instrument și devine disponibilă pentru agenții AI și automatizările de fluxuri de lucru.
+* **`toolInputSchema`** (`object`, opțional): Un obiect JSON Schema care descrie parametrii pe care îi acceptă funcția dvs. Agenții AI folosesc această schemă pentru a înțelege ce intrări așteaptă instrumentul și pentru a valida apelurile. Dacă este omisă, schema are implicit valoarea `{ type: 'object', properties: {} }` (fără parametri).
+* Funcțiile cu `isTool: false` (sau nedefinit) **nu** sunt expuse ca instrumente. Pot totuși fi executate direct sau apelate de alte funcții, dar nu vor apărea în descoperirea instrumentelor.
+* **Denumierea instrumentelor**: Când este expusă ca instrument, denumirea funcției este normalizată automat la `logic_function_<name>` (convertită la litere mici, iar caracterele non-alfanumerice sunt înlocuite cu caractere de subliniere). De exemplu, `enrich-company` devine `logic_function_enrich_company`.
+* Puteți combina `isTool` cu declanșatoare — o funcție poate fi atât un instrument (apelabilă de agenții AI), cât și declanșată de evenimente (cron, evenimente de bază de date, rute) în același timp.
+
+<Note>
+**Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+</Note>
+
+### Componente Front
+
+Componentele Front vă permit să construiți componente React personalizate care sunt randate în interfața Twenty. Utilizați `defineFrontComponent()` pentru a defini componente cu validare încorporată:
+
+```typescript
+// src/front-components/my-widget.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Puncte cheie:
+
+* Componentele Front sunt componente React care sunt randate în contexte izolate în cadrul Twenty.
+* Câmpul `component` face referire la componenta React.
+* Componentele sunt construite și sincronizate automat în timpul `yarn twenty dev`.
+
+Puteți crea componente Front noi în două moduri:
+
+* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o componentă frontend nouă.
+* **Manual**: Creați un fișier nou `.tsx` și folosiți `defineFrontComponent()`, urmând același model.
+
+### Abilități
+
+Abilitățile definesc instrucțiuni și capabilități reutilizabile pe care agenții AI le pot folosi în spațiul dvs. de lucru. Folosiți `defineSkill()` pentru a defini abilități cu validare încorporată:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Puncte cheie:
+
+* `name` este un șir identificator unic pentru abilitate (se recomandă kebab-case).
+* `label` este numele lizibil afișat în interfața cu utilizatorul (UI).
+* `content` conține instrucțiunile abilității — acesta este textul pe care agentul AI îl folosește.
+* `icon` (opțional) setează pictograma afișată în UI.
+* `description` (opțional) oferă context suplimentar despre scopul abilității.
+
+Puteți crea abilități noi în două moduri:
+
+* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o abilitate nouă.
+* **Manual**: Creați un fișier nou și folosiți `defineSkill()`, urmând același model.
+
+### Clienți tipizați generați
+
+Doi clienți tipizați sunt generați automat de `yarn twenty dev` și stocați în `node_modules/twenty-sdk/generated`, pe baza schemei spațiului tău de lucru:
+
+* **`CoreApiClient`** — interoghează endpointul `/graphql` pentru datele spațiului de lucru
+* **`MetadataApiClient`** — interoghează endpointul `/metadata` pentru configurarea spațiului de lucru și încărcarea fișierelor
+
+```typescript
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+
+const client = new CoreApiClient();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+```
+
+Ambii clienți sunt regenerați automat de `yarn twenty dev` ori de câte ori obiectele sau câmpurile tale se schimbă.
+
+#### Acreditări la runtime în funcțiile de logică
+
+Când funcția rulează pe Twenty, platforma injectează acreditări ca variabile de mediu înainte de execuția codului:
+
+* `TWENTY_API_URL`: URL-ul de bază al API-ului Twenty către care țintește aplicația.
+* `TWENTY_API_KEY`: Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației.
+
+Notițe:
+
+* Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application-config.ts` prin `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `defaultRoleUniversalIdentifier` la identificatorul universal al acelui rol.
+
+#### Încărcarea fișierelor
+
+Clientul `MetadataApiClient` generat include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier ale obiectelor din spațiul tău de lucru. Deoarece clienții GraphQL standard nu acceptă în mod nativ încărcarea fișierelor multipart, clientul oferă această metodă dedicată care implementează, sub capotă, [specificația cererilor GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec).
+
+```typescript
+import { MetadataApiClient } from 'twenty-sdk/generated';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Semnătura metodei:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parametru                          | Tip      | Descriere                                                                                   |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                                               |
+| `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)                                       |
+| `contentType`                      | `string` | Tipul MIME al fișierului (are valoarea implicită `application/octet-stream` dacă este omis) |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul tău                          |
+
+Puncte cheie:
+
+* Metoda `uploadFile` este disponibilă pe `MetadataApiClient` deoarece mutația de încărcare este rezolvată de endpointul `/metadata`.
+* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul tău de încărcare funcționează în orice spațiu de lucru în care aplicația ta este instalată — în concordanță cu modul în care aplicațiile fac referire la câmpuri în rest.
+* `url` returnat este un URL semnat pe care îl poți folosi pentru a accesa fișierul încărcat.
+
+### Exemplu Hello World
+
+Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de logică, componente Front și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world).

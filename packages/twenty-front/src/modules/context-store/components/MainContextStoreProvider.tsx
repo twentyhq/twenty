@@ -2,21 +2,22 @@ import { MainContextStoreProviderEffect } from '@/context-store/components/MainC
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewKey } from '~/generated-metadata/graphql';
+import { ViewKey, ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = (
   viewIdFromQueryParams: string | null,
   indexViewId?: string,
   lastVisitedViewId?: string,
+  firstAvailableViewId?: string,
 ) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
@@ -30,8 +31,14 @@ const getViewId = (
     return indexViewId;
   }
 
+  if (isDefined(firstAvailableViewId)) {
+    return firstAvailableViewId;
+  }
+
   return undefined;
 };
+
+const SIGN_IN_BACKGROUND_OBJECT_NAME_PLURAL = 'companies';
 
 export const MainContextStoreProvider = () => {
   const location = useLocation();
@@ -41,16 +48,21 @@ export const MainContextStoreProvider = () => {
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
   const isSettingsPage = useIsSettingsPage();
+  const showAuthModal = useShowAuthModal();
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
+  const objectNamePluralFromParams = useParams().objectNamePlural ?? '';
   const objectNameSingular = useParams().objectNameSingular ?? '';
 
-  const [searchParams] = useSearchParams();
-  const viewIdQueryParam = searchParams.get('viewId');
+  const objectNamePlural = showAuthModal
+    ? SIGN_IN_BACKGROUND_OBJECT_NAME_PLURAL
+    : objectNamePluralFromParams;
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsState);
+  const [searchParams] = useSearchParams();
+  const viewIdQueryParamRaw = searchParams.get('viewId');
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
-  const coreViews = useAtomStateValue(coreViewsState);
+  const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -60,22 +72,54 @@ export const MainContextStoreProvider = () => {
 
   const { getLastVisitedViewIdFromObjectNamePlural } = useLastVisitedView();
 
-  const lastVisitedViewId = getLastVisitedViewIdFromObjectNamePlural(
+  const viewIdQueryParamView = views.find(
+    (view) => view.id === viewIdQueryParamRaw,
+  );
+
+  const viewIdQueryParam =
+    isDefined(viewIdQueryParamView) &&
+    viewIdQueryParamView.type !== ViewType.FIELDS_WIDGET
+      ? viewIdQueryParamRaw
+      : null;
+
+  const lastVisitedViewIdRaw = getLastVisitedViewIdFromObjectNamePlural(
     objectMetadataItem?.namePlural ?? '',
   );
 
-  const indexViewId = coreViews.find(
+  const lastVisitedView = views.find(
+    (view) => view.id === lastVisitedViewIdRaw,
+  );
+
+  const lastVisitedViewId =
+    isDefined(lastVisitedView) &&
+    lastVisitedView.type !== ViewType.FIELDS_WIDGET
+      ? lastVisitedViewIdRaw
+      : undefined;
+
+  const indexViewId = views.find(
     (view) =>
       view.objectMetadataId === objectMetadataItem?.id &&
       view.key === ViewKey.INDEX,
   )?.id;
 
-  const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
-  const showAuthModal = useShowAuthModal();
+  const firstAvailableViewId = views.find(
+    (view) =>
+      view.objectMetadataId === objectMetadataItem?.id &&
+      view.type !== ViewType.FIELDS_WIDGET,
+  )?.id;
+
+  const viewId = getViewId(
+    viewIdQueryParam,
+    indexViewId,
+    lastVisitedViewId,
+    firstAvailableViewId,
+  );
 
   const shouldComputeContextStore =
-    (isRecordIndexPage || isRecordShowPage || isSettingsPage) &&
-    !showAuthModal &&
+    (isRecordIndexPage ||
+      isRecordShowPage ||
+      isSettingsPage ||
+      showAuthModal) &&
     metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {

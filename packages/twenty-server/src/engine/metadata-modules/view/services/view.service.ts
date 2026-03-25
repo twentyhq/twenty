@@ -4,27 +4,39 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { fromDeleteViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util';
 import { fromDestroyViewInputToFlatViewOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util';
 import { fromUpdateViewInputToFlatViewToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util';
+import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
+import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
+import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
+import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
+import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
+import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { DeleteViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/delete-view.input';
 import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/destroy-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { computeFieldsWidgetViewFieldsAndGroupsToCreate } from 'src/engine/metadata-modules/view/utils/compute-fields-widget-view-fields-and-groups-to-create.util';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { type UniversalFlatViewFieldGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field-group.type';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 @Injectable()
 export class ViewService {
@@ -73,6 +85,39 @@ export class ViewService {
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
+    let flatViewFieldGroupsToCreate: UniversalFlatViewFieldGroup[] = [];
+    let flatViewFieldsToCreate: UniversalFlatViewField[] = [];
+
+    if (flatViewToCreate.type === ViewType.FIELDS_WIDGET) {
+      const objectFlatFieldMetadatas = Object.values(
+        existingFlatFieldMetadataMaps.byUniversalIdentifier,
+      ).filter(
+        (field): field is NonNullable<typeof field> =>
+          field !== undefined &&
+          field.objectMetadataUniversalIdentifier ===
+            flatViewToCreate.objectMetadataUniversalIdentifier,
+      );
+
+      const objectFlatMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+        flatEntityMaps: existingFlatObjectMetadataMaps,
+        universalIdentifier: flatViewToCreate.objectMetadataUniversalIdentifier,
+      });
+
+      const fieldsWidgetResult = computeFieldsWidgetViewFieldsAndGroupsToCreate(
+        {
+          objectFlatFieldMetadatas,
+          viewUniversalIdentifier: flatViewToCreate.universalIdentifier,
+          flatApplication: workspaceCustomFlatApplication,
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            objectFlatMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+        },
+      );
+
+      flatViewFieldGroupsToCreate =
+        fieldsWidgetResult.flatViewFieldGroupsToCreate;
+      flatViewFieldsToCreate = fieldsWidgetResult.flatViewFieldsToCreate;
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -85,6 +130,18 @@ export class ViewService {
 
             viewGroup: {
               flatEntityToCreate: flatViewGroupsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+
+            viewFieldGroup: {
+              flatEntityToCreate: flatViewFieldGroupsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+
+            viewField: {
+              flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -372,42 +429,73 @@ export class ViewService {
     return viewName;
   }
 
+  private isViewVisibleToUser(
+    view: {
+      visibility: ViewVisibility;
+      createdByUserWorkspaceId: string | null;
+    },
+    userWorkspaceId?: string,
+  ): boolean {
+    if (view.visibility === ViewVisibility.WORKSPACE) {
+      return true;
+    }
+
+    return (
+      view.visibility === ViewVisibility.UNLISTED &&
+      isDefined(userWorkspaceId) &&
+      view.createdByUserWorkspaceId === userWorkspaceId
+    );
+  }
+
+  private async getFilteredFlatViews({
+    workspaceId,
+    objectMetadataId,
+    userWorkspaceId,
+    viewTypes,
+  }: {
+    workspaceId: string;
+    objectMetadataId?: string;
+    userWorkspaceId?: string;
+    viewTypes?: ViewType[];
+  }): Promise<FlatView[]> {
+    const { flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    return Object.values(flatViewMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatView) => flatView.workspaceId === workspaceId)
+      .filter(
+        (flatView) =>
+          !objectMetadataId || flatView.objectMetadataId === objectMetadataId,
+      )
+      .filter((flatView) => flatView.deletedAt === null)
+      .filter(
+        (flatView) =>
+          !viewTypes ||
+          viewTypes.length === 0 ||
+          viewTypes.includes(flatView.type),
+      )
+      .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
+      .sort((a, b) => a.position - b.position);
+  }
+
   async findByWorkspaceId(
     workspaceId: string,
     userWorkspaceId?: string,
     viewTypes?: ViewType[],
-  ): Promise<ViewEntity[]> {
-    const views = await this.viewRepository.find({
-      where: {
-        workspaceId,
-        deletedAt: IsNull(),
-        ...(viewTypes && viewTypes.length > 0 && { type: In(viewTypes) }),
-      },
-      order: { position: 'ASC' },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
+  ): Promise<ViewDTO[]> {
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      userWorkspaceId,
+      viewTypes,
     });
 
-    return views.filter((view) => {
-      if (view.visibility === ViewVisibility.WORKSPACE) {
-        return true;
-      }
-      if (
-        view.visibility === ViewVisibility.UNLISTED &&
-        isDefined(userWorkspaceId) &&
-        view.createdByUserWorkspaceId === userWorkspaceId
-      ) {
-        return true;
-      }
-
-      return false;
-    });
+    return flatViews.map(fromFlatViewToViewDto);
   }
 
   async findByObjectMetadataId(
@@ -415,60 +503,170 @@ export class ViewService {
     objectMetadataId: string,
     userWorkspaceId?: string,
     viewTypes?: ViewType[],
-  ): Promise<ViewEntity[]> {
-    const views = await this.viewRepository.find({
-      where: {
-        workspaceId,
-        objectMetadataId,
-        deletedAt: IsNull(),
-        ...(viewTypes && viewTypes.length > 0 && { type: In(viewTypes) }),
-      },
-      order: { position: 'ASC' },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
+  ): Promise<ViewDTO[]> {
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      objectMetadataId,
+      userWorkspaceId,
+      viewTypes,
     });
 
-    // Apply visibility filtering
-    return views.filter((view) => {
-      if (view.visibility === ViewVisibility.WORKSPACE) {
-        return true;
-      }
-      if (
-        view.visibility === ViewVisibility.UNLISTED &&
-        isDefined(userWorkspaceId) &&
-        view.createdByUserWorkspaceId === userWorkspaceId
-      ) {
-        return true;
-      }
+    return flatViews.map(fromFlatViewToViewDto);
+  }
 
-      return false;
+  async findById(id: string, workspaceId: string): Promise<ViewDTO | null> {
+    const { flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    if (!isDefined(flatView) || flatView.deletedAt !== null) {
+      return null;
+    }
+
+    return fromFlatViewToViewDto(flatView);
+  }
+
+  async findManyWithRelationsFromCache(
+    flatViews: FlatView[],
+    workspaceId: string,
+  ): Promise<ViewDTO[]> {
+    const {
+      flatViewFieldMaps,
+      flatViewFieldGroupMaps,
+      flatViewFilterMaps,
+      flatViewFilterGroupMaps,
+      flatViewSortMaps,
+      flatViewGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatViewFieldMaps',
+            'flatViewFieldGroupMaps',
+            'flatViewFilterMaps',
+            'flatViewFilterGroupMaps',
+            'flatViewSortMaps',
+            'flatViewGroupMaps',
+          ],
+        },
+      );
+
+    return flatViews.map((flatView) => {
+      const viewDto = fromFlatViewToViewDto(flatView);
+
+      viewDto.viewFields = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatView.viewFieldIds,
+        flatEntityMaps: flatViewFieldMaps,
+      })
+        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .map(fromFlatViewFieldToViewFieldDto);
+
+      viewDto.viewFieldGroups = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatView.viewFieldGroupIds,
+        flatEntityMaps: flatViewFieldGroupMaps,
+      })
+        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .map(fromFlatViewFieldGroupToViewFieldGroupDto);
+
+      viewDto.viewFilters = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatView.viewFilterIds,
+        flatEntityMaps: flatViewFilterMaps,
+      })
+        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .map(fromFlatViewFilterToViewFilterDto);
+
+      viewDto.viewFilterGroups = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatView.viewFilterGroupIds,
+        flatEntityMaps: flatViewFilterGroupMaps,
+      })
+        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .map(fromFlatViewFilterGroupToViewFilterGroupDto);
+
+      viewDto.viewSorts = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatView.viewSortIds,
+        flatEntityMaps: flatViewSortMaps,
+      })
+        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .map(fromFlatViewSortToViewSortDto);
+
+      viewDto.viewGroups = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatView.viewGroupIds,
+        flatEntityMaps: flatViewGroupMaps,
+      })
+        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .map(fromFlatViewGroupToViewGroupDto);
+
+      return viewDto;
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewEntity | null> {
-    const view = await this.viewRepository.findOne({
-      where: {
-        id,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
+  async findByWorkspaceIdWithRelations(
+    workspaceId: string,
+    userWorkspaceId?: string,
+    viewTypes?: ViewType[],
+  ): Promise<ViewDTO[]> {
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      userWorkspaceId,
+      viewTypes,
     });
 
-    return view || null;
+    return this.findManyWithRelationsFromCache(flatViews, workspaceId);
+  }
+
+  async findByObjectMetadataIdWithRelations(
+    workspaceId: string,
+    objectMetadataId: string,
+    userWorkspaceId?: string,
+    viewTypes?: ViewType[],
+  ): Promise<ViewDTO[]> {
+    const flatViews = await this.getFilteredFlatViews({
+      workspaceId,
+      objectMetadataId,
+      userWorkspaceId,
+      viewTypes,
+    });
+
+    return this.findManyWithRelationsFromCache(flatViews, workspaceId);
+  }
+
+  async findByIdWithRelations(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewDTO | null> {
+    const { flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps'],
+        },
+      );
+
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    if (!isDefined(flatView) || flatView.deletedAt !== null) {
+      return null;
+    }
+
+    const results = await this.findManyWithRelationsFromCache(
+      [flatView],
+      workspaceId,
+    );
+
+    return results[0] ?? null;
   }
 
   async findByIdIncludingDeleted(

@@ -1,33 +1,31 @@
+import { useMutation } from '@apollo/client/react';
 import {
   type UpdateOneFieldMetadataItemMutationVariables,
-  useUpdateOneFieldMetadataItemMutation,
+  UpdateOneFieldMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { ApolloError } from '@apollo/client';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { CrudOperationType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useUpdateOneFieldMetadataItem = () => {
-  const { refreshObjectMetadataItems } =
-    useRefreshObjectMetadataItems('network-only');
-
-  const { refreshCoreViewsByObjectMetadataId } =
-    useRefreshCoreViewsByObjectMetadataId();
-
-  const [updateOneFieldMetadataItemMutation] =
-    useUpdateOneFieldMetadataItemMutation();
+  const [updateOneFieldMetadataItemMutation] = useMutation(
+    UpdateOneFieldMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
 
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const setLastFieldMetadataItemUpdate = useSetAtomState(
     lastFieldMetadataItemUpdateState,
@@ -64,8 +62,19 @@ export const useUpdateOneFieldMetadataItem = () => {
         },
       });
 
-      await refreshObjectMetadataItems();
-      await refreshCoreViewsByObjectMetadataId(objectMetadataId);
+      const updatedField = response.data?.updateOneField;
+
+      if (isDefined(updatedField)) {
+        const { __typename, object, ...fieldData } = updatedField;
+
+        updateInDraft('fieldMetadataItems', [
+          {
+            ...fieldData,
+            objectMetadataId: object?.id ?? objectMetadataId,
+          } as FlatFieldMetadataItem,
+        ]);
+        applyChanges();
+      }
 
       setLastFieldMetadataItemUpdate({
         fieldMetadataItemId: fieldMetadataIdToUpdate,
@@ -78,7 +87,7 @@ export const useUpdateOneFieldMetadataItem = () => {
         response,
       };
     } catch (error) {
-      if (error instanceof ApolloError) {
+      if (CombinedGraphQLErrors.is(error)) {
         handleMetadataError(error, {
           primaryMetadataName: 'fieldMetadata',
           operationType: CrudOperationType.UPDATE,

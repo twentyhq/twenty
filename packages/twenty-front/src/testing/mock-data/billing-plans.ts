@@ -1,4 +1,4 @@
-import type { ListPlansQueryResult } from '~/generated-metadata/graphql';
+import type { ListPlansQuery } from '~/generated-metadata/graphql';
 
 export const mockBillingPlans = {
   listPlans: [
@@ -583,4 +583,4 @@ export const mockBillingPlans = {
       ],
     },
   ],
-} as NonNullable<ListPlansQueryResult['data']>;
+} as ListPlansQuery;

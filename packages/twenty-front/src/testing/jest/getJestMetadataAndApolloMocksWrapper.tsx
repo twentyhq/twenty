@@ -1,13 +1,17 @@
-import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
+import { MockedProvider } from '@apollo/client/testing/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  jotaiStore,
+  resetJotaiStore,
+} from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type InMemoryCache } from '@apollo/client';
 import type { Store } from 'jotai/vanilla/store';
@@ -25,35 +29,41 @@ export const getJestMetadataAndApolloMocksWrapper = ({
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeJotaiStore?: (store: Store) => void;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }) => {
-  const store = resetJotaiStore();
+  resetJotaiStore();
 
-  onInitializeJotaiStore?.(store);
+  return ({ children }: { children: ReactNode }) => {
+    const [store] = useState(() => {
+      const currentStore = jotaiStore;
+      onInitializeJotaiStore?.(currentStore);
+      return currentStore;
+    });
 
-  return ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={store}>
-      <SnackBarComponentInstanceContext.Provider
-        value={{ instanceId: 'snack-bar-manager' }}
-      >
-        <MockedProvider mocks={apolloMocks} addTypename={false} cache={cache}>
-          <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
-            <ViewComponentInstanceContext.Provider
-              value={{ instanceId: 'instanceId' }}
-            >
-              <JestObjectMetadataItemSetter
-                objectMetadataItems={objectMetadataItems}
+    return (
+      <JotaiProvider store={store}>
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'snack-bar-manager' }}
+        >
+          <MockedProvider mocks={apolloMocks} cache={cache}>
+            <RecordComponentInstanceContextsWrapper componentInstanceId="instanceId">
+              <ViewComponentInstanceContext.Provider
+                value={{ instanceId: 'instanceId' }}
               >
-                <ContextStoreComponentInstanceContext.Provider
-                  value={{ instanceId: 'instanceId' }}
+                <JestObjectMetadataItemSetter
+                  objectMetadataItems={objectMetadataItems}
                 >
-                  <JestContextStoreSetter>{children}</JestContextStoreSetter>
-                </ContextStoreComponentInstanceContext.Provider>
-              </JestObjectMetadataItemSetter>
-            </ViewComponentInstanceContext.Provider>
-          </RecordComponentInstanceContextsWrapper>
-        </MockedProvider>
-      </SnackBarComponentInstanceContext.Provider>
-    </JotaiProvider>
-  );
+                  <ContextStoreComponentInstanceContext.Provider
+                    value={{ instanceId: 'instanceId' }}
+                  >
+                    <JestContextStoreSetter>{children}</JestContextStoreSetter>
+                  </ContextStoreComponentInstanceContext.Provider>
+                </JestObjectMetadataItemSetter>
+              </ViewComponentInstanceContext.Provider>
+            </RecordComponentInstanceContextsWrapper>
+          </MockedProvider>
+        </SnackBarComponentInstanceContext.Provider>
+      </JotaiProvider>
+    );
+  };
 };

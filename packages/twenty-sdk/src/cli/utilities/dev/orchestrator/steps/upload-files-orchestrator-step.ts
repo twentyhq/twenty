@@ -3,15 +3,7 @@ import {
   type OrchestratorStateBuiltFileInfo,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
-import { copy, ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
-import crypto from 'crypto';
-import { readFile } from 'node:fs/promises';
-import { join } from 'path';
-import { CLIENTS_GENERATED_DIR } from '@/cli/constants/clients-dir';
-import { OUTPUT_DIR, API_CLIENT_DIR } from 'twenty-shared/application';
-import { FileFolder } from 'twenty-shared/types';
-
-const API_CLIENT_FILES = ['core/types.ts', 'core/schema.ts'];
+import { type FileFolder } from 'twenty-shared/types';
 
 export type UploadFilesOrchestratorStepOutput = {
   fileUploader: FileUploader | null;
@@ -65,11 +57,14 @@ export class UploadFilesOrchestratorStep {
       return;
     }
 
+    step.status = 'in_progress';
+
     this.state.addEvent({
       message: `Uploading ${builtPath}`,
       status: 'info',
     });
     this.state.updateEntityStatus(sourcePath, 'uploading');
+    this.notify();
 
     const uploadPromise = step.output.fileUploader
       .uploadFile({ builtPath, fileFolder })
@@ -95,6 +90,11 @@ export class UploadFilesOrchestratorStep {
       })
       .finally(() => {
         step.output.activeUploads.delete(uploadPromise);
+
+        if (step.output.activeUploads.size === 0) {
+          step.status = 'done';
+          this.notify();
+        }
       });
 
     step.output.activeUploads.add(uploadPromise);
@@ -109,48 +109,6 @@ export class UploadFilesOrchestratorStep {
 
     step.status = 'done';
     this.notify();
-  }
-
-  async copyAndUploadApiClientFiles(appPath: string): Promise<void> {
-    const generatedDir = join(
-      appPath,
-      'node_modules',
-      'twenty-sdk',
-      CLIENTS_GENERATED_DIR,
-    );
-
-    if (!(await pathExists(generatedDir))) {
-      return;
-    }
-
-    const outputDir = join(appPath, OUTPUT_DIR, API_CLIENT_DIR);
-
-    await ensureDir(outputDir);
-
-    for (const fileName of API_CLIENT_FILES) {
-      const absoluteSourcePath = join(generatedDir, fileName);
-
-      if (!(await pathExists(absoluteSourcePath))) {
-        continue;
-      }
-
-      await copy(absoluteSourcePath, join(outputDir, fileName));
-
-      const content = await readFile(absoluteSourcePath);
-      const checksum = crypto.createHash('md5').update(content).digest('hex');
-
-      const builtPath = join(OUTPUT_DIR, API_CLIENT_DIR, fileName);
-      const sourcePath = join(API_CLIENT_DIR, fileName);
-
-      this.state.steps.uploadFiles.output.builtFileInfos.set(builtPath, {
-        checksum,
-        builtPath,
-        sourcePath,
-        fileFolder: FileFolder.Dependencies,
-      });
-
-      this.uploadFile(builtPath, sourcePath, FileFolder.Dependencies);
-    }
   }
 
   private uploadPendingFiles(): void {

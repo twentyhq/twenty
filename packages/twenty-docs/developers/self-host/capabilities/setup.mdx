@@ -289,43 +289,57 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
 </Warning>
 
-## Logic Functions
+## Logic Functions & Code Interpreter
 
-Twenty supports logic functions for workflows and custom logic. The execution environment is configured via the `SERVERLESS_TYPE` environment variable.
+Twenty supports logic functions for workflows and the code interpreter for AI data analysis. Both run user-provided code and require explicit configuration for security.
+
+### Security Defaults
+
+**In production (NODE_ENV=production):** Both logic functions and code interpreter default to **Disabled**. You must explicitly enable them with `LOGIC_FUNCTION_TYPE` and `CODE_INTERPRETER_TYPE` if you need these features.
+
+**In development (NODE_ENV=development):** Both default to **LOCAL** for convenience when running locally.
 
 <Warning>
-**Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, we highly recommend using `SERVERLESS_TYPE=LAMBDA` or `SERVERLESS_TYPE=DISABLED`.
+**Security Notice:** The local driver (`LOGIC_FUNCTION_TYPE=LOCAL` or `CODE_INTERPRETER_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, use `LOGIC_FUNCTION_TYPE=LAMBDA` or `CODE_INTERPRETER_TYPE=E2B` (with sandboxing), or keep them disabled.
 </Warning>
 
-### Available Drivers
+### Logic Functions - Available Drivers
 
 | Driver | Environment Variable | Use Case | Security Level |
 |--------|---------------------|----------|----------------|
-| Disabled | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | N/A |
-| Local | `SERVERLESS_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
-| Lambda | `SERVERLESS_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
+| Disabled | `LOGIC_FUNCTION_TYPE=DISABLED` | Disable logic functions entirely | N/A |
+| Local | `LOGIC_FUNCTION_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
+| Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
 
-### Recommended Configuration
+### Logic Functions - Recommended Configuration
 
 **For development:**
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **For production (AWS):**
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **To disable logic functions:**
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Code Interpreter - Available Drivers
+
+| Driver | Environment Variable | Use Case | Security Level |
+|--------|---------------------|----------|----------------|
+| Disabled | `CODE_INTERPRETER_TYPE=DISABLED` | Disable AI code execution | N/A |
+| Local | `CODE_INTERPRETER_TYPE=LOCAL` | Development only | Low (no sandboxing) |
+| E2B | `CODE_INTERPRETER_TYPE=E_2_B` | Production with sandboxed execution | High (isolated sandbox) |
+
 <Note>
-When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
+When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
 </Note>

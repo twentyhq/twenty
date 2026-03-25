@@ -7,7 +7,7 @@ import { emailsCompositeType } from './emails.composite-type';
 import { fullNameCompositeType } from './full-name.composite-type';
 import { linksCompositeType } from './links.composite-type';
 import { phonesCompositeType } from './phones.composite-type';
-import { richTextV2CompositeType } from './rich-text-v2.composite-type';
+import { richTextCompositeType } from './rich-text.composite-type';
 
 export const compositeTypeDefinitions = new Map<
   FieldMetadataType,
@@ -20,5 +20,5 @@ export const compositeTypeDefinitions = new Map<
   [FieldMetadataType.ACTOR, actorCompositeType],
   [FieldMetadataType.EMAILS, emailsCompositeType],
   [FieldMetadataType.PHONES, phonesCompositeType],
-  [FieldMetadataType.RICH_TEXT_V2, richTextV2CompositeType],
+  [FieldMetadataType.RICH_TEXT, richTextCompositeType],
 ]);

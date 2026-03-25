@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 import {
   type CreateWorkflowVersionEdgeMutation,
   type CreateWorkflowVersionEdgeMutationVariables,

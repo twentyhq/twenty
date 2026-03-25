@@ -1,17 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`CommandMenuItem creation should fail when creating with both workflowVersionId and frontComponentId 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
-    "userFriendlyMessage": "Either workflow version or front component is required.",
-  },
-  "message": "Exactly one of workflowVersionId or frontComponentId is required",
-  "name": "UserInputError",
-}
-`;
-
 exports[`CommandMenuItem creation should fail when creating with empty label 1`] = `
 {
   "extensions": {
@@ -47,6 +35,34 @@ exports[`CommandMenuItem creation should fail when creating with empty label 1`]
 }
 `;
 
+exports[`CommandMenuItem creation should fail when creating with missing label 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "label" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`CommandMenuItem creation should fail when creating with missing engineComponentKey 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "engineComponentKey" of required type "EngineComponentKey!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`CommandMenuItem creation should fail when creating with empty workflowVersionId 1`] = `
 {
   "extensions": {
@@ -77,28 +93,143 @@ exports[`CommandMenuItem creation should fail when creating with invalid workflo
 }
 `;
 
-exports[`CommandMenuItem creation should fail when creating with missing label 1`] = `
+exports[`CommandMenuItem creation should fail when creating TRIGGER_WORKFLOW_VERSION without workflowVersionId 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "commandMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_COMMAND_MENU_ITEM_INPUT",
+              "message": "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW_VERSION",
+              "userFriendlyMessage": "Workflow version is required for workflow trigger items",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "commandMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "userFriendlyMessage": "An error occurred.",
+    "message": "Validation failed for 1 commandMenuItem",
+    "summary": {
+      "commandMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
   },
-  "message": "Field "label" of required type "String!" was not provided.",
+  "message": "Multiple validation errors occurred while creating command menu item",
   "name": "GraphQLError",
 }
 `;
 
-exports[`CommandMenuItem creation should fail when creating with missing workflowVersionId 1`] = `
+exports[`CommandMenuItem creation should fail when creating TRIGGER_WORKFLOW_VERSION with frontComponentId 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
-    "userFriendlyMessage": "Either workflow version or front component is required.",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Exactly one of workflowVersionId or frontComponentId is required",
-  "name": "UserInputError",
+  "message": "Could not find frontComponent for given frontComponentId",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`CommandMenuItem creation should fail when creating FRONT_COMPONENT_RENDERER without frontComponentId 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "commandMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_COMMAND_MENU_ITEM_INPUT",
+              "message": "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_RENDERER",
+              "userFriendlyMessage": "Front component is required for front component renderer items",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "commandMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 commandMenuItem",
+    "summary": {
+      "commandMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating command menu item",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`CommandMenuItem creation should fail when creating FRONT_COMPONENT_RENDERER with workflowVersionId 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Could not find frontComponent for given frontComponentId",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`CommandMenuItem creation should fail when creating standard key with workflowVersionId 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "commandMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_COMMAND_MENU_ITEM_INPUT",
+              "message": "workflowVersionId must not be set for engine component key GO_TO_PEOPLE",
+              "userFriendlyMessage": "Workflow version must not be set for this item type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "commandMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 commandMenuItem",
+    "summary": {
+      "commandMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating command menu item",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`CommandMenuItem creation should fail when creating standard key with frontComponentId 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Could not find frontComponent for given frontComponentId",
+  "name": "NotFoundError",
 }
 `;

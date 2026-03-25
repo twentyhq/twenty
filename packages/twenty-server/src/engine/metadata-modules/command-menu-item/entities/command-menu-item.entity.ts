@@ -11,14 +11,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-
-export enum CommandMenuItemAvailabilityType {
-  GLOBAL = 'GLOBAL',
-  RECORD_SELECTION = 'RECORD_SELECTION',
-}
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
 @Index('IDX_COMMAND_MENU_ITEM_WORKFLOW_VERSION_ID_WORKSPACE_ID', [
@@ -33,8 +30,8 @@ export enum CommandMenuItemAvailabilityType {
   'availabilityObjectMetadataId',
 ])
 @Check(
-  'CHK_command_menu_item_workflow_or_front_component',
-  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL)',
+  'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
+  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL)`,
 )
 export class CommandMenuItemEntity
   extends SyncableEntity
@@ -56,6 +53,9 @@ export class CommandMenuItemEntity
   @JoinColumn({ name: 'frontComponentId' })
   frontComponent: Relation<FrontComponentEntity> | null;
 
+  @Column({ type: 'varchar', nullable: false })
+  engineComponentKey: EngineComponentKey;
+
   @Column({ nullable: false })
   label: string;
 
@@ -73,11 +73,14 @@ export class CommandMenuItemEntity
 
   @Column({
     type: 'enum',
-    enum: CommandMenuItemAvailabilityType,
+    enum: Object.values(CommandMenuItemAvailabilityType),
     nullable: false,
     default: CommandMenuItemAvailabilityType.GLOBAL,
   })
   availabilityType: CommandMenuItemAvailabilityType;
+
+  @Column({ type: 'text', array: true, nullable: true })
+  hotKeys: string[] | null;
 
   @Column({ nullable: true, type: 'varchar' })
   conditionalAvailabilityExpression: string | null;

@@ -149,8 +149,8 @@
         "extend": {
           "label": "扩展",
           "groups": {
-            "extendCapabilities": {
-              "label": "功能"
+            "apps": {
+              "label": "应用"
             }
           }
         },

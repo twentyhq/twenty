@@ -1,6 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { BAR_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/barChartData';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartSeries';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graph-widget-bar-chart/utils/getEffectiveGroupMode';
 import { type BarChartDatum } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarChartDatum';
@@ -10,12 +9,13 @@ import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/deter
 import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
 import { extractBarChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractBarChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  BarChartDataDocument,
   type BarChartConfiguration,
   type BarChartLayout,
   type BarChartSeries,
@@ -66,7 +66,7 @@ export const useGraphBarChartWidgetData = ({
     previousData,
     loading,
     error,
-  } = useQuery(BAR_CHART_DATA, {
+  } = useQuery(BarChartDataDocument, {
     variables: {
       input: {
         objectMetadataId: objectMetadataItemId,
@@ -144,7 +144,7 @@ export const useGraphBarChartWidgetData = ({
     data: chartData,
     indexBy,
     keys,
-    series,
+    series: series ?? [],
     xAxisLabel: effectiveQueryData?.barChartData?.xAxisLabel ?? '',
     yAxisLabel: effectiveQueryData?.barChartData?.yAxisLabel ?? '',
     showDataLabels: configuration.displayDataLabel ?? false,

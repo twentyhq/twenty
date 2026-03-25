@@ -16,7 +16,7 @@ import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/b
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
-import { BillingFeatureUsedListener } from 'src/engine/core-modules/billing/listeners/billing-feature-used.listener';
+import { BillingUsageEventListener } from 'src/engine/core-modules/billing/listeners/billing-usage-event.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
@@ -32,6 +32,7 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
@@ -66,6 +67,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ]),
     DataSourceModule,
     MetricsModule,
+    EnterpriseModule,
   ],
   providers: [
     BillingSubscriptionService,
@@ -77,7 +79,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingResolver,
     BillingPlanService,
     BillingWorkspaceMemberListener,
-    BillingFeatureUsedListener,
+    BillingUsageEventListener,
     BillingService,
     BillingRestApiExceptionFilter,
     BillingSyncCustomerDataCommand,

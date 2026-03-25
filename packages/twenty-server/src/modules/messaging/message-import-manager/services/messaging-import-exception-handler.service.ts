@@ -7,8 +7,7 @@ import {
   type TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStatus,
@@ -30,7 +29,7 @@ export enum MessageImportSyncStep {
 @Injectable()
 export class MessageImportExceptionHandlerService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -152,37 +151,27 @@ export class MessageImportExceptionHandlerService {
       return;
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
+    await this.messageChannelDataAccessService.increment(
+      workspaceId,
+      { id: messageChannel.id },
+      'throttleFailureCount',
+      1,
+    );
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
+    const throttleRetryAfter =
+      exception instanceof MessageImportDriverException
+        ? exception.throttleRetryAfter
+        : undefined;
 
-      await messageChannelRepository.increment(
-        { id: messageChannel.id },
-        'throttleFailureCount',
-        1,
-        undefined,
-        ['throttleFailureCount', 'id'],
-      );
-
-      const throttleRetryAfter =
-        exception instanceof MessageImportDriverException
-          ? exception.throttleRetryAfter
-          : undefined;
-
-      await messageChannelRepository.update(
-        { id: messageChannel.id },
-        {
-          throttleRetryAfter: isDefined(throttleRetryAfter)
-            ? throttleRetryAfter.toISOString()
-            : null,
-        },
-      );
-    }, authContext);
+    await this.messageChannelDataAccessService.update(
+      workspaceId,
+      { id: messageChannel.id },
+      {
+        throttleRetryAfter: isDefined(throttleRetryAfter)
+          ? throttleRetryAfter.toISOString()
+          : null,
+      },
+    );
 
     switch (syncStep) {
       case MessageImportSyncStep.MESSAGE_LIST_FETCH:

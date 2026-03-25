@@ -19,9 +19,10 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,
-  useGetDatabaseConfigVariableQuery,
+  GetDatabaseConfigVariableDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledFormContainer = styled.div`
@@ -61,11 +62,13 @@ export const SettingsAdminConfigVariableDetails = () => {
     isConfigVariablesInDbEnabledState,
   );
 
-  const { data: configVariableData, loading } =
-    useGetDatabaseConfigVariableQuery({
+  const { data: configVariableData, loading } = useQuery(
+    GetDatabaseConfigVariableDocument,
+    {
       variables: { key: variableName ?? '' },
       fetchPolicy: 'network-only',
-    });
+    },
+  );
 
   const variable = configVariableData?.getDatabaseConfigVariable;
 

@@ -9,15 +9,13 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import {
-  type PublicWorkspaceData,
-  useEmailPasswordResetLinkMutation,
-} from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 // Mocks
 jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
-jest.mock('~/generated-metadata/graphql');
+jest.mock('@apollo/client/react');
 
 dynamicActivate(SOURCE_LOCALE);
 
@@ -63,7 +61,7 @@ describe('useHandleResetPassword', () => {
       enqueueErrorSnackBar: enqueueErrorSnackBarMock,
       enqueueSuccessSnackBar: enqueueSuccessSnackBarMock,
     });
-    (useEmailPasswordResetLinkMutation as jest.Mock).mockReturnValue([
+    (useMutation as unknown as jest.Mock).mockReturnValue([
       emailPasswordResetLinkMock,
     ]);
   });
@@ -127,6 +125,8 @@ describe('useHandleResetPassword', () => {
     const { result } = renderHooks();
     await act(() => result.current.handleResetPassword('test@example.com')());
 
-    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({});
+    expect(enqueueErrorSnackBarMock).toHaveBeenCalledWith({
+      message: errorMessage,
+    });
   });
 });

@@ -135,8 +135,17 @@ type Story = StoryObj<typeof DateFieldInputWithContext>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    const calendarButton = await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+    await userEvent.click(calendarButton);
+
     // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    const div = await canvas.findByText('January', {}, { timeout: 10000 });
+    const div = await body.findByText('January', {}, { timeout: 10000 });
 
     await expect(div.innerText).toContain('January');
   },
@@ -145,12 +154,22 @@ export const Default: Story = {
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
+    const calendarButton = await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+    await userEvent.click(calendarButton);
+
     // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await canvas.findByText('January', {}, { timeout: 10000 });
+    await body.findByText('January', {}, { timeout: 10000 });
+
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
+    await userEvent.click(emptyDiv);
     await userEvent.click(emptyDiv);
 
     await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
@@ -161,9 +180,19 @@ export const Escape: Story = {
   play: async ({ canvasElement }) => {
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    const calendarButton = await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+    await userEvent.click(calendarButton);
 
     // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await canvas.findByText('January', {}, { timeout: 10000 });
+    await body.findByText('January', {}, { timeout: 10000 });
+
+    await userEvent.keyboard('{escape}');
     await userEvent.keyboard('{escape}');
 
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
@@ -174,9 +203,19 @@ export const Enter: Story = {
   play: async ({ canvasElement }) => {
     await expect(handleEnterMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    const calendarButton = await canvas.findByRole(
+      'button',
+      { name: 'Select month and year' },
+      { timeout: 10000 },
+    );
+    await userEvent.click(calendarButton);
 
     // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await canvas.findByText('January', {}, { timeout: 10000 });
+    await body.findByText('January', {}, { timeout: 10000 });
+
+    await userEvent.keyboard('{enter}');
     await userEvent.keyboard('{enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);

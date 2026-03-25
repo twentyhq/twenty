@@ -13,6 +13,7 @@ export enum BillingWebhookEvent {
   PRICE_UPDATED = 'price.updated',
   ALERT_TRIGGERED = 'billing.alert.triggered',
   INVOICE_FINALIZED = 'invoice.finalized',
+  INVOICE_PAID = 'invoice.paid',
   SUBSCRIPTION_SCHEDULE_UPDATED = 'subscription_schedule.updated',
   CREDIT_GRANT_CREATED = 'billing.credit_grant.created',
   CREDIT_GRANT_UPDATED = 'billing.credit_grant.updated',

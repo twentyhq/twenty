@@ -572,4 +572,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       ),
     };
   }
+
+  public async getActiveUserWorkspaceCountTotal(): Promise<number> {
+    const count = await this.userWorkspaceRepository.count({
+      where: { deletedAt: IsNull() },
+    });
+
+    return Math.max(1, count);
+  }
 }

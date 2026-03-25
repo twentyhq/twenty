@@ -10,6 +10,7 @@ export const query = gql`
       labelPlural
       description
       icon
+      color
       isCustom
       isActive
       isSearchable
@@ -32,6 +33,7 @@ export const responseData = {
   labelPlural: '',
   description: '',
   icon: '',
+  color: null,
   isCustom: false,
   isActive: true,
   isSearchable: false,

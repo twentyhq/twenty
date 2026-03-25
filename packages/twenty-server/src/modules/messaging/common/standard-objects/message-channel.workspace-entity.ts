@@ -1,6 +1,15 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelPendingGroupEmailsAction,
+  MessageChannelSyncStage,
+  MessageChannelSyncStatus,
+  MessageChannelType,
+  MessageChannelVisibility,
+  MessageFolderImportPolicy,
+} from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
@@ -9,52 +18,15 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
-export enum MessageChannelSyncStatus {
-  NOT_SYNCED = 'NOT_SYNCED',
-  ONGOING = 'ONGOING',
-  ACTIVE = 'ACTIVE',
-  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
-  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
-}
-
-export enum MessageChannelSyncStage {
-  PENDING_CONFIGURATION = 'PENDING_CONFIGURATION',
-  MESSAGE_LIST_FETCH_PENDING = 'MESSAGE_LIST_FETCH_PENDING',
-  MESSAGE_LIST_FETCH_SCHEDULED = 'MESSAGE_LIST_FETCH_SCHEDULED',
-  MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
-  MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
-  MESSAGES_IMPORT_SCHEDULED = 'MESSAGES_IMPORT_SCHEDULED',
-  MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
-  FAILED = 'FAILED',
-}
-
-export enum MessageChannelVisibility {
-  METADATA = 'METADATA',
-  SUBJECT = 'SUBJECT',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
-}
-
-export enum MessageChannelType {
-  EMAIL = 'EMAIL',
-  SMS = 'SMS',
-}
-
-export enum MessageChannelContactAutoCreationPolicy {
-  SENT_AND_RECEIVED = 'SENT_AND_RECEIVED',
-  SENT = 'SENT',
-  NONE = 'NONE',
-}
-
-export enum MessageFolderImportPolicy {
-  ALL_FOLDERS = 'ALL_FOLDERS',
-  SELECTED_FOLDERS = 'SELECTED_FOLDERS',
-}
-
-export enum MessageChannelPendingGroupEmailsAction {
-  GROUP_EMAILS_DELETION = 'GROUP_EMAILS_DELETION',
-  GROUP_EMAILS_IMPORT = 'GROUP_EMAILS_IMPORT',
-  NONE = 'NONE',
-}
+export {
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelPendingGroupEmailsAction,
+  MessageChannelSyncStage,
+  MessageChannelSyncStatus,
+  MessageChannelType,
+  MessageChannelVisibility,
+  MessageFolderImportPolicy,
+};
 
 registerEnumType(MessageChannelVisibility, {
   name: 'MessageChannelVisibility',

@@ -13,6 +13,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
@@ -35,6 +36,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    @InjectRepository(ObjectPermissionEntity)
+    private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
   ) {
     super();
   }
@@ -42,35 +45,51 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatEntityMaps<FlatObjectMetadata>> {
-    const [objectMetadatas, applications, fields, indexMetadatas, views] =
-      await Promise.all([
-        this.objectMetadataRepository.find({
-          where: { workspaceId },
-          withDeleted: true,
-        }),
-        this.applicationRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.fieldMetadataRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier', 'objectMetadataId'],
-          withDeleted: true,
-        }),
-        this.indexMetadataRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier', 'objectMetadataId'],
-          withDeleted: true,
-        }),
-        this.viewRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier', 'objectMetadataId'],
-          withDeleted: true,
-        }),
-      ]);
+    const [
+      objectMetadatas,
+      applications,
+      fields,
+      indexMetadatas,
+      views,
+      objectPermissions,
+    ] = await Promise.all([
+      this.objectMetadataRepository.find({
+        where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.applicationRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
+      this.fieldMetadataRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier', 'objectMetadataId'],
+        withDeleted: true,
+      }),
+      this.indexMetadataRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier', 'objectMetadataId'],
+        withDeleted: true,
+      }),
+      this.viewRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier', 'objectMetadataId'],
+        withDeleted: true,
+      }),
+      this.objectPermissionRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier', 'objectMetadataId'],
+        withDeleted: true,
+      }),
+    ]);
 
-    const [fieldsByObjectId, indexesByObjectId, viewsByObjectId] = (
+    const [
+      fieldsByObjectId,
+      indexesByObjectId,
+      viewsByObjectId,
+      objectPermissionsByObjectId,
+    ] = (
       [
         {
           entities: fields,
@@ -82,6 +101,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
         },
         {
           entities: views,
+          foreignKey: 'objectMetadataId',
+        },
+        {
+          entities: objectPermissions,
           foreignKey: 'objectMetadataId',
         },
       ] as const
@@ -101,6 +124,8 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
           fields: fieldsByObjectId.get(objectMetadataEntity.id) || [],
           indexMetadatas: indexesByObjectId.get(objectMetadataEntity.id) || [],
           views: viewsByObjectId.get(objectMetadataEntity.id) || [],
+          objectPermissions:
+            objectPermissionsByObjectId.get(objectMetadataEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,

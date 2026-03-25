@@ -1,36 +1,9 @@
-import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTr = styled.div<{
   isDragging: boolean;
-  isFirstRowOfGroup?: boolean;
-  isScrolledVertically?: boolean;
 }>`
-  --z-index-for-normal-cells: ${({
-    isFirstRowOfGroup,
-    isScrolledVertically,
-  }) =>
-    isFirstRowOfGroup === true
-      ? isScrolledVertically
-        ? TABLE_Z_INDEX.activeRows.firstRow.normal.scrolledVertically
-        : TABLE_Z_INDEX.activeRows.firstRow.normal.noVerticalScroll
-      : isScrolledVertically
-        ? TABLE_Z_INDEX.activeRows.afterFirstRow.normal.scrolledVertically
-        : TABLE_Z_INDEX.activeRows.afterFirstRow.normal.noVerticalScroll};
-
-  --z-index-for-sticky-cells: ${({
-    isFirstRowOfGroup,
-    isScrolledVertically,
-  }) =>
-    isFirstRowOfGroup === true
-      ? isScrolledVertically
-        ? TABLE_Z_INDEX.activeRows.firstRow.sticky.scrolledVertically
-        : TABLE_Z_INDEX.activeRows.firstRow.sticky.noVerticalScroll
-      : isScrolledVertically
-        ? TABLE_Z_INDEX.activeRows.afterFirstRow.sticky.scrolledVertically
-        : TABLE_Z_INDEX.activeRows.afterFirstRow.sticky.noVerticalScroll};
-
   border-top: ${({ isDragging }) =>
     isDragging ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
 
@@ -42,7 +15,7 @@ const StyledTr = styled.div<{
     div.table-cell,
     div.table-cell-0-0 {
       &:not(:first-of-type) {
-        background-color: ${themeCssVariables.background.tertiary};
+        background-color: ${themeCssVariables.accent.quaternary};
         border-bottom: 1px solid ${themeCssVariables.border.color.medium};
         border-color: ${themeCssVariables.border.color.medium};
       }

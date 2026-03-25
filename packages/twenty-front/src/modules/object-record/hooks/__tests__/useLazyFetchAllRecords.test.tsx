@@ -4,7 +4,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const defaultResponseData = {
   pageInfo: {
@@ -133,7 +133,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
 
 describe('useLazyFetchAllRecords', () => {
   const objectNameSingular = 'person';
-  const objectMetadataItem = generatedMockObjectMetadataItems.find(
+  const objectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === objectNameSingular,
   );
   if (!objectMetadataItem) {

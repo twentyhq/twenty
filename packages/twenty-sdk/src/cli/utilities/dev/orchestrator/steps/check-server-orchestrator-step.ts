@@ -34,7 +34,16 @@ export class CheckServerOrchestratorStep {
         step.output = { isReady: false, errorLogged: true };
         step.status = 'error';
         this.state.applyStepEvents([
-          { message: 'Cannot reach server', status: 'error' },
+          {
+            message:
+              'Cannot reach Twenty server.\n\n' +
+              '  Start a local server:\n' +
+              '    yarn twenty server start\n\n' +
+              '  Check server status:\n' +
+              '    yarn twenty server status\n\n' +
+              '  Waiting for server...',
+            status: 'error',
+          },
         ]);
         this.state.updatePipeline({ status: 'error' });
       }
@@ -47,7 +56,11 @@ export class CheckServerOrchestratorStep {
         step.output = { isReady: false, errorLogged: true };
         step.status = 'error';
         this.state.applyStepEvents([
-          { message: 'Authentication failed', status: 'error' },
+          {
+            message:
+              'Authentication failed. Run `twenty remote add --local` to authenticate.',
+            status: 'error',
+          },
         ]);
         this.state.updatePipeline({ status: 'error' });
       }
@@ -55,9 +68,14 @@ export class CheckServerOrchestratorStep {
       return false;
     }
 
+    const wasReady = step.output.isReady;
+
     step.output = { isReady: true, errorLogged: false };
     step.status = 'done';
-    this.notify();
+
+    if (!wasReady) {
+      this.notify();
+    }
 
     return true;
   }

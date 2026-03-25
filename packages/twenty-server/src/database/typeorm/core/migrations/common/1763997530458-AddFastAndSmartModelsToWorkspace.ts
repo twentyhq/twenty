@@ -1,10 +1,5 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
-
 export class AddFastAndSmartModelsToWorkspace1763997530458
   implements MigrationInterface
 {
@@ -12,10 +7,10 @@ export class AddFastAndSmartModelsToWorkspace1763997530458
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "fastModel" character varying NOT NULL DEFAULT '${DEFAULT_FAST_MODEL}'`,
+      `ALTER TABLE "core"."workspace" ADD "fastModel" character varying NOT NULL DEFAULT 'default-fast-model'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "smartModel" character varying NOT NULL DEFAULT '${DEFAULT_SMART_MODEL}'`,
+      `ALTER TABLE "core"."workspace" ADD "smartModel" character varying NOT NULL DEFAULT 'default-smart-model'`,
     );
   }
 

@@ -61,11 +61,18 @@ export class FlatObjectMetadataValidatorService {
     };
 
     if (!buildOptions.isSystemBuild && existingFlatObjectMetadata.isSystem) {
-      validationResult.errors.push({
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        message: t`System objects cannot be updated`,
-        userFriendlyMessage: msg`System objects cannot be updated`,
-      });
+      const allowedOverrideKeys = new Set(['standardOverrides', 'isActive']);
+      const disallowedProperties = Object.keys(flatEntityUpdate).filter(
+        (property) => !allowedOverrideKeys.has(property),
+      );
+
+      if (disallowedProperties.length > 0) {
+        validationResult.errors.push({
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          message: t`System objects cannot be updated directly. Use standardOverrides for cosmetic changes.`,
+          userFriendlyMessage: msg`System objects cannot be updated`,
+        });
+      }
     }
 
     validationResult.errors.push(

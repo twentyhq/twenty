@@ -72,7 +72,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
         }
       : undefined,
   extra: {
-    query_timeout: 15000,
+    query_timeout: Number(process.env.PG_DATABASE_PRIMARY_TIMEOUT_MS ?? 10000),
   },
 };
 

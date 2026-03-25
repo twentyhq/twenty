@@ -1,0 +1,689 @@
+---
+title: Uygulama Geliştirme
+description: Nesneleri, mantık fonksiyonlarını, ön uç bileşenlerini ve daha fazlasını Twenty SDK ile tanımlayın.
+---
+
+<Warning>
+Uygulamalar şu anda alfa testinde. Özellik işlevsel ancak hâlâ gelişmekte.
+</Warning>
+
+## SDK kaynaklarını kullanın (türler ve yapılandırma)
+
+twenty-sdk, uygulamanız içinde kullandığınız türlendirilmiş yapı taşları ve yardımcı fonksiyonlar sağlar. Aşağıda en sık dokunacağınız başlıca parçalar yer alıyor.
+
+### Yardımcı fonksiyonlar
+
+SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağlar. [Varlık algılama](/l/tr/developers/extend/apps/getting-started#entity-detection) bölümünde açıklandığı gibi, varlıklarınızın algılanması için `export default define<Entity>({...})` kullanmalısınız:
+
+| Fonksiyon                        | Amaç                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------- |
+| `defineApplication`              | Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet) |
+| `defineObject`                   | Alanlara sahip özel nesneler tanımlayın                                   |
+| `defineLogicFunction`            | İşleyicilerle mantık fonksiyonları tanımlayın                             |
+| `definePreInstallLogicFunction`  | Bir kurulum öncesi mantık işlevi tanımlayın (uygulama başına bir adet)    |
+| `definePostInstallLogicFunction` | Bir kurulum sonrası mantık işlevi tanımlayın (uygulama başına bir adet)   |
+| `defineFrontComponent`           | Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın                |
+| `defineRole`                     | Rol izinlerini ve nesne erişimini yapılandırın                            |
+| `defineField`                    | Mevcut nesneleri ek alanlarla genişletin                                  |
+| `defineView`                     | Nesneler için kaydedilmiş görünümler tanımlayın                           |
+| `defineNavigationMenuItem`       | Kenar çubuğu gezinme bağlantılarını tanımlayın                            |
+| `defineSkill`                    | Yapay zekâ ajanı yeteneklerini tanımlayın                                 |
+
+Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
+
+### Nesnelerin tanımlanması
+
+Özel nesneler, çalışma alanınızdaki kayıtlar için hem şemayı hem de davranışı tanımlar. Yerleşik doğrulamayla nesneler tanımlamak için `defineObject()` kullanın:
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+Önemli noktalar:
+
+* Yerleşik doğrulama ve daha iyi IDE desteği için `defineObject()` kullanın.
+* `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
+* Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
+* `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
+* `yarn twenty entity:add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
+
+<Note>
+**Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, standart alanları otomatik olarak ekler
+örneğin `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt`.
+Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
+`fields` dizinizde aynı ada sahip bir alan tanımlayarak varsayılan alanları geçersiz kılabilirsiniz,
+ancak bu önerilmez.
+</Note>
+
+### Uygulama yapılandırması (application-config.ts)
+
+Her uygulamanın aşağıdakileri açıklayan tek bir `application-config.ts` dosyası vardır:
+
+* **Uygulamanın kim olduğu**: tanımlayıcılar, görünen ad ve açıklama.
+* **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
+* **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
+* **(İsteğe bağlı) kurulum öncesi işlev**: uygulama yüklenmeden önce çalışan bir mantık işlevi.
+* **(İsteğe bağlı) kurulum sonrası işlev**: uygulama yüklendikten sonra çalışan bir mantık işlevi.
+
+Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
+
+```typescript
+// src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Notlar:
+
+* `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
+* `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+* `defaultRoleUniversalIdentifier`, rol dosyasıyla eşleşmelidir (aşağıya bakın).
+* Kurulum öncesi ve kurulum sonrası işlevler, manifest oluşturma sırasında otomatik olarak algılanır. Bkz. [Kurulum öncesi işlevler](#pre-install-functions) ve [Kurulum sonrası işlevler](#post-install-functions).
+
+#### Roller ve izinler
+
+Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application-config.ts` içindeki `defaultRoleUniversalIdentifier` alanı, uygulamanızın mantık fonksiyonlarının kullandığı varsayılan rolü belirtir.
+
+* `TWENTY_API_KEY` olarak enjekte edilen çalışma zamanı API anahtarı bu varsayılan fonksiyon rolünden türetilir.
+* Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
+* En az ayrıcalık ilkesini izleyin: Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinlere sahip özel bir rol oluşturun ve ardından evrensel tanımlayıcısına referans verin.
+
+##### Varsayılan fonksiyon rolü (*.role.ts)
+
+Yeni bir uygulama oluşturduğunuzda CLI ayrıca varsayılan bir rol dosyası da oluşturur. Yerleşik doğrulamayla roller tanımlamak için `defineRole()` kullanın:
+
+```typescript
+// src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+Bu rolün `universalIdentifier` değeri daha sonra `application-config.ts` içinde `defaultRoleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
+
+* **\*.role.ts**, varsayılan fonksiyon rolünün neler yapabileceğini tanımlar.
+* **application-config.ts**, fonksiyonlarınızın izinlerini devralması için bu role işaret eder.
+
+Notlar:
+
+* Oluşturulan rol ile başlayın ve en az ayrıcalık ilkesini izleyerek aşamalı olarak kısıtlayın.
+* `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın ihtiyaç duyduğu nesneler/alanlarla değiştirin.
+* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Minimumda tutun; yalnızca ihtiyacınız olanları ekleyin.
+* Çalışan bir örneği Hello World uygulamasında görün: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### Mantık fonksiyon yapılandırması ve giriş noktası
+
+Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
+
+```typescript
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+Yaygın tetikleyici türleri:
+
+* **route**: Fonksiyonunuzu bir HTTP yolu ve yöntemiyle **`/s/` uç noktası altında** sunar:
+
+> örn. `path: '/post-card/create',` -> `<APP_URL>/s/post-card/create` üzerinden çağırın
+
+* **cron**: Bir CRON ifadesi kullanarak fonksiyonunuzu bir zamanlamayla çalıştırır.
+* **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme fonksiyonu tetikler.
+
+> örn. `person.updated`
+
+Notlar:
+
+* `triggers` dizisi isteğe bağlıdır. Tetikleyicisi olmayan fonksiyonlar, diğer fonksiyonlar tarafından çağrılan yardımcı fonksiyonlar olarak kullanılabilir.
+* Tek bir fonksiyonda birden çok tetikleyici türünü birleştirebilirsiniz.
+
+### Kurulum öncesi işlevler
+
+Kurulum öncesi işlev, uygulamanız bir çalışma alanına yüklenmeden önce otomatik olarak çalışan bir mantık işlevidir. Bu, doğrulama görevleri, önkoşul kontrolleri veya ana kurulum başlamadan önce çalışma alanı durumunun hazırlanması için yararlıdır.
+
+`create-twenty-app` ile yeni bir uygulama iskeleti oluşturduğunuzda, `src/logic-functions/pre-install.ts` konumunda sizin için bir kurulum öncesi işlev oluşturulur:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Ayrıca kurulum öncesi işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Önemli noktalar:
+
+* Kurulum öncesi işlevler `definePreInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) özel bir varyanttır.
+* İşleyici, `{ previousVersion: string }` içeren bir `InstallLogicFunctionPayload` alır — daha önce yüklü olan uygulamanın sürümü (veya yeni kurulumlar için boş bir dize).
+* Uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
+* İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `preInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
+* Varsayılan zaman aşımı, daha uzun hazırlık görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
+* Kurulum öncesi işlevlerin tetikleyicilere ihtiyacı yoktur — kurulumdan önce platform tarafından veya `function:execute --preInstall` aracılığıyla manuel olarak çağrılırlar.
+
+### Kurulum sonrası işlevler
+
+Kurulum sonrası işlev, uygulamanız bir çalışma alanına yüklendikten sonra otomatik olarak çalışan bir mantık işlevidir. Bu, varsayılan verileri tohumlama, ilk kayıtları oluşturma veya çalışma alanı ayarlarını yapılandırma gibi tek seferlik kurulum görevleri için yararlıdır.
+
+`create-twenty-app` ile yeni bir uygulama iskeleti oluşturduğunuzda, `src/logic-functions/post-install.ts` konumunda sizin için bir kurulum sonrası işlevi oluşturulur:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Ayrıca kurulum sonrası işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Önemli noktalar:
+
+* Kurulum sonrası işlevler `definePostInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) özel bir varyanttır.
+* İşleyici, `{ previousVersion: string }` içeren bir `InstallLogicFunctionPayload` alır — daha önce yüklü olan uygulamanın sürümü (veya yeni kurulumlar için boş bir dize).
+* Uygulama başına yalnızca bir kurulum sonrası işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
+* İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `postInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
+* Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
+* Kurulum sonrası işlevlerin tetikleyicilere ihtiyacı yoktur — kurulum sırasında platform tarafından veya `function:execute --postInstall` aracılığıyla manuel olarak çağrılırlar.
+
+### Rota tetikleyicisi yükü
+
+<Warning>
+**Kırıcı değişiklik (v1.16, Ocak 2026):** Rota tetikleyicisi yük formatı değişti. v1.16'dan önce, sorgu parametreleri, yol parametreleri ve gövde doğrudan payload olarak gönderiliyordu. v1.16 itibarıyla, yapılandırılmış bir `RoutePayload` nesnesinin içine yerleştiriliyorlar.
+
+**v1.16'dan önce:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
+
+**v1.16'dan sonra:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
+
+**Mevcut fonksiyonları taşımak için:** İşleyicinizi, parametreler nesnesinden doğrudan ayırmak yerine `event.body`, `event.queryStringParameters` veya `event.pathParameters` üzerinden ayrıştıracak şekilde güncelleyin.
+</Warning>
+
+Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında, AWS HTTP API v2 formatını izleyen bir `RoutePayload` nesnesi alır. Türü `twenty-sdk` içinden içe aktarın:
+
+```typescript
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+`RoutePayload` türünün yapısı şu şekildedir:
+
+| Özellik                      | Tür                                   | Açıklama                                                                           |
+| ---------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)         |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)               |
+| `pathParameters`             | `Record<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri (örn., `/users/:id` → `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Ayrıştırılmış istek gövdesi (JSON)                                                 |
+| `isBase64Encoded`            | `boolean`                             | Gövdenin base64 ile kodlanıp kodlanmadığı                                          |
+| `requestContext.http.method` | `string`                              | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                       |
+| `requestContext.http.path`   | `string`                              | Ham istek yolu                                                                     |
+
+### HTTP başlıklarını iletme
+
+Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları mantık fonksiyonunuza **aktarılmaz**. Belirli başlıklara erişmek için bunları açıkça `forwardedRequestHeaders` dizisinde listeleyin:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+Daha sonra işleyicinizde bu başlıklara erişebilirsiniz:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
+</Note>
+
+Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
+
+* **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir mantık fonksiyonu ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
+* **Manuel**: Yeni bir `*.logic-function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineLogicFunction()` kullanın.
+
+### Bir mantık işlevini araç olarak işaretleme
+
+Mantık işlevleri, yapay zeka ajanları ve iş akışları için **araçlar** olarak sunulabilir. Bir işlev bir araç olarak işaretlendiğinde, Twenty'nin yapay zeka özellikleri tarafından keşfedilebilir hâle gelir ve iş akışı otomasyonlarında bir adım olarak seçilebilir.
+
+Bir mantık işlevini bir araç olarak işaretlemek için `isTool: true` olarak ayarlayın ve beklenen giriş parametrelerini açıklayan bir `toolInputSchema`yı [JSON Şeması](https://json-schema.org/) kullanarak sağlayın:
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Önemli noktalar:
+
+* **`isTool`** (`boolean`, varsayılan: `false`): `true` olarak ayarlandığında, işlev bir araç olarak kaydedilir ve AI ajanları ile iş akışı otomasyonları tarafından kullanılabilir hale gelir.
+* **`toolInputSchema`** (`object`, isteğe bağlı): İşlevinizin kabul ettiği parametreleri tanımlayan bir JSON Schema nesnesi. AI ajanları, aracın hangi girdileri beklediğini anlamak ve çağrıları doğrulamak için bu şemayı kullanır. Atlanırsa, şema varsayılan olarak `{ type: 'object', properties: {} }` olur (parametre yok).
+* `isTool: false` (veya ayarlanmamış) olan işlevler araç olarak **sunulmaz**. Yine de doğrudan yürütülebilir veya diğer işlevler tarafından çağrılabilirler, ancak araç keşfinde görünmezler.
+* **Araç adlandırma**: Bir araç olarak sunulduğunda, işlev adı otomatik olarak `logic_function_<name>` biçimine dönüştürülür (küçük harfe çevrilir, alfasayısal olmayan karakterler alt çizgi ile değiştirilir). Örneğin, `enrich-company` `logic_function_enrich_company` haline gelir.
+* `isTool` özelliğini tetikleyicilerle birleştirebilirsiniz — bir işlev aynı anda hem bir araç (AI ajanları tarafından çağrılabilir) olabilir hem de olaylar tarafından tetiklenebilir (cron, veritabanı olayları, routes).
+
+<Note>
+**İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
+</Note>
+
+### Ön uç bileşenleri
+
+Ön uç bileşenleri, Twenty'nin kullanıcı arayüzünde görüntülenen özel React bileşenleri oluşturmanıza olanak tanır. Yerleşik doğrulamayla bileşenleri tanımlamak için `defineFrontComponent()` kullanın:
+
+```typescript
+// src/front-components/my-widget.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Önemli noktalar:
+
+* Ön uç bileşenleri, Twenty içinde yalıtılmış bağlamlarda görüntülenen React bileşenleridir.
+* `component` alanı, React bileşeninize referans verir.
+* Bileşenler, `yarn twenty dev` sırasında otomatik olarak oluşturulur ve senkronize edilir.
+
+Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
+
+* **Şablondan**: `yarn twenty entity:add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
+* **Manuel**: Aynı deseni izleyerek yeni bir `.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
+
+### Beceriler
+
+Yetenekler, yapay zekâ ajanlarının çalışma alanınızda kullanabileceği yeniden kullanılabilir yönergeleri ve kabiliyetleri tanımlar. Yerleşik doğrulamayla yetenekleri tanımlamak için `defineSkill()` kullanın:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Önemli noktalar:
+
+* `name`, yetenek için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen, insan tarafından okunabilir addır.
+* `content`, yetenek yönergelerini içerir — bu, yapay zekâ ajanının kullandığı metindir.
+* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+* `description` (isteğe bağlı), yeteneğin amacı hakkında ek bağlam sağlar.
+
+Yeni yetenekleri iki şekilde oluşturabilirsiniz:
+
+* **Şablondan**: `yarn twenty entity:add` komutunu çalıştırın ve yeni bir yetenek ekleme seçeneğini seçin.
+* **Manuel**: Yeni bir dosya oluşturun ve aynı deseni izleyerek `defineSkill()` kullanın.
+
+### Oluşturulan tiplendirilmiş istemciler
+
+Çalışma alanı şemanıza göre `yarn twenty dev` tarafından iki tiplendirilmiş istemci otomatik olarak oluşturulur ve `node_modules/twenty-sdk/generated` içine kaydedilir:
+
+* **`CoreApiClient`** — çalışma alanı verileri için `/graphql` uç noktasını sorgular
+* **`MetadataApiClient`** — çalışma alanı yapılandırması ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
+
+```typescript
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+
+const client = new CoreApiClient();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+```
+
+Her iki istemci de, nesneleriniz veya alanlarınız değiştiğinde, `yarn twenty dev` tarafından otomatik olarak yeniden oluşturulur.
+
+#### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
+
+Fonksiyonunuz Twenty üzerinde çalıştığında, platform kodunuz yürütülmeden önce kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
+
+* `TWENTY_API_URL`: Uygulamanızın hedeflediği Twenty API'nin temel URL’si.
+* `TWENTY_API_KEY`: Uygulamanızın varsayılan fonksiyon rolü kapsamına sahip kısa ömürlü anahtar.
+
+Notlar:
+
+* Oluşturulan istemciye URL veya API anahtarı geçirmeniz gerekmez. Çalışma zamanında `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini process.env üzerinden okur.
+* API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
+* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `defaultRoleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
+
+#### Dosya yükleme
+
+Oluşturulan `MetadataApiClient`, çalışma alanı nesnelerinizdeki dosya türündeki alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. Standart GraphQL istemcileri çok parçalı dosya yüklemelerini yerel olarak desteklemediğinden, istemci arka planda [GraphQL çok parçalı istek belirtimi](https://github.com/jaydenseric/graphql-multipart-request-spec) uygulayan bu özel yöntemi sağlar.
+
+```typescript
+import { MetadataApiClient } from 'twenty-sdk/generated';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Yöntem imzası:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Parametre                          | Tür      | Açıklama                                                                                   |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | Dosyanın ham içeriği                                                                       |
+| `filename`                         | `string` | Dosyanın adı (depolama ve görüntüleme için kullanılır)                                     |
+| `contentType`                      | `string` | Dosyanın MIME türü (belirtilmezse varsayılan olarak `application/octet-stream` kullanılır) |
+| `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri                              |
+
+Önemli noktalar:
+
+* `uploadFile` yöntemi, yükleme mutasyonu `/metadata` uç noktası tarafından çözümlendiği için `MetadataApiClient` üzerinde mevcuttur.
+* Alan için `universalIdentifier` kullanılır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır — uygulamaların başka her yerde alanlara nasıl atıfta bulunduğuyla tutarlıdır.
+* Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
+
+### Hello World örneği
+
+Nesneleri, mantık fonksiyonlarını, ön uç bileşenlerini ve birden çok tetikleyiciyi gösteren minimal, uçtan uca bir örneği [buradan](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world) inceleyin.

@@ -1,14 +1,16 @@
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { type ToReferenceFunction } from '@apollo/client/cache/core/types/common';
+import { type FieldFunctionOptions } from '@apollo/client/cache';
+
+type ToReferenceFunction = FieldFunctionOptions['toReference'];
 import { isDefined } from 'twenty-shared/utils';
 
 type CreateCacheEdgeWithRecordRefParams = {
   record: RecordGqlNode;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   toReference: ToReferenceFunction;
 };
 

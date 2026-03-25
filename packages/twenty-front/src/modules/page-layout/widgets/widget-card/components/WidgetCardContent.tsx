@@ -62,12 +62,21 @@ export const WidgetCardContent = ({
   className,
   children,
 }: WidgetCardContentProps) => {
+  const handleContentClick = (event: React.MouseEvent) => {
+    if (!isEditable) {
+      return;
+    }
+
+    event.stopPropagation();
+  };
+
   return (
     <StyledWidgetCardContent
       variant={variant}
       hasHeader={hasHeader}
       isEditable={isEditable}
       className={className}
+      onClick={handleContentClick}
     >
       {children}
     </StyledWidgetCardContent>

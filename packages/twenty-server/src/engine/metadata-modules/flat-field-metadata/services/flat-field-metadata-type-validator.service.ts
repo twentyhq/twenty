@@ -72,7 +72,6 @@ export class FlatFieldMetadataTypeValidatorService {
       POSITION: validatePositionFlatFieldMetadata,
       RAW_JSON: DEFAULT_NO_VALIDATION,
       RICH_TEXT: DEFAULT_NO_VALIDATION,
-      RICH_TEXT_V2: DEFAULT_NO_VALIDATION,
       TEXT: DEFAULT_NO_VALIDATION,
       TS_VECTOR: validateTsVectorFlatFieldMetadata,
       UUID: DEFAULT_NO_VALIDATION,

@@ -1,0 +1,119 @@
+---
+title: Publicare
+description: Distribuie aplicația ta Twenty în marketplace sau implementeaz-o intern.
+---
+
+<Warning>
+Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
+</Warning>
+
+## Prezentare generală
+
+După ce aplicația ta este [construită și testată local](/l/ro/developers/extend/apps/building), ai două căi pentru distribuire:
+
+* **Publică pe npm** — listează aplicația ta în marketplace-ul Twenty pentru ca orice spațiu de lucru să o poată descoperi și instala.
+* **Trimite un tarball** — implementează aplicația ta pe un server Twenty specific pentru utilizare internă, fără a o face disponibilă public.
+
+## Publicarea pe npm
+
+Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketplace-ul Twenty. Orice spațiu de lucru Twenty poate răsfoi, instala și actualiza aplicațiile din marketplace direct din interfață.
+
+### Cerințe
+
+* Un cont [npm](https://www.npmjs.com)
+* Numele pachetului tău **trebuie** să folosească prefixul `twenty-app-` (de ex., `twenty-app-postcard-sender`)
+
+### Pași
+
+1. **Construiește-ți aplicația** — CLI compilează sursele TypeScript și generează manifestul aplicației:
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+2. **Publică pe npm** — publică pachetul construit în registrul npm:
+
+```bash filename="Terminal"
+npx twenty publish
+```
+
+### Descoperire automată
+
+Pachetele cu prefixul `twenty-app-` sunt descoperite automat de catalogul marketplace-ului Twenty. După publicare, aplicația ta apare în marketplace în câteva minute — fără înregistrare manuală sau aprobare necesară.
+
+### Publicare CI
+
+Proiectul generat include un workflow GitHub Actions care publică la fiecare lansare. Acesta rulează `app:build`, apoi `npm publish --provenance` din rezultatul build-ului:
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `npx twenty build`, apoi `npm publish` din `.twenty/output`.
+
+<Tip>
+**npm provenance** este opțională, dar recomandată. Publicarea cu `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru instrucțiuni de configurare.
+</Tip>
+
+## Distribuire internă
+
+Pentru aplicațiile pe care nu le dorești disponibile public — instrumente proprietare, integrări doar pentru enterprise sau build-uri experimentale — poți trimite un tarball direct pe un server Twenty.
+
+### Trimite un tarball
+
+Construiește-ți aplicația și implementeaz-o pe un server specific, într-un singur pas:
+
+```bash filename="Terminal"
+npx twenty publish --server <server-url>
+```
+
+Orice spațiu de lucru de pe acel server poate apoi instala și actualiza aplicația din pagina de setări **Applications**.
+
+### Gestionarea versiunilor
+
+Pentru a lansa o actualizare:
+
+1. Actualizează câmpul `version` din `package.json`
+2. Trimite un tarball nou cu `npx twenty publish --server <server-url>`
+3. Spațiile de lucru de pe acel server vor vedea actualizarea disponibilă în setările lor
+
+<Note>
+Aplicațiile interne sunt limitate la serverul pe care sunt trimise. Acestea nu vor apărea în marketplace-ul public și nu pot fi instalate de spațiile de lucru de pe alte servere.
+</Note>
+
+## Categorii de aplicații
+
+Twenty organizează aplicațiile în trei categorii, în funcție de modul în care sunt distribuite:
+
+| Categorie      | Cum funcționează                                                                                                                  | Vizibilă în marketplace? |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **Dezvoltare** | Aplicații în modul de dezvoltare local, rulate prin `yarn twenty dev`. Folosite pentru construire și testare.                     | Nu                       |
+| **Publicat**   | Aplicații publicate pe npm cu prefixul `twenty-app-`. Listate în marketplace pentru ca orice spațiu de lucru să le poată instala. | Da                       |
+| **Intern**     | Aplicații implementate prin tarball pe un server specific. Disponibile doar pentru spațiile de lucru de pe acel server.           | Nu                       |
+
+<Tip>
+Pornește în modul **Dezvoltare** în timp ce îți construiești aplicația. Când este gata, alege **Publicat** (npm) pentru distribuire largă sau **Intern** (tarball) pentru implementare privată.
+</Tip>

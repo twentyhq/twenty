@@ -149,8 +149,8 @@
         "extend": {
           "label": "Genişlet",
           "groups": {
-            "extendCapabilities": {
-              "label": "Yetkinlikler"
+            "apps": {
+              "label": "Uygulamalar"
             }
           }
         },

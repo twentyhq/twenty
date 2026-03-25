@@ -21,19 +21,51 @@ Os aplicativos permitem criar e gerenciar personalizações do Twenty **como có
 ## Pré-requisitos
 
 * Node.js 24+ e Yarn 4
-* Um espaço de trabalho do Twenty e uma chave de API (crie uma em https://app.twenty.com/settings/api-webhooks)
+* Docker (para o servidor de desenvolvimento local do Twenty)
 
 ## Primeiros passos
 
-Crie um novo aplicativo usando o gerador oficial, depois autentique-se e comece a desenvolver:
+Crie um novo app usando o gerador oficial de estrutura. Ele pode iniciar automaticamente uma instância local do Twenty para você:
 
 ```bash filename="Terminal"
-# Criar a estrutura de um novo app (inclui todos os exemplos por padrão)
+# Criar a estrutura de um novo app — a CLI oferecerá iniciar um servidor local do Twenty
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Iniciar modo de desenvolvimento: sincroniza automaticamente as alterações locais com seu workspace
-yarn twenty app:dev
+yarn twenty dev
+```
+
+### Gerenciamento do Servidor Local
+
+O SDK inclui comandos para gerenciar um servidor de desenvolvimento local do Twenty (imagem Docker all-in-one com PostgreSQL, Redis, servidor e worker):
+
+```bash filename="Terminal"
+# Iniciar o servidor local (faz pull da imagem se necessário)
+yarn twenty server start
+
+# Verificar o status do servidor
+yarn twenty server status
+
+# Transmitir os logs do servidor
+yarn twenty server logs
+
+# Parar o servidor
+yarn twenty server stop
+
+# Redefinir todos os dados e começar do zero
+yarn twenty server reset
+```
+
+O servidor local já vem pré-configurado com um espaço de trabalho e um usuário (`tim@apple.dev` / `tim@apple.dev`), para que você possa começar a desenvolver imediatamente, sem qualquer configuração manual.
+
+### Autenticação
+
+Conecte seu aplicativo ao servidor local usando OAuth:
+
+```bash filename="Terminal"
+# Authenticate via OAuth (opens browser)
+yarn twenty remote add --local
 ```
 
 O gerador de estrutura oferece suporte a dois modos para controlar quais arquivos de exemplo são incluídos:
@@ -44,6 +76,18 @@ npx create-twenty-app@latest my-app
 
 # Mínimo: apenas arquivos principais (application-config.ts e default-role.ts)
 npx create-twenty-app@latest my-app --minimal
+```
+
+### Como usar uma instância local do Twenty
+
+Se você já estiver executando uma instância local do Twenty, você pode conectar-se a ela em vez de usar o Docker. Informe a porta em que seu servidor local está escutando (padrão: `3000`):
+
+```bash filename="Terminal"
+# Durante a criação do projeto
+npx create-twenty-app@latest my-app --port 3000
+
+# Ou após a criação do projeto
+yarn twenty remote add --local --port 3000
 ```
 
 A partir daqui você pode:
@@ -64,8 +108,14 @@ yarn twenty function:execute --preInstall
 # Execute the post-install function
 yarn twenty function:execute --postInstall
 
+# Build the app for distribution
+yarn twenty build
+
+# Publish the app to npm or a Twenty server
+yarn twenty publish
+
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
 yarn twenty help
@@ -171,7 +221,7 @@ export default defineObject({
 
 Comandos posteriores adicionarão mais arquivos e pastas:
 
-* `yarn twenty app:dev` irá gerar automaticamente dois clientes de API tipados em `node_modules/twenty-sdk/generated`: `CoreApiClient` (para dados do espaço de trabalho via `/graphql`) e `MetadataApiClient` (para configuração do espaço de trabalho e envio de arquivos via `/metadata`).
+* `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/clients`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
 * `yarn twenty entity:add` adicionará arquivos de definição de entidade em `src/` para seus objetos, funções, componentes de front-end, papéis e habilidades personalizados, entre outros.
 
 ## Autenticação
@@ -228,7 +278,7 @@ O SDK fornece funções utilitárias para definir as entidades do seu app. Confo
 | `defineView()`                     | Define visualizações salvas para objetos                     |
 | `defineNavigationMenuItem()`       | Define links de navegação da barra lateral                   |
 | `defineSkill()`                    | Define habilidades de agente de IA                           |
-| `defineAgent()`                    | Define AI agents with system prompts                         |
+| `defineAgent()`                    | Defina agentes de IA com prompts do sistema                  |
 
 Essas funções validam sua configuração em tempo de compilação e oferecem autocompletar na IDE e segurança de tipos.
 
@@ -320,6 +370,72 @@ Você não precisa definir esses no seu array `fields` — adicione apenas seus 
 Você pode substituir os campos padrão definindo um campo com o mesmo nome no seu array `fields`,
 mas isso não é recomendado.
 </Note>
+
+### Definindo campos em objetos existentes
+
+Use `defineField()` para adicionar campos personalizados a objetos existentes — tanto objetos padrão (como `company`, `person`, `opportunity`) quanto objetos personalizados definidos por outros aplicativos. Cada campo fica em seu próprio arquivo e faz referência ao objeto de destino por seu `universalIdentifier`.
+
+Para fazer referência a objetos padrão, importe `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` de `twenty-sdk`. Essa constante fornece identificadores estáveis para todos os objetos integrados e seus campos:
+
+```typescript
+// src/fields/apollo-total-funding.field.ts
+import {
+  defineField,
+  FieldType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'c90ae72d-4ddf-4f22-882f-eef98c91e40e',
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  type: FieldType.CURRENCY,
+  name: 'apolloTotalFunding',
+  label: 'Total Funding',
+  description: 'Total funding raised by the company',
+  icon: 'IconCash',
+});
+```
+
+Pontos-chave:
+
+* `objectUniversalIdentifier` indica ao Twenty a qual objeto anexar o campo. Use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.<objectName.universalIdentifier` para objetos padrão.
+* Cada campo requer seu próprio `universalIdentifier` estável, um `name`, `type`, `label` e o `objectUniversalIdentifier` de destino.
+* Você pode criar novos campos usando `yarn twenty entity:add` e escolhendo a opção de campo.
+* `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` também é exportado como `STANDARD_OBJECT` por conveniência — ambos se referem à mesma constante.
+
+Os objetos padrão disponíveis incluem: `attachment`, `blocklist`, `calendarChannel`, `calendarEvent`, `calendarEventParticipant`, `company`, `connectedAccount`, `dashboard`, `favorite`, `favoriteFolder`, `message`, `messageChannel`, `messageParticipant`, `messageThread`, `note`, `noteTarget`, `opportunity`, `person`, `task`, `taskTarget`, `timelineActivity`, `workflow`, `workflowAutomatedTrigger`, `workflowRun`, `workflowVersion` e `workspaceMember`.
+
+Cada objeto padrão também expõe os identificadores de seus campos. Por exemplo, para referenciar um campo específico em um objeto padrão nas permissões de função:
+
+```typescript
+STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier
+```
+
+#### Campos de relação em objetos existentes
+
+Você também pode definir campos de relação que vinculam objetos existentes aos seus objetos personalizados:
+
+```typescript
+// src/fields/people-on-call-recording.field.ts
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk';
+import { CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/call-recording';
+import { CALL_RECORDING_ON_PERSON_ID } from 'src/fields/call-recording-on-person.field';
+
+export default defineField({
+  universalIdentifier: '4a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  objectUniversalIdentifier:
+    CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CALL_RECORDING_ON_PERSON_ID,
+  relationType: RelationType.MANY_TO_ONE,
+});
+```
 
 ### Configuração do aplicativo (application-config.ts)
 
@@ -434,7 +550,7 @@ Cada arquivo de função usa `defineLogicFunction()` para exportar uma configura
 // src/app/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -679,7 +795,7 @@ Para marcar uma função lógica como ferramenta, defina `isTool: true` e forne�
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -765,12 +881,261 @@ Pontos-chave:
 
 * Componentes de front-end são componentes React que renderizam em contextos isolados dentro do Twenty.
 * O campo `component` faz referência ao seu componente React.
-* Os componentes são compilados e sincronizados automaticamente durante `yarn twenty app:dev`.
+* Components are built and synced automatically during `yarn twenty dev`.
 
 Você pode criar novos componentes de front-end de duas formas:
 
 * **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar um novo componente de front-end.
 * **Manual**: Crie um novo ficheiro `.tsx` e use `defineFrontComponent()`, seguindo o mesmo padrão.
+
+#### Onde os componentes de front-end podem ser usados
+
+Os componentes de front-end podem ser renderizados em dois locais dentro do Twenty:
+
+* **Painel lateral** — Componentes de front-end não headless abrem no painel lateral direito. Este é o comportamento padrão quando um componente de front-end é acionado pelo menu de comandos.
+* **Widgets (painéis e páginas de registro)** — Componentes de front-end podem ser incorporados como widgets nos layouts de página. Ao configurar um painel ou o layout de uma página de registro, os usuários podem adicionar um widget de componente de front-end.
+
+#### Headless vs não headless
+
+Os componentes de front-end têm dois modos de renderização controlados pela opção `isHeadless`:
+
+**Não headless (padrão)** — O componente renderiza uma interface visível. Quando acionado pelo menu de comandos, ele é aberto no painel lateral. Este é o comportamento padrão quando `isHeadless` é `false` ou omitido.
+
+**Headless** — O componente é montado de forma invisível em segundo plano. Ele não abre o painel lateral. Componentes headless são projetados para ações que executam lógica e, em seguida, se desmontam — por exemplo, executar uma tarefa assíncrona, navegar para uma página ou exibir um modal de confirmação. Eles se combinam naturalmente com os componentes Command do SDK descritos abaixo.
+
+```typescript
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-action',
+  description: 'Runs an action without opening the side panel',
+  component: MyAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+    label: 'Run my action',
+  },
+});
+```
+
+#### Adicionando itens ao menu de comandos
+
+Para que um componente de front-end apareça como um item no menu de comandos do Twenty, adicione a propriedade `command` a `defineFrontComponent()`. Quando os usuários abrem o menu de comandos (Cmd+K / Ctrl+K), o item aparece e aciona o componente de front-end ao clicar.
+
+O objeto `command` aceita os seguintes campos:
+
+| Campo                                   | Tipo                                        | Descrição                                                                                                  |
+| --------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | `string` (obrigatório)                      | ID exclusivo para o item do menu de comandos                                                               |
+| `etiqueta`                              | `string` (obrigatório)                      | Rótulo exibido no menu de comandos                                                                         |
+| `ícone`                                 | `string` (opcional)                         | Nome do ícone (por exemplo, `'IconSparkles'`)                                                              |
+| `isPinned`                              | `boolean` (opcional)                        | Se o comando fica fixado no topo do menu                                                                   |
+| `availabilityType`                      | `'GLOBAL' \| 'RECORD_SELECTION'` (opcional) | `GLOBAL` mostra o comando em todos os lugares; `RECORD_SELECTION` o mostra apenas em contextos de registro |
+| `availabilityObjectUniversalIdentifier` | `string` (opcional)                         | Restringe o comando a um tipo específico de objeto (por exemplo, Person)                                   |
+
+Aqui está um exemplo do app de gravação de chamadas que adiciona um comando com escopo para registros de Person:
+
+```typescript
+import { defineFrontComponent } from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+  name: 'Summarize Person Call Recordings',
+  description: 'Generates a summary of call recordings for a person',
+  component: SummarizePersonRecordings,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+    label: 'Summarize call recordings',
+    icon: 'IconSparkles',
+    isPinned: false,
+    availabilityType: 'RECORD_SELECTION',
+    availabilityObjectUniversalIdentifier:
+      '20202020-e674-48e5-a542-72570eee7213',
+  },
+});
+```
+
+Quando o comando é sincronizado, ele aparece no menu de comandos. Se o componente de front-end não for headless, o painel lateral é aberto com o componente renderizado dentro. Se for headless, o componente é montado em segundo plano e executa sua lógica.
+
+#### Componentes Command do SDK
+
+O pacote `twenty-sdk` fornece quatro componentes auxiliares Command projetados para componentes de front-end headless. Cada componente executa uma ação ao montar, trata erros exibindo uma notificação de snackbar e desmonta automaticamente o componente de front-end ao concluir.
+
+Importe-os de `twenty-sdk/command`:
+
+* **`Command`** — Executa um callback assíncrono via a prop `execute`.
+* **`CommandLink`** — Navega para um caminho do app. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Abre um modal de confirmação. Se o usuário confirmar, executa o callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Abre uma página específica do painel lateral. Props: `page`, `pageTitle`, `pageIcon`.
+
+Aqui está um exemplo completo de um componente de front-end headless usando `Command` para executar uma ação a partir do menu de comandos:
+
+```typescript
+// src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+E um exemplo usando `CommandModal` para solicitar confirmação antes de executar:
+
+```typescript
+// src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+#### Contexto de execução
+
+Todo componente de front-end recebe um contexto de execução que fornece informações sobre onde e como está sendo executado. Acesse os valores do contexto usando hooks do `twenty-sdk`:
+
+| Hook                    | Tipo de retorno  | Descrição                                                                                                                                                                                                   |
+| ----------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useFrontComponentId()` | `string`         | O ID exclusivo da instância atual do componente de front-end                                                                                                                                                |
+| `useRecordId()`         | `string \| null` | O ID do registro atual, quando o componente é executado em um contexto de registro (por exemplo, um widget de página de registro ou um comando com escopo para um registro). Retorna `null` caso contrário. |
+| `useUserId()`           | `string \| null` | O ID do usuário atual                                                                                                                                                                                       |
+
+```typescript
+import { useRecordId, useUserId } from 'twenty-sdk';
+
+const MyWidget = () => {
+  const recordId = useRecordId();
+  const userId = useUserId();
+
+  return (
+    <div>
+      <p>Record: {recordId ?? 'none'}</p>
+      <p>User: {userId ?? 'anonymous'}</p>
+    </div>
+  );
+};
+```
+
+O contexto é reativo — se o registro de contexto mudar, os hooks retornam automaticamente os valores atualizados.
+
+#### Funções da API do host
+
+Os componentes de front-end são executados em um sandbox isolado, mas podem interagir com a UI do Twenty por meio de um conjunto de funções fornecidas pelo host. Importe-as diretamente de `twenty-sdk`:
+
+```typescript
+import {
+  navigate,
+  closeSidePanel,
+  enqueueSnackbar,
+  unmountFrontComponent,
+  openSidePanelPage,
+  openCommandConfirmationModal,
+} from 'twenty-sdk';
+```
+
+| Função                         | Assinatura                                               | Descrição                                                                                                                                                                      |
+| ------------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `navegar`                      | `(to, params?, queryParams?, options?) => Promise<void>` | Navega para um caminho tipado do app dentro do Twenty                                                                                                                          |
+| `closeSidePanel`               | `() => Promise<void>`                                    | Fecha o painel lateral                                                                                                                                                         |
+| `enqueueSnackbar`              | `(params) => Promise<void>`                              | Exibe uma notificação de snackbar. Parâmetros: `message`, `variant` (`'error'`, `'success'`, `'info'`, `'warning'`), `duration` opcional, `detailedMessage`, `dedupeKey`       |
+| `unmountFrontComponent`        | `() => Promise<void>`                                    | Desmonta o componente de front-end atual (usado por componentes headless para limpar após a execução)                                                                          |
+| `openSidePanelPage`            | `(params) => Promise<void>`                              | Abre uma página no painel lateral. Parâmetros: `page`, `pageTitle`, `pageIcon`, `shouldResetSearchState`                                                                       |
+| `openCommandConfirmationModal` | `(params) => Promise<'confirm' \| 'cancel'>`             | Exibe um modal de confirmação e aguarda a resposta do usuário. Parâmetros: `title`, `subtitle`, `confirmButtonText`, `confirmButtonAccent` (`'default'`, `'blue'`, `'danger'`) |
+
+Aqui está um exemplo que usa a API do host para exibir um snackbar e fechar o painel lateral após a conclusão de uma ação:
+
+```typescript
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 ### Habilidades
 
@@ -809,7 +1174,7 @@ Você pode criar novas habilidades de duas formas:
 
 ### Agentes
 
-Agents define AI agents with system prompts that can operate within your workspace. Use `defineAgent()` to define agents with built-in validation:
+Agentes definem agentes de IA com prompts do sistema que podem operar no seu espaço de trabalho. Use `defineAgent()` para definir agentes com validação integrada:
 
 ```typescript
 // src/agents/example-agent.ts
@@ -831,36 +1196,36 @@ export default defineAgent({
 
 Pontos-chave:
 
-* `name` is a unique identifier string for the agent (kebab-case recommended).
+* `name` é uma string de identificador exclusivo para o agente (recomenda-se kebab-case).
 * `label` é o nome de exibição legível por humanos mostrado na UI.
-* `prompt` contains the system prompt — this is the instruction text that defines the agent's behavior.
+* `prompt` contém o prompt do sistema — este é o texto de instruções que define o comportamento do agente.
 * `icon` (opcional) define o ícone exibido na UI.
-* `description` (optional) provides additional context about the agent's purpose.
+* `description` (opcional) fornece contexto adicional sobre a finalidade do agente.
 
-You can create new agents in two ways:
+Você pode criar novos agentes de duas formas:
 
-* **Scaffolded**: Run `yarn twenty entity:add` and choose the option to add a new agent.
-* **Manual**: Create a new file and use `defineAgent()`, following the same pattern.
+* **Gerado automaticamente**: Execute `yarn twenty entity:add` e escolha a opção para adicionar um novo agente.
+* **Manual**: Crie um novo arquivo e use `defineAgent()`, seguindo o mesmo padrão.
 
 ### Clientes tipados gerados
 
-Dois clientes tipados são gerados automaticamente pelo `yarn twenty app:dev` e armazenados em `node_modules/twenty-sdk/generated` com base no esquema do seu espaço de trabalho:
+Two typed clients are auto-generated by `yarn twenty dev` and stored in `node_modules/twenty-sdk/clients` based on your workspace schema:
 
 * **`CoreApiClient`** — consulta o endpoint `/graphql` para dados do espaço de trabalho
 * **`MetadataApiClient`** — consulta o endpoint `/metadata` para obter a configuração do espaço de trabalho e o carregamento de ficheiros
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const client = new CoreApiClient();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 
 const metadataClient = new MetadataApiClient();
 const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
-
 ```
 
-Ambos os clientes são regenerados automaticamente pelo `yarn twenty app:dev` sempre que seus objetos ou campos forem alterados.
+`CoreApiClient` is re-generated automatically by `yarn twenty dev` whenever your objects or fields change. `MetadataApiClient` é fornecido pré-compilado com o SDK.
 
 #### Credenciais em tempo de execução em funções de lógica
 
@@ -877,10 +1242,10 @@ Notas:
 
 #### Carregamento de ficheiros
 
-O `MetadataApiClient` gerado inclui um método `uploadFile` para anexar ficheiros a campos do tipo ficheiro nos objetos do seu espaço de trabalho. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+`MetadataApiClient` inclui um método `uploadFile` para anexar ficheiros a campos do tipo ficheiro nos objetos do seu espaço de trabalho. Como os clientes GraphQL padrão não suportam nativamente o carregamento de ficheiros multipart, o cliente fornece este método dedicado que implementa, nos bastidores, a [especificação de pedidos multipart do GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -896,7 +1261,6 @@ const uploadedFile = await metadataClient.uploadFile(
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
-
 ```
 
 A assinatura do método:
@@ -927,6 +1291,113 @@ Pontos-chave:
 
 Explore um exemplo mínimo de ponta a ponta que demonstra objetos, funções de lógica, componentes de front-end e vários gatilhos [aqui](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
+## Compilando seu app
+
+Depois de desenvolver seu app com `app:dev`, use `app:build` para compilá-lo em um pacote distribuível.
+
+```bash filename="Terminal"
+# Build the app (output goes to .twenty/output/)
+yarn twenty build
+
+# Build and create a tarball (.tgz) for distribution
+yarn twenty build --tarball
+```
+
+O processo de build:
+
+1. **Analisa e valida o manifesto** — lê todas as entidades `defineX()` dos seus arquivos de código-fonte e valida a estrutura do manifesto.
+2. **Compila funções de lógica e componentes de front-end** — empacota o código-fonte TypeScript em arquivos ESM `.mjs` usando o esbuild.
+3. **Gera checksums** — calcula hashes MD5 para cada arquivo gerado, armazenados no manifesto como `builtHandlerChecksum` / `builtComponentChecksum`.
+4. **Gera o cliente de API tipado** — inspeciona o esquema GraphQL e gera clientes tipados `CoreApiClient` e `MetadataApiClient`.
+5. **Executa uma verificação de tipos do TypeScript** — executa `tsc --noEmit` para detectar erros de tipo antes da publicação.
+6. **Reconstrói com o cliente gerado** — realiza uma segunda passagem de compilação para que os tipos do cliente gerado sejam incluídos.
+7. **Opcionalmente cria um tarball** — se `--tarball` for passado, executa `npm pack` para criar um arquivo `.tgz` pronto para distribuição.
+
+A saída da compilação em `.twenty/output/` contém:
+
+```text
+.twenty/output/
+├── manifest.json              # Manifesto com somas de verificação para todos os arquivos compilados
+├── package.json               # Copiado da raiz do aplicativo
+├── yarn.lock                  # Copiado da raiz do aplicativo
+├── src/
+│   ├── logic-functions/       # Arquivos .mjs compilados de funções de lógica
+│   └── front-components/      # Arquivos .mjs compilados de componentes de front-end
+├── public/                    # Recursos estáticos (se houver)
+└── my-app-1.0.0.tgz          # Apenas com a opção --tarball
+```
+
+| Opção       | Descrição                                                 |
+| ----------- | --------------------------------------------------------- |
+| `[appPath]` | Caminho para o diretório do app (padrão: diretório atual) |
+| `--tarball` | Também empacota a saída em um tarball `.tgz`              |
+
+## Publicando seu app
+
+Use `app:publish` para distribuir seu app — ou para o registro do npm ou diretamente para um servidor Twenty.
+
+### Publicar no npm (padrão)
+
+```bash filename="Terminal"
+# Publish to npm (requires npm login)
+yarn twenty publish
+
+# Publish with a dist-tag (e.g. beta, next)
+yarn twenty publish --tag beta
+```
+
+Isso compila o app e executa `npm publish` a partir do diretório `.twenty/output/`. O pacote publicado pode então ser instalado no marketplace da Twenty por qualquer espaço de trabalho.
+
+### Publicar em um servidor Twenty
+
+```bash filename="Terminal"
+# Publish directly to a Twenty server
+yarn twenty publish --server https://app.twenty.com
+```
+
+Isso compila o app com um tarball, faz o upload para o servidor via a mutação GraphQL `uploadAppTarball` e aciona a instalação em uma única etapa. Isso é útil para implantações privadas ou para testar em um servidor específico.
+
+| Opção             | Descrição                                                             |
+| ----------------- | --------------------------------------------------------------------- |
+| `[appPath]`       | Caminho para o diretório do app (padrão: diretório atual)             |
+| `--server <url>`  | Publicar em um servidor Twenty em vez de no npm                       |
+| `--token <token>` | Token de autenticação para o servidor de destino                      |
+| `--tag <tag>`     | dist-tag do npm (ex.: `beta`, `next`) — apenas para publicação no npm |
+
+## Registro de aplicação
+
+Antes que um app possa ser instalado em um espaço de trabalho, ele precisa ser **registrado**. Um registro é um registro de metadados que descreve de onde o app vem e como autenticá-lo. Isso é tratado automaticamente pela CLI na maioria dos casos.
+
+### Tipos de origem
+
+Cada registro tem um **tipo de origem** que determina como os arquivos do app são resolvidos durante a instalação:
+
+| Tipo de origem | Como os arquivos são resolvidos                                                             | Caso de uso típico                      |
+| -------------- | ------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `LOCAL`        | Os arquivos são sincronizados em tempo real pelo observador da CLI — a instalação é omitida | Desenvolvimento com `app:dev`           |
+| `NPM`          | Obtidos do registro npm por meio do campo `sourcePackage`                                   | Apps publicados no npm                  |
+| `TARBALL`      | Extraídos de um arquivo `.tgz` enviado e armazenado no servidor                             | Apps privados publicados com `--server` |
+
+### Como o registro acontece
+
+* **`app:dev`** — cria automaticamente um registro `LOCAL` na primeira vez que você executa o modo de desenvolvimento em um espaço de trabalho.
+* **`app:publish --server`** — faz o upload de um tarball e cria (ou atualiza) um registro `TARBALL`, e em seguida instala o app.
+* **marketplace do npm** — registros `NPM` são criados quando apps são sincronizados do registro npm para o catálogo do marketplace da Twenty.
+* **API GraphQL** — você também pode criar registros programaticamente por meio da mutação `createApplicationRegistration`.
+
+### Registro vs instalação
+
+**Registro** e **instalação** são conceitos distintos:
+
+* Um **registro** (`ApplicationRegistration`) é um registro global de metadados que descreve o app: seu nome, tipo de origem, credenciais OAuth e status de listagem no marketplace. Ele existe independentemente de qualquer espaço de trabalho.
+* Uma **instalação** (`Application`) é uma instância por espaço de trabalho. Quando um usuário instala um app, a Twenty resolve o pacote a partir da origem do registro, grava os arquivos compilados no armazenamento e sincroniza o manifesto (criando objetos, campos, funções de lógica etc.). naquele espaço de trabalho.
+
+Um registro pode ser instalado em muitos espaços de trabalho. Cada espaço de trabalho recebe sua própria cópia dos arquivos e do modelo de dados do app.
+
+### Credenciais OAuth
+
+Cada registro inclui credenciais OAuth (`oAuthClientId` e `oAuthClientSecret`) geradas no momento da criação. Elas são usadas pelo app para autenticar requisições de API em nome dos usuários. O segredo do cliente é retornado **uma única vez** na criação — armazene-o com segurança. Você pode rotacioná-lo posteriormente por meio da mutação `rotateApplicationRegistrationClientSecret`.
+
 ## Configuração manual (sem o gerador)
 
 Embora recomendemos usar `create-twenty-app` para a melhor experiência inicial, você também pode configurar um projeto manualmente. Não instale a CLI globalmente. Em vez disso, adicione `twenty-sdk` como uma dependência local e configure um único script no seu package.json:
@@ -945,13 +1416,13 @@ Em seguida, adicione um script `twenty`:
 }
 ```
 
-Agora você pode executar todos os comandos via `yarn twenty <command>`, por exemplo, `yarn twenty app:dev`, `yarn twenty help`, etc.
+Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
 
 ## Resolução de Problemas
 
 * Erros de autenticação: execute `yarn twenty auth:login` e certifique-se de que sua chave de API tenha as permissões necessárias.
 * Não é possível conectar ao servidor: verifique a URL da API e se o servidor do Twenty está acessível.
-* Tipos ou cliente ausentes/desatualizados: reinicie `yarn twenty app:dev` — ele gera automaticamente o cliente tipado.
-* Modo de desenvolvimento não sincronizando: certifique-se de que `yarn twenty app:dev` esteja em execução e de que as alterações não estejam sendo ignoradas pelo seu ambiente.
+* Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
+* Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
 
 Canal de ajuda no Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

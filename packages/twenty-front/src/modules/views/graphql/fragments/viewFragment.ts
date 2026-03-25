@@ -14,7 +14,7 @@ export const VIEW_FRAGMENT = gql`
   ${VIEW_SORT_FRAGMENT}
   ${VIEW_GROUP_FRAGMENT}
 
-  fragment ViewFragment on CoreView {
+  fragment ViewFragment on View {
     id
     name
     objectMetadataId

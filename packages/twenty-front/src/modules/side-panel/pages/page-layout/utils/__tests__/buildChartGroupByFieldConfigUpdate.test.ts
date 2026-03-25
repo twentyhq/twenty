@@ -2,7 +2,7 @@ import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/
 import { type TypedLineChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedLineChartConfiguration';
 import { type TypedPieChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedPieChartConfiguration';
 import { buildChartGroupByFieldConfigUpdate } from '@/side-panel/pages/page-layout/utils/buildChartGroupByFieldConfigUpdate';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
@@ -14,7 +14,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 describe('buildChartGroupByFieldConfigUpdate', () => {
-  const mockObjectMetadataItem: ObjectMetadataItem = {
+  const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
     id: 'object-id',
     nameSingular: 'opportunity',
     namePlural: 'opportunities',

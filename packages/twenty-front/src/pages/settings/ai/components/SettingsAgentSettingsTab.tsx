@@ -72,7 +72,7 @@ export const SettingsAgentSettingsTab = ({
   const currentModelLabel = useAiModelLabel(formValues.modelId);
 
   const currentModel = aiModels.find((m) => m.modelId === formValues.modelId);
-  const isCurrentModelDeprecated = currentModel?.deprecated === true;
+  const isCurrentModelDeprecated = currentModel?.isDeprecated === true;
 
   const modelOptions = isCurrentModelDeprecated
     ? [

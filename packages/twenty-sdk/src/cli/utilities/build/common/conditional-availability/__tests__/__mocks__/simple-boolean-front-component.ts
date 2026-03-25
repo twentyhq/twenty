@@ -1,4 +1,4 @@
-import { defineFrontComponent, isShowPage } from '@/sdk';
+import { defineFrontComponent, pageType } from '@/sdk';
 
 const MyComponent = () => null;
 
@@ -8,6 +8,6 @@ export default defineFrontComponent({
   command: {
     universalIdentifier: 'simple-boolean-cmd',
     label: 'Simple Boolean',
-    conditionalAvailabilityExpression: isShowPage,
+    conditionalAvailabilityExpression: pageType === 'RECORD_PAGE',
   },
 });

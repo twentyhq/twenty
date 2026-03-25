@@ -29,6 +29,7 @@ const computeBorderColor = (
   return 'transparent';
 };
 
+// oxlint-disable-next-line twenty/sort-css-properties-alphabetically
 const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   background: ${(props) => {
     if (props.isEditable && props.isDragging) {
@@ -45,27 +46,28 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     }
     return 'none';
   }};
+
+  border: ${(props) =>
+    props.variant === 'dashboard' ||
+    props.variant === 'record-page' ||
+    props.isEditable
+      ? `1px solid ${computeBorderColor(props)}`
+      : 'none'};
+
   border-bottom: ${(props) => {
     const { variant, isEditable, isLastWidget } = props;
+
     if (variant === 'side-column' && !isEditable) {
       return isLastWidget !== true
         ? `1px solid ${themeCssVariables.border.color.light}`
         : 'none';
     }
+
     return `1px solid ${computeBorderColor(props)}`;
   }};
-  border-color: ${(props) => computeBorderColor(props)};
   border-radius: ${({ variant, isEditable }) =>
     variant === 'dashboard' || variant === 'record-page' || isEditable
       ? themeCssVariables.border.radius.md
-      : '0'};
-  border-style: ${({ variant, isEditable }) =>
-    variant === 'dashboard' || variant === 'record-page' || isEditable
-      ? 'solid'
-      : 'none'};
-  border-width: ${({ variant, isEditable }) =>
-    variant === 'dashboard' || variant === 'record-page' || isEditable
-      ? '1px'
       : '0'};
 
   box-sizing: border-box;
@@ -102,6 +104,7 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   width: 100%;
 
   &:hover {
+    // border-color shorthand must precede border-bottom-color longhand for correct CSS cascade
     border-color: ${(props) => {
       if (
         props.isEditable &&
@@ -111,6 +114,25 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
       ) {
         return themeCssVariables.border.color.strong;
       }
+      return computeBorderColor(props);
+    }};
+
+    border-bottom-color: ${(props) => {
+      const { variant, isEditable } = props;
+
+      if (variant === 'side-column' && !isEditable) {
+        return themeCssVariables.border.color.light;
+      }
+
+      if (
+        props.isEditable &&
+        !props.isDragging &&
+        !props.isEditing &&
+        !props.isResizing
+      ) {
+        return themeCssVariables.border.color.strong;
+      }
+
       return computeBorderColor(props);
     }};
   }

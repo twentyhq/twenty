@@ -80,6 +80,17 @@ npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/mi
 npx nx run twenty-server:command workspace:sync-metadata
 ```
 
+### Database Inspection (Postgres MCP)
+
+A read-only Postgres MCP server is configured in `.mcp.json`. Use it to:
+- Inspect workspace data, metadata, and object definitions while developing
+- Verify migration results (columns, types, constraints) after running migrations
+- Explore the multi-tenant schema structure (core, metadata, workspace-specific schemas)
+- Debug issues by querying raw data to confirm whether a bug is frontend, backend, or data-level
+- Inspect metadata tables to debug GraphQL schema generation or `workspace:sync-metadata` issues
+
+This server is read-only — for write operations (reset, migrations, sync), use the CLI commands above.
+
 ### GraphQL
 ```bash
 # Generate GraphQL types (run after schema changes)
@@ -188,13 +199,22 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 - Descriptive test names: "should [behavior] when [condition]"
 - Clear mocks between tests with `jest.clearAllMocks()`
 
-## CI Environment (GitHub Actions)
+## Dev Environment Setup
 
-When running in CI, the dev environment is **not** pre-configured. Dependencies are installed but builds, env files, and databases are not set up.
+All dev environments (Claude Code web, Cursor, local) use one script:
 
-- **Before running tests, builds, lint, type checks, or DB operations**, run: `bash packages/twenty-utils/setup-dev-env.sh`
+```bash
+bash packages/twenty-utils/setup-dev-env.sh
+```
+
+This handles everything: starts Postgres + Redis (auto-detects local services vs Docker), creates databases, and copies `.env` files. Idempotent — safe to run multiple times.
+
+- `--docker` — force Docker mode (uses `packages/twenty-docker/docker-compose.dev.yml`)
+- `--down` — stop services
+- `--reset` — wipe data and restart fresh
 - **Skip the setup script** for tasks that only read code — architecture questions, code review, documentation, etc.
-- The script is idempotent and safe to run multiple times.
+
+**Note:** CI workflows (GitHub Actions) manage services via Actions service containers and run setup steps individually — they don't use this script.
 
 ## Important Files
 - `nx.json` - Nx workspace configuration with task definitions

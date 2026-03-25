@@ -17,6 +17,8 @@ export const turnSseMetadataEventsToMetadataOperationBrowserEvents = <
 }): MetadataOperationBrowserEventDetail<T>[] => {
   return sseMetadataEvents
     .map((event): MetadataOperationBrowserEventDetail<T> | null => {
+      const updatedCollectionHash = event.updatedCollectionHash ?? undefined;
+
       switch (event.type) {
         case MetadataEventAction.CREATED: {
           const createdRecord = event.properties.after;
@@ -31,6 +33,7 @@ export const turnSseMetadataEventsToMetadataOperationBrowserEvents = <
               type: 'create',
               createdRecord,
             },
+            updatedCollectionHash,
           };
         }
         case MetadataEventAction.UPDATED: {
@@ -47,6 +50,7 @@ export const turnSseMetadataEventsToMetadataOperationBrowserEvents = <
               updatedRecord,
               updatedFields: event.properties.updatedFields ?? undefined,
             },
+            updatedCollectionHash,
           };
         }
         case MetadataEventAction.DELETED: {
@@ -56,6 +60,7 @@ export const turnSseMetadataEventsToMetadataOperationBrowserEvents = <
               type: 'delete',
               deletedRecordId: event.recordId,
             },
+            updatedCollectionHash,
           };
         }
         default:

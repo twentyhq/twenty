@@ -1,0 +1,119 @@
+---
+title: Yayımlama
+description: Twenty uygulamanızı pazaryerine sunun ya da dahili olarak dağıtın.
+---
+
+<Warning>
+Uygulamalar şu anda alfa testinde. Özellik işlevsel ancak hâlâ gelişmekte.
+</Warning>
+
+## Genel Bakış
+
+Uygulamanız [yerelde derlenip test edildikten sonra](/l/tr/developers/extend/apps/building), dağıtım için iki yolunuz vardır:
+
+* **npm’ye yayımlama** — uygulamanızı Twenty pazaryerinde listeleyin; böylece herhangi bir çalışma alanı keşfedip yükleyebilir.
+* **Bir tarball gönderin** — uygulamanızı herkese açık yapmadan, dahili kullanım için belirli bir Twenty sunucusuna dağıtın.
+
+## npm’ye yayımlama
+
+npm’ye yayımlamak, uygulamanızın Twenty pazaryerinde keşfedilebilir olmasını sağlar. Herhangi bir Twenty çalışma alanı, pazaryeri uygulamalarına doğrudan arayüzden göz atabilir, yükleyebilir ve güncelleyebilir.
+
+### Gereksinimler
+
+* Bir [npm](https://www.npmjs.com) hesabı
+* Paket adınız **mutlaka** `twenty-app-` önekini kullanmalıdır (ör. `twenty-app-postcard-sender`)
+
+### Adımlar
+
+1. **Uygulamanızı derleyin** — CLI, TypeScript kaynaklarınızı derler ve uygulama manifestini oluşturur:
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+2. **npm’ye yayımlayın** — derlenmiş paketi npm registry’ye gönderin:
+
+```bash filename="Terminal"
+npx twenty publish
+```
+
+### Otomatik keşif
+
+`twenty-app-` önekine sahip paketler, Twenty pazaryeri kataloğu tarafından otomatik olarak keşfedilir. Yayımlandıktan sonra, uygulamanız birkaç dakika içinde pazaryerinde görünür — manuel kayıt veya onay gerekmez.
+
+### CI üzerinden yayımlama
+
+İskelet proje, her sürümde yayımlama yapan bir GitHub Actions iş akışını içerir. Önce `app:build` çalıştırır, ardından derleme çıktısından `npm publish --provenance` çalıştırır:
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+Diğer CI sistemleri (GitLab CI, CircleCI, vb.) için de aynı üç komut geçerlidir: `yarn install`, `npx twenty build` ve ardından `.twenty/output` dizininden `npm publish`.
+
+<Tip>
+**npm provenance** isteğe bağlıdır ancak önerilir. `--provenance` ile yayımlamak, npm listenize bir güven rozeti ekler ve kullanıcıların paketin herkese açık bir CI ardışık düzenindeki belirli bir commit’ten oluşturulduğunu doğrulamasını sağlar. Kurulum talimatları için [npm provenance belgelerine](https://docs.npmjs.com/generating-provenance-statements) bakın.
+</Tip>
+
+## Dahili dağıtım
+
+Genel kullanıma açık olmasını istemediğiniz uygulamalar — sahipli araçlar, yalnızca kurumsal entegrasyonlar veya deneysel yapılar — için bir tarball’ı doğrudan bir Twenty sunucusuna gönderebilirsiniz.
+
+### Bir tarball gönderin
+
+Uygulamanızı derleyin ve tek adımda belirli bir sunucuya dağıtın:
+
+```bash filename="Terminal"
+npx twenty publish --server <server-url>
+```
+
+Daha sonra, bu sunucudaki herhangi bir çalışma alanı uygulamayı **Applications** ayarları sayfasından yükleyip güncelleyebilir.
+
+### Sürüm yönetimi
+
+Bir güncelleme yayımlamak için:
+
+1. `package.json` içindeki `version` alanını artırın
+2. `npx twenty publish --server <server-url>` ile yeni bir tarball gönderin
+3. O sunucudaki çalışma alanları, ayarlarında kullanılabilir güncellemeyi görecektir.
+
+<Note>
+Dahili uygulamalar, gönderildikleri sunucu ile sınırlıdır. Genel pazaryerinde görünmezler ve diğer sunuculardaki çalışma alanları tarafından yüklenemezler.
+</Note>
+
+## Uygulama kategorileri
+
+Twenty, uygulamaları nasıl dağıtıldıklarına göre üç kategoriye ayırır:
+
+| Kategori        | Nasıl Çalışır                                                                                                                       | Pazaryerinde görünür mü? |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **Geliştirme**  | `yarn twenty dev` ile çalışan yerel geliştirme modu uygulamaları. Derleme ve test için kullanılır.                                  | Hayır                    |
+| **Yayımlanmış** | `twenty-app-` önekiyle npm’ye yayımlanan uygulamalar. Herhangi bir çalışma alanının yükleyebilmesi için pazaryerinde listelenir.    | Evet                     |
+| **Dahili**      | Bir tarball aracılığıyla belirli bir sunucuya dağıtılan uygulamalar. Yalnızca o sunucudaki çalışma alanlarının kullanımına açıktır. | Hayır                    |
+
+<Tip>
+Uygulamanızı geliştirirken **Geliştirme** modunda başlayın. Hazır olduğunda, geniş dağıtım için **Yayımlanmış** (npm) ya da özel dağıtım için **Dahili** (tarball) seçeneğini tercih edin.
+</Tip>

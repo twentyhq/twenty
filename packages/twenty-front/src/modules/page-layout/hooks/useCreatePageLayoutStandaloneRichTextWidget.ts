@@ -6,7 +6,6 @@ import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLa
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/createDefaultStandaloneRichTextWidget';
 import { getDefaultWidgetPosition } from '@/page-layout/utils/getDefaultWidgetPosition';
-import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -17,20 +16,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type PageLayoutWidget,
-  type RichTextV2Body,
+  type RichTextBody,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const useCreatePageLayoutStandaloneRichTextWidget = (
-  pageLayoutIdFromProps?: string,
-) => {
+export const useCreatePageLayoutStandaloneRichTextWidget = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
 
   const store = useStore();
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
     pageLayoutCurrentLayoutsComponentState,
@@ -48,7 +50,7 @@ export const useCreatePageLayoutStandaloneRichTextWidget = (
   );
 
   const createPageLayoutStandaloneRichTextWidget = useCallback(
-    (body: RichTextV2Body): PageLayoutWidget => {
+    (body: RichTextBody): PageLayoutWidget => {
       const activeTabId = store.get(
         activeTabIdComponentState.atomFamily({
           instanceId: tabListInstanceId,

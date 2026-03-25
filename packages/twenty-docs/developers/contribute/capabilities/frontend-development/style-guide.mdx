@@ -9,7 +9,7 @@ The goal here is to have a consistent codebase, which is easy to read and easy t
 
 For this, it's better to be a bit more verbose than to be too concise.
 
-Always keep in mind that people read code more often than they write it, specially on an open source project, where anyone can contribute.
+Always keep in mind that people read code more often than they write it, especially on an open source project, where anyone can contribute.
 
 There are a lot of rules that are not defined here, but that are automatically checked by linters.
 
@@ -150,7 +150,7 @@ type MyType = {
 
 ### Use string literals instead of enums
 
-[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, specially with code completion.
+[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, especially with code completion.
 
 You can see why TypeScript recommends avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
 
@@ -288,4 +288,3 @@ An Oxlint rule, `typescript/consistent-type-imports`, enforces the no-type impor
 Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
 
 To ensure your code complies with this rule, make sure to run Oxlint as part of your development workflow.
-

@@ -9,10 +9,11 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload } from 'twenty-ui/display';
+import { useQuery } from '@apollo/client/react';
 import {
   type FeatureFlagKey,
   PermissionFlagType,
-  useFindManyApplicationsQuery,
+  FindManyApplicationsDocument,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
@@ -37,7 +38,7 @@ export const SettingsApplications = () => {
     APPLICATIONS_TAB_LIST_ID,
   );
 
-  const { data } = useFindManyApplicationsQuery();
+  const { data } = useQuery(FindManyApplicationsDocument);
 
   const applications = data?.findManyApplications ?? [];
 

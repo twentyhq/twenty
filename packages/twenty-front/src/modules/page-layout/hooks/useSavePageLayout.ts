@@ -10,10 +10,11 @@ import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reI
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 
 export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -40,11 +41,16 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
 
+  const featureFlags = useFeatureFlagsMap();
+  const isRecordPageLayoutEditingEnabled =
+    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
   const store = useStore();
 
   const savePageLayout = useCallback(async () => {
     const pageLayoutDraft = store.get(pageLayoutDraftCallbackState);
-    const updateInput = convertPageLayoutDraftToUpdateInput(pageLayoutDraft);
+    const updateInput = convertPageLayoutDraftToUpdateInput(pageLayoutDraft, {
+      shouldFilterDynamicRelationWidgets: !isRecordPageLayoutEditingEnabled,
+    });
 
     const result = await updatePageLayoutWithTabsAndWidgets(
       pageLayoutId,
@@ -60,6 +66,7 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
           transformPageLayout(updatedPageLayout);
 
         const pageLayoutToPersist =
+          !isRecordPageLayoutEditingEnabled &&
           persistedLayout.type === PageLayoutType.RECORD_PAGE
             ? reInjectDynamicRelationWidgetsFromDraft(
                 persistedLayout,
@@ -77,6 +84,7 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
 
     return result;
   }, [
+    isRecordPageLayoutEditingEnabled,
     pageLayoutCurrentLayoutsCallbackState,
     pageLayoutDraftCallbackState,
     pageLayoutId,

@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { getAbsoluteUrl } from 'twenty-shared/utils';
+import { ensureAbsoluteUrl } from 'twenty-shared/utils';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
@@ -79,7 +79,7 @@ export class CallWebhookJob {
       );
 
       const response = await axiosClient.post(
-        getAbsoluteUrl(data.targetUrl),
+        ensureAbsoluteUrl(data.targetUrl),
         payloadWithoutSecret,
         {
           headers,

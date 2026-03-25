@@ -1,5 +1,5 @@
-import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalResultBrowserEventName';
 import { COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalId';
+import { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalResultBrowserEventName';
 import { commandMenuItemConfirmationModalConfigState } from '@/command-menu-item/confirmation-modal/states/commandMenuItemConfirmationModalState';
 import {
   type CommandMenuConfirmationModalResult,
@@ -10,6 +10,7 @@ import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpe
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const CommandMenuConfirmationModalManager = () => {
   const commandMenuItemConfirmationModalConfig = useAtomStateValue(
@@ -23,12 +24,12 @@ export const CommandMenuConfirmationModalManager = () => {
     commandMenuItemConfirmationModalConfigState,
   );
 
-  const callerId = commandMenuItemConfirmationModalConfig?.frontComponentId;
+  const caller = commandMenuItemConfirmationModalConfig?.caller;
 
   const emitConfirmationResult = (
     confirmationResult: CommandMenuConfirmationModalResult,
   ) => {
-    if (!callerId) {
+    if (!isDefined(caller)) {
       return;
     }
 
@@ -37,7 +38,7 @@ export const CommandMenuConfirmationModalManager = () => {
         COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME,
         {
           detail: {
-            frontComponentId: callerId,
+            caller,
             confirmationResult,
           },
         },

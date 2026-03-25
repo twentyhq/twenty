@@ -1,78 +1,39 @@
-import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
-import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
-import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
-import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
-
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
-import { RecordTableDraggableTrFirstRowOfGroup } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTrFirstRowOfGroup';
-import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
-import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
-import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { RecordTableRowCells } from '@/object-record/record-table/record-table-row/components/RecordTableRowCells';
+import { RecordTableStaticTr } from '@/object-record/record-table/record-table-row/components/RecordTableStaticTr';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type RecordTableRowProps = {
   recordId: string;
   rowIndexForFocus: number;
   rowIndexForDrag: number;
-  isFirstRowOfGroup: boolean;
 };
 
 export const RecordTableRow = ({
   recordId,
   rowIndexForFocus,
   rowIndexForDrag,
-  isFirstRowOfGroup,
 }: RecordTableRowProps) => {
-  const { recordTableId } = useRecordTableContextOrThrow();
-
-  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
-    isRecordTableRowFocusedComponentFamilyState,
-    rowIndexForFocus,
-  );
-  const isRecordTableRowFocusActive = useAtomComponentStateValue(
-    isRecordTableRowFocusActiveComponentState,
-    recordTableId,
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
   );
 
-  return isFirstRowOfGroup ? (
-    <RecordTableDraggableTrFirstRowOfGroup
-      recordId={recordId}
-      draggableIndex={rowIndexForDrag}
-      focusIndex={rowIndexForFocus}
-    >
-      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
-        <>
-          <RecordTableRowHotkeyEffect />
-          <RecordTableRowArrowKeysEffect />
-        </>
-      )}
-      <RecordTableCellDragAndDrop />
-      <RecordTableCellCheckbox />
-      <RecordTableFieldsCells />
-      <RecordTablePlusButtonCellPlaceholder />
-      <RecordTableLastEmptyCell />
-    </RecordTableDraggableTrFirstRowOfGroup>
-  ) : (
+  if (isRecordTableDragColumnHidden) {
+    return (
+      <RecordTableStaticTr recordId={recordId} focusIndex={rowIndexForFocus}>
+        <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
+      </RecordTableStaticTr>
+    );
+  }
+
+  return (
     <RecordTableDraggableTr
       recordId={recordId}
       draggableIndex={rowIndexForDrag}
       focusIndex={rowIndexForFocus}
     >
-      {isRecordTableRowFocusActive && isRecordTableRowFocused && (
-        <>
-          <RecordTableRowHotkeyEffect />
-          <RecordTableRowArrowKeysEffect />
-        </>
-      )}
-      <RecordTableCellDragAndDrop />
-      <RecordTableCellCheckbox />
-      <RecordTableFieldsCells />
-      <RecordTablePlusButtonCellPlaceholder />
-      <RecordTableLastEmptyCell />
+      <RecordTableRowCells rowIndexForFocus={rowIndexForFocus} />
     </RecordTableDraggableTr>
   );
 };

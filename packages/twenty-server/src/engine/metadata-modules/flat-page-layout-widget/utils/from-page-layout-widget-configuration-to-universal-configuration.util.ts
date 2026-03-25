@@ -74,7 +74,8 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
   fieldMetadataUniversalIdentifierById,
   frontComponentUniversalIdentifierById = {},
-  viewFieldGroupUniversalIdentifierById = {},
+  viewFieldGroupUniversalIdentifierById:
+    _viewFieldGroupUniversalIdentifierById = {},
   viewUniversalIdentifierById = {},
   shouldThrowOnMissingIdentifier = false,
 }: {
@@ -273,7 +274,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELDS: {
-      const { viewId, newFieldDefaultConfiguration, ...rest } = configuration;
+      const { viewId, newFieldDefaultVisibility, ...rest } = configuration;
 
       let viewUniversalIdentifier: string | null = null;
 
@@ -291,28 +292,28 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         }
       }
 
-      if (!isDefined(newFieldDefaultConfiguration)) {
-        return {
-          ...rest,
-          newFieldDefaultConfiguration,
-          viewId: viewUniversalIdentifier,
-        };
-      }
+      return {
+        ...rest,
+        newFieldDefaultVisibility,
+        viewId: viewUniversalIdentifier,
+      };
+    }
 
-      let viewFieldGroupUniversalIdentifier: string | null = null;
+    case WidgetConfigurationType.RECORD_TABLE: {
+      const { viewId, ...rest } = configuration;
 
-      if (isDefined(newFieldDefaultConfiguration.viewFieldGroupId)) {
-        viewFieldGroupUniversalIdentifier =
-          viewFieldGroupUniversalIdentifierById[
-            newFieldDefaultConfiguration.viewFieldGroupId
-          ] ?? null;
+      let viewUniversalIdentifier: string | undefined = undefined;
+
+      if (isDefined(viewId)) {
+        viewUniversalIdentifier =
+          viewUniversalIdentifierById[viewId] ?? undefined;
 
         if (
-          !isDefined(viewFieldGroupUniversalIdentifier) &&
+          !isDefined(viewUniversalIdentifier) &&
           shouldThrowOnMissingIdentifier
         ) {
           throw new FlatEntityMapsException(
-            `View field group universal identifier not found for id: ${newFieldDefaultConfiguration.viewFieldGroupId}`,
+            `View universal identifier not found for id: ${viewId}`,
             FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
           );
         }
@@ -321,10 +322,6 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         ...rest,
         viewId: viewUniversalIdentifier,
-        newFieldDefaultConfiguration: {
-          isVisible: newFieldDefaultConfiguration.isVisible,
-          viewFieldGroupId: viewFieldGroupUniversalIdentifier,
-        },
       };
     }
 
@@ -350,8 +347,25 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FIELD: {
+      const { fieldMetadataId, fieldDisplayMode, configurationType } =
+        configuration;
+
+      const fieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        });
+
+      return {
+        configurationType,
+        fieldMetadataId: fieldMetadataUniversalIdentifier ?? fieldMetadataId,
+        fieldDisplayMode,
+      };
+    }
+
     case WidgetConfigurationType.VIEW:
-    case WidgetConfigurationType.FIELD:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
     case WidgetConfigurationType.NOTES:

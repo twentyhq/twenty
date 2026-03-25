@@ -6,4 +6,5 @@ export type MetadataOperationBrowserEventDetail<
 > = {
   metadataName: AllMetadataName;
   operation: MetadataOperation<T>;
+  updatedCollectionHash?: string;
 };

@@ -18,12 +18,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
+import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
+import { useDirectExecution } from 'src/engine/api/graphql/direct-execution/hooks/use-direct-execution.hook';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { useGraphQLQueryTiming } from 'src/engine/core-modules/graphql/hooks/use-graphql-query-timing.hook';
 import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -50,12 +54,21 @@ export class GraphQLConfigService
     private readonly metricsService: MetricsService,
     private readonly dataloaderService: DataloaderService,
     private readonly i18nService: I18nService,
+    private readonly directExecutionService: DirectExecutionService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode =
       this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
     const plugins = [
+      useGraphQLQueryTiming({
+        featureFlagService: this.featureFlagService,
+      }),
+      useDirectExecution({
+        directExecutionService: this.directExecutionService,
+        featureFlagService: this.featureFlagService,
+      }),
       useGraphQLErrorHandlerHook({
         metricsService: this.metricsService,
         exceptionHandlerService: this.exceptionHandlerService,
@@ -85,10 +98,11 @@ export class GraphQLConfigService
       resolverSchemaScope: 'core',
       buildSchemaOptions: {},
       conditionalSchema: async (context) => {
-        const { workspace, user, application } = context.req;
+        const { workspace, user, application, skipWorkspaceSchemaCreation } =
+          context.req;
 
         try {
-          if (!isDefined(workspace)) {
+          if (!isDefined(workspace) || skipWorkspaceSchemaCreation) {
             return new GraphQLSchema({});
           }
 

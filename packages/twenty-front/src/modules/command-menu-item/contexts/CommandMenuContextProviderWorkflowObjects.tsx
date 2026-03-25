@@ -1,14 +1,12 @@
-import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/hooks/useShouldCommandMenuItemBeRegisteredParams';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
+import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -17,7 +15,7 @@ import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
 type CommandMenuContextProviderWorkflowObjectsProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   isInSidePanel: CommandMenuContextType['isInSidePanel'];
   displayType: CommandMenuContextType['displayType'];
   containerType: CommandMenuContextType['containerType'];
@@ -53,11 +51,6 @@ const CommandMenuContextProviderWorkflowObjectsContent = ({
   const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
-
-  const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
-
   return (
     <CommandMenuContext.Provider
       value={{
@@ -67,7 +60,6 @@ const CommandMenuContextProviderWorkflowObjectsContent = ({
         commandMenuItems: [
           ...commandMenuItems,
           ...runWorkflowRecordAgnosticCommands,
-          ...commandMenuItemFrontComponentActions,
         ],
       }}
     >
@@ -101,11 +93,6 @@ const CommandMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
   const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
-
-  const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
-
   return (
     <CommandMenuContext.Provider
       value={{
@@ -115,7 +102,6 @@ const CommandMenuContextProviderWorkflowObjectsWithoutWorkflow = ({
         commandMenuItems: [
           ...commandMenuItems,
           ...runWorkflowRecordAgnosticCommands,
-          ...commandMenuItemFrontComponentActions,
         ],
       }}
     >

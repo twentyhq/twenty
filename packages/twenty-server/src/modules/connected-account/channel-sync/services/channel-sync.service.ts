@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -12,13 +14,9 @@ import {
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
-  type CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import {
-  MessageChannelSyncStage,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
@@ -37,7 +35,9 @@ export class ChannelSyncService {
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
   ) {}
 
   async startChannelSync(input: StartChannelSyncInput): Promise<void> {
@@ -54,18 +54,13 @@ export class ChannelSyncService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-          workspaceId,
-          'messageChannel',
-        );
-
-      const messageChannels = await messageChannelRepository.find({
-        where: {
+      const messageChannels = await this.messageChannelDataAccessService.find(
+        workspaceId,
+        {
           connectedAccountId,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
         },
-      });
+      );
 
       for (const messageChannel of messageChannels) {
         await this.messageChannelSyncStatusService.markAsMessagesListFetchScheduled(
@@ -91,25 +86,26 @@ export class ChannelSyncService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannelRepository =
-        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-          workspaceId,
-          'calendarChannel',
-        );
-
-      const calendarChannels = await calendarChannelRepository.find({
-        where: {
-          connectedAccountId,
-          syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
+      const calendarChannels = await this.calendarChannelDataAccessService.find(
+        workspaceId,
+        {
+          where: {
+            connectedAccountId,
+            syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
+          },
         },
-      });
+      );
 
       for (const calendarChannel of calendarChannels) {
-        await calendarChannelRepository.update(calendarChannel.id, {
-          syncStage:
-            CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
-          syncStatus: CalendarChannelSyncStatus.ONGOING,
-        });
+        await this.calendarChannelDataAccessService.update(
+          workspaceId,
+          { id: calendarChannel.id },
+          {
+            syncStage:
+              CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+            syncStatus: CalendarChannelSyncStatus.ONGOING,
+          },
+        );
 
         await this.calendarQueueService.add<CalendarEventListFetchJobData>(
           CalendarEventListFetchJob.name,

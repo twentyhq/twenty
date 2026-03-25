@@ -1,16 +1,18 @@
 import { type IconComponent } from '@ui/display';
-import { useContext } from 'react';
 import { ThemeContext } from '@ui/theme-constants';
+import { useContext } from 'react';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 export type MenuItemIconProps = {
   Icon: IconComponent | null | undefined;
   withContainer?: boolean;
+  withContainerBackground?: boolean;
 };
 
 export const MenuItemIcon = ({
   Icon,
   withContainer = false,
+  withContainerBackground = true,
 }: MenuItemIconProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -23,7 +25,11 @@ export const MenuItemIcon = ({
   );
 
   if (withContainer) {
-    return <MenuItemIconBoxContainer>{iconElement}</MenuItemIconBoxContainer>;
+    return (
+      <MenuItemIconBoxContainer hasBackground={withContainerBackground}>
+        {iconElement}
+      </MenuItemIconBoxContainer>
+    );
   }
 
   return iconElement;

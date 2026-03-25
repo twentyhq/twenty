@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
@@ -20,7 +20,7 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const instanceId = 'entity-options-instance';
@@ -32,9 +32,9 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
   decorators: [
     (Story) => {
       useEffect(() => {
-        jotaiStore.set(
-          objectMetadataItemsState.atom,
-          generatedMockObjectMetadataItems,
+        setTestObjectMetadataItemsInMetadataStore(
+          jotaiStore,
+          getTestEnrichedObjectMetadataItemsMock(),
         );
       }, []);
 
@@ -72,9 +72,10 @@ type Story = StoryObj<typeof ObjectOptionsDropdownContent>;
 const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
   decorators: [
     (Story) => {
-      const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-        (item) => item.nameSingular === 'company',
-      )!;
+      const companyObjectMetadataItem =
+        getTestEnrichedObjectMetadataItemsMock().find(
+          (item) => item.nameSingular === 'company',
+        )!;
 
       const {
         fieldDefinitionByFieldMetadataItemId,
@@ -108,7 +109,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
           >
             <ObjectOptionsDropdownContext.Provider
               value={{
-                viewType: ViewType.Table,
+                viewType: ViewType.TABLE,
                 objectMetadataItem: companyObjectMetadataItem,
                 recordIndexId: instanceId,
                 currentContentId: contentId,

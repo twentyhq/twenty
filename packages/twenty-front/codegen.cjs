@@ -21,13 +21,10 @@ module.exports = {
       plugins: [
         'typescript',
         'typescript-operations',
-        'typescript-react-apollo',
+        'typed-document-node',
       ],
       config: {
         skipTypename: false,
-        withHooks: true,
-        withHOC: false,
-        withComponent: false,
         scalars: {
           DateTime: 'string',
         },

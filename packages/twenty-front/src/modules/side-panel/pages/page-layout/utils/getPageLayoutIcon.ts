@@ -4,10 +4,9 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   IconAppWindow,
   IconChartPie,
-  IconFilter,
   IconFrame,
-  IconLayoutSidebarRight,
   IconList,
+  IconTable,
 } from 'twenty-ui/display';
 
 export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
@@ -18,14 +17,12 @@ export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
       return IconChartPie;
     case SidePanelPages.PageLayoutIframeSettings:
       return IconFrame;
-    case SidePanelPages.PageLayoutGraphFilter:
-      return IconFilter;
     case SidePanelPages.PageLayoutTabSettings:
       return IconAppWindow;
     case SidePanelPages.PageLayoutFieldsSettings:
       return IconList;
-    case SidePanelPages.PageLayoutFieldsLayout:
-      return IconLayoutSidebarRight;
+    case SidePanelPages.PageLayoutRecordTableSettings:
+      return IconTable;
     default:
       assertUnreachable(page);
   }

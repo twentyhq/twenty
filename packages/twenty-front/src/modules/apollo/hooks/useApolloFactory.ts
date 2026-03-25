@@ -1,4 +1,4 @@
-import { InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
+import { InMemoryCache } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -21,9 +21,9 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
+export const useApolloFactory = (options: Partial<Options> = {}) => {
   // oxlint-disable-next-line twenty/no-state-useref
-  const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
+  const apolloRef = useRef<ApolloFactory | null>(null);
 
   const navigate = useNavigate();
   const setTokenPair = useSetAtomState(tokenPairState);
@@ -58,7 +58,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           fetchPolicy: 'cache-and-network',
         },
       },
-      connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
+      devtools: { enabled: process.env.IS_DEBUG_MODE === 'true' },
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
       appVersion,

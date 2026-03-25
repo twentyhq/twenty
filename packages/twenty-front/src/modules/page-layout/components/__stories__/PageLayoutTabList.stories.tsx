@@ -7,6 +7,7 @@ import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
+import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
@@ -187,11 +188,13 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
   decorators: [
     ComponentWithRouterDecorator,
     (Story) => (
-      <PageLayoutComponentInstanceContext.Provider
-        value={{ instanceId: 'instance-id' }}
-      >
-        <Story />
-      </PageLayoutComponentInstanceContext.Provider>
+      <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
+        <PageLayoutComponentInstanceContext.Provider
+          value={{ instanceId: 'instance-id' }}
+        >
+          <Story />
+        </PageLayoutComponentInstanceContext.Provider>
+      </PageLayoutEditModeProviderContext>
     ),
   ],
 };

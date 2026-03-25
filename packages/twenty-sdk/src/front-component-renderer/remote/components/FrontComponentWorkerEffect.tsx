@@ -1,8 +1,10 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
+import { type ConfirmationModalCaller } from 'twenty-shared/types';
 import { type CommandConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
+import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import { createRemoteWorker } from '../worker/utils/createRemoteWorker';
 
@@ -11,7 +13,7 @@ const COMMAND_MENU_ITEM_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME =
   'command-menu-item-confirmation-modal-result';
 
 type CommandMenuItemConfirmationModalResultBrowserEventDetail = {
-  frontComponentId: string;
+  caller: ConfirmationModalCaller;
   confirmationResult: CommandConfirmationModalResult;
 };
 
@@ -19,6 +21,7 @@ type FrontComponentWorkerEffectProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
+  sdkClientUrls?: SdkClientUrls;
   frontComponentId: string;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -35,6 +38,7 @@ export const FrontComponentWorkerEffect = ({
   componentUrl,
   applicationAccessToken,
   apiUrl,
+  sdkClientUrls,
   frontComponentId,
   frontComponentHostCommunicationApi,
   setReceiver,
@@ -73,9 +77,12 @@ export const FrontComponentWorkerEffect = ({
       const commandMenuItemConfirmationModalResultBrowserEventDetail =
         event.detail;
 
+      const caller =
+        commandMenuItemConfirmationModalResultBrowserEventDetail.caller;
+
       if (
-        commandMenuItemConfirmationModalResultBrowserEventDetail.frontComponentId !==
-        frontComponentId
+        caller.type !== 'frontComponent' ||
+        caller.frontComponentId !== frontComponentId
       ) {
         return;
       }
@@ -101,6 +108,7 @@ export const FrontComponentWorkerEffect = ({
         componentUrl,
         applicationAccessToken,
         apiUrl,
+        sdkClientUrls,
       })
       .catch((error: Error) => {
         setError(error);
@@ -122,6 +130,7 @@ export const FrontComponentWorkerEffect = ({
     componentUrl,
     applicationAccessToken,
     apiUrl,
+    sdkClientUrls,
     frontComponentId,
     setError,
     setReceiver,

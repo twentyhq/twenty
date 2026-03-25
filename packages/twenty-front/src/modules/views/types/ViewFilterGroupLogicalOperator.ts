@@ -1,4 +1,1 @@
-export enum ViewFilterGroupLogicalOperator {
-  AND = 'AND',
-  OR = 'OR',
-}
+export { ViewFilterGroupLogicalOperator } from '~/generated-metadata/graphql';

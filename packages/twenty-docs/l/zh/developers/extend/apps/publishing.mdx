@@ -1,0 +1,119 @@
+---
+title: 发布
+description: 将你的 Twenty 应用分发到应用市场，或进行内部部署。
+---
+
+<Warning>
+应用目前处于 Alpha 测试阶段。 该功能可用，但仍在演进中。
+</Warning>
+
+## 概览
+
+一旦你的应用已[在本地构建并完成测试](/l/zh/developers/extend/apps/building)，你可以通过两种方式进行分发：
+
+* **发布到 npm** — 将你的应用在 Twenty 应用市场上架，供任何工作区发现并安装。
+* **推送 tar 包** — 将你的应用部署到特定的 Twenty 服务器供内部使用，而无需公开发布。
+
+## 发布到 npm
+
+发布到 npm 可让你的应用在 Twenty 应用市场中被发现。 任何 Twenty 工作区都可以直接通过 UI 浏览、安装和升级应用市场中的应用。
+
+### 要求
+
+* 一个 [npm](https://www.npmjs.com) 账户
+* 你的包名**必须**使用 `twenty-app-` 前缀（例如，`twenty-app-postcard-sender`）
+
+### 步骤
+
+1. **构建你的应用** — CLI 会编译你的 TypeScript 源码并生成应用清单：
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+2. **发布到 npm** — 将构建好的包推送到 npm 注册表：
+
+```bash filename="Terminal"
+npx twenty publish
+```
+
+### 自动发现
+
+Twenty 应用市场目录会自动发现带有 `twenty-app-` 前缀的包。 发布后，你的应用会在几分钟内出现在应用市场中 — 无需手动注册或审批。
+
+### CI 发布
+
+脚手架项目包含一个 GitHub Actions 工作流，会在每次发版时自动发布。 它会先运行 `app:build`，然后在构建输出目录中执行 `npm publish --provenance`：
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+对于其他 CI 系统（GitLab CI、CircleCI 等），同样适用以下三条命令：`yarn install`、`npx twenty build`，然后在 `.twenty/output` 目录下执行 `npm publish`。
+
+<Tip>
+**npm provenance** 可选，但建议启用。 使用 `--provenance` 发布会在你的 npm 列表中添加可信徽章，使用户可以验证该包是由公共 CI 流水线中的特定提交构建的。 有关设置说明，请参见 [npm provenance 文档](https://docs.npmjs.com/generating-provenance-statements)。
+</Tip>
+
+## 内部分发
+
+对于你不希望公开的应用 — 例如专有工具、仅供企业使用的集成或实验性构建 — 你可以将 tar 包直接推送到某台 Twenty 服务器。
+
+### 推送 tar 包
+
+在一步中构建你的应用并将其部署到特定服务器：
+
+```bash filename="Terminal"
+npx twenty publish --server <server-url>
+```
+
+该服务器上的任何工作区随后都可以在**应用程序**设置页面安装和升级该应用。
+
+### 版本管理
+
+要发布更新：
+
+1. 更新 `package.json` 中的 `version` 字段
+2. 使用 `npx twenty publish --server <server-url>` 推送新的 tar 包
+3. 该服务器上的工作区会在其设置中看到可用的升级
+
+<Note>
+内部应用的作用范围仅限于它们被推送到的服务器。 它们不会出现在公共应用市场中，其他服务器上的工作区也无法安装。
+</Note>
+
+## 应用类别
+
+Twenty 会根据分发方式将应用归为三类：
+
+| 类别      | 工作原理                                              | 在应用市场中可见？ |
+| ------- | ------------------------------------------------- | --------- |
+| **开发**  | 通过 `yarn twenty dev` 运行的本地开发模式应用。 用于构建和测试。        | 否         |
+| **已发布** | 使用 `twenty-app-` 前缀发布到 npm 的应用。 在应用市场上架，供任何工作区安装。 | 是         |
+| **内部**  | 通过 tar 包部署到特定服务器的应用。 仅对该服务器上的工作区可用。               | 否         |
+
+<Tip>
+在构建你的应用时，从**开发**模式开始。 准备就绪后，选择用于广泛分发的**已发布**（npm），或用于私有部署的**内部**（tar 包）。
+</Tip>

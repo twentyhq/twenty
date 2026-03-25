@@ -38,6 +38,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
+  isSdkLayerStale: true,
 };
 
 type GenerateMorphOrRelationFlatFieldMetadataPairTestInput = Parameters<

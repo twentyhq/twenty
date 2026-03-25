@@ -43,7 +43,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     return null;
   }
 
-  if (isRecordTableCreateDisabled(objectMetadataItem.nameSingular)) {
+  if (isRecordTableCreateDisabled(objectMetadataItem)) {
     return null;
   }
 

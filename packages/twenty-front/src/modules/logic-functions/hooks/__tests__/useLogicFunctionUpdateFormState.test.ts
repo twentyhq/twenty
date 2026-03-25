@@ -37,7 +37,7 @@ describe('useLogicFunctionUpdateFormState', () => {
     const { formValues } = result.current;
 
     expect(formValues).toEqual({
-      name: '',
+      name: 'name',
       description: '',
       sourceHandlerCode: '',
       isTool: false,

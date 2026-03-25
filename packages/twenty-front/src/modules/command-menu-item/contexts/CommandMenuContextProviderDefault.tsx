@@ -1,15 +1,13 @@
-import { useRunWorkflowRecordCommands } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands';
-import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useRegisteredCommandMenuItems } from '@/command-menu-item/hooks/useRegisteredCommandMenuItems';
 import { useShouldCommandMenuItemBeRegisteredParams } from '@/command-menu-item/hooks/useShouldCommandMenuItemBeRegisteredParams';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { useCommandMenuItemFrontComponentActions } from '@/command-menu-item/hooks/useCommandMenuItemFrontComponentActions';
+import { useRunWorkflowRecordAgnosticCommands } from '@/command-menu-item/record-agnostic/workflow/hooks/useRunWorkflowRecordAgnosticCommands';
+import { useRunWorkflowRecordCommands } from '@/command-menu-item/record/workflow/hooks/useRunWorkflowRecordCommands';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const CommandMenuContextProviderDefault = ({
@@ -19,19 +17,15 @@ export const CommandMenuContextProviderDefault = ({
   containerType,
   children,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   isInSidePanel: CommandMenuContextType['isInSidePanel'];
   displayType: CommandMenuContextType['displayType'];
   containerType: CommandMenuContextType['containerType'];
   children: React.ReactNode;
 }) => {
-  const params = useShouldCommandMenuItemBeRegisteredParams({
+  const shouldBeRegisteredParams = useShouldCommandMenuItemBeRegisteredParams({
     objectMetadataItem,
   });
-
-  const shouldBeRegisteredParams = {
-    ...params,
-  };
 
   const commandMenuItems = useRegisteredCommandMenuItems(
     shouldBeRegisteredParams,
@@ -53,11 +47,6 @@ export const CommandMenuContextProviderDefault = ({
   const runWorkflowRecordAgnosticCommands =
     useRunWorkflowRecordAgnosticCommands();
 
-  const commandMenuContextApi = useCommandMenuContextApi();
-
-  const commandMenuItemFrontComponentActions =
-    useCommandMenuItemFrontComponentActions(commandMenuContextApi);
-
   return (
     <CommandMenuContext.Provider
       value={{
@@ -68,7 +57,6 @@ export const CommandMenuContextProviderDefault = ({
           ...commandMenuItems,
           ...runWorkflowRecordCommands,
           ...runWorkflowRecordAgnosticCommands,
-          ...commandMenuItemFrontComponentActions,
         ],
       }}
     >

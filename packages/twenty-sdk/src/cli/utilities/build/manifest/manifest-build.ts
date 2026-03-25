@@ -115,7 +115,6 @@ export const buildManifest = async (
           ...extract.config,
           yarnLockChecksum: null,
           packageJsonChecksum: null,
-          apiClientChecksum: null,
         };
         errors.push(...extract.errors);
         applicationFilePaths.push(relativePath);
@@ -368,21 +367,27 @@ export const buildManifest = async (
     };
   }
 
+  const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>
+    a.universalIdentifier.localeCompare(b.universalIdentifier);
+
+  const byPath = <T extends { filePath: string }>(a: T, b: T) =>
+    a.filePath.localeCompare(b.filePath);
+
   const manifest = !application
     ? null
     : {
         application,
-        objects,
-        fields,
-        roles,
-        skills,
-        agents,
-        logicFunctions,
-        frontComponents,
-        publicAssets,
-        views,
-        navigationMenuItems,
-        pageLayouts,
+        objects: objects.sort(byId),
+        fields: fields.sort(byId),
+        roles: roles.sort(byId),
+        skills: skills.sort(byId),
+        agents: agents.sort(byId),
+        logicFunctions: logicFunctions.sort(byId),
+        frontComponents: frontComponents.sort(byId),
+        publicAssets: publicAssets.sort(byPath),
+        views: views.sort(byId),
+        navigationMenuItems: navigationMenuItems.sort(byId),
+        pageLayouts: pageLayouts.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {

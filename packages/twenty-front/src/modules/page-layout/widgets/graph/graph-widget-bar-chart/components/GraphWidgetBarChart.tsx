@@ -1,4 +1,3 @@
-import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
@@ -17,14 +16,20 @@ import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
-import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import {
+  formatGraphValue,
+  type GraphValueFormatOptions,
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { isSidePanelAnimatingState } from '@/side-panel/states/isSidePanelAnimatingState';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { useMemo, useRef, useState } from 'react';
+import { isNumber } from '@sniptt/guards';
+import { useContext, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
@@ -83,7 +88,8 @@ export const GraphWidgetBarChart = ({
   customFormatter,
   onSliceClick,
 }: GraphWidgetBarChartProps) => {
-  const colorRegistry = createGraphColorRegistry();
+  const { theme } = useContext(ThemeContext);
+  const colorRegistry = createGraphColorRegistry(theme.color);
 
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
@@ -118,13 +124,16 @@ export const GraphWidgetBarChart = ({
 
   const allowDataTransitions = !isLayoutAnimating;
 
-  const formatOptions: GraphValueFormatOptions = {
-    customFormatter,
-    decimals,
-    displayType,
-    prefix,
-    suffix,
-  };
+  const formatOptions = useMemo<GraphValueFormatOptions>(
+    () => ({
+      customFormatter,
+      decimals,
+      displayType,
+      prefix,
+      suffix,
+    }),
+    [customFormatter, decimals, displayType, prefix, suffix],
+  );
 
   const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
     useBarChartData({ keys, series, colorRegistry, seriesLabels, colorMode });
@@ -148,6 +157,36 @@ export const GraphWidgetBarChart = ({
       rangeMax,
       rangeMin,
     });
+
+  const hasExplicitRangeBounds = isDefined(rangeMin) || isDefined(rangeMax);
+
+  const rightTickLabels = useMemo(() => {
+    if (
+      !hasExplicitRangeBounds ||
+      !showValues ||
+      layout !== BarChartLayout.HORIZONTAL
+    ) {
+      return undefined;
+    }
+    const labels: string[] = [];
+    for (const dataItem of data) {
+      for (const visibleKey of visibleKeys) {
+        const value = dataItem[visibleKey];
+
+        if (isNumber(value)) {
+          labels.push(formatGraphValue(value, formatOptions));
+        }
+      }
+    }
+    return labels;
+  }, [
+    data,
+    visibleKeys,
+    formatOptions,
+    hasExplicitRangeBounds,
+    showValues,
+    layout,
+  ]);
 
   const dataByIndexValue = useMemo(
     () => new Map(data.map((row) => [String(row[indexBy]), row])),
@@ -220,8 +259,10 @@ export const GraphWidgetBarChart = ({
               maximum: effectiveMaximumValue,
               minimum: effectiveMinimumValue,
             }}
+            hasExplicitRangeBounds={hasExplicitRangeBounds}
             enrichedKeysMap={enrichedKeysMap}
             formatOptions={formatOptions}
+            rightTickLabels={rightTickLabels}
             groupMode={groupMode}
             hasNoData={hasNoData}
             hoveredSliceIndexValue={graphWidgetHoveredSliceIndex}

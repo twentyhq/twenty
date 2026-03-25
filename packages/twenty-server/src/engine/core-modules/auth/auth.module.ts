@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -20,6 +19,7 @@ import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.s
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -37,6 +37,7 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
 import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -56,14 +57,13 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
+import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/data-access/message-channel-data-access.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
@@ -77,12 +77,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 @Module({
   imports: [
     JwtModule,
-    DataSourceModule,
     WorkspaceDomainsModule,
     TokenModule,
     UserModule,
-    WorkspaceManagerModule,
-    TypeORMModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       UserEntity,
@@ -95,14 +92,16 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       UserWorkspaceEntity,
       TwoFactorAuthenticationMethodEntity,
       ObjectMetadataEntity,
+      ConnectedAccountEntity,
     ]),
     UserWorkspaceModule,
-    WorkspaceModule,
     OnboardingModule,
-    WorkspaceDataSourceModule,
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
+    CalendarChannelDataAccessModule,
+    ConnectedAccountDataAccessModule,
+    MessageChannelDataAccessModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
@@ -110,7 +109,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GuardRedirectModule,
     MetricsModule,
     PermissionsModule,
-    UserRoleModule,
     TwoFactorAuthenticationModule,
     ApiKeyModule,
     AuditModule,
@@ -120,6 +118,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ApplicationModule,
     WorkspaceCacheModule,
     SecureHttpClientModule,
+    EnterpriseModule,
     FileModule,
   ],
   controllers: [
@@ -152,6 +151,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateConnectedAccountService,
+    CreateSSOConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,

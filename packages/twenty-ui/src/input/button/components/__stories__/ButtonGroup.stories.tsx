@@ -27,9 +27,9 @@ export const Default: Story = {
     variant: 'primary',
     accent: 'danger',
     children: [
-      <Button Icon={IconNotes} title="Note" />,
-      <Button Icon={IconCheckbox} title="Task" />,
-      <Button Icon={IconTimelineEvent} title="Activity" />,
+      <Button key="note" Icon={IconNotes} title="Note" />,
+      <Button key="task" Icon={IconCheckbox} title="Task" />,
+      <Button key="activity" Icon={IconTimelineEvent} title="Activity" />,
     ],
   },
   argTypes: {
@@ -41,9 +41,9 @@ export const Default: Story = {
 export const Catalog: CatalogStory<Story, typeof ButtonGroup> = {
   args: {
     children: [
-      <Button Icon={IconNotes} title="Note" />,
-      <Button Icon={IconCheckbox} title="Task" />,
-      <Button Icon={IconTimelineEvent} title="Activity" />,
+      <Button key="note" Icon={IconNotes} title="Note" />,
+      <Button key="task" Icon={IconCheckbox} title="Task" />,
+      <Button key="activity" Icon={IconTimelineEvent} title="Activity" />,
     ],
   },
   argTypes: {

@@ -383,16 +383,26 @@ export const successfulInputsByFieldMetadataType: {
     },
     { input: { linksField: null }, expectedOutput: { linksField: null } },
   ],
-  [FieldMetadataType.RICH_TEXT_V2]: [
+  [FieldMetadataType.RICH_TEXT]: [
     {
-      input: { richTextV2Field: { blocknote: 'test', markdown: 'test' } },
+      input: {
+        richTextField: {
+          blocknote:
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
+          markdown: 'test',
+        },
+      },
       expectedOutput: {
-        richTextV2Field: { blocknote: 'test', markdown: 'test' },
+        richTextField: {
+          blocknote:
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
+          markdown: 'test',
+        },
       },
     },
     {
-      input: { richTextV2Field: null },
-      expectedOutput: { richTextV2Field: null },
+      input: { richTextField: null },
+      expectedOutput: { richTextField: null },
     },
   ],
   [FieldMetadataType.POSITION]: [

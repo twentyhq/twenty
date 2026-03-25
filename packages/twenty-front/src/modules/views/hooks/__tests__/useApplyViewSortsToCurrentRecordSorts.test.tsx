@@ -3,9 +3,9 @@ import { act, renderHook } from '@testing-library/react';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
+import { type ViewSortEssential } from '@/views/types/ViewSortEssential';
 import { isDefined } from 'twenty-shared/utils';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
@@ -14,7 +14,7 @@ import { useApplyViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyVie
 const mockObjectMetadataItemNameSingular = 'company';
 
 describe('useApplyViewSortsToCurrentRecordSorts', () => {
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  const mockObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
   );
 
@@ -32,7 +32,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
     throw new Error(`Missing mock field metadata Name`);
   }
 
-  const mockViewSort: CoreViewSortEssential = {
+  const mockViewSort: ViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,

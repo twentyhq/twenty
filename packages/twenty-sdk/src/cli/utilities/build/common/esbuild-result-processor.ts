@@ -5,6 +5,8 @@ import path from 'path';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type FileFolder } from 'twenty-shared/types';
 
+const SDK_CLIENT_IMPORT_PREFIX = 'twenty-client-sdk';
+
 export type ProcessEsbuildResultParams = {
   result: esbuild.BuildResult;
   appPath: string;
@@ -42,12 +44,21 @@ export const processEsbuildResult = async ({
 
     lastChecksums.set(relativeBuiltPath, checksum);
 
+    const outputMeta = result.metafile?.outputs?.[outputFile];
+    const usesSdkClient =
+      outputMeta?.imports?.some(
+        (imp) =>
+          imp.external === true &&
+          imp.path.startsWith(SDK_CLIENT_IMPORT_PREFIX),
+      ) ?? false;
+
     if (onFileBuilt) {
       await onFileBuilt({
         fileFolder,
         builtPath: relativeBuiltPath,
         sourcePath: relativeSourcePath,
         checksum,
+        usesSdkClient,
       });
     }
   }

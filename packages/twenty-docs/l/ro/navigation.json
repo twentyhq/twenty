@@ -149,8 +149,8 @@
         "extend": {
           "label": "Extend",
           "groups": {
-            "extendCapabilities": {
-              "label": "Capabilities"
+            "apps": {
+              "label": "Aplicații"
             }
           }
         },

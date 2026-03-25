@@ -5,6 +5,7 @@ export type DevUiStateListener = (state: OrchestratorState) => void;
 export class DevUiStateManager {
   private orchestratorState: OrchestratorState;
   private listeners = new Set<DevUiStateListener>();
+  private pendingNotify = false;
 
   constructor(orchestratorState: OrchestratorState) {
     this.orchestratorState = orchestratorState;
@@ -22,8 +23,18 @@ export class DevUiStateManager {
   }
 
   notify(): void {
-    for (const listener of this.listeners) {
-      listener(this.orchestratorState);
+    if (this.pendingNotify) {
+      return;
     }
+
+    this.pendingNotify = true;
+
+    queueMicrotask(() => {
+      this.pendingNotify = false;
+
+      for (const listener of this.listeners) {
+        listener(this.orchestratorState);
+      }
+    });
   }
 }

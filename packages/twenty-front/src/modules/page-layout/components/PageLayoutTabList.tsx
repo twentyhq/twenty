@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import {
   DragDropContext,
   type DropResult,
@@ -7,6 +6,7 @@ import {
   type OnDragUpdateResponder,
   type ResponderProvided,
 } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,41 +18,46 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
+import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
-import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS } from '@/page-layout/constants/StandardPageLayoutTabTitleTranslations';
 import { useIsCurrentObjectCustom } from '@/page-layout/hooks/useIsCurrentObjectCustom';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  FeatureFlagKey,
+  type PageLayoutType,
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  height: ${themeCssVariables.spacing[10]};
+  height: ${TAB_LIST_HEIGHT};
   position: relative;
   user-select: none;
   width: 100%;
@@ -76,7 +81,7 @@ const StyledDropdownContainer = styled.div`
 const StyledAddButton = styled.div`
   align-items: center;
   display: flex;
-  height: ${themeCssVariables.spacing[10]};
+  height: ${TAB_LIST_HEIGHT};
   margin-left: ${TAB_LIST_GAP}px;
 `;
 
@@ -107,6 +112,10 @@ export const PageLayoutTabList = ({
   const { isCustom } = useIsCurrentObjectCustom();
 
   const shouldTranslateTabTitles = !isCustom;
+
+  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
+  );
 
   const tabsWithIcons: SingleTabProps[] = tabs.map((tab) => ({
     id: tab.id,
@@ -231,10 +240,7 @@ export const PageLayoutTabList = ({
     ],
   );
 
-  const isPageLayoutInEditMode = useAtomComponentStateValue(
-    isPageLayoutInEditModeComponentState,
-    pageLayoutId,
-  );
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
@@ -262,7 +268,10 @@ export const PageLayoutTabList = ({
     (tabId: string) => {
       const shouldOpenSettings =
         isPageLayoutInEditMode &&
-        shouldEnableTabEditingFeatures(pageLayoutType);
+        shouldEnableTabEditingFeatures(
+          pageLayoutType,
+          isRecordPageGlobalEditionEnabled,
+        );
 
       if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);
@@ -277,6 +286,7 @@ export const PageLayoutTabList = ({
     },
     [
       isPageLayoutInEditMode,
+      isRecordPageGlobalEditionEnabled,
       pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
@@ -289,7 +299,10 @@ export const PageLayoutTabList = ({
     (tabId: string) => {
       const shouldOpenSettings =
         isPageLayoutInEditMode &&
-        shouldEnableTabEditingFeatures(pageLayoutType);
+        shouldEnableTabEditingFeatures(
+          pageLayoutType,
+          isRecordPageGlobalEditionEnabled,
+        );
 
       if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);
@@ -305,6 +318,7 @@ export const PageLayoutTabList = ({
     },
     [
       isPageLayoutInEditMode,
+      isRecordPageGlobalEditionEnabled,
       pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
@@ -413,14 +427,16 @@ export const PageLayoutTabList = ({
             />
             {shouldRenderStaticDropdown && (
               <StyledDropdownContainer>
-                <PageLayoutTabListStaticOverflowDropdown
+                <TabListDropdown
                   dropdownId={dropdownId}
                   hiddenTabs={hiddenTabs}
-                  hiddenTabsCount={hiddenTabsCount}
-                  isActiveTabHidden={isActiveTabHidden}
+                  overflow={{
+                    hiddenTabsCount,
+                    isActiveTabHidden,
+                  }}
                   activeTabId={activeTabId || ''}
                   loading={loading}
-                  onSelect={handleSelectTabFromDropdown}
+                  onTabSelect={handleSelectTabFromDropdown}
                   onClose={closeOverflowDropdown}
                 />
               </StyledDropdownContainer>

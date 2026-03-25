@@ -3,12 +3,11 @@ import { SidePanelAskAIPage } from '@/side-panel/pages/ask-ai/components/SidePan
 import { SidePanelCalendarEventPage } from '@/side-panel/pages/calendar-event/components/SidePanelCalendarEventPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelMessageThreadPage } from '@/side-panel/pages/message-thread/components/SidePanelMessageThreadPage';
-import { SidePanelNavigationMenuItemEditPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNavigationMenuItemEditPage';
-import { SidePanelNewSidebarItemPage } from '@/side-panel/pages/navigation-menu-item/components/SidePanelNewSidebarItemPage';
+import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
+import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelPageLayoutChartSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutChartSettings';
-import { SidePanelPageLayoutFieldsLayout } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsLayout';
 import { SidePanelPageLayoutFieldsSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings';
-import { SidePanelPageLayoutGraphFilter } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutGraphFilter';
+import { SidePanelPageLayoutRecordTableSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings';
 import { SidePanelPageLayoutIframeSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings';
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
 import { SidePanelPageLayoutWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect';
@@ -55,7 +54,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
       SidePanelPages.PageLayoutGraphTypeSelect,
       <SidePanelPageLayoutChartSettings />,
     ],
-    [SidePanelPages.PageLayoutGraphFilter, <SidePanelPageLayoutGraphFilter />],
     [
       SidePanelPages.PageLayoutIframeSettings,
       <SidePanelPageLayoutIframeSettings />,
@@ -66,8 +64,8 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
       <SidePanelPageLayoutFieldsSettings />,
     ],
     [
-      SidePanelPages.PageLayoutFieldsLayout,
-      <SidePanelPageLayoutFieldsLayout />,
+      SidePanelPages.PageLayoutRecordTableSettings,
+      <SidePanelPageLayoutRecordTableSettings />,
     ],
     [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
     [

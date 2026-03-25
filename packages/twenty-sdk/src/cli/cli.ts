@@ -16,8 +16,8 @@ program
   .version(packageJson.version);
 
 program.option(
-  '--workspace <name>',
-  'Use a specific workspace configuration (overrides the default set by auth:switch)',
+  '-r, --remote <name>',
+  'Use a specific remote (overrides the default set by remote switch)',
 );
 
 program.hook('preAction', async (thisCommand) => {
@@ -25,17 +25,15 @@ program.hook('preAction', async (thisCommand) => {
     ? (thisCommand as any).optsWithGlobals()
     : thisCommand.opts();
 
-  // If --workspace is provided, use it; otherwise, read the persisted default
-  let workspace = opts.workspace;
-  if (!workspace) {
+  let remote = opts.remote;
+  if (!remote) {
     const configService = new ConfigService();
-    workspace = await configService.getDefaultWorkspace();
+    remote = await configService.getDefaultRemote();
+  } else {
+    console.log(chalk.gray(`Using remote: ${remote}`));
   }
 
-  ConfigService.setActiveWorkspace(workspace);
-  console.log(
-    chalk.gray(`👩‍💻 Workspace - ${ConfigService.getActiveWorkspace()}`),
-  );
+  ConfigService.setActiveRemote(remote);
 });
 
 registerCommands(program);

@@ -1,0 +1,36 @@
+{
+  "name": "postcard-app",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "remote:add": "twenty remote add --local",
+    "remote:status": "twenty remote status",
+    "remote:switch": "twenty remote switch",
+    "remote:list": "twenty remote list",
+    "remote:remove": "twenty remote remove",
+    "dev": "twenty dev",
+    "add": "twenty add",
+    "logs": "twenty logs",
+    "exec": "twenty exec",
+    "uninstall": "twenty uninstall",
+    "help": "twenty help",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
+  },
+  "dependencies": {
+    "twenty-sdk": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.0.2",
+    "react": "^19.0.2",
+    "oxlint": "^0.16.0"
+  }
+}

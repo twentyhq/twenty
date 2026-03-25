@@ -16,7 +16,7 @@ import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAP
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
-import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
+import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -38,7 +38,7 @@ export const ViewPickerListContent = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const viewsOnCurrentObject = useAtomFamilySelectorValue(
-    coreViewsFromObjectMetadataItemFamilySelector,
+    viewsFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
 
@@ -49,6 +49,8 @@ export const ViewPickerListContent = () => {
   const unlistedViews = viewsOnCurrentObject.filter(
     (view) => view.visibility === ViewVisibility.UNLISTED,
   );
+
+  const isLastView = viewsOnCurrentObject.length <= 1;
 
   const shouldShowSectionLabels =
     workspaceViews.length > 0 && unlistedViews.length > 0;
@@ -152,9 +154,10 @@ export const ViewPickerListContent = () => {
                     isDragDisabled={workspaceViews.length === 1}
                     itemComponent={
                       <ViewPickerOptionDropdown
-                        view={{ ...view, __typename: 'View' }}
+                        view={view}
                         handleViewSelect={handleViewSelect}
                         isIndexView={isIndexView}
+                        isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
                       />
                     }
@@ -184,9 +187,10 @@ export const ViewPickerListContent = () => {
                     isDragDisabled={unlistedViews.length === 1}
                     itemComponent={
                       <ViewPickerOptionDropdown
-                        view={{ ...view, __typename: 'View' }}
+                        view={view}
                         handleViewSelect={handleViewSelect}
                         isIndexView={isIndexView}
+                        isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
                       />
                     }

@@ -1,4 +1,7 @@
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
@@ -13,6 +16,15 @@ import { Button } from 'twenty-ui/input';
 export const ViewPickerEditButton = () => {
   const { availableFieldsForGrouping, navigateToSelectSettings } =
     useGetAvailableFieldsToGroupRecordsBy();
+
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
+  const viewsOnCurrentObject = useAtomFamilySelectorValue(
+    viewsFromObjectMetadataItemFamilySelector,
+    { objectMetadataItemId: objectMetadataItem.id },
+  );
+
+  const isLastView = viewsOnCurrentObject.length <= 1;
 
   const { viewPickerMode } = useViewPickerMode();
   const viewPickerType = useAtomComponentStateValue(
@@ -39,13 +51,13 @@ export const ViewPickerEditButton = () => {
         justify="center"
         focus={false}
         variant="secondary"
-        disabled={viewPickerIsPersisting}
+        disabled={viewPickerIsPersisting || isLastView}
       />
     );
   }
 
   if (
-    viewPickerType === ViewType.Kanban &&
+    viewPickerType === ViewType.KANBAN &&
     availableFieldsForGrouping.length === 0
   ) {
     return (
@@ -61,7 +73,7 @@ export const ViewPickerEditButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.Table ||
+    viewPickerType === ViewType.TABLE ||
     viewPickerMainGroupByFieldMetadataId !== ''
   ) {
     return (
@@ -74,7 +86,7 @@ export const ViewPickerEditButton = () => {
         justify="center"
         disabled={
           viewPickerIsPersisting ||
-          (viewPickerType === ViewType.Kanban &&
+          (viewPickerType === ViewType.KANBAN &&
             viewPickerMainGroupByFieldMetadataId === '')
         }
       />

@@ -61,6 +61,7 @@ export class RunWorkflowJob {
           workflowRunId,
           status: WorkflowRunStatus.FAILED,
           error: error.message,
+          isSystemError: true,
         });
 
         throw error;

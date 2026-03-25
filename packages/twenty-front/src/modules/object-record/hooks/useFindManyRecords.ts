@@ -1,4 +1,6 @@
-import { useQuery, type WatchQueryFetchPolicy } from '@apollo/client';
+import { type WatchQueryFetchPolicy } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -98,10 +100,21 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         limit,
       },
       fetchPolicy: fetchPolicy,
-      onCompleted: handleFindManyRecordsCompleted,
-      onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     });
+
+  // TODO: Refactor these useEffects to avoid unnecessary re-renders (see PR #18584 review)
+  useEffect(() => {
+    if (data) {
+      handleFindManyRecordsCompleted(data);
+    }
+  }, [data, handleFindManyRecordsCompleted]);
+
+  useEffect(() => {
+    if (error) {
+      handleFindManyRecordsError(error);
+    }
+  }, [error, handleFindManyRecordsError]);
 
   const { fetchMoreRecords, records, hasNextPage } =
     useFetchMoreRecordsWithPagination<T>({

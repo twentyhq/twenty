@@ -5,15 +5,15 @@ import { contextStoreCurrentViewTypeComponentState } from '@/context-store/state
 import { getViewType } from '@/context-store/utils/getViewType';
 import { useSetLastVisitedObjectMetadataId } from '@/navigation/hooks/useSetLastVisitedObjectMetadataId';
 import { useSetLastVisitedViewForObjectMetadataNamePlural } from '@/navigation/hooks/useSetLastVisitedViewForObjectMetadataNamePlural';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useEffect } from 'react';
 
 type MainContextStoreProviderEffectProps = {
   viewId?: string;
-  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   isRecordIndexPage: boolean;
   isRecordShowPage: boolean;
   isSettingsPage: boolean;
@@ -52,7 +52,7 @@ export const MainContextStoreProviderEffect = ({
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const view = useAtomFamilySelectorValue(coreViewFromViewIdFamilySelector, {
+  const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: viewId ?? '',
   });
 

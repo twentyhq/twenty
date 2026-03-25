@@ -51,6 +51,14 @@ type JunctionConfigSeed = {
   label?: string;
 };
 
+type WorkspaceSeedConfig = {
+  objects: { seed: ObjectMetadataSeed; fields?: FieldMetadataSeed[] }[];
+  fields: { objectName: string; seeds: FieldMetadataSeed[] }[];
+  morphRelations?: { objectName: string; seeds: MorphRelationSeed[] }[];
+  junctionFields?: JunctionFieldSeed[];
+  junctionConfigs?: JunctionConfigSeed[];
+};
+
 type FlatMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -65,18 +73,7 @@ export class DevSeederMetadataService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  private readonly workspaceConfigs: Record<
-    string,
-    {
-      objects: { seed: ObjectMetadataSeed; fields?: FieldMetadataSeed[] }[];
-      fields: { objectName: string; seeds: FieldMetadataSeed[] }[];
-      morphRelations?: { objectName: string; seeds: MorphRelationSeed[] }[];
-      // Junction fields create relations to junction objects (inverses auto-created)
-      junctionFields?: JunctionFieldSeed[];
-      // Configure junction settings on fields after all relations exist
-      junctionConfigs?: JunctionConfigSeed[];
-    }
-  > = {
+  private readonly workspaceConfigs: Record<string, WorkspaceSeedConfig> = {
     [SEED_APPLE_WORKSPACE_ID]: {
       objects: [
         { seed: ROCKET_CUSTOM_OBJECT_SEED },
@@ -178,13 +175,14 @@ export class DevSeederMetadataService {
     },
   };
 
-  public async seed({
-    dataSourceMetadata,
-    workspaceId,
-  }: {
-    dataSourceMetadata: DataSourceEntity;
-    workspaceId: string;
-  }) {
+  private getLightConfig(_config: WorkspaceSeedConfig): WorkspaceSeedConfig {
+    return {
+      objects: [],
+      fields: [],
+    };
+  }
+
+  private getConfig(workspaceId: string, light: boolean): WorkspaceSeedConfig {
     const config = this.workspaceConfigs[workspaceId];
 
     if (!config) {
@@ -192,6 +190,20 @@ export class DevSeederMetadataService {
         `Workspace configuration not found for workspaceId: ${workspaceId}`,
       );
     }
+
+    return light ? this.getLightConfig(config) : config;
+  }
+
+  public async seed({
+    dataSourceMetadata,
+    workspaceId,
+    light = false,
+  }: {
+    dataSourceMetadata: DataSourceEntity;
+    workspaceId: string;
+    light?: boolean;
+  }) {
+    const config = this.getConfig(workspaceId, light);
 
     for (const obj of config.objects) {
       await this.seedCustomObject({
@@ -266,14 +278,14 @@ export class DevSeederMetadataService {
     });
   }
 
-  public async seedRelations({ workspaceId }: { workspaceId: string }) {
-    const config = this.workspaceConfigs[workspaceId];
-
-    if (!config) {
-      throw new Error(
-        `Workspace configuration not found for workspaceId: ${workspaceId}`,
-      );
-    }
+  public async seedRelations({
+    workspaceId,
+    light = false,
+  }: {
+    workspaceId: string;
+    light?: boolean;
+  }) {
+    const config = this.getConfig(workspaceId, light);
 
     // 1. Seed morph relations (creates inverses on target objects)
     let maps = await this.getFreshFlatMaps(workspaceId);
@@ -287,7 +299,6 @@ export class DevSeederMetadataService {
     }
 
     // 2. Seed junction fields (creates relations + inverses on junction objects)
-    // Use same maps for all - matches original working behavior
     maps = await this.getFreshFlatMaps(workspaceId);
 
     for (const field of config.junctionFields ?? []) {

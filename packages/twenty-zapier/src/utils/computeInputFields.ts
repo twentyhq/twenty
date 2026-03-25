@@ -15,7 +15,6 @@ const getTypeFromFieldMetadataType = (
   switch (fieldMetadataType) {
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.ARRAY:
     case FieldMetadataType.RATING:
       return 'string';
@@ -242,7 +241,6 @@ export const computeInputFields = (
         break;
       case FieldMetadataType.UUID:
       case FieldMetadataType.TEXT:
-      case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.DATE_TIME:
       case FieldMetadataType.DATE:
       case FieldMetadataType.BOOLEAN:

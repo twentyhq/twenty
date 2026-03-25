@@ -2,13 +2,11 @@ import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDe
 import { renderHook } from '@testing-library/react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const mutationDeleteWorkspaceInvitationCallSpy = jest.fn();
+const mutationCallSpy = jest.fn();
 
-jest.mock('~/generated-metadata/graphql', () => ({
-  ...jest.requireActual('~/generated-metadata/graphql'),
-  useDeleteWorkspaceInvitationMutation: () => [
-    mutationDeleteWorkspaceInvitationCallSpy,
-  ],
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useMutation: () => [mutationCallSpy],
 }));
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -30,7 +28,7 @@ describe('useDeleteWorkspaceInvitation', () => {
       { wrapper: Wrapper },
     );
 
-    expect(mutationDeleteWorkspaceInvitationCallSpy).toHaveBeenCalledWith({
+    expect(mutationCallSpy).toHaveBeenCalledWith({
       onCompleted: expect.any(Function),
       variables: params,
     });

@@ -29,18 +29,4 @@ export const OBJECT_METADATA_LABEL_FAILING_TEST_CASES: EachTestingContext<
     title: 'when labelPlural contains only whitespace',
     context: { labelPlural: '   ' },
   },
-  {
-    title: 'when labels are identical',
-    context: {
-      labelPlural: 'fooBar',
-      labelSingular: 'fooBar',
-    },
-  },
-  {
-    title: 'when labels with whitespaces result to be identical',
-    context: {
-      labelPlural: '      fooBar               ',
-      labelSingular: 'fooBar',
-    },
-  },
 ];

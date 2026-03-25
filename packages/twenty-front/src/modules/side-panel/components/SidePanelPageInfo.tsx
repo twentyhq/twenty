@@ -5,6 +5,9 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 
+import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
@@ -14,11 +17,7 @@ import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageIn
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
-import { NavigationMenuItemType } from '@/navigation-menu-item/constants/NavigationMenuItemType';
-import { useWorkspaceSectionItems } from '@/navigation-menu-item/hooks/useWorkspaceSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/states/selectedNavigationMenuItemInEditModeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { useContext } from 'react';
@@ -35,10 +34,10 @@ type SidePanelPageInfoProps = {
 
 export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   const { theme } = useContext(ThemeContext);
-  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
   );
-  const items = useWorkspaceSectionItems();
+  const items = useNavigationMenuItemSectionItems();
 
   if (!isDefined(pageChip)) {
     return null;
@@ -47,23 +46,24 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   const isNavigationMenuItemEditPage =
     pageChip.page?.page === SidePanelPages.NavigationMenuItemEdit;
   const selectedNavItem = isNavigationMenuItemEditPage
-    ? items.find((item) => item.id === selectedNavigationMenuItemInEditMode)
+    ? items.find((item) => item.id === selectedNavigationMenuItemIdInEditMode)
     : undefined;
 
   if (isNavigationMenuItemEditPage && isDefined(selectedNavItem)) {
-    const itemType = selectedNavItem.itemType;
+    const navItemType = selectedNavItem.type;
 
-    if (itemType === NavigationMenuItemType.FOLDER) {
+    if (navItemType === NavigationMenuItemType.FOLDER) {
       return <SidePanelFolderInfo />;
     }
 
-    if (itemType === NavigationMenuItemType.LINK) {
+    if (navItemType === NavigationMenuItemType.LINK) {
       return <SidePanelLinkInfo />;
     }
 
     if (
-      itemType === NavigationMenuItemType.VIEW ||
-      itemType === NavigationMenuItemType.RECORD
+      navItemType === NavigationMenuItemType.OBJECT ||
+      navItemType === NavigationMenuItemType.VIEW ||
+      navItemType === NavigationMenuItemType.RECORD
     ) {
       return <SidePanelObjectViewRecordInfo />;
     }
@@ -98,11 +98,10 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     ? [
         SidePanelPages.PageLayoutWidgetTypeSelect,
         SidePanelPages.PageLayoutGraphTypeSelect,
-        SidePanelPages.PageLayoutGraphFilter,
         SidePanelPages.PageLayoutIframeSettings,
         SidePanelPages.PageLayoutTabSettings,
         SidePanelPages.PageLayoutFieldsSettings,
-        SidePanelPages.PageLayoutFieldsLayout,
+        SidePanelPages.PageLayoutRecordTableSettings,
       ].includes(pageChip.page?.page)
     : false;
 

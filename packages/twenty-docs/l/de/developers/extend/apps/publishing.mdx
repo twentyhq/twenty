@@ -1,0 +1,119 @@
+---
+title: Veröffentlichen
+description: Veröffentlichen Sie Ihre Twenty-App auf dem Twenty-Marktplatz oder stellen Sie sie intern bereit.
+---
+
+<Warning>
+Apps befinden sich derzeit in der Alpha-Testphase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
+</Warning>
+
+## Übersicht
+
+Sobald Ihre App [lokal gebaut und getestet](/l/de/developers/extend/apps/building) wurde, haben Sie zwei Möglichkeiten, sie zu verteilen:
+
+* **Auf npm veröffentlichen** — führen Sie Ihre App im Twenty-Marktplatz auf, damit jeder Arbeitsbereich sie entdecken und installieren kann.
+* **Einen Tarball pushen** — stellen Sie Ihre App auf einem bestimmten Twenty-Server für die interne Nutzung bereit, ohne sie öffentlich verfügbar zu machen.
+
+## Auf npm veröffentlichen
+
+Die Veröffentlichung auf npm macht Ihre App im Twenty-Marktplatz auffindbar. Jeder Twenty-Arbeitsbereich kann Marktplatz-Apps direkt über die Benutzeroberfläche durchsuchen, installieren und aktualisieren.
+
+### Anforderungen
+
+* Ein [npm](https://www.npmjs.com)-Konto
+* Ihr Paketname **muss** das Präfix `twenty-app-` verwenden (z. B. `twenty-app-postcard-sender`)
+
+### Schritte
+
+1. **App erstellen** — die CLI kompiliert Ihre TypeScript-Quellen und erzeugt das Anwendungsmanifest:
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+2. **Auf npm veröffentlichen** — pushen Sie das gebaute Paket in die npm-Registry:
+
+```bash filename="Terminal"
+npx twenty publish
+```
+
+### Automatische Erkennung
+
+Pakete mit dem Präfix `twenty-app-` werden vom Twenty-Marktplatzkatalog automatisch erkannt. Nach der Veröffentlichung erscheint Ihre App innerhalb weniger Minuten im Marktplatz — keine manuelle Registrierung oder Genehmigung erforderlich.
+
+### CI-Veröffentlichung
+
+Das vorgefertigte Projekt enthält einen GitHub-Actions-Workflow, der bei jedem Release eine Veröffentlichung durchführt. Er führt `app:build` aus und danach `npm publish --provenance` aus dem Build-Output:
+
+```yaml filename=".github/workflows/publish.yml"
+name: Publish
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+      - run: yarn install --immutable
+      - run: npx twenty build
+      - run: npm publish --provenance --access public
+        working-directory: .twenty/output
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+Für andere CI-Systeme (GitLab CI, CircleCI usw.) gelten die gleichen drei Befehle: `yarn install`, `npx twenty build` und anschließend `npm publish` aus `.twenty/output`.
+
+<Tip>
+**npm-Provenance** ist optional, wird jedoch empfohlen. Das Veröffentlichen mit `--provenance` fügt Ihrem npm-Eintrag ein Vertrauensabzeichen hinzu, sodass Nutzer überprüfen können, dass das Paket aus einem bestimmten Commit in einer öffentlichen CI-Pipeline gebaut wurde. Siehe die [npm-Provenance-Dokumentation](https://docs.npmjs.com/generating-provenance-statements) für Einrichtungshinweise.
+</Tip>
+
+## Interne Verteilung
+
+Für Apps, die Sie nicht öffentlich verfügbar machen möchten — proprietäre Tools, nur für Unternehmen bestimmte Integrationen oder experimentelle Builds — können Sie einen Tarball direkt auf einen Twenty-Server pushen.
+
+### Einen Tarball pushen
+
+Erstellen Sie Ihre App und stellen Sie sie in einem Schritt auf einem bestimmten Server bereit:
+
+```bash filename="Terminal"
+npx twenty publish --server <server-url>
+```
+
+Jeder Arbeitsbereich auf diesem Server kann die App anschließend über die Seite **Applications** in den Einstellungen installieren und aktualisieren.
+
+### Versionsverwaltung
+
+So veröffentlichen Sie ein Update:
+
+1. Erhöhen Sie das Feld `version` in Ihrer `package.json`
+2. Pushen Sie einen neuen Tarball mit `npx twenty publish --server <server-url>`
+3. Arbeitsbereiche auf diesem Server sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
+
+<Note>
+Interne Apps sind auf den Server beschränkt, auf den sie gepusht werden. Sie erscheinen nicht im öffentlichen Marktplatz und können von Arbeitsbereichen auf anderen Servern nicht installiert werden.
+</Note>
+
+## App-Kategorien
+
+Twenty organisiert Apps in drei Kategorien, basierend auf ihrer Vertriebsart:
+
+| Kategorie          | Wie es funktioniert                                                                                                                  | Im Marktplatz sichtbar? |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| **Entwicklung**    | Lokale Apps im Entwicklungsmodus, die über `yarn twenty dev` ausgeführt werden. Zum Erstellen und Testen verwendet.                  | Nein                    |
+| **Veröffentlicht** | Auf npm veröffentlichte Apps mit dem Präfix `twenty-app-`. Im Marktplatz gelistet, damit jeder Arbeitsbereich sie installieren kann. | Ja                      |
+| **Intern**         | Apps, die per Tarball auf einen bestimmten Server bereitgestellt werden. Nur für Arbeitsbereiche auf diesem Server verfügbar.        | Nein                    |
+
+<Tip>
+Beginnen Sie im **Entwicklungsmodus**, während Sie Ihre App erstellen. Wenn sie bereit ist, wählen Sie **Veröffentlicht** (npm) für die breite Verteilung oder **Intern** (Tarball) für die private Bereitstellung.
+</Tip>

@@ -1,0 +1,689 @@
+---
+title: Создание приложений
+description: Определяйте объекты, функции логики, компоненты фронтенда и многое другое с помощью Twenty SDK.
+---
+
+<Warning>
+Приложения сейчас проходят альфа-тестирование. Функциональность работает, но продолжает развиваться.
+</Warning>
+
+## Используйте ресурсы SDK (типы и конфигурация)
+
+Пакет twenty-sdk предоставляет типизированные строительные блоки и вспомогательные функции, которые вы используете внутри своего приложения. Ниже — ключевые части, с которыми вы будете работать чаще всего.
+
+### Вспомогательные функции
+
+SDK предоставляет вспомогательные функции для определения сущностей вашего приложения. Как описано в [Обнаружение сущностей](/l/ru/developers/extend/apps/getting-started#entity-detection), вы должны использовать `export default define<Entity>({...})`, чтобы ваши сущности были обнаружены:
+
+| Функция                          | Назначение                                                               |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| `defineApplication`              | Настройка метаданных приложения (обязательно, по одному на приложение)   |
+| `defineObject`                   | Определяет пользовательские объекты с полями                             |
+| `defineLogicFunction`            | Определение логических функций с обработчиками                           |
+| `definePreInstallLogicFunction`  | Определяет предустановочную логическую функцию (по одной на приложение)  |
+| `definePostInstallLogicFunction` | Определяет послеустановочную логическую функцию (по одной на приложение) |
+| `defineFrontComponent`           | Определение фронт-компонентов для настраиваемого интерфейса              |
+| `defineRole`                     | Настраивает права роли и доступ к объектам                               |
+| `defineField`                    | Расширение существующих объектов дополнительными полями                  |
+| `defineView`                     | Определяйте сохранённые представления для объектов                       |
+| `defineNavigationMenuItem`       | Определяйте ссылки боковой панели навигации                              |
+| `defineSkill`                    | Определение навыков агента ИИ                                            |
+
+Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
+
+### Определение объектов
+
+Пользовательские объекты описывают как схему, так и поведение записей в вашем рабочем пространстве. Используйте `defineObject()` для определения объектов со встроенной валидацией:
+
+```typescript
+// src/app/postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+Основные моменты:
+
+* Используйте `defineObject()` для встроенной валидации и лучшей поддержки в IDE.
+* `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
+* Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
+* Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
+* Вы можете сгенерировать новые объекты с помощью `yarn twenty entity:add`, который проведёт вас через настройку имени, полей и связей.
+
+<Note>
+**Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля,
+такие как `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` и `deletedAt`.
+Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
+Вы можете переопределить поля по умолчанию, определив поле с тем же именем в массиве `fields`,
+но это не рекомендуется.
+</Note>
+
+### Конфигурация приложения (application-config.ts)
+
+У каждого приложения есть единственный файл `application-config.ts`, который описывает:
+
+* **Что это за приложение**: идентификаторы, отображаемое имя и описание.
+* **Как запускаются его функции**: какую роль они используют для прав доступа.
+* **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
+* **(Необязательно) предустановочная функция**: логическая функция, которая запускается до установки приложения.
+* **(Необязательно) послеустановочная функция**: функция логики, которая запускается после установки приложения.
+
+Используйте `defineApplication()` для определения конфигурации вашего приложения:
+
+```typescript
+// src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Заметки:
+
+* `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
+* `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
+* Предустановочные и послеустановочные функции автоматически обнаруживаются во время сборки манифеста. См. [Предустановочные функции](#pre-install-functions) и [Послеустановочные функции](#post-install-functions).
+
+#### Роли и разрешения
+
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `defaultRoleUniversalIdentifier` в `application-config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
+
+* Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
+* Типизированный клиент будет ограничен правами, предоставленными этой ролью.
+* Следуйте принципу наименьших привилегий: создайте отдельную роль только с теми правами, которые нужны вашим функциям, и укажите её универсальный идентификатор.
+
+##### Роль функции по умолчанию (*.role.ts)
+
+Когда вы генерируете новое приложение, CLI также создаёт файл роли по умолчанию. Используйте `defineRole()` для определения ролей со встроенной валидацией:
+
+```typescript
+// src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+Значение `universalIdentifier` этой роли затем указывается в `application-config.ts` как `defaultRoleUniversalIdentifier`. Иными словами:
+
+* **\*.role.ts** определяет, что может делать роль функции по умолчанию.
+* **application-config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
+
+Заметки:
+
+* Начните со сгенерированной роли, затем постепенно ограничивайте её, следуя принципу наименьших привилегий.
+* Замените `objectPermissions` и `fieldPermissions` на объекты/поля, которые нужны вашим функциям.
+* `permissionFlags` управляют доступом к возможностям на уровне платформы. Держите их минимальными; добавляйте только то, что нужно.
+* См. рабочий пример в приложении Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+### Конфигурация логической функции и точка входа
+
+Каждый файл функции использует `defineLogicFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами.
+
+```typescript
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  triggers: [
+    // Public HTTP route trigger '/s/post-card/create'
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/post-card/create',
+      httpMethod: 'GET',
+      isAuthRequired: false,
+    },
+    // Cron trigger (CRON pattern)
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
+    // Database event trigger
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
+  ],
+});
+```
+
+Распространённые типы триггеров:
+
+* **route**: Публикует вашу функцию по HTTP-пути и методу **под конечной точкой `/s/`**:
+
+> например, `path: '/post-card/create',` -> вызов по адресу `<APP_URL>/s/post-card/create`
+
+* **cron**: Запускает вашу функцию по расписанию с использованием выражения CRON.
+* **databaseEvent**: Запускается при событиях жизненного цикла объектов рабочего пространства. Когда операция события — `updated`, можно указать конкретные поля для отслеживания в массиве `updatedFields`. Если оставить не заданным или пустым, любое обновление будет вызывать функцию.
+
+> например, `person.updated`
+
+Заметки:
+
+* Массив `triggers` необязателен. Функции без триггеров можно использовать как вспомогательные, вызываемые другими функциями.
+* Вы можете сочетать несколько типов триггеров в одной функции.
+
+### Предустановочные функции
+
+Предустановочная функция — это логическая функция, которая автоматически выполняется до установки вашего приложения в рабочем пространстве. Это полезно для задач валидации, проверки предварительных условий или подготовки состояния рабочего пространства перед основной установкой.
+
+Когда вы создаёте каркас нового приложения с помощью `create-twenty-app`, для вас генерируется предустановочная функция по пути `src/logic-functions/pre-install.ts`:
+
+```typescript
+// src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Вы также можете вручную выполнить предустановочную функцию в любое время с помощью CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --preInstall
+```
+
+Основные моменты:
+
+* Предустановочные функции используют `definePreInstallLogicFunction()` — специализированный вариант, который опускает настройки триггеров (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Обработчик получает `InstallLogicFunctionPayload` с `{ previousVersion: string }` — версией приложения, которая была установлена ранее (или пустой строкой для новых установок).
+* Для каждого приложения допускается только одна предустановочная функция. Сборка манифеста завершится ошибкой, если будет обнаружено более одной такой функции.
+* Параметр `universalIdentifier` функции автоматически устанавливается как `preInstallLogicFunctionUniversalIdentifier` в манифесте приложения во время сборки — вам не нужно ссылаться на него в `defineApplication()`.
+* Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы обеспечить выполнение более длительных задач подготовки.
+* Предустановочным функциям не нужны триггеры — платформа вызывает их перед установкой или вручную через `function:execute --preInstall`.
+
+### Послеустановочные функции
+
+Послеустановочная функция — это функция логики, которая автоматически выполняется после установки вашего приложения в рабочем пространстве. Это полезно для одноразовых задач настройки, таких как инициализация данных по умолчанию, создание начальных записей или настройка параметров рабочего пространства.
+
+Когда вы создаёте каркас нового приложения с помощью `create-twenty-app`, для вас генерируется постустановочная функция по пути `src/logic-functions/post-install.ts`:
+
+```typescript
+// src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: '<generated-uuid>',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Вы также можете вручную выполнить постустановочную функцию в любое время с помощью CLI:
+
+```bash filename="Terminal"
+yarn twenty function:execute --postInstall
+```
+
+Основные моменты:
+
+* Послеустановочные функции используют `definePostInstallLogicFunction()` — специализированный вариант, который опускает настройки триггеров (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Обработчик получает `InstallLogicFunctionPayload` с `{ previousVersion: string }` — версией приложения, которая была установлена ранее (или пустой строкой для новых установок).
+* Для каждого приложения допускается только одна послеустановочная функция. Сборка манифеста завершится ошибкой, если будет обнаружено более одной такой функции.
+* Параметр `universalIdentifier` функции автоматически устанавливается как `postInstallLogicFunctionUniversalIdentifier` в манифесте приложения во время сборки — вам не нужно ссылаться на него в `defineApplication()`.
+* Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
+* Постустановочным функциям не нужны триггеры — платформа вызывает их во время установки или вручную через `function:execute --postInstall`.
+
+### Полезная нагрузка триггера маршрута
+
+<Warning>
+**Нарушающее совместимость изменение (v1.16, январь 2026):** Формат полезной нагрузки триггера маршрута изменился. До v1.16 параметры запроса, параметры пути и тело передавались напрямую в качестве полезной нагрузки. Начиная с v1.16 они вложены в структурированный объект `RoutePayload`.
+
+**До v1.16:**
+```typescript
+const handler = async (params) => {
+  const { param1, param2 } = params; // Direct access
+};
+```
+
+**После v1.16:**
+```typescript
+const handler = async (event: RoutePayload) => {
+  const { param1, param2 } = event.body; // Access via .body
+  const { queryParam } = event.queryStringParameters;
+  const { id } = event.pathParameters;
+};
+```
+
+**Чтобы мигрировать существующие функции:** Обновите обработчик, чтобы деструктурировать из `event.body`, `event.queryStringParameters` или `event.pathParameters` вместо прямого доступа к объекту params.
+</Warning>
+
+Когда триггер маршрута вызывает вашу логическую функцию, она получает объект `RoutePayload`, соответствующий формату AWS HTTP API v2. Импортируйте тип из `twenty-sdk`:
+
+```typescript
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+
+const handler = async (event: RoutePayload) => {
+  // Access request data
+  const { headers, queryStringParameters, pathParameters, body } = event;
+
+  // HTTP method and path are available in requestContext
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Тип `RoutePayload` имеет следующую структуру:
+
+| Свойство                     | Тип                                   | Описание                                                                                   |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP-заголовки (только перечисленные в `forwardedRequestHeaders`)                          |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Параметры строки запроса (несколько значений объединяются запятыми)                        |
+| `pathParameters`             | `Record<string, string \| undefined>` | Параметры пути, извлечённые из шаблона маршрута (например, `/users/:id` → `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Разобранное тело запроса (JSON)                                                            |
+| `isBase64Encoded`            | `логический тип`                      | Является ли тело закодированным в base64                                                   |
+| `requestContext.http.method` | `строка`                              | Метод HTTP (GET, POST, PUT, PATCH, DELETE)                                                 |
+| `requestContext.http.path`   | `строка`                              | Необработанный путь запроса                                                                |
+
+### Проброс HTTP-заголовков
+
+По умолчанию HTTP-заголовки из входящих запросов **не** передаются в вашу логическую функцию по соображениям безопасности. Чтобы получить доступ к определённым заголовкам, явно перечислите их в массиве `forwardedRequestHeaders`:
+
+```typescript
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  triggers: [
+    {
+      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      type: 'route',
+      path: '/webhook',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+    },
+  ],
+});
+```
+
+В обработчике вы сможете получить доступ к этим заголовкам:
+
+```typescript
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+  Имена заголовков приводятся к нижнему регистру. Обращайтесь к ним, используя ключи в нижнем регистре (например, `event.headers['content-type']`).
+</Note>
+
+Вы можете создать новые функции двумя способами:
+
+* **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления новой функции логики. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Вручную**: Создайте новый файл `*.logic-function.ts` и используйте `defineLogicFunction()`, следуя тому же шаблону.
+
+### Пометка логической функции как инструмента
+
+Логические функции можно предоставлять как **инструменты** для ИИ-агентов и рабочих процессов. Когда функция помечена как инструмент, она становится доступной для ИИ Twenty и может быть выбрана в качестве шага в автоматизациях рабочих процессов.
+
+Чтобы пометить логическую функцию как инструмент, установите `isTool: true` и укажите `toolInputSchema` для описания ожидаемых входных параметров с помощью [схемы JSON](https://json-schema.org/):
+
+```typescript
+// src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/generated';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+Основные моменты:
+
+* **`isTool`** (`boolean`, по умолчанию: `false`): Если значение равно `true`, функция регистрируется как инструмент и становится доступной агентам ИИ и автоматизациям рабочих процессов.
+* **`toolInputSchema`** (`object`, необязательно): Объект JSON Schema, который описывает параметры, которые принимает ваша функция. Агенты ИИ используют эту схему, чтобы понять, какие входные данные ожидает инструмент, и проверять корректность вызовов. Если опущено, по умолчанию используется схема `{ type: 'object', properties: {} }` (без параметров).
+* Функции с `isTool: false` (или без указания) **не** выставляются как инструменты. Их по-прежнему можно выполнять напрямую или вызывать из других функций, но они не будут отображаться при обнаружении инструментов.
+* **Именование инструмента**: При публикации как инструмента имя функции автоматически нормализуется до `logic_function_<name>` (в нижнем регистре, небуквенно-цифровые символы заменяются на подчёркивания). Например, `enrich-company` становится `logic_function_enrich_company`.
+* Вы можете комбинировать `isTool` с триггерами — функция может одновременно быть инструментом (вызываемым агентами ИИ) и запускаться событиями (cron, события базы данных, маршруты).
+
+<Note>
+**Напишите хорошее описание в поле `description`.** Агенты ИИ опираются на поле `description` функции, чтобы решить, когда использовать инструмент. Чётко опишите, что делает инструмент и когда его следует вызывать.
+</Note>
+
+### Фронт-компоненты
+
+Фронт-компоненты позволяют создавать пользовательские компоненты React, которые рендерятся внутри интерфейса Twenty. Используйте `defineFrontComponent()` для определения компонентов со встроенной валидацией:
+
+```typescript
+// src/front-components/my-widget.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Основные моменты:
+
+* Фронт-компоненты — это компоненты React, которые рендерятся в изолированных контекстах внутри Twenty.
+* Поле `component` ссылается на ваш компонент React.
+* Компоненты автоматически собираются и синхронизируются во время `yarn twenty dev`.
+
+Вы можете создать новые фронт-компоненты двумя способами:
+
+* **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления нового фронтенд-компонента.
+* **Вручную**: Создайте новый файл `.tsx` и используйте `defineFrontComponent()`, следуя тому же шаблону.
+
+### Навыки
+
+Навыки определяют многократно используемые инструкции и возможности, которые агенты ИИ могут использовать в вашем рабочем пространстве. Используйте `defineSkill()` для определения навыков со встроенной валидацией:
+
+```typescript
+// src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Основные моменты:
+
+* `name` — уникальная строка-идентификатор навыка (рекомендуется kebab-case).
+* `label` — читаемое человеком отображаемое имя, показываемое в UI.
+* `content` содержит инструкции навыка — это текст, который использует агент ИИ.
+* `icon` (необязательно) задаёт значок, отображаемый в UI.
+* `description` (необязательно) предоставляет дополнительный контекст о назначении навыка.
+
+Вы можете создать новые навыки двумя способами:
+
+* **Сгенерировано**: Запустите `yarn twenty entity:add` и выберите опцию добавления нового навыка.
+* **Вручную**: Создайте новый файл и используйте `defineSkill()`, следуя тому же шаблону.
+
+### Сгенерированные типизированные клиенты
+
+Два типизированных клиента автоматически генерируются с помощью `yarn twenty dev` и сохраняются в `node_modules/twenty-sdk/generated` на основе схемы вашего рабочего пространства:
+
+* **`CoreApiClient`** — выполняет запросы к конечной точке `/graphql` для получения данных рабочего пространства
+* **`MetadataApiClient`** — выполняет запросы к эндпоинту `/metadata` для получения конфигурации рабочего пространства и загрузки файлов.
+
+```typescript
+import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+
+const client = new CoreApiClient();
+const { me } = await client.query({ me: { id: true, displayName: true } });
+
+const metadataClient = new MetadataApiClient();
+const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+```
+
+Оба клиента автоматически перегенерируются с помощью `yarn twenty dev` при изменении ваших объектов или полей.
+
+#### Учётные данные времени выполнения в логических функциях
+
+Когда ваша функция запускается на Twenty, платформа подставляет учётные данные как переменные окружения перед выполнением вашего кода:
+
+* `TWENTY_API_URL`: Базовый URL API Twenty, на который нацелено ваше приложение.
+* `TWENTY_API_KEY`: Краткоживущий ключ, ограниченный ролью функции по умолчанию вашего приложения.
+
+Заметки:
+
+* Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
+* Права ключа API определяются ролью, на которую ссылается ваш `application-config.ts` через `defaultRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
+* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Предоставляйте только те права, которые нужны вашим функциям, затем укажите в `defaultRoleUniversalIdentifier` универсальный идентификатор этой роли.
+
+#### Загрузка файлов
+
+Сгенерированный `MetadataApiClient` включает метод `uploadFile` для прикрепления файлов к полям типа «файл» в объектах вашего рабочего пространства. Поскольку стандартные клиенты GraphQL изначально не поддерживают многочастовую загрузку файлов, клиент предоставляет специальный метод, который под капотом реализует [спецификацию многочастных запросов GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec).
+
+```typescript
+import { MetadataApiClient } from 'twenty-sdk/generated';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+Сигнатура метода:
+
+```typescript
+uploadFile(
+  fileBuffer: Buffer,
+  filename: string,
+  contentType: string,
+  fieldMetadataUniversalIdentifier: string,
+): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
+```
+
+| Параметр                           | Тип      | Описание                                                                 |
+| ---------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `fileBuffer`                       | `Buffer` | Необработанное содержимое файла                                          |
+| `filename`                         | `строка` | Имя файла (используется для хранения и отображения)                      |
+| `contentType`                      | `строка` | Тип MIME файла (по умолчанию `application/octet-stream`, если не указан) |
+| `fieldMetadataUniversalIdentifier` | `строка` | Значение `universalIdentifier` для поля типа файла в вашем объекте       |
+
+Основные моменты:
+
+* Метод `uploadFile` доступен в `MetadataApiClient`, потому что мутация загрузки обрабатывается эндпоинтом `/metadata`.
+* Он использует `universalIdentifier` поля (а не его идентификатор, специфичный для рабочего пространства), поэтому ваш код загрузки будет работать в любом рабочем пространстве, где установлено ваше приложение — в соответствии с тем, как приложения ссылаются на поля повсюду.
+* Возвращаемый `url` — это подписанный URL, который можно использовать для доступа к загруженному файлу.
+
+### Пример Hello World
+
+Ознакомьтесь с минимальным сквозным примером, демонстрирующим объекты, логические функции, фронт-компоненты и несколько триггеров, [здесь](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world).

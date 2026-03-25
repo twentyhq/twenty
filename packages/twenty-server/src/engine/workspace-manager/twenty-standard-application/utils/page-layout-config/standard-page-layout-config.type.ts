@@ -1,8 +1,8 @@
 import {
+  type GridPosition,
   type PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
-  type GridPosition,
 } from 'twenty-shared/types';
 
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -15,6 +15,7 @@ export type StandardPageLayoutWidgetConfig = {
   gridPosition?: GridPosition;
   position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+  fieldUniversalIdentifier?: string;
 };
 
 export type StandardPageLayoutTabConfig = {
@@ -42,6 +43,7 @@ export type StandardRecordPageWidgetConfig = {
   gridPosition: GridPosition;
   position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+  fieldUniversalIdentifier?: string;
 };
 
 export type StandardRecordPageTabConfig = {

@@ -21,9 +21,7 @@ import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/rec
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesSingleRecordCommand } from '@/command-menu-item/record/single-record/components/RemoveFromFavoritesSingleRecordCommand';
 import { RestoreSingleRecordCommand } from '@/command-menu-item/record/single-record/components/RestoreSingleRecordCommand';
-import { CancelRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/CancelRecordPageLayoutSingleRecordCommand';
 import { EditRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/EditRecordPageLayoutSingleRecordCommand';
-import { SaveRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/SaveRecordPageLayoutSingleRecordCommand';
 import { RecordPageLayoutSingleRecordCommandKeys } from '@/command-menu-item/record/single-record/record-page-layout/types/RecordPageLayoutSingleRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
@@ -45,11 +43,9 @@ import {
 import {
   IconArrowMerge,
   IconBuildingSkyscraper,
-  IconCancel,
   IconCheckbox,
   IconChevronDown,
   IconChevronUp,
-  IconDeviceFloppy,
   IconEdit,
   IconEyeOff,
   IconFileExport,
@@ -116,8 +112,13 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     position: 2,
     isPinned: true,
     Icon: IconPlus,
-    shouldBeRegistered: ({ objectPermissions, hasAnySoftDeleteFilterOnView }) =>
-      (objectPermissions.canUpdateObjectRecords &&
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      objectPermissions,
+      hasAnySoftDeleteFilterOnView,
+    }) =>
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canUpdateObjectRecords &&
         !hasAnySoftDeleteFilterOnView) ??
       false,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
@@ -137,8 +138,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       hasAnySoftDeleteFilterOnView,
       objectPermissions,
+      objectMetadataItem,
     }) =>
-      (isDefined(selectedRecord) &&
+      (!objectMetadataItem?.isSystem &&
+        isDefined(selectedRecord) &&
         !selectedRecord.isRemote &&
         !hasAnySoftDeleteFilterOnView &&
         objectPermissions.canSoftDeleteObjectRecords &&
@@ -165,8 +168,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
+      objectMetadataItem,
     }) =>
-      (objectPermissions.canSoftDeleteObjectRecords &&
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canSoftDeleteObjectRecords &&
         !isRemote &&
         !hasAnySoftDeleteFilterOnView &&
         isDefined(numberOfSelectedRecords) &&
@@ -191,8 +196,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       isShowPage,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
-      (!isRemote &&
+      (!objectMetadataItem?.isSystem &&
+        !isRemote &&
         isDefined(selectedRecord?.deletedAt) &&
         objectPermissions.canSoftDeleteObjectRecords &&
         ((isDefined(isShowPage) && isShowPage) ||
@@ -220,8 +227,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
+      objectMetadataItem,
     }) =>
-      (objectPermissions.canSoftDeleteObjectRecords &&
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canSoftDeleteObjectRecords &&
         !isRemote &&
         isDefined(hasAnySoftDeleteFilterOnView) &&
         hasAnySoftDeleteFilterOnView &&
@@ -241,8 +250,14 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconTrashX,
     accent: 'danger',
     isPinned: true,
-    shouldBeRegistered: ({ selectedRecord, objectPermissions, isRemote }) =>
-      (objectPermissions.canDestroyObjectRecords &&
+    shouldBeRegistered: ({
+      selectedRecord,
+      objectPermissions,
+      isRemote,
+      objectMetadataItem,
+    }) =>
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canDestroyObjectRecords &&
         !isRemote &&
         isDefined(selectedRecord?.deletedAt)) ??
       false,
@@ -267,8 +282,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isRemote,
       hasAnySoftDeleteFilterOnView,
       numberOfSelectedRecords,
+      objectMetadataItem,
     }) =>
-      (objectPermissions.canDestroyObjectRecords &&
+      (!objectMetadataItem?.isSystem &&
+        objectPermissions.canDestroyObjectRecords &&
         !isRemote &&
         isDefined(hasAnySoftDeleteFilterOnView) &&
         hasAnySoftDeleteFilterOnView &&
@@ -292,7 +309,9 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       isFavorite,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
+      !objectMetadataItem?.isSystem &&
       !selectedRecord?.isRemote &&
       !isFavorite &&
       !isDefined(selectedRecord?.deletedAt) &&
@@ -316,7 +335,9 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       isFavorite,
       hasAnySoftDeleteFilterOnView,
+      objectMetadataItem,
     }) =>
+      !objectMetadataItem?.isSystem &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       isDefined(isFavorite) &&
@@ -387,8 +408,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconEdit,
     accent: 'default',
     isPinned: true,
-    shouldBeRegistered: ({ objectPermissions, isRemote }) =>
-      objectPermissions.canUpdateObjectRecords && !isRemote,
+    shouldBeRegistered: ({ objectPermissions, isRemote, objectMetadataItem }) =>
+      !objectMetadataItem?.isSystem &&
+      objectPermissions.canUpdateObjectRecords &&
+      !isRemote,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <UpdateMultipleRecordsCommand />,
   },
@@ -440,8 +463,10 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     Icon: IconFileImport,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ hasAnySoftDeleteFilterOnView }) =>
-      !hasAnySoftDeleteFilterOnView,
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      hasAnySoftDeleteFilterOnView,
+    }) => !objectMetadataItem?.isSystem && !hasAnySoftDeleteFilterOnView,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <ImportRecordsNoSelectionRecordCommand />,
     requiredPermissionFlag: PermissionFlagType.IMPORT_CSV,
@@ -784,60 +809,5 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
     availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <EditRecordPageLayoutSingleRecordCommand />,
-  },
-  [RecordPageLayoutSingleRecordCommandKeys.SAVE_RECORD_PAGE_LAYOUT]: {
-    key: RecordPageLayoutSingleRecordCommandKeys.SAVE_RECORD_PAGE_LAYOUT,
-    label: msg`Save Page Layout`,
-    shortLabel: msg`Save`,
-    isPinned: true,
-    isPrimaryCTA: true,
-    position: 31,
-    Icon: IconDeviceFloppy,
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      objectMetadataItem,
-      isFeatureFlagEnabled,
-    }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-      ) &&
-      isDefined(selectedRecord) &&
-      !selectedRecord?.isRemote &&
-      !isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canUpdateObjectRecords &&
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
-    availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
-    component: <SaveRecordPageLayoutSingleRecordCommand />,
-  },
-  [RecordPageLayoutSingleRecordCommandKeys.CANCEL_RECORD_PAGE_LAYOUT_EDITION]: {
-    key: RecordPageLayoutSingleRecordCommandKeys.CANCEL_RECORD_PAGE_LAYOUT_EDITION,
-    label: msg`Cancel Edition`,
-    shortLabel: msg`Cancel`,
-    isPinned: true,
-    position: 32,
-    Icon: IconCancel,
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    requiredPermissionFlag: PermissionFlagType.LAYOUTS,
-    shouldBeRegistered: ({
-      selectedRecord,
-      objectPermissions,
-      objectMetadataItem,
-      isFeatureFlagEnabled,
-    }) =>
-      isFeatureFlagEnabled(
-        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-      ) &&
-      isDefined(selectedRecord) &&
-      !selectedRecord?.isRemote &&
-      !isDefined(selectedRecord?.deletedAt) &&
-      objectPermissions.canUpdateObjectRecords &&
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard,
-    availableOn: [CommandMenuItemViewType.PAGE_EDIT_MODE],
-    component: <CancelRecordPageLayoutSingleRecordCommand />,
   },
 };

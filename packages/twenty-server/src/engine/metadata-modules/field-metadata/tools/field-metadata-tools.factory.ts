@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
@@ -118,6 +118,48 @@ const UpdateManyFieldMetadataInputSchema = z.object({
     .min(1)
     .max(20)
     .describe('Array of field metadata updates to apply (1-20 items).'),
+});
+
+const CreateManyRelationFieldsInputSchema = z.object({
+  relations: z
+    .array(
+      z.object({
+        objectMetadataId: z
+          .string()
+          .uuid()
+          .describe('ID of the source object to add the relation field to'),
+        name: z
+          .string()
+          .describe('Internal name of the relation field (camelCase)'),
+        label: z.string().describe('Display label of the relation field'),
+        description: z
+          .string()
+          .optional()
+          .describe('Description of the relation field'),
+        icon: z
+          .string()
+          .optional()
+          .describe('Icon identifier for the relation field'),
+        type: z
+          .nativeEnum(RelationType)
+          .describe('Relation type: MANY_TO_ONE or ONE_TO_MANY'),
+        targetObjectMetadataId: z
+          .string()
+          .uuid()
+          .describe('ID of the target object this relation points to'),
+        targetFieldLabel: z
+          .string()
+          .describe(
+            'Display label for the inverse relation field on the target object',
+          ),
+        targetFieldIcon: z
+          .string()
+          .describe('Icon for the inverse relation field (e.g. IconSomething)'),
+      }),
+    )
+    .min(1)
+    .max(20)
+    .describe('Array of relation fields to create (1-20 items).'),
 });
 
 @Injectable()
@@ -315,6 +357,53 @@ export class FieldMetadataToolsFactory {
                 });
               }),
             );
+
+            return true;
+          } catch (error) {
+            if (error instanceof WorkspaceMigrationBuilderException) {
+              throw new Error(formatValidationErrors(error));
+            }
+            throw error;
+          }
+        },
+      },
+      create_many_relation_fields: {
+        description:
+          'Create multiple relation fields between objects at once. This is the recommended way to add relations after creating objects and non-relation fields. Each item specifies the source object, target object, relation type, and labels for both sides of the relation.',
+        inputSchema: CreateManyRelationFieldsInputSchema,
+        execute: async (parameters: {
+          relations: Array<{
+            objectMetadataId: string;
+            name: string;
+            label: string;
+            description?: string;
+            icon?: string;
+            type: RelationType;
+            targetObjectMetadataId: string;
+            targetFieldLabel: string;
+            targetFieldIcon: string;
+          }>;
+        }) => {
+          try {
+            await this.fieldMetadataService.createManyFields({
+              createFieldInputs: parameters.relations.map((relation) => ({
+                objectMetadataId: relation.objectMetadataId,
+                type: FieldMetadataType.RELATION,
+                name: relation.name,
+                label: relation.label,
+                description: relation.description,
+                icon: relation.icon,
+                relationCreationPayload: {
+                  type: relation.type,
+                  targetObjectMetadataId: relation.targetObjectMetadataId,
+                  targetFieldLabel: relation.targetFieldLabel,
+                  targetFieldIcon: relation.targetFieldIcon,
+                },
+              })) as Parameters<
+                typeof this.fieldMetadataService.createManyFields
+              >[0]['createFieldInputs'],
+              workspaceId,
+            });
 
             return true;
           } catch (error) {

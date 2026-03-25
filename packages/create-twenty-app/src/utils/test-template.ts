@@ -45,7 +45,6 @@ export default defineConfig({
     include: ['src/**/*.integration-test.ts'],
     setupFiles: ['src/__tests__/setup-test.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:3000',
       TWENTY_API_KEY:
         '${SEED_API_KEY}',
     },
@@ -94,7 +93,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
 const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
 
 const assertServerIsReachable = async () => {
@@ -120,12 +119,13 @@ beforeAll(async () => {
   fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
 
   const configFile = {
-    profiles: {
-      default: {
+    remotes: {
+      local: {
         apiUrl: process.env.TWENTY_API_URL,
         apiKey: process.env.TWENTY_API_KEY,
       },
     },
+    defaultRemote: 'local',
   };
 
   fs.writeFileSync(
@@ -149,18 +149,17 @@ const createIntegrationTest = async ({
   fileName: string;
 }) => {
   const content = `import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
-import { appBuild, appUninstall } from 'twenty-sdk/cli';
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const APP_PATH = process.cwd();
 
 describe('App installation', () => {
-  let appInstalled = false;
-
   beforeAll(async () => {
     const buildResult = await appBuild({
       appPath: APP_PATH,
+      tarball: true,
       onProgress: (message: string) => console.log(\`[build] \${message}\`),
     });
 
@@ -170,14 +169,27 @@ describe('App installation', () => {
       );
     }
 
-    appInstalled = true;
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(\`[deploy] \${message}\`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(
+        \`Deploy failed: \${deployResult.error?.message ?? 'Unknown error'}\`,
+      );
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(
+        \`Install failed: \${installResult.error?.message ?? 'Unknown error'}\`,
+      );
+    }
   });
 
   afterAll(async () => {
-    if (!appInstalled) {
-      return;
-    }
-
     const uninstallResult = await appUninstall({ appPath: APP_PATH });
 
     if (!uninstallResult.success) {
@@ -257,7 +269,7 @@ jobs:
         run: yarn test
         env:
           TWENTY_API_URL: \${{ steps.twenty.outputs.server-url }}
-          TWENTY_TEST_API_KEY: \${{ steps.twenty.outputs.access-token }}
+          TWENTY_API_KEY: \${{ steps.twenty.outputs.access-token }}
 `;
 
   const workflowDir = join(appDirectory, '.github', 'workflows');

@@ -1,10 +1,17 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useEffect } from 'react';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { MockLink } from '@apollo/client/testing';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import gql from 'graphql-tag';
 import { expect, userEvent, within } from 'storybook/test';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -43,8 +50,21 @@ const mocks = [
 const mockLink = new MockLink(mocks);
 const mockApolloCoreClient = new ApolloClient({
   link: mockLink,
-  cache: new InMemoryCache({ addTypename: false }),
+  cache: new InMemoryCache(),
 });
+
+const SelectedRecordsSeedDecorator: Decorator = (Story) => {
+  const setNumberOfSelectedRecords = useSetAtomComponentState(
+    contextStoreNumberOfSelectedRecordsComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  useEffect(() => {
+    setNumberOfSelectedRecords(3);
+  }, [setNumberOfSelectedRecords]);
+
+  return <Story />;
+};
 
 const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
   title:
@@ -65,6 +85,7 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
         </CommandMenuContext.Provider>
       </ApolloCoreClientContext.Provider>
     ),
+    SelectedRecordsSeedDecorator,
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,

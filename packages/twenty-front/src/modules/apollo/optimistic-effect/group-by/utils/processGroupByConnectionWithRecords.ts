@@ -1,13 +1,13 @@
 import { doesRecordBelongToGroup } from '@/apollo/optimistic-effect/group-by/utils/doesRecordBelongToGroup';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { createCacheEdgeWithRecordRef } from '@/object-record/cache/utils/createCacheEdgeWithRecordRef';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import {
-  type ReadFieldFunction,
-  type ToReferenceFunction,
-} from '@apollo/client/cache/core/types/common';
+import { type FieldFunctionOptions } from '@apollo/client/cache';
+
+type ReadFieldFunction = FieldFunctionOptions['readField'];
+type ToReferenceFunction = FieldFunctionOptions['toReference'];
 import { isDefined } from 'twenty-shared/utils';
 
 type ProcessGroupByConnectionWithRecordsArgs = {
@@ -26,7 +26,7 @@ type ProcessGroupByConnectionWithRecordsArgs = {
   groupByConfig?:
     | Array<Record<string, boolean | Record<string, string>>>
     | Record<string, boolean | Record<string, string>>;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   readField: ReadFieldFunction;
   toReference: ToReferenceFunction;
 };

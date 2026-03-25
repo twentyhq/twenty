@@ -4,7 +4,6 @@ import { getViewSortsToUpdate } from '@/views/utils/getViewSortsToUpdate';
 
 describe('getViewSortsToUpdate', () => {
   const baseSort: ViewSort = {
-    __typename: 'ViewSort',
     id: 'sort-1',
     fieldMetadataId: 'field-1',
     direction: ViewSortDirection.ASC,

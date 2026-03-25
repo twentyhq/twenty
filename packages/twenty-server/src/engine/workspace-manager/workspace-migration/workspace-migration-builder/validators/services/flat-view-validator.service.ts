@@ -149,6 +149,7 @@ export class FlatViewValidatorService {
     flatEntityToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
@@ -172,6 +173,34 @@ export class FlatViewValidatorService {
         message: t`View not found`,
         userFriendlyMessage: msg`View not found`,
       });
+
+      return validationResult;
+    }
+
+    const parentObjectStillExists = isDefined(
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: existingFlatView.objectMetadataUniversalIdentifier,
+        flatEntityMaps: optimisticFlatObjectMetadataMaps,
+      }),
+    );
+
+    if (parentObjectStillExists) {
+      const viewsForSameObject = Object.values(
+        optimisticFlatViewMaps.byUniversalIdentifier,
+      ).filter(
+        (view) =>
+          isDefined(view) &&
+          view.objectMetadataUniversalIdentifier ===
+            existingFlatView.objectMetadataUniversalIdentifier,
+      );
+
+      if (viewsForSameObject.length <= 1) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Cannot delete the only view for this object`,
+          userFriendlyMessage: msg`Cannot delete the only view for this object`,
+        });
+      }
     }
 
     return validationResult;

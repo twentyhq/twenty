@@ -1,0 +1,245 @@
+---
+title: Erste Schritte
+description: Erstellen Sie in wenigen Minuten Ihre erste Twenty-App.
+---
+
+<Warning>
+Apps befinden sich derzeit in der Alpha-Testphase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
+</Warning>
+
+Apps ermöglichen es Ihnen, Twenty mit benutzerdefinierten Objekten, Feldern, Logikfunktionen, KI-Fähigkeiten und UI-Komponenten zu erweitern — alles als Code verwaltet.
+
+**Was Sie heute tun können:**
+
+* Benutzerdefinierte Objekte und Felder als Code definieren (verwaltetes Datenmodell)
+* Erstellen Sie Logikfunktionen mit benutzerdefinierten Triggern (HTTP-Routen, cron, Datenbankereignisse)
+* Fähigkeiten für KI-Agenten definieren
+* Erstellen Sie Frontend-Komponenten, die in der Twenty-UI gerendert werden
+* Dieselbe App in mehreren Workspaces bereitstellen
+
+## Voraussetzungen
+
+* Node.js 24+ und Yarn 4
+* Docker (für den lokalen Twenty-Dev-Server)
+
+## Erste Schritte
+
+Erstellen Sie mit dem offiziellen Scaffolder eine neue App, authentifizieren Sie sich und beginnen Sie mit der Entwicklung:
+
+```bash filename="Terminal"
+# Scaffold a new app (includes all examples by default)
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
+
+# Start dev mode: automatically syncs local changes to your workspace
+yarn twenty dev
+```
+
+Das Scaffolding-Tool unterstützt zwei Modi, um zu steuern, welche Beispieldateien enthalten sind:
+
+```bash filename="Terminal"
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+npx create-twenty-app@latest my-app
+
+# Minimal: only core files (application-config.ts and default-role.ts)
+npx create-twenty-app@latest my-app --minimal
+```
+
+Von hier aus können Sie:
+
+```bash filename="Terminal"
+# Add a new entity to your application (guided)
+yarn twenty entity:add
+
+# Watch your application's function logs
+yarn twenty function:logs
+
+# Execute a function by name
+yarn twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute the pre-install function
+yarn twenty function:execute --preInstall
+
+# Execute the post-install function
+yarn twenty function:execute --postInstall
+
+# Uninstall the application from the current workspace
+yarn twenty uninstall
+
+# Display commands' help
+yarn twenty help
+```
+
+Siehe auch: die CLI-Referenzseiten für [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) und [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+
+## Projektstruktur (vom Scaffolder erzeugt)
+
+Wenn Sie `npx create-twenty-app@latest my-twenty-app` ausführen, erledigt der Scaffolder Folgendes:
+
+* Kopiert eine minimale Basisanwendung nach `my-twenty-app/`
+* Fügt eine lokale `twenty-sdk`-Abhängigkeit und die Yarn-4-Konfiguration hinzu
+* Erstellt Konfigurationsdateien und Skripte, die an die `twenty`-CLI angebunden sind
+* Erzeugt Kerndateien (Anwendungskonfiguration, Standardrolle für Logikfunktionen, Pre-Installations- und Post-Installationsfunktionen) sowie Beispieldateien entsprechend dem Scaffolding-Modus
+
+Eine frisch erstellte App mit dem Standardmodus `--exhaustive` sieht so aus:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  yarn.lock
+  .gitignore
+  .nvmrc
+  .yarnrc.yml
+  .yarn/
+    install-state.gz
+  .oxlintrc.json
+  tsconfig.json
+  README.md
+  public/                           # Public assets folder (images, fonts, etc.)
+  src/
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── objects/
+  │   └── example-object.ts             # Example custom object definition
+  ├── fields/
+  │   └── example-field.ts              # Example standalone field definition
+  ├── logic-functions/
+  │   ├── hello-world.ts                # Example logic function
+  │   ├── pre-install.ts                # Pre-install logic function
+  │   └── post-install.ts               # Post-install logic function
+  ├── front-components/
+  │   └── hello-world.tsx               # Example front component
+  ├── views/
+  │   └── example-view.ts                # Example saved view definition
+  ├── navigation-menu-items/
+  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
+  └── skills/
+      └── example-skill.ts                # Example AI agent skill definition
+```
+
+Mit `--minimal` werden nur die Kerndateien erstellt (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` und `logic-functions/post-install.ts`).
+
+Auf hoher Ebene:
+
+* **package.json**: Deklariert den App-Namen, die Version und die Engines (Node 24+, Yarn 4) und fügt `twenty-sdk` sowie ein `twenty`-Skript hinzu, das an die lokale `twenty`-CLI delegiert. Führen Sie `yarn twenty help` aus, um alle verfügbaren Befehle aufzulisten.
+* **.gitignore**: Ignoriert übliche Artefakte wie `node_modules`, `.yarn`, `generated/` (typisierter Client), `dist/`, `build/`, Coverage-Ordner, Logdateien und `.env*`-Dateien.
+* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Fixieren und konfigurieren die vom Projekt verwendete Yarn-4-Toolchain.
+* **.nvmrc**: Legt die vom Projekt erwartete Node.js-Version fest.
+* **.oxlintrc.json** und **tsconfig.json**: Stellen Linting und TypeScript-Konfiguration für die TypeScript-Quellen Ihrer App bereit.
+* **README.md**: Ein kurzes README im App-Root mit grundlegenden Anweisungen.
+* **public/**: Ein Ordner zum Speichern öffentlicher Assets (Bilder, Schriftarten, statische Dateien), die zusammen mit Ihrer Anwendung bereitgestellt werden. Hier abgelegte Dateien werden während der Synchronisierung hochgeladen und sind zur Laufzeit zugänglich.
+* **src/**: Der Hauptort, an dem Sie Ihre Anwendung als Code definieren
+
+### Entitätserkennung
+
+Das SDK erkennt Entitäten, indem es Ihre TypeScript-Dateien nach Aufrufen von **`export default define<Entity>({...})`** parst. Für jeden Entitätstyp gibt es eine entsprechende Hilfsfunktion, die aus `twenty-sdk` exportiert wird:
+
+| Hilfsfunktion                    | Entitätstyp                                                              |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| `defineObject`                   | Benutzerdefinierte Objektdefinitionen                                    |
+| `defineLogicFunction`            | Definitionen von Logikfunktionen                                         |
+| `definePreInstallLogicFunction`  | Pre-Installations-Logikfunktion (wird vor der Installation ausgeführt)   |
+| `definePostInstallLogicFunction` | Post-Installations-Logikfunktion (wird nach der Installation ausgeführt) |
+| `defineFrontComponent`           | Definitionen von Frontend-Komponenten                                    |
+| `defineRole`                     | Rollendefinitionen                                                       |
+| `defineField`                    | Felderweiterungen für bestehende Objekte                                 |
+| `defineView`                     | Gespeicherte View-Definitionen                                           |
+| `defineNavigationMenuItem`       | Definitionen von Navigationsmenüeinträgen                                |
+| `defineSkill`                    | Skill-Definitionen für KI-Agenten                                        |
+
+<Note>
+**Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.
+</Note>
+
+Beispiel für eine erkannte Entität:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
+
+Spätere Befehle fügen weitere Dateien und Ordner hinzu:
+
+* `yarn twenty dev` generiert automatisch zwei typisierte API-Clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (für Arbeitsbereichsdaten über `/graphql`) und `MetadataApiClient` (für Arbeitsbereichskonfiguration und Datei-Uploads über `/metadata`).
+* `yarn twenty entity:add` fügt unter `src/` Entitätsdefinitionsdateien für Ihre benutzerdefinierten Objekte, Funktionen, Frontend-Komponenten, Rollen, Skills und mehr hinzu.
+
+## Authentifizierung
+
+Wenn Sie `yarn twenty auth:login` zum ersten Mal ausführen, werden Sie nach Folgendem gefragt:
+
+* API-URL (standardmäßig http://localhost:3000 oder Ihr aktuelles Workspace-Profil)
+* API-Schlüssel
+
+Ihre Anmeldedaten werden pro Benutzer in `~/.twenty/config.json` gespeichert. Sie können mehrere Profile verwalten und zwischen ihnen wechseln.
+
+### Arbeitsbereiche verwalten
+
+```bash filename="Terminal"
+# Login interactively (recommended)
+yarn twenty auth:login
+
+# Login to a specific workspace profile
+yarn twenty auth:login --workspace my-custom-workspace
+
+# List all configured workspaces
+yarn twenty auth:list
+
+# Switch the default workspace (interactive)
+yarn twenty auth:switch
+
+# Switch to a specific workspace
+yarn twenty auth:switch production
+
+# Check current authentication status
+yarn twenty auth:status
+```
+
+Sobald Sie mit `yarn twenty auth:switch` den Arbeitsbereich gewechselt haben, verwenden alle nachfolgenden Befehle standardmäßig diesen Arbeitsbereich. Sie können es weiterhin vorübergehend mit `--workspace <name>` überschreiben.
+
+## Manuelle Einrichtung (ohne Scaffolder)
+
+Wir empfehlen zwar `create-twenty-app` für das beste Einstiegserlebnis, Sie können ein Projekt aber auch manuell einrichten. Installieren Sie die CLI nicht global. Fügen Sie stattdessen `twenty-sdk` als lokale Abhängigkeit hinzu und binden Sie ein einzelnes Skript in Ihrer package.json ein:
+
+```bash filename="Terminal"
+yarn add -D twenty-sdk
+```
+
+Fügen Sie dann ein `twenty`-Skript hinzu:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+Jetzt können Sie alle Befehle über `yarn twenty <command>` ausführen, z. B. `yarn twenty dev`, `yarn twenty help` usw.
+
+## So verwenden Sie eine lokale Twenty-Instanz
+
+Wenn Sie bereits lokal eine Twenty-Instanz ausführen (z. B. über `npx nx start twenty-server`), können Sie sich damit verbinden, anstatt Docker zu verwenden:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
+
+## Fehlerbehebung
+
+* Authentifizierungsfehler: Führen Sie `yarn twenty auth:login` aus und stellen Sie sicher, dass Ihr API-Schlüssel die erforderlichen Berechtigungen hat.
+* Verbindung zum Server nicht möglich: Überprüfen Sie die API-URL und dass der Twenty-Server erreichbar ist.
+* Typen oder Client fehlen oder sind veraltet: Starten Sie `yarn twenty dev` neu — der typisierte Client wird automatisch generiert.
+* Dev-Modus synchronisiert nicht: Stellen Sie sicher, dass `yarn twenty dev` läuft und dass Änderungen von Ihrer Umgebung nicht ignoriert werden.
+
+Discord-Hilfekanal: https://discord.com/channels/1130383047699738754/1130386664812982322
