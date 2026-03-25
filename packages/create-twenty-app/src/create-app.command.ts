@@ -29,7 +29,6 @@ type CreateAppOptions = {
   displayName?: string;
   description?: string;
   skipLocalInstance?: boolean;
-  port?: number;
 };
 
 export class CreateAppCommand {
@@ -64,7 +63,6 @@ export class CreateAppCommand {
 
       if (!options.skipLocalInstance) {
         const startResult = await serverStart({
-          port: options.port,
           onProgress: (message: string) => console.log(chalk.gray(message)),
         });
 

@@ -339,13 +339,9 @@ Notes:
 
 ## How to use a local Twenty instance
 
-If you're already running a local Twenty instance, you can connect to it instead of using Docker. Pass the port your local server is listening on (default: `3000`):
+If you're already running a local Twenty instance, you can connect to it instead of using Docker:
 
 ```bash
-# During scaffolding
-npx create-twenty-app@latest my-app --port 3000
-
-# Or after scaffolding
 twenty remote add --local --port 3000
 ```
 

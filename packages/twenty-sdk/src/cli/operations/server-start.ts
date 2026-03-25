@@ -71,18 +71,6 @@ const innerServerStart = async (
     };
   }
 
-  if (options.port) {
-    return {
-      success: false,
-      error: {
-        code: SERVER_ERROR_CODES.SERVER_NOT_FOUND,
-        message:
-          `No Twenty server found on port ${options.port}.\n` +
-          'Start your server and run `yarn twenty remote add --local` manually.',
-      },
-    };
-  }
-
   if (!checkDockerRunning()) {
     return {
       success: false,
@@ -123,7 +111,7 @@ const innerServerStart = async (
     return { success: true, data: { port, url } };
   }
 
-  let port = DEFAULT_PORT;
+  let port = options.port ?? DEFAULT_PORT;
 
   if (containerExists()) {
     const existingPort = getContainerPort();

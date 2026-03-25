@@ -11,17 +11,6 @@ import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
 
-const validatePort = (value: string): number => {
-  const port = parseInt(value, 10);
-
-  if (isNaN(port) || port < 1 || port > 65535) {
-    console.error(chalk.red('Invalid port number.'));
-    process.exit(1);
-  }
-
-  return port;
-};
-
 export const registerServerCommands = (program: Command): void => {
   const server = program
     .command('server')
@@ -32,7 +21,12 @@ export const registerServerCommands = (program: Command): void => {
     .description('Start a local Twenty server')
     .option('-p, --port <port>', 'HTTP port', String(DEFAULT_PORT))
     .action(async (options: { port: string }) => {
-      const port = validatePort(options.port);
+      const port = parseInt(options.port, 10);
+
+      if (isNaN(port) || port < 1 || port > 65535) {
+        console.error(chalk.red('Invalid port number.'));
+        process.exit(1);
+      }
 
       const result = await serverStart({
         port,
