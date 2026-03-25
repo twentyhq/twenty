@@ -26,7 +26,6 @@ export type OrganizeActionsProps = {
 type SidePanelEditOrganizeActionsProps = OrganizeActionsProps & {
   showMoveToFolder?: boolean;
   onMoveToFolder?: () => void;
-  moveToFolderHasSubMenu?: boolean;
 };
 
 export const SidePanelEditOrganizeActions = ({
@@ -39,7 +38,6 @@ export const SidePanelEditOrganizeActions = ({
   onAddAfter,
   showMoveToFolder = false,
   onMoveToFolder,
-  moveToFolderHasSubMenu = false,
 }: SidePanelEditOrganizeActionsProps) => {
   const { t } = useLingui();
 
@@ -78,7 +76,7 @@ export const SidePanelEditOrganizeActions = ({
             Icon={IconFolderSymlink}
             label={t`Move to folder`}
             id={SidePanelNavigationItemActions.MOVE_TO_FOLDER}
-            hasSubMenu={moveToFolderHasSubMenu}
+            hasSubMenu
             onClick={onMoveToFolder}
           />
         </SelectableListItem>

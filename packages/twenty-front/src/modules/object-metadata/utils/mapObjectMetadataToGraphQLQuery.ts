@@ -65,9 +65,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       }
 
       if (!isDefined(fieldMetadata.morphRelations)) {
-        throw new Error(
-          `Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
-        );
+        return [];
       }
 
       return fieldMetadata.morphRelations.map((morphRelation) => ({
@@ -100,9 +98,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }
 
     if (!isDefined(fieldMetadata.morphRelations)) {
-      throw new Error(
-        `Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
-      );
+      return [];
     }
 
     return fieldMetadata.morphRelations.map((morphRelation) => ({

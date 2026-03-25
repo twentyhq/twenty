@@ -1,6 +1,7 @@
 import { type EntityManager } from 'typeorm';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { QUICK_LEAD_WORKFLOW_VERSION_ID } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -52,7 +53,7 @@ export const prefillWorkflowCommandMenuItems = async (
         applicationId: applicationRow.app_id,
         workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
         frontComponentId: null,
-        engineComponentKey: null,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Quick Lead',
         icon: 'IconUserPlus',
         shortLabel: 'Quick Lead',

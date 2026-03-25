@@ -16,7 +16,7 @@ import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/us
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
 import {
   type NavigationMenuItemClickParams,
@@ -52,9 +52,9 @@ export const WorkspaceSection = () => {
     isLayoutCustomizationModeEnabledState,
   );
   const [
-    selectedNavigationMenuItemInEditMode,
-    setSelectedNavigationMenuItemInEditMode,
-  ] = useAtomState(selectedNavigationMenuItemInEditModeState);
+    selectedNavigationMenuItemIdInEditMode,
+    setSelectedNavigationMenuItemIdInEditMode,
+  ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const setOpenNavigationMenuItemFolderIds = useSetAtomState(
     openNavigationMenuItemFolderIdsState,
   );
@@ -133,7 +133,7 @@ export const WorkspaceSection = () => {
     params: NavigationMenuItemClickParams,
   ) => {
     const { item, objectMetadataItem } = params;
-    setSelectedNavigationMenuItemInEditMode(item.id);
+    setSelectedNavigationMenuItemIdInEditMode(item.id);
 
     switch (item.type) {
       case NavigationMenuItemType.FOLDER:
@@ -155,7 +155,7 @@ export const WorkspaceSection = () => {
     navigationMenuItemId: string,
   ) => {
     enterLayoutCustomizationMode();
-    setSelectedNavigationMenuItemInEditMode(navigationMenuItemId);
+    setSelectedNavigationMenuItemIdInEditMode(navigationMenuItemId);
     openNavigationMenuItemInSidePanel({
       pageTitle: objectMetadataItem.labelSingular,
       pageIcon: getIcon(objectMetadataItem.icon),
@@ -197,7 +197,7 @@ export const WorkspaceSection = () => {
           )}
         </StyledRightIconsContainer>
       }
-      selectedNavigationMenuItemId={selectedNavigationMenuItemInEditMode}
+      selectedNavigationMenuItemId={selectedNavigationMenuItemIdInEditMode}
       onNavigationMenuItemClick={
         isLayoutCustomizationModeEnabled
           ? handleNavigationMenuItemClick

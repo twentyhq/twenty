@@ -3,13 +3,12 @@ import { Avatar, IconFolder, useIcons } from 'twenty-ui/display';
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/edit/record/hooks/useAddRecordToNavigationMenuDraft';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/types/add-to-navigation-drag-payload';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import {
   CoreObjectNameSingular,
   NavigationMenuItemType,
@@ -25,23 +24,19 @@ type SearchRecord = {
 type SidePanelNewSidebarItemRecordItemProps = {
   record: SearchRecord;
   dragIndex?: number;
-  disableDrag?: boolean;
 };
 
 export const SidePanelNewSidebarItemRecordItem = ({
   record,
   dragIndex,
-  disableDrag = false,
 }: SidePanelNewSidebarItemRecordItemProps) => {
   const { getIcon } = useIcons();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
-  );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
-  );
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -66,10 +61,10 @@ export const SidePanelNewSidebarItemRecordItem = ({
         imageUrl: record.imageUrl,
       },
       currentDraft,
-      addMenuItemInsertionContext?.targetFolderId ?? null,
-      addMenuItemInsertionContext?.targetIndex,
+      pendingInsertionNavigationMenuItem?.folderId ?? null,
+      pendingInsertionNavigationMenuItem?.position,
     );
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
       pageTitle: record.label,
@@ -101,7 +96,6 @@ export const SidePanelNewSidebarItemRecordItem = ({
         id={record.recordId}
         onClick={handleSelectRecord}
         dragIndex={dragIndex}
-        disableDrag={disableDrag}
         payload={recordPayload}
       />
     </SelectableListItem>

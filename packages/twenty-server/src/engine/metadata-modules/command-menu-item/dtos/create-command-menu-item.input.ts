@@ -27,9 +27,9 @@ export class CreateCommandMenuItemInput {
   frontComponentId?: string;
 
   @IsEnum(EngineComponentKey)
-  @IsOptional()
-  @Field(() => EngineComponentKey, { nullable: true })
-  engineComponentKey?: EngineComponentKey;
+  @IsNotEmpty()
+  @Field(() => EngineComponentKey)
+  engineComponentKey: EngineComponentKey;
 
   @IsString()
   @IsNotEmpty()

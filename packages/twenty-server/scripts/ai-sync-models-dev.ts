@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as prettier from 'prettier';
 
 import {
   type AiSdkPackage,
@@ -331,7 +332,14 @@ const main = async (): Promise<void> => {
     'ai-providers.json',
   );
 
-  fs.writeFileSync(outputPath, json, 'utf-8');
+  const prettierConfig = await prettier.resolveConfig(outputPath);
+
+  const formatted = await prettier.format(json, {
+    ...prettierConfig,
+    filepath: outputPath,
+  });
+
+  fs.writeFileSync(outputPath, formatted, 'utf-8');
   // oxlint-disable-next-line no-console
   console.log(`Wrote ${outputPath}`);
 };

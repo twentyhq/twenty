@@ -28,13 +28,13 @@ description: Распространяйте своё приложение Twenty
 1. **Соберите приложение** — CLI компилирует исходные файлы TypeScript и генерирует манифест приложения:
 
 ```bash filename="Terminal"
-yarn twenty app:build
+yarn twenty build
 ```
 
 2. **Опубликуйте в npm** — отправьте собранный пакет в реестр npm:
 
 ```bash filename="Terminal"
-npx twenty app:publish
+npx twenty publish
 ```
 
 ### Автоматическое обнаружение
@@ -65,14 +65,14 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty app:build
+      - run: npx twenty build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-Для других CI-систем (GitLab CI, CircleCI и др.) применимы те же три команды: `yarn install`, `npx twenty app:build`, затем `npm publish` из `.twenty/output`.
+Для других CI-систем (GitLab CI, CircleCI и др.) применимы те же три команды: `yarn install`, `npx twenty build`, затем `npm publish` из `.twenty/output`.
 
 <Tip>
 **npm provenance** — опционально, но рекомендуется. Публикация с флагом `--provenance` добавляет к вашему пакету в npm значок доверия, позволяя пользователям проверить, что пакет был собран из конкретного коммита в общедоступном конвейере CI. См. инструкции по настройке в [документации по npm provenance](https://docs.npmjs.com/generating-provenance-statements).
@@ -87,7 +87,7 @@ jobs:
 Соберите приложение и разверните его на конкретном сервере одним шагом:
 
 ```bash filename="Terminal"
-npx twenty app:publish --server <server-url>
+npx twenty publish --server <server-url>
 ```
 
 Любое рабочее пространство на этом сервере сможет установить и обновить приложение на странице настроек **Applications**.
@@ -97,7 +97,7 @@ npx twenty app:publish --server <server-url>
 Чтобы выпустить обновление:
 
 1. Обновите значение поля `version` в файле `package.json`
-2. Отправьте новый tarball командой `npx twenty app:publish --server <server-url>`
+2. Отправьте новый tarball командой `npx twenty publish --server <server-url>`
 3. Рабочие пространства на этом сервере увидят доступное обновление в своих настройках
 
 <Note>
@@ -110,7 +110,7 @@ Twenty группирует приложения в три категории в
 
 | Категория        | Как это работает                                                                                                                               | Отображается в маркетплейсе? |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| **Разработка**   | Локальные приложения в режиме разработки, запущенные через `yarn twenty app:dev`. Используются для сборки и тестирования.                      | Нет                          |
+| **Разработка**   | Локальные приложения в режиме разработки, запущенные через `yarn twenty dev`. Используются для сборки и тестирования.                          | Нет                          |
 | **Опубликовано** | Приложения, опубликованные в npm с префиксом `twenty-app-`. Отображаются в маркетплейсе, доступные для установки любому рабочему пространству. | Да                           |
 | **Внутренний**   | Приложения, развернутые через tarball на конкретном сервере. Доступны только рабочим пространствам на этом сервере.                            | Нет                          |
 

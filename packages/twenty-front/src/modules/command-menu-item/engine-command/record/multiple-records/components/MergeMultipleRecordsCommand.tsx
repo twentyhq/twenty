@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MergeMultipleRecordsCommand = () => {
   const { objectMetadataItem, selectedRecords } =
-    useMountedEngineCommandContext();
+    useHeadlessCommandContextApi();
 
   const selectedRecordIds = selectedRecords.map((record) => record.id);
 

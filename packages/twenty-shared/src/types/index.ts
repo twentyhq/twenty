@@ -174,6 +174,7 @@ export type {
   BarChartConfiguration,
   LineChartConfiguration,
   ViewConfiguration,
+  RecordTableConfiguration,
   FieldConfiguration,
   FieldsConfiguration,
   FieldRichTextConfiguration,
