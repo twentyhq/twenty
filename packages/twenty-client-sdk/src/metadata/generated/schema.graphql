@@ -4090,6 +4090,7 @@ input UpdateObjectPayload {
   labelIdentifierFieldMetadataId: UUID
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
+  isSearchable: Boolean
 }
 
 input UpdateViewFieldInput {
