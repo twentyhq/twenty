@@ -44,9 +44,7 @@ export const SettingsSkillTableRow = ({
         overflow="hidden"
       >
         <StyledIconContainer>
-          {/* TODO: remove hardcoded color */}
-          {/* cant fgure out what this color is from figma*/}
-          <Icon size={theme.icon.size.md} color="#0091FF" />
+          <Icon size={theme.icon.size.md} color={theme.color.blue9} />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={skill.label} />
       </TableCell>
