@@ -1,4 +1,5 @@
 import { CoatApprovalActions } from '@/coat-approval/components/CoatApprovalActions';
+import { CoatEditableField } from '@/coat-approval/components/CoatEditableField';
 import { type CoatContractRecord } from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
@@ -258,20 +259,9 @@ const hasNonEmptySpecialAgreements = (value: string | null): boolean => {
 export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
   const exportStatusColor = getExportStatusColor(contract.coatExportStatus);
   const productBadge = getProductBadge(contract.program);
-  const customerName = [contract.customerFirstName, contract.customerLastName]
-    .filter(Boolean)
-    .join(' ');
   const showSpecialAgreementsWarning = hasNonEmptySpecialAgreements(
     contract.specialAgreements,
   );
-
-  // Build full address string
-  const addressParts = [
-    contract.customerStreet,
-    [contract.customerPostcode, contract.customerCity].filter(Boolean).join(' '),
-    contract.customerCountry,
-  ].filter(Boolean);
-  const fullAddress = addressParts.length > 0 ? addressParts.join(', ') : null;
 
   return (
     <StyledDetailContainer>
@@ -318,11 +308,23 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
 
             <StyledInfoLabel>Start Date</StyledInfoLabel>
             <StyledInfoValue>
-              {formatDate(contract.startDate)}
+              <CoatEditableField
+                fieldName="startDate"
+                value={contract.startDate}
+                objectId={contract.id}
+                type="date"
+              />
             </StyledInfoValue>
 
             <StyledInfoLabel>End Date</StyledInfoLabel>
-            <StyledInfoValue>{formatDate(contract.endDate)}</StyledInfoValue>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="endDate"
+                value={contract.endDate}
+                objectId={contract.id}
+                type="date"
+              />
+            </StyledInfoValue>
 
             <StyledInfoLabel>Completion Date</StyledInfoLabel>
             <StyledInfoValue>
@@ -340,13 +342,16 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
             <StyledInfoValue>{renderValue(contract.program)}</StyledInfoValue>
 
             <StyledInfoLabel>Program ID</StyledInfoLabel>
-            <StyledInfoValue>
-              {renderValue(contract.programId)}
-            </StyledInfoValue>
+            <StyledInfoValue>{renderValue(contract.programId)}</StyledInfoValue>
 
             <StyledInfoLabel>Value</StyledInfoLabel>
             <StyledInfoValue>
-              {formatCurrency(contract.valueGrossBase, contract.currencyBase)}
+              <CoatEditableField
+                fieldName="valueGrossBase"
+                value={contract.valueGrossBase}
+                objectId={contract.id}
+                type="number"
+              />
             </StyledInfoValue>
 
             <StyledInfoLabel>Closer</StyledInfoLabel>
@@ -355,51 +360,102 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
             </StyledInfoValue>
 
             <StyledInfoLabel>Bexio ID</StyledInfoLabel>
-            <StyledInfoValue>
-              {renderValue(contract.bexioId)}
-            </StyledInfoValue>
+            <StyledInfoValue>{renderValue(contract.bexioId)}</StyledInfoValue>
           </StyledInfoGrid>
         </StyledSection>
 
         <StyledSection>
           <StyledSectionTitle>Customer Info</StyledSectionTitle>
           <StyledInfoGrid>
-            <StyledInfoLabel>Name</StyledInfoLabel>
+            <StyledInfoLabel>First Name</StyledInfoLabel>
             <StyledInfoValue>
-              {customerName || (
-                <StyledEmptyText>Not available</StyledEmptyText>
-              )}
+              <CoatEditableField
+                fieldName="customerFirstName"
+                value={contract.customerFirstName}
+                objectId={contract.id}
+              />
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Last Name</StyledInfoLabel>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="customerLastName"
+                value={contract.customerLastName}
+                objectId={contract.id}
+              />
             </StyledInfoValue>
 
             <StyledInfoLabel>Email</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.customerEmail)}
+              <CoatEditableField
+                fieldName="customerEmail"
+                value={contract.customerEmail}
+                objectId={contract.id}
+              />
             </StyledInfoValue>
 
             <StyledInfoLabel>Phone</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.customerPhone)}
+              <CoatEditableField
+                fieldName="customerPhone"
+                value={contract.customerPhone}
+                objectId={contract.id}
+              />
             </StyledInfoValue>
 
             <StyledInfoLabel>Gender</StyledInfoLabel>
             <StyledInfoValue>
-              {renderValue(contract.customerGender)}
+              <CoatEditableField
+                fieldName="customerGender"
+                value={contract.customerGender}
+                objectId={contract.id}
+              />
             </StyledInfoValue>
 
             <StyledInfoLabel>Birthday</StyledInfoLabel>
             <StyledInfoValue>
-              {isDefined(contract.customerBirthday)
-                ? formatDate(contract.customerBirthday)
-                : renderValue(null)}
+              <CoatEditableField
+                fieldName="customerBirthday"
+                value={contract.customerBirthday}
+                objectId={contract.id}
+                type="date"
+              />
             </StyledInfoValue>
 
-            <StyledInfoLabel>Address</StyledInfoLabel>
+            <StyledInfoLabel>Street</StyledInfoLabel>
             <StyledInfoValue>
-              {isDefined(fullAddress) ? (
-                fullAddress
-              ) : (
-                <StyledEmptyText>Not available</StyledEmptyText>
-              )}
+              <CoatEditableField
+                fieldName="customerStreet"
+                value={contract.customerStreet}
+                objectId={contract.id}
+              />
+            </StyledInfoValue>
+
+            <StyledInfoLabel>City</StyledInfoLabel>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="customerCity"
+                value={contract.customerCity}
+                objectId={contract.id}
+              />
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Postcode</StyledInfoLabel>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="customerPostcode"
+                value={contract.customerPostcode}
+                objectId={contract.id}
+              />
+            </StyledInfoValue>
+
+            <StyledInfoLabel>Country</StyledInfoLabel>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="customerCountry"
+                value={contract.customerCountry}
+                objectId={contract.id}
+              />
             </StyledInfoValue>
           </StyledInfoGrid>
         </StyledSection>
@@ -410,6 +466,17 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
             <StyledInfoLabel>Contract Value</StyledInfoLabel>
             <StyledInfoValue>
               {formatCurrency(contract.valueGrossBase, contract.currencyBase)}
+            </StyledInfoValue>
+          </StyledInfoGrid>
+
+          <StyledInfoGrid>
+            <StyledInfoLabel>Payment Terms</StyledInfoLabel>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="paymentTerms"
+                value={contract.paymentTerms}
+                objectId={contract.id}
+              />
             </StyledInfoValue>
           </StyledInfoGrid>
 
@@ -437,14 +504,24 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
           )}
         </StyledSection>
 
-        {showSpecialAgreementsWarning && (
-          <StyledSection>
-            <StyledSectionTitle>Special Agreements</StyledSectionTitle>
+        <StyledSection>
+          <StyledSectionTitle>Special Agreements</StyledSectionTitle>
+          {showSpecialAgreementsWarning && (
             <StyledSpecialAgreementsText>
               {contract.specialAgreements}
             </StyledSpecialAgreementsText>
-          </StyledSection>
-        )}
+          )}
+          <StyledInfoGrid>
+            <StyledInfoLabel>Edit</StyledInfoLabel>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="specialAgreements"
+                value={contract.specialAgreements}
+                objectId={contract.id}
+              />
+            </StyledInfoValue>
+          </StyledInfoGrid>
+        </StyledSection>
       </StyledDetailContent>
 
       <CoatApprovalActions
