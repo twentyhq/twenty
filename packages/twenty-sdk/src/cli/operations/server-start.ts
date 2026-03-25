@@ -1,4 +1,7 @@
-import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import {
+  SERVER_ERROR_CODES,
+  type CommandResult,
+} from '@/cli/types';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
 import {
@@ -72,7 +75,7 @@ const innerServerStart = async (
     return {
       success: false,
       error: {
-        code: APP_ERROR_CODES.BUILD_FAILED,
+        code: SERVER_ERROR_CODES.SERVER_NOT_FOUND,
         message:
           `No Twenty server found on port ${options.port}.\n` +
           'Start your server and run `yarn twenty remote add --local` manually.',
@@ -84,20 +87,40 @@ const innerServerStart = async (
     return {
       success: false,
       error: {
-        code: APP_ERROR_CODES.BUILD_FAILED,
+        code: SERVER_ERROR_CODES.DOCKER_NOT_RUNNING,
         message: 'Docker is not running. Please start Docker and try again.',
       },
     };
   }
 
   if (isContainerRunning()) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.BUILD_FAILED,
-        message: 'Container is running but not healthy yet.',
-      },
-    };
+    const port = getContainerPort();
+
+    onProgress?.('Container is running, waiting for it to become healthy...');
+
+    const healthy = await waitForHealthy(port);
+
+    if (!healthy) {
+      return {
+        success: false,
+        error: {
+          code: SERVER_ERROR_CODES.HEALTH_TIMEOUT,
+          message:
+            'Twenty server did not become healthy in time.\n' +
+            "Check: 'yarn twenty server logs'",
+        },
+      };
+    }
+
+    const url = `http://localhost:${port}`;
+    const configService = new ConfigService();
+
+    ConfigService.setActiveRemote('local');
+    await configService.setConfig({ apiUrl: url });
+
+    onProgress?.(`Server running on ${url}`);
+
+    return { success: true, data: { port, url } };
   }
 
   let port = DEFAULT_PORT;
@@ -140,7 +163,7 @@ const innerServerStart = async (
       return {
         success: false,
         error: {
-          code: APP_ERROR_CODES.BUILD_FAILED,
+          code: SERVER_ERROR_CODES.CONTAINER_START_FAILED,
           message: 'Failed to start Twenty container.',
         },
       };
@@ -155,7 +178,7 @@ const innerServerStart = async (
     return {
       success: false,
       error: {
-        code: APP_ERROR_CODES.BUILD_FAILED,
+        code: SERVER_ERROR_CODES.HEALTH_TIMEOUT,
         message:
           'Twenty server did not become healthy in time.\n' +
           "Check: 'yarn twenty server logs'",
@@ -177,4 +200,4 @@ const innerServerStart = async (
 export const serverStart = (
   options?: ServerStartOptions,
 ): Promise<CommandResult<ServerStartResult>> =>
-  runSafe(() => innerServerStart(options), APP_ERROR_CODES.BUILD_FAILED);
+  runSafe(() => innerServerStart(options), SERVER_ERROR_CODES.CONTAINER_START_FAILED);

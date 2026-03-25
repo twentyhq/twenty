@@ -31,6 +31,7 @@ export {
   APP_ERROR_CODES,
   AUTH_ERROR_CODES,
   FUNCTION_ERROR_CODES,
+  SERVER_ERROR_CODES,
 } from '@/cli/types';
 export type {
   AuthListRemote,
