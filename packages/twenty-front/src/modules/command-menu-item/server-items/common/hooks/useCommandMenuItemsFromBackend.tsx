@@ -1,6 +1,6 @@
 import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/components/FrontComponentCommandMenuItem';
 import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
-import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
+import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 
@@ -12,6 +12,7 @@ import {
 } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import {
   CommandMenuItemAvailabilityType,
@@ -136,13 +137,13 @@ export const useCommandMenuItemsFromBackend = (
 
   const hasRecordSelection = commandMenuContextApi.numberOfSelectedRecords >= 1;
 
-  const { commandMenuItems: allItems } = useCommandMenuItemsDraftState();
+  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
 
   const objectMatches = (item: CommandMenuItemFieldsFragment) =>
     !isDefined(item.availabilityObjectMetadataId) ||
     item.availabilityObjectMetadataId === currentObjectMetadataItemId;
 
-  const itemsWithObjectMatches = allItems.filter(objectMatches);
+  const itemsWithObjectMatches = commandMenuItems.filter(objectMatches);
 
   const buildCommandMenuItem = ({
     item,
