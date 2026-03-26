@@ -79,11 +79,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
-  const serverCommandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const serverItemsById = new Map(
-    serverCommandMenuItems.map((item) => [item.id, item]),
+    commandMenuItems.map((item) => [item.id, item]),
   );
-  const { commandMenuItems } = useCommandMenuItemsDraftState();
+  const { commandMenuItems: commandMenuItemsDraft } =
+    useCommandMenuItemsDraftState();
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
   const { reorderCommandMenuItemInDraft } = useReorderCommandMenuItemsInDraft();
   const { resetCommandMenuItemsDraft } = useResetCommandMenuItemsDraft();
@@ -98,7 +99,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
     commandMenuItemsInCurrentContext.map((item) => item.id).filter(isDefined),
   );
 
-  const contextualCommandMenuItems = commandMenuItems.filter((item) =>
+  const contextualCommandMenuItems = commandMenuItemsDraft.filter((item) =>
     contextualCommandMenuItemIds.has(item.id),
   );
 
