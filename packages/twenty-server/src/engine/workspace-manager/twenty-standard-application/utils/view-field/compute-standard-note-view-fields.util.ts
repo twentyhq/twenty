@@ -70,19 +70,6 @@ export const computeStandardNoteViewFields = (
     }),
 
     // noteRecordPageFields view fields
-    noteRecordPageFieldsTitle: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldName: 'title',
-        fieldName: 'title',
-        position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     noteRecordPageFieldsNoteTargets: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'note',
@@ -120,6 +107,86 @@ export const computeStandardNoteViewFields = (
         isVisible: true,
         size: 150,
         viewFieldGroupName: 'other',
+      },
+    }),
+    noteRecordPageFieldsBodyV2: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'bodyV2',
+        fieldName: 'bodyV2',
+        position: 0,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'additional',
+      },
+    }),
+    noteRecordPageFieldsUpdatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'updatedAt',
+        fieldName: 'updatedAt',
+        position: 2,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
+    noteRecordPageFieldsUpdatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'updatedBy',
+        fieldName: 'updatedBy',
+        position: 3,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'other',
+      },
+    }),
+    noteRecordPageFieldsAttachments: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'attachments',
+        fieldName: 'attachments',
+        position: 2,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    noteRecordPageFieldsTimelineActivities: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'note',
+        context: {
+          viewName: 'noteRecordPageFields',
+          viewFieldName: 'timelineActivities',
+          fieldName: 'timelineActivities',
+          position: 3,
+          isVisible: false,
+          size: 150,
+          viewFieldGroupName: 'general',
+        },
+      },
+    ),
+    noteRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'favorites',
+        fieldName: 'favorites',
+        position: 4,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'general',
       },
     }),
   };

@@ -69,19 +69,6 @@ export const computeStandardMessageFolderViewFields = (
       },
     }),
 
-    messageFolderRecordPageFieldsName: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'messageFolder',
-      context: {
-        viewName: 'messageFolderRecordPageFields',
-        viewFieldName: 'name',
-        fieldName: 'name',
-        position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     messageFolderRecordPageFieldsMessageChannel:
       createStandardViewFieldFlatMetadata({
         ...args,

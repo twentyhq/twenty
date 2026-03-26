@@ -11,11 +11,13 @@ export const computeFlatViewFieldsToCreate = ({
   viewUniversalIdentifier,
   flatApplication,
   labelIdentifierFieldMetadataUniversalIdentifier,
+  excludeLabelIdentifier = false,
 }: {
   flatApplication: FlatApplication;
   objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   viewUniversalIdentifier: string;
   labelIdentifierFieldMetadataUniversalIdentifier: string | null;
+  excludeLabelIdentifier?: boolean;
 }): UniversalFlatViewField[] => {
   const createdAt = new Date().toISOString();
   const defaultViewFields = objectFlatFieldMetadatas
@@ -27,6 +29,10 @@ export const computeFlatViewFieldsToCreate = ({
         // Include 'id' only if it's the label identifier (e.g., for junction tables)
         (field.name !== 'id' ||
           field.universalIdentifier ===
+            labelIdentifierFieldMetadataUniversalIdentifier) &&
+        // Exclude label identifier field when requested (e.g., for FIELDS_WIDGET views)
+        (!excludeLabelIdentifier ||
+          field.universalIdentifier !==
             labelIdentifierFieldMetadataUniversalIdentifier),
     )
     .map<UniversalFlatViewField>((field, index) => ({

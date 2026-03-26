@@ -81,19 +81,6 @@ export const computeStandardCalendarChannelViewFields = (
       },
     }),
 
-    calendarChannelRecordPageFieldsHandle: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'calendarChannel',
-      context: {
-        viewName: 'calendarChannelRecordPageFields',
-        viewFieldName: 'handle',
-        fieldName: 'handle',
-        position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     calendarChannelRecordPageFieldsConnectedAccount:
       createStandardViewFieldFlatMetadata({
         ...args,
