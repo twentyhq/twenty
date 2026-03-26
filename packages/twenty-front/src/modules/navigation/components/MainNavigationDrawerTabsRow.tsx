@@ -42,6 +42,7 @@ const StyledTabsPill = styled.div`
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[0.5]};
   height: ${themeCssVariables.spacing[7]};
   padding: 3px;
@@ -77,6 +78,14 @@ const StyledTabIcon = styled.div`
   height: ${themeCssVariables.spacing[5]};
   justify-content: center;
   width: ${themeCssVariables.spacing[5]};
+`;
+
+const StyledNewChatIcon = styled.div`
+  align-items: center;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  justify-content: center;
 `;
 
 const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
@@ -198,7 +207,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconHome
-                size={theme.icon.size.sm}
+                size={theme.icon.size.md}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
@@ -228,7 +237,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconComment
-                size={theme.icon.size.sm}
+                size={theme.icon.size.md}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
@@ -246,7 +255,12 @@ export const MainNavigationDrawerTabsRow = () => {
           onClick={handleNewChatClick}
           onKeyDown={handleNewChatKeyDown}
         >
-          <IconMessageCirclePlus size={theme.icon.size.md} />
+          <StyledNewChatIcon>
+            <IconMessageCirclePlus
+              size={theme.icon.size.md}
+              style={{ minWidth: theme.icon.size.md }}
+            />
+          </StyledNewChatIcon>
           {isExpanded && <OverflowingTextWithTooltip text={t`New chat`} />}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>
