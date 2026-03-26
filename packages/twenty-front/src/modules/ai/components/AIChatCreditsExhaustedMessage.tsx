@@ -1,66 +1,27 @@
 import { AIChatBanner } from '@/ai/components/AIChatBanner';
-import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconSparkles } from 'twenty-ui/display';
-import { useQuery } from '@apollo/client/react';
 import {
   PermissionFlagType,
   SubscriptionStatus,
-  BillingPortalSessionDocument,
 } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const AIChatCreditsExhaustedMessage = () => {
-  const { redirect } = useRedirect();
+  const navigateSettings = useNavigateSettings();
   const subscriptionStatus = useSubscriptionStatus();
-  const { endTrialPeriod, isLoading: isEndingTrial } =
-    useEndSubscriptionTrialPeriod();
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
     usePermissionFlagMap();
 
-  const { data: billingPortalData, loading: isBillingPortalLoading } = useQuery(
-    BillingPortalSessionDocument,
-    {
-      variables: {
-        returnUrlPath: getSettingsPath(SettingsPath.Billing),
-      },
-    },
-  );
-
-  const openBillingPortal = () => {
-    if (
-      isDefined(billingPortalData) &&
-      isDefined(billingPortalData.billingPortalSession.url)
-    ) {
-      redirect(billingPortalData.billingPortalSession.url);
-    }
+  const handleUpgradeClick = () => {
+    navigateSettings(SettingsPath.Billing);
   };
-
-  const handleUpgradeClick = async () => {
-    if (!isTrialing) {
-      openBillingPortal();
-      return;
-    }
-
-    setIsProcessing(true);
-    const result = await endTrialPeriod();
-    setIsProcessing(false);
-
-    if (!result.success) {
-      openBillingPortal();
-    }
-  };
-
-  const isLoading = isEndingTrial || isBillingPortalLoading || isProcessing;
 
   const message = hasPermissionToManageBilling
     ? isTrialing
@@ -79,8 +40,6 @@ export const AIChatCreditsExhaustedMessage = () => {
       buttonOnClick={
         hasPermissionToManageBilling ? handleUpgradeClick : undefined
       }
-      isButtonDisabled={isLoading}
-      isButtonLoading={isLoading}
     />
   );
 };

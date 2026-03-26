@@ -20,8 +20,10 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
-import { DEFAULT_FAST_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-fast-model.const';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -107,10 +109,6 @@ export class ClientConfigService {
         this.aiModelRegistryService.getDefaultSpeedModel();
       const defaultSpeedModelConfig =
         this.aiModelRegistryService.getModelConfig(defaultSpeedModel?.modelId);
-      const defaultSpeedModelLabel =
-        defaultSpeedModelConfig?.label ||
-        defaultSpeedModel?.modelId ||
-        'Default';
 
       const defaultPerformanceModel =
         this.aiModelRegistryService.getDefaultPerformanceModel();
@@ -118,23 +116,29 @@ export class ClientConfigService {
         this.aiModelRegistryService.getModelConfig(
           defaultPerformanceModel?.modelId,
         );
-      const defaultPerformanceModelLabel =
-        defaultPerformanceModelConfig?.label ||
-        defaultPerformanceModel?.modelId ||
-        'Default';
 
       aiModels.unshift(
         {
-          modelId: DEFAULT_SMART_MODEL,
-          label: `Best (${defaultPerformanceModelLabel})`,
-          sdkPackage: null,
+          modelId: AUTO_SELECT_SMART_MODEL_ID,
+          label:
+            defaultPerformanceModelConfig?.label ||
+            defaultPerformanceModel?.modelId ||
+            'Default',
+          modelFamily: defaultPerformanceModelConfig?.modelFamily,
+          providerName: defaultPerformanceModel?.providerName,
+          sdkPackage: defaultPerformanceModel?.sdkPackage ?? null,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
         },
         {
-          modelId: DEFAULT_FAST_MODEL,
-          label: `Best (${defaultSpeedModelLabel})`,
-          sdkPackage: null,
+          modelId: AUTO_SELECT_FAST_MODEL_ID,
+          label:
+            defaultSpeedModelConfig?.label ||
+            defaultSpeedModel?.modelId ||
+            'Default',
+          modelFamily: defaultSpeedModelConfig?.modelFamily,
+          providerName: defaultSpeedModel?.providerName,
+          sdkPackage: defaultSpeedModel?.sdkPackage ?? null,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
         },
