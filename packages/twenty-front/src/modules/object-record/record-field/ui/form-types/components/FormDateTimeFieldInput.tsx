@@ -232,9 +232,13 @@ export const FormDateTimeFieldInput = ({
     ? null
     : defaultValue === 'null' || defaultValue === '' || !isDefined(defaultValue)
       ? null
-      : Temporal.Instant.from(defaultValue).toZonedDateTimeISO(
-          timeZone ?? userTimezone,
-        );
+      : defaultValue.includes('T')
+        ? Temporal.Instant.from(defaultValue).toZonedDateTimeISO(
+            timeZone ?? userTimezone,
+          )
+        : Temporal.PlainDate.from(defaultValue).toZonedDateTime(
+            timeZone ?? userTimezone,
+          );
 
   return (
     <FormFieldInputContainer>
