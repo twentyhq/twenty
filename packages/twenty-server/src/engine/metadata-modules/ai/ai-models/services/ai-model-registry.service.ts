@@ -17,12 +17,15 @@ import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
-import { DEFAULT_FAST_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-fast-model.const';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
+import { isAutoSelectModelId } from 'twenty-shared/utils';
+
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
-import { isDefaultModelSentinel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-default-model-sentinel.util';
 import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
@@ -203,9 +206,9 @@ export class AiModelRegistryService {
   }
 
   getEffectiveModelConfig(modelId: string): AIModelConfig {
-    if (isDefaultModelSentinel(modelId)) {
+    if (isAutoSelectModelId(modelId)) {
       const defaultModel =
-        modelId === DEFAULT_FAST_MODEL
+        modelId === AUTO_SELECT_FAST_MODEL_ID
           ? this.getDefaultSpeedModel()
           : this.getDefaultPerformanceModel();
 
@@ -253,7 +256,7 @@ export class AiModelRegistryService {
   }
 
   isModelAdminAllowed(modelId: string): boolean {
-    if (isDefaultModelSentinel(modelId)) {
+    if (isAutoSelectModelId(modelId)) {
       return true;
     }
 
@@ -360,7 +363,7 @@ export class AiModelRegistryService {
 
   resolveModelForAgent(agent: { modelId: string } | null): RegisteredAIModel {
     const aiModel = this.getEffectiveModelConfig(
-      agent?.modelId ?? DEFAULT_SMART_MODEL,
+      agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
     );
 
     const registeredModel = this.getModel(aiModel.modelId);

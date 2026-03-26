@@ -8,7 +8,6 @@ export type NavigationMenuItemSectionListDndKitProps = {
   filteredItems: NavigationMenuItem[];
   getEditModeProps: (item: NavigationMenuItem) => EditModeProps;
   folderChildrenById: Map<string, NavigationMenuItem[]>;
-  selectedNavigationMenuItemId: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
     objectMetadataItem: EnrichedObjectMetadataItem,

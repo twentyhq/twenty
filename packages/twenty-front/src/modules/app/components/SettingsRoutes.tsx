@@ -259,6 +259,18 @@ const SettingsBilling = lazy(() =>
   })),
 );
 
+const SettingsUsage = lazy(() =>
+  import('~/pages/settings/SettingsUsage').then((module) => ({
+    default: module.SettingsUsage,
+  })),
+);
+
+const SettingsUsageUserDetail = lazy(() =>
+  import('~/pages/settings/SettingsUsageUserDetail').then((module) => ({
+    default: module.SettingsUsageUserDetail,
+  })),
+);
+
 const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
@@ -529,6 +541,19 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route
+          element={
+            <SettingsProtectedRouteWrapper
+              requiredFeatureFlag={FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED}
+            />
+          }
+        >
+          <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
+          <Route
+            path={SettingsPath.UsageUserDetail}
+            element={<SettingsUsageUserDetail />}
+          />
+        </Route>
         <Route
           path={SettingsPath.Subdomain}
           element={<SettingsSubdomainPage />}

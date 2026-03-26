@@ -91,7 +91,7 @@ msgstr "Meghívó elfogadása"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your new email address"
-msgstr ""
+msgstr "Erősítsd meg az új e-mail címed"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -101,7 +101,7 @@ msgstr "Erősítse meg email címét"
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm new email"
-msgstr ""
+msgstr "Új e-mail megerősítése"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx

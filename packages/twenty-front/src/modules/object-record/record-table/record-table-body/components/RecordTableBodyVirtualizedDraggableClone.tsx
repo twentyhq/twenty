@@ -65,13 +65,13 @@ const cloneColumnFieldWidthRules = Array.from(
 ).join('\n');
 
 const StyledRowDraggableCloneCSSBridge = styled.div`
-  div.table-cell:nth-of-type(1) {
+  div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     left: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
-  div.table-cell:nth-of-type(2) {
+  div.table-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
     left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
@@ -84,7 +84,7 @@ const StyledRowDraggableCloneCSSBridge = styled.div`
     ${HorizontalScrollBoxShadowCSS}
   }
 
-  div.table-cell:nth-of-type(3) {
+  div.table-cell.${getRecordTableColumnFieldWidthClassName(0)} {
     left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
@@ -147,7 +147,7 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 
   const columnWidthStyles = useMemo(() => {
     const styles: Record<string, string> =
-      getRecordTableColumnWidthInlineStyles(visibleRecordFields);
+      getRecordTableColumnWidthInlineStyles({ visibleRecordFields });
     styles[RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME] =
       `${lastColumnWidth}px`;
     styles[

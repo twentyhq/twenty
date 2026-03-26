@@ -9,7 +9,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
+import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -73,6 +73,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
+    const userWorkspaceId =
+      executionContext.authContext.type === 'user'
+        ? executionContext.authContext.userWorkspaceId
+        : null;
+
     const { result, usage, cacheCreationTokens } =
       await this.aiAgentExecutionService.executeAgent({
         agent,
@@ -85,10 +90,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       });
 
     await this.aiBillingService.calculateAndBillUsage(
-      agent?.modelId ?? DEFAULT_SMART_MODEL,
+      agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
       { usage, cacheCreationTokens },
       workspaceId,
       agent?.id || null,
+      userWorkspaceId,
     );
 
     return {

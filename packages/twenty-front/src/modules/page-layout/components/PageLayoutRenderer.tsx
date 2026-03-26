@@ -7,8 +7,10 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type PageLayoutRendererProps = {
   pageLayoutId: string;
@@ -18,6 +20,10 @@ export const PageLayoutRenderer = ({
   pageLayoutId,
 }: PageLayoutRendererProps) => {
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
+
+  const featureFlags = useFeatureFlagsMap();
+  const isRecordPageLayoutEditingEnabled =
+    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
     pageLayoutId,
@@ -42,7 +48,9 @@ export const PageLayoutRenderer = ({
         >
           <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
           <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-          <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
+          {!isRecordPageLayoutEditingEnabled && (
+            <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
+          )}
           <PageLayoutRendererContent />
         </PageLayoutEditModeProvider>
       </TabListComponentInstanceContext.Provider>

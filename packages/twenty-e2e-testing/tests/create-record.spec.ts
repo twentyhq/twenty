@@ -6,8 +6,14 @@ const query = `query FindOnePerson($objectRecordId: UUID!) {
   person(
     filter: {or: [{deletedAt: {is: NULL}}, {deletedAt: {is: NOT_NULL}}], id: {eq: $objectRecordId}}
   ) {
-    company {
-      name
+    previousCompanies {
+      edges {
+        node {
+          company {
+            name
+          }
+        }
+      }
     }
     emails {
       primaryEmail
@@ -43,8 +49,8 @@ const query = `query FindOnePerson($objectRecordId: UUID!) {
 }`
 
 test('Create and update record', async ({ page }) => {
-    await page.getByRole('link', { name: 'People' }).click();
-    await page.getByRole('button', { name: 'Create new record' }).click();
+    await page.goto('/objects/people');
+    await page.getByRole('button', { name: 'Create new Person' }).click();
 
     // Generate a random email for testing
     const randomEmail = `testuser_${Math.random().toString(36).substring(2, 10)}@example.com`;
@@ -107,29 +113,17 @@ test('Create and update record', async ({ page }) => {
     await options.getByText('Hybrid').first().click({force: true});
     recordFieldList.getByText('Work Preference').first().click({force: true});
 
-    // Fill company relation
-    const companyRelationWidget = page.getByTestId(/dynamic-relation-widget-.+-Company/);
-    await expect(companyRelationWidget).toBeVisible();
+    // Fill previous companies
+    await recordFieldList.getByText('Previous Companies').first().click({force: true});
+    await recordFieldList.getByText('Previous Companies').nth(1).click({force: true});
+    await page.getByPlaceholder('Search').fill('VMw');
+    await page.getByRole('listbox').first().getByText('VMware').click({force: true});
+    await page.keyboard.press('Escape');
 
-    await companyRelationWidget.hover();
-    await companyRelationWidget.locator('.tabler-icon-pencil').click();
-    await page.getByRole('textbox', { name: 'Search' }).fill('VMw');
-    await expect(page.getByRole('option', { name: 'VMware' })).toBeVisible();
-    const [updatePersonResponse] = await Promise.all([
-      page.waitForResponse(async (response) => {
-        if (!response.url().endsWith('/graphql')) {
-          return false;
-        }
-
-        const requestBody = response.request().postDataJSON();
-
-        return requestBody.operationName === 'UpdateOnePerson';
-      }),
-      await page.getByRole('option', { name: 'VMware' }).click({force: true})
-    ]);
-
-    const body = await updatePersonResponse.json()
-    const newPersonId = body.data.updatePerson.id;
+    // Open full record page to get person ID
+    await page.getByRole('button', { name: /^Open/ }).click();
+    await page.waitForURL(/\/object\/person\//);
+    const newPersonId = page.url().match(/\/object\/person\/([a-f0-9-]+)/)?.[1];
 
     // Check data was saved
     const { authToken } = await getAccessAuthToken(page);
@@ -155,6 +149,6 @@ test('Create and update record', async ({ page }) => {
     expect(findOnePersonReponseBody.data.person.linkedinLink.primaryLinkUrl).toBe('linkedin.com/johndoe');
     expect(findOnePersonReponseBody.data.person.phones.primaryPhoneNumber).toBe('611223344');
     expect(findOnePersonReponseBody.data.person.workPreference).toEqual(['HYBRID']);
-    expect(findOnePersonReponseBody.data.person.company.name).toBe('VMware');
+    expect(findOnePersonReponseBody.data.person.previousCompanies.edges[0].node.company.name).toBe('VMware');
 
 });

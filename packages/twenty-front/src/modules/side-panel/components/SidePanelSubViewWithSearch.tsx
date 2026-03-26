@@ -53,6 +53,7 @@ type SidePanelSubViewWithSearchProps = {
   searchValue: string;
   onSearchChange: (value: string) => void;
   searchInputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  rightElement?: ReactNode;
   children?: ReactNode;
 };
 
@@ -61,6 +62,7 @@ export const SidePanelSubViewWithSearch = ({
   searchValue,
   onSearchChange,
   searchInputProps,
+  rightElement,
   children,
 }: SidePanelSubViewWithSearchProps) => (
   <StyledSubViewContainer>
@@ -73,6 +75,7 @@ export const SidePanelSubViewWithSearch = ({
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...searchInputProps}
       />
+      {rightElement}
     </StyledSearchContainer>
     {children != null && (
       <StyledScrollableListWrapper>{children}</StyledScrollableListWrapper>

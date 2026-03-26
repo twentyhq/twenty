@@ -1,8 +1,11 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  GRID_POSITIONS,
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -18,6 +21,25 @@ const PERSON_PAGE_TABS = {
       fields: {
         universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11211',
         ...WIDGET_PROPS.fields,
+      },
+      company: {
+        universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11212',
+        title: 'Company',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.person.fields.company.universalIdentifier,
+      },
+      pointOfContactForOpportunities: {
+        universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11213',
+        title: 'Opportunities',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.person.fields.pointOfContactForOpportunities
+            .universalIdentifier,
       },
     },
   },

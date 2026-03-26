@@ -28,13 +28,13 @@ Publicar no npm torna seu aplicativo descobrível no Marketplace da Twenty. Qual
 1. **Compile seu aplicativo** — a CLI compila seus códigos-fonte TypeScript e gera o manifesto do aplicativo:
 
 ```bash filename="Terminal"
-yarn twenty app:build
+yarn twenty build
 ```
 
 2. **Publicar no npm** — envie o pacote compilado para o registro do npm:
 
 ```bash filename="Terminal"
-npx twenty app:publish
+npx twenty publish
 ```
 
 ### Descoberta automática
@@ -65,14 +65,14 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty app:build
+      - run: npx twenty build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-Para outros sistemas de CI (GitLab CI, CircleCI etc.), aplicam-se os mesmos três comandos: `yarn install`, `npx twenty app:build` e depois `npm publish` a partir de `.twenty/output`.
+Para outros sistemas de CI (GitLab CI, CircleCI etc.), aplicam-se os mesmos três comandos: `yarn install`, `npx twenty build` e depois `npm publish` a partir de `.twenty/output`.
 
 <Tip>
 **Proveniência do npm** é opcional, mas recomendada. Publicar com `--provenance` adiciona um selo de confiança à sua listagem no npm, permitindo que os usuários verifiquem que o pacote foi construído a partir de um commit específico em um pipeline de CI público. Consulte a [documentação de proveniência do npm](https://docs.npmjs.com/generating-provenance-statements) para instruções de configuração.
@@ -87,7 +87,7 @@ Para aplicativos que você não quer disponibilizar publicamente — ferramentas
 Compile seu aplicativo e implante-o em um servidor específico em uma única etapa:
 
 ```bash filename="Terminal"
-npx twenty app:publish --server <server-url>
+npx twenty publish --server <server-url>
 ```
 
 Qualquer espaço de trabalho nesse servidor pode então instalar e atualizar o aplicativo na página de configurações de **Aplicativos**.
@@ -97,7 +97,7 @@ Qualquer espaço de trabalho nesse servidor pode então instalar e atualizar o a
 Para lançar uma atualização:
 
 1. Atualize o campo `version` no seu `package.json`
-2. Envie um novo tarball com `npx twenty app:publish --server <server-url>`
+2. Envie um novo tarball com `npx twenty publish --server <server-url>`
 3. Os espaços de trabalho nesse servidor verão a atualização disponível nas suas configurações
 
 <Note>
@@ -110,7 +110,7 @@ A Twenty organiza os aplicativos em três categorias com base em como são distr
 
 | Categoria           | Como Funciona                                                                                                                           | Visível no Marketplace? |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| **Desenvolvimento** | Aplicativos em modo de desenvolvimento local executados via `yarn twenty app:dev`. Usados para compilação e testes.                     | Não                     |
+| **Desenvolvimento** | Aplicativos em modo de desenvolvimento local executados via `yarn twenty dev`. Usados para compilação e testes.                         | Não                     |
 | **Publicado**       | Aplicativos publicados no npm com o prefixo `twenty-app-`. Listados no Marketplace para que qualquer espaço de trabalho possa instalar. | Sim                     |
 | **Interno**         | Aplicativos implantados via tarball em um servidor específico. Disponível apenas para espaços de trabalho nesse servidor.               | Não                     |
 

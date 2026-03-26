@@ -4,7 +4,6 @@ export type ApplicationConfig = Omit<
   ApplicationManifest,
   | 'packageJsonChecksum'
   | 'yarnLockChecksum'
-  | 'apiClientChecksum'
   | 'postInstallLogicFunctionUniversalIdentifier'
   | 'preInstallLogicFunctionUniversalIdentifier'
 >;

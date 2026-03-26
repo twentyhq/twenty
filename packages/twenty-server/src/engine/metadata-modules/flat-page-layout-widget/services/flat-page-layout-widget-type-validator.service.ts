@@ -51,10 +51,8 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         msg`Widget type VIEW is not supported yet.`,
       ),
       IFRAME: validateIframeFlatPageLayoutWidgetForCreation,
-      FIELD: rejectWidgetType(
-        WidgetType.FIELD,
-        'Widget type FIELD is not supported yet.',
-        msg`Widget type FIELD is not supported yet.`,
+      FIELD: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.FIELD,
       ),
       FIELDS: validateFieldsFlatPageLayoutWidgetForCreation,
       GRAPH: validateGraphFlatPageLayoutWidgetForCreation,
@@ -91,6 +89,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       WORKFLOW_RUN: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.WORKFLOW_RUN,
       ),
+      RECORD_TABLE: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.RECORD_TABLE,
+      ),
     };
 
   private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP: FlatPageLayoutWidgetTypeValidatorForUpdate =
@@ -101,10 +102,8 @@ export class FlatPageLayoutWidgetTypeValidatorService {
         msg`Widget type VIEW is not supported yet.`,
       ),
       IFRAME: validateIframeFlatPageLayoutWidgetForUpdate,
-      FIELD: rejectWidgetType(
-        WidgetType.FIELD,
-        'Widget type FIELD is not supported yet.',
-        msg`Widget type FIELD is not supported yet.`,
+      FIELD: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.FIELD,
       ),
       FIELDS: () => [],
       GRAPH: validateGraphFlatPageLayoutWidgetForUpdate,
@@ -140,6 +139,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ),
       WORKFLOW_RUN: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.WORKFLOW_RUN,
+      ),
+      RECORD_TABLE: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.RECORD_TABLE,
       ),
     };
 

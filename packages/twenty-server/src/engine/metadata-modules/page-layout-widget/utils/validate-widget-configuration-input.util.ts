@@ -7,6 +7,7 @@ import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-lay
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
+import { RecordTableConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/record-table-configuration.dto';
 import { StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
@@ -117,6 +118,12 @@ export const validateWidgetConfigurationInput = ({
     case WidgetConfigurationType.FRONT_COMPONENT:
       errors = validateWidgetConfigurationByDto(
         FrontComponentConfigurationDTO,
+        configuration,
+      );
+      break;
+    case WidgetConfigurationType.RECORD_TABLE:
+      errors = validateWidgetConfigurationByDto(
+        RecordTableConfigurationDTO,
         configuration,
       );
       break;

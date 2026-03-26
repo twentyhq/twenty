@@ -1,6 +1,5 @@
-import { useCreateNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useCreateNavigationMenuItem';
+import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,6 +10,9 @@ import { type View } from '@/views/types/View';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 import {
   IconHeart,
   IconLock,
@@ -53,7 +55,7 @@ export const ViewPickerOptionDropdown = ({
   );
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
-  const { createNavigationMenuItem } = useCreateNavigationMenuItem();
+  const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
   const { navigationMenuItems, currentWorkspaceMemberId } =
     useNavigationMenuItemsData();
 
@@ -76,7 +78,24 @@ export const ViewPickerOptionDropdown = ({
 
   const handleAddToFavorites = () => {
     if (!isFavorite) {
-      createNavigationMenuItem(view as unknown as ObjectRecord, 'view');
+      const relevantItems = navigationMenuItems.filter(
+        (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
+      );
+
+      const maxPosition = Math.max(
+        ...relevantItems.map((item) => item.position),
+        0,
+      );
+
+      createManyNavigationMenuItems([
+        {
+          id: uuidv4(),
+          type: NavigationMenuItemType.VIEW,
+          viewId: view.id,
+          userWorkspaceId: currentWorkspaceMemberId,
+          position: maxPosition + 1,
+        },
+      ]);
     }
     closeDropdown(dropdownId);
   };

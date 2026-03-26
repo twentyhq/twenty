@@ -282,6 +282,31 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       return { ...rest, viewId, newFieldDefaultVisibility };
     }
 
+    case WidgetConfigurationType.RECORD_TABLE: {
+      const { viewId: viewUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      let viewId: string | undefined = undefined;
+
+      if (isDefined(viewUniversalIdentifier)) {
+        const flatView = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatViewMaps,
+          universalIdentifier: viewUniversalIdentifier,
+        });
+
+        if (!isDefined(flatView)) {
+          throw new FlatEntityMapsException(
+            `View not found for universal identifier: ${viewUniversalIdentifier}`,
+            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+          );
+        }
+
+        viewId = flatView.id;
+      }
+
+      return { ...rest, viewId };
+    }
+
     case WidgetConfigurationType.FRONT_COMPONENT: {
       const { frontComponentUniversalIdentifier, configurationType } =
         universalConfiguration;
@@ -311,8 +336,19 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       };
     }
 
+    case WidgetConfigurationType.FIELD: {
+      const { fieldMetadataId: fieldMetadataUniversalIdentifier, ...rest } =
+        universalConfiguration;
+
+      const fieldMetadataId = resolveFieldMetadataIdOrThrow({
+        fieldMetadataUniversalIdentifier,
+        flatFieldMetadataMaps,
+      });
+
+      return { ...rest, fieldMetadataId };
+    }
+
     case WidgetConfigurationType.VIEW:
-    case WidgetConfigurationType.FIELD:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
     case WidgetConfigurationType.NOTES:

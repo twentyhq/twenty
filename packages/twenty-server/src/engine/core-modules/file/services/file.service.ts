@@ -19,6 +19,8 @@ import {
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
+import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -45,7 +47,15 @@ export class FileService {
     applicationId: string;
     filepath: string;
     fileFolder: FileFolder;
-  }) {
+  }): Promise<{ stream: Readable; mimeType: string }> {
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        path: `${fileFolder}/${filepath}`,
+        workspaceId,
+        applicationId,
+      },
+    });
+
     const application = await this.applicationRepository.findOneOrFail({
       where: {
         id: applicationId,
@@ -53,12 +63,17 @@ export class FileService {
       },
     });
 
-    return this.fileStorageService.readFile({
+    const stream = await this.fileStorageService.readFile({
       resourcePath: filepath,
       fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
     });
+
+    return {
+      stream,
+      mimeType: file.mimeType,
+    };
   }
 
   async getFileStreamById({
@@ -69,7 +84,7 @@ export class FileService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<Readable> {
+  }): Promise<{ stream: Readable; mimeType: string }> {
     const file = await this.fileRepository.findOneOrFail({
       where: {
         id: fileId,
@@ -85,12 +100,63 @@ export class FileService {
       },
     });
 
-    return this.fileStorageService.readFile({
+    const stream = await this.fileStorageService.readFile({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
     });
+
+    return {
+      stream,
+      mimeType: file.mimeType,
+    };
+  }
+
+  async getFileResponseById(params: {
+    fileId: string;
+    workspaceId: string;
+    fileFolder: FileFolder;
+  }): Promise<FileResponse> {
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        id: params.fileId,
+        workspaceId: params.workspaceId,
+        path: Like(`${params.fileFolder}/%`),
+      },
+    });
+
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: file.applicationId,
+        workspaceId: params.workspaceId,
+      },
+    });
+
+    const mimeType = file.mimeType ?? 'application/octet-stream';
+    const resourceIdentifier = {
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
+      fileFolder: params.fileFolder,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId: params.workspaceId,
+    };
+
+    const presignedUrl = await this.fileStorageService.getPresignedUrl({
+      ...resourceIdentifier,
+      expiresInSeconds: this.twentyConfigService.get(
+        'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
+      ),
+      responseContentType: mimeType,
+      responseContentDisposition: getContentDisposition(mimeType),
+    });
+
+    if (presignedUrl) {
+      return { type: 'redirect', presignedUrl };
+    }
+
+    const stream = await this.fileStorageService.readFile(resourceIdentifier);
+
+    return { type: 'stream', stream, mimeType };
   }
 
   async getFileContentById({

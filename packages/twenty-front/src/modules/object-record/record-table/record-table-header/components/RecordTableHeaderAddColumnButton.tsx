@@ -30,7 +30,6 @@ const StyledPlusIconHeaderCell = styled.div<{
       ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
 
-  border-right: ${themeCssVariables.border.color.light} !important;
   color: ${themeCssVariables.font.color.tertiary};
 
   cursor: pointer;

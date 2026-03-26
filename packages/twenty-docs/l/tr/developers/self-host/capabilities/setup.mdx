@@ -297,6 +297,16 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
+## S3 Depolama
+
+<Warning>
+Varsayılan olarak, Twenty yüklenen dosyaları yerel dosya sisteminde depolar. Üretim dağıtımları için S3 veya S3 uyumlu bir hizmet (MinIO, DigitalOcean Spaces vb.) kullanın. dosyaların kapsayıcı yeniden başlatmaları arasında kalıcı olmasını ve birden çok sunucu örneği arasında ölçeklenmesini sağlamak için.
+</Warning>
+
+`STORAGE_TYPE=S_3` değerini ayarlayın ve `STORAGE_S3_*` değişkenlerini yönetici paneli veya `.env` üzerinden yapılandırın. S3 değişkenlerinin tam listesi için [config-variables.ts referansına](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) bakın.
+
+S3'ü CORS'a bağlı özelliklerle kullanırken (örn. tarayıcı içi dosya indirmeleri), bucket'ınızın CORS yapılandırmasında Twenty frontend origin'inize izin verdiğinden emin olun.
+
 ## Mantıksal İşlevler ve Kod Yorumlayıcısı
 
 Twenty, iş akışları için mantıksal işlevleri ve yapay zekâ veri analizi için kod yorumlayıcısını destekler. Her ikisi de kullanıcı tarafından sağlanan kodu çalıştırır ve güvenlik için açık bir yapılandırma gerektirir.

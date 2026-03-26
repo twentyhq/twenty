@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
+  GraphQLEnumType,
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
   isObjectType,
@@ -71,7 +72,7 @@ export class CompositeFieldMetadataCreateGqlInputTypeGenerator {
       const typeOptions = computeCompositeFieldTypeOptions(property);
 
       const type = isEnumFieldMetadataType(property.type)
-        ? this.gqlTypesStorage.getGqlTypeByKey(key)
+        ? this.gqlTypesStorage.getGqlTypeByKey<GraphQLEnumType>(key)
         : this.typeMapperService.mapToPreBuiltGraphQLInputType({
             fieldMetadataType: property.type,
             typeOptions,

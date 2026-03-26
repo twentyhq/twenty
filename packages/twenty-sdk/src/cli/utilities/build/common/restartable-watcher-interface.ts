@@ -13,6 +13,7 @@ export type OnFileBuiltCallback = (options: {
   builtPath: string;
   sourcePath: string;
   checksum: string;
+  usesSdkClient?: boolean;
 }) => void | Promise<void>;
 
 export type OnBuildErrorCallback = (

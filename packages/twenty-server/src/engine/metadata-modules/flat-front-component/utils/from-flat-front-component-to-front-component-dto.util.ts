@@ -21,6 +21,7 @@ export const fromFlatFrontComponentToFrontComponentDto = (
   workspaceId: flatFrontComponent.workspaceId,
   applicationId: flatFrontComponent.applicationId,
   isHeadless: flatFrontComponent.isHeadless,
+  usesSdkClient: flatFrontComponent.usesSdkClient,
   createdAt: new Date(flatFrontComponent.createdAt),
   updatedAt: new Date(flatFrontComponent.updatedAt),
 });

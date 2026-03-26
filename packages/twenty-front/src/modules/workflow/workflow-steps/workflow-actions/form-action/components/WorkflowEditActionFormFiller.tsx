@@ -130,7 +130,7 @@ export const WorkflowEditActionFormFiller = ({
             );
           }
 
-          if (field.type === 'SELECT') {
+          if (field.type === 'SELECT' || field.type === 'MULTI_SELECT') {
             const selectedFieldId = field.settings?.selectedFieldId;
 
             if (!isDefined(selectedFieldId)) {

@@ -28,6 +28,7 @@ import {
   SupportedFileFolder,
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -48,21 +49,23 @@ export class FileController {
     const filepath = join(...req.params.path);
 
     try {
-      const fileStream = await this.fileService.getFileStreamByPath({
+      const { stream, mimeType } = await this.fileService.getFileStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
       });
 
-      fileStream.on('error', () => {
+      setFileResponseHeaders(res, mimeType);
+
+      stream.on('error', () => {
         throw new FileException(
           'Error streaming file from storage',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       });
 
-      fileStream.pipe(res);
+      stream.pipe(res);
     } catch (error) {
       if (
         error instanceof FileStorageException &&
@@ -93,20 +96,29 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     try {
-      const fileStream = await this.fileService.getFileStreamById({
+      const fileResponse = await this.fileService.getFileResponseById({
         fileId,
         workspaceId,
         fileFolder,
       });
 
-      fileStream.on('error', () => {
-        throw new FileException(
-          'Error streaming file from storage',
-          FileExceptionCode.INTERNAL_SERVER_ERROR,
-        );
+      if (fileResponse.type === 'redirect') {
+        return res.redirect(fileResponse.presignedUrl);
+      }
+
+      setFileResponseHeaders(res, fileResponse.mimeType);
+
+      fileResponse.stream.on('error', () => {
+        if (!res.headersSent) {
+          res.status(500).send('Error streaming file from storage');
+
+          return;
+        }
+
+        res.destroy();
       });
 
-      fileStream.pipe(res);
+      fileResponse.stream.pipe(res);
     } catch (error) {
       if (
         error instanceof FileStorageException &&

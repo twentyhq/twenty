@@ -2,8 +2,9 @@ import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMetadata';
-import { useLoadMockedMinimalMetadata } from '@/metadata-store/hooks/useLoadMockedMinimalMetadata';
+import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
 import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
+import { metadataLoadedVersionState } from '@/metadata-store/states/metadataLoadedVersionState';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -28,10 +29,14 @@ export const MinimalMetadataLoadEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const [loadedState, setLoadedState] = useState<LoadedState>('none');
+  const metadataLoadedVersion = useAtomStateValue(metadataLoadedVersionState);
+  const [lastMetadataLoadData, setLastMetadataLoadData] = useState<{
+    state: LoadedState;
+    version: number;
+  }>({ state: 'none', version: -1 });
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
-  const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
+  const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
   const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
   const isCommandMenuItemEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
@@ -45,15 +50,25 @@ export const MinimalMetadataLoadEffect = () => {
   );
 
   useEffect(() => {
-    if (!isCurrentUserLoaded || loadedState === desiredLoadState) {
+    if (!isCurrentUserLoaded) {
       return;
     }
 
-    setLoadedState(desiredLoadState);
+    const versionChanged =
+      metadataLoadedVersion !== lastMetadataLoadData.version;
+
+    if (!versionChanged && lastMetadataLoadData.state === desiredLoadState) {
+      return;
+    }
+
+    setLastMetadataLoadData({
+      state: desiredLoadState,
+      version: metadataLoadedVersion,
+    });
 
     const performLoad = async () => {
       if (desiredLoadState === 'mocked') {
-        await loadMockedMinimalMetadata();
+        await loadMockedMetadataAtomic();
         return;
       }
 
@@ -83,9 +98,10 @@ export const MinimalMetadataLoadEffect = () => {
     hasAccessTokenPair,
     isActiveWorkspace,
     desiredLoadState,
-    loadedState,
+    lastMetadataLoadData,
+    metadataLoadedVersion,
     loadMinimalMetadata,
-    loadMockedMinimalMetadata,
+    loadMockedMetadataAtomic,
     loadStaleMetadataEntities,
     isCommandMenuItemEnabled,
   ]);
