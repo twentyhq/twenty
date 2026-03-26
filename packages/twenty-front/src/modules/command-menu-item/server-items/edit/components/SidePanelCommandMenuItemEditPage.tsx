@@ -6,9 +6,9 @@ import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/server-items/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useResetCommandMenuItemsDraft';
-import { commandMenuItemEditObjectMetadataItemIdState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditObjectMetadataItemIdState';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/server-items/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -79,12 +79,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const { commandMenuItems: commandMenuItemsInCurrentContext } =
     useContext(CommandMenuContext);
 
-  const commandMenuItemEditObjectMetadataItemId = useAtomComponentStateValue(
-    commandMenuItemEditObjectMetadataItemIdState,
+  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
   );
   const { objectMetadataItems } = useObjectMetadataItems();
   const editObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === commandMenuItemEditObjectMetadataItemId,
+    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const contextStoreCurrentViewType = useAtomComponentStateValue(

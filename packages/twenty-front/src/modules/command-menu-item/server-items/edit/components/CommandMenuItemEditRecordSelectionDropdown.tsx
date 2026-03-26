@@ -6,8 +6,8 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -50,18 +50,19 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
 
-  const commandMenuItemEditTargetedRecordsRule = useAtomComponentStateValue(
+  const commandMenuItemEditTargetedRecordsRule = useAtomStateValue(
     commandMenuItemEditTargetedRecordsRuleState,
   );
-  const setCommandMenuItemEditTargetedRecordsRule = useSetAtomComponentState(
+  const setCommandMenuItemEditTargetedRecordsRule = useSetAtomState(
     commandMenuItemEditTargetedRecordsRuleState,
   );
 
-  const commandMenuItemEditNumberOfSelectedRecords = useAtomComponentStateValue(
+  const commandMenuItemEditNumberOfSelectedRecords = useAtomStateValue(
     commandMenuItemEditNumberOfSelectedRecordsState,
   );
-  const setCommandMenuItemEditNumberOfSelectedRecords =
-    useSetAtomComponentState(commandMenuItemEditNumberOfSelectedRecordsState);
+  const setCommandMenuItemEditNumberOfSelectedRecords = useSetAtomState(
+    commandMenuItemEditNumberOfSelectedRecordsState,
+  );
 
   const [snapshot, setSnapshot] = useState({
     targetedRecordsRule: commandMenuItemEditTargetedRecordsRule,

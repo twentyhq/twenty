@@ -1,13 +1,10 @@
 import { AnimatedIconCrossfade } from 'twenty-ui/utilities';
 import { commandMenuItemEditNumberOfSelectedRecordsState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditNumberOfSelectedRecordsState';
-import { commandMenuItemEditObjectMetadataItemIdState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditObjectMetadataItemIdState';
 import { commandMenuItemEditTargetedRecordsRuleState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditTargetedRecordsRuleState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -52,20 +49,7 @@ export const CommandMenuItemEditButton = () => {
     }
 
     store.set(
-      commandMenuItemEditObjectMetadataItemIdState.atomFamily({
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      }),
-      store.get(
-        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-      ) ?? null,
-    );
-
-    store.set(
-      commandMenuItemEditTargetedRecordsRuleState.atomFamily({
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      }),
+      commandMenuItemEditTargetedRecordsRuleState.atom,
       store.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
@@ -74,9 +58,7 @@ export const CommandMenuItemEditButton = () => {
     );
 
     store.set(
-      commandMenuItemEditNumberOfSelectedRecordsState.atomFamily({
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      }),
+      commandMenuItemEditNumberOfSelectedRecordsState.atom,
       store.get(
         contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,

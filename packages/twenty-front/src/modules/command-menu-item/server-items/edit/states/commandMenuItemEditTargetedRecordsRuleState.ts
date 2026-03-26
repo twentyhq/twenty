@@ -1,13 +1,11 @@
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const commandMenuItemEditTargetedRecordsRuleState =
-  createAtomComponentState<ContextStoreTargetedRecordsRule>({
+  createAtomState<ContextStoreTargetedRecordsRule>({
     key: 'commandMenuItemEditTargetedRecordsRuleState',
     defaultValue: {
       mode: 'selection',
       selectedRecordIds: [],
     },
-    componentInstanceContext: ContextStoreComponentInstanceContext,
   });
