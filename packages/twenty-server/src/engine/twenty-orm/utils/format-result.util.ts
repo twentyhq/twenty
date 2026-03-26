@@ -191,6 +191,23 @@ function formatResultInternal<T>(
     flatFieldMetadataMaps,
   );
 
+  const fieldMetadataItemsOfTypeDateOnly = getFlatFieldsFromFlatObjectMetadata(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  ).filter((field) => field.type === FieldMetadataType.DATE);
+
+  for (const dateField of fieldMetadataItemsOfTypeDateOnly) {
+    // @ts-expect-error legacy noImplicitAny
+    const rawUpdatedDate = newData[dateField.name] as string | null | undefined;
+
+    if (!isDefined(rawUpdatedDate)) {
+      continue;
+    }
+
+    // @ts-expect-error legacy noImplicitAny
+    newData[dateField.name] = rawUpdatedDate;
+  }
+
   const fieldMetadataItemsOfTypeDateTimeOnly =
     getFlatFieldsFromFlatObjectMetadata(
       flatObjectMetadata,
