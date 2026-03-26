@@ -43,10 +43,7 @@ const validateGroupByFieldAsChartFieldOrThrow = (
       throw error;
     }
 
-    throw buildChartFieldValidationException(
-      error.message,
-      widgetTitle,
-    );
+    throw buildChartFieldValidationException(error.message, widgetTitle);
   }
 };
 
