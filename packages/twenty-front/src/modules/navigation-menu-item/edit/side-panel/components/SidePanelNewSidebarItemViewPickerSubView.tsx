@@ -16,7 +16,6 @@ import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanel
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type View } from '@/views/types/View';
-import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -49,7 +48,6 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     .filter(
       (view) =>
         view.objectMetadataId === selectedObjectMetadataIdForView &&
-        view.key !== ViewKey.INDEX &&
         view.type !== ViewType.FIELDS_WIDGET &&
         view.visibility === ViewVisibility.WORKSPACE,
     )

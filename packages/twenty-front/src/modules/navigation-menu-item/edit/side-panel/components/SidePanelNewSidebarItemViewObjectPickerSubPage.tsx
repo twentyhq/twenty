@@ -9,7 +9,6 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { selectedObjectMetadataIdForViewFlowState } from '@/side-panel/states/selectedObjectMetadataIdForViewFlowState';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType } from '@/views/types/ViewType';
 import { useState } from 'react';
 import { ViewVisibility } from '~/generated-metadata/graphql';
@@ -32,7 +31,6 @@ export const SidePanelNewSidebarItemViewObjectPickerSubPage = () => {
     views
       .filter(
         (view) =>
-          view.key !== ViewKey.INDEX &&
           view.type !== ViewType.FIELDS_WIDGET &&
           view.visibility === ViewVisibility.WORKSPACE &&
           !viewIdsInWorkspace.has(view.id),
