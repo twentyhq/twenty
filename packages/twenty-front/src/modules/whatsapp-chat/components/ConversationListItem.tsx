@@ -192,6 +192,24 @@ const StyledPinIcon = styled.div`
   display: flex;
 `;
 
+const StyledAssignBadge = styled.span<{ variant: 'owner' | 'coach' }>`
+  align-items: center;
+  background: ${({ variant }) =>
+    variant === 'coach' ? '#f0fdf4' : '#fef2f2'};
+  border: 1px solid ${({ variant }) =>
+    variant === 'coach' ? '#bbf7d0' : '#fecaca'};
+  border-radius: 10px;
+  color: ${({ variant }) =>
+    variant === 'coach' ? '#166534' : '#dc2626'};
+  display: inline-flex;
+  font-size: 9px;
+  font-weight: 600;
+  gap: 2px;
+  line-height: 1;
+  padding: 2px 5px;
+  white-space: nowrap;
+`;
+
 const StyledMessageCount = styled.span`
   background: #E5E7EB;
   border-radius: 10px;
@@ -636,6 +654,16 @@ export const ConversationListItem = ({
                 {conversation.lastMessageBody}
               </StyledPreview>
               <StyledBadges>
+                {conversation.assignedToName && (
+                  <StyledAssignBadge variant="owner">
+                    {conversation.assignedToName.split(' ')[0]}
+                  </StyledAssignBadge>
+                )}
+                {conversation.coachLeadOwnerName && (
+                  <StyledAssignBadge variant="coach">
+                    {conversation.coachLeadOwnerName.split(' ')[0]}
+                  </StyledAssignBadge>
+                )}
                 {conversation.isPinned && (
                   <StyledPinIcon>
                     <IconPinned size={14} />
