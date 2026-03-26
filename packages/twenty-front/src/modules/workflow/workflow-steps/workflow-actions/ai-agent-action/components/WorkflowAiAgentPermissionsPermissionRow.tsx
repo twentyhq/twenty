@@ -27,6 +27,19 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
 }: WorkflowAiAgentPermissionsPermissionRowProps) => {
   const isClickable = !readonly && !isEnabled;
   const isDisabled = isEnabled && !showDeleteButton;
+  const showTrashButton = isEnabled && showDeleteButton;
+
+  const iconButtons = showTrashButton
+    ? [
+        {
+          Icon: IconTrash,
+          onClick: (event: React.MouseEvent) => {
+            event.stopPropagation();
+            onDelete?.();
+          },
+        },
+      ]
+    : undefined;
 
   return (
     <MenuItem
@@ -39,19 +52,7 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
       text={permission.label}
       onClick={isClickable ? onAdd : undefined}
       disabled={isDisabled}
-      iconButtons={
-        isEnabled && showDeleteButton
-          ? [
-              {
-                Icon: IconTrash,
-                onClick: (event) => {
-                  event.stopPropagation();
-                  onDelete?.();
-                },
-              },
-            ]
-          : undefined
-      }
+      iconButtons={iconButtons}
     />
   );
 };

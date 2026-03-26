@@ -38,16 +38,8 @@ export const WorkflowAiAgentPermissionsFlagList = ({
             isEnabled={isEnabled}
             readonly={readonly}
             showDeleteButton={showDeleteButton}
-            onAdd={
-              isEnabled
-                ? undefined
-                : () => onAddPermissionFlag?.(permission.key)
-            }
-            onDelete={
-              showDeleteButton
-                ? () => onDeletePermissionFlag?.(permission.key)
-                : undefined
-            }
+            onAdd={() => onAddPermissionFlag?.(permission.key)}
+            onDelete={() => onDeletePermissionFlag?.(permission.key)}
           />
         );
       })}
