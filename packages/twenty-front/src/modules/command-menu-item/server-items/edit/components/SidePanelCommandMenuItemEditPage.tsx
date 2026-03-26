@@ -1,6 +1,6 @@
 import { useCommandMenuContextApi } from '@/command-menu-item/server-items/common/hooks/useCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
-import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/server-items/common/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown';
@@ -104,7 +104,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
   ]);
 
   const filteredCommandMenuItems = commandMenuItemsDraft
-    .filter(matchesObjectMetadataId(currentObjectMetadataItemId))
+    .filter(
+      doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
+    )
     .filter((item) => allowedAvailabilityTypes.has(item.availabilityType));
 
   const filteredCommandMenuItemIds = new Set(

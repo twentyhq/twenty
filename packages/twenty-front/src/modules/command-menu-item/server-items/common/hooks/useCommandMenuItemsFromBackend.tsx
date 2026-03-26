@@ -1,7 +1,7 @@
 import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/components/FrontComponentCommandMenuItem';
 import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
-import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/server-items/common/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 
@@ -141,7 +141,7 @@ export const useCommandMenuItemsFromBackend = (
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
 
   const itemsWithObjectMatches = commandMenuItems.filter(
-    matchesObjectMetadataId(currentObjectMetadataItemId),
+    doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
   );
 
   const buildCommandMenuItem = ({

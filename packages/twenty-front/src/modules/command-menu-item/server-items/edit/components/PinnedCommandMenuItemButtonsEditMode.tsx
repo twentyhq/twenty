@@ -1,6 +1,6 @@
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useCommandMenuContextApi } from '@/command-menu-item/server-items/common/hooks/useCommandMenuContextApi';
-import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/server-items/common/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/server-items/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/server-items/display/constants/PinnedCommandMenuItemsGap';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/server-items/display/hooks/usePinnedCommandMenuItemsInlineLayout';
@@ -83,7 +83,9 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
   const pinnedCommandMenuItems: CommandMenuItemConfig[] = useMemo(
     () =>
       commandMenuItemsDraft
-        .filter(matchesObjectMetadataId(currentObjectMetadataItemId))
+        .filter(
+          doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
+        )
         .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
         .filter((item) => item.isPinned)
         .map((item) => {
