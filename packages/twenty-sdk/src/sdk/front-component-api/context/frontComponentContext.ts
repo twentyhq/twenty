@@ -16,16 +16,6 @@ const getListeners = (): Set<Listener> => {
   ] as Set<Listener>;
 };
 
-export const setFrontComponentExecutionContext = (
-  context: FrontComponentExecutionContext,
-): void => {
-  (globalThis as Record<string, unknown>)[CONTEXT_KEY] = context;
-
-  for (const listener of getListeners()) {
-    listener();
-  }
-};
-
 export const getFrontComponentExecutionContext =
   (): FrontComponentExecutionContext => {
     return (globalThis as Record<string, unknown>)[
