@@ -704,8 +704,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         const clonedAgent = await this.agentService.createOneAgent(
           {
-            label:
-              existingAgent.label + ' ' + clonedStepId.substring(0, 4),
+            label: existingAgent.label + ' ' + clonedStepId.substring(0, 4),
             icon: existingAgent.icon ?? undefined,
             description: existingAgent.description ?? undefined,
             prompt: existingAgent.prompt,
