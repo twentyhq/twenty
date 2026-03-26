@@ -26,6 +26,9 @@ const CoatApprovalPage = React.lazy(
 const WhatsAppChatPage = React.lazy(
   () => import('~/pages/whatsapp-chat/WhatsAppChatPage').then(m => ({ default: m.WhatsAppChatPage })),
 );
+const CoachingPage = React.lazy(
+  () => import('~/pages/coaching/CoachingPage').then(m => ({ default: m.CoachingPage })),
+);
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { BookCall } from '~/pages/onboarding/BookCall';
@@ -81,6 +84,10 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.WhatsAppChat}
             element={<WhatsAppChatPage />}
+          />
+          <Route
+            path={AppPath.Coaching}
+            element={<CoachingPage />}
           />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />

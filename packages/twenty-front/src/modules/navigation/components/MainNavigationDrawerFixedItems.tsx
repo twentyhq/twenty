@@ -18,6 +18,7 @@ import {
   IconSearch,
   IconSettings,
   IconSparkles,
+  IconUser,
   IconVideo,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -71,6 +72,12 @@ export const MainNavigationDrawerFixedItems = () => {
             mouseUpNavigation={true}
           />
         )}
+        <NavigationDrawerItem
+          label="Customer Dashboard"
+          Icon={IconUser}
+          to="/coaching"
+          active={location.pathname.startsWith('/coaching')}
+        />
         <NavigationDrawerItem
           label="COAT"
           Icon={IconFileCheck}

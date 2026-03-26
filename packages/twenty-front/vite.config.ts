@@ -29,6 +29,8 @@ export default defineConfig(({ command, mode }) => {
     SSL_KEY_PATH,
     REACT_APP_PORT,
     IS_DEBUG_MODE,
+    CF_ACCESS_CLIENT_ID,
+    CF_ACCESS_CLIENT_SECRET,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
@@ -92,6 +94,21 @@ export default defineConfig(({ command, mode }) => {
           '**/@blocknote/core/src/fonts/**',
         ],
       },
+      ...(CF_ACCESS_CLIENT_ID && CF_ACCESS_CLIENT_SECRET
+        ? {
+            proxy: {
+              '/api': {
+                target: 'https://crm.tob.sh',
+                changeOrigin: true,
+                rewrite: (proxyPath: string) => proxyPath.replace(/^\/api/, ''),
+                headers: {
+                  'CF-Access-Client-Id': CF_ACCESS_CLIENT_ID,
+                  'CF-Access-Client-Secret': CF_ACCESS_CLIENT_SECRET,
+                },
+              },
+            },
+          }
+        : {}),
     },
 
     plugins: [
