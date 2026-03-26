@@ -24,6 +24,8 @@ export const computeFlatViewFieldsToCreate = ({
     .filter(
       (field) =>
         field.name !== 'deletedAt' &&
+        field.type !== FieldMetadataType.TS_VECTOR &&
+        field.type !== FieldMetadataType.POSITION &&
         field.type !== FieldMetadataType.MORPH_RELATION &&
         field.type !== FieldMetadataType.RELATION &&
         // Include 'id' only if it's the label identifier (e.g., for junction tables)
