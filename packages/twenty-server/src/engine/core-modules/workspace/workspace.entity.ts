@@ -303,11 +303,19 @@ export class WorkspaceEntity {
   version: string | null;
 
   @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: AUTO_SELECT_FAST_MODEL_ID })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AUTO_SELECT_FAST_MODEL_ID,
+  })
   fastModel: ModelId;
 
   @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: AUTO_SELECT_SMART_MODEL_ID })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AUTO_SELECT_SMART_MODEL_ID,
+  })
   smartModel: ModelId;
 
   @Field(() => String, { nullable: true })

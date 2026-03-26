@@ -176,6 +176,7 @@ export const AIChatEditorSection = () => {
                 options={smartModelOptions}
                 pinnedOption={defaultPinnedOption}
                 selectSizeVariant="small"
+                showContextualTextInControl={false}
                 withSearchInput
                 dropdownOffset={{ x: 0, y: 8 }}
               />

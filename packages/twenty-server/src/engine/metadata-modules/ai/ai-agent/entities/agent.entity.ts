@@ -43,7 +43,11 @@ export class AgentEntity
   @Column({ nullable: false, type: 'text' })
   prompt: string;
 
-  @Column({ nullable: false, type: 'varchar', default: AUTO_SELECT_SMART_MODEL_ID })
+  @Column({
+    nullable: false,
+    type: 'varchar',
+    default: AUTO_SELECT_SMART_MODEL_ID,
+  })
   modelId: ModelId;
 
   // Should not be nullable

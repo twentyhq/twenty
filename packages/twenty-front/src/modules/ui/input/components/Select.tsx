@@ -53,6 +53,7 @@ export type SelectProps<Value extends SelectValue> = {
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
+  showContextualTextInControl?: boolean;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -93,6 +94,7 @@ export const Select = <Value extends SelectValue>({
   callToActionButton,
   dropdownOffset,
   hasRightElement,
+  showContextualTextInControl = true,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -155,13 +157,26 @@ export const Select = <Value extends SelectValue>({
 
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
+  const controlSelectedOption = useMemo(() => {
+    if (!isDefined(selectedOption) || showContextualTextInControl) {
+      return selectedOption;
+    }
+
+    const { contextualText: _, ...rest } = selectedOption;
+
+    return rest;
+  }, [selectedOption, showContextualTextInControl]);
+
   const handleDropdownOpen = () => {
-    if (isDefined(selectedOption) && !isNonEmptyString(searchInputValue)) {
-      setSelectedItemId(selectedOption.label);
+    if (
+      isDefined(controlSelectedOption) &&
+      !isNonEmptyString(searchInputValue)
+    ) {
+      setSelectedItemId(controlSelectedOption.label);
     }
   };
 
-  if (!isDefined(selectedOption)) {
+  if (!isDefined(controlSelectedOption)) {
     return <></>;
   }
 
@@ -176,7 +191,7 @@ export const Select = <Value extends SelectValue>({
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <SelectControl
-          selectedOption={selectedOption}
+          selectedOption={controlSelectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
@@ -189,7 +204,7 @@ export const Select = <Value extends SelectValue>({
           onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
-              selectedOption={selectedOption}
+              selectedOption={controlSelectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
@@ -213,7 +228,9 @@ export const Select = <Value extends SelectValue>({
                     LeftIcon={pinnedOption.Icon}
                     text={pinnedOption.label}
                     contextualText={pinnedOption.contextualText}
-                    selected={selectedOption.value === pinnedOption.value}
+                    selected={
+                      controlSelectedOption.value === pinnedOption.value
+                    }
                     needIconCheck={needIconCheck}
                     onClick={() => {
                       onChange?.(pinnedOption.value);
@@ -247,7 +264,9 @@ export const Select = <Value extends SelectValue>({
                           LeftIcon={option.Icon}
                           text={option.label}
                           contextualText={option.contextualText}
-                          selected={selectedOption.value === option.value}
+                          selected={
+                            controlSelectedOption.value === option.value
+                          }
                           focused={selectedItemId === option.label}
                           needIconCheck={needIconCheck}
                           onClick={() => {

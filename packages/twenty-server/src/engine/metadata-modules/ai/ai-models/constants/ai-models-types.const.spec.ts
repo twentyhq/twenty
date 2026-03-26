@@ -126,7 +126,9 @@ describe('AiModelRegistryService', () => {
   });
 
   it('should throw when no models are available for AUTO_SELECT_SMART_MODEL_ID', () => {
-    expect(() => service.getEffectiveModelConfig(AUTO_SELECT_SMART_MODEL_ID)).toThrow(
+    expect(() =>
+      service.getEffectiveModelConfig(AUTO_SELECT_SMART_MODEL_ID),
+    ).toThrow(
       'No AI models are available. Configure at least one AI provider.',
     );
   });
