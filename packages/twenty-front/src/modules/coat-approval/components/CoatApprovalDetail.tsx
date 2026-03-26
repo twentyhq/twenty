@@ -154,9 +154,13 @@ const getExportStatusColor = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return '#22c55e';
+    case 'EXPORTED':
+      return '#6b7280';
     case 'DECLINED':
       return '#ef4444';
     case 'NEEDS_APPROVAL':
+    case null:
+    case undefined:
     default:
       return '#f59e0b';
   }
@@ -166,12 +170,18 @@ const getExportStatusLabel = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return 'Ready for Export';
+    case 'EXPORTED':
+      return 'Exported';
     case 'DECLINED':
       return 'Declined';
     case 'NEEDS_APPROVAL':
       return 'Needs Approval';
+    case null:
+    case undefined:
+    case '':
+      return 'Needs Approval';
     default:
-      return status ?? 'New';
+      return status;
   }
 };
 
