@@ -1,6 +1,6 @@
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
+import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
-import { CommandMenuItemDraggable } from '@/command-menu-item/server-items/edit/components/CommandMenuItemDraggable';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/server-items/edit/hooks/useReorderCommandMenuItemsInDraft';
@@ -34,7 +34,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CommandMenuItemAvailabilityType,
@@ -109,13 +109,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
       : CommandMenuItemAvailabilityType.FALLBACK,
   ]);
 
-  const filteredCommandMenuItems = commandMenuItemsDraft.filter(
-    (item) =>
-      allowedAvailabilityTypes.has(item.availabilityType) &&
-      (!isDefined(item.availabilityObjectMetadataId) ||
-        item.availabilityObjectMetadataId ===
-          contextStoreCurrentObjectMetadataItemId),
-  );
+  const filteredCommandMenuItems = commandMenuItemsDraft
+    .filter(matchesObjectMetadataId(contextStoreCurrentObjectMetadataItemId))
+    .filter((item) => allowedAvailabilityTypes.has(item.availabilityType));
 
   const filteredCommandMenuItemIds = new Set(
     filteredCommandMenuItems.map((item) => item.id),
@@ -267,9 +263,10 @@ export const SidePanelCommandMenuItemEditPage = () => {
                         itemId={item.id}
                         onEnter={() => handleTogglePin(item.id, true)}
                       >
-                        <CommandMenuItemDraggable
-                          label={getDisplayLabel(item)}
-                          Icon={ItemIcon}
+                        <MenuItemDraggable
+                          withIconContainer
+                          LeftIcon={ItemIcon}
+                          text={getDisplayLabel(item)}
                           gripMode="onHover"
                           isIconDisplayedOnHoverOnly={false}
                           iconButtons={[
