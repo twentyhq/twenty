@@ -39,6 +39,9 @@ export enum AppPath {
   // WhatsApp Chat
   WhatsAppChat = '/chat',
 
+  // Coaching Dashboard
+  Coaching = '/coaching',
+
   // 404 page not found
   NotFoundWildcard = '*',
   NotFound = '/not-found',
