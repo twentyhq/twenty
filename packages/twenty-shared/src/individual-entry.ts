@@ -1,6 +1,5 @@
 export * from './ai';
 export * from './application';
-export * from './command-menu';
 export * from './constants';
 export * from './database-events';
 export * from './metadata';
