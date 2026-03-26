@@ -65,7 +65,10 @@ export const SettingsAdminApps = () => {
       <StyledTableContainer>
         <Table>
           <StyledTableHeaderRowContainer>
-            <TableRow gridAutoColumns={TABLE_GRID} mobileGridAutoColumns={TABLE_GRID_MOBILE}>
+            <TableRow
+              gridAutoColumns={TABLE_GRID}
+              mobileGridAutoColumns={TABLE_GRID_MOBILE}
+            >
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader>{t`Source`}</TableHeader>
               <TableHeader>{t`Listed`}</TableHeader>
@@ -82,7 +85,11 @@ export const SettingsAdminApps = () => {
                 )}
                 fullWidth
               >
-                <TableRow gridAutoColumns={TABLE_GRID} mobileGridAutoColumns={TABLE_GRID_MOBILE} isClickable>
+                <TableRow
+                  gridAutoColumns={TABLE_GRID}
+                  mobileGridAutoColumns={TABLE_GRID_MOBILE}
+                  isClickable
+                >
                   <TableCell>{registration.name}</TableCell>
                   <TableCell overflow="hidden">
                     {registration.sourcePackage ?? registration.sourceType}
