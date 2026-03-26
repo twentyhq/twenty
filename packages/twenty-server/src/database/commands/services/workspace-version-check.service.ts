@@ -47,37 +47,6 @@ export class WorkspaceVersionCheckService {
     return this.findWorkspacesBelowVersion(previousVersion);
   }
 
-  async assertNoWorkspacesBelowMinimumVersion(
-    allCommandVersions: string[],
-  ): Promise<void> {
-    const hasWorkspaces = await this.hasActiveOrSuspendedWorkspaces();
-
-    if (!hasWorkspaces) {
-      return;
-    }
-
-    const workspacesBelow =
-      await this.getWorkspacesBelowMinimumVersion(allCommandVersions);
-
-    if (workspacesBelow.length === 0) {
-      return;
-    }
-
-    const currentAppVersion = this.getCurrentAppVersion();
-
-    for (const workspace of workspacesBelow) {
-      this.logger.error(
-        `Workspace ${workspace.id} (${workspace.displayName}) is at version ${workspace.version ?? 'undefined'}, which is below the minimum required version.`,
-      );
-    }
-
-    throw new Error(
-      `Unable to run migrations. ${workspacesBelow.length} workspace(s) are below the minimum required version for ${currentAppVersion.version}.\n` +
-        'Please ensure all workspaces are on at least the previous minor version before running migrations.\n' +
-        'If running manually, use --force to bypass this check (not recommended).',
-    );
-  }
-
   getCurrentAppVersion(): SemVer {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
