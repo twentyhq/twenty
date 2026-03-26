@@ -36,7 +36,7 @@ if [ "$has_schema" = "f" ]; then
 fi
 
 # Always run migrations (idempotent — skips already-applied ones)
-yarn database:migrate:prod
+yarn database:migrate:prod --force
 
 yarn command:prod cache:flush
 yarn command:prod upgrade

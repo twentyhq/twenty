@@ -14,7 +14,7 @@ setup_and_migrate_db() {
     if [ "$has_schema" = "f" ]; then
         echo "Database appears to be empty, running migrations."
         NODE_OPTIONS="--max-old-space-size=1500" node ./dist/scripts/setup-db.js
-        yarn database:migrate:prod
+        yarn database:migrate:prod --force
     fi
 
     yarn command:prod cache:flush
