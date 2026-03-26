@@ -100,7 +100,7 @@ function formatResultInternal<T>(
       flatObjectMetadata,
     );
 
-  const { fieldIdByName } = fieldMaps;
+  const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
 
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
     flatObjectMetadata,
@@ -114,6 +114,7 @@ function formatResultInternal<T>(
 
     const fieldMetadataId =
       fieldIdByName[key] ||
+      fieldIdByJoinColumnName[key] ||
       fieldIdByName[compositePropertyArgs?.parentField ?? ''];
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -189,23 +190,6 @@ function formatResultInternal<T>(
     flatObjectMetadata,
     flatFieldMetadataMaps,
   );
-
-  const fieldMetadataItemsOfTypeDateOnly = getFlatFieldsFromFlatObjectMetadata(
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-  ).filter((field) => field.type === FieldMetadataType.DATE);
-
-  for (const dateField of fieldMetadataItemsOfTypeDateOnly) {
-    // @ts-expect-error legacy noImplicitAny
-    const rawUpdatedDate = newData[dateField.name] as string | null | undefined;
-
-    if (!isDefined(rawUpdatedDate)) {
-      continue;
-    }
-
-    // @ts-expect-error legacy noImplicitAny
-    newData[dateField.name] = rawUpdatedDate;
-  }
 
   const fieldMetadataItemsOfTypeDateTimeOnly =
     getFlatFieldsFromFlatObjectMetadata(
