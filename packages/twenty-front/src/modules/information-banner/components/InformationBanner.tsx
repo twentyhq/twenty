@@ -3,23 +3,31 @@ import { informationBannerIsOpenComponentState } from '@/information-banner/stat
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import {
   Banner,
   type BannerVariant,
   type IconComponent,
   IconX,
 } from 'twenty-ui/display';
-import { Button, IconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-const StyledCloseButtonContainer = styled.div`
-  color: ${themeCssVariables.grayScale.gray1};
+const StyledCloseButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
   display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 0;
 `;
 
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
@@ -50,6 +58,7 @@ export const InformationBanner = ({
   onClose?: () => void;
   componentInstanceId: string;
 }) => {
+  const { theme } = useContext(ThemeContext);
   const informationBannerIsOpen = useAtomComponentStateValue(
     informationBannerIsOpenComponentState,
     componentInstanceId,
@@ -78,15 +87,12 @@ export const InformationBanner = ({
             )}
           </StyledContent>
           {onClose && (
-            <StyledCloseButtonContainer>
-              <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
-            </StyledCloseButtonContainer>
+            <StyledCloseButton
+              onClick={onClose}
+              aria-label={t`Close banner`}
+            >
+              <IconX size={theme.icon.size.md} />
+            </StyledCloseButton>
           )}
         </Banner>
       )}

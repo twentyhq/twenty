@@ -7,7 +7,7 @@ export const SettingsRolesTableHeader = () => {
   return (
     <Table>
       <TableRow
-        mobileGridAutoColumns="2fr 3fr 1fr 35px"
+        mobileGridAutoColumns="5fr 1fr 1fr 35px"
         gridAutoColumns="332px 3fr 2fr 1fr"
       >
         <TableHeader>
@@ -16,6 +16,7 @@ export const SettingsRolesTableHeader = () => {
         <TableHeader align="right">
           <Trans>Assigned to</Trans>
         </TableHeader>
+        <TableHeader></TableHeader>
         <TableHeader></TableHeader>
       </TableRow>
     </Table>
