@@ -330,7 +330,9 @@ export const WorkflowEditActionFormBuilder = ({
                                           .placeholder}
                                   </FormFieldPlaceholder>
                                 </StyledPlaceholderContainer>
-                                {field.type === 'RECORD' && (
+                                {(field.type === 'RECORD' ||
+                                  field.type === 'SELECT' ||
+                                  field.type === 'MULTI_SELECT') && (
                                   <IconChevronDown
                                     size={theme.icon.size.md}
                                     color={

@@ -19,7 +19,9 @@ import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/si
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
@@ -113,6 +115,8 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       });
       store.set(isSidePanelOpenedState.atom, false);
       store.set(sidePanelSearchState.atom, '');
+      store.set(sidePanelSearchObjectFilterState.atom, null);
+      store.set(sidePanelShowHiddenObjectsState.atom, false);
       store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       store.set(sidePanelNavigationStackState.atom, []);
       resetNavigationMenuItemState();

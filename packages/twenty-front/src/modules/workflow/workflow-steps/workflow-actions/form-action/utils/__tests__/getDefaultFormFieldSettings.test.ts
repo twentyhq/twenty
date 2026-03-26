@@ -54,6 +54,20 @@ describe('getDefaultFormFieldSettings', () => {
     });
   });
 
+  it('should return correct default settings for MULTI_SELECT field type', () => {
+    const result = getDefaultFormFieldSettings(FieldMetadataType.MULTI_SELECT);
+    expect(result).toEqual({
+      id: 'test-uuid-123',
+      name: 'multiSelect',
+      label: 'Multi-Select',
+      placeholder: 'Choose values',
+      settings: {
+        selectType: 'EXISTING_FIELD',
+        selectedFieldId: undefined,
+      },
+    });
+  });
+
   it('should generate unique UUID for each call', () => {
     getDefaultFormFieldSettings(FieldMetadataType.TEXT);
     getDefaultFormFieldSettings(FieldMetadataType.NUMBER);

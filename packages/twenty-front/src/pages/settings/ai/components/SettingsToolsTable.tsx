@@ -8,19 +8,13 @@ import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogic
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconChevronRight,
-  IconPlus,
-  IconSearch,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { H2Title, IconChevronRight, IconPlus } from 'twenty-ui/display';
+import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -32,16 +26,8 @@ import {
   SettingsToolTableRow,
 } from './SettingsToolTableRow';
 
-const StyledSearchAndFilterContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledSearchInputContainer = styled.div`
-  flex: 1;
-  width: 100%;
 `;
 
 const StyledTableHeaderRowContainer = styled.div`
@@ -171,18 +157,13 @@ export const SettingsToolsTable = () => {
           title={t`Custom`}
           description={t`Custom tools created in your workspace`}
         />
-        <StyledSearchAndFilterContainer>
-          <StyledSearchInputContainer>
-            <SettingsTextInput
-              instanceId="custom-tool-table-search"
-              LeftIcon={IconSearch}
-              placeholder={t`Search a custom tool...`}
-              value={customSearchTerm}
-              onChange={setCustomSearchTerm}
-              fullWidth
-            />
-          </StyledSearchInputContainer>
-        </StyledSearchAndFilterContainer>
+        <StyledSearchContainer>
+          <SearchInput
+            placeholder={t`Search a custom tool...`}
+            value={customSearchTerm}
+            onChange={setCustomSearchTerm}
+          />
+        </StyledSearchContainer>
         <Table>
           <StyledTableHeaderRowContainer>
             <TableRow
@@ -229,18 +210,13 @@ export const SettingsToolsTable = () => {
           title={t`Built-in`}
           description={t`Standard tools available to AI agents`}
         />
-        <StyledSearchAndFilterContainer>
-          <StyledSearchInputContainer>
-            <SettingsTextInput
-              instanceId="builtin-tool-table-search"
-              LeftIcon={IconSearch}
-              placeholder={t`Search a built-in tool...`}
-              value={builtInSearchTerm}
-              onChange={setBuiltInSearchTerm}
-              fullWidth
-            />
-          </StyledSearchInputContainer>
-        </StyledSearchAndFilterContainer>
+        <StyledSearchContainer>
+          <SearchInput
+            placeholder={t`Search a built-in tool...`}
+            value={builtInSearchTerm}
+            onChange={setBuiltInSearchTerm}
+          />
+        </StyledSearchContainer>
         <Table>
           <StyledTableHeaderRowContainer>
             <TableRow

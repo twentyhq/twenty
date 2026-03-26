@@ -4,6 +4,7 @@ import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/vie
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
+import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/side-panel/utils/isViewDisplayableInNavigationMenu';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -16,13 +17,10 @@ import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanel
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type View } from '@/views/types/View';
-import { ViewKey } from '@/views/types/ViewKey';
-import { ViewType } from '@/views/types/ViewType';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { ViewVisibility } from '~/generated-metadata/graphql';
 
 type SidePanelNewSidebarItemViewPickerSubViewProps = {
   selectedObjectMetadataIdForView: string;
@@ -49,9 +47,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     .filter(
       (view) =>
         view.objectMetadataId === selectedObjectMetadataIdForView &&
-        view.key !== ViewKey.INDEX &&
-        view.type !== ViewType.FIELDS_WIDGET &&
-        view.visibility === ViewVisibility.WORKSPACE,
+        isViewDisplayableInNavigationMenu(view),
     )
     .sort((a, b) => a.position - b.position);
 
