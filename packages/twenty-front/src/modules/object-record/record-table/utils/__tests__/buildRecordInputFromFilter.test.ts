@@ -103,6 +103,23 @@ describe('buildRecordInputFromFilter', () => {
     expect(result.createdAt).toEqual(filterDate);
   });
 
+  it('should deep-merge a single composite address sub-field starting from empty object', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_ADDRESS,
+          type: 'ADDRESS',
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Paris',
+          subFieldName: 'addressCity',
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+    });
+
+    expect(result.address).toEqual({ addressCity: 'Paris' });
+  });
+
   it('should merge composite address sub-fields into a single object', () => {
     const result = buildRecordInputFromFilter({
       currentRecordFilters: [

@@ -5,14 +5,12 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildValueFromFilter';
-import { mergeCompositeValues } from '@/object-record/record-table/utils/mergeCompositeValues';
-import { type FieldType } from '@/settings/data-model/types/FieldType';
 import {
   FieldMetadataType,
   ViewFilterOperand,
   type ObjectRecord,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { deepMerge, isDefined } from 'twenty-shared/utils';
 
 export const buildRecordInputFromFilter = ({
   currentRecordFilters,
@@ -58,10 +56,10 @@ export const buildRecordInputFromFilter = ({
         return;
       }
 
-      if (isCompositeFieldType(fieldMetadataItem.type as FieldType)) {
-        recordInput[fieldMetadataItem.name] = mergeCompositeValues(
-          recordInput[fieldMetadataItem.name] as ObjectRecord | undefined,
-          value as ObjectRecord,
+      if (isCompositeFieldType(fieldMetadataItem.type)) {
+        recordInput[fieldMetadataItem.name] = deepMerge(
+          recordInput[fieldMetadataItem.name] ?? {},
+          value,
         );
       } else if (
         fieldMetadataItem.type === FieldMetadataType.DATE_TIME &&
