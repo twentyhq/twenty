@@ -4,6 +4,7 @@ import {
   IconComment,
   IconHome,
   IconMessageCirclePlus,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -108,6 +109,9 @@ const StyledNewChatButton = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: 100%;
   justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  padding-inline: ${themeCssVariables.spacing[1]};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
@@ -243,7 +247,7 @@ export const MainNavigationDrawerTabsRow = () => {
           onKeyDown={handleNewChatKeyDown}
         >
           <IconMessageCirclePlus size={theme.icon.size.md} />
-          {isExpanded && t`New chat`}
+          {isExpanded && <OverflowingTextWithTooltip text={t`New chat`} />}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>
     </StyledRow>
