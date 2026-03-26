@@ -18,9 +18,14 @@ export class WorkspaceVersionService {
   ) {}
 
   async hasActiveOrSuspendedWorkspaces(): Promise<boolean> {
-    const workspaces = await this.loadActiveOrSuspendedWorkspaces();
-
-    return workspaces.length > 0;
+    return this.workspaceRepository.exists({
+      where: {
+        activationStatus: In([
+          WorkspaceActivationStatus.ACTIVE,
+          WorkspaceActivationStatus.SUSPENDED,
+        ]),
+      },
+    });
   }
 
   async getWorkspacesBelowVersion(

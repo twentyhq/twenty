@@ -20,7 +20,11 @@ export class CoreEngineVersionService {
       );
     }
 
-    return new SemVer(appVersion);
+    try {
+      return new SemVer(appVersion);
+    } catch {
+      throw new Error(`APP_VERSION is not a valid semver: "${appVersion}"`);
+    }
   }
 
   getPreviousVersion(): SemVer {

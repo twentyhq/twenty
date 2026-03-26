@@ -8,8 +8,7 @@ import { V1_20_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
-import { CoreMigrationRunnerService } from 'src/engine/services/core-migration-runner.service';
+import { CoreEngineModule } from 'src/engine/services/core-engine.module';
 import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 
 @Module({
@@ -20,17 +19,10 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     V1_19_UpgradeVersionCommandModule,
     V1_20_UpgradeVersionCommandModule,
     DataSourceModule,
+    CoreEngineModule,
     WorkspaceVersionModule,
   ],
-  providers: [
-    UpgradeCommand,
-    CoreEngineVersionService,
-    CoreMigrationRunnerService,
-  ],
-  exports: [
-    CoreEngineVersionService,
-    CoreMigrationRunnerService,
-    UpgradeCommand,
-  ],
+  providers: [UpgradeCommand],
+  exports: [UpgradeCommand],
 })
 export class UpgradeVersionCommandModule {}
