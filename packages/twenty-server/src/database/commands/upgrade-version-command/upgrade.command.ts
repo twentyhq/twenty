@@ -34,10 +34,8 @@ import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgra
 import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
 import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
-import { BackfillFieldWidgetsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-field-widgets.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
-import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
-import { BackfillRecordPageViewFieldsAndRemoveFieldWidgetsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-record-page-view-fields-and-remove-field-widgets.command';
+import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
 import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
 import { GenerateApplicationSdkClientsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-generate-application-sdk-clients.command';
@@ -106,13 +104,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillNavigationMenuItemTypeCommand: BackfillNavigationMenuItemTypeCommand,
     protected readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
     protected readonly deleteOrphanNavigationMenuItemsCommand: DeleteOrphanNavigationMenuItemsCommand,
-    protected readonly backfillPageLayoutsCommand: BackfillPageLayoutsCommand,
+    protected readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     protected readonly generateApplicationSdkClientsCommand: GenerateApplicationSdkClientsCommand,
     protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
     protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
     protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
-    protected readonly backfillFieldWidgetsCommand: BackfillFieldWidgetsCommand,
-    protected readonly backfillRecordPageViewFieldsAndRemoveFieldWidgetsCommand: BackfillRecordPageViewFieldsAndRemoveFieldWidgetsCommand,
     protected readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
     protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
   ) {
@@ -172,11 +168,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateRichTextToTextCommand,
       this.deleteOrphanNavigationMenuItemsCommand,
       this.backfillCommandMenuItemsCommand,
-      this.backfillPageLayoutsCommand,
+      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
       this.seedCliApplicationRegistrationCommand,
       this.migrateMessagingInfrastructureToMetadataCommand,
-      this.backfillFieldWidgetsCommand,
-      this.backfillRecordPageViewFieldsAndRemoveFieldWidgetsCommand,
       this.backfillSelectFieldOptionIdsCommand,
       this.updateStandardIndexViewNamesCommand,
       this.generateApplicationSdkClientsCommand,
