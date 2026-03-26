@@ -1,4 +1,4 @@
-import { ALLOWED_HTML_ELEMENTS } from 'twenty-sdk';
+import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 
 const ATTRIBUTE_TO_PROPERTY_MAP: Record<string, string> = {
   className: 'className',

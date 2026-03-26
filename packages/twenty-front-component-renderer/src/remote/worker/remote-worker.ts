@@ -15,12 +15,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
-import {
-  type FrontComponentExecutionContext,
-  frontComponentHostCommunicationApi,
-  HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
-  setFrontComponentExecutionContext,
-} from 'twenty-sdk';
+import { type FrontComponentExecutionContext } from 'twenty-sdk';
+import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
+import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
+import { setFrontComponentExecutionContext } from './utils/setFrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';

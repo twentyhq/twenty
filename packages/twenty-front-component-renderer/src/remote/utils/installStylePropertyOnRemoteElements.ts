@@ -1,4 +1,4 @@
-import { ALLOWED_HTML_ELEMENTS } from 'twenty-sdk';
+import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 
 const camelToKebab = (property: string): string =>
   property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);

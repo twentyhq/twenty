@@ -4,11 +4,9 @@ import * as path from 'path';
 import { IndentationText, Project, QuoteKind } from 'ts-morph';
 import { fileURLToPath } from 'url';
 
-import {
-  ALLOWED_HTML_ELEMENTS,
-  COMMON_HTML_EVENTS,
-  HTML_COMMON_PROPERTIES,
-} from 'twenty-sdk';
+import { ALLOWED_HTML_ELEMENTS } from '../../src/constants/AllowedHtmlElements';
+import { COMMON_HTML_EVENTS } from '../../src/constants/CommonHtmlEvents';
+import { HTML_COMMON_PROPERTIES } from '../../src/constants/HtmlCommonProperties';
 
 import {
   type ComponentSchema,

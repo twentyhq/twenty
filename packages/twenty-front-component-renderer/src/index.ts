@@ -132,5 +132,5 @@ export type {
   HostToWorkerRenderContext,
   SdkClientUrls,
 } from './types/HostToWorkerRenderContext';
-export type { PropertySchema } from 'twenty-sdk';
+export type { PropertySchema } from './constants/PropertySchema';
 export type { WorkerExports } from './types/WorkerExports';

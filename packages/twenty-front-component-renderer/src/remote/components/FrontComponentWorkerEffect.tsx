@@ -2,7 +2,7 @@ import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
 import { type ConfirmationModalCaller } from 'twenty-shared/types';
-import { type CommandConfirmationModalResult } from '../../../sdk/front-component-api/globals/frontComponentHostCommunicationApi';
+import { type CommandConfirmationModalResult } from 'twenty-sdk';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';

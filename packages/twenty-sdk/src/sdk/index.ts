@@ -134,9 +134,6 @@ export {
   useRecordId,
   useUserId,
 } from './front-component-api';
-export {
-  frontComponentHostCommunicationApi,
-} from './front-component-api';
 export type {
   CloseSidePanelFunction,
   CommandConfirmationModalAccent,
@@ -157,16 +154,3 @@ export type {
   EnqueueSnackbarParams,
   SnackBarVariant,
 } from 'twenty-shared/types';
-
-// Front Component Common exports
-export {
-  ALLOWED_HTML_ELEMENTS,
-  COMMON_HTML_EVENTS,
-  EVENT_TO_REACT,
-  HTML_COMMON_PROPERTIES,
-  HTML_TAG_TO_REMOTE_COMPONENT,
-  HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
-} from './front-component-api';
-export type { AllowedHtmlElement } from './front-component-api';
-export type { PropertySchema } from './front-component-api';
-export type { SerializedEventData } from './front-component-api';

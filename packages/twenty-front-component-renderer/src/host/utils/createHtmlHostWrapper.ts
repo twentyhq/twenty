@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { EVENT_TO_REACT, type SerializedEventData } from 'twenty-sdk';
+import { EVENT_TO_REACT } from '@/constants/EventToReact';
+import { type SerializedEventData } from '@/constants/SerializedEventData';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
