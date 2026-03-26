@@ -94,10 +94,12 @@ export const RecordBoardDragDropContext = ({
         processBoardCardDrop(result, originalDragSelection);
       } catch (error) {
         store.set(isRecordBoardDropProcessingCallbackState, false);
+        endRecordDrag();
 
         throw error;
       }
 
+      store.set(isRecordBoardDropProcessingCallbackState, false);
       endRecordDrag();
     },
     [
