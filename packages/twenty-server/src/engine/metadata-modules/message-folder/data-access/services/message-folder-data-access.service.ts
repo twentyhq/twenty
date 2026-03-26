@@ -42,8 +42,7 @@ export class MessageFolderDataAccessService {
   ): Promise<Record<string, unknown>> {
     const coreData: Record<string, unknown> = { ...data, workspaceId };
     const parentFolderId = coreData.parentFolderId as string | null;
-    const channelId =
-      (coreData.messageChannelId as string) ?? messageChannelId;
+    const channelId = (coreData.messageChannelId as string) ?? messageChannelId;
 
     if (parentFolderId && !uuidValidate(parentFolderId) && channelId) {
       const parentFolder = await this.coreRepository.findOne({

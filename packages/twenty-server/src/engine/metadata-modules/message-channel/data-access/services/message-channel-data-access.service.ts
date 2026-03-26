@@ -135,10 +135,12 @@ export class MessageChannelDataAccessService {
       }
 
       if (needsMessageFolders) {
-        const messageFolders =
-          await this.messageFolderDataAccessService.find(workspaceId, {
+        const messageFolders = await this.messageFolderDataAccessService.find(
+          workspaceId,
+          {
             messageChannelId: result.id,
-          });
+          },
+        );
 
         workspaceResult.messageFolders =
           messageFolders as unknown as MessageChannelWorkspaceEntity['messageFolders'];
