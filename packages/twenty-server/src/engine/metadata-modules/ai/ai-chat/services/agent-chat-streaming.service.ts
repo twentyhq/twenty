@@ -33,6 +33,7 @@ export type StreamAgentChatOptions = {
   response: Response;
   messages: ExtendedUIMessage[];
   browsingContext: BrowsingContextType | null;
+  modelId?: string;
 };
 
 @Injectable()
@@ -51,6 +52,7 @@ export class AgentChatStreamingService {
     messages,
     browsingContext,
     response,
+    modelId,
   }: StreamAgentChatOptions) {
     const thread = await this.threadRepository.findOne({
       where: {
@@ -114,6 +116,7 @@ export class AgentChatStreamingService {
               messages,
               browsingContext,
               onCodeExecutionUpdate,
+              modelId,
             });
 
           let streamUsage = {

@@ -23,6 +23,10 @@ const StyledIconButton = styled.button<{
     color 0.1s ease-in-out,
     background 0.1s ease-in-out;
 
+  &:hover:not(:disabled) {
+    background: ${themeCssVariables.color.blue10};
+  }
+
   &:disabled {
     background: ${themeCssVariables.background.quaternary};
     color: ${themeCssVariables.font.color.tertiary};

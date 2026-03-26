@@ -29,6 +29,21 @@ export const computeFlatViewFieldsToCreate = ({
           field.universalIdentifier ===
             labelIdentifierFieldMetadataUniversalIdentifier),
     )
+    .sort((a, b) => {
+      const aIsLabelIdentifierFieldMetadata =
+        a.universalIdentifier ===
+        labelIdentifierFieldMetadataUniversalIdentifier;
+      const bIsLabelIdentifierFieldMetadata =
+        b.universalIdentifier ===
+        labelIdentifierFieldMetadataUniversalIdentifier;
+
+      if (aIsLabelIdentifierFieldMetadata && !bIsLabelIdentifierFieldMetadata)
+        return -1;
+      if (!aIsLabelIdentifierFieldMetadata && bIsLabelIdentifierFieldMetadata)
+        return 1;
+
+      return 0;
+    })
     .map<UniversalFlatViewField>((field, index) => ({
       fieldMetadataUniversalIdentifier: field.universalIdentifier,
       viewUniversalIdentifier,

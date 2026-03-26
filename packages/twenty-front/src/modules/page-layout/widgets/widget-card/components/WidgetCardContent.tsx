@@ -51,6 +51,7 @@ type WidgetCardContentProps = {
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
+  hasInteractiveContent?: boolean;
   className?: string;
   children?: React.ReactNode;
 };
@@ -59,11 +60,12 @@ export const WidgetCardContent = ({
   variant,
   hasHeader,
   isEditable,
+  hasInteractiveContent = false,
   className,
   children,
 }: WidgetCardContentProps) => {
   const handleContentClick = (event: React.MouseEvent) => {
-    if (!isEditable) {
+    if (!isEditable || !hasInteractiveContent) {
       return;
     }
 

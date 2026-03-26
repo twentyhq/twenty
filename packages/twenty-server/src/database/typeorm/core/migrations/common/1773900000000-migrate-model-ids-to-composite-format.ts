@@ -6,7 +6,7 @@ export class MigrateModelIdsToCompositeFormat1773900000000
   name = 'MigrateModelIdsToCompositeFormat1773900000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Reset workspace model columns to sentinel defaults.
+    // Reset workspace model columns to auto-select placeholders.
     // The runtime resolves these dynamically from admin preferences.
     await queryRunner.query(
       `UPDATE "core"."workspace"
@@ -25,7 +25,7 @@ export class MigrateModelIdsToCompositeFormat1773900000000
           OR array_length("enabledAiModelIds", 1) > 0`,
     );
 
-    // Reset agent model IDs to the sentinel so they fall back to workspace defaults
+    // Reset agent model IDs to the auto-select placeholder so they fall back to workspace defaults
     await queryRunner.query(
       `UPDATE "core"."agent"
        SET "modelId" = 'default-smart-model'
@@ -34,6 +34,6 @@ export class MigrateModelIdsToCompositeFormat1773900000000
   }
 
   public async down(_queryRunner: QueryRunner): Promise<void> {
-    // No reversal needed — sentinel defaults are safe to leave in place.
+    // No reversal needed — auto-select placeholders are safe to leave in place.
   }
 }

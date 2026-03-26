@@ -54,6 +54,8 @@ export class CalendarRelaunchFailedCalendarChannelJob {
         {
           syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
           syncStatus: CalendarChannelSyncStatus.ACTIVE,
+          throttleFailureCount: 0,
+          syncStageStartedAt: null,
         },
       );
     }, authContext);

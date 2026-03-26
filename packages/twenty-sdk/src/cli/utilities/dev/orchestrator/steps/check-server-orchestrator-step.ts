@@ -58,7 +58,7 @@ export class CheckServerOrchestratorStep {
         this.state.applyStepEvents([
           {
             message:
-              'Authentication failed. Run `twenty remote add --local` to authenticate.',
+              'Authentication failed. Run `twenty remote add <url>` to authenticate.',
             status: 'error',
           },
         ]);

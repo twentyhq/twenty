@@ -22,6 +22,7 @@ type SidePanelEditLinkItemViewProps = OrganizeActionsProps & {
     updates: { link?: string; name?: string },
   ) => void;
   onOpenFolderPicker: () => void;
+  showMoveToFolder?: boolean;
 };
 
 export const SidePanelEditLinkItemView = ({
@@ -35,13 +36,15 @@ export const SidePanelEditLinkItemView = ({
   onRemove,
   onAddBefore,
   onAddAfter,
+  showMoveToFolder = false,
 }: SidePanelEditLinkItemViewProps) => {
   const { t } = useLingui();
   const [urlEditInput, setUrlEditInput] = useState('');
   const [lastAutoSetName, setLastAutoSetName] = useState<string | null>(null);
 
   const defaultLabel = t`Link label`;
-  const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
+  const selectableItemIds =
+    getOrganizeActionsSelectableItemIds(showMoveToFolder);
 
   const currentName = selectedItem.name ?? defaultLabel;
   const currentDomain = selectedItem.link
@@ -91,7 +94,7 @@ export const SidePanelEditLinkItemView = ({
         onRemove={onRemove}
         onAddBefore={onAddBefore}
         onAddAfter={onAddAfter}
-        showMoveToFolder
+        showMoveToFolder={showMoveToFolder}
         onMoveToFolder={onOpenFolderPicker}
       />
       <SidePanelEditOwnerSection applicationId={selectedItem.applicationId} />
