@@ -1,3 +1,4 @@
+import { AnimatedIconCrossfade } from '@/command-menu-item/components/AnimatedIconCrossfade';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
@@ -5,8 +6,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
-import { motion } from 'framer-motion';
-import { useContext } from 'react';
 import {
   AppTooltip,
   IconLayoutSidebarRightExpand,
@@ -15,66 +14,12 @@ import {
   TooltipPosition,
 } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTooltipWrapper = styled.div`
   font-size: ${themeCssVariables.font.size.md};
 `;
-
-const StyledAnimatedIconContainer = styled.div`
-  height: 14px;
-  overflow: hidden;
-  position: relative;
-  width: 14px;
-`;
-
-const StyledAnimatedIconLayer = styled(motion.div)`
-  align-items: center;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  position: absolute;
-`;
-
-const CommandMenuItemMoreActionsAnimatedIcon = ({
-  isSidePanelOpened,
-}: {
-  isSidePanelOpened: boolean;
-}) => {
-  const { theme } = useContext(ThemeContext);
-
-  return (
-    <StyledAnimatedIconContainer>
-      <StyledAnimatedIconLayer
-        initial={false}
-        animate={{
-          opacity: isSidePanelOpened ? 0 : 1,
-          scale: isSidePanelOpened ? 0.85 : 1,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-          ease: 'easeInOut',
-        }}
-      >
-        <IconLayoutSidebarRightExpand size={14} />
-      </StyledAnimatedIconLayer>
-      <StyledAnimatedIconLayer
-        initial={false}
-        animate={{
-          opacity: isSidePanelOpened ? 1 : 0,
-          scale: isSidePanelOpened ? 1 : 0.85,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-          ease: 'easeInOut',
-        }}
-      >
-        <IconX size={14} />
-      </StyledAnimatedIconLayer>
-    </StyledAnimatedIconContainer>
-  );
-};
 
 export const CommandMenuItemMoreActionsButton = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
@@ -90,8 +35,10 @@ export const CommandMenuItemMoreActionsButton = () => {
     <div id="toggle-side-panel-button">
       <AnimatedButton
         animatedSvg={
-          <CommandMenuItemMoreActionsAnimatedIcon
-            isSidePanelOpened={isSidePanelOpened}
+          <AnimatedIconCrossfade
+            isActive={isSidePanelOpened}
+            ActiveIcon={IconX}
+            InactiveIcon={IconLayoutSidebarRightExpand}
           />
         }
         dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}

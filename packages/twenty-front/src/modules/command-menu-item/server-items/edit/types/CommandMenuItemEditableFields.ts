@@ -1,5 +1,6 @@
-export type CommandMenuItemEditableFields = {
-  isPinned: boolean;
-  position: number;
-  shortLabel?: string | null;
-};
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+
+export type CommandMenuItemEditableFields = Pick<
+  CommandMenuItemFieldsFragment,
+  'isPinned' | 'position' | 'shortLabel'
+>;

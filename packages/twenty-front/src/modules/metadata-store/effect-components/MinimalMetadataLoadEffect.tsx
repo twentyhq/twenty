@@ -5,12 +5,9 @@ import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMet
 import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
 import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
 import { metadataLoadedVersionState } from '@/metadata-store/states/metadataLoadedVersionState';
-import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect, useState } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type LoadedState = 'none' | 'mocked' | 'real';
 
@@ -38,9 +35,6 @@ export const MinimalMetadataLoadEffect = () => {
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
   const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
   const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
 
   const isActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 
@@ -74,21 +68,8 @@ export const MinimalMetadataLoadEffect = () => {
 
       const result = await loadMinimalMetadata();
 
-      if (result?.staleEntityKeys) {
-        const staleEntityKeysIncludingCommandMenuItems = [
-          ...result.staleEntityKeys,
-        ] as MetadataEntityKey[];
-
-        if (
-          isCommandMenuItemEnabled &&
-          !staleEntityKeysIncludingCommandMenuItems.includes('commandMenuItems')
-        ) {
-          staleEntityKeysIncludingCommandMenuItems.push('commandMenuItems');
-        }
-
-        await loadStaleMetadataEntities(
-          staleEntityKeysIncludingCommandMenuItems,
-        );
+      if (result?.staleEntityKeys && result.staleEntityKeys.length > 0) {
+        await loadStaleMetadataEntities(result.staleEntityKeys);
       }
     };
 
@@ -103,7 +84,6 @@ export const MinimalMetadataLoadEffect = () => {
     loadMinimalMetadata,
     loadMockedMetadataAtomic,
     loadStaleMetadataEntities,
-    isCommandMenuItemEnabled,
   ]);
 
   return null;

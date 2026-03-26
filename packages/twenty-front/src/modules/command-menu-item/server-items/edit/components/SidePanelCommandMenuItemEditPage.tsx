@@ -1,6 +1,7 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCommandMenuContextApi } from '@/command-menu-item/server-items/common/hooks/useCommandMenuContextApi';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
+import { useCommandMenuContextApiForEdition } from '@/command-menu-item/server-items/edit/hooks/useCommandMenuContextApiForEdition';
+import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { CommandMenuItemDraggable } from '@/command-menu-item/server-items/edit/components/CommandMenuItemDraggable';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown';
@@ -72,11 +73,17 @@ const StyledContent = styled.div`
 export const SidePanelCommandMenuItemEditPage = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { isInSidePanel, commandMenuItems: commandMenuItemsInCurrentContext } =
+  const { commandMenuItems: commandMenuItemsInCurrentContext } =
     useContext(CommandMenuContext);
-  const commandMenuContextApi = useCommandMenuContextApi({ isInSidePanel });
+  const commandMenuContextApi = useCommandMenuContextApiForEdition();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+
+  // oxlint-disable-next-line twenty/matching-state-variable
+  const serverCommandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const serverItemsById = new Map(
+    serverCommandMenuItems.map((item) => [item.id, item]),
+  );
   const { commandMenuItems } = useCommandMenuItemsDraftState();
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
   const { reorderCommandMenuItemInDraft } = useReorderCommandMenuItemsInDraft();
@@ -89,9 +96,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
     }) ?? item.label;
 
   const contextualCommandMenuItemIds = new Set(
-    commandMenuItemsInCurrentContext
-      .map((item) => item.sourceCommandMenuItemId)
-      .filter(isDefined),
+    commandMenuItemsInCurrentContext.map((item) => item.id).filter(isDefined),
   );
 
   const contextualCommandMenuItems = commandMenuItems.filter((item) =>
@@ -153,17 +158,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
   };
 
   const makeOptionsDropdownWrapper =
-    (
-      item: Pick<
-        CommandMenuItemFieldsFragment,
-        'id' | 'engineComponentKey' | 'shortLabel'
-      >,
-    ) =>
+    (item: Pick<CommandMenuItemFieldsFragment, 'id' | 'shortLabel'>) =>
     ({ iconButton }: { iconButton: React.ReactElement }) => (
       <CommandMenuItemOptionsDropdown
         itemId={item.id}
-        engineComponentKey={item.engineComponentKey}
         shortLabel={item.shortLabel}
+        serverShortLabel={serverItemsById.get(item.id)?.shortLabel ?? null}
         iconButton={iconButton}
       />
     );

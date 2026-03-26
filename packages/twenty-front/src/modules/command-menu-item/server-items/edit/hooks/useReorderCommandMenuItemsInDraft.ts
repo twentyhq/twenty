@@ -56,8 +56,6 @@ export const useReorderCommandMenuItemsInDraft = () => {
         return;
       }
 
-      // Non-visible items between visible ones still occupy position space,
-      // so we resolve bounds in the full (unfiltered) section
       const positionBounds = isDefined(nextContextualItem)
         ? getPositionBoundsAtInsertionPoint(
             nextContextualItem.id,

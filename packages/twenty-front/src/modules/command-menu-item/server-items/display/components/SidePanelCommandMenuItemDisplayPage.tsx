@@ -15,6 +15,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
@@ -64,11 +65,12 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const hasKnownPinnedInlineLayout =
     commandMenuPinnedInlineLayout.containerWidth > 0 &&
-    pinnedCommandMenuItemKeysInDisplayOrder.every(
-      (commandMenuItemKey) =>
-        typeof commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[
+    pinnedCommandMenuItemKeysInDisplayOrder.every((commandMenuItemKey) =>
+      isNumber(
+        commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[
           commandMenuItemKey
-        ] === 'number',
+        ],
+      ),
     );
 
   const pinnedOverflowCommandMenuItems = hasKnownPinnedInlineLayout

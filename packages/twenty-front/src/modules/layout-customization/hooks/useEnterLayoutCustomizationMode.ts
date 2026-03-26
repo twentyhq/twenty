@@ -71,7 +71,7 @@ export const useEnterLayoutCustomizationMode = () => {
         commandMenuItemEditRecordSelectionPreviewModeState.atomFamily({
           instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
         }),
-        'auto',
+        'selection',
       );
 
       navigateSidePanel({

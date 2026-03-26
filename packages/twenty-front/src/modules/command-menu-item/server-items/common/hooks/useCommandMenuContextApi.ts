@@ -1,10 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
-import { getPreviewContextStoreState } from '@/command-menu-item/server-items/common/utils/getPreviewContextStoreState';
-import { commandMenuItemEditRecordSelectionPreviewModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditRecordSelectionPreviewModeState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -15,9 +12,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -32,6 +27,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+// Display-only hook. For the edit page, use useCommandMenuContextApiForEdition.
 export const useCommandMenuContextApi = ({
   isInSidePanel,
 }: {
@@ -69,80 +65,36 @@ export const useCommandMenuContextApi = ({
     }),
   );
 
-  const mainContextStoreCurrentViewId = useAtomValue(
-    contextStoreCurrentViewIdComponentState.atomFamily({
-      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-    }),
-  );
-
   const { objectMetadataItems } = useObjectMetadataItems();
-
-  const commandMenuItemEditRecordSelectionPreviewMode =
-    useAtomComponentStateValue(
-      commandMenuItemEditRecordSelectionPreviewModeState,
-    );
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
-  const shouldUseCommandMenuEditPreviewMode =
-    isInSidePanel && sidePanelPage === SidePanelPages.CommandMenuEdit;
-
-  const shouldUseMainContextForCommandMenu =
+  const shouldUseMainContext =
     isInSidePanel &&
     (sidePanelPage === SidePanelPages.CommandMenuDisplay ||
       sidePanelPage === SidePanelPages.CommandMenuEdit);
 
-  const effectiveContextStoreCurrentObjectMetadataItemId =
-    shouldUseMainContextForCommandMenu
-      ? mainContextStoreCurrentObjectMetadataItemId
-      : contextStoreCurrentObjectMetadataItemId;
+  const effectiveObjectMetadataItemId = shouldUseMainContext
+    ? mainContextStoreCurrentObjectMetadataItemId
+    : contextStoreCurrentObjectMetadataItemId;
 
-  const mainContextObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === mainContextStoreCurrentObjectMetadataItemId,
-  );
-
-  const mainRecordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
-    mainContextObjectMetadataItem?.namePlural ?? '',
-    mainContextStoreCurrentViewId ?? '',
-  );
-
-  const mainRecordIds = useAtomComponentSelectorValue(
-    recordIndexAllRecordIdsComponentSelector,
-    mainRecordIndexId,
-  );
-
-  const baseTargetedRecordsRule = shouldUseMainContextForCommandMenu
+  const effectiveTargetedRecordsRule = shouldUseMainContext
     ? mainContextStoreTargetedRecordsRule
     : contextStoreTargetedRecordsRule;
 
-  const baseNumberOfSelectedRecords = shouldUseMainContextForCommandMenu
+  const effectiveNumberOfSelectedRecords = shouldUseMainContext
     ? mainContextStoreNumberOfSelectedRecords
     : contextStoreNumberOfSelectedRecords;
 
-  const previewState = shouldUseCommandMenuEditPreviewMode
-    ? getPreviewContextStoreState(
-        commandMenuItemEditRecordSelectionPreviewMode,
-        mainContextStoreTargetedRecordsRule,
-        mainContextStoreNumberOfSelectedRecords,
-        mainRecordIds,
-      )
-    : null;
-
-  const effectiveContextStoreTargetedRecordsRule =
-    previewState?.targetedRecordsRule ?? baseTargetedRecordsRule;
-
-  const effectiveContextStoreNumberOfSelectedRecords =
-    previewState?.numberOfSelectedRecords ?? baseNumberOfSelectedRecords;
-
   const objectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === effectiveContextStoreCurrentObjectMetadataItemId,
+    (item) => item.id === effectiveObjectMetadataItemId,
   );
 
   const { navigationMenuItems } = useNavigationMenuItemsData();
 
   const recordIds =
-    effectiveContextStoreTargetedRecordsRule.mode === 'selection'
-      ? effectiveContextStoreTargetedRecordsRule.selectedRecordIds
+    effectiveTargetedRecordsRule.mode === 'selection'
+      ? effectiveTargetedRecordsRule.selectedRecordIds
       : undefined;
 
   const favoriteRecordIds =
@@ -197,8 +149,7 @@ export const useCommandMenuContextApi = ({
       ? CommandMenuContextApiPageType.RECORD_PAGE
       : CommandMenuContextApiPageType.INDEX_PAGE;
 
-  const isSelectAll =
-    effectiveContextStoreTargetedRecordsRule.mode === 'exclusion';
+  const isSelectAll = effectiveTargetedRecordsRule.mode === 'exclusion';
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -230,7 +181,7 @@ export const useCommandMenuContextApi = ({
     favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,
-    numberOfSelectedRecords: effectiveContextStoreNumberOfSelectedRecords,
+    numberOfSelectedRecords: effectiveNumberOfSelectedRecords,
     objectPermissions,
     selectedRecords,
     featureFlags,

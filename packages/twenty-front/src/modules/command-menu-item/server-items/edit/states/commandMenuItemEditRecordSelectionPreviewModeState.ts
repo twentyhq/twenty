@@ -2,14 +2,12 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
 export type CommandMenuItemEditRecordSelectionPreviewMode =
-  | 'auto'
   | 'none'
-  | 'single'
-  | 'multiple';
+  | 'selection';
 
 export const commandMenuItemEditRecordSelectionPreviewModeState =
   createAtomComponentState<CommandMenuItemEditRecordSelectionPreviewMode>({
     key: 'commandMenuItemEditRecordSelectionPreviewModeState',
-    defaultValue: 'auto',
+    defaultValue: 'selection',
     componentInstanceContext: ContextStoreComponentInstanceContext,
   });

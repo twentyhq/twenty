@@ -3,9 +3,6 @@ import {
   commandMenuItemEditRecordSelectionPreviewModeState,
   type CommandMenuItemEditRecordSelectionPreviewMode,
 } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditRecordSelectionPreviewModeState';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,12 +12,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomValue } from 'jotai';
 import {
-  type IconComponent,
-  IconCheckbox,
   IconChevronDown,
-  IconRefresh,
   IconSquareCheck,
   IconSquareX,
 } from 'twenty-ui/display';
@@ -28,15 +21,6 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
-
-const PREVIEW_MODE_ICON: Record<
-  Exclude<CommandMenuItemEditRecordSelectionPreviewMode, 'auto'>,
-  IconComponent
-> = {
-  none: IconSquareX,
-  single: IconSquareCheck,
-  multiple: IconCheckbox,
-};
 
 const StyledClickableArea = styled.div`
   align-items: center;
@@ -76,49 +60,21 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
       commandMenuItemEditRecordSelectionPreviewModeState,
     );
 
-  const contextStoreTargetedRecordsRule = useAtomValue(
-    contextStoreTargetedRecordsRuleComponentState.atomFamily({
-      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-    }),
-  );
-  const contextStoreNumberOfSelectedRecords = useAtomValue(
-    contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-    }),
-  );
-
-  const selectedCount =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds.length
-      : contextStoreNumberOfSelectedRecords;
-
-  const liveSelectionMode: CommandMenuItemEditRecordSelectionPreviewMode =
-    selectedCount === 0 ? 'none' : selectedCount === 1 ? 'single' : 'multiple';
-
-  const triggerPreviewMode =
-    commandMenuItemEditRecordSelectionPreviewMode === 'auto'
-      ? liveSelectionMode
-      : commandMenuItemEditRecordSelectionPreviewMode;
-
   const handleSelectPreviewMode = (
-    previewMode: CommandMenuItemEditRecordSelectionPreviewMode,
+    mode: CommandMenuItemEditRecordSelectionPreviewMode,
   ) => {
-    setCommandMenuItemEditRecordSelectionPreviewMode(previewMode);
+    setCommandMenuItemEditRecordSelectionPreviewMode(mode);
     closeDropdown(DROPDOWN_ID);
   };
 
-  const TriggerIcon = PREVIEW_MODE_ICON[triggerPreviewMode];
-
-  const PREVIEW_MODE_LABEL = {
-    none: t`No record selected`,
-    single: t`Single record selected`,
-    multiple: t`Multiple records selected`,
-  } as const;
-
+  const TriggerIcon =
+    commandMenuItemEditRecordSelectionPreviewMode === 'none'
+      ? IconSquareX
+      : IconSquareCheck;
   const triggerLabel =
-    commandMenuItemEditRecordSelectionPreviewMode === 'auto'
-      ? t`Auto`
-      : PREVIEW_MODE_LABEL[triggerPreviewMode];
+    commandMenuItemEditRecordSelectionPreviewMode === 'none'
+      ? t`No record selected`
+      : t`Records selected`;
 
   return (
     <Dropdown
@@ -140,14 +96,6 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
           >
             <DropdownMenuItemsContainer>
               <MenuItemSelect
-                LeftIcon={IconRefresh}
-                text={t`Auto`}
-                selected={
-                  commandMenuItemEditRecordSelectionPreviewMode === 'auto'
-                }
-                onClick={() => handleSelectPreviewMode('auto')}
-              />
-              <MenuItemSelect
                 LeftIcon={IconSquareX}
                 text={t`No record selected`}
                 selected={
@@ -157,19 +105,11 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
               />
               <MenuItemSelect
                 LeftIcon={IconSquareCheck}
-                text={t`Single record selected`}
+                text={t`Records selected`}
                 selected={
-                  commandMenuItemEditRecordSelectionPreviewMode === 'single'
+                  commandMenuItemEditRecordSelectionPreviewMode === 'selection'
                 }
-                onClick={() => handleSelectPreviewMode('single')}
-              />
-              <MenuItemSelect
-                LeftIcon={IconCheckbox}
-                text={t`Multiple records selected`}
-                selected={
-                  commandMenuItemEditRecordSelectionPreviewMode === 'multiple'
-                }
-                onClick={() => handleSelectPreviewMode('multiple')}
+                onClick={() => handleSelectPreviewMode('selection')}
               />
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>

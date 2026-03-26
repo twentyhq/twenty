@@ -1,3 +1,4 @@
+import { AnimatedIconCrossfade } from '@/command-menu-item/components/AnimatedIconCrossfade';
 import { commandMenuItemEditRecordSelectionPreviewModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditRecordSelectionPreviewModeState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
@@ -7,70 +8,12 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { motion } from 'framer-motion';
 import { useStore } from 'jotai';
-import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil, IconX } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
-const StyledAnimatedIconContainer = styled.div`
-  height: 14px;
-  overflow: hidden;
-  position: relative;
-  width: 14px;
-`;
-
-const StyledAnimatedIconLayer = styled(motion.div)`
-  align-items: center;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  position: absolute;
-`;
-
-const CommandMenuItemEditAnimatedIcon = ({
-  isCommandMenuEditPageActive,
-}: {
-  isCommandMenuEditPageActive: boolean;
-}) => {
-  const { theme } = useContext(ThemeContext);
-
-  return (
-    <StyledAnimatedIconContainer>
-      <StyledAnimatedIconLayer
-        initial={false}
-        animate={{
-          opacity: isCommandMenuEditPageActive ? 0 : 1,
-          scale: isCommandMenuEditPageActive ? 0.85 : 1,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-          ease: 'easeInOut',
-        }}
-      >
-        <IconPencil size={14} />
-      </StyledAnimatedIconLayer>
-      <StyledAnimatedIconLayer
-        initial={false}
-        animate={{
-          opacity: isCommandMenuEditPageActive ? 1 : 0,
-          scale: isCommandMenuEditPageActive ? 1 : 0.85,
-        }}
-        transition={{
-          duration: theme.animation.duration.fast,
-          ease: 'easeInOut',
-        }}
-      >
-        <IconX size={14} />
-      </StyledAnimatedIconLayer>
-    </StyledAnimatedIconContainer>
-  );
-};
 
 export const CommandMenuItemEditButton = () => {
   const { t } = useLingui();
@@ -106,7 +49,7 @@ export const CommandMenuItemEditButton = () => {
       commandMenuItemEditRecordSelectionPreviewModeState.atomFamily({
         instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
       }),
-      'auto',
+      'selection',
     );
 
     navigateSidePanel({
@@ -120,8 +63,10 @@ export const CommandMenuItemEditButton = () => {
   return (
     <AnimatedButton
       animatedSvg={
-        <CommandMenuItemEditAnimatedIcon
-          isCommandMenuEditPageActive={isCommandMenuEditPageActive}
+        <AnimatedIconCrossfade
+          isActive={isCommandMenuEditPageActive}
+          ActiveIcon={IconX}
+          InactiveIcon={IconPencil}
         />
       }
       title={t`Edit actions`}

@@ -16,7 +16,6 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
-  type EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
 type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
@@ -62,7 +61,7 @@ const buildCommandMenuItemFromFrontComponent = ({
   return {
     type,
     key: `command-menu-item-front-component-${item.id}`,
-    sourceCommandMenuItemId: item.id,
+    id: item.id,
     scope,
     label: displayLabel,
     shortLabel: displayShortLabel,
@@ -78,16 +77,13 @@ const buildCommandMenuItemFromFrontComponent = ({
     component: isHeadless ? (
       <HeadlessCommandMenuItem item={item} />
     ) : (
-      <FrontComponentCommandMenuItem
-        frontComponentId={item.frontComponentId}
-      />
+      <FrontComponentCommandMenuItem frontComponentId={item.frontComponentId} />
     ),
   };
 };
 
 type BuildCommandMenuItemFromStandardKeyParams = {
   item: CommandMenuItemWithSource;
-  engineComponentKey: EngineComponentKey;
   type?: CommandMenuItemType;
   scope: CommandMenuItemScope;
   isPinned: boolean;
@@ -97,7 +93,6 @@ type BuildCommandMenuItemFromStandardKeyParams = {
 
 const buildCommandItemFromEngineKey = ({
   item,
-  engineComponentKey,
   type = CommandMenuItemType.Standard,
   scope,
   isPinned,
@@ -109,7 +104,7 @@ const buildCommandItemFromEngineKey = ({
   return {
     type,
     key: `command-menu-item-engine-${item.id}`,
-    sourceCommandMenuItemId: item.id,
+    id: item.id,
     scope,
     label: interpolateCommandMenuItemLabel({
       label: item.label,
@@ -163,7 +158,6 @@ export const useCommandMenuItemsFromBackend = (
     if (isDefined(item.engineComponentKey)) {
       return buildCommandItemFromEngineKey({
         item,
-        engineComponentKey: item.engineComponentKey,
         type: typeOverride,
         scope,
         isPinned,

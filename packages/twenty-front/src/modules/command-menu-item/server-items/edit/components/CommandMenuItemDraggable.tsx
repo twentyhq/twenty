@@ -1,5 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { IconArrowUpRight, type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import {
   MenuItemDraggable,
   type MenuItemDraggableGripMode,
@@ -34,10 +33,6 @@ export const CommandMenuItemDraggable = ({
   isIconDisplayedOnHoverOnly = true,
 }: CommandMenuItemDraggableProps) => {
   const { onItemClick } = useCommandMenuOnItemClick();
-
-  if (isNonEmptyString(to) && !Icon) {
-    Icon = IconArrowUpRight;
-  }
 
   return (
     <MenuItemDraggable

@@ -6,7 +6,6 @@ import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelate
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -18,7 +17,6 @@ import {
   FindFieldsWidgetViewsDocument,
   FindManyLogicFunctionsDocument,
   FindManyNavigationMenuItemsDocument,
-  FeatureFlagKey,
   type ObjectMetadataItemsQuery,
   ViewType,
 } from '~/generated-metadata/graphql';
@@ -57,9 +55,6 @@ export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
   const store = useStore();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
 
   const loadStaleMetadataEntities = useCallback(
     async (staleEntityKeys: MetadataEntityKey[]) => {
@@ -199,10 +194,7 @@ export const useLoadStaleMetadataEntities = () => {
         );
       }
 
-      if (
-        isCommandMenuItemEnabled &&
-        staleEntityKeys.includes('commandMenuItems')
-      ) {
+      if (staleEntityKeys.includes('commandMenuItems')) {
         fetchPromises.push(
           client
             .query({
@@ -222,7 +214,7 @@ export const useLoadStaleMetadataEntities = () => {
       await Promise.all(fetchPromises);
       applyChanges();
     },
-    [client, store, replaceDraft, applyChanges, isCommandMenuItemEnabled],
+    [client, store, replaceDraft, applyChanges],
   );
 
   return { loadStaleMetadataEntities };
