@@ -1,10 +1,10 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
-import { useCommandMenuContextApiForEdition } from '@/command-menu-item/server-items/edit/hooks/useCommandMenuContextApiForEdition';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { CommandMenuItemDraggable } from '@/command-menu-item/server-items/edit/components/CommandMenuItemDraggable';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown';
+import { useCommandMenuContextApiForEdition } from '@/command-menu-item/server-items/edit/hooks/useCommandMenuContextApiForEdition';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/server-items/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useResetCommandMenuItemsDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/server-items/edit/hooks/useUpdateCommandMenuItemInDraft';
@@ -35,8 +35,8 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const partitionByPinned = (items: CommandMenuItemFieldsFragment[]) => {
   const pinned = items
@@ -79,7 +79,6 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
-  // oxlint-disable-next-line twenty/matching-state-variable
   const serverCommandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const serverItemsById = new Map(
     serverCommandMenuItems.map((item) => [item.id, item]),
