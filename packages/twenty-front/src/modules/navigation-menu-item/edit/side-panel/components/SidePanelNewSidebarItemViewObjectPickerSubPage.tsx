@@ -1,17 +1,18 @@
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
+import { SidePanelNewSidebarItemViewObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView';
+import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
-import { SidePanelNewSidebarItemViewObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView';
-import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { selectedObjectMetadataIdForViewFlowState } from '@/side-panel/states/selectedObjectMetadataIdForViewFlowState';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewType } from '@/views/types/ViewType';
 import { useState } from 'react';
+import { ViewVisibility } from '~/generated-metadata/graphql';
 
 export const SidePanelNewSidebarItemViewObjectPickerSubPage = () => {
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
@@ -24,14 +25,17 @@ export const SidePanelNewSidebarItemViewObjectPickerSubPage = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const { views, objectMetadataIdsWithIndexView } =
+  const { views, objectMetadataIdsWithIndexView, viewIdsInWorkspace } =
     useNavigationMenuObjectMetadataFromDraft(currentDraft);
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
       .filter(
         (view) =>
-          view.key !== ViewKey.INDEX && view.type !== ViewType.FIELDS_WIDGET,
+          view.key !== ViewKey.INDEX &&
+          view.type !== ViewType.FIELDS_WIDGET &&
+          view.visibility === ViewVisibility.WORKSPACE &&
+          !viewIdsInWorkspace.has(view.id),
       )
       .map((view) => view.objectMetadataId),
   );
