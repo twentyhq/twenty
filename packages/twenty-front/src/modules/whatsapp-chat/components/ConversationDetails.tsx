@@ -178,33 +178,35 @@ const StyledBadgeRow = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledAssignInput = styled.input`
+const StyledAssignSelect = styled.select`
   background: #FFFFFF;
   border: 1px solid #D1D5DB;
   border-radius: 4px;
   color: #111827;
+  cursor: pointer;
   font-family: inherit;
   font-size: 13px;
   outline: none;
-  padding: 4px 8px;
+  padding: 5px 8px;
+  width: 100%;
 
   &:focus {
     border-color: #1A6CFF;
   }
 `;
 
-const StyledAssignButton = styled.button`
-  background: #1A6CFF;
-  border: none;
-  border-radius: 4px;
-  color: #FFFFFF;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 4px 8px;
+const StyledAssignRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+`;
 
-  &:hover {
-    opacity: 0.9;
-  }
+const StyledAssignLabel = styled.span`
+  color: #6B7280;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 48px;
 `;
 
 const StyledLoadingText = styled.span`
@@ -1628,6 +1630,24 @@ export const ConversationDetails = ({
   const [assignEmail, setAssignEmail] = useState(
     conversation.assignedToEmail ?? '',
   );
+  const [workspaceMembers, setWorkspaceMembers] = useState<
+    { email: string; fullName: string }[]
+  >([]);
+
+  // Fetch workspace members once for assignment dropdowns
+  useEffect(() => {
+    let cancelled = false;
+    bridgeFetch<{ members: { email: string; fullName: string }[] }>(
+      '/api/v1/conversations/members',
+    )
+      .then((data) => {
+        if (!cancelled && data?.members) setWorkspaceMembers(data.members);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [bridgeFetch]);
 
   // Allow parent to trigger SA results refresh via ref (e.g. on WebSocket event)
   useEffect(() => {
@@ -1645,35 +1665,53 @@ export const ConversationDetails = ({
 
   const isClient = contact?.isClient || conversation.isClient;
 
-  const handleAssign = useCallback(async () => {
-    const trimmedEmail = assignEmail.trim();
-    if (!trimmedEmail) return;
+  const handleAssign = useCallback(
+    async (email: string) => {
+      if (!email) return;
+      const member = workspaceMembers.find((m) => m.email === email);
+      const name = member?.fullName ?? email.split('@')[0];
+      try {
+        await bridgeFetch(`/api/v1/conversations/${conversation.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            assigned_to_email: email,
+            assigned_to_name: name,
+          }),
+        });
+        onUpdate?.(conversation.id, {
+          assignedToEmail: email,
+          assignedToName: name,
+        });
+      } catch {
+        // Silently fail
+      }
+    },
+    [bridgeFetch, conversation.id, workspaceMembers, onUpdate],
+  );
 
-    try {
-      await bridgeFetch(`/api/v1/conversations/${conversation.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ assigned_to_email: trimmedEmail }),
-      });
-      onUpdate?.(conversation.id, { assignedToEmail: trimmedEmail });
-    } catch {
-      // Silently fail
-    }
-  }, [bridgeFetch, conversation.id, assignEmail, onUpdate]);
-
-  const handleAssignCoach = useCallback(async () => {
-    const trimmedEmail = coachEmail.trim();
-    if (!trimmedEmail) return;
-
-    try {
-      await bridgeFetch(`/api/v1/conversations/${conversation.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ coach_lead_owner_email: trimmedEmail }),
-      });
-      onUpdate?.(conversation.id, { coachLeadOwnerEmail: trimmedEmail });
-    } catch {
-      // Silently fail
-    }
-  }, [bridgeFetch, conversation.id, coachEmail, onUpdate]);
+  const handleAssignCoach = useCallback(
+    async (email: string) => {
+      if (!email) return;
+      const member = workspaceMembers.find((m) => m.email === email);
+      const name = member?.fullName ?? email.split('@')[0];
+      try {
+        await bridgeFetch(`/api/v1/conversations/${conversation.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            coach_lead_owner_email: email,
+            coach_lead_owner_name: name,
+          }),
+        });
+        onUpdate?.(conversation.id, {
+          coachLeadOwnerEmail: email,
+          coachLeadOwnerName: name,
+        });
+      } catch {
+        // Silently fail
+      }
+    },
+    [bridgeFetch, conversation.id, workspaceMembers, onUpdate],
+  );
 
   const handleCallToggle = useCallback((callId: string) => {
     setCallExpanded((prev) => ({ ...prev, [callId]: !prev[callId] }));
@@ -2446,36 +2484,43 @@ export const ConversationDetails = ({
 
             {/* ── Reassign Section ── */}
             <StyledSection>
-              <StyledSectionTitle>Reassign</StyledSectionTitle>
-              <StyledAssignInput
-                type="email"
-                placeholder="Assign to email..."
-                value={assignEmail}
-                onChange={(e) => setAssignEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAssign();
-                  }
-                }}
-              />
-              <StyledAssignButton onClick={handleAssign}>
-                Assign
-              </StyledAssignButton>
-              <StyledAssignInput
-                type="email"
-                placeholder="Coach email..."
-                value={coachEmail}
-                onChange={(e) => setCoachEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAssignCoach();
-                  }
-                }}
-                style={{ marginTop: 8 }}
-              />
-              <StyledAssignButton onClick={handleAssignCoach}>
-                Assign Coach
-              </StyledAssignButton>
+              <StyledSectionTitle>Assign</StyledSectionTitle>
+              <StyledAssignRow>
+                <StyledAssignLabel>Owner</StyledAssignLabel>
+                <StyledAssignSelect
+                  value={assignEmail}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setAssignEmail(val);
+                    handleAssign(val);
+                  }}
+                >
+                  <option value="">Unassigned</option>
+                  {workspaceMembers.map((m) => (
+                    <option key={m.email} value={m.email}>
+                      {m.fullName}
+                    </option>
+                  ))}
+                </StyledAssignSelect>
+              </StyledAssignRow>
+              <StyledAssignRow>
+                <StyledAssignLabel>Coach</StyledAssignLabel>
+                <StyledAssignSelect
+                  value={coachEmail}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCoachEmail(val);
+                    handleAssignCoach(val);
+                  }}
+                >
+                  <option value="">Unassigned</option>
+                  {workspaceMembers.map((m) => (
+                    <option key={m.email} value={m.email}>
+                      {m.fullName}
+                    </option>
+                  ))}
+                </StyledAssignSelect>
+              </StyledAssignRow>
             </StyledSection>
 
             {/* ── Opportunities Section ── */}
