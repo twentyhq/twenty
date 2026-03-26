@@ -228,9 +228,13 @@ export const FormDateTimeFieldInput = ({
 
   const { userTimezone } = useUserTimezone();
 
-  const dateValue = isStandaloneVariableString(defaultValue)
-    ? null
-    : defaultValue === 'null' || defaultValue === '' || !isDefined(defaultValue)
+  const isVariable = Boolean(isStandaloneVariableString(defaultValue));
+
+  const dateValue =
+    isVariable ||
+    !isDefined(defaultValue) ||
+    defaultValue === 'null' ||
+    defaultValue === ''
       ? null
       : defaultValue.includes('T')
         ? Temporal.Instant.from(defaultValue).toZonedDateTimeISO(
