@@ -39,7 +39,8 @@ export const SidePanelEditObjectViewBase = ({
   selectedItem,
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
-  const selectableItemIds = getOrganizeActionsSelectableItemIds(showMoveToFolder);
+  const selectableItemIds =
+    getOrganizeActionsSelectableItemIds(showMoveToFolder);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 

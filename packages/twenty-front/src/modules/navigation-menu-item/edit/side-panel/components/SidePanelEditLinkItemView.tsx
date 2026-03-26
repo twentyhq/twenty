@@ -43,7 +43,8 @@ export const SidePanelEditLinkItemView = ({
   const [lastAutoSetName, setLastAutoSetName] = useState<string | null>(null);
 
   const defaultLabel = t`Link label`;
-  const selectableItemIds = getOrganizeActionsSelectableItemIds(showMoveToFolder);
+  const selectableItemIds =
+    getOrganizeActionsSelectableItemIds(showMoveToFolder);
 
   const currentName = selectedItem.name ?? defaultLabel;
   const currentDomain = selectedItem.link
