@@ -41,14 +41,7 @@ export const RecordTableHeader = () => {
     isRecordTableCheckboxColumnHiddenComponentState,
   );
 
-  const recordFieldsWithoutLabelIdentifierAndFirstOne = visibleRecordFields
-    .filter(
-      filterOutByProperty(
-        'fieldMetadataItemId',
-        labelIdentifierFieldMetadataItem?.id,
-      ),
-    )
-    .slice(1);
+  const recordFieldsWithoutFirstTwo = visibleRecordFields.slice(2);
 
   useResizeTableHeader();
 
@@ -60,7 +53,7 @@ export const RecordTableHeader = () => {
       )}
       <RecordTableHeaderFirstCell />
       <RecordTableHeaderFirstScrollableCell />
-      {recordFieldsWithoutLabelIdentifierAndFirstOne.map(
+      {recordFieldsWithoutFirstTwo.map(
         (recordField, index) => (
           <RecordTableHeaderCell
             key={recordField.fieldMetadataItemId}

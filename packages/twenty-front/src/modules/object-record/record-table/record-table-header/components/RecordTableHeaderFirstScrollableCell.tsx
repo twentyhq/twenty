@@ -45,14 +45,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     0,
   );
 
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-
-  const recordField = visibleRecordFields.filter(
-    filterOutByProperty(
-      'fieldMetadataItemId',
-      labelIdentifierFieldMetadataItem?.id,
-    ),
-  )[0] as RecordField | undefined;
+  const recordField = visibleRecordFields[1] as RecordField | undefined;
 
   const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
