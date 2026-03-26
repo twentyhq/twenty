@@ -34,7 +34,7 @@ export class UsageEventWriterService {
       creditsUsedMicro: usageEvent.creditsUsedMicro,
       resourceId: usageEvent.resourceId ?? '',
       resourceContext: usageEvent.resourceContext ?? '',
-      metadata: '{}',
+      metadata: {},
     }));
 
     this.clickHouseService.insert('usageEvent', rows).catch((error) => {

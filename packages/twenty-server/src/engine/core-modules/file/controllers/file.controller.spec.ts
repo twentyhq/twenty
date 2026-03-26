@@ -34,6 +34,7 @@ const createMockStream = (): Readable => {
 
 const createMockResponse = () => ({
   setHeader: jest.fn(),
+  redirect: jest.fn(),
 });
 
 describe('FileController', () => {
@@ -56,6 +57,7 @@ describe('FileController', () => {
           useValue: {
             getFileStreamById: jest.fn(),
             getFileStreamByPath: jest.fn(),
+            getFileResponseById: jest.fn(),
           },
         },
       ],
@@ -79,10 +81,38 @@ describe('FileController', () => {
   });
 
   describe('getFileById', () => {
-    it('should call fileService.getFileStreamById and pipe the result with headers', async () => {
+    it('should 302 redirect when presigned URL is available', async () => {
+      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
+        type: 'redirect',
+        presignedUrl: 'https://s3.example.com/file?signed=abc',
+      });
+
+      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      const mockResponse = createMockResponse() as any;
+
+      await controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.Workflow,
+        'file-123',
+      );
+
+      expect(fileService.getFileResponseById).toHaveBeenCalledWith({
+        fileId: 'file-123',
+        workspaceId: 'workspace-id',
+        fileFolder: FileFolder.Workflow,
+      });
+      expect(mockResponse.redirect).toHaveBeenCalledWith(
+        'https://s3.example.com/file?signed=abc',
+      );
+      expect(mockResponse.setHeader).not.toHaveBeenCalled();
+    });
+
+    it('should stream with headers when no presigned URL (local driver)', async () => {
       const mockStream = createMockStream();
 
-      jest.spyOn(fileService, 'getFileStreamById').mockResolvedValue({
+      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
+        type: 'stream',
         stream: mockStream,
         mimeType: 'image/png',
       });
@@ -97,11 +127,6 @@ describe('FileController', () => {
         'file-123',
       );
 
-      expect(fileService.getFileStreamById).toHaveBeenCalledWith({
-        fileId: 'file-123',
-        workspaceId: 'workspace-id',
-        fileFolder: FileFolder.CorePicture,
-      });
       expect(mockResponse.setHeader).toHaveBeenCalledWith(
         'Content-Type',
         'image/png',
@@ -120,7 +145,8 @@ describe('FileController', () => {
     it('should force attachment disposition for non-safe MIME types', async () => {
       const mockStream = createMockStream();
 
-      jest.spyOn(fileService, 'getFileStreamById').mockResolvedValue({
+      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
+        type: 'stream',
         stream: mockStream,
         mimeType: 'text/html',
       });
@@ -147,7 +173,7 @@ describe('FileController', () => {
 
     it('should throw FileException with FILE_NOT_FOUND when file is not found', async () => {
       jest
-        .spyOn(fileService, 'getFileStreamById')
+        .spyOn(fileService, 'getFileResponseById')
         .mockRejectedValue(
           new FileStorageException(
             'File not found',
@@ -172,7 +198,7 @@ describe('FileController', () => {
 
     it('should throw FileException with INTERNAL_SERVER_ERROR for unexpected errors', async () => {
       jest
-        .spyOn(fileService, 'getFileStreamById')
+        .spyOn(fileService, 'getFileResponseById')
         .mockRejectedValue(new Error('Storage unavailable'));
 
       const mockRequest = { workspaceId: 'workspace-id' } as any;

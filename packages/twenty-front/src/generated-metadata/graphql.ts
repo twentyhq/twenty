@@ -1720,6 +1720,7 @@ export enum FeatureFlagKey {
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED = 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED = 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED',
+  IS_RECORD_TABLE_WIDGET_ENABLED = 'IS_RECORD_TABLE_WIDGET_ENABLED',
   IS_RICH_TEXT_V1_MIGRATED = 'IS_RICH_TEXT_V1_MIGRATED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
   IS_TASK_TARGET_MIGRATED = 'IS_TASK_TARGET_MIGRATED',
@@ -5326,6 +5327,7 @@ export type UpdateObjectPayload = {
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isSearchable?: InputMaybe<Scalars['Boolean']>;
   labelIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
   labelPlural?: InputMaybe<Scalars['String']>;
   labelSingular?: InputMaybe<Scalars['String']>;

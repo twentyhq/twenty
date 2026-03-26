@@ -1,7 +1,7 @@
 export enum ModelFamily {
-  GPT = 'gpt',
-  CLAUDE = 'claude',
-  GEMINI = 'gemini',
-  MISTRAL = 'mistral',
-  GROK = 'grok',
+  GPT = 'GPT',
+  CLAUDE = 'CLAUDE',
+  GEMINI = 'GEMINI',
+  MISTRAL = 'MISTRAL',
+  GROK = 'GROK',
 }

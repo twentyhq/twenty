@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import {
   FeatureFlagKey,
+  ViewKey,
   ViewOpenRecordIn,
   ViewType,
-  ViewKey,
   ViewVisibility,
 } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
@@ -24,7 +24,6 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
-import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
@@ -32,6 +31,7 @@ import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -414,14 +414,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatApplication: resolvedOwnerFlatApplication,
     });
 
-    const flatDefaultViewFieldsToCreate =
-      await this.computeFlatViewFieldsToCreate({
-        flatApplication: workspaceCustomFlatApplication,
-        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-        viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
-      });
+    const flatDefaultViewFieldsToCreate = computeFlatViewFieldsToCreate({
+      flatApplication: workspaceCustomFlatApplication,
+      objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
+      viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
+    });
 
     let flatRecordPageFieldsViewToCreate:
       | (UniversalFlatView & { id: string })
@@ -449,15 +448,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           flatApplication: resolvedOwnerFlatApplication,
         });
 
-      flatRecordPageFieldsViewFieldsToCreate =
-        await this.computeFlatViewFieldsToCreate({
-          flatApplication: workspaceCustomFlatApplication,
-          objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
-          labelIdentifierFieldMetadataUniversalIdentifier:
-            flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-          viewUniversalIdentifier:
-            flatRecordPageFieldsViewToCreate.universalIdentifier,
-        });
+      flatRecordPageFieldsViewFieldsToCreate = computeFlatViewFieldsToCreate({
+        flatApplication: workspaceCustomFlatApplication,
+        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
+        viewUniversalIdentifier:
+          flatRecordPageFieldsViewToCreate.universalIdentifier,
+      });
 
       flatDefaultRecordPageLayoutsToCreate =
         this.computeFlatDefaultRecordPageLayoutToCreate({
@@ -661,25 +659,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatApplication,
       recordPageFieldsView,
       workspaceId,
-    });
-  }
-
-  private async computeFlatViewFieldsToCreate({
-    objectFlatFieldMetadatas,
-    viewUniversalIdentifier,
-    flatApplication,
-    labelIdentifierFieldMetadataUniversalIdentifier,
-  }: {
-    flatApplication: FlatApplication;
-    objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
-    viewUniversalIdentifier: string;
-    labelIdentifierFieldMetadataUniversalIdentifier: string | null;
-  }) {
-    return computeFlatViewFieldsToCreate({
-      objectFlatFieldMetadatas,
-      viewUniversalIdentifier,
-      flatApplication,
-      labelIdentifierFieldMetadataUniversalIdentifier,
     });
   }
 

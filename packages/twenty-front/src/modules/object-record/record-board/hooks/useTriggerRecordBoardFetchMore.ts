@@ -23,6 +23,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 import { sleep } from '~/utils/sleep';
 
@@ -99,8 +100,7 @@ export const useTriggerRecordBoardFetchMore = () => {
           ),
         );
       })
-      .map((recordGroupDefinition) => recordGroupDefinition.value)
-      .filter(isDefined);
+      .map((recordGroupDefinition) => recordGroupDefinition.value);
 
     if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
       store.set(recordBoardShouldFetchMoreCallbackState, false);
@@ -109,15 +109,18 @@ export const useTriggerRecordBoardFetchMore = () => {
       return;
     }
 
+    const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
+      recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
+      recordGroupValues: recordGroupValuesThatShouldBeFetched,
+    });
+
     const recordIndexGroupsRecordsGroupByLazyQueryResult =
       await executeRecordIndexGroupsRecordsLazyGroupBy({
         variables: {
           offsetForRecords: newOffset,
           filter: {
             ...combinedFilters,
-            [recordIndexGroupFieldMetadataItem?.name ?? '']: {
-              in: [...recordGroupValuesThatShouldBeFetched],
-            },
+            ...recordGroupOptionsFilter,
           },
         },
       });

@@ -4,9 +4,10 @@ import {
 } from '@/settings/developers/utils/formatExpiration';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { IconChevronRight } from 'twenty-ui/display';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { IconChevronRight } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
@@ -29,6 +30,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   apiKey,
   to,
 }: SettingsApiKeysFieldItemTableRowProps) => {
+  const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
@@ -43,7 +45,9 @@ export const SettingsApiKeysFieldItemTableRow = ({
         textOverflow="ellipsis"
         clickable
       >
-        <StyledEllipsisLabel>{apiKey.name}</StyledEllipsisLabel>
+        <StyledEllipsisLabel>
+          {apiKey.name || t`Unnamed API Key`}
+        </StyledEllipsisLabel>
       </TableCell>
 
       <TableCell

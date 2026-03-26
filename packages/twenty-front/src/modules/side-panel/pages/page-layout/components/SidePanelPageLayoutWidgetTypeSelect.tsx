@@ -90,6 +90,10 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
     FeatureFlagKey.IS_APPLICATION_ENABLED,
   );
 
+  const isRecordTableWidgetEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_TABLE_WIDGET_ENABLED,
+  );
+
   const { data: frontComponentsData } = useQuery<{
     frontComponents: FrontComponent[];
   }>(FIND_MANY_FRONT_COMPONENTS, {
@@ -226,7 +230,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
 
   const selectableItemIds = [
     'chart',
-    'record-table',
+    ...(isRecordTableWidgetEnabled ? ['record-table'] : []),
     'iframe',
     'rich-text',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
@@ -246,17 +250,19 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
             onClick={handleNavigateToGraphTypeSelect}
           />
         </SelectableListItem>
-        <SelectableListItem
-          itemId="record-table"
-          onEnter={handleNavigateToRecordTableSettings}
-        >
-          <CommandMenuItem
-            Icon={IconTable}
-            label={t`Record Table`}
-            id="record-table"
-            onClick={handleNavigateToRecordTableSettings}
-          />
-        </SelectableListItem>
+        {isRecordTableWidgetEnabled && (
+          <SelectableListItem
+            itemId="record-table"
+            onEnter={handleNavigateToRecordTableSettings}
+          >
+            <CommandMenuItem
+              Icon={IconTable}
+              label={t`Record Table`}
+              id="record-table"
+              onClick={handleNavigateToRecordTableSettings}
+            />
+          </SelectableListItem>
+        )}
         <SelectableListItem
           itemId="iframe"
           onEnter={handleNavigateToIframeSettings}

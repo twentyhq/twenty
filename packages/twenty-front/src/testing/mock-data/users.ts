@@ -1,5 +1,7 @@
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -86,8 +88,8 @@ export const mockCurrentWorkspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
   trashRetentionDays: 14,
-  fastModel: DEFAULT_FAST_MODEL,
-  smartModel: DEFAULT_SMART_MODEL,
+  fastModel: AUTO_SELECT_FAST_MODEL_ID,
+  smartModel: AUTO_SELECT_SMART_MODEL_ID,
   routerModel: 'auto',
   enabledAiModelIds: [],
   useRecommendedModels: true,

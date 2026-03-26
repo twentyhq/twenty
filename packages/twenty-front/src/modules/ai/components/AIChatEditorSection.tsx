@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
-import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
@@ -12,10 +11,17 @@ import { AIChatEditorFocusEffect } from '@/ai/components/internal/AIChatEditorFo
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
-import { useAiModelLabel } from '@/ai/hooks/useAiModelOptions';
+import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
+import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
+import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
@@ -102,23 +108,47 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledReadOnlyModelButtonContainer = styled.div`
-  > * {
-    cursor: default;
-
-    &:hover,
-    &:active {
-      background: transparent;
-    }
-  }
-`;
-
 export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const smartModelLabel = useAiModelLabel(currentWorkspace?.smartModel, false);
+  const aiModels = useAtomStateValue(aiModelsState);
+  const { enabledModels } = useWorkspaceAiModelAvailability();
+  const setAgentChatUserSelectedModel = useSetAtomState(
+    agentChatUserSelectedModelState,
+  );
+  const { selectedModelId } = useAgentChatModelId();
 
   const { editor, handleSendAndClear } = useAIChatEditor();
+
+  const workspaceSmartModel = aiModels.find(
+    (model) => model.modelId === currentWorkspace?.smartModel,
+  );
+
+  const resolvedDefaultModelId = enabledModels.find(
+    (model) =>
+      model.label === workspaceSmartModel?.label &&
+      model.providerName === workspaceSmartModel?.providerName,
+  )?.modelId;
+
+  const defaultPinnedOption = workspaceSmartModel
+    ? {
+        value: null as string | null,
+        label: workspaceSmartModel.label,
+        Icon: getModelIcon(
+          workspaceSmartModel.modelFamily,
+          workspaceSmartModel.providerName,
+        ),
+        contextualText: t`default`,
+      }
+    : undefined;
+
+  const smartModelOptions = enabledModels
+    .filter((model) => model.modelId !== resolvedDefaultModelId)
+    .map((model) => ({
+      value: model.modelId as string | null,
+      label: model.label,
+      Icon: getModelIcon(model.modelFamily, model.providerName),
+    }));
 
   return (
     <>
@@ -139,9 +169,17 @@ export const AIChatEditorSection = () => {
               <AIChatContextUsageButton />
             </StyledLeftButtonsContainer>
             <StyledRightButtonsContainer>
-              <StyledReadOnlyModelButtonContainer>
-                <LightButton accent="tertiary" title={smartModelLabel} />
-              </StyledReadOnlyModelButtonContainer>
+              <Select
+                dropdownId="ai-chat-smart-model-select"
+                value={selectedModelId}
+                onChange={setAgentChatUserSelectedModel}
+                options={smartModelOptions}
+                pinnedOption={defaultPinnedOption}
+                selectSizeVariant="small"
+                showContextualTextInControl={false}
+                withSearchInput
+                dropdownOffset={{ x: 0, y: 8 }}
+              />
               <SendMessageButton onSend={handleSendAndClear} />
             </StyledRightButtonsContainer>
           </StyledButtonsContainer>
