@@ -1,14 +1,7 @@
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { IconTrash } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
-import {
-  StyledDeleteButton,
-  StyledIconContainer,
-  StyledRow,
-  StyledRowLeftContent,
-  StyledText,
-} from './WorkflowAiAgentPermissionsStyles';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type WorkflowAiAgentPermissionsPermissionRowProps = {
   permission: {
@@ -36,32 +29,29 @@ export const WorkflowAiAgentPermissionsPermissionRow = ({
   const isDisabled = isEnabled && !showDeleteButton;
 
   return (
-    <StyledRow
+    <MenuItem
+      LeftComponent={
+        <PermissionIcon
+          permission={permission.key}
+          state={alwaysShowGranted || isEnabled ? 'granted' : 'revoked'}
+        />
+      }
+      text={permission.label}
       onClick={isClickable ? onAdd : undefined}
-      isDisabled={isDisabled}
-    >
-      <StyledRowLeftContent>
-        <StyledIconContainer>
-          <PermissionIcon
-            permission={permission.key}
-            state={alwaysShowGranted || isEnabled ? 'granted' : 'revoked'}
-          />
-        </StyledIconContainer>
-        <StyledText>{permission.label}</StyledText>
-      </StyledRowLeftContent>
-      {isEnabled && showDeleteButton && (
-        <StyledDeleteButton data-delete-button>
-          <IconButton
-            Icon={IconTrash}
-            variant="tertiary"
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete?.();
-            }}
-          />
-        </StyledDeleteButton>
-      )}
-    </StyledRow>
+      disabled={isDisabled}
+      iconButtons={
+        isEnabled && showDeleteButton
+          ? [
+              {
+                Icon: IconTrash,
+                onClick: (event) => {
+                  event.stopPropagation();
+                  onDelete?.();
+                },
+              },
+            ]
+          : undefined
+      }
+    />
   );
 };

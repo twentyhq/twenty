@@ -1,15 +1,7 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { IconTrash } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
-import {
-  StyledDeleteButton,
-  StyledIconContainer,
-  StyledRow,
-  StyledRowLeftContent,
-  StyledText,
-} from './WorkflowAiAgentPermissionsStyles';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { MenuItem } from 'twenty-ui/navigation';
+
 type WorkflowAiAgentPermissionsFlagRowProps = {
   permission: SettingsRolePermissionsSettingPermission;
   isEnabled: boolean;
@@ -27,34 +19,29 @@ export const WorkflowAiAgentPermissionsFlagRow = ({
   onAdd,
   onDelete,
 }: WorkflowAiAgentPermissionsFlagRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const isClickable = !readonly && !isEnabled && Boolean(onAdd);
   const isDisabled = isEnabled && !showDeleteButton;
 
   return (
-    <StyledRow
+    <MenuItem
+      LeftIcon={permission.Icon}
+      withIconContainer
+      text={permission.name}
       onClick={isClickable ? onAdd : undefined}
-      isDisabled={isDisabled}
-    >
-      <StyledRowLeftContent>
-        <StyledIconContainer>
-          <permission.Icon size={theme.icon.size.sm} />
-        </StyledIconContainer>
-        <StyledText>{permission.name}</StyledText>
-      </StyledRowLeftContent>
-      {isEnabled && showDeleteButton && (
-        <StyledDeleteButton data-delete-button>
-          <IconButton
-            Icon={IconTrash}
-            variant="tertiary"
-            size="small"
-            onClick={(event) => {
-              event.stopPropagation();
-              onDelete?.();
-            }}
-          />
-        </StyledDeleteButton>
-      )}
-    </StyledRow>
+      disabled={isDisabled}
+      iconButtons={
+        isEnabled && showDeleteButton
+          ? [
+              {
+                Icon: IconTrash,
+                onClick: (event) => {
+                  event.stopPropagation();
+                  onDelete?.();
+                },
+              },
+            ]
+          : undefined
+      }
+    />
   );
 };
