@@ -339,10 +339,11 @@ Notes:
 
 ## How to use a local Twenty instance
 
-If you're already running a local Twenty instance, you can connect to it instead of using Docker:
+If you're already running a local Twenty instance, you can connect to it instead of using Docker. Running `twenty remote add --local` will auto-detect a server on ports 2020 and 3000. Use `--port` to specify a custom port:
 
 ```bash
-twenty remote add --local --port 3000
+twenty remote add --local              # auto-detect on ports 2020/3000
+twenty remote add --local --port 4000  # connect to a specific port
 ```
 
 ## Troubleshooting
