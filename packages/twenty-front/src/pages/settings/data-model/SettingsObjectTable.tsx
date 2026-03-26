@@ -6,7 +6,11 @@ import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import {
+  SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
+  SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH,
+  StyledStickyFirstCell,
+} from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -26,7 +30,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -37,6 +41,19 @@ const StyledIconChevronRightContainer = styled.div`
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledScrollWrapper = styled.div`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+`;
+
+const StyledScrollableContent = styled.div`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    min-width: ${SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH};
+  }
 `;
 
 export const SettingsObjectTable = ({
@@ -170,24 +187,43 @@ export const SettingsObjectTable = ({
         </StyledSearchInputContainer>
       )}
 
-      <Table>
-        <TableRow
-          gridTemplateColumns={SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-        >
-          {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
-            (settingsObjectsTableMetadataField) => (
-              <SortableTableHeader
-                key={settingsObjectsTableMetadataField.fieldName}
-                fieldName={settingsObjectsTableMetadataField.fieldName}
-                label={t(settingsObjectsTableMetadataField.fieldLabel)}
-                tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
-                align={settingsObjectsTableMetadataField.align}
-                initialSort={GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort}
-              />
-            ),
-          )}
-          <TableHeader></TableHeader>
-        </TableRow>
+      <StyledScrollWrapper>
+        <StyledScrollableContent>
+          <Table>
+            <TableRow
+              gridTemplateColumns={SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+            >
+              {GET_SETTINGS_OBJECT_TABLE_METADATA.fields.map(
+                (settingsObjectsTableMetadataField, index) =>
+                  index === 0 ? (
+                    <StyledStickyFirstCell
+                      key={settingsObjectsTableMetadataField.fieldName}
+                    >
+                      <SortableTableHeader
+                        fieldName={settingsObjectsTableMetadataField.fieldName}
+                        label={t(settingsObjectsTableMetadataField.fieldLabel)}
+                        tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
+                        align={settingsObjectsTableMetadataField.align}
+                        initialSort={
+                          GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort
+                        }
+                      />
+                    </StyledStickyFirstCell>
+                  ) : (
+                    <SortableTableHeader
+                      key={settingsObjectsTableMetadataField.fieldName}
+                      fieldName={settingsObjectsTableMetadataField.fieldName}
+                      label={t(settingsObjectsTableMetadataField.fieldLabel)}
+                      tableId={GET_SETTINGS_OBJECT_TABLE_METADATA.tableId}
+                      align={settingsObjectsTableMetadataField.align}
+                      initialSort={
+                        GET_SETTINGS_OBJECT_TABLE_METADATA.initialSort
+                      }
+                    />
+                  ),
+              )}
+              <TableHeader></TableHeader>
+            </TableRow>
         {filteredObjectSettingsItems.map((objectSettingsItem) => {
           const isActive = objectSettingsItem.objectMetadataItem.isActive;
 
@@ -237,7 +273,9 @@ export const SettingsObjectTable = ({
             />
           );
         })}
-      </Table>
+          </Table>
+        </StyledScrollableContent>
+      </StyledScrollWrapper>
     </>
   );
 };
