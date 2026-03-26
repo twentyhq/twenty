@@ -1,4 +1,4 @@
-import { getPositionBoundsAtInsertionPoint } from '../getPositionBoundsAtInsertionPoint';
+import { getPositionBoundsAtInsertionPoint } from '@/command-menu-item/server-items/edit/utils/getPositionBoundsAtInsertionPoint';
 
 const makeItems = (positions: number[]) =>
   positions.map((position, index) => ({

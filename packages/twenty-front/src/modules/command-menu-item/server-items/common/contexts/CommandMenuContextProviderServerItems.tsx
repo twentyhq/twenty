@@ -20,9 +20,7 @@ export const CommandMenuContextProviderServerItems = ({
   containerType,
   children,
 }: CommandMenuContextProviderServerItemsProps) => {
-  const commandMenuContextApi = useCommandMenuContextApi({
-    isInSidePanel,
-  });
+  const commandMenuContextApi = useCommandMenuContextApi();
 
   const currentObjectNameSingular =
     commandMenuContextApi.objectMetadataItem.nameSingular;

@@ -1,4 +1,4 @@
-import { computeInsertPositionFromBounds } from '../computeInsertPositionFromBounds';
+import { computeInsertPositionFromBounds } from '@/command-menu-item/server-items/edit/utils/computeInsertPositionFromBounds';
 
 describe('computeInsertPositionFromBounds', () => {
   it('returns midpoint when both bounds are defined', () => {

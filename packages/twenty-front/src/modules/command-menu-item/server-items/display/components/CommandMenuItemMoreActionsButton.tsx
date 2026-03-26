@@ -1,4 +1,3 @@
-import { AnimatedIconCrossfade } from '@/command-menu-item/components/AnimatedIconCrossfade';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
@@ -15,7 +14,7 @@ import {
 } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { AnimatedIconCrossfade, useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTooltipWrapper = styled.div`
   font-size: ${themeCssVariables.font.size.md};

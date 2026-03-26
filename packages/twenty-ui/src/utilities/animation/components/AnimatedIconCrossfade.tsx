@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { type IconComponent } from '@ui/display';
+import { ThemeContext } from '@ui/theme-constants';
 
 const StyledContainer = styled.div<{ size: number }>`
   height: ${({ size }) => size}px;

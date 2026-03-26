@@ -4,11 +4,16 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
+import { commandMenuItemEditNumberOfSelectedRecordsState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditNumberOfSelectedRecordsState';
+import { commandMenuItemEditObjectMetadataItemIdState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditObjectMetadataItemIdState';
 import { commandMenuItemEditRecordSelectionPreviewModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditRecordSelectionPreviewModeState';
+import { commandMenuItemEditTargetedRecordsRuleState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditTargetedRecordsRuleState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
-import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndCommandMenuStates';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
@@ -24,11 +29,52 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
-  const { copyContextStoreStates } = useCopyContextStoreStates();
   const { navigateSidePanel } = useNavigateSidePanel();
   const isCommandMenuItemEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
   );
+
+  const snapshotEditionStatesFromMainContext = useCallback(() => {
+    store.set(
+      commandMenuItemEditObjectMetadataItemIdState.atomFamily({
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+      }),
+      store.get(
+        contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+      ) ?? null,
+    );
+
+    store.set(
+      commandMenuItemEditTargetedRecordsRuleState.atomFamily({
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+      }),
+      store.get(
+        contextStoreTargetedRecordsRuleComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+      ),
+    );
+
+    store.set(
+      commandMenuItemEditNumberOfSelectedRecordsState.atomFamily({
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+      }),
+      store.get(
+        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+      ),
+    );
+
+    store.set(
+      commandMenuItemEditRecordSelectionPreviewModeState.atomFamily({
+        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
+      }),
+      'selection',
+    );
+  }, [store]);
 
   const enterLayoutCustomizationMode = useCallback(() => {
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
@@ -62,17 +108,7 @@ export const useEnterLayoutCustomizationMode = () => {
       isSidePanelOpened &&
       currentSidePanelPage === SidePanelPages.CommandMenuDisplay
     ) {
-      copyContextStoreStates({
-        instanceIdToCopyFrom: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        instanceIdToCopyTo: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      });
-
-      store.set(
-        commandMenuItemEditRecordSelectionPreviewModeState.atomFamily({
-          instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-        }),
-        'selection',
-      );
+      snapshotEditionStatesFromMainContext();
 
       navigateSidePanel({
         page: SidePanelPages.CommandMenuEdit,
@@ -82,9 +118,9 @@ export const useEnterLayoutCustomizationMode = () => {
       });
     }
   }, [
-    copyContextStoreStates,
     isCommandMenuItemEnabled,
     navigateSidePanel,
+    snapshotEditionStatesFromMainContext,
     store,
   ]);
 

@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -13,27 +13,30 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useAtomValue, useStore } from 'jotai';
+import { useStore } from 'jotai';
 import {
   CommandMenuContextApiPageType,
-  SidePanelPages,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-// Display-only hook. For the edit page, use useCommandMenuContextApiForEdition.
-export const useCommandMenuContextApi = ({
-  isInSidePanel,
-}: {
-  isInSidePanel: boolean;
-}): CommandMenuContextApi => {
+// Display-only hook that reads from the component-scoped context store.
+// For the edit page, use useCommandMenuContextApiForEdition instead.
+export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
+
+  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ContextStoreComponentInstanceContext,
+  );
+  const isInSidePanel =
+    contextStoreInstanceId === SIDE_PANEL_COMPONENT_INSTANCE_ID;
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -47,54 +50,17 @@ export const useCommandMenuContextApi = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const mainContextStoreTargetedRecordsRule = useAtomValue(
-    contextStoreTargetedRecordsRuleComponentState.atomFamily({
-      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-    }),
-  );
-
-  const mainContextStoreNumberOfSelectedRecords = useAtomValue(
-    contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-    }),
-  );
-
-  const mainContextStoreCurrentObjectMetadataItemId = useAtomValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-      instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-    }),
-  );
-
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
-
-  const shouldUseMainContext =
-    isInSidePanel &&
-    (sidePanelPage === SidePanelPages.CommandMenuDisplay ||
-      sidePanelPage === SidePanelPages.CommandMenuEdit);
-
-  const effectiveObjectMetadataItemId = shouldUseMainContext
-    ? mainContextStoreCurrentObjectMetadataItemId
-    : contextStoreCurrentObjectMetadataItemId;
-
-  const effectiveTargetedRecordsRule = shouldUseMainContext
-    ? mainContextStoreTargetedRecordsRule
-    : contextStoreTargetedRecordsRule;
-
-  const effectiveNumberOfSelectedRecords = shouldUseMainContext
-    ? mainContextStoreNumberOfSelectedRecords
-    : contextStoreNumberOfSelectedRecords;
-
   const objectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === effectiveObjectMetadataItemId,
+    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
   );
 
   const { navigationMenuItems } = useNavigationMenuItemsData();
 
   const recordIds =
-    effectiveTargetedRecordsRule.mode === 'selection'
-      ? effectiveTargetedRecordsRule.selectedRecordIds
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
       : undefined;
 
   const favoriteRecordIds =
@@ -149,7 +115,7 @@ export const useCommandMenuContextApi = ({
       ? CommandMenuContextApiPageType.RECORD_PAGE
       : CommandMenuContextApiPageType.INDEX_PAGE;
 
-  const isSelectAll = effectiveTargetedRecordsRule.mode === 'exclusion';
+  const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -181,7 +147,7 @@ export const useCommandMenuContextApi = ({
     favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,
-    numberOfSelectedRecords: effectiveNumberOfSelectedRecords,
+    numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
     objectPermissions,
     selectedRecords,
     featureFlags,
