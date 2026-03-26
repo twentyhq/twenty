@@ -17,7 +17,6 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { ViewKey } from '@/views/types/ViewKey';
 
 type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
@@ -64,11 +63,6 @@ export const NavigationMenuItemFolderSubItem = ({
     views,
   );
 
-  const view = isDefined(navigationMenuItem.viewId)
-    ? views.find((viewItem) => viewItem.id === navigationMenuItem.viewId)
-    : undefined;
-  const isIndexView = view?.key === ViewKey.INDEX;
-
   const objectMetadataItem =
     navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
     navigationMenuItem.type === NavigationMenuItemType.VIEW ||
@@ -98,7 +92,7 @@ export const NavigationMenuItemFolderSubItem = ({
   return (
     <NavigationDrawerSubItem
       secondaryLabel={
-        isIndexView
+        navigationMenuItem.type !== NavigationMenuItemType.VIEW
           ? undefined
           : getObjectNavigationMenuItemSecondaryLabel({
               objectMetadataItems,

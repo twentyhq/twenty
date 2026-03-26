@@ -12,7 +12,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -33,12 +32,11 @@ import {
   IconChevronRight,
   IconMail,
   IconReload,
-  IconSearch,
   IconTrash,
   Status,
   TooltipDelay,
 } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useQuery } from '@apollo/client/react';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
@@ -90,13 +88,6 @@ const StyledTextContainerWithEllipsis = styled.div`
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledSearchInputContainer = styled.div`
-  input {
-    background: ${themeCssVariables.background.transparent.lighter};
-    border: 1px solid ${themeCssVariables.border.color.medium};
-  }
 `;
 
 const StyledTableRows = styled.div`
@@ -385,17 +376,11 @@ export const SettingsWorkspaceMembers = () => {
               description={t`Manage the members of your workspace here`}
             />
             <StyledSearchContainer>
-              <StyledSearchInputContainer>
-                <SettingsTextInput
-                  instanceId="workspace-members-search"
-                  value={searchFilter}
-                  onChange={handleSearchChange}
-                  placeholder={t`Search a team member...`}
-                  fullWidth
-                  LeftIcon={IconSearch}
-                  sizeVariant="lg"
-                />
-              </StyledSearchInputContainer>
+              <SearchInput
+                value={searchFilter}
+                onChange={handleSearchChange}
+                placeholder={t`Search a team member...`}
+              />
             </StyledSearchContainer>
             <StyledTableContainer hasMoreRows={hasNextPage}>
               <Table>

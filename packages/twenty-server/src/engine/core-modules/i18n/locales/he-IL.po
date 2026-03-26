@@ -34,6 +34,11 @@ msgstr "שדות {fieldType} אינם יכולים להיות ייחודיים."
 msgid "{fieldType} fields cannot have a default value."
 msgstr "לא ניתן לשדות {fieldType} לקבל ערך ברירת מחדל."
 
+#. js-lingui-id: VEmyIu
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util.ts
+msgid "{fullMessage}"
+msgstr ""
+
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"

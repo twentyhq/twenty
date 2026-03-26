@@ -8,7 +8,7 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
+import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 
 const DEFAULT_PROVIDERS: AiProvidersConfig = loadDefaultAiProviders();
 
@@ -125,13 +125,15 @@ describe('AiModelRegistryService', () => {
     service = module.get<AiModelRegistryService>(AiModelRegistryService);
   });
 
-  it('should throw when no models are available for DEFAULT_SMART_MODEL', () => {
-    expect(() => service.getEffectiveModelConfig(DEFAULT_SMART_MODEL)).toThrow(
+  it('should throw when no models are available for AUTO_SELECT_SMART_MODEL_ID', () => {
+    expect(() =>
+      service.getEffectiveModelConfig(AUTO_SELECT_SMART_MODEL_ID),
+    ).toThrow(
       'No AI models are available. Configure at least one AI provider.',
     );
   });
 
-  it('should return effective model config for DEFAULT_SMART_MODEL when models are available', () => {
+  it('should return effective model config for AUTO_SELECT_SMART_MODEL_ID when models are available', () => {
     jest.spyOn(service, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'openai/gpt-5.2',
@@ -146,14 +148,14 @@ describe('AiModelRegistryService', () => {
       model: {} as any,
     });
 
-    const result = service.getEffectiveModelConfig(DEFAULT_SMART_MODEL);
+    const result = service.getEffectiveModelConfig(AUTO_SELECT_SMART_MODEL_ID);
 
     expect(result).toBeDefined();
     expect(result.modelId).toBe('openai/gpt-5.2');
     expect(result.sdkPackage).toBe('@ai-sdk/openai');
   });
 
-  it('should return effective model config for DEFAULT_SMART_MODEL with custom model', () => {
+  it('should return effective model config for AUTO_SELECT_SMART_MODEL_ID with custom model', () => {
     jest.spyOn(service, 'getAvailableModels').mockReturnValue([
       {
         modelId: 'custom/mistral',
@@ -168,7 +170,7 @@ describe('AiModelRegistryService', () => {
       model: {} as any,
     });
 
-    const result = service.getEffectiveModelConfig(DEFAULT_SMART_MODEL);
+    const result = service.getEffectiveModelConfig(AUTO_SELECT_SMART_MODEL_ID);
 
     expect(result).toBeDefined();
     expect(result.modelId).toBe('custom/mistral');

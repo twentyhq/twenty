@@ -313,7 +313,7 @@ describe('SyncMessageFoldersService', () => {
 
         expect(mockMessageFolderDataAccessService.update).toHaveBeenCalledWith(
           workspaceId,
-          { id: 'folder-1' },
+          { id: 'folder-1', messageChannelId: 'channel-123' },
           expect.objectContaining({ name: 'Primary Inbox' }),
         );
         expect(result).toContainEqual(
@@ -353,7 +353,7 @@ describe('SyncMessageFoldersService', () => {
 
         expect(mockMessageFolderDataAccessService.update).toHaveBeenCalledWith(
           workspaceId,
-          { id: 'folder-1' },
+          { id: 'folder-1', messageChannelId: 'channel-123' },
           expect.objectContaining({
             parentFolderId: 'new-parent-id',
           }),
@@ -500,7 +500,7 @@ describe('SyncMessageFoldersService', () => {
         );
         expect(mockMessageFolderDataAccessService.update).toHaveBeenCalledWith(
           workspaceId,
-          { id: 'folder-to-update' },
+          { id: 'folder-to-update', messageChannelId: 'channel-123' },
           expect.objectContaining({ name: 'New Name' }),
         );
         expect(mockMessageFolderDataAccessService.save).toHaveBeenCalledWith(

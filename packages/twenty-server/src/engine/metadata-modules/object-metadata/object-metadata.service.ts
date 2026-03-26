@@ -414,14 +414,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatApplication: resolvedOwnerFlatApplication,
     });
 
-    const flatDefaultViewFieldsToCreate =
-      await this.computeFlatViewFieldsToCreate({
-        flatApplication: workspaceCustomFlatApplication,
-        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-        viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
-      });
+    const flatDefaultViewFieldsToCreate = computeFlatViewFieldsToCreate({
+      flatApplication: workspaceCustomFlatApplication,
+      objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
+      viewUniversalIdentifier: flatDefaultViewToCreate.universalIdentifier,
+    });
 
     let flatRecordPageFieldsViewToCreate:
       | (UniversalFlatView & { id: string })
@@ -449,16 +448,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           flatApplication: resolvedOwnerFlatApplication,
         });
 
-      flatRecordPageFieldsViewFieldsToCreate =
-        await this.computeFlatViewFieldsToCreate({
-          flatApplication: workspaceCustomFlatApplication,
-          objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
-          labelIdentifierFieldMetadataUniversalIdentifier:
-            flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-          viewUniversalIdentifier:
-            flatRecordPageFieldsViewToCreate.universalIdentifier,
-          excludeLabelIdentifier: true,
-        });
+      flatRecordPageFieldsViewFieldsToCreate = computeFlatViewFieldsToCreate({
+        flatApplication: workspaceCustomFlatApplication,
+        objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
+        viewUniversalIdentifier:
+          flatRecordPageFieldsViewToCreate.universalIdentifier,
+        excludeLabelIdentifier: true,
+      });
 
       flatDefaultRecordPageLayoutsToCreate =
         this.computeFlatDefaultRecordPageLayoutToCreate({
@@ -662,28 +660,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatApplication,
       recordPageFieldsView,
       workspaceId,
-    });
-  }
-
-  private async computeFlatViewFieldsToCreate({
-    objectFlatFieldMetadatas,
-    viewUniversalIdentifier,
-    flatApplication,
-    labelIdentifierFieldMetadataUniversalIdentifier,
-    excludeLabelIdentifier,
-  }: {
-    flatApplication: FlatApplication;
-    objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
-    viewUniversalIdentifier: string;
-    labelIdentifierFieldMetadataUniversalIdentifier: string | null;
-    excludeLabelIdentifier?: boolean;
-  }) {
-    return computeFlatViewFieldsToCreate({
-      objectFlatFieldMetadatas,
-      viewUniversalIdentifier,
-      flatApplication,
-      labelIdentifierFieldMetadataUniversalIdentifier,
-      excludeLabelIdentifier,
     });
   }
 

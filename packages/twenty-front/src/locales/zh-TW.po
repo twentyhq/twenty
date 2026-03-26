@@ -506,10 +506,10 @@ msgstr "1. 類型"
 msgid "10,000 workflow node executions"
 msgstr "10,000 次工作流程節點執行"
 
-#. js-lingui-id: bM5lnW
+#. js-lingui-id: rU05hS
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
-msgid "12h - {hour12Label}"
-msgstr "12小時 - {hour12Label}"
+msgid "12h"
+msgstr ""
 
 #. js-lingui-id: 4EdXYs
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -542,10 +542,10 @@ msgstr "20,000 次工作流程節點執行"
 msgid "200 OK - {duration}ms"
 msgstr "200 OK - {duration} 毫秒"
 
-#. js-lingui-id: mwTnop
+#. js-lingui-id: W1k7eB
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
-msgid "24h - {hour24Label}"
-msgstr "24小時 - {hour24Label}"
+msgid "24h"
+msgstr ""
 
 #. js-lingui-id: QsMprd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -1751,6 +1751,11 @@ msgstr "API 密鑰已複製到剪貼板"
 msgid "API key is required"
 msgstr "需要提供 API 金鑰"
 
+#. js-lingui-id: sb6i1L
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "API key name cannot be empty"
+msgstr ""
+
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "API key roles"
@@ -1816,10 +1821,10 @@ msgstr "API"
 msgid "APIs & Webhooks"
 msgstr "API 和 Webhooks"
 
-#. js-lingui-id: BnUHmx
+#. js-lingui-id: 0UMxlw
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
-msgid "Apostrophe and dot - {apostropheAndDotExample}"
-msgstr "撇號和點 - {apostropheAndDotExample}"
+msgid "Apostrophe and dot"
+msgstr ""
 
 #. js-lingui-id: LMUw1U
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -2366,6 +2371,11 @@ msgstr "由於此工作流程未使用手動觸發，表單不會在介面上方
 #: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarQueryDateRangeFilter.tsx
 msgid "Before"
 msgstr "之前"
+
+#. js-lingui-id: KYr9vA
+#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+msgid "Best"
+msgstr ""
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -3114,10 +3124,10 @@ msgstr "指令選單項目"
 msgid "Commands copied to clipboard"
 msgstr "命令已複製到剪貼板"
 
-#. js-lingui-id: A9u+7N
+#. js-lingui-id: QeCopv
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
-msgid "Commas and dot - {commasAndDotExample}"
-msgstr "逗號和點 - {commasAndDotExample}"
+msgid "Commas and dot"
+msgstr ""
 
 #. js-lingui-id: NBdIgR
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -4356,7 +4366,7 @@ msgstr "停用工作流程"
 #. js-lingui-id: yAT3be
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -4373,6 +4383,11 @@ msgstr "除錯資訊"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Decide which Sub-address fields you want to display"
 msgstr "決定您希望顯示哪些子地址欄位"
+
+#. js-lingui-id: Bn9+El
+#: src/modules/ai/components/AIChatEditorSection.tsx
+msgid "default"
+msgstr ""
 
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -4942,10 +4957,10 @@ msgstr "不要從／向 Gmail、Outlook 電子郵件創建聯絡人"
 msgid "Don't sync emails from team@ support@ noreply@..."
 msgstr "不要同步來自 team@、support@、noreply@ 的電子郵件..."
 
-#. js-lingui-id: bd+DPX
+#. js-lingui-id: Wm78zZ
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
-msgid "Dots and comma - {dotsAndCommaExample}"
-msgstr "點和逗號 - {dotsAndCommaExample}"
+msgid "Dots and comma"
+msgstr ""
 
 #. js-lingui-id: LE8J+K
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
@@ -6366,7 +6381,7 @@ msgid "Failed to activate enterprise license. Please check your key or contact s
 msgstr "無法啟用企業授權。請檢查您的金鑰或聯絡支援。"
 
 #. js-lingui-id: vJiM7T
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Failed to activate skill"
 msgstr ""
 
@@ -6391,7 +6406,7 @@ msgid "Failed to delete jobs. Please try again later."
 msgstr "無法刪除工作。請稍後重試。"
 
 #. js-lingui-id: bmwWKk
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Failed to delete skill"
 msgstr ""
 
@@ -6764,9 +6779,6 @@ msgid "Files"
 msgstr "檔案"
 
 #. js-lingui-id: o7J4JM
-#: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
@@ -9134,6 +9146,7 @@ msgstr "此供應商的模型。切換以啟用或停用。"
 
 #. js-lingui-id: hty0d5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
 msgstr "星期一"
 
@@ -9566,7 +9579,7 @@ msgstr "新記錄"
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "New Skill"
 msgstr ""
 
@@ -12152,6 +12165,7 @@ msgstr "俄語"
 
 #. js-lingui-id: +5kO8P
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
 msgstr "星期六"
 
@@ -12277,7 +12291,7 @@ msgid "Search a role..."
 msgstr "搜尋角色..."
 
 #. js-lingui-id: lJNEce
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Search a skill..."
 msgstr ""
 
@@ -13161,12 +13175,12 @@ msgid "Skill"
 msgstr ""
 
 #. js-lingui-id: h4t38o
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Skill activated"
 msgstr ""
 
 #. js-lingui-id: /IoK74
-#: src/pages/settings/ai/components/SettingsSkillsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Skill deleted"
 msgstr ""
 
@@ -13183,6 +13197,7 @@ msgstr ""
 
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Skills"
 msgstr ""
 
@@ -13328,10 +13343,10 @@ msgstr "排序"
 msgid "Source"
 msgstr "來源"
 
-#. js-lingui-id: IEtmGM
+#. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
-msgid "Spaces and comma - {spacesAndCommaExample}"
-msgstr "空格和逗號 - {spacesAndCommaExample}"
+msgid "Spaces and comma"
+msgstr ""
 
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -13637,6 +13652,7 @@ msgstr "總和"
 
 #. js-lingui-id: DBC3t5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
 msgstr "星期日"
 
@@ -13785,42 +13801,23 @@ msgstr "系統關聯"
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeZoneSelect.tsx
+#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
+#: src/modules/settings/experience/components/NumberFormatSelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
+#: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings"
 msgstr "系統設置"
 
 #. js-lingui-id: E3AMmw
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsDateFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsDateFormatSelect.tsx
 msgid "System settings - {systemDateFormatLabel}"
 msgstr "系統設置 - {systemDateFormatLabel}"
 
-#. js-lingui-id: uKM6SP
-#: src/modules/settings/experience/components/NumberFormatSelect.tsx
-msgid "System Settings - {systemNumberFormatLabel}"
-msgstr "系統設置 - {systemNumberFormatLabel}"
-
 #. js-lingui-id: 0ZgB1e
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
-#: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "System Settings - {systemTimeFormatLabel}"
 msgstr "系統設置 - {systemTimeFormatLabel}"
-
-#. js-lingui-id: e89dEj
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
-msgid "System settings - Monday"
-msgstr "系統設置 - 星期一"
-
-#. js-lingui-id: o+Kvng
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
-msgid "System settings - Saturday"
-msgstr "系統設置 - 星期六"
-
-#. js-lingui-id: gluMQd
-#: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
-msgid "System settings - Sunday"
-msgstr "系統設置 - 星期日"
 
 #. js-lingui-id: HuA3RU
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
@@ -14872,6 +14869,13 @@ msgstr "未列出"
 msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
 msgstr "解鎖企業功能，例如 SSO、資料列層級安全性與審計日誌。"
 
+#. js-lingui-id: Te2H8x
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
+msgid "Unnamed API Key"
+msgstr ""
+
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "unordered"
@@ -15140,6 +15144,11 @@ msgstr "使用 authenticator 應用和瀏覽器擴充功能，如 1Password、Au
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
 msgid "Use best models only"
 msgstr "僅使用最佳模型"
+
+#. js-lingui-id: cVOIgV
+#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+msgid "Use filter to see existing tools or create your own"
+msgstr ""
 
 #. js-lingui-id: oTTQsc
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts

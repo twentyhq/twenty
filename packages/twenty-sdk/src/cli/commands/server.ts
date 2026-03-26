@@ -1,75 +1,15 @@
-import { ConfigService } from '@/cli/utilities/config/config-service';
+import { serverStart } from '@/cli/operations/server-start';
+import {
+  CONTAINER_NAME,
+  containerExists,
+  DEFAULT_PORT,
+  getContainerPort,
+  isContainerRunning,
+} from '@/cli/utilities/server/docker-container';
 import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
-
-const CONTAINER_NAME = 'twenty-app-dev';
-const IMAGE = 'twentycrm/twenty-app-dev:latest';
-const DEFAULT_PORT = 2020;
-
-const isContainerRunning = (): boolean => {
-  try {
-    const result = execSync(
-      `docker inspect -f '{{.State.Running}}' ${CONTAINER_NAME}`,
-      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
-    ).trim();
-
-    return result === 'true';
-  } catch {
-    return false;
-  }
-};
-
-const getContainerPort = (): number => {
-  try {
-    const result = execSync(
-      `docker inspect -f '{{(index (index .NetworkSettings.Ports "3000/tcp") 0).HostPort}}' ${CONTAINER_NAME}`,
-      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
-    ).trim();
-
-    return parseInt(result, 10) || DEFAULT_PORT;
-  } catch {
-    return DEFAULT_PORT;
-  }
-};
-
-const containerExists = (): boolean => {
-  try {
-    execSync(`docker inspect ${CONTAINER_NAME}`, {
-      stdio: ['pipe', 'pipe', 'ignore'],
-    });
-
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const checkDockerRunning = (): boolean => {
-  try {
-    execSync('docker info', { stdio: 'ignore' });
-
-    return true;
-  } catch {
-    console.error(
-      chalk.red('Docker is not running. Please start Docker and try again.'),
-    );
-
-    return false;
-  }
-};
-
-const validatePort = (value: string): number => {
-  const port = parseInt(value, 10);
-
-  if (isNaN(port) || port < 1 || port > 65535) {
-    console.error(chalk.red('Invalid port number.'));
-    process.exit(1);
-  }
-
-  return port;
-};
 
 export const registerServerCommands = (program: Command): void => {
   const server = program
@@ -81,81 +21,26 @@ export const registerServerCommands = (program: Command): void => {
     .description('Start a local Twenty server')
     .option('-p, --port <port>', 'HTTP port', String(DEFAULT_PORT))
     .action(async (options: { port: string }) => {
-      let port = validatePort(options.port);
+      const port = parseInt(options.port, 10);
 
-      if (await checkServerHealth(port)) {
-        const localUrl = `http://localhost:${port}`;
-        const configService = new ConfigService();
-
-        ConfigService.setActiveRemote('local');
-        await configService.setConfig({ apiUrl: localUrl });
-
-        console.log(
-          chalk.green(`Twenty server is already running on localhost:${port}.`),
-        );
-
-        return;
-      }
-
-      if (!checkDockerRunning()) {
+      if (isNaN(port) || port < 1 || port > 65535) {
+        console.error(chalk.red('Invalid port number.'));
         process.exit(1);
       }
 
-      if (isContainerRunning()) {
-        console.log(chalk.gray('Container is running but not healthy yet.'));
+      const result = await serverStart({
+        port,
+        onProgress: (message) => console.log(chalk.gray(message)),
+      });
 
-        return;
+      if (!result.success) {
+        console.error(chalk.red(result.error.message));
+        process.exit(1);
       }
 
-      if (containerExists()) {
-        const existingPort = getContainerPort();
-
-        if (existingPort !== port) {
-          console.log(
-            chalk.yellow(
-              `Existing container uses port ${existingPort}. Run 'yarn twenty server reset' first to change ports.`,
-            ),
-          );
-        }
-
-        port = existingPort;
-
-        console.log(chalk.gray('Starting existing container...'));
-        execSync(`docker start ${CONTAINER_NAME}`, { stdio: 'ignore' });
-      } else {
-        console.log(chalk.gray('Starting Twenty container...'));
-
-        const runResult = spawnSync(
-          'docker',
-          [
-            'run',
-            '-d',
-            '--name',
-            CONTAINER_NAME,
-            '-p',
-            `${port}:3000`,
-            '-v',
-            'twenty-app-dev-data:/data/postgres',
-            '-v',
-            'twenty-app-dev-storage:/app/.local-storage',
-            IMAGE,
-          ],
-          { stdio: 'inherit' },
-        );
-
-        if (runResult.status !== 0) {
-          console.error(chalk.red('\nFailed to start Twenty container.'));
-          process.exit(runResult.status ?? 1);
-        }
-      }
-
-      const localUrl = `http://localhost:${port}`;
-      const configService = new ConfigService();
-
-      ConfigService.setActiveRemote('local');
-      await configService.setConfig({ apiUrl: localUrl });
-
-      console.log(chalk.green(`\nLocal remote configured → ${localUrl}`));
+      console.log(
+        chalk.green(`\nLocal remote configured → ${result.data.url}`),
+      );
     });
 
   server

@@ -49,9 +49,11 @@ export type SelectProps<Value extends SelectValue> = {
   value?: Value;
   withSearchInput?: boolean;
   needIconCheck?: boolean;
+  pinnedOption?: SelectOption<Value>;
   callToActionButton?: CallToActionButton;
   dropdownOffset?: DropdownOffset;
   hasRightElement?: boolean;
+  showContextualTextInControl?: boolean;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -88,15 +90,21 @@ export const Select = <Value extends SelectValue>({
   value,
   withSearchInput,
   needIconCheck,
+  pinnedOption,
   callToActionButton,
   dropdownOffset,
   hasRightElement,
+  showContextualTextInControl = true,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const selectedOption = useMemo(() => {
+    if (isDefined(pinnedOption) && pinnedOption.value === value) {
+      return pinnedOption;
+    }
+
     const fromMatchingOption = options.find(
       ({ value: optionValue }) => optionValue === value,
     );
@@ -114,7 +122,7 @@ export const Select = <Value extends SelectValue>({
     }
 
     return null;
-  }, [emptyOption, options, value]);
+  }, [emptyOption, options, pinnedOption, value]);
 
   const filteredOptions = useMemo(
     () =>
@@ -129,6 +137,7 @@ export const Select = <Value extends SelectValue>({
   const isDisabled =
     disabledFromProps ||
     (options.length <= 1 &&
+      !isDefined(pinnedOption) &&
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
@@ -148,13 +157,26 @@ export const Select = <Value extends SelectValue>({
 
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
+  const controlSelectedOption = useMemo(() => {
+    if (!isDefined(selectedOption) || showContextualTextInControl) {
+      return selectedOption;
+    }
+
+    const { contextualText: _, ...rest } = selectedOption;
+
+    return rest;
+  }, [selectedOption, showContextualTextInControl]);
+
   const handleDropdownOpen = () => {
-    if (isDefined(selectedOption) && !isNonEmptyString(searchInputValue)) {
-      setSelectedItemId(selectedOption.label);
+    if (
+      isDefined(controlSelectedOption) &&
+      !isNonEmptyString(searchInputValue)
+    ) {
+      setSelectedItemId(controlSelectedOption.label);
     }
   };
 
-  if (!isDefined(selectedOption)) {
+  if (!isDefined(controlSelectedOption)) {
     return <></>;
   }
 
@@ -169,7 +191,7 @@ export const Select = <Value extends SelectValue>({
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <SelectControl
-          selectedOption={selectedOption}
+          selectedOption={controlSelectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
@@ -182,7 +204,7 @@ export const Select = <Value extends SelectValue>({
           onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
-              selectedOption={selectedOption}
+              selectedOption={controlSelectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
@@ -198,6 +220,27 @@ export const Select = <Value extends SelectValue>({
                 />
               )}
               {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
+                <DropdownMenuSeparator />
+              )}
+              {isDefined(pinnedOption) && (
+                <DropdownMenuItemsContainer scrollable={false}>
+                  <MenuItemSelect
+                    LeftIcon={pinnedOption.Icon}
+                    text={pinnedOption.label}
+                    contextualText={pinnedOption.contextualText}
+                    selected={
+                      controlSelectedOption.value === pinnedOption.value
+                    }
+                    needIconCheck={needIconCheck}
+                    onClick={() => {
+                      onChange?.(pinnedOption.value);
+                      onBlur?.();
+                      closeDropdown(dropdownId);
+                    }}
+                  />
+                </DropdownMenuItemsContainer>
+              )}
+              {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
                 <DropdownMenuSeparator />
               )}
               {isNonEmptyArray(filteredOptions) && (
@@ -220,7 +263,10 @@ export const Select = <Value extends SelectValue>({
                         <MenuItemSelect
                           LeftIcon={option.Icon}
                           text={option.label}
-                          selected={selectedOption.value === option.value}
+                          contextualText={option.contextualText}
+                          selected={
+                            controlSelectedOption.value === option.value
+                          }
                           focused={selectedItemId === option.label}
                           needIconCheck={needIconCheck}
                           onClick={() => {

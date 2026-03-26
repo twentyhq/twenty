@@ -10,4 +10,5 @@ export type SelectOption<
   value: Value;
   disabled?: boolean;
   color?: ThemeColor | 'transparent';
+  contextualText?: string;
 };

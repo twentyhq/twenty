@@ -34,8 +34,10 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { DEFAULT_FAST_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-fast-model.const';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -301,11 +303,19 @@ export class WorkspaceEntity {
   version: string | null;
 
   @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: DEFAULT_FAST_MODEL })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AUTO_SELECT_FAST_MODEL_ID,
+  })
   fastModel: ModelId;
 
   @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: DEFAULT_SMART_MODEL })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AUTO_SELECT_SMART_MODEL_ID,
+  })
   smartModel: ModelId;
 
   @Field(() => String, { nullable: true })
