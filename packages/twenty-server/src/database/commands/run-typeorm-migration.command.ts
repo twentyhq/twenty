@@ -3,8 +3,8 @@ import { Logger } from '@nestjs/common';
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
+import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
-import { CoreMigrationRunnerService } from 'src/engine/core-engine-version/services/core-migration-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunTypeormMigrationCommandOptions = {
@@ -45,33 +45,28 @@ export class RunTypeormMigrationCommand extends CommandRunner {
         chalk.yellow('Skipping workspace version check (--force flag used)'),
       );
     } else {
-      const hasWorkspaces =
-        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
+      const previousVersion =
+        this.coreEngineVersionService.getPreviousVersion();
 
-      if (hasWorkspaces) {
-        const previousVersion =
-          this.coreEngineVersionService.getPreviousVersion();
+      const workspacesBelow =
+        await this.workspaceVersionService.getWorkspacesBelowVersion(
+          previousVersion.version,
+        );
 
-        const workspacesBelow =
-          await this.workspaceVersionService.getWorkspacesBelowVersion(
-            previousVersion.version,
-          );
-
-        if (workspacesBelow.length > 0) {
-          for (const workspace of workspacesBelow) {
-            this.logger.error(
-              chalk.red(
-                `Workspace ${workspace.id} (${workspace.displayName}) is at version ${workspace.version ?? 'undefined'}, which is below the minimum required version.`,
-              ),
-            );
-          }
-
-          throw new Error(
-            'Unable to run TypeORM migrations. Some workspace(s) are below the minimum required version.\n' +
-              'Please ensure all workspaces are on at least the previous minor version before running migrations.\n' +
-              'Use --force to bypass this check (not recommended).',
+      if (workspacesBelow.length > 0) {
+        for (const workspace of workspacesBelow) {
+          this.logger.error(
+            chalk.red(
+              `Workspace ${workspace.id} (${workspace.displayName}) is at version ${workspace.version ?? 'undefined'}, which is below the minimum required version.`,
+            ),
           );
         }
+
+        throw new Error(
+          'Unable to run TypeORM migrations. Some workspace(s) are below the minimum required version.\n' +
+            'Please ensure all workspaces are on at least the previous minor version before running migrations.\n' +
+            'Use --force to bypass this check (not recommended).',
+        );
       }
     }
 
