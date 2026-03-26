@@ -6,7 +6,6 @@ import { IconPencil } from 'twenty-ui/display';
 
 import { commandMenuItemEditNumberOfSelectedRecordsState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditNumberOfSelectedRecordsState';
 import { commandMenuItemEditObjectMetadataItemIdState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditObjectMetadataItemIdState';
-import { commandMenuItemEditRecordSelectionPreviewModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditRecordSelectionPreviewModeState';
 import { commandMenuItemEditTargetedRecordsRuleState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditTargetedRecordsRuleState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
@@ -66,13 +65,6 @@ export const useEnterLayoutCustomizationMode = () => {
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
       ),
-    );
-
-    store.set(
-      commandMenuItemEditRecordSelectionPreviewModeState.atomFamily({
-        instanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
-      }),
-      'selection',
     );
   }, [store]);
 

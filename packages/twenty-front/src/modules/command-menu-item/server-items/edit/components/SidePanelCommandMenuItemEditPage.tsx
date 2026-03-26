@@ -4,11 +4,14 @@ import { commandMenuItemsSelector } from '@/command-menu-item/server-items/commo
 import { CommandMenuItemDraggable } from '@/command-menu-item/server-items/edit/components/CommandMenuItemDraggable';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown';
-import { useCommandMenuContextApiForEdition } from '@/command-menu-item/server-items/edit/hooks/useCommandMenuContextApiForEdition';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/server-items/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useResetCommandMenuItemsDraft';
+import { commandMenuItemEditObjectMetadataItemIdState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditObjectMetadataItemIdState';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/server-items/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -16,12 +19,12 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type DropResult } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { CommandMenuContextApiPageType } from 'twenty-shared/types';
 import {
   interpolateCommandMenuItemLabel,
   isDefined,
@@ -75,7 +78,20 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const { getIcon } = useIcons();
   const { commandMenuItems: commandMenuItemsInCurrentContext } =
     useContext(CommandMenuContext);
-  const commandMenuContextApi = useCommandMenuContextApiForEdition();
+
+  const commandMenuItemEditObjectMetadataItemId = useAtomComponentStateValue(
+    commandMenuItemEditObjectMetadataItemIdState,
+  );
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const editObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === commandMenuItemEditObjectMetadataItemId,
+  );
+
+  const contextStoreCurrentViewType = useAtomComponentStateValue(
+    contextStoreCurrentViewTypeComponentState,
+  );
+  const isIndexPage =
+    contextStoreCurrentViewType !== ContextStoreViewType.ShowPage;
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
@@ -92,7 +108,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
     interpolateCommandMenuItemLabel({
       label: item.label,
-      context: commandMenuContextApi,
+      context: { objectMetadataItem: editObjectMetadataItem ?? {} },
     }) ?? item.label;
 
   const contextualCommandMenuItemIds = new Set(
@@ -226,9 +242,6 @@ export const SidePanelCommandMenuItemEditPage = () => {
       contextualCommandMenuItemIds,
     );
   };
-
-  const isIndexPage =
-    commandMenuContextApi.pageType === CommandMenuContextApiPageType.INDEX_PAGE;
 
   return (
     <StyledContainer data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}>
