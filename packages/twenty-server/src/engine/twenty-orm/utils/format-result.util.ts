@@ -121,21 +121,13 @@ function formatResultInternal<T>(
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    if (!isDefined(fieldMetadata)) {
+      continue;
+    }
+
     const isRelation = fieldMetadata
       ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       : false;
-
-    if (!compositePropertyArgs && !isRelation) {
-      if (fieldMetadata) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
-      } else {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = value;
-      }
-
-      continue;
-    }
 
     if (isRelation) {
       if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
@@ -164,26 +156,31 @@ function formatResultInternal<T>(
       );
     }
 
-    if (!compositePropertyArgs || !isDefined(fieldMetadata)) {
-      continue;
-    }
+    if (isDefined(compositePropertyArgs)) {
+      const { parentField, ...compositeProperty } = compositePropertyArgs;
 
-    const { parentField, ...compositeProperty } = compositePropertyArgs;
-
-    // @ts-expect-error legacy noImplicitAny
-    if (!newData[parentField]) {
       // @ts-expect-error legacy noImplicitAny
-      newData[parentField] = {};
+      if (!newData[parentField]) {
+        // @ts-expect-error legacy noImplicitAny
+        newData[parentField] = {};
+      }
+
+      // @ts-expect-error legacy noImplicitAny
+      newData[parentField][compositeProperty.name] = isNull(value)
+        ? transformCompositeFieldNullValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          )
+        : formatCompositeFieldValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          );
     }
 
     // @ts-expect-error legacy noImplicitAny
-    newData[parentField][compositeProperty.name] = isNull(value)
-      ? transformCompositeFieldNullValue(
-          value,
-          compositeProperty.name,
-          fieldMetadata,
-        )
-      : formatCompositeFieldValue(value, compositeProperty.name, fieldMetadata);
+    newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
   }
 
   // After assembling composite fields, handle those with missing required subfields
