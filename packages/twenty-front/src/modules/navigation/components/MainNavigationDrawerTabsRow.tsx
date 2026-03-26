@@ -256,10 +256,7 @@ export const MainNavigationDrawerTabsRow = () => {
           onKeyDown={handleNewChatKeyDown}
         >
           <StyledNewChatIcon>
-            <IconMessageCirclePlus
-              size={theme.icon.size.md}
-              style={{ minWidth: theme.icon.size.md }}
-            />
+            <IconMessageCirclePlus size={theme.icon.size.md} />
           </StyledNewChatIcon>
           {isExpanded && <OverflowingTextWithTooltip text={t`New chat`} />}
         </StyledNewChatButton>
