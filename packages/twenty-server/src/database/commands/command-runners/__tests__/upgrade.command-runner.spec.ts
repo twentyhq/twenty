@@ -8,19 +8,18 @@ import {
 import { type Repository } from 'typeorm';
 
 import {
-  type AllCommands,
   UpgradeCommandRunner,
+  type AllCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
-import {
-  UPGRADE_COMMAND_VERSIONS,
-  WorkspaceVersionCheckService,
-} from 'src/database/commands/services/workspace-version-check.service';
+import { UPGRADE_COMMAND_VERSIONS } from 'src/engine/constants/upgrade-command-versions.constant';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 const CURRENT_VERSION =
   UPGRADE_COMMAND_VERSIONS[UPGRADE_COMMAND_VERSIONS.length - 1];
@@ -76,7 +75,8 @@ const buildUpgradeCommandModule = async ({
           twentyConfigService: TwentyConfigService,
           globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
           dataSourceService: DataSourceService,
-          workspaceVersionCheckService: WorkspaceVersionCheckService,
+          coreEngineVersionService: CoreEngineVersionService,
+          workspaceVersionService: WorkspaceVersionService,
           coreMigrationRunnerService: CoreMigrationRunnerService,
         ) => {
           return new commandRunner(
@@ -84,7 +84,8 @@ const buildUpgradeCommandModule = async ({
             twentyConfigService,
             globalWorkspaceOrmManager,
             dataSourceService,
-            workspaceVersionCheckService,
+            coreEngineVersionService,
+            workspaceVersionService,
             coreMigrationRunnerService,
           );
         },
@@ -93,7 +94,8 @@ const buildUpgradeCommandModule = async ({
           TwentyConfigService,
           GlobalWorkspaceOrmManager,
           DataSourceService,
-          WorkspaceVersionCheckService,
+          CoreEngineVersionService,
+          WorkspaceVersionService,
           CoreMigrationRunnerService,
         ],
       },
@@ -139,7 +141,8 @@ const buildUpgradeCommandModule = async ({
         provide: DataSourceService,
         useValue: mockDataSourceService,
       },
-      WorkspaceVersionCheckService,
+      CoreEngineVersionService,
+      WorkspaceVersionService,
       {
         provide: CoreMigrationRunnerService,
         useValue: { run: jest.fn().mockResolvedValue(undefined) },

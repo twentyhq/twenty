@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
-import { WorkspaceVersionCheckService } from 'src/database/commands/services/workspace-version-check.service';
 import { V1_17_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-17/1-17-upgrade-version-command.module';
 import { V1_18_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-18/1-18-upgrade-version-command.module';
 import { V1_19_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-19/1-19-upgrade-version-command.module';
@@ -10,6 +9,8 @@ import { V1_20_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
+import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 
 @Module({
   imports: [
@@ -19,14 +20,15 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     V1_19_UpgradeVersionCommandModule,
     V1_20_UpgradeVersionCommandModule,
     DataSourceModule,
+    WorkspaceVersionModule,
   ],
   providers: [
     UpgradeCommand,
-    WorkspaceVersionCheckService,
+    CoreEngineVersionService,
     CoreMigrationRunnerService,
   ],
   exports: [
-    WorkspaceVersionCheckService,
+    CoreEngineVersionService,
     CoreMigrationRunnerService,
     UpgradeCommand,
   ],

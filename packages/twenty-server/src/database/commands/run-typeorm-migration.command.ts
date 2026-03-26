@@ -4,7 +4,8 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
-import { WorkspaceVersionCheckService } from 'src/database/commands/services/workspace-version-check.service';
+import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunTypeormMigrationCommandOptions = {
   force?: boolean;
@@ -19,7 +20,8 @@ export class RunTypeormMigrationCommand extends CommandRunner {
   private readonly logger = new Logger(RunTypeormMigrationCommand.name);
 
   constructor(
-    private readonly workspaceVersionCheckService: WorkspaceVersionCheckService,
+    private readonly coreEngineVersionService: CoreEngineVersionService,
+    private readonly workspaceVersionService: WorkspaceVersionService,
     private readonly coreMigrationRunnerService: CoreMigrationRunnerService,
   ) {
     super();
@@ -44,14 +46,14 @@ export class RunTypeormMigrationCommand extends CommandRunner {
       );
     } else {
       const hasWorkspaces =
-        await this.workspaceVersionCheckService.hasActiveOrSuspendedWorkspaces();
+        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
       if (hasWorkspaces) {
         const previousVersion =
-          this.workspaceVersionCheckService.getPreviousTwentyMajorMinorVersion();
+          this.coreEngineVersionService.getPreviousTwentyVersion();
 
         const workspacesBelow =
-          await this.workspaceVersionCheckService.getWorkspacesBelowVersion(
+          await this.workspaceVersionService.getWorkspacesBelowVersion(
             previousVersion.version,
           );
 

@@ -49,11 +49,12 @@ import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-vers
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
-import { WorkspaceVersionCheckService } from 'src/database/commands/services/workspace-version-check.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 @Command({
   name: 'upgrade',
@@ -68,7 +69,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    protected readonly workspaceVersionCheckService: WorkspaceVersionCheckService,
+    protected readonly coreEngineVersionService: CoreEngineVersionService,
+    protected readonly workspaceVersionService: WorkspaceVersionService,
     protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
 
     // 1.17 Commands
@@ -123,7 +125,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       twentyConfigService,
       globalWorkspaceOrmManager,
       dataSourceService,
-      workspaceVersionCheckService,
+      coreEngineVersionService,
+      workspaceVersionService,
       coreMigrationRunnerService,
     );
 
