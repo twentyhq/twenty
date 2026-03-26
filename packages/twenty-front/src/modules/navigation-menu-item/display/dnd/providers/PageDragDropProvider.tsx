@@ -1,7 +1,6 @@
 import { lazy, Suspense, useState, type ReactNode } from 'react';
 
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
-import { useResetNavigationMenuItemStateOnSidePanelClose } from '@/navigation-menu-item/common/hooks/useResetNavigationMenuItemStateOnSidePanelClose';
 import { PageDragDropProviderMountEffect } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProviderMountEffect';
 
 const LazyNavigationMenuItemDndKitProvider = lazy(() =>
@@ -20,8 +19,6 @@ export const PageDragDropProvider = ({
   children,
 }: PageDragDropProviderProps) => {
   const [hasProviderMounted, setHasProviderMounted] = useState(false);
-
-  useResetNavigationMenuItemStateOnSidePanelClose();
 
   if (!hasProviderMounted) {
     return (
