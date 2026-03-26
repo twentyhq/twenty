@@ -100,6 +100,9 @@ export const MultiItemFieldInput = <T,>({
         }
 
         onChange(updatedItems);
+        onClickOutside(updatedItems, event);
+
+        return;
       }
 
       onClickOutside(items, event);
