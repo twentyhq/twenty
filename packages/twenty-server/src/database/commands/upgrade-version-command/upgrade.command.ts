@@ -48,11 +48,11 @@ import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/co
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
+import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
+import { CoreMigrationRunnerService } from 'src/engine/core-engine-version/services/core-migration-runner.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
-import { CoreMigrationRunnerService } from 'src/engine/services/core-migration-runner.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 

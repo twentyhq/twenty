@@ -14,11 +14,11 @@ import {
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
+import { CoreMigrationRunnerService } from 'src/engine/core-engine-version/services/core-migration-runner.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
-import { CoreMigrationRunnerService } from 'src/engine/services/core-migration-runner.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import {

@@ -3,8 +3,8 @@ import { Logger } from '@nestjs/common';
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
-import { CoreMigrationRunnerService } from 'src/engine/services/core-migration-runner.service';
+import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
+import { CoreMigrationRunnerService } from 'src/engine/core-engine-version/services/core-migration-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunTypeormMigrationCommandOptions = {
