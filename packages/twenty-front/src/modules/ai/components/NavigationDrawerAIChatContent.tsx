@@ -50,26 +50,7 @@ export const NavigationDrawerAIChatContent = () => {
     resetNavigationStack: true,
   });
 
-  const { threads: realThreads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
-
-  // DEBUG: set to 0 for empty, 100 for scroll test — remove before commit
-  const DEBUG_THREAD_COUNT = 100;
-  const now = new Date();
-  const threads =
-    DEBUG_THREAD_COUNT > 0
-      ? (Array.from({ length: DEBUG_THREAD_COUNT }, (_, i) => ({
-          id: `debug-${i}`,
-          title: `Debug thread ${i + 1}`,
-          createdAt: new Date(now.getTime() - i * 3600000).toISOString(),
-          updatedAt: new Date(now.getTime() - i * 3600000).toISOString(),
-          totalInputTokens: 0,
-          totalOutputTokens: 0,
-          contextWindowTokens: null,
-          conversationSize: 0,
-          totalInputCredits: 0,
-          totalOutputCredits: 0,
-        })) as typeof realThreads)
-      : ([] as typeof realThreads);
+  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
 
   const groupedThreads = groupThreadsByDate(threads);
 
