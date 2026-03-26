@@ -32,6 +32,7 @@ const LazySalesAngelSidePanel = lazy(() =>
     default: m.SalesAngelSidePanel,
   })),
 );
+import { type WorkspaceMember } from '@/whatsapp-chat/components/ChatHeader';
 import { useLabels } from '@/whatsapp-chat/hooks/useLabels';
 import { useMessages } from '@/whatsapp-chat/hooks/useMessages';
 import { useSendMessage } from '@/whatsapp-chat/hooks/useSendMessage';
@@ -195,6 +196,66 @@ export const WhatsAppChatContainer = () => {
   const saRefreshRef = useRef<(() => void) | null>(null);
   const [showSalesAngel, setShowSalesAngel] = useState(false);
   const [externalDraft, setExternalDraft] = useState<string | null>(null);
+  const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMember[]>([]);
+
+  // Fetch workspace members once for assignment dropdowns in header
+  useEffect(() => {
+    let cancelled = false;
+    bridgeFetch<{ members: WorkspaceMember[] }>(
+      '/api/v1/conversations/members',
+    )
+      .then((data) => {
+        if (!cancelled && data?.members) setWorkspaceMembers(data.members);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [bridgeFetch]);
+
+  const handleAssign = useCallback(
+    async (email: string, name: string) => {
+      if (!selectedConversation) return;
+      try {
+        await bridgeFetch(`/api/v1/conversations/${selectedConversation.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            assigned_to_email: email,
+            assigned_to_name: name,
+          }),
+        });
+        setSelectedConversation((prev) =>
+          prev ? { ...prev, assignedToEmail: email, assignedToName: name } : null,
+        );
+      } catch {
+        // Silently fail
+      }
+    },
+    [bridgeFetch, selectedConversation],
+  );
+
+  const handleAssignCoach = useCallback(
+    async (email: string, name: string) => {
+      if (!selectedConversation) return;
+      try {
+        await bridgeFetch(`/api/v1/conversations/${selectedConversation.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            coach_lead_owner_email: email,
+            coach_lead_owner_name: name,
+          }),
+        });
+        setSelectedConversation((prev) =>
+          prev
+            ? { ...prev, coachLeadOwnerEmail: email, coachLeadOwnerName: name }
+            : null,
+        );
+      } catch {
+        // Silently fail
+      }
+    },
+    [bridgeFetch, selectedConversation],
+  );
 
   const handleSelectSession = useCallback((session: WaSession) => {
     setActiveSessionName(session.name);
@@ -640,6 +701,8 @@ export const WhatsAppChatContainer = () => {
               conversation={selectedConversation}
               messages={messages}
               labels={labels}
+              workspaceMembers={workspaceMembers}
+              currentUserEmail={currentMember?.userEmail ?? undefined}
               onAddLabel={addLabel}
               onRemoveLabel={removeLabel}
               onTogglePin={handleTogglePin}
@@ -647,6 +710,8 @@ export const WhatsAppChatContainer = () => {
               onToggleDetails={() => setShowDetails((prev) => !prev)}
               onToggleSalesAngel={() => setShowSalesAngel((prev) => !prev)}
               showSalesAngel={showSalesAngel}
+              onAssign={handleAssign}
+              onAssignCoach={handleAssignCoach}
             />
             <ChatThread
               conversation={selectedConversation}

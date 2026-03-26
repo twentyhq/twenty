@@ -178,34 +178,6 @@ const StyledBadgeRow = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledAssignInput = styled.input`
-  background: #FFFFFF;
-  border: 1px solid #D1D5DB;
-  border-radius: 4px;
-  color: #111827;
-  font-family: inherit;
-  font-size: 13px;
-  outline: none;
-  padding: 4px 8px;
-
-  &:focus {
-    border-color: #1A6CFF;
-  }
-`;
-
-const StyledAssignButton = styled.button`
-  background: #1A6CFF;
-  border: none;
-  border-radius: 4px;
-  color: #FFFFFF;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 4px 8px;
-
-  &:hover {
-    opacity: 0.9;
-  }
-`;
 
 const StyledLoadingText = styled.span`
   color: #9CA3AF;
@@ -1622,13 +1594,6 @@ export const ConversationDetails = ({
   const [callCopiedId, setCallCopiedId] = useState<string | null>(null);
   const [callDisplayCount, setCallDisplayCount] = useState(10);
   const [factsFilterOpen, setFactsFilterOpen] = useState(false);
-  const [coachEmail, setCoachEmail] = useState(
-    conversation.coachLeadOwnerEmail ?? '',
-  );
-  const [assignEmail, setAssignEmail] = useState(
-    conversation.assignedToEmail ?? '',
-  );
-
   // Allow parent to trigger SA results refresh via ref (e.g. on WebSocket event)
   useEffect(() => {
     if (saRefreshRef) {
@@ -1644,36 +1609,6 @@ export const ConversationDetails = ({
     conversation.leadPhoneNumber;
 
   const isClient = contact?.isClient || conversation.isClient;
-
-  const handleAssign = useCallback(async () => {
-    const trimmedEmail = assignEmail.trim();
-    if (!trimmedEmail) return;
-
-    try {
-      await bridgeFetch(`/api/v1/conversations/${conversation.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ assigned_to_email: trimmedEmail }),
-      });
-      onUpdate?.(conversation.id, { assignedToEmail: trimmedEmail });
-    } catch {
-      // Silently fail
-    }
-  }, [bridgeFetch, conversation.id, assignEmail, onUpdate]);
-
-  const handleAssignCoach = useCallback(async () => {
-    const trimmedEmail = coachEmail.trim();
-    if (!trimmedEmail) return;
-
-    try {
-      await bridgeFetch(`/api/v1/conversations/${conversation.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ coach_lead_owner_email: trimmedEmail }),
-      });
-      onUpdate?.(conversation.id, { coachLeadOwnerEmail: trimmedEmail });
-    } catch {
-      // Silently fail
-    }
-  }, [bridgeFetch, conversation.id, coachEmail, onUpdate]);
 
   const handleCallToggle = useCallback((callId: string) => {
     setCallExpanded((prev) => ({ ...prev, [callId]: !prev[callId] }));
@@ -2440,42 +2375,6 @@ export const ConversationDetails = ({
                   </StyledProfileCardValue>
                 </StyledProfileCardRow>
               </StyledProfileCard>
-            </StyledSection>
-
-            <StyledDivider />
-
-            {/* ── Reassign Section ── */}
-            <StyledSection>
-              <StyledSectionTitle>Reassign</StyledSectionTitle>
-              <StyledAssignInput
-                type="email"
-                placeholder="Assign to email..."
-                value={assignEmail}
-                onChange={(e) => setAssignEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAssign();
-                  }
-                }}
-              />
-              <StyledAssignButton onClick={handleAssign}>
-                Assign
-              </StyledAssignButton>
-              <StyledAssignInput
-                type="email"
-                placeholder="Coach email..."
-                value={coachEmail}
-                onChange={(e) => setCoachEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAssignCoach();
-                  }
-                }}
-                style={{ marginTop: 8 }}
-              />
-              <StyledAssignButton onClick={handleAssignCoach}>
-                Assign Coach
-              </StyledAssignButton>
             </StyledSection>
 
             {/* ── Opportunities Section ── */}

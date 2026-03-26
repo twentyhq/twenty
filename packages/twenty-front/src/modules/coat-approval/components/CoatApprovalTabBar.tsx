@@ -1,9 +1,12 @@
+import { type CoatTabCounts } from '@/coat-approval/hooks/useCoatTabCounts';
 import { type CoatTab } from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 
 type CoatApprovalTabBarProps = {
   activeTab: CoatTab;
   onTabChange: (tab: CoatTab) => void;
+  tabCounts: CoatTabCounts;
 };
 
 type TabDefinition = {
@@ -29,8 +32,7 @@ const StyledTab = styled.button<{ isActive: boolean }>`
     isActive ? theme.background.primary : 'transparent'};
   border: none;
   border-bottom: 2px solid
-    ${({ theme, isActive }) =>
-      isActive ? theme.color.blue : 'transparent'};
+    ${({ theme, isActive }) => (isActive ? theme.color.blue : 'transparent')};
   color: ${({ theme, isActive }) =>
     isActive ? theme.font.color.primary : theme.font.color.tertiary};
   cursor: pointer;
@@ -50,21 +52,46 @@ const StyledTab = styled.button<{ isActive: boolean }>`
   }
 `;
 
+const StyledCount = styled.span<{ isActive: boolean }>`
+  background: ${({ theme, isActive }) =>
+    isActive ? theme.color.blue : theme.background.tertiary};
+  border-radius: 10px;
+  color: ${({ theme, isActive }) =>
+    isActive ? theme.font.color.inverted : theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  line-height: 1;
+  margin-left: 6px;
+  min-width: 18px;
+  padding: 2px 6px;
+  text-align: center;
+`;
+
 export const CoatApprovalTabBar = ({
   activeTab,
   onTabChange,
+  tabCounts,
 }: CoatApprovalTabBarProps) => {
   return (
     <StyledTabBarContainer>
-      {TABS.map((tab) => (
-        <StyledTab
-          key={tab.key}
-          isActive={activeTab === tab.key}
-          onClick={() => onTabChange(tab.key)}
-        >
-          {tab.label}
-        </StyledTab>
-      ))}
+      {TABS.map((tab) => {
+        const count = tabCounts[tab.key];
+
+        return (
+          <StyledTab
+            key={tab.key}
+            isActive={activeTab === tab.key}
+            onClick={() => onTabChange(tab.key)}
+          >
+            {tab.label}
+            {isDefined(count) && (
+              <StyledCount isActive={activeTab === tab.key}>
+                {count}
+              </StyledCount>
+            )}
+          </StyledTab>
+        );
+      })}
     </StyledTabBarContainer>
   );
 };

@@ -1,6 +1,7 @@
 import { CoatApprovalFilterBar } from '@/coat-approval/components/CoatApprovalFilterBar';
 import { CoatApprovalList } from '@/coat-approval/components/CoatApprovalList';
 import { CoatApprovalTabBar } from '@/coat-approval/components/CoatApprovalTabBar';
+import { type CoatTabCounts } from '@/coat-approval/hooks/useCoatTabCounts';
 import {
   type CoatFilterValues,
   type CoatTab,
@@ -17,6 +18,7 @@ type CoatApprovalLeftPanelProps = {
   onFilterChange: (values: CoatFilterValues) => void;
   activeTab: CoatTab;
   onTabChange: (tab: CoatTab) => void;
+  tabCounts: CoatTabCounts;
   selectedContractId: string | null;
   onSelectContract: (contractId: string) => void;
 };
@@ -40,12 +42,17 @@ export const CoatApprovalLeftPanel = ({
   onFilterChange,
   activeTab,
   onTabChange,
+  tabCounts,
   selectedContractId,
   onSelectContract,
 }: CoatApprovalLeftPanelProps) => {
   return (
     <StyledLeftPanel>
-      <CoatApprovalTabBar activeTab={activeTab} onTabChange={onTabChange} />
+      <CoatApprovalTabBar
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        tabCounts={tabCounts}
+      />
       <CoatApprovalFilterBar
         filterValues={filterValues}
         onFilterChange={onFilterChange}

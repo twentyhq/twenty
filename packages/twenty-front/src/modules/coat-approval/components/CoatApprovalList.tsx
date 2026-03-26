@@ -112,6 +112,7 @@ export const CoatApprovalList = ({
             }
             programName={contractRecord.program}
             coatExportStatus={contractRecord.coatExportStatus}
+            contractStatus={contractRecord.status}
             signatureDate={
               contractRecord.completionDate ?? contractRecord.startDate
             }

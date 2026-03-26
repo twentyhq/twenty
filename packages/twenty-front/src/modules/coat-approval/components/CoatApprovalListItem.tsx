@@ -6,6 +6,7 @@ type CoatApprovalListItemProps = {
   customerName: string | null;
   programName: string | null;
   coatExportStatus: string | null;
+  contractStatus: string | null;
   signatureDate: string | null;
   hasSpecialAgreements: boolean;
   isSelected: boolean;
@@ -91,25 +92,46 @@ const getExportStatusColor = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return '#22c55e';
+    case 'EXPORTED':
+      return '#6b7280';
     case 'DECLINED':
       return '#ef4444';
     case 'NEEDS_APPROVAL':
+    case null:
+    case undefined:
     default:
       return '#f59e0b';
   }
 };
 
-const getExportStatusLabel = (status: string | null): string => {
-  switch (status) {
+const getExportStatusLabel = (
+  exportStatus: string | null,
+  contractStatus: string | null,
+): string => {
+  switch (exportStatus) {
     case 'READY_FOR_EXPORT':
       return 'Ready for Export';
+    case 'EXPORTED':
+      return 'Exported';
     case 'DECLINED':
       return 'Declined';
     case 'NEEDS_APPROVAL':
       return 'Needs Approval';
+    case null:
+    case undefined:
+    case '':
+      return contractStatus === 'Completed' ? 'Needs Approval' : contractStatus ?? 'Unknown';
     default:
-      return status ?? 'New';
+      return exportStatus;
   }
+};
+
+const getExportStatusColorWithContract = (
+  exportStatus: string | null,
+  contractStatus: string | null,
+): string => {
+  if (exportStatus) return getExportStatusColor(exportStatus);
+  return contractStatus === 'Completed' ? '#f59e0b' : '#6b7280';
 };
 
 type ProductBadgeInfo = {
@@ -166,13 +188,14 @@ export const CoatApprovalListItem = ({
   customerName,
   programName,
   coatExportStatus,
+  contractStatus,
   signatureDate,
   hasSpecialAgreements,
   isSelected,
   onClick,
 }: CoatApprovalListItemProps) => {
   const formattedDate = formatDate(signatureDate);
-  const statusColor = getExportStatusColor(coatExportStatus);
+  const statusColor = getExportStatusColorWithContract(coatExportStatus, contractStatus);
   const productBadge = getProductBadge(programName);
 
   return (
@@ -190,7 +213,7 @@ export const CoatApprovalListItem = ({
       </StyledMetaRow>
       <StyledMetaRow>
         <StyledExportStatusBadge statusColor={statusColor}>
-          {getExportStatusLabel(coatExportStatus)}
+          {getExportStatusLabel(coatExportStatus, contractStatus)}
         </StyledExportStatusBadge>
         {isDefined(formattedDate) && <span>{formattedDate}</span>}
         {hasSpecialAgreements && (

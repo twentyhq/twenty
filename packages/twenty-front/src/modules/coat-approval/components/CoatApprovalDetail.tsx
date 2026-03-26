@@ -154,25 +154,46 @@ const getExportStatusColor = (status: string | null): string => {
   switch (status) {
     case 'READY_FOR_EXPORT':
       return '#22c55e';
+    case 'EXPORTED':
+      return '#6b7280';
     case 'DECLINED':
       return '#ef4444';
     case 'NEEDS_APPROVAL':
+    case null:
+    case undefined:
     default:
       return '#f59e0b';
   }
 };
 
-const getExportStatusLabel = (status: string | null): string => {
-  switch (status) {
+const getExportStatusLabel = (
+  exportStatus: string | null,
+  contractStatus: string | null,
+): string => {
+  switch (exportStatus) {
     case 'READY_FOR_EXPORT':
       return 'Ready for Export';
+    case 'EXPORTED':
+      return 'Exported';
     case 'DECLINED':
       return 'Declined';
     case 'NEEDS_APPROVAL':
       return 'Needs Approval';
+    case null:
+    case undefined:
+    case '':
+      return contractStatus === 'Completed' ? 'Needs Approval' : contractStatus ?? 'Unknown';
     default:
-      return status ?? 'New';
+      return exportStatus;
   }
+};
+
+const getExportStatusColorWithContract = (
+  exportStatus: string | null,
+  contractStatus: string | null,
+): string => {
+  if (exportStatus) return getExportStatusColor(exportStatus);
+  return contractStatus === 'Completed' ? '#f59e0b' : '#6b7280';
 };
 
 type ProductBadgeInfo = {
@@ -257,7 +278,7 @@ const hasNonEmptySpecialAgreements = (value: string | null): boolean => {
 };
 
 export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
-  const exportStatusColor = getExportStatusColor(contract.coatExportStatus);
+  const exportStatusColor = getExportStatusColorWithContract(contract.coatExportStatus, contract.status);
   const productBadge = getProductBadge(contract.program);
   const showSpecialAgreementsWarning = hasNonEmptySpecialAgreements(
     contract.specialAgreements,
@@ -279,7 +300,7 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
         <StyledSection>
           <StyledBadgeRow>
             <StyledExportStatusBadge statusColor={exportStatusColor}>
-              {getExportStatusLabel(contract.coatExportStatus)}
+              {getExportStatusLabel(contract.coatExportStatus, contract.status)}
             </StyledExportStatusBadge>
             <StyledProductBadge badgeColor={productBadge.color}>
               {productBadge.label}

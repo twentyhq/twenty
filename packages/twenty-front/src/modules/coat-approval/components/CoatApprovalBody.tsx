@@ -3,6 +3,7 @@ import { CoatApprovalRightPanel } from '@/coat-approval/components/CoatApprovalR
 import { INITIAL_FILTER_VALUES } from '@/coat-approval/constants/InitialFilterValues.constants';
 import { useCoatContractsList } from '@/coat-approval/hooks/useCoatContractsList';
 import { useCoatObjectExists } from '@/coat-approval/hooks/useCoatObjectExists';
+import { useCoatTabCounts } from '@/coat-approval/hooks/useCoatTabCounts';
 import {
   type CoatFilterValues,
   type CoatTab,
@@ -65,15 +66,13 @@ const CoatApprovalBodyContent = ({
     INITIAL_FILTER_VALUES,
   );
 
-  const [queryFilterValues, setQueryFilterValues] =
-    useState<CoatFilterValues>(INITIAL_FILTER_VALUES);
-
-  const debouncedUpdate = useDebouncedCallback(
-    (values: CoatFilterValues) => {
-      setQueryFilterValues(values);
-    },
-    300,
+  const [queryFilterValues, setQueryFilterValues] = useState<CoatFilterValues>(
+    INITIAL_FILTER_VALUES,
   );
+
+  const debouncedUpdate = useDebouncedCallback((values: CoatFilterValues) => {
+    setQueryFilterValues(values);
+  }, 300);
 
   const handleFilterChange = useCallback(
     (values: CoatFilterValues) => {
@@ -90,6 +89,8 @@ const CoatApprovalBodyContent = ({
   const { contracts, loading, fetchMoreRecords, hasNextPage } =
     useCoatContractsList(queryFilterValues, activeTab);
 
+  const tabCounts = useCoatTabCounts(queryFilterValues);
+
   return (
     <StyledBodyContainer>
       <CoatApprovalLeftPanel
@@ -101,6 +102,7 @@ const CoatApprovalBodyContent = ({
         onFilterChange={handleFilterChange}
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        tabCounts={tabCounts}
         selectedContractId={selectedContractId}
         onSelectContract={onSelectContract}
       />

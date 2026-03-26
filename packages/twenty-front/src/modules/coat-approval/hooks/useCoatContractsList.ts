@@ -8,9 +8,7 @@ import {
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
-const buildTabFilter = (
-  activeTab: CoatTab,
-): RecordGqlOperationFilter[] => {
+const buildTabFilter = (activeTab: CoatTab): RecordGqlOperationFilter[] => {
   const clauses: RecordGqlOperationFilter[] = [];
 
   switch (activeTab) {
@@ -30,23 +28,29 @@ const buildTabFilter = (
       break;
 
     case 'warnings':
-      // Contracts with special agreements (non-empty) or payment issues
+      // Only completed contracts with special agreements
+      clauses.push({ status: { eq: 'Completed' } });
       clauses.push({
-        or: [
-          {
-            and: [
-              { specialAgreements: { is: 'NOT_NULL' } },
-              // Filter out entries that are just a period
-              { specialAgreements: { neq: '' } },
-              { specialAgreements: { neq: '.' } },
-            ],
-          },
+        and: [
+          { specialAgreements: { is: 'NOT_NULL' } },
+          { specialAgreements: { neq: '' } },
+          { specialAgreements: { neq: '.' } },
         ],
       });
       break;
   }
 
   return clauses;
+};
+
+const getTabOrderBy = (activeTab: CoatTab) => {
+  switch (activeTab) {
+    case 'analyze':
+    case 'warnings':
+      return [{ createdAt: 'AscNullsLast' as const }];
+    case 'all':
+      return [{ createdAt: 'DescNullsLast' as const }];
+  }
 };
 
 const buildCoatFilter = (
@@ -58,7 +62,7 @@ const buildCoatFilter = (
   // Tab-level filters
   clauses.push(...buildTabFilter(activeTab));
 
-  if (filterValues.searchTerm) {
+  if (filterValues.searchTerm.length > 0) {
     clauses.push({
       or: [
         { name: { ilike: `%${filterValues.searchTerm}%` } },
@@ -70,25 +74,25 @@ const buildCoatFilter = (
     });
   }
 
-  if (filterValues.exportStatus) {
+  if (filterValues.exportStatus.length > 0) {
     clauses.push({
       coatExportStatus: { eq: filterValues.exportStatus },
     });
   }
 
-  if (filterValues.programName) {
+  if (filterValues.programName.length > 0) {
     clauses.push({
       program: { ilike: `%${filterValues.programName}%` },
     });
   }
 
-  if (filterValues.dateFrom) {
+  if (filterValues.dateFrom.length > 0) {
     clauses.push({
       startDate: { gte: filterValues.dateFrom },
     });
   }
 
-  if (filterValues.dateTo) {
+  if (filterValues.dateTo.length > 0) {
     clauses.push({
       startDate: { lte: filterValues.dateTo },
     });
@@ -111,11 +115,13 @@ export const useCoatContractsList = (
 ) => {
   const filter = buildCoatFilter(filterValues, activeTab);
 
+  const orderBy = getTabOrderBy(activeTab);
+
   const { records, loading, error, fetchMoreRecords, hasNextPage, totalCount } =
     useFindManyRecords({
       objectNameSingular: COAT_OBJECT_NAME_SINGULAR,
       filter,
-      orderBy: [{ createdAt: 'DescNullsLast' }],
+      orderBy,
       recordGqlFields: COAT_LIST_GQL_FIELDS,
       limit: COAT_LIST_PAGE_SIZE,
     });
