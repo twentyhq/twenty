@@ -3,6 +3,7 @@ import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
+import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 
@@ -137,11 +138,18 @@ export const useCommandMenuItemsFromBackend = (
   const currentObjectMetadataItemId =
     commandMenuContextApi.objectMetadataItem.id;
 
-  const hasRecordSelection = commandMenuContextApi.numberOfSelectedRecords >= 1;
-
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const commandMenuItemEditSelectionMode = useAtomStateValue(
+    commandMenuItemEditSelectionModeState,
+  );
+
+  const isEditMode = isDefined(commandMenuItemsDraft);
   const items = commandMenuItemsDraft ?? commandMenuItems;
+
+  const hasRecordSelection = isEditMode
+    ? commandMenuItemEditSelectionMode === 'selection'
+    : commandMenuContextApi.numberOfSelectedRecords >= 1;
 
   const itemsWithObjectMatches = items.filter(
     matchesObjectMetadataId(currentObjectMetadataItemId),
@@ -220,16 +228,20 @@ export const useCommandMenuItemsFromBackend = (
         .filter(isDefined)
     : [];
 
-  const fallbackCommandMenuItems = fallbackItems
-    .map((item) =>
-      buildCommandMenuItem({
-        item,
-        scope: CommandMenuItemScope.Global,
-        isPinned: false,
-        typeOverride: CommandMenuItemType.Fallback,
-      }),
-    )
-    .filter(isDefined);
+  const showFallbackItems = !isEditMode || !hasRecordSelection;
+
+  const fallbackCommandMenuItems = showFallbackItems
+    ? fallbackItems
+        .map((item) =>
+          buildCommandMenuItem({
+            item,
+            scope: CommandMenuItemScope.Global,
+            isPinned: false,
+            typeOverride: CommandMenuItemType.Fallback,
+          }),
+        )
+        .filter(isDefined)
+    : [];
 
   return [
     ...globalCommandMenuItems,
