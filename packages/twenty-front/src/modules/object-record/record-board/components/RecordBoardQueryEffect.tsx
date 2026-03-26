@@ -3,8 +3,8 @@ import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { lastRecordGroupIdsComponentState } from '@/object-record/record-board/states/lastRecordGroupIdsComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
-import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
 import { recordBoardShouldFetchMoreComponentState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreComponentState';
+import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
@@ -21,6 +21,10 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RecordBoardQueryEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const isDraggingRecord = useAtomComponentStateValue(
+    isDraggingRecordComponentState,
+  );
 
   const [lastRecordBoardQueryIdentifier, setLastRecordBoardQueryIdentifier] =
     useAtomComponentState(lastRecordBoardQueryIdentifierComponentState);
@@ -51,12 +55,8 @@ export const RecordBoardQueryEffect = () => {
 
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
-  const [recordBoardShouldFetchMore] = useAtomComponentState(
+  const recordBoardShouldFetchMore = useAtomComponentStateValue(
     recordBoardShouldFetchMoreComponentState,
-  );
-
-  const recordBoardIsFetchingMore = useAtomComponentStateValue(
-    recordBoardIsFetchingMoreComponentState,
   );
 
   const { triggerRecordBoardFetchMore } = useTriggerRecordBoardFetchMore();
@@ -73,6 +73,10 @@ export const RecordBoardQueryEffect = () => {
   );
 
   useEffect(() => {
+    if (isDraggingRecord) {
+      return;
+    }
+
     if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       (queryIdentifierHasChanged || recordGroupIdsHaveChanged)
@@ -82,8 +86,7 @@ export const RecordBoardQueryEffect = () => {
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&
       recordBoardShouldFetchMore &&
-      !queryIdentifierHasChanged &&
-      !recordBoardIsFetchingMore
+      !queryIdentifierHasChanged
     ) {
       triggerRecordBoardFetchMore();
     }
@@ -96,11 +99,11 @@ export const RecordBoardQueryEffect = () => {
     scrollWrapperHTMLElement,
     recordIndexRecordGroupsAreInInitialLoading,
     recordBoardShouldFetchMore,
-    recordBoardIsFetchingMore,
     triggerRecordBoardFetchMore,
     setLastRecordGroupIds,
     recordGroupIds,
     recordGroupIdsHaveChanged,
+    isDraggingRecord,
   ]);
 
   return null;

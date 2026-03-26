@@ -3028,6 +3028,7 @@ msgstr "Đóng biểu ngữ"
 
 #. js-lingui-id: saip/v
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
+#: src/modules/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton.tsx
 msgid "Close side panel"
 msgstr "Đóng ngăn bên"
 
@@ -3402,6 +3403,7 @@ msgstr "Nội dung"
 #. js-lingui-id: M73whl
 #: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiModelHoverCard.tsx
+#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "Ngữ cảnh"
@@ -5179,6 +5181,13 @@ msgstr "Chỉnh sửa {objectLabelPlural}"
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "Edit Account"
 msgstr "Chỉnh Sửa Tài Khoản"
+
+#. js-lingui-id: t1EOLt
+#: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditButton.tsx
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditButton.tsx
+msgid "Edit actions"
+msgstr ""
 
 #. js-lingui-id: GpnfNN
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
@@ -7400,6 +7409,11 @@ msgstr "Ẩn nhóm {groupValue}"
 msgid "Hide hidden groups"
 msgstr "Ẩn nhóm ẩn"
 
+#. js-lingui-id: 2ouyMV
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown.tsx
+msgid "Hide label"
+msgstr ""
+
 #. js-lingui-id: i0qMbr
 #: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
@@ -9197,6 +9211,7 @@ msgstr ""
 #. js-lingui-id: 2FYpfJ
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
+#: src/modules/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton.tsx
 msgid "More"
 msgstr "Thêm nữa"
 
@@ -10023,6 +10038,12 @@ msgstr "Chưa thiết lập quyền cho các đối tượng cá nhân."
 msgid "No record is required to trigger this workflow"
 msgstr "Không cần bản ghi nào để kích hoạt quy trình công việc này"
 
+#. js-lingui-id: aqUuQE
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+msgid "No record selected"
+msgstr ""
+
 #. js-lingui-id: X8wJTR
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
 msgid "No records"
@@ -10553,6 +10574,7 @@ msgstr "Mở Outlook"
 
 #. js-lingui-id: bY2Xkv
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
+#: src/modules/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton.tsx
 msgid "Open side panel"
 msgstr "Mở ngăn bên"
 
@@ -10650,6 +10672,8 @@ msgstr "Sắp xếp"
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
+#: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
+#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Other"
 msgstr "Khác"
 
@@ -11023,6 +11047,12 @@ msgstr "Biểu đồ hình tròn"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Pink"
 msgstr "Hồng"
+
+#. js-lingui-id: kNiQp6
+#: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
+#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Pinned"
+msgstr ""
 
 #. js-lingui-id: hx1ePY
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsText.tsx
@@ -11570,6 +11600,12 @@ msgstr "Cấp bản ghi"
 msgid "Records"
 msgstr "Hồ Sơ"
 
+#. js-lingui-id: J+Qyf2
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+msgid "Records selected"
+msgstr ""
+
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Red"
@@ -11862,6 +11898,11 @@ msgstr "Đặt lại"
 msgid "Reset 2FA"
 msgstr "Đặt lại 2FA"
 
+#. js-lingui-id: YdI8A2
+#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown.tsx
+msgid "Reset label to default"
+msgstr ""
+
 #. js-lingui-id: 1IWc1n
 #: src/modules/side-panel/pages/root/components/SidePanelResetContextToSelectionButton.tsx
 msgid "Reset to"
@@ -11869,6 +11910,7 @@ msgstr "Đặt lại thành"
 
 #. js-lingui-id: L+rMC9
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+#: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
 msgstr "Đặt lại về mặc định"
 

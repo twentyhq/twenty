@@ -26,6 +26,7 @@ import { isAutoSelectModelId } from 'twenty-shared/utils';
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
+import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
 import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
@@ -84,9 +85,7 @@ export class AiModelRegistryService {
         continue;
       }
 
-      const isConfigured = !!(config.apiKey || config.accessKeyId);
-
-      const sdkInstance = isConfigured
+      const sdkInstance = isProviderConfigured(config)
         ? this.sdkProviderFactory.createProvider(providerKey, config)
         : undefined;
 
