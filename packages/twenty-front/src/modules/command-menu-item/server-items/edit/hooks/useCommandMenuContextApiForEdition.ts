@@ -26,8 +26,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-// Edition-specific hook that reads objectMetadataItemId and selection
-// from dedicated edition states, not from any context store.
 export const useCommandMenuContextApiForEdition = (): CommandMenuContextApi => {
   const store = useStore();
 

@@ -27,8 +27,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-// Display-only hook that reads from the component-scoped context store.
-// For the edit page, use useCommandMenuContextApiForEdition instead.
 export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
