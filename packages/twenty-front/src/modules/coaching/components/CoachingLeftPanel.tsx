@@ -2,7 +2,7 @@ import { CoachingCustomerList } from '@/coaching/components/CoachingCustomerList
 import { type CoachingFilterValues } from '@/coaching/types/coaching.types';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import styled from '@emotion/styled';
-import { IconFilter, IconSearch } from 'twenty-ui/display';
+import { IconFilter } from 'twenty-ui/display';
 
 type CoachingLeftPanelProps = {
   customers: ObjectRecord[];
@@ -40,7 +40,7 @@ const StyledFiltersHeader = styled.div`
 `;
 
 const StyledFiltersIcon = styled.div`
-  color: ${({ theme }) => theme.color.red};
+  color: #e74c3c;
   display: flex;
 `;
 
@@ -50,41 +50,72 @@ const StyledFiltersTitle = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
+const StyledRemoveFiltersButton = styled.button`
+  align-items: center;
+  background: #f39c12;
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: white;
+  cursor: pointer;
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
+  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
+  width: 100%;
+
+  &:hover {
+    background: #e67e22;
+  }
+`;
+
 const StyledFilterLabel = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   text-transform: uppercase;
 `;
 
-const StyledSearchInputWrapper = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.lighter};
+const StyledFilterInput = styled.input`
+  background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
-`;
-
-const StyledSearchIcon = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  flex-shrink: 0;
-`;
-
-const StyledSearchInput = styled.input`
-  background: transparent;
-  border: none;
   color: ${({ theme }) => theme.font.color.primary};
-  flex: 1;
   font-size: ${({ theme }) => theme.font.size.md};
   outline: none;
+  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
+  width: 100%;
+  box-sizing: border-box;
 
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
   }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.color.blue};
+  }
 `;
+
+const StyledFilterSelect = styled.select`
+  appearance: none;
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.primary};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.font.size.md};
+  outline: none;
+  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.color.blue};
+  }
+`;
+
+const INITIAL_FILTER: CoachingFilterValues = { searchTerm: '' };
 
 export const CoachingLeftPanel = ({
   customers,
@@ -96,6 +127,8 @@ export const CoachingLeftPanel = ({
   selectedCustomerId,
   onSelectCustomer,
 }: CoachingLeftPanelProps) => {
+  const hasActiveFilters = filterValues.searchTerm !== '';
+
   return (
     <StyledLeftPanel>
       <StyledFiltersContainer>
@@ -105,35 +138,32 @@ export const CoachingLeftPanel = ({
           </StyledFiltersIcon>
           <StyledFiltersTitle>Filters</StyledFiltersTitle>
         </StyledFiltersHeader>
+
+        {hasActiveFilters && (
+          <StyledRemoveFiltersButton
+            onClick={() => onFilterChange(INITIAL_FILTER)}
+          >
+            <IconFilter size={14} />
+            Remove Filters
+          </StyledRemoveFiltersButton>
+        )}
+
         <StyledFilterLabel>Keyword</StyledFilterLabel>
-        <StyledSearchInputWrapper>
-          <StyledSearchIcon>
-            <IconSearch size={16} />
-          </StyledSearchIcon>
-          <StyledSearchInput
-            placeholder="Search..."
-            value={filterValues.searchTerm}
-            onChange={(event) =>
-              onFilterChange({
-                ...filterValues,
-                searchTerm: event.target.value,
-              })
-            }
-          />
-        </StyledSearchInputWrapper>
+        <StyledFilterInput
+          placeholder="Keyword"
+          value={filterValues.searchTerm}
+          onChange={(event) =>
+            onFilterChange({
+              ...filterValues,
+              searchTerm: event.target.value,
+            })
+          }
+        />
+
         <StyledFilterLabel>Full Name</StyledFilterLabel>
-        <StyledSearchInputWrapper>
-          <StyledSearchInput
-            placeholder="Search..."
-            value={filterValues.searchTerm}
-            onChange={(event) =>
-              onFilterChange({
-                ...filterValues,
-                searchTerm: event.target.value,
-              })
-            }
-          />
-        </StyledSearchInputWrapper>
+        <StyledFilterSelect>
+          <option value="">Search...</option>
+        </StyledFilterSelect>
       </StyledFiltersContainer>
       <CoachingCustomerList
         customers={customers}

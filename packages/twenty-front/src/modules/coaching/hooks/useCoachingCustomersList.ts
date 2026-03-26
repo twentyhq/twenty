@@ -17,6 +17,7 @@ const buildCoachingFilter = (
       { name: { ilike: `%${filterValues.searchTerm}%` } },
       { fullName: { ilike: `%${filterValues.searchTerm}%` } },
       { email: { ilike: `%${filterValues.searchTerm}%` } },
+      { id: { ilike: `%${filterValues.searchTerm}%` } },
     ],
   };
 };

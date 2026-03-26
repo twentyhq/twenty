@@ -1,6 +1,7 @@
 import { useCoachingCustomerDetail } from '@/coaching/hooks/useCoachingCustomerDetail';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { IconLink, IconPencil } from 'twenty-ui/display';
 
 type CoachingCustomerDetailProps = {
   customerId: string;
@@ -30,6 +31,7 @@ const StyledTabBar = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => `0 ${theme.spacing(4)}`};
+  flex-shrink: 0;
 `;
 
 const StyledTab = styled.button<{ isActive: boolean }>`
@@ -54,19 +56,47 @@ const StyledDetailContent = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
+// -- Action Buttons --
+
+const StyledActionRow = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing(3)};
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledActionButton = styled.button`
+  align-items: center;
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.primary};
+  cursor: pointer;
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.md};
+  gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
+  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(4)}`};
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.lighter};
+  }
+`;
+
 // -- Sections --
 
 const StyledSection = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
+  overflow: hidden;
 `;
 
 const StyledSectionHeader = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding: ${({ theme }) => `${theme.spacing(3)} ${theme.spacing(4)}`};
+  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(4)}`};
 `;
 
 const StyledSectionTitle = styled.h3`
@@ -74,6 +104,20 @@ const StyledSectionTitle = styled.h3`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin: 0;
+`;
+
+const StyledSectionButton = styled.button`
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.primary};
+  cursor: pointer;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(3)}`};
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.lighter};
+  }
 `;
 
 const StyledSectionBody = styled.div`
@@ -87,6 +131,13 @@ const StyledInfoCardGrid = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
   grid-template-columns: repeat(3, 1fr);
+`;
+
+const StyledInfoRow = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.spacing(4)};
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledInfoCardCell = styled.div`
@@ -206,6 +257,18 @@ export const CoachingCustomerDetail = ({
 
       {activeTab === 'Overview' ? (
         <StyledDetailContent>
+          {/* Action Buttons */}
+          <StyledActionRow>
+            <StyledActionButton>
+              <IconLink size={16} />
+              Link user to existing customer
+            </StyledActionButton>
+            <StyledActionButton>
+              <IconPencil size={16} />
+              Change App Subscription&apos;s status
+            </StyledActionButton>
+          </StyledActionRow>
+
           {/* App's Information */}
           <StyledSection>
             <StyledSectionHeader>
@@ -232,6 +295,20 @@ export const CoachingCustomerDetail = ({
                   </StyledInfoValue>
                 </StyledInfoCardCell>
               </StyledInfoCardGrid>
+              <StyledInfoRow>
+                <StyledInfoCardCell>
+                  <StyledInfoLabel>Last Login Date</StyledInfoLabel>
+                  <StyledInfoValue>
+                    <StyledEmptyText>No value</StyledEmptyText>
+                  </StyledInfoValue>
+                </StyledInfoCardCell>
+                <StyledInfoCardCell>
+                  <StyledInfoLabel>Active Program Ids</StyledInfoLabel>
+                  <StyledInfoValue>
+                    <StyledEmptyText>No value</StyledEmptyText>
+                  </StyledInfoValue>
+                </StyledInfoCardCell>
+              </StyledInfoRow>
             </StyledSectionBody>
           </StyledSection>
 
@@ -239,16 +316,21 @@ export const CoachingCustomerDetail = ({
           <StyledSection>
             <StyledSectionHeader>
               <StyledSectionTitle>Subscriptions</StyledSectionTitle>
+              <StyledSectionButton>Open Subscription</StyledSectionButton>
             </StyledSectionHeader>
             <StyledSectionBody>
               <StyledTable>
                 <thead>
                   <tr>
                     <StyledTableHeader>Program</StyledTableHeader>
-                    <StyledTableHeader>Status</StyledTableHeader>
+                    <StyledTableHeader>
+                      Subscription App Status
+                    </StyledTableHeader>
                     <StyledTableHeader>Start Date</StyledTableHeader>
                     <StyledTableHeader>End Date</StyledTableHeader>
-                    <StyledTableHeader>Pause Days</StyledTableHeader>
+                    <StyledTableHeader>
+                      Subscription Pause Days
+                    </StyledTableHeader>
                   </tr>
                 </thead>
                 <tbody>
