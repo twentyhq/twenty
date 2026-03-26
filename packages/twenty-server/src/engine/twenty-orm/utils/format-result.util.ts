@@ -155,6 +155,7 @@ function formatResultInternal<T>(
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
+      continue;
     }
 
     if (isDefined(compositePropertyArgs)) {
@@ -178,6 +179,7 @@ function formatResultInternal<T>(
             compositeProperty.name,
             fieldMetadata,
           );
+      continue;
     }
 
     // @ts-expect-error legacy noImplicitAny
