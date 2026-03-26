@@ -1,4 +1,3 @@
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton';
@@ -15,7 +14,6 @@ import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-recor
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { filterOutByProperty } from 'twenty-shared/utils';
 
 const StyledHeaderContainer = styled.div`
   display: flex;
@@ -27,7 +25,6 @@ const StyledHeaderContainer = styled.div`
 
 export const RecordTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
   const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
     isRecordTableColumnHeadersReadOnlyComponentState,
