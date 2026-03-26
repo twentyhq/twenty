@@ -114,6 +114,24 @@ export class FileStorageService {
     });
   }
 
+  async getPresignedUrl(
+    params: ResourceIdentifier & {
+      expiresInSeconds?: number;
+      responseContentType?: string;
+      responseContentDisposition?: string;
+    },
+  ): Promise<string | null> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.getPresignedUrl({
+      filePath: onStoragePath,
+      expiresInSeconds: params.expiresInSeconds,
+      responseContentType: params.responseContentType,
+      responseContentDisposition: params.responseContentDisposition,
+    });
+  }
+
   readFile(params: ResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 

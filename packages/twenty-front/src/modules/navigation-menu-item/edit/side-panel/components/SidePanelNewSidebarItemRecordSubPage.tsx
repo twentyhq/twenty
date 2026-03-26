@@ -1,18 +1,19 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
+import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SidePanelNewSidebarItemRecordItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordItem';
 import { useQuery } from '@apollo/client/react';
 import { SearchDocument } from '~/generated/graphql';
@@ -27,21 +28,30 @@ type SearchRecordBase = {
 export const SidePanelNewSidebarItemRecordSubPage = () => {
   const { t } = useLingui();
   const { currentDraft } = useDraftNavigationMenuItems();
-  const { objectMetadataItems } = useObjectMetadataItems();
   const [recordSearchInput, setRecordSearchInput] = useState('');
   const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);
   const coreClient = useApolloCoreClient();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
+  const [selectedObjectNameSingular, setSelectedObjectNameSingular] = useState<
+    string | null
+  >(null);
+  const sidePanelShowHiddenObjects = useAtomStateValue(
+    sidePanelShowHiddenObjectsState,
+  );
 
-  const nonReadableObjectMetadataItemsNameSingular = objectMetadataItems
-    .filter(
-      (objectMetadataItem) =>
-        !getObjectPermissionsFromMapByObjectMetadataId({
-          objectPermissionsByObjectMetadataId,
-          objectMetadataId: objectMetadataItem.id,
-        })?.canReadObjectRecords,
-    )
-    .map((objectMetadataItem) => objectMetadataItem.nameSingular);
+  const includedObjectNameSingulars = useMemo(() => {
+    if (isDefined(selectedObjectNameSingular)) {
+      return [selectedObjectNameSingular];
+    }
+
+    return readableObjectMetadataItems
+      .filter((item) => sidePanelShowHiddenObjects || item.isSearchable)
+      .map((item) => item.nameSingular);
+  }, [
+    readableObjectMetadataItems,
+    selectedObjectNameSingular,
+    sidePanelShowHiddenObjects,
+  ]);
 
   const { data: searchData, loading: recordSearchLoading } = useQuery(
     SearchDocument,
@@ -50,10 +60,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
       variables: {
         searchInput: deferredRecordSearchInput ?? '',
         limit: MAX_SEARCH_RESULTS,
-        excludedObjectNameSingulars: [
-          'workspaceMember',
-          ...nonReadableObjectMetadataItemsNameSingular,
-        ],
+        includedObjectNameSingulars,
       },
     },
   );
@@ -84,6 +91,12 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
       searchPlaceholder={t`Search records...`}
       searchValue={recordSearchInput}
       onSearchChange={setRecordSearchInput}
+      rightElement={
+        <SidePanelObjectFilterDropdown
+          selectedObjectNameSingular={selectedObjectNameSingular}
+          onSelectObject={setSelectedObjectNameSingular}
+        />
+      }
     >
       <SidePanelAddToNavigationDroppable>
         {({ innerRef, droppableProps, placeholder }) => (

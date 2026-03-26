@@ -6,6 +6,7 @@ import { useEnsureAgentChatThreadIdForSend } from '@/ai/hooks/useEnsureAgentChat
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { normalizeAiSdkError } from '@/ai/utils/normalizeAiSdkError';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
@@ -119,7 +120,7 @@ export const AgentChatAiSdkStreamEffect = () => {
   const setAgentChatError = useSetAtomState(agentChatErrorState);
 
   useEffect(() => {
-    setAgentChatError(chatState.error);
+    setAgentChatError(normalizeAiSdkError(chatState.error));
   }, [chatState.error, setAgentChatError]);
 
   const setAgentChatIsStreaming = useSetAtomState(agentChatIsStreamingState);

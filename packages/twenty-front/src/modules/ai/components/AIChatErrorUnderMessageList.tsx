@@ -1,4 +1,4 @@
-import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
+import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
@@ -7,6 +7,12 @@ import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessa
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledErrorWrapper = styled.div`
+  padding-top: ${themeCssVariables.spacing[3]};
+`;
 
 export const AIChatErrorUnderMessageList = () => {
   const agentChatError = useAtomStateValue(agentChatErrorState);
@@ -31,5 +37,9 @@ export const AIChatErrorUnderMessageList = () => {
     return null;
   }
 
-  return <AIChatStandaloneError />;
+  return (
+    <StyledErrorWrapper>
+      <AIChatErrorRenderer error={agentChatError} />
+    </StyledErrorWrapper>
+  );
 };

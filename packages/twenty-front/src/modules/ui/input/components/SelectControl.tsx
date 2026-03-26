@@ -94,7 +94,13 @@ export const SelectControl = ({
           stroke={theme.icon.stroke.sm}
         />
       ) : null}
-      <OverflowingTextWithTooltip text={selectedOption.label} />
+      <OverflowingTextWithTooltip
+        text={
+          selectedOption.contextualText
+            ? `${selectedOption.label} · ${selectedOption.contextualText}`
+            : selectedOption.label
+        }
+      />
       <StyledIconChevronDownWrapper disabled={isDisabled}>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownWrapper>

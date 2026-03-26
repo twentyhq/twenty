@@ -67,6 +67,7 @@ describe('FileStorageService', () => {
         uploadFolder: jest.fn(),
         checkFileExists: jest.fn(),
         checkFolderExists: jest.fn(),
+        getPresignedUrl: jest.fn(),
       };
 
       mockFileStorageDriverFactory.getCurrentDriver.mockReturnValue(mockDriver);
@@ -148,6 +149,47 @@ describe('FileStorageService', () => {
         );
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.copy).toHaveBeenCalledWith(copyParams);
+      });
+    });
+
+    describe('getPresignedUrl', () => {
+      it('should delegate to the driver and return the URL', async () => {
+        mockDriver.getPresignedUrl.mockResolvedValue(
+          'https://s3.example.com/signed',
+        );
+
+        mockApplicationRepository.findOneOrFail.mockResolvedValue({
+          universalIdentifier: 'app-uid',
+        });
+
+        const result = await service.getPresignedUrl({
+          resourcePath: 'file.txt',
+          fileFolder: 'workflow' as any,
+          applicationUniversalIdentifier: 'app-uid',
+          workspaceId: 'ws-id',
+          responseContentType: 'image/png',
+          responseContentDisposition: 'inline',
+        });
+
+        expect(result).toBe('https://s3.example.com/signed');
+        expect(mockDriver.getPresignedUrl).toHaveBeenCalled();
+      });
+
+      it('should return null when driver returns null', async () => {
+        mockDriver.getPresignedUrl.mockResolvedValue(null);
+
+        mockApplicationRepository.findOneOrFail.mockResolvedValue({
+          universalIdentifier: 'app-uid',
+        });
+
+        const result = await service.getPresignedUrl({
+          resourcePath: 'file.txt',
+          fileFolder: 'workflow' as any,
+          applicationUniversalIdentifier: 'app-uid',
+          workspaceId: 'ws-id',
+        });
+
+        expect(result).toBeNull();
       });
     });
 

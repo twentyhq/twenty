@@ -1,4 +1,4 @@
-import { isDefaultModelSentinel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-default-model-sentinel.util';
+import { isAutoSelectModelId } from 'twenty-shared/utils';
 
 export type WorkspaceModelAvailabilitySettings = {
   useRecommendedModels: boolean;
@@ -10,7 +10,7 @@ export const isModelAllowedByWorkspace = (
   workspace: WorkspaceModelAvailabilitySettings,
   recommendedModelIds?: Set<string>,
 ): boolean => {
-  if (isDefaultModelSentinel(modelId)) {
+  if (isAutoSelectModelId(modelId)) {
     return true;
   }
 

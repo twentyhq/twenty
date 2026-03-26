@@ -1,7 +1,6 @@
 import { type SelectOption } from 'twenty-ui/input';
+import { isAutoSelectModelId } from 'twenty-shared/utils';
 
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,13 +15,11 @@ export const useAiModelOptions = (): SelectOption<string>[] => {
     )
     .map((model) => ({
       value: model.modelId,
-      label:
-        model.modelId === DEFAULT_FAST_MODEL ||
-        model.modelId === DEFAULT_SMART_MODEL
-          ? model.label
-          : model.modelFamilyLabel
-            ? `${model.label} (${model.modelFamilyLabel})`
-            : model.label,
+      label: isAutoSelectModelId(model.modelId)
+        ? model.label
+        : model.modelFamilyLabel
+          ? `${model.label} (${model.modelFamilyLabel})`
+          : model.label,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };
@@ -43,11 +40,7 @@ export const useAiModelLabel = (
     return modelId;
   }
 
-  if (
-    model.modelId === DEFAULT_FAST_MODEL ||
-    model.modelId === DEFAULT_SMART_MODEL ||
-    !includeProvider
-  ) {
+  if (isAutoSelectModelId(model.modelId) || !includeProvider) {
     return model.label;
   }
 

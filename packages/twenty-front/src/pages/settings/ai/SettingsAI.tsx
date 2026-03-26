@@ -23,7 +23,7 @@ import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { SettingsAIMCP } from './components/SettingsAIMCP';
 import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
-import { SettingsSkillsTable } from './components/SettingsSkillsTable';
+import { SettingsAgentSkills } from './components/SettingsAgentSkills';
 import { SettingsToolsTable } from './components/SettingsToolsTable';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
 
@@ -84,7 +84,7 @@ export const SettingsAI = () => {
           componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
         />
         {isModelsTab && <SettingsAIModelsTab />}
-        {isSkillsTab && <SettingsSkillsTable />}
+        {isSkillsTab && <SettingsAgentSkills />}
         {isToolsTab && <SettingsToolsTable />}
         {isMoreTab && (
           <>
