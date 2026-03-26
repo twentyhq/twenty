@@ -50,7 +50,7 @@ export class RunTypeormMigrationCommand extends CommandRunner {
 
       if (hasWorkspaces) {
         const previousVersion =
-          this.coreEngineVersionService.getPreviousTwentyVersion();
+          this.coreEngineVersionService.getPreviousVersion();
 
         const workspacesBelow =
           await this.workspaceVersionService.getWorkspacesBelowVersion(

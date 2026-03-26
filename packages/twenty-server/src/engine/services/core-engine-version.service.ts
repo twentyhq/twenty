@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { SemVer } from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UPGRADE_COMMAND_VERSIONS } from 'src/engine/constants/upgrade-command-versions.constant';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
 @Injectable()
 export class CoreEngineVersionService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  getCurrentAppVersion(): SemVer {
+  getCurrentVersion(): SemVer {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     if (!isDefined(appVersion)) {
@@ -23,8 +23,8 @@ export class CoreEngineVersionService {
     return new SemVer(appVersion);
   }
 
-  getPreviousTwentyVersion(): SemVer {
-    const currentAppVersion = this.getCurrentAppVersion();
+  getPreviousVersion(): SemVer {
+    const currentAppVersion = this.getCurrentVersion();
     const currentVersionMajorMinor = `${currentAppVersion.major}.${currentAppVersion.minor}.0`;
 
     const previousVersion = getPreviousVersion({

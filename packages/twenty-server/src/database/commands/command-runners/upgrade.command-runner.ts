@@ -14,10 +14,10 @@ import {
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
+import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-versions.constant';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/services/core-engine-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
@@ -63,8 +63,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       return;
     }
 
-    const currentAppVersion =
-      this.coreEngineVersionService.getCurrentAppVersion();
+    const currentAppVersion = this.coreEngineVersionService.getCurrentVersion();
     const currentVersionMajorMinor =
       `${currentAppVersion.major}.${currentAppVersion.minor}.0` as UpgradeCommandVersion;
     const currentCommands = this.allCommands[currentVersionMajorMinor];
@@ -75,8 +74,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       );
     }
 
-    const previousVersion =
-      this.coreEngineVersionService.getPreviousTwentyVersion();
+    const previousVersion = this.coreEngineVersionService.getPreviousVersion();
 
     this.commands = currentCommands;
     this.fromWorkspaceVersion = previousVersion;
