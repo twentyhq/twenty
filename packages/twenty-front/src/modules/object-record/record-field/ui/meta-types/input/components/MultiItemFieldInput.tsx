@@ -91,13 +91,17 @@ export const MultiItemFieldInput = <T,>({
       ) {
         return;
       }
-      const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
 
-      if (!isValid) {
-        return;
+      if (isInputDisplayed) {
+        const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+
+        if (!isValid) {
+          return;
+        }
+
+        onChange(updatedItems);
       }
 
-      onChange(updatedItems);
       onClickOutside(items, event);
     },
     listenerId: instanceId,
