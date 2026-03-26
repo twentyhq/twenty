@@ -357,6 +357,7 @@ export class AdminPanelResolver {
         npm: config.npm,
         label: config.label ?? key,
         source: isCatalog ? 'catalog' : 'custom',
+        ...(config.authType && { authType: config.authType }),
         ...(config.name && { name: config.name }),
         ...(config.baseUrl && { baseUrl: config.baseUrl }),
         ...(config.region && { region: config.region }),
