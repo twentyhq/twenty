@@ -476,6 +476,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
         flatApplication: workspaceCustomFlatApplication,
         labelIdentifierFieldMetadataUniversalIdentifier:
           customObject.labelIdentifierFieldMetadataUniversalIdentifier,
+        excludeLabelIdentifier: true,
       });
 
       const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
