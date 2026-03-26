@@ -184,7 +184,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
 
     const recordPageLayoutUniversalIdentifiers = new Set<string>();
 
-    const pageLayoutsToCreate = Object.values(
+    const recordPageLayoutsFromStandard = Object.values(
       standardAllFlatEntityMaps.flatPageLayoutMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
@@ -202,7 +202,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
 
     const tabUniversalIdentifiers = new Set<string>();
 
-    const pageLayoutTabsToCreate = Object.values(
+    const tabsFromStandard = Object.values(
       standardAllFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
@@ -220,7 +220,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
         return true;
       });
 
-    const pageLayoutWidgetsToCreate = Object.values(
+    const widgetsFromStandard = Object.values(
       standardAllFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
@@ -229,14 +229,48 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       );
 
     const {
+      flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatPageLayoutMaps',
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
       'flatViewMaps',
       'flatViewFieldMaps',
       'flatViewFieldGroupMaps',
     ]);
+
+    // Filter out page layouts, tabs, and widgets that already exist in the workspace
+    const pageLayoutsToCreate = recordPageLayoutsFromStandard.filter(
+      (pageLayout) =>
+        !isDefined(
+          existingFlatPageLayoutMaps.byUniversalIdentifier[
+            pageLayout.universalIdentifier
+          ],
+        ),
+    );
+
+    const pageLayoutTabsToCreate = tabsFromStandard.filter(
+      (tab) =>
+        !isDefined(
+          existingFlatPageLayoutTabMaps.byUniversalIdentifier[
+            tab.universalIdentifier
+          ],
+        ),
+    );
+
+    const pageLayoutWidgetsToCreate = widgetsFromStandard.filter(
+      (widget) =>
+        !isDefined(
+          existingFlatPageLayoutWidgetMaps.byUniversalIdentifier[
+            widget.universalIdentifier
+          ],
+        ),
+    );
 
     // Collect all standard FIELDS_WIDGET view universal identifiers
     // This includes both new views to create AND existing views (created by 1-19)
