@@ -1,8 +1,5 @@
 import { type FieldManifest, type Manifest } from 'twenty-shared/application';
-import {
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 const RELATION_FIELD_TYPES: string[] = [
