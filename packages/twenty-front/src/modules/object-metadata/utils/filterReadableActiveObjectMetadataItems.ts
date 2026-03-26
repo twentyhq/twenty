@@ -10,12 +10,16 @@ export const filterReadableActiveObjectMetadataItems = (
   >,
 ): EnrichedObjectMetadataItem[] =>
   objectMetadataItems.filter((objectMetadataItem) => {
+    if (!objectMetadataItem.isActive) {
+      return false;
+    }
+
     const objectPermissions =
       objectPermissionsByObjectMetadataId[objectMetadataItem.id];
 
-    return (
-      isDefined(objectPermissions) &&
-      objectPermissions.canReadObjectRecords &&
-      objectMetadataItem.isActive
-    );
+    if (!isDefined(objectPermissions)) {
+      return true;
+    }
+
+    return objectPermissions.canReadObjectRecords;
   });

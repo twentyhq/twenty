@@ -296,6 +296,16 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Режим только для среды:** если вы установили `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, добавьте эти переменные в свой `.env` файл вместо этого.
 </Warning>
 
+## S3 Storage
+
+<Warning>
+By default, Twenty stores uploaded files on the local filesystem. Для продакшн-развертываний используйте S3 или совместимый с S3 сервис (MinIO, DigitalOcean Spaces и т. д.). чтобы файлы сохранялись при перезапусках контейнеров и были доступны на нескольких экземплярах сервера при масштабировании.
+</Warning>
+
+Установите `STORAGE_TYPE=S_3` и настройте переменные `STORAGE_S3_*` через админ-панель или `.env`. См. [справочник config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) для полного списка переменных S3.
+
+При использовании S3 с функциями, зависящими от CORS (например, загрузки файлов в браузере), убедитесь, что в конфигурации CORS вашего бакета разрешен origin фронтенда Twenty.
+
 ## Логические функции и интерпретатор кода
 
 Twenty поддерживает логические функции для рабочих процессов и интерпретатор кода для анализа данных ИИ. Оба запускают предоставленный пользователем код и требуют явной настройки в целях безопасности.

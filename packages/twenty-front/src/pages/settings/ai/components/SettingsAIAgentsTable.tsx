@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
 
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -12,13 +11,8 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  IconFilter,
-  IconSearch,
-  IconSettingsAutomation,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconChevronRight, IconSettingsAutomation } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SETTINGS_AI_AGENT_TABLE_METADATA } from '~/pages/settings/ai/constants/SettingsAiAgentTableMetadata';
@@ -33,15 +27,8 @@ import {
   SettingsAIAgentTableRow,
 } from './SettingsAIAgentTableRow';
 
-const StyledSearchAndFilterContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledSearchContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
-const StyledSearchInputContainer = styled.div`
-  flex: 1;
 `;
 
 const StyledTableContainer = styled.div`
@@ -79,47 +66,36 @@ export const SettingsAIAgentsTable = () => {
 
   return (
     <>
-      <StyledSearchAndFilterContainer>
-        <StyledSearchInputContainer>
-          <SettingsTextInput
-            instanceId="settings-ai-agents-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search an agent...`}
-            value={searchTerm}
-            onChange={setSearchTerm}
-            fullWidth
-          />
-        </StyledSearchInputContainer>
-        <Dropdown
-          dropdownId="settings-ai-agents-filter-dropdown"
-          dropdownPlacement="bottom-end"
-          dropdownOffset={{ x: 0, y: 8 }}
-          clickableComponent={
-            <Button
-              Icon={IconFilter}
-              size="medium"
-              variant="secondary"
-              accent="default"
-              ariaLabel={t`Filter`}
+      <StyledSearchContainer>
+        <SearchInput
+          placeholder={t`Search an agent...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+          filterDropdown={(filterButton) => (
+            <Dropdown
+              dropdownId="settings-ai-agents-filter-dropdown"
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={filterButton}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItemToggle
+                      LeftIcon={IconSettingsAutomation}
+                      onToggleChange={() =>
+                        setShowWorkflowAgents(!showWorkflowAgents)
+                      }
+                      toggled={showWorkflowAgents}
+                      text={t`Workflow agents`}
+                      toggleSize="small"
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
             />
-          }
-          dropdownComponents={
-            <DropdownContent>
-              <DropdownMenuItemsContainer>
-                <MenuItemToggle
-                  LeftIcon={IconSettingsAutomation}
-                  onToggleChange={() =>
-                    setShowWorkflowAgents(!showWorkflowAgents)
-                  }
-                  toggled={showWorkflowAgents}
-                  text={t`Workflow agents`}
-                  toggleSize="small"
-                />
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          }
+          )}
         />
-      </StyledSearchAndFilterContainer>
+      </StyledSearchContainer>
 
       <StyledTableContainer>
         <Table>

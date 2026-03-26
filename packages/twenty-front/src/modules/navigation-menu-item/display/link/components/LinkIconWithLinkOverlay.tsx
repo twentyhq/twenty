@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import type { IconComponent } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
@@ -75,6 +75,7 @@ export const LinkIconWithLinkOverlay = ({
   DefaultIcon,
   color: navItemColor,
 }: LinkIconWithLinkOverlayProps) => {
+  const { theme } = useContext(ThemeContext);
   const [localFailedLink, setLocalFailedLink] = useState<string | null>(null);
   const faviconUrl = getLinkFaviconUrl(link);
   const linkKey = link ?? '';
@@ -105,7 +106,7 @@ export const LinkIconWithLinkOverlay = ({
         ) : (
           <DefaultIcon
             size="14px"
-            stroke={themeCssVariables.icon.stroke.md}
+            stroke={theme.icon.stroke.md}
             color={linkStyle.iconColor}
           />
         )}
@@ -113,7 +114,7 @@ export const LinkIconWithLinkOverlay = ({
       <StyledLinkOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <LinkIcon
           size="14px"
-          stroke={themeCssVariables.icon.stroke.md}
+          stroke={theme.icon.stroke.md}
           color={themeCssVariables.grayScale.gray10}
         />
       </StyledLinkOverlay>
