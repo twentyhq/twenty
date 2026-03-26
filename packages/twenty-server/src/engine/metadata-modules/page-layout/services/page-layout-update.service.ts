@@ -22,6 +22,7 @@ import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import {
@@ -474,6 +475,14 @@ export class PageLayoutUpdateService {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
   } {
+    for (const widgetInput of widgets) {
+      this.validateChartFieldReferences({
+        widgetInput,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+    }
+
     const existingWidgets = Object.values(
       flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
@@ -634,6 +643,28 @@ export class PageLayoutUpdateService {
     };
   }
 
+  private validateChartFieldReferences({
+    widgetInput,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+  }: {
+    widgetInput: UpdatePageLayoutWidgetWithIdInput;
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+  }): void {
+    if (!isDefined(widgetInput.configuration)) {
+      return;
+    }
+
+    validateChartConfigurationFieldReferencesOrThrow({
+      widgetConfiguration: widgetInput.configuration,
+      widgetObjectMetadataId: widgetInput.objectMetadataId,
+      widgetTitle: widgetInput.title,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    });
+  }
+
   private collectOrphanedViewIdsFromDeletedWidgets({
     widgetsToUpdate,
     tabsToUpdate,
@@ -649,7 +680,6 @@ export class PageLayoutUpdateService {
     const viewIdsToDelete = new Set<string>();
     const directlyDeletedWidgetIds = new Set<string>();
 
-    // Collect viewIds from directly deleted FIELDS widgets
     for (const widget of widgetsToUpdate) {
       if (isDefined(widget.deletedAt)) {
         directlyDeletedWidgetIds.add(widget.id);
@@ -661,7 +691,6 @@ export class PageLayoutUpdateService {
       }
     }
 
-    // Collect viewIds from FIELDS widgets in deleted tabs
     const deletedTabIds = new Set(
       tabsToUpdate
         .filter((tab) => isDefined(tab.deletedAt))
@@ -685,7 +714,6 @@ export class PageLayoutUpdateService {
       }
     }
 
-    // Filter out viewIds still referenced by surviving widgets
     for (const widget of allExistingWidgets) {
       if (
         !isDefined(widget.deletedAt) &&

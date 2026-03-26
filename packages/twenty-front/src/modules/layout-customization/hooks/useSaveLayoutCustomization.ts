@@ -1,3 +1,5 @@
+import { useSaveCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useSaveCommandMenuItemsDraft';
+import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
@@ -31,6 +33,8 @@ export const useSaveLayoutCustomization = () => {
   const { t } = useLingui();
 
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
+  const { saveCommandMenuItemsDraft } = useSaveCommandMenuItemsDraft();
+  const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
@@ -57,6 +61,10 @@ export const useSaveLayoutCustomization = () => {
       // while page layouts fail.
       if (isNavigationDirty) {
         await saveDraft();
+      }
+
+      if (isCommandMenuItemsDirty) {
+        await saveCommandMenuItemsDraft();
       }
 
       const activePageLayoutIds = store.get(
@@ -164,6 +172,8 @@ export const useSaveLayoutCustomization = () => {
     }
   }, [
     saveDraft,
+    saveCommandMenuItemsDraft,
+    isCommandMenuItemsDirty,
     updatePageLayoutWithTabsAndWidgets,
     savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,

@@ -12,6 +12,7 @@ import {
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -26,6 +27,7 @@ export class MessageChannelDataAccessService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    private readonly messageFolderDataAccessService: MessageFolderDataAccessService,
   ) {}
 
   private async isMigrated(workspaceId: string): Promise<boolean> {
@@ -133,15 +135,15 @@ export class MessageChannelDataAccessService {
       }
 
       if (needsMessageFolders) {
-        const workspaceRepository =
-          await this.getWorkspaceRepository(workspaceId);
+        const messageFolders = await this.messageFolderDataAccessService.find(
+          workspaceId,
+          {
+            messageChannelId: result.id,
+          },
+        );
 
-        const workspaceChannel = await workspaceRepository.findOne({
-          where: { id: result.id },
-          relations: ['messageFolders'],
-        });
-
-        workspaceResult.messageFolders = workspaceChannel?.messageFolders ?? [];
+        workspaceResult.messageFolders =
+          messageFolders as unknown as MessageChannelWorkspaceEntity['messageFolders'];
       }
 
       return workspaceResult;

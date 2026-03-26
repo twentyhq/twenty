@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { MainNavigationDrawerAIChatContent } from '@/navigation/components/MainNavigationDrawerAIChatContent';
+import { NavigationDrawerAIChatContent } from '@/ai/components/NavigationDrawerAIChatContent';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
@@ -27,7 +27,7 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       <NavigationDrawerScrollableContent>
         {navigationDrawerActiveTab ===
         NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY ? (
-          <MainNavigationDrawerAIChatContent />
+          <NavigationDrawerAIChatContent />
         ) : (
           <MainNavigationDrawerNavigationContent />
         )}

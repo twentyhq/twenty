@@ -34,6 +34,11 @@ msgstr "I campi {fieldType} non possono essere unici."
 msgid "{fieldType} fields cannot have a default value."
 msgstr "I campi {fieldType} non possono avere un valore predefinito."
 
+#. js-lingui-id: VEmyIu
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util.ts
+msgid "{fullMessage}"
+msgstr ""
+
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"

@@ -9720,6 +9720,11 @@ msgstr "Kein Body"
 msgid "No calling code"
 msgstr "Ohne Ländervorwahl"
 
+#. js-lingui-id: d14J3J
+#: src/modules/ai/components/NavigationDrawerAIChatContent.tsx
+msgid "No chat"
+msgstr ""
+
 #. js-lingui-id: wgUPZ1
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "No comment"

@@ -98,7 +98,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       }
 
       store.set(viewableRecordIdState.atom, null);
-      store.set(sidePanelPageState.atom, SidePanelPages.Root);
+      store.set(sidePanelPageState.atom, SidePanelPages.CommandMenuDisplay);
       store.set(sidePanelPageInfoState.atom, {
         title: undefined,
         Icon: undefined,

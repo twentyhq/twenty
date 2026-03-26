@@ -9720,6 +9720,11 @@ msgstr "沒有主體"
 msgid "No calling code"
 msgstr "不含國碼"
 
+#. js-lingui-id: d14J3J
+#: src/modules/ai/components/NavigationDrawerAIChatContent.tsx
+msgid "No chat"
+msgstr ""
+
 #. js-lingui-id: wgUPZ1
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "No comment"
