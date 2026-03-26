@@ -6,7 +6,7 @@ import { Trans } from '@lingui/react/macro';
 export const SettingsRolesTableHeader = () => {
   return (
     <Table>
-      <TableRow gridAutoColumns="332px 3fr 2fr 1fr">
+      <TableRow mobileGridAutoColumns="2fr 3fr 1fr 35px" gridAutoColumns="332px 3fr 2fr 1fr">
         <TableHeader>
           <Trans>Name</Trans>
         </TableHeader>
