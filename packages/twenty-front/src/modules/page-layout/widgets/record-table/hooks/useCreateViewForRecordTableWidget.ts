@@ -38,8 +38,11 @@ export const useCreateViewForRecordTableWidget = (pageLayoutId: string) => {
         return;
       }
 
-      const eligibleFields = objectMetadataItem.fields.filter(
-        filterFieldsForRecordTableViewCreation,
+      const eligibleFields = objectMetadataItem.fields.filter((field) =>
+        filterFieldsForRecordTableViewCreation(
+          field,
+          objectMetadataItem.labelIdentifierFieldMetadataId,
+        ),
       );
 
       const sortedFields = eligibleFields.toSorted(
