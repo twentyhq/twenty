@@ -10749,11 +10749,11 @@ __metadata:
   linkType: hard
 
 "@linaria/core@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "@linaria/core@npm:6.2.0"
+  version: 6.3.0
+  resolution: "@linaria/core@npm:6.3.0"
   dependencies:
-    "@wyw-in-js/processor-utils": "npm:^0.5.3"
-  checksum: 10c0/4eb6083c0988f19aa3721e34bf14093dab8a0c6a784237ae4276a0b4e68bb82e91c594d7dd1d12173aaa2b38400a6bf5e0bd8b961a9ae05cdba854e2c566a134
+    "@wyw-in-js/processor-utils": "npm:^0.6.0"
+  checksum: 10c0/4a3c7a1b3ae486e27540bcafe377498c22770e4e2914084b495a6aae65b77611308505d11108d3d999bfd9e40e443f6deb3120dbabbdaa8fc922de1db320b515
   languageName: node
   linkType: hard
 
@@ -27416,6 +27416,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wyw-in-js/processor-utils@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@wyw-in-js/processor-utils@npm:0.6.0"
+  dependencies:
+    "@babel/generator": "npm:^7.23.5"
+    "@wyw-in-js/shared": "npm:0.6.0"
+  checksum: 10c0/e7338afb71aa1eccf7646447df9d20c2ac895dc1d5a5ad8c26931997fa31595ece5890e8ada39b3c1fda28439c7598de950980dded714dbe003b232f95d22d9e
+  languageName: node
+  linkType: hard
+
 "@wyw-in-js/shared@npm:0.5.4, @wyw-in-js/shared@npm:^0.5.3":
   version: 0.5.4
   resolution: "@wyw-in-js/shared@npm:0.5.4"
@@ -27424,6 +27434,17 @@ __metadata:
     find-up: "npm:^5.0.0"
     minimatch: "npm:^9.0.3"
   checksum: 10c0/47ec8bf5196679c42bdd1fa0f9831171fd8d8727031bbf7dcafbdbe19ee658660343405249d77ab2b9e7c1004ff30e4e6eaa4790784f223118089812020d0d4b
+  languageName: node
+  linkType: hard
+
+"@wyw-in-js/shared@npm:0.6.0":
+  version: 0.6.0
+  resolution: "@wyw-in-js/shared@npm:0.6.0"
+  dependencies:
+    debug: "npm:^4.3.4"
+    find-up: "npm:^5.0.0"
+    minimatch: "npm:^9.0.3"
+  checksum: 10c0/a7bab831ebdf9172c8b7a117525550b57c6b338bb6579f186b0f54a3cae5cde75dd245e375b93766fe1f1fc1d42f804353622594115727a2a8c4eb4de84aaaab
   languageName: node
   linkType: hard
 
