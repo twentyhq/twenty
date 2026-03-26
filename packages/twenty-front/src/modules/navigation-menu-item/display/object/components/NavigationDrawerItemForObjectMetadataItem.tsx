@@ -12,7 +12,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { ViewKey } from '@/views/types/ViewKey';
 import { useLocation } from 'react-router-dom';
 import {
   AppPath,
@@ -102,10 +101,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const view = isDefined(navigationMenuItem?.viewId)
     ? views.find((view) => view.id === navigationMenuItem!.viewId)
     : undefined;
-  const viewKey = view?.key ?? null;
-
-  const isViewWithCustomName =
-    isView && viewKey !== ViewKey.INDEX && isDefined(view);
+  const isViewWithCustomName = isView && isDefined(view);
 
   const itemLabel = isDefined(navigationMenuItem)
     ? getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views)

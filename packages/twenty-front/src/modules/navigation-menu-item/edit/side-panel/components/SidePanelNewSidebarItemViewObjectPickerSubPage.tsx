@@ -2,6 +2,7 @@ import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/u
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { SidePanelNewSidebarItemViewObjectPickerSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/side-panel/utils/isViewDisplayableInNavigationMenu';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -9,9 +10,7 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { selectedObjectMetadataIdForViewFlowState } from '@/side-panel/states/selectedObjectMetadataIdForViewFlowState';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { ViewType } from '@/views/types/ViewType';
 import { useState } from 'react';
-import { ViewVisibility } from '~/generated-metadata/graphql';
 
 export const SidePanelNewSidebarItemViewObjectPickerSubPage = () => {
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
@@ -31,8 +30,7 @@ export const SidePanelNewSidebarItemViewObjectPickerSubPage = () => {
     views
       .filter(
         (view) =>
-          view.type !== ViewType.FIELDS_WIDGET &&
-          view.visibility === ViewVisibility.WORKSPACE &&
+          isViewDisplayableInNavigationMenu(view) &&
           !viewIdsInWorkspace.has(view.id),
       )
       .map((view) => view.objectMetadataId),
