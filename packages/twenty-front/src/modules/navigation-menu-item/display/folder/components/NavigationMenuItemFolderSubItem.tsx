@@ -63,9 +63,6 @@ export const NavigationMenuItemFolderSubItem = ({
     views,
   );
 
-  const isNotView =
-    navigationMenuItem.type !== NavigationMenuItemType.VIEW;
-
   const objectMetadataItem =
     navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
     navigationMenuItem.type === NavigationMenuItemType.VIEW ||
@@ -95,7 +92,7 @@ export const NavigationMenuItemFolderSubItem = ({
   return (
     <NavigationDrawerSubItem
       secondaryLabel={
-        isNotView
+        navigationMenuItem.type !== NavigationMenuItemType.VIEW
           ? undefined
           : getObjectNavigationMenuItemSecondaryLabel({
               objectMetadataItems,

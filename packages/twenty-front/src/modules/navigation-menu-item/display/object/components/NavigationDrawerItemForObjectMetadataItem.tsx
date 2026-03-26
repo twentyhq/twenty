@@ -101,7 +101,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const view = isDefined(navigationMenuItem?.viewId)
     ? views.find((view) => view.id === navigationMenuItem!.viewId)
     : undefined;
-  const isViewWithCustomName = isView && isDefined(view);
+  const isViewWithResolvedView = isView && isDefined(view);
 
   const itemLabel = isDefined(navigationMenuItem)
     ? getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views)
@@ -109,7 +109,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const label = isRecord
     ? itemLabel
-    : isViewWithCustomName
+    : isViewWithResolvedView
       ? itemLabel
       : objectMetadataItem.labelPlural;
 
@@ -134,7 +134,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
           placeholder={itemLabel}
         />
       )
-    : isViewWithCustomName && isDefined(view?.icon)
+    : isViewWithResolvedView && isDefined(view?.icon)
       ? () => (
           <ObjectIconWithViewOverlay
             ObjectIcon={getIcon(objectMetadataItem.icon)}
@@ -147,7 +147,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const iconThemeColor = !isRecord ? objectNavItemColor : undefined;
 
   const secondaryLabel =
-    isRecord || isViewWithCustomName
+    isRecord || isViewWithResolvedView
       ? objectMetadataItem.labelSingular
       : undefined;
 

@@ -42,10 +42,6 @@ export const NavigationMenuItemIcon = ({
   const view = isDefined(navigationMenuItem.viewId)
     ? views.find((view) => view.id === navigationMenuItem.viewId)
     : undefined;
-  const isViewWithOverlay =
-    navigationMenuItem.type === NavigationMenuItemType.VIEW &&
-    isDefined(view);
-
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === objectNameSingular,
   );
@@ -55,7 +51,10 @@ export const NavigationMenuItemIcon = ({
       : StandardIcon;
 
   const canShowViewOverlay =
-    isViewWithOverlay && isDefined(objectIconForView) && isDefined(view?.icon);
+    navigationMenuItem.type === NavigationMenuItemType.VIEW &&
+    isDefined(view) &&
+    isDefined(objectIconForView) &&
+    isDefined(view?.icon);
 
   if (canShowViewOverlay) {
     return (
