@@ -1,11 +1,8 @@
-import { Command } from '@/command-menu-item/display/components/Command';
-import { EngineCommandMenuItem } from '@/command-menu-item/display/components/EngineCommandMenuItem';
-import { HeadlessFrontComponentCommandMenuItem } from '@/command-menu-item/display/components/HeadlessFrontComponentCommandMenuItem';
+import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/components/FrontComponentCommandMenuItem';
+import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-
-import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
@@ -13,10 +10,9 @@ import {
   interpolateCommandMenuItemLabel,
   isDefined,
 } from 'twenty-shared/utils';
-import { type IconComponent, useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/display';
 
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { isString } from '@sniptt/guards';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
@@ -38,17 +34,6 @@ type BuildCommandMenuItemFromFrontComponentParams = {
   scope: CommandMenuItemScope;
   isPinned: boolean;
   getIcon: ReturnType<typeof useIcons>['getIcon'];
-  openFrontComponentInSidePanel: (params: {
-    frontComponentId: string;
-    pageTitle: string;
-    pageIcon: IconComponent;
-    recordContext?: {
-      recordId: string;
-      objectNameSingular: string;
-    };
-  }) => void;
-  recordId?: string;
-  objectNameSingular?: string;
   commandMenuContextApi: CommandMenuContextApi;
 };
 
@@ -58,9 +43,6 @@ const buildCommandMenuItemFromFrontComponent = ({
   scope,
   isPinned,
   getIcon,
-  openFrontComponentInSidePanel,
-  recordId,
-  objectNameSingular,
   commandMenuContextApi,
 }: BuildCommandMenuItemFromFrontComponentParams) => {
   const displayLabel = interpolateCommandMenuItemLabel({
@@ -76,18 +58,6 @@ const buildCommandMenuItemFromFrontComponent = ({
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
   const isHeadless = item.frontComponent?.isHeadless === true;
-
-  const handleNonHeadlessClick = () => {
-    openFrontComponentInSidePanel({
-      frontComponentId: item.frontComponentId,
-      pageTitle: displayLabel ?? '',
-      pageIcon: Icon,
-      recordContext:
-        isDefined(recordId) && isDefined(objectNameSingular)
-          ? { recordId, objectNameSingular }
-          : undefined,
-    });
-  };
 
   return {
     type,
@@ -106,14 +76,11 @@ const buildCommandMenuItemFromFrontComponent = ({
         commandMenuContextApi,
       ),
     component: isHeadless ? (
-      <HeadlessFrontComponentCommandMenuItem
-        frontComponentId={item.frontComponentId}
-        commandMenuItemId={item.id}
-        recordId={recordId}
-        objectNameSingular={objectNameSingular}
-      />
+      <HeadlessCommandMenuItem item={item} />
     ) : (
-      <Command onClick={handleNonHeadlessClick} />
+      <FrontComponentCommandMenuItem
+        frontComponentId={item.frontComponentId}
+      />
     ),
   };
 };
@@ -161,12 +128,7 @@ const buildCommandItemFromEngineKey = ({
         item.conditionalAvailabilityExpression,
         commandMenuContextApi,
       ),
-    component: (
-      <EngineCommandMenuItem
-        commandMenuItemId={item.id}
-        engineComponentKey={engineComponentKey}
-      />
-    ),
+    component: <HeadlessCommandMenuItem item={item} />,
   };
 };
 
@@ -174,24 +136,10 @@ export const useCommandMenuItemsFromBackend = (
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
   const { getIcon } = useIcons();
-  const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const currentObjectMetadataItemId =
     commandMenuContextApi.objectMetadataItem.id;
 
-  const selectedRecordIds = commandMenuContextApi.selectedRecords
-    .map((record) => record.id)
-    .filter(isDefined);
-
   const hasRecordSelection = commandMenuContextApi.numberOfSelectedRecords >= 1;
-
-  const recordId =
-    selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
-
-  const objectNameSingular = isString(
-    commandMenuContextApi.objectMetadataItem.nameSingular,
-  )
-    ? commandMenuContextApi.objectMetadataItem.nameSingular
-    : undefined;
 
   const { commandMenuItems: allItems } = useCommandMenuItemsDraftState();
 
@@ -231,10 +179,7 @@ export const useCommandMenuItemsFromBackend = (
         scope,
         isPinned,
         getIcon,
-        openFrontComponentInSidePanel,
         commandMenuContextApi,
-        recordId,
-        objectNameSingular,
       });
     }
 
