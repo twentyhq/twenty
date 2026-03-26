@@ -2,7 +2,7 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/server-items/hooks/useWorkflowsWithCurrentVersions';
+import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/server-items/common/hooks/useWorkflowsWithCurrentVersions';
 
 import { CommandMenuContextProviderServerItemsContent } from './CommandMenuContextProviderServerItemsContent';
 

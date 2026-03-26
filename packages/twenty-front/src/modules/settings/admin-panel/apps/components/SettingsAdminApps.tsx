@@ -28,6 +28,7 @@ const StyledTableHeaderRowContainer = styled.div`
 `;
 
 const TABLE_GRID = '1fr 1fr 100px 80px';
+const TABLE_GRID_MOBILE = '3fr 3fr 1fr 70px';
 
 export const SettingsAdminApps = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,7 +65,10 @@ export const SettingsAdminApps = () => {
       <StyledTableContainer>
         <Table>
           <StyledTableHeaderRowContainer>
-            <TableRow gridTemplateColumns={TABLE_GRID}>
+            <TableRow
+              gridAutoColumns={TABLE_GRID}
+              mobileGridAutoColumns={TABLE_GRID_MOBILE}
+            >
               <TableHeader>{t`Name`}</TableHeader>
               <TableHeader>{t`Source`}</TableHeader>
               <TableHeader>{t`Listed`}</TableHeader>
@@ -81,9 +85,13 @@ export const SettingsAdminApps = () => {
                 )}
                 fullWidth
               >
-                <TableRow gridTemplateColumns={TABLE_GRID} isClickable>
+                <TableRow
+                  gridAutoColumns={TABLE_GRID}
+                  mobileGridAutoColumns={TABLE_GRID_MOBILE}
+                  isClickable
+                >
                   <TableCell>{registration.name}</TableCell>
-                  <TableCell>
+                  <TableCell overflow="hidden">
                     {registration.sourcePackage ?? registration.sourceType}
                   </TableCell>
                   <TableCell>

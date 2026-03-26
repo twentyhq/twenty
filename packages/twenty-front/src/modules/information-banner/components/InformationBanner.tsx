@@ -17,9 +17,8 @@ const StyledText = styled.div`
   text-overflow: ellipsis;
 `;
 
-const StyledCloseButtonContainer = styled.div`
-  color: ${themeCssVariables.grayScale.gray1};
-  display: flex;
+const StyledInvertedIconButton = styled(IconButton)`
+  color: ${themeCssVariables.font.color.inverted} !important;
 `;
 
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
@@ -78,15 +77,13 @@ export const InformationBanner = ({
             )}
           </StyledContent>
           {onClose && (
-            <StyledCloseButtonContainer>
-              <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
-            </StyledCloseButtonContainer>
+            <StyledInvertedIconButton
+              Icon={IconX}
+              size="small"
+              variant="tertiary"
+              onClick={onClose}
+              ariaLabel={t`Close banner`}
+            />
           )}
         </Banner>
       )}

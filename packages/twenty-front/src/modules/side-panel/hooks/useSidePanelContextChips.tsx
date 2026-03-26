@@ -52,7 +52,7 @@ export const useSidePanelContextChips = () => {
 
   const contextChips = useMemo(() => {
     const filteredSidePanelNavigationStack = sidePanelNavigationStack.filter(
-      (page) => page.page !== SidePanelPages.Root,
+      (page) => page.page !== SidePanelPages.CommandMenuDisplay,
     );
 
     return filteredSidePanelNavigationStack

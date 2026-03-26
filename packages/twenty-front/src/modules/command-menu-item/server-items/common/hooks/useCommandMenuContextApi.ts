@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -13,13 +13,14 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
+import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useContext } from 'react';
 import {
   CommandMenuContextApiPageType,
   type CommandMenuContextApi,
@@ -29,7 +30,11 @@ import { isDefined } from 'twenty-shared/utils';
 export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
-  const { isInSidePanel } = useContext(CommandMenuContext);
+  const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ContextStoreComponentInstanceContext,
+  );
+  const isInSidePanel =
+    contextStoreInstanceId === SIDE_PANEL_COMPONENT_INSTANCE_ID;
 
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -37,6 +42,10 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
 
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
     contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -52,19 +61,16 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
       ? contextStoreTargetedRecordsRule.selectedRecordIds
       : undefined;
 
-  const favoriteRecordIds = (() => {
-    if (!isNonEmptyArray(recordIds) || !isDefined(objectMetadataItem)) {
-      return [];
-    }
-
-    return recordIds.filter((recordId) =>
-      navigationMenuItems?.some(
-        (item) =>
-          item.targetRecordId === recordId &&
-          item.targetObjectMetadataId === objectMetadataItem.id,
-      ),
-    );
-  })();
+  const favoriteRecordIds =
+    !isNonEmptyArray(recordIds) || !isDefined(objectMetadataItem)
+      ? []
+      : recordIds.filter((recordId) =>
+          navigationMenuItems?.some(
+            (item) =>
+              item.targetRecordId === recordId &&
+              item.targetObjectMetadataId === objectMetadataItem.id,
+          ),
+        );
 
   const selectedRecords = useAtomFamilySelectorValue(
     recordStoreRecordsSelector,
@@ -106,10 +112,6 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentViewType === ContextStoreViewType.ShowPage
       ? CommandMenuContextApiPageType.RECORD_PAGE
       : CommandMenuContextApiPageType.INDEX_PAGE;
-
-  const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
 
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 

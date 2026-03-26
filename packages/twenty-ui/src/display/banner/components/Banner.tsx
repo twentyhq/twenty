@@ -10,7 +10,7 @@ const StyledBanner = styled.div<{ variant?: BannerVariant }>`
       : themeCssVariables.color.blue};
   display: flex;
   gap: ${themeCssVariables.spacing[3]};
-  height: 40px;
+  min-height: 40px;
   justify-content: center;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;

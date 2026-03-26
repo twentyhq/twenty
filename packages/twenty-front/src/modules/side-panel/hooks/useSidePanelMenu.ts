@@ -67,7 +67,7 @@ export const useSidePanelMenu = () => {
       });
     } else {
       navigateSidePanel({
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: t`Command Menu`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,

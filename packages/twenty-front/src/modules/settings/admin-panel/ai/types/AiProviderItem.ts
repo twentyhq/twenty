@@ -1,5 +1,6 @@
 import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
 
+import { type AiProviderAuthType } from '@/settings/admin-panel/ai/types/AiProviderAuthType';
 import { type AiProviderSource } from '@/settings/admin-panel/ai/types/AiProviderSource';
 
 // AiProviderItem = RawAiProviderConfig (from the backend's Record<string,
@@ -11,6 +12,7 @@ export type AiProviderItem = {
   // Optional provider display/catalog name from config (not a model name; models use `models[].name` on the backend).
   name?: string;
   label?: string;
+  authType?: AiProviderAuthType;
   source?: AiProviderSource;
   baseUrl?: string;
   region?: string;

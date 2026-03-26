@@ -1,8 +1,8 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useCommandMenuContextApi } from '@/command-menu-item/server-items/hooks/useCommandMenuContextApi';
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useCommandMenuContextApi } from '@/command-menu-item/server-items/common/hooks/useCommandMenuContextApi';
 
 import { CommandMenuContextProviderServerItemsContent } from './CommandMenuContextProviderServerItemsContent';
 import { CommandMenuContextProviderServerItemsWithWorkflowEnrichment } from './CommandMenuContextProviderServerItemsWithWorkflowEnrichment';

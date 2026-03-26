@@ -65,8 +65,8 @@ describe('useNavigateSidePanel', () => {
 
     act(() => {
       result.current.navigateSidePanel({
-        page: SidePanelPages.Root,
-        pageTitle: 'Root',
+        page: SidePanelPages.CommandMenuDisplay,
+        pageTitle: 'Command menu',
         pageIcon: Icon123,
         pageIconColor: 'red',
         pageId: 'mocked-uuid',
@@ -74,18 +74,20 @@ describe('useNavigateSidePanel', () => {
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
+      SidePanelPages.CommandMenuDisplay,
+    );
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
       {
-        page: SidePanelPages.Root,
-        pageTitle: 'Root',
+        page: SidePanelPages.CommandMenuDisplay,
+        pageTitle: 'Command menu',
         pageIcon: Icon123,
         pageIconColor: 'red',
         pageId: 'mocked-uuid',
       },
     ]);
     expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
-      title: 'Root',
+      title: 'Command menu',
       Icon: Icon123,
       instanceId: 'mocked-uuid',
     });

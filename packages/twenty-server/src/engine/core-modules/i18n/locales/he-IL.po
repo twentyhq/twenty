@@ -104,11 +104,6 @@ msgstr "רכיב פרונט בשם זה כבר קיים."
 msgid "A function with this name already exists."
 msgstr "פונקציה בשם זה כבר קיימת."
 
-#. js-lingui-id: 1Pylbk
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "A many to one relation field should always declare a join column"
-msgstr ""
-
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
@@ -127,11 +122,6 @@ msgstr "הערה"
 #. js-lingui-id: 6kUkZW
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A note target"
-msgstr ""
-
-#. js-lingui-id: MtcxLV
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "A one to many relation field should never declare a join column"
 msgstr ""
 
 #. js-lingui-id: W6LTzL
@@ -1558,11 +1548,6 @@ msgstr "לא ניתן למצוא מידע מטאדטה שדה קשור לאינ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index related object metadata"
 msgstr "לא ניתן למצוא מטאדטה אובייקט קשור לאינדקס"
-
-#. js-lingui-id: YzCaIm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "Could not find relation field parent flat object"
-msgstr ""
 
 #. js-lingui-id: KwGZ0m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts

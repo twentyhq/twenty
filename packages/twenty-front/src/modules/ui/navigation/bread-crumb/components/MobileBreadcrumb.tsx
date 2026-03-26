@@ -36,6 +36,7 @@ const StyledLinkContainer = styled.div`
 
 const StyledText = styled.span`
   color: inherit;
+  cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

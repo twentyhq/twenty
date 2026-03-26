@@ -1,3 +1,4 @@
+import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
@@ -25,6 +26,7 @@ export const useExitLayoutCustomizationMode = () => {
   const exitLayoutCustomizationMode = useCallback(() => {
     setNavigationMenuItemsDraft(null);
     setSelectedNavigationMenuItemIdInEditMode(null);
+    store.set(commandMenuItemsDraftState.atom, null);
 
     store.set(currentPageLayoutIdState.atom, null);
     store.set(activeCustomizationPageLayoutIdsState.atom, []);
