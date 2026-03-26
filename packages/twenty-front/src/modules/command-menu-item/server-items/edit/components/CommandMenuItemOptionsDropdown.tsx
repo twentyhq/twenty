@@ -70,8 +70,6 @@ export const CommandMenuItemOptionsDropdown = ({
               onToggleChange={handleToggleHideLabel}
               toggleSize="small"
             />
-          </DropdownMenuItemsContainer>
-          <DropdownMenuItemsContainer>
             <MenuItem
               LeftIcon={IconRefresh}
               onClick={handleResetLabelToDefault}

@@ -1,4 +1,5 @@
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
+import { useCommandMenuContextApi } from '@/command-menu-item/server-items/common/hooks/useCommandMenuContextApi';
 import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/server-items/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/server-items/display/constants/PinnedCommandMenuItemsGap';
@@ -8,10 +9,7 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edi
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { styled } from '@linaria/react';
@@ -54,14 +52,10 @@ const StyledItemsContainer = styled.div`
 export const PinnedCommandMenuItemButtonsEditMode = () => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
+  const commandMenuContextApi = useCommandMenuContextApi();
 
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const editObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
-  );
+  const currentObjectMetadataItemId =
+    commandMenuContextApi.objectMetadataItem.id;
 
   const commandMenuItemsDraft =
     useAtomStateValue(commandMenuItemsDraftState) ?? [];
@@ -80,21 +74,22 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
     [commandMenuItemEditSelectionMode],
   );
 
-  const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
+  const interpolateLabel = (rawLabel: string | null | undefined) =>
     interpolateCommandMenuItemLabel({
-      label: item.label,
-      context: { objectMetadataItem: editObjectMetadataItem ?? {} },
-    }) ?? item.label;
+      label: rawLabel,
+      context: commandMenuContextApi,
+    });
 
   const pinnedCommandMenuItems: CommandMenuItemConfig[] = useMemo(
     () =>
       commandMenuItemsDraft
-        .filter(matchesObjectMetadataId(contextStoreCurrentObjectMetadataItemId))
+        .filter(matchesObjectMetadataId(currentObjectMetadataItemId))
         .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
         .filter((item) => item.isPinned)
         .map((item) => {
           const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
-          const label = getDisplayLabel(item);
+          const label = interpolateLabel(item.label) ?? item.label;
+          const shortLabel = interpolateLabel(item.shortLabel);
           const key = `edit-preview-${item.id}`;
 
           return {
@@ -102,14 +97,14 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
             scope: CommandMenuItemScope.Global,
             key,
             label,
-            shortLabel: item.shortLabel,
+            shortLabel,
             position: item.position,
             Icon,
             isPinned: true,
             shouldBeRegistered: () => true,
             component: (
               <CommandMenuButton
-                command={{ key, label, shortLabel: item.shortLabel, Icon }}
+                command={{ key, label, shortLabel, Icon }}
                 disabled
               />
             ),
@@ -118,9 +113,9 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       commandMenuItemsDraft,
-      contextStoreCurrentObjectMetadataItemId,
+      currentObjectMetadataItemId,
       allowedAvailabilityTypes,
-      editObjectMetadataItem,
+      commandMenuContextApi,
       getIcon,
     ],
   );

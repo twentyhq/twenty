@@ -1,3 +1,4 @@
+import { useCommandMenuContextApi } from '@/command-menu-item/server-items/common/hooks/useCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
@@ -8,8 +9,6 @@ import { useResetCommandMenuItemsDraft } from '@/command-menu-item/server-items/
 import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/server-items/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -17,7 +16,6 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type DropResult } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
@@ -77,14 +75,10 @@ const StyledContent = styled.div`
 export const SidePanelCommandMenuItemEditPage = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const commandMenuContextApi = useCommandMenuContextApi();
 
-  const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const editObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === contextStoreCurrentObjectMetadataItemId,
-  );
+  const currentObjectMetadataItemId =
+    commandMenuContextApi.objectMetadataItem.id;
 
   const commandMenuItemEditSelectionMode = useAtomStateValue(
     commandMenuItemEditSelectionModeState,
@@ -110,7 +104,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
   ]);
 
   const filteredCommandMenuItems = commandMenuItemsDraft
-    .filter(matchesObjectMetadataId(contextStoreCurrentObjectMetadataItemId))
+    .filter(matchesObjectMetadataId(currentObjectMetadataItemId))
     .filter((item) => allowedAvailabilityTypes.has(item.availabilityType));
 
   const filteredCommandMenuItemIds = new Set(
@@ -120,7 +114,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
     interpolateCommandMenuItemLabel({
       label: item.label,
-      context: { objectMetadataItem: editObjectMetadataItem ?? {} },
+      context: commandMenuContextApi,
     }) ?? item.label;
 
   const { pinned: allPinnedItems, other: allOtherItems } = partitionByPinned(
