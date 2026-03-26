@@ -2,6 +2,7 @@ import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/compo
 import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { matchesObjectMetadataId } from '@/command-menu-item/server-items/common/utils/matchesObjectMetadataId';
+import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 
@@ -138,9 +139,11 @@ export const useCommandMenuItemsFromBackend = (
 
   const hasRecordSelection = commandMenuContextApi.numberOfSelectedRecords >= 1;
 
+  const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const items = commandMenuItemsDraft ?? commandMenuItems;
 
-  const itemsWithObjectMatches = commandMenuItems.filter(
+  const itemsWithObjectMatches = items.filter(
     matchesObjectMetadataId(currentObjectMetadataItemId),
   );
 
