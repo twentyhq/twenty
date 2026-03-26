@@ -134,10 +134,22 @@ export {
   useRecordId,
   useUserId,
 } from './front-component-api';
+export {
+  frontComponentHostCommunicationApi,
+} from './front-component-api';
 export type {
+  CloseSidePanelFunction,
   CommandConfirmationModalAccent,
   CommandConfirmationModalResult,
+  EnqueueSnackbarFunction,
   FrontComponentExecutionContext,
+  NavigateFunction,
+  OpenCommandConfirmationModalFunction,
+  OpenCommandConfirmationModalHostFunction,
+  OpenSidePanelPageFunction,
+  RequestAccessTokenRefreshFunction,
+  UnmountFrontComponentFunction,
+  UpdateProgressFunction,
 } from './front-component-api';
 
 export { AppPath, SidePanelPages } from 'twenty-shared/types';
@@ -153,9 +165,8 @@ export {
   EVENT_TO_REACT,
   HTML_COMMON_PROPERTIES,
   HTML_TAG_TO_REMOTE_COMPONENT,
+  HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 } from './front-component-api';
 export type { AllowedHtmlElement } from './front-component-api';
-
-// Style bridge utilities for CSS-in-JS libraries in remote components
-export { installStyleBridge } from '../front-component-renderer/polyfills/installStyleBridge';
-export { exposeGlobals } from '../front-component-renderer/remote/utils/exposeGlobals';
+export type { PropertySchema } from './front-component-api';
+export type { SerializedEventData } from './front-component-api';

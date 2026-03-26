@@ -20,12 +20,18 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.d.ts",
+    "scripts/**/*.ts",
+    ".storybook/*.ts",
+    ".storybook/*.tsx",
     "**/__mocks__/**/*",
     "**/__tests__/**/*",
-    "vite.config.ts",
-    "vite.config.node.ts",
-    "vite.config.browser.ts",
-    "vite.config.sdk.ts",
-    "jest.config.mjs"
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "src/remote/mock/**/*",
+    "src/host/generated/host-component-registry.ts",
+    "src/remote/generated/remote-components.ts",
+    "src/remote/generated/remote-elements.ts",
+    "src/__stories__/**/*"
   ]
 }

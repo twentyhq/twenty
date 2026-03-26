@@ -59559,6 +59559,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-front-component-renderer@workspace:*, twenty-front-component-renderer@workspace:packages/twenty-front-component-renderer":
+  version: 0.0.0-use.local
+  resolution: "twenty-front-component-renderer@workspace:packages/twenty-front-component-renderer"
+  dependencies:
+    "@emotion/react": "npm:^11.14.0"
+    "@emotion/styled": "npm:^11.14.0"
+    "@mui/material": "npm:^7.3.8"
+    "@quilted/threads": "npm:^4.0.1"
+    "@remote-dom/core": "npm:^1.10.1"
+    "@remote-dom/react": "npm:^1.2.2"
+    "@sniptt/guards": "npm:^0.2.0"
+    "@storybook/addon-vitest": "npm:^10.2.13"
+    "@storybook/react-vite": "npm:^10.2.13"
+    "@types/node": "npm:^24.0.0"
+    "@types/react": "npm:^19.0.0"
+    "@types/react-dom": "npm:^19.0.0"
+    "@vitest/browser-playwright": "npm:^4.0.18"
+    playwright: "npm:^1.56.1"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    storybook: "npm:^10.2.13"
+    ts-morph: "npm:^25.0.0"
+    tsx: "npm:^4.7.0"
+    twenty-sdk: "workspace:*"
+    twenty-shared: "workspace:*"
+    twenty-ui: "workspace:*"
+    vite-plugin-dts: "npm:^4.5.4"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    zod: "npm:^4.1.11"
+  languageName: unknown
+  linkType: soft
+
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
@@ -59665,7 +59697,7 @@ __metadata:
     remark-gfm: "npm:^4.0.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
     transliteration: "npm:^2.3.5"
-    twenty-sdk: "workspace:*"
+    twenty-front-component-renderer: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     use-debounce: "npm:^10.0.0"
@@ -59686,22 +59718,14 @@ __metadata:
   dependencies:
     "@chakra-ui/react": "npm:^3.33.0"
     "@emotion/react": "npm:^11.14.0"
-    "@emotion/styled": "npm:^11.14.0"
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
-    "@mui/material": "npm:^7.3.8"
     "@prettier/sync": "npm:^0.5.2"
-    "@quilted/threads": "npm:^4.0.1"
-    "@remote-dom/core": "npm:^1.10.1"
-    "@remote-dom/react": "npm:^1.2.2"
     "@sniptt/guards": "npm:^0.2.0"
-    "@storybook/addon-vitest": "npm:^10.2.13"
-    "@storybook/react-vite": "npm:^10.2.13"
     "@types/inquirer": "npm:^9.0.0"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:^19.0.0"
     "@types/react-dom": "npm:^19.0.0"
-    "@vitest/browser-playwright": "npm:^4.0.18"
     axios: "npm:^1.13.5"
     chalk: "npm:^5.3.0"
     chokidar: "npm:^4.0.0"
@@ -59713,11 +59737,9 @@ __metadata:
     ink: "npm:^6.8.0"
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
-    playwright: "npm:^1.56.1"
     preact: "npm:^10.28.3"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    storybook: "npm:^10.2.13"
     tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"

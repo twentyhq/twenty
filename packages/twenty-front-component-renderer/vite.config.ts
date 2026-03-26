@@ -8,7 +8,8 @@ import packageJson from './package.json';
 export default defineConfig(() => {
   return {
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/packages/twenty-sdk-browser',
+    cacheDir:
+      '../../node_modules/.vite/packages/twenty-front-component-renderer',
     resolve: {
       alias: {
         '@/': path.resolve(__dirname, 'src') + '/',
@@ -19,12 +20,29 @@ export default defineConfig(() => {
         root: __dirname,
       }),
     ],
+    worker: {
+      format: 'iife',
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true,
+        },
+      },
+      plugins: () => [
+        {
+          name: 'define-process-env',
+          transform: (code: string) =>
+            code
+              .replace(/process\.env\.NODE_ENV/g, JSON.stringify('production'))
+              .replace(/process\.env/g, '{}'),
+        },
+      ],
+    },
     build: {
       emptyOutDir: false,
       outDir: 'dist',
       lib: {
-        entry: 'src/ui/index.ts',
-        name: 'twenty-sdk',
+        entry: 'src/index.ts',
+        name: 'twenty-front-component-renderer',
       },
       rollupOptions: {
         onwarn: (warning, warn) => {
@@ -46,14 +64,14 @@ export default defineConfig(() => {
         output: [
           {
             format: 'es',
-            entryFileNames: 'ui/index.mjs',
+            entryFileNames: '[name].mjs',
           },
           {
             format: 'cjs',
             interop: 'auto',
             esModule: true,
             exports: 'named',
-            entryFileNames: 'ui/index.cjs',
+            entryFileNames: '[name].cjs',
           },
         ],
       },
