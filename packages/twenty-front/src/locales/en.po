@@ -1746,6 +1746,11 @@ msgstr "API Key copied to clipboard"
 msgid "API key is required"
 msgstr "API key is required"
 
+#. js-lingui-id: sb6i1L
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "API key name cannot be empty"
+msgstr "API key name cannot be empty"
+
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "API key roles"
@@ -14860,6 +14865,13 @@ msgstr "Unlisted"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
 msgstr "Unlock enterprise features like SSO, row-level security, and audit logs."
+
+#. js-lingui-id: Te2H8x
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
+msgid "Unnamed API Key"
+msgstr "Unnamed API Key"
 
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts

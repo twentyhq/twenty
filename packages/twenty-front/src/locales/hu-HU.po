@@ -1751,6 +1751,11 @@ msgstr "API kulcs vágólapra másolva"
 msgid "API key is required"
 msgstr "API-kulcs megadása kötelező"
 
+#. js-lingui-id: sb6i1L
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "API key name cannot be empty"
+msgstr ""
+
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "API key roles"
@@ -14863,6 +14868,13 @@ msgstr "Nem listázott"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
 msgstr "Oldja fel az olyan Enterprise funkciókat, mint az SSO, a rekordszintű biztonság és az auditnaplók."
+
+#. js-lingui-id: Te2H8x
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
+msgid "Unnamed API Key"
+msgstr ""
 
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts

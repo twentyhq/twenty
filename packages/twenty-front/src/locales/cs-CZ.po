@@ -1751,6 +1751,11 @@ msgstr "Klíč API zkopírován do schránky"
 msgid "API key is required"
 msgstr "Klíč API je vyžadován"
 
+#. js-lingui-id: sb6i1L
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "API key name cannot be empty"
+msgstr ""
+
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "API key roles"
@@ -14863,6 +14868,13 @@ msgstr "Neveřejné"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
 msgstr "Odemkněte funkce Enterprise, jako je SSO, zabezpečení na úrovni řádků a záznamy auditu."
+
+#. js-lingui-id: Te2H8x
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
+msgid "Unnamed API Key"
+msgstr ""
 
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts

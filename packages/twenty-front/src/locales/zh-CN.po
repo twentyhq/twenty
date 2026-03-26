@@ -1751,6 +1751,11 @@ msgstr "API 密钥已复制到剪贴板"
 msgid "API key is required"
 msgstr "API 密钥为必填项"
 
+#. js-lingui-id: sb6i1L
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+msgid "API key name cannot be empty"
+msgstr ""
+
 #. js-lingui-id: Widx6n
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "API key roles"
@@ -14863,6 +14868,13 @@ msgstr "未列出"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
 msgstr "解锁包括 SSO、行级安全和审计日志在内的企业功能。"
+
+#. js-lingui-id: Te2H8x
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
+msgid "Unnamed API Key"
+msgstr ""
 
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
