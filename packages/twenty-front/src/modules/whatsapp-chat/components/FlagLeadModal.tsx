@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useWhatsAppBridge } from '@/whatsapp-chat/hooks/useWhatsAppBridge';
 import { type WaConversation } from '@/whatsapp-chat/types/WhatsAppTypes';
@@ -172,6 +172,21 @@ const StyledInput = styled.input`
   &:focus { border-color: #1A6CFF; }
 `;
 
+const StyledSelect = styled.select`
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  color: #111827;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  padding: 10px 12px;
+  width: 100%;
+
+  &:focus { border-color: #1A6CFF; }
+`;
+
 const StyledTextarea = styled.textarea`
   background: #F3F4F6;
   border: 1px solid #E5E7EB;
@@ -271,6 +286,23 @@ export const FlagLeadModal = ({
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [workspaceMembers, setWorkspaceMembers] = useState<
+    { email: string; fullName: string }[]
+  >([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    bridgeFetch<{ members: { email: string; fullName: string }[] }>(
+      '/api/v1/conversations/members',
+    )
+      .then((data) => {
+        if (!cancelled && data?.members) setWorkspaceMembers(data.members);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [bridgeFetch]);
   const { handleFocus: hotkeyFocus, handleBlur: hotkeyBlur } =
     useSuppressHotkeys('flag-lead-modal-input');
 
@@ -375,14 +407,19 @@ export const FlagLeadModal = ({
           )}
 
           <StyledSectionTitle>Assign To</StyledSectionTitle>
-          <StyledInput
-            type="email"
-            placeholder="Sales rep email..."
+          <StyledSelect
             value={assignedTo}
             onChange={(e) => setAssignedTo(e.target.value)}
-            onFocus={hotkeyFocus}
-            onBlur={hotkeyBlur}
-          />
+            onFocus={hotkeyFocus as any}
+            onBlur={hotkeyBlur as any}
+          >
+            <option value="">Unassigned</option>
+            {workspaceMembers.map((m) => (
+              <option key={m.email} value={m.email}>
+                {m.fullName}
+              </option>
+            ))}
+          </StyledSelect>
 
           <StyledSectionTitle>Sales Notes</StyledSectionTitle>
           <StyledTextarea
