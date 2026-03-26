@@ -88,6 +88,12 @@ export class BackfillNavigationMenuItemTypeCommand extends ActiveOrSuspendedWork
       `UPDATE "core"."navigationMenuItem" SET "type" = 'OBJECT' WHERE "type" = 'VIEW' AND "targetObjectMetadataId" IS NOT NULL AND "targetRecordId" IS NULL`,
     );
 
+    // VIEW items with no viewId, no object link, and no record link are folder items
+    // that inherited the default VIEW type — reclassify them as FOLDER
+    await queryRunner.query(
+      `UPDATE "core"."navigationMenuItem" SET "type" = 'FOLDER' WHERE "type" = 'VIEW' AND "viewId" IS NULL AND "targetObjectMetadataId" IS NULL AND "targetRecordId" IS NULL`,
+    );
+
     await queryRunner.query(
       `UPDATE "core"."navigationMenuItem" SET "type" = 'RECORD' WHERE "type" IS NULL AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL`,
     );
