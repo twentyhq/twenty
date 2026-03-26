@@ -87,10 +87,7 @@ export const InformationBanner = ({
             )}
           </StyledContent>
           {onClose && (
-            <StyledCloseButton
-              onClick={onClose}
-              aria-label={t`Close banner`}
-            >
+            <StyledCloseButton onClick={onClose} aria-label={t`Close banner`}>
               <IconX size={theme.icon.size.md} />
             </StyledCloseButton>
           )}
