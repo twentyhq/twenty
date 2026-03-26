@@ -34,6 +34,11 @@ msgstr "{fieldType} 필드는 고유할 수 없습니다."
 msgid "{fieldType} fields cannot have a default value."
 msgstr "{fieldType} 필드는 기본값을 가질 수 없습니다."
 
+#. js-lingui-id: VEmyIu
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util.ts
+msgid "{fullMessage}"
+msgstr ""
+
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
