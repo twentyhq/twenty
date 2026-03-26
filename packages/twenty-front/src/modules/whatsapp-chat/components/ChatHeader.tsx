@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   IconArchive,
@@ -24,6 +24,16 @@ const PROGRAM_COLORS: Record<string, { bg: string; text: string }> = {
   Alumni: { bg: '#f1f5f9', text: '#475569' },
   Canceled: { bg: '#ffe4e6', text: '#be123c' },
   Lead: { bg: '#f5f5f4', text: '#78716c' },
+};
+
+// ── Types ───────────────────────────────────────────────────────
+
+export type WorkspaceMember = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  avatarUrl?: string | null;
 };
 
 // ── Styled components ───────────────────────────────────────────
@@ -114,14 +124,6 @@ const StyledProgramBadge = styled.span<{ bg: string; text: string }>`
   letter-spacing: 0.02em;
   line-height: 1;
   padding: 2px 5px;
-  white-space: nowrap;
-`;
-
-const StyledOwnerLine = styled.span`
-  color: #9CA3AF;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
@@ -228,12 +230,129 @@ const StyledAddLabelButton = styled.button`
   }
 `;
 
+// ── Assignment styled components ────────────────────────────────
+
+const StyledAssignRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  padding: 4px 12px 6px;
+`;
+
+const StyledAssignButton = styled.button<{ hasValue?: boolean; variant?: 'owner' | 'coach' }>`
+  align-items: center;
+  background: ${({ hasValue, variant }) =>
+    hasValue
+      ? variant === 'coach' ? '#f0fdf4' : '#fef2f2'
+      : '#F9FAFB'};
+  border: 1px solid ${({ hasValue, variant }) =>
+    hasValue
+      ? variant === 'coach' ? '#86efac' : '#fca5a5'
+      : '#E5E7EB'};
+  border-radius: 6px;
+  color: ${({ hasValue, variant }) =>
+    hasValue
+      ? variant === 'coach' ? '#166534' : '#dc2626'
+      : '#6B7280'};
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  position: relative;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: ${({ variant }) =>
+      variant === 'coach' ? '#22c55e' : '#ef4444'};
+    opacity: 0.9;
+  }
+`;
+
+const StyledDropdown = styled.div`
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  left: 0;
+  max-height: 280px;
+  min-width: 220px;
+  overflow-y: auto;
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 100;
+`;
+
+const StyledDropdownHeader = styled.div`
+  color: #9CA3AF;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 8px 12px 4px;
+  text-transform: uppercase;
+`;
+
+const StyledDropdownItem = styled.button<{ isActive?: boolean }>`
+  align-items: center;
+  background: ${({ isActive }) => (isActive ? '#F0F9FF' : 'transparent')};
+  border: none;
+  color: ${({ isActive }) => (isActive ? '#1A6CFF' : '#374151')};
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: ${({ isActive }) => (isActive ? 500 : 400)};
+  gap: 8px;
+  padding: 6px 12px;
+  text-align: left;
+  width: 100%;
+
+  &:hover {
+    background: #F3F4F6;
+  }
+`;
+
+const StyledDropdownSearch = styled.input`
+  background: #F9FAFB;
+  border: none;
+  border-bottom: 1px solid #E5E7EB;
+  color: #111827;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  padding: 8px 12px;
+  width: 100%;
+
+  &::placeholder {
+    color: #9CA3AF;
+  }
+`;
+
+const StyledMemberInitials = styled.span`
+  align-items: center;
+  background: #E5E7EB;
+  border-radius: 50%;
+  color: #374151;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  height: 22px;
+  justify-content: center;
+  width: 22px;
+`;
+
 // ── Component ───────────────────────────────────────────────────
 
 type ChatHeaderProps = {
   conversation: WaConversation;
   messages?: WaMessage[];
   labels: WaLabel[];
+  workspaceMembers: WorkspaceMember[];
+  currentUserEmail?: string;
   onAddLabel: (name: string, color: string) => Promise<unknown>;
   onRemoveLabel: (labelId: string) => void;
   onTogglePin?: (id: string, isPinned: boolean) => void;
@@ -241,6 +360,8 @@ type ChatHeaderProps = {
   onToggleDetails?: () => void;
   onToggleSalesAngel?: () => void;
   showSalesAngel?: boolean;
+  onAssign?: (email: string, name: string) => void;
+  onAssignCoach?: (email: string, name: string) => void;
 };
 
 const formatChatForClipboard = (
@@ -268,6 +389,8 @@ export const ChatHeader = ({
   conversation,
   messages,
   labels,
+  workspaceMembers,
+  currentUserEmail,
   onAddLabel,
   onRemoveLabel,
   onTogglePin,
@@ -275,9 +398,16 @@ export const ChatHeader = ({
   onToggleDetails,
   onToggleSalesAngel,
   showSalesAngel,
+  onAssign,
+  onAssignCoach,
 }: ChatHeaderProps) => {
   const [showPicker, setShowPicker] = useState(false);
   const addButtonRef = useRef<HTMLButtonElement>(null);
+  const [showOwnerDropdown, setShowOwnerDropdown] = useState(false);
+  const [showCoachDropdown, setShowCoachDropdown] = useState(false);
+  const [assignSearch, setAssignSearch] = useState('');
+  const ownerRef = useRef<HTMLDivElement>(null);
+  const coachRef = useRef<HTMLDivElement>(null);
 
   const { pictureUrl } = useProfilePicture(
     conversation.sessionName,
@@ -303,8 +433,10 @@ export const ChatHeader = ({
   const duration = conversation.justusDuration;
   const programColor = program ? PROGRAM_COLORS[program] : undefined;
 
-  const ownerName = conversation.assignedToName || 'Unassigned';
-  const coachName = conversation.coachLeadOwnerName || 'None';
+  const ownerName = conversation.assignedToName || null;
+  const ownerEmail = conversation.assignedToEmail || null;
+  const coachName = conversation.coachLeadOwnerName || null;
+  const coachEmail = conversation.coachLeadOwnerEmail || null;
 
   const handleTogglePin = useCallback(() => {
     onTogglePin?.(conversation.id, !conversation.isPinned);
@@ -323,6 +455,63 @@ export const ChatHeader = ({
       setTimeout(() => setCopied(false), 2000);
     });
   }, [conversation, messages]);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ownerRef.current && !ownerRef.current.contains(e.target as Node)) {
+        setShowOwnerDropdown(false);
+      }
+      if (coachRef.current && !coachRef.current.contains(e.target as Node)) {
+        setShowCoachDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // Reset search when dropdown closes
+  useEffect(() => {
+    if (!showOwnerDropdown && !showCoachDropdown) setAssignSearch('');
+  }, [showOwnerDropdown, showCoachDropdown]);
+
+  const filteredMembers = workspaceMembers.filter((m) => {
+    if (!assignSearch) return true;
+    const q = assignSearch.toLowerCase();
+    return m.fullName.toLowerCase().includes(q) || m.email.toLowerCase().includes(q);
+  });
+
+  const handleSelectOwner = useCallback(
+    (member: WorkspaceMember) => {
+      onAssign?.(member.email, member.fullName);
+      setShowOwnerDropdown(false);
+    },
+    [onAssign],
+  );
+
+  const handleSelectCoach = useCallback(
+    (member: WorkspaceMember) => {
+      onAssignCoach?.(member.email, member.fullName);
+      setShowCoachDropdown(false);
+    },
+    [onAssignCoach],
+  );
+
+  const memberInitials = (m: WorkspaceMember) =>
+    m.fullName
+      .split(/\s+/)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase() || '?';
+
+  const meFirst = currentUserEmail
+    ? filteredMembers.sort((a, b) => {
+        if (a.email === currentUserEmail) return -1;
+        if (b.email === currentUserEmail) return 1;
+        return 0;
+      })
+    : filteredMembers;
 
   return (
     <StyledContainer>
@@ -362,9 +551,6 @@ export const ChatHeader = ({
                 </StyledProgramBadge>
               </StyledPhoneRow>
             )}
-            <StyledOwnerLine>
-              Owner: {ownerName} &middot; Coach: {coachName}
-            </StyledOwnerLine>
           </StyledInfo>
         </StyledLeft>
         <StyledRight>
@@ -419,6 +605,92 @@ export const ChatHeader = ({
           )}
         </StyledRight>
       </StyledTopRow>
+
+      {/* ── Assignment row ── */}
+      <StyledAssignRow>
+        <div ref={ownerRef} style={{ position: 'relative' }}>
+          <StyledAssignButton
+            hasValue={!!ownerName}
+            variant="owner"
+            onClick={() => {
+              setShowCoachDropdown(false);
+              setShowOwnerDropdown((p) => !p);
+            }}
+            title={ownerEmail ? `Owner: ${ownerName} (${ownerEmail})` : 'Assign owner'}
+          >
+            {ownerName
+              ? `Owner: ${ownerName.split(' ')[0]}`
+              : 'Owner'}
+          </StyledAssignButton>
+          {showOwnerDropdown && (
+            <StyledDropdown>
+              <StyledDropdownSearch
+                placeholder="Search..."
+                value={assignSearch}
+                onChange={(e) => setAssignSearch(e.target.value)}
+                autoFocus
+              />
+              <StyledDropdownHeader>Assign Owner</StyledDropdownHeader>
+              {meFirst.map((m) => (
+                <StyledDropdownItem
+                  key={m.email}
+                  isActive={m.email === ownerEmail}
+                  onClick={() => handleSelectOwner(m)}
+                >
+                  <StyledMemberInitials>{memberInitials(m)}</StyledMemberInitials>
+                  {m.fullName}
+                  {m.email === currentUserEmail ? ' (Me)' : ''}
+                </StyledDropdownItem>
+              ))}
+              {meFirst.length === 0 && (
+                <StyledDropdownItem>No matches</StyledDropdownItem>
+              )}
+            </StyledDropdown>
+          )}
+        </div>
+
+        <div ref={coachRef} style={{ position: 'relative' }}>
+          <StyledAssignButton
+            hasValue={!!coachName}
+            variant="coach"
+            onClick={() => {
+              setShowOwnerDropdown(false);
+              setShowCoachDropdown((p) => !p);
+            }}
+            title={coachEmail ? `Coach: ${coachName} (${coachEmail})` : 'Assign coach'}
+          >
+            {coachName
+              ? `Coach: ${coachName.split(' ')[0]}`
+              : 'Coach'}
+          </StyledAssignButton>
+          {showCoachDropdown && (
+            <StyledDropdown>
+              <StyledDropdownSearch
+                placeholder="Search..."
+                value={assignSearch}
+                onChange={(e) => setAssignSearch(e.target.value)}
+                autoFocus
+              />
+              <StyledDropdownHeader>Assign Coach</StyledDropdownHeader>
+              {meFirst.map((m) => (
+                <StyledDropdownItem
+                  key={m.email}
+                  isActive={m.email === coachEmail}
+                  onClick={() => handleSelectCoach(m)}
+                >
+                  <StyledMemberInitials>{memberInitials(m)}</StyledMemberInitials>
+                  {m.fullName}
+                  {m.email === currentUserEmail ? ' (Me)' : ''}
+                </StyledDropdownItem>
+              ))}
+              {meFirst.length === 0 && (
+                <StyledDropdownItem>No matches</StyledDropdownItem>
+              )}
+            </StyledDropdown>
+          )}
+        </div>
+      </StyledAssignRow>
+
       <StyledLabelsRow>
         {labels.map((label) => (
           <LabelBadge key={label.id} label={label} onRemove={onRemoveLabel} />
