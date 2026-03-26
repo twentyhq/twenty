@@ -6,6 +6,7 @@ type CoatApprovalListItemProps = {
   customerName: string | null;
   programName: string | null;
   coatExportStatus: string | null;
+  contractStatus: string | null;
   signatureDate: string | null;
   hasSpecialAgreements: boolean;
   isSelected: boolean;
@@ -103,8 +104,11 @@ const getExportStatusColor = (status: string | null): string => {
   }
 };
 
-const getExportStatusLabel = (status: string | null): string => {
-  switch (status) {
+const getExportStatusLabel = (
+  exportStatus: string | null,
+  contractStatus: string | null,
+): string => {
+  switch (exportStatus) {
     case 'READY_FOR_EXPORT':
       return 'Ready for Export';
     case 'EXPORTED':
@@ -116,10 +120,18 @@ const getExportStatusLabel = (status: string | null): string => {
     case null:
     case undefined:
     case '':
-      return 'Needs Approval';
+      return contractStatus === 'Completed' ? 'Needs Approval' : contractStatus ?? 'Unknown';
     default:
-      return status;
+      return exportStatus;
   }
+};
+
+const getExportStatusColorWithContract = (
+  exportStatus: string | null,
+  contractStatus: string | null,
+): string => {
+  if (exportStatus) return getExportStatusColor(exportStatus);
+  return contractStatus === 'Completed' ? '#f59e0b' : '#6b7280';
 };
 
 type ProductBadgeInfo = {
@@ -176,13 +188,14 @@ export const CoatApprovalListItem = ({
   customerName,
   programName,
   coatExportStatus,
+  contractStatus,
   signatureDate,
   hasSpecialAgreements,
   isSelected,
   onClick,
 }: CoatApprovalListItemProps) => {
   const formattedDate = formatDate(signatureDate);
-  const statusColor = getExportStatusColor(coatExportStatus);
+  const statusColor = getExportStatusColorWithContract(coatExportStatus, contractStatus);
   const productBadge = getProductBadge(programName);
 
   return (
@@ -200,7 +213,7 @@ export const CoatApprovalListItem = ({
       </StyledMetaRow>
       <StyledMetaRow>
         <StyledExportStatusBadge statusColor={statusColor}>
-          {getExportStatusLabel(coatExportStatus)}
+          {getExportStatusLabel(coatExportStatus, contractStatus)}
         </StyledExportStatusBadge>
         {isDefined(formattedDate) && <span>{formattedDate}</span>}
         {hasSpecialAgreements && (
