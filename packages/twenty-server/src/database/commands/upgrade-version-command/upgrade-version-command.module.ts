@@ -20,7 +20,15 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     V1_20_UpgradeVersionCommandModule,
     DataSourceModule,
   ],
-  providers: [UpgradeCommand, WorkspaceVersionCheckService, CoreMigrationRunnerService],
-  exports: [WorkspaceVersionCheckService, CoreMigrationRunnerService, UpgradeCommand],
+  providers: [
+    UpgradeCommand,
+    WorkspaceVersionCheckService,
+    CoreMigrationRunnerService,
+  ],
+  exports: [
+    WorkspaceVersionCheckService,
+    CoreMigrationRunnerService,
+    UpgradeCommand,
+  ],
 })
 export class UpgradeVersionCommandModule {}

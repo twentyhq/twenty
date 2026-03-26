@@ -5,7 +5,6 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
 import { WorkspaceVersionCheckService } from 'src/database/commands/services/workspace-version-check.service';
-import { UpgradeCommand } from 'src/database/commands/upgrade-version-command/upgrade.command';
 
 type RunTypeormMigrationCommandOptions = {
   force?: boolean;
@@ -22,7 +21,6 @@ export class RunTypeormMigrationCommand extends CommandRunner {
   constructor(
     private readonly workspaceVersionCheckService: WorkspaceVersionCheckService,
     private readonly coreMigrationRunnerService: CoreMigrationRunnerService,
-    private readonly upgradeCommand: UpgradeCommand,
   ) {
     super();
   }
@@ -49,12 +47,12 @@ export class RunTypeormMigrationCommand extends CommandRunner {
         await this.workspaceVersionCheckService.hasActiveOrSuspendedWorkspaces();
 
       if (hasWorkspaces) {
-        const allCommandVersions = Object.keys(
-          this.upgradeCommand.allCommands,
-        );
+        const previousVersion =
+          this.workspaceVersionCheckService.getPreviousTwentyMajorMinorVersion();
+
         const workspacesBelow =
-          await this.workspaceVersionCheckService.getWorkspacesBelowMinimumVersion(
-            allCommandVersions,
+          await this.workspaceVersionCheckService.getWorkspacesBelowVersion(
+            previousVersion.version,
           );
 
         if (workspacesBelow.length > 0) {

@@ -14,7 +14,10 @@ import {
   WorkspacesMigrationCommandRunner,
 } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
-import { WorkspaceVersionCheckService } from 'src/database/commands/services/workspace-version-check.service';
+import {
+  type UpgradeCommandVersion,
+  WorkspaceVersionCheckService,
+} from 'src/database/commands/services/workspace-version-check.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -23,13 +26,12 @@ import {
   type CompareVersionMajorAndMinorReturnType,
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
-import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
 export type VersionCommands = (
   | WorkspacesMigrationCommandRunner
   | ActiveOrSuspendedWorkspacesMigrationCommandRunner
 )[];
-export type AllCommands = Record<string, VersionCommands>;
+export type AllCommands = Record<UpgradeCommandVersion, VersionCommands>;
 
 export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private fromWorkspaceVersion: SemVer;
@@ -63,7 +65,8 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
     const currentAppVersion =
       this.workspaceVersionCheckService.getCurrentAppVersion();
-    const currentVersionMajorMinor = `${currentAppVersion.major}.${currentAppVersion.minor}.0`;
+    const currentVersionMajorMinor =
+      `${currentAppVersion.major}.${currentAppVersion.minor}.0` as UpgradeCommandVersion;
     const currentCommands = this.allCommands[currentVersionMajorMinor];
 
     if (!isDefined(currentCommands)) {
@@ -72,17 +75,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       );
     }
 
-    const allCommandsVersions = Object.keys(this.allCommands);
-    const previousVersion = getPreviousVersion({
-      currentVersion: currentVersionMajorMinor,
-      versions: allCommandsVersions,
-    });
+    const previousVersion =
+      this.workspaceVersionCheckService.getPreviousTwentyMajorMinorVersion();
 
-    if (!isDefined(previousVersion)) {
-      throw new Error(
-        `No previous version found for version ${currentAppVersion}. Please review the "allCommands" record. Available versions are: ${allCommandsVersions.join(', ')}`,
-      );
-    }
     this.commands = currentCommands;
     this.fromWorkspaceVersion = previousVersion;
     this.currentAppVersion = currentAppVersion;
@@ -115,10 +110,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         return;
       }
 
-      const allCommandsVersions = Object.keys(this.allCommands);
       const workspacesThatAreBelowFromWorkspaceVersion =
-        await this.workspaceVersionCheckService.getWorkspacesBelowMinimumVersion(
-          allCommandsVersions,
+        await this.workspaceVersionCheckService.getWorkspacesBelowVersion(
+          this.fromWorkspaceVersion.version,
         );
 
       if (workspacesThatAreBelowFromWorkspaceVersion.length > 0) {

@@ -7,37 +7,38 @@ import {
 } from 'twenty-shared/testing';
 import { type Repository } from 'typeorm';
 
-import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
+import {
+  type AllCommands,
+  UpgradeCommandRunner,
+} from 'src/database/commands/command-runners/upgrade.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/services/core-migration-runner.service';
-import { WorkspaceVersionCheckService } from 'src/database/commands/services/workspace-version-check.service';
+import {
+  UPGRADE_COMMAND_VERSIONS,
+  WorkspaceVersionCheckService,
+} from 'src/database/commands/services/workspace-version-check.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
+const CURRENT_VERSION =
+  UPGRADE_COMMAND_VERSIONS[UPGRADE_COMMAND_VERSIONS.length - 1];
+const PREVIOUS_VERSION =
+  UPGRADE_COMMAND_VERSIONS[UPGRADE_COMMAND_VERSIONS.length - 2];
+
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
-  allCommands = {
-    '1.0.0': [],
-    '2.0.0': [],
-  };
+  allCommands = Object.fromEntries(
+    UPGRADE_COMMAND_VERSIONS.map((version) => [version, []]),
+  ) as unknown as AllCommands;
 }
 
-class InvalidUpgradeCommandRunner extends UpgradeCommandRunner {
-  allCommands = {
-    invalid: [],
-    '2.0.0': [],
-  };
-}
-
-type CommandRunnerValues =
-  | typeof BasicUpgradeCommandRunner
-  | typeof InvalidUpgradeCommandRunner;
+type CommandRunnerValues = typeof BasicUpgradeCommandRunner;
 
 const generateMockWorkspace = (overrides?: Partial<WorkspaceEntity>) =>
   ({
     id: 'workspace-id',
-    version: '1.0.0',
+    version: PREVIOUS_VERSION,
     createdAt: new Date(),
     updatedAt: new Date(),
     allowImpersonation: false,
@@ -166,7 +167,7 @@ describe('UpgradeCommandRunner', () => {
     workspaceOverride,
     workspaces,
     commandRunner = BasicUpgradeCommandRunner,
-    appVersion = '2.0.0',
+    appVersion = CURRENT_VERSION,
   }: BuildModuleAndSetupSpiesArgs) => {
     const generatedWorkspaces = Array.from(
       { length: numberOfWorkspace },
@@ -202,12 +203,10 @@ describe('UpgradeCommandRunner', () => {
       id: 'higher_version_workspace',
       version: '42.42.42',
     });
-    const appVersion = '2.0.0';
 
     await buildModuleAndSetupSpies({
       numberOfWorkspace: 0,
       workspaces: [higherVersionWorkspace],
-      appVersion,
     });
     // @ts-expect-error legacy noImplicitAny
     const passedParams = [];
@@ -233,11 +232,9 @@ describe('UpgradeCommandRunner', () => {
 
   it('should run upgrade over several workspaces', async () => {
     const numberOfWorkspace = 42;
-    const appVersion = '2.0.0';
 
     await buildModuleAndSetupSpies({
       numberOfWorkspace,
-      appVersion,
     });
     // @ts-expect-error legacy noImplicitAny
     const passedParams = [];
@@ -252,7 +249,7 @@ describe('UpgradeCommandRunner', () => {
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
       numberOfWorkspace,
       { id: expect.any(String) },
-      { version: appVersion },
+      { version: CURRENT_VERSION },
     );
     expect(upgradeCommandRunner.migrationReport.success.length).toBe(42);
     expect(upgradeCommandRunner.migrationReport.fail.length).toBe(0);
@@ -266,9 +263,9 @@ describe('UpgradeCommandRunner', () => {
         title: 'even if workspace version and app version differ in patch',
         context: {
           input: {
-            appVersion: 'v2.0.0',
+            appVersion: `v${CURRENT_VERSION}`,
             workspaceOverride: {
-              version: 'v1.0.12',
+              version: `v${PREVIOUS_VERSION.replace('.0', '.12')}`,
             },
           },
         },
@@ -278,9 +275,9 @@ describe('UpgradeCommandRunner', () => {
           'even if workspace version and app version differ in patch and semantic',
         context: {
           input: {
-            appVersion: 'v2.0.0',
+            appVersion: `v${CURRENT_VERSION}`,
             workspaceOverride: {
-              version: '1.0.12',
+              version: PREVIOUS_VERSION.replace('.0', '.12'),
             },
           },
         },
@@ -289,9 +286,9 @@ describe('UpgradeCommandRunner', () => {
         title: 'even if app version contains a patch value',
         context: {
           input: {
-            appVersion: '2.0.24',
+            appVersion: CURRENT_VERSION.replace('.0', '.24'),
             workspaceOverride: {
-              version: '1.0.12',
+              version: PREVIOUS_VERSION.replace('.0', '.12'),
             },
           },
         },
@@ -334,7 +331,6 @@ describe('UpgradeCommandRunner', () => {
         title: 'when workspace version is not equal to fromVersion',
         context: {
           input: {
-            appVersion: '2.0.0',
             workspaceOverride: {
               version: '0.1.0',
             },
@@ -383,15 +379,7 @@ describe('UpgradeCommandRunner', () => {
         title: 'when previous version is not found',
         context: {
           input: {
-            appVersion: '1.0.0',
-          },
-        },
-      },
-      {
-        title: 'when all commands contains invalid semver keys',
-        context: {
-          input: {
-            commandRunner: InvalidUpgradeCommandRunner,
+            appVersion: UPGRADE_COMMAND_VERSIONS[0],
           },
         },
       },

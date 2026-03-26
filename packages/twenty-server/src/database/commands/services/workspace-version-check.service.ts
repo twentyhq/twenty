@@ -11,6 +11,16 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
+export const UPGRADE_COMMAND_VERSIONS = [
+  '1.16.0',
+  '1.17.0',
+  '1.18.0',
+  '1.19.0',
+  '1.20.0',
+] as const;
+
+export type UpgradeCommandVersion = (typeof UPGRADE_COMMAND_VERSIONS)[number];
+
 @Injectable()
 export class WorkspaceVersionCheckService {
   private readonly logger = new Logger(WorkspaceVersionCheckService.name);
@@ -27,63 +37,8 @@ export class WorkspaceVersionCheckService {
     return workspaces.length > 0;
   }
 
-  async getWorkspacesBelowMinimumVersion(
-    allCommandVersions: string[],
-  ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName' | 'version'>[]> {
-    const currentAppVersion = this.getCurrentAppVersion();
-    const currentVersionMajorMinor = `${currentAppVersion.major}.${currentAppVersion.minor}.0`;
-
-    const previousVersion = getPreviousVersion({
-      currentVersion: currentVersionMajorMinor,
-      versions: allCommandVersions,
-    });
-
-    if (!isDefined(previousVersion)) {
-      throw new Error(
-        `No previous version found for version ${currentAppVersion}. Available versions are: ${allCommandVersions.join(', ')}`,
-      );
-    }
-
-    return this.findWorkspacesBelowVersion(previousVersion);
-  }
-
-  getCurrentAppVersion(): SemVer {
-    const appVersion = this.twentyConfigService.get('APP_VERSION');
-
-    if (!isDefined(appVersion)) {
-      throw new Error(
-        'APP_VERSION is not defined, please double check your env variables',
-      );
-    }
-
-    try {
-      return new SemVer(appVersion);
-    } catch {
-      throw new Error(
-        `Should never occur, APP_VERSION is invalid ${appVersion}`,
-      );
-    }
-  }
-
-  private async loadActiveOrSuspendedWorkspaces(): Promise<
-    Pick<WorkspaceEntity, 'id' | 'version' | 'displayName'>[]
-  > {
-    return this.workspaceRepository.find({
-      select: ['id', 'version', 'displayName'],
-      where: {
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
-      },
-      order: {
-        id: 'ASC',
-      },
-    });
-  }
-
-  private async findWorkspacesBelowVersion(
-    fromWorkspaceVersion: SemVer,
+  async getWorkspacesBelowVersion(
+    version: string,
   ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName' | 'version'>[]> {
     const allActiveOrSuspendedWorkspaces =
       await this.loadActiveOrSuspendedWorkspaces();
@@ -104,7 +59,7 @@ export class WorkspaceVersionCheckService {
       try {
         const versionCompareResult = compareVersionMajorAndMinor(
           workspace.version,
-          fromWorkspaceVersion.version,
+          version,
         );
 
         return versionCompareResult === 'lower';
@@ -115,6 +70,53 @@ export class WorkspaceVersionCheckService {
 
         return true;
       }
+    });
+  }
+
+  getCurrentAppVersion(): SemVer {
+    const appVersion = this.twentyConfigService.get('APP_VERSION');
+
+    if (!isDefined(appVersion)) {
+      throw new Error(
+        'APP_VERSION is not defined, please double check your env variables',
+      );
+    }
+
+    return new SemVer(appVersion);
+  }
+
+  getPreviousTwentyMajorMinorVersion(): SemVer {
+    const currentAppVersion = this.getCurrentAppVersion();
+    const currentVersionMajorMinor = `${currentAppVersion.major}.${currentAppVersion.minor}.0`;
+
+    const previousVersion = getPreviousVersion({
+      currentVersion: currentVersionMajorMinor,
+      versions: [...UPGRADE_COMMAND_VERSIONS],
+    });
+
+    if (!isDefined(previousVersion)) {
+      throw new Error(
+        `No previous version found for version ${currentAppVersion}. Available versions: ${UPGRADE_COMMAND_VERSIONS.join(', ')}`,
+      );
+    }
+
+    return previousVersion;
+  }
+
+  private async loadActiveOrSuspendedWorkspaces(): Promise<
+    Pick<WorkspaceEntity, 'id' | 'version' | 'displayName'>[]
+  > {
+    return this.workspaceRepository.find({
+      select: ['id', 'version', 'displayName'],
+      where: {
+        activationStatus: In([
+          WorkspaceActivationStatus.ACTIVE,
+          WorkspaceActivationStatus.SUSPENDED,
+        ]),
+      },
+      order: {
+        id: 'ASC',
+      },
     });
   }
 }
