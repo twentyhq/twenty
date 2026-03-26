@@ -2,6 +2,7 @@
 Validator for tracked changes in Word documents.
 """
 
+import os
 import subprocess
 import tempfile
 import zipfile
@@ -12,12 +13,38 @@ class RedliningValidator:
     """Validator for tracked changes in Word documents."""
 
     def __init__(self, unpacked_dir, original_docx, verbose=False):
-        self.unpacked_dir = Path(unpacked_dir)
-        self.original_docx = Path(original_docx)
+        self.unpacked_dir = Path(unpacked_dir).resolve()
+        self.original_docx = Path(original_docx).resolve()
+        self._validate_paths()
         self.verbose = verbose
         self.namespaces = {
             "w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
         }
+
+    def _validate_paths(self):
+        """Validate file paths to prevent path traversal attacks."""
+        # Check for path traversal sequences
+        for path in [self.unpacked_dir, self.original_docx]:
+            path_str = str(path)
+            # Check for suspicious patterns
+            if ".." in path_str or path_str.startswith("/etc") or path_str.startswith("/proc"):
+                raise ValueError(f"Invalid path detected: {path}")
+            
+            # Ensure paths are absolute and normalized
+            if not path.is_absolute():
+                raise ValueError(f"Path must be absolute: {path}")
+        
+        # Verify unpacked_dir exists and is a directory
+        if not self.unpacked_dir.exists():
+            raise ValueError(f"Unpacked directory does not exist: {self.unpacked_dir}")
+        if not self.unpacked_dir.is_dir():
+            raise ValueError(f"Path is not a directory: {self.unpacked_dir}")
+        
+        # Verify original_docx exists and is a file
+        if not self.original_docx.exists():
+            raise ValueError(f"Original file does not exist: {self.original_docx}")
+        if not self.original_docx.is_file():
+            raise ValueError(f"Path is not a file: {self.original_docx}")
 
     def validate(self):
         """Main validation method that returns True if valid, False otherwise."""
@@ -163,6 +190,7 @@ class RedliningValidator:
                     ],
                     capture_output=True,
                     text=True,
+                    timeout=30,
                 )
 
                 if result.stdout.strip():
@@ -194,6 +222,7 @@ class RedliningValidator:
                     ],
                     capture_output=True,
                     text=True,
+                    timeout=30,
                 )
 
                 if result.stdout.strip():

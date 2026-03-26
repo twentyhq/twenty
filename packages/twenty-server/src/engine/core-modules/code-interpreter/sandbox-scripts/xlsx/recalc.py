@@ -89,7 +89,7 @@ def recalc(filename, timeout=30):
         if timeout_cmd:
             cmd = [timeout_cmd, str(timeout)] + cmd
     
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout + 5)
     
     if result.returncode != 0 and result.returncode != 124:  # 124 is timeout exit code
         error_msg = result.stderr or 'Unknown error during recalculation'
