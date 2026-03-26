@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { SemVer } from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 
-import { UPGRADE_COMMAND_VERSIONS } from 'src/engine/constants/upgrade-command-versions.constant';
+import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { getPreviousVersion } from 'src/utils/version/get-previous-version';
 
@@ -29,12 +29,12 @@ export class CoreEngineVersionService {
 
     const previousVersion = getPreviousVersion({
       currentVersion: currentVersionMajorMinor,
-      versions: [...UPGRADE_COMMAND_VERSIONS],
+      versions: [...UPGRADE_COMMAND_SUPPORTED_VERSIONS],
     });
 
     if (!isDefined(previousVersion)) {
       throw new Error(
-        `No previous version found for version ${currentAppVersion}. Available versions: ${UPGRADE_COMMAND_VERSIONS.join(', ')}`,
+        `No previous version found for version ${currentAppVersion}. Available versions: ${UPGRADE_COMMAND_SUPPORTED_VERSIONS.join(', ')}`,
       );
     }
 

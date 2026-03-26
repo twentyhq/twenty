@@ -11,7 +11,7 @@ import {
   UpgradeCommandRunner,
   type AllCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
-import { UPGRADE_COMMAND_VERSIONS } from 'src/engine/constants/upgrade-command-versions.constant';
+import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -22,13 +22,17 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 const CURRENT_VERSION =
-  UPGRADE_COMMAND_VERSIONS[UPGRADE_COMMAND_VERSIONS.length - 1];
+  UPGRADE_COMMAND_SUPPORTED_VERSIONS[
+    UPGRADE_COMMAND_SUPPORTED_VERSIONS.length - 1
+  ];
 const PREVIOUS_VERSION =
-  UPGRADE_COMMAND_VERSIONS[UPGRADE_COMMAND_VERSIONS.length - 2];
+  UPGRADE_COMMAND_SUPPORTED_VERSIONS[
+    UPGRADE_COMMAND_SUPPORTED_VERSIONS.length - 2
+  ];
 
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = Object.fromEntries(
-    UPGRADE_COMMAND_VERSIONS.map((version) => [version, []]),
+    UPGRADE_COMMAND_SUPPORTED_VERSIONS.map((version) => [version, []]),
   ) as unknown as AllCommands;
 }
 
@@ -389,11 +393,11 @@ describe('UpgradeCommandRunner', () => {
         title: 'when previous version is not found',
         context: {
           input: {
-            appVersion: UPGRADE_COMMAND_VERSIONS[0],
+            appVersion: UPGRADE_COMMAND_SUPPORTED_VERSIONS[0],
           },
           output: {
             failReportWorkspaceId: 'global',
-            expectedErrorMessage: `No previous version found for version ${UPGRADE_COMMAND_VERSIONS[0]}. Available versions: ${UPGRADE_COMMAND_VERSIONS.join(', ')}`,
+            expectedErrorMessage: `No previous version found for version ${UPGRADE_COMMAND_SUPPORTED_VERSIONS[0]}. Available versions: ${UPGRADE_COMMAND_SUPPORTED_VERSIONS.join(', ')}`,
           },
         },
       },
