@@ -56,11 +56,6 @@
       "import": "./dist/application.mjs",
       "require": "./dist/application.cjs"
     },
-    "./command-menu": {
-      "types": "./dist/command-menu/index.d.ts",
-      "import": "./dist/command-menu.mjs",
-      "require": "./dist/command-menu.cjs"
-    },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
@@ -121,7 +116,6 @@
     "dist",
     "ai",
     "application",
-    "command-menu",
     "constants",
     "database-events",
     "logic-function",
@@ -141,9 +135,6 @@
       ],
       "application": [
         "dist/application/index.d.ts"
-      ],
-      "command-menu": [
-        "dist/command-menu/index.d.ts"
       ],
       "constants": [
         "dist/constants/index.d.ts"

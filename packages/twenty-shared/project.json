@@ -16,8 +16,6 @@
         "{projectRoot}/ai/dist",
         "{projectRoot}/application/package.json",
         "{projectRoot}/application/dist",
-        "{projectRoot}/command-menu/package.json",
-        "{projectRoot}/command-menu/dist",
         "{projectRoot}/constants/package.json",
         "{projectRoot}/constants/dist",
         "{projectRoot}/database-events/package.json",

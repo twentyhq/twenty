@@ -4,13 +4,9 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
-import { commandMenuItemEditNumberOfSelectedRecordsState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditNumberOfSelectedRecordsState';
-import { commandMenuItemEditTargetedRecordsRuleState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditTargetedRecordsRuleState';
+import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
@@ -29,26 +25,6 @@ export const useEnterLayoutCustomizationMode = () => {
   const isCommandMenuItemEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
   );
-
-  const snapshotEditionStatesFromMainContext = useCallback(() => {
-    store.set(
-      commandMenuItemEditTargetedRecordsRuleState.atom,
-      store.get(
-        contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-      ),
-    );
-
-    store.set(
-      commandMenuItemEditNumberOfSelectedRecordsState.atom,
-      store.get(
-        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-      ),
-    );
-  }, [store]);
 
   const enterLayoutCustomizationMode = useCallback(() => {
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
@@ -82,7 +58,7 @@ export const useEnterLayoutCustomizationMode = () => {
       isSidePanelOpened &&
       currentSidePanelPage === SidePanelPages.CommandMenuDisplay
     ) {
-      snapshotEditionStatesFromMainContext();
+      store.set(commandMenuItemEditSelectionModeState.atom, 'selection');
 
       navigateSidePanel({
         page: SidePanelPages.CommandMenuEdit,
@@ -91,12 +67,7 @@ export const useEnterLayoutCustomizationMode = () => {
         resetNavigationStack: true,
       });
     }
-  }, [
-    isCommandMenuItemEnabled,
-    navigateSidePanel,
-    snapshotEditionStatesFromMainContext,
-    store,
-  ]);
+  }, [isCommandMenuItemEnabled, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };
 };

@@ -1,6 +1,5 @@
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
-import { commandMenuItemEditNumberOfSelectedRecordsState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditNumberOfSelectedRecordsState';
-import { commandMenuItemEditTargetedRecordsRuleState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditTargetedRecordsRuleState';
+import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -10,7 +9,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import {
   IconChevronDown,
   IconSquareCheck,
@@ -50,48 +48,17 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
 
-  const commandMenuItemEditTargetedRecordsRule = useAtomStateValue(
-    commandMenuItemEditTargetedRecordsRuleState,
+  const commandMenuItemEditSelectionMode = useAtomStateValue(
+    commandMenuItemEditSelectionModeState,
   );
-  const setCommandMenuItemEditTargetedRecordsRule = useSetAtomState(
-    commandMenuItemEditTargetedRecordsRuleState,
-  );
-
-  const commandMenuItemEditNumberOfSelectedRecords = useAtomStateValue(
-    commandMenuItemEditNumberOfSelectedRecordsState,
-  );
-  const setCommandMenuItemEditNumberOfSelectedRecords = useSetAtomState(
-    commandMenuItemEditNumberOfSelectedRecordsState,
+  const setCommandMenuItemEditSelectionMode = useSetAtomState(
+    commandMenuItemEditSelectionModeState,
   );
 
-  const [snapshot, setSnapshot] = useState({
-    targetedRecordsRule: commandMenuItemEditTargetedRecordsRule,
-    numberOfSelectedRecords: commandMenuItemEditNumberOfSelectedRecords,
-  });
+  const isNoneSelected = commandMenuItemEditSelectionMode === 'none';
 
-  const isNoneSelected =
-    commandMenuItemEditTargetedRecordsRule.mode === 'selection' &&
-    commandMenuItemEditTargetedRecordsRule.selectedRecordIds.length === 0 &&
-    commandMenuItemEditNumberOfSelectedRecords === 0;
-
-  const handleSelectNone = () => {
-    setSnapshot({
-      targetedRecordsRule: commandMenuItemEditTargetedRecordsRule,
-      numberOfSelectedRecords: commandMenuItemEditNumberOfSelectedRecords,
-    });
-    setCommandMenuItemEditTargetedRecordsRule({
-      mode: 'selection',
-      selectedRecordIds: [],
-    });
-    setCommandMenuItemEditNumberOfSelectedRecords(0);
-    closeDropdown(DROPDOWN_ID);
-  };
-
-  const handleSelectSelection = () => {
-    setCommandMenuItemEditTargetedRecordsRule(snapshot.targetedRecordsRule);
-    setCommandMenuItemEditNumberOfSelectedRecords(
-      snapshot.numberOfSelectedRecords,
-    );
+  const handleSelectMode = (mode: 'none' | 'selection') => {
+    setCommandMenuItemEditSelectionMode(mode);
     closeDropdown(DROPDOWN_ID);
   };
 
@@ -123,13 +90,13 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
                 LeftIcon={IconSquareX}
                 text={t`No record selected`}
                 selected={isNoneSelected}
-                onClick={handleSelectNone}
+                onClick={() => handleSelectMode('none')}
               />
               <MenuItemSelect
                 LeftIcon={IconSquareCheck}
                 text={t`Records selected`}
                 selected={!isNoneSelected}
-                onClick={handleSelectSelection}
+                onClick={() => handleSelectMode('selection')}
               />
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>

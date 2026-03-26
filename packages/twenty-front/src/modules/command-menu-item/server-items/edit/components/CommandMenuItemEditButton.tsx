@@ -1,9 +1,5 @@
 import { AnimatedIconCrossfade } from 'twenty-ui/utilities';
-import { commandMenuItemEditNumberOfSelectedRecordsState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditNumberOfSelectedRecordsState';
-import { commandMenuItemEditTargetedRecordsRuleState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditTargetedRecordsRuleState';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -48,23 +44,7 @@ export const CommandMenuItemEditButton = () => {
       return;
     }
 
-    store.set(
-      commandMenuItemEditTargetedRecordsRuleState.atom,
-      store.get(
-        contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-      ),
-    );
-
-    store.set(
-      commandMenuItemEditNumberOfSelectedRecordsState.atom,
-      store.get(
-        contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-        }),
-      ),
-    );
+    store.set(commandMenuItemEditSelectionModeState.atom, 'selection');
 
     navigateSidePanel({
       page: SidePanelPages.CommandMenuEdit,
