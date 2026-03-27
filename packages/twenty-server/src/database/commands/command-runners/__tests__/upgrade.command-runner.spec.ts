@@ -113,6 +113,7 @@ const buildUpgradeCommandModule = async ({
             ),
           update: jest.fn(),
           find: jest.fn().mockResolvedValue(workspaces),
+          exists: jest.fn().mockResolvedValue(workspaces.length > 0),
         },
       },
       {
