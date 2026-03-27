@@ -1,4 +1,5 @@
 import { CoachingAnamneseTab } from '@/coaching/components/CoachingAnamneseTab';
+import { CoachingSessionsTab } from '@/coaching/components/CoachingSessionsTab';
 import { CoachingTicketsTab } from '@/coaching/components/CoachingTicketsTab';
 import { useCoachingCustomerDetail } from '@/coaching/hooks/useCoachingCustomerDetail';
 import { useCoachingSubscriptions } from '@/coaching/hooks/useCoachingSubscriptions';
@@ -419,7 +420,9 @@ export const CoachingCustomerDetail = ({
           </StyledSection>
         </StyledDetailContent>
       ) : (
-        activeTab === 'Anamnesebogen' ? (
+        activeTab === 'Sessions Analysis' ? (
+        <CoachingSessionsTab email={customerEmail} wpUserId={wpUserId} />
+      ) : activeTab === 'Anamnesebogen' ? (
         <CoachingAnamneseTab email={customerEmail} wpUserId={wpUserId} />
       ) : activeTab === 'Tickets' ? (
         <CoachingTicketsTab wpUserId={wpUserId} />
