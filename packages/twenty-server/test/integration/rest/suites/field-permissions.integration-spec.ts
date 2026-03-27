@@ -288,7 +288,7 @@ describe('Restricted fields', () => {
     });
 
     it('should allow create when user has no restricted update permissions', async () => {
-      // Remove field permission restrictions on phones
+      // Remove field permission restrictions on phones; restrict read on emails so response excludes it
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -296,6 +296,12 @@ describe('Restricted fields', () => {
             objectMetadataId: personObjectId,
             fieldMetadataId: phonesFieldId,
             canReadFieldValue: null,
+            canUpdateFieldValue: null,
+          },
+          {
+            objectMetadataId: personObjectId,
+            fieldMetadataId: emailsFieldId,
+            canReadFieldValue: false,
             canUpdateFieldValue: null,
           },
         ],
@@ -357,7 +363,7 @@ describe('Restricted fields', () => {
     });
 
     it('should allow createMany when user has no restricted update permissions', async () => {
-      // Remove field permission restrictions
+      // Remove field permission restrictions on phones; restrict read on emails so response excludes it
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -365,6 +371,12 @@ describe('Restricted fields', () => {
             objectMetadataId: personObjectId,
             fieldMetadataId: phonesFieldId,
             canReadFieldValue: null,
+            canUpdateFieldValue: null,
+          },
+          {
+            objectMetadataId: personObjectId,
+            fieldMetadataId: emailsFieldId,
+            canReadFieldValue: false,
             canUpdateFieldValue: null,
           },
         ],

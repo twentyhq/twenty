@@ -9,6 +9,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
@@ -48,6 +49,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   logicFunction: LogicFunctionEntity,
   objectMetadata: ObjectMetadataEntity,
   objectPermission: ObjectPermissionEntity,
+  fieldPermission: FieldPermissionEntity,
   role: RoleEntity,
   agent: AgentEntity,
   commandMenuItem: CommandMenuItemEntity,

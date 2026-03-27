@@ -9,6 +9,9 @@ import { UpdateAgentActionHandlerService } from 'src/engine/workspace-manager/wo
 import { CreateCommandMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/create-command-menu-item-action-handler.service';
 import { DeleteCommandMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/delete-command-menu-item-action-handler.service';
 import { UpdateCommandMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/command-menu-item/services/update-command-menu-item-action-handler.service';
+import { CreateFieldPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-permission/services/create-field-permission-action-handler.service';
+import { DeleteFieldPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-permission/services/delete-field-permission-action-handler.service';
+import { UpdateFieldPermissionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-permission/services/update-field-permission-action-handler.service';
 import { CreateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service';
 import { DeleteFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/delete-field-action-handler.service';
 import { UpdateFieldActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/update-field-action-handler.service';
@@ -143,6 +146,10 @@ import { UpdateWebhookActionHandlerService } from 'src/engine/workspace-manager/
     CreatePermissionFlagActionHandlerService,
     UpdatePermissionFlagActionHandlerService,
     DeletePermissionFlagActionHandlerService,
+
+    CreateFieldPermissionActionHandlerService,
+    UpdateFieldPermissionActionHandlerService,
+    DeleteFieldPermissionActionHandlerService,
 
     CreateObjectPermissionActionHandlerService,
     UpdateObjectPermissionActionHandlerService,

@@ -41,12 +41,14 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill.module';
 
 @Module({
   imports: [
     TypeORMModule,
     TypeOrmModule.forFeature([BillingSubscriptionEntity, WorkspaceEntity]),
     MetricsModule,
+    StandardObjectsPrefillModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         AuditModule,
@@ -79,6 +81,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
         ApplicationModule,
         EnterpriseModule,
+        StandardObjectsPrefillModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

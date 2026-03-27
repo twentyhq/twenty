@@ -6686,6 +6686,11 @@ msgstr "Nume câmp"
 msgid "Field on destination"
 msgstr "Câmp pe destinație"
 
+#. js-lingui-id: P8JCfj
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field permission"
+msgstr ""
+
 #. js-lingui-id: RnX5oc
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "fields"

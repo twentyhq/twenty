@@ -246,8 +246,8 @@
         "no-seed": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
-            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
+            "node dist/database/scripts/truncate-db.js",
+            "node dist/database/scripts/setup-db.js",
             "nx database:migrate",
             "nx command-no-deps -- cache:flush"
           ],
@@ -256,8 +256,8 @@
         "seed": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "nx ts-node-no-deps-transpile-only -- ./scripts/truncate-db.ts",
-            "nx ts-node-no-deps-transpile-only -- ./scripts/setup-db.ts",
+            "node dist/database/scripts/truncate-db.js",
+            "node dist/database/scripts/setup-db.js",
             "nx database:migrate",
             "nx command-no-deps -- cache:flush",
             "nx command-no-deps -- workspace:seed:dev"

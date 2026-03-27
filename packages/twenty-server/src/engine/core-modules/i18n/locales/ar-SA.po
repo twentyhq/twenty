@@ -1512,10 +1512,10 @@ msgstr "السياق"
 msgid "Context of the workflow run"
 msgstr ""
 
-#. js-lingui-id: gdbojg
+#. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
-msgstr "تم الكشف عن تناقضات في أذونات الحقول على حقل العلاقات ({fieldName})."
+msgid "Contradicting field permissions have been detected on a relation field."
+msgstr ""
 
 #. js-lingui-id: xuYXJX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -2510,6 +2510,10 @@ msgstr "معرف تسمية الحقل مطلوب"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field metadata not found"
 msgstr "البيانات الوصفية للحقل غير موجودة"
 
@@ -2546,6 +2550,44 @@ msgstr "اسم الحقل غير متزامن مع التسمية."
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Field not found."
 msgstr "الحقل غير موجود."
+
+#. js-lingui-id: krbBsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission already exists"
+msgstr ""
+
+#. js-lingui-id: J4IqxN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission for this role, object and field already exists"
+msgstr ""
+
+#. js-lingui-id: 8mkDdX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission not found"
+msgstr ""
+
+#. js-lingui-id: yqmAnC
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Field permission not found."
+msgstr ""
+
+#. js-lingui-id: 7OZNMg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission to delete not found"
+msgstr ""
+
+#. js-lingui-id: rR7vkH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission to update not found"
+msgstr ""
+
+#. js-lingui-id: A2VI9D
+#. placeholder {0}: flatFieldPermissionToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission with universal identifier {0} already exists"
+msgstr ""
 
 #. js-lingui-id: QXuG8C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -5035,6 +5077,10 @@ msgstr "التسمية قصيرة جدًا"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Object metadata not found"
 msgstr "البيانات الوصفية للكيان غير موجودة"
 
@@ -5923,6 +5969,9 @@ msgstr "لا يمكن تعيين الدور لهذا الكيان."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Role is not editable"
 msgstr "لا يمكن تحرير الدور"
 
@@ -5958,6 +6007,10 @@ msgstr "يجب أن يحتوي الدور على هدف واحد على الأق
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Role not found"
 msgstr ""
 
@@ -6852,11 +6905,6 @@ msgstr "لم يتم العثور على الدور الذي تبحث عنه. ر�
 msgid "The role you are trying to modify could not be found."
 msgstr "لم يتم العثور على الدور الذي تحاول تعديله."
 
-#. js-lingui-id: HRcugS
-#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
-msgstr "لم يتم العثور على الدور الذي تحاول تعديله. ربما تم حذفه أو قد لا تكون لديك صلاحية الوصول إليه."
-
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
@@ -7031,6 +7079,12 @@ msgstr "لا يمكن تعديل هذا الحقل."
 msgid "This field name is not available."
 msgstr "اسم هذا الحقل غير متاح."
 
+#. js-lingui-id: IuDcjw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "This field permission is already set for the role"
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -7140,7 +7194,9 @@ msgstr "لا يمكن تحرير هذا الدور."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "لا يمكن تعديل هذا الدور لأنه دور نظام. يمكن تعديل الأدوار المخصصة فقط."
 
@@ -8313,6 +8369,11 @@ msgstr "عدم تطابق بين معرّف مساحة العمل والدور."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "مساحة العمل ليست جاهزة للترحيب بأعضاء جدد"
+
+#. js-lingui-id: iN7doz
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+msgstr ""
 
 #. js-lingui-id: CbGxon
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts

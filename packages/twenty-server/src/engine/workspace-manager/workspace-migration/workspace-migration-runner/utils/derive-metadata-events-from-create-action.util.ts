@@ -91,6 +91,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'navigationMenuItem':
     case 'permissionFlag':
     case 'objectPermission':
+    case 'fieldPermission':
     case 'viewSort':
     case 'webhook': {
       return [
