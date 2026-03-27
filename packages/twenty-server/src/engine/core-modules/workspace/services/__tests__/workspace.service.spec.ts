@@ -33,7 +33,7 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/create-company-when-adding-new-person-code-step-logic-function.service';
+import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 describe('WorkspaceService', () => {
@@ -120,7 +120,7 @@ describe('WorkspaceService', () => {
           PermissionsService,
           FileCorePictureService,
           AiModelRegistryService,
-          CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService,
+          PrefillLogicFunctionService,
         ].map((service) => ({
           provide: service,
           useValue: {},

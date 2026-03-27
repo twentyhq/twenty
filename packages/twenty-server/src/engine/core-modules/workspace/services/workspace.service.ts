@@ -59,10 +59,8 @@ import { prefillOpportunities } from 'src/engine/workspace-manager/standard-obje
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
 import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-command-menu-items';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
-import {
-  CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService,
-  type CreatedPrefilledLogicFunctionResource,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/services/create-company-when-adding-new-person-code-step-logic-function.service';
+import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-code-step-logic-functions';
+import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
@@ -115,7 +113,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly permissionsService: PermissionsService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly createCompanyWhenAddingNewPersonCodeStepLogicFunctionService: CreateCompanyWhenAddingNewPersonCodeStepLogicFunctionService,
+    private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -686,23 +684,20 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         },
       );
 
+    await this.prefillLogicFunctionService.ensureSeeded({
+      workspaceId,
+      definitions:
+        getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions(
+          workspaceId,
+        ),
+    });
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
 
-    let createdLogicFunctionResources: CreatedPrefilledLogicFunctionResource[] =
-      [];
-
     try {
       await queryRunner.startTransaction();
-
-      createdLogicFunctionResources =
-        await this.createCompanyWhenAddingNewPersonCodeStepLogicFunctionService.ensureSeeded(
-          {
-            entityManager: queryRunner.manager,
-            workspaceId,
-          },
-        );
 
       await prefillCompanies(queryRunner.manager, schemaName);
 
@@ -737,10 +732,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           );
         }
       }
-
-      await this.createCompanyWhenAddingNewPersonCodeStepLogicFunctionService.cleanupSeededResources(
-        createdLogicFunctionResources,
-      );
 
       throw error;
     } finally {
