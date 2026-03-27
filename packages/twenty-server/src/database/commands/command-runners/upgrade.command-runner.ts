@@ -97,6 +97,8 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     try {
       this.setUpgradeContextVersionsAndCommandsForCurrentAppVersion();
 
+      // On fresh installs there are no workspaces yet, so skip the
+      // per-workspace upgrade loop (core migrations already ran above).
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
