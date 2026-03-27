@@ -105,10 +105,14 @@ export const useUpdateDroppedRecordOnBoard = () => {
         recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
       ) as string[];
 
+      // Gracefully handle the case where record is not found in initial group
+      // This can happen due to race conditions during concurrent drag operations
+      // or when the record has already been moved by another operation
       if (indexOfDroppedRecordInInitialRecordGroup === -1) {
-        throw new Error(
-          `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
+        console.warn(
+          `Record not found in initial group during drop operation. This may be due to a concurrent update. recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
         );
+        return;
       }
 
       const newInitialGroupRecordIds =
