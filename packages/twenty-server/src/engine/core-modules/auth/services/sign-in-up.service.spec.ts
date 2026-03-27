@@ -2,6 +2,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
 import { type SignInUpNewUserPayload } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -46,6 +47,10 @@ const createSignInUpServiceForTests = () => {
     ),
   };
 
+  const mockEnterprisePlanService = {
+    isValid: jest.fn(() => false),
+  };
+
   const queryRunnerMock = {
     manager: {
       save: jest.fn(),
@@ -69,6 +74,7 @@ const createSignInUpServiceForTests = () => {
       checkUserWorkspaceExists: jest.fn(),
     } as any,
     {
+      setOnboardingConnectAccountPending: jest.fn(),
       setOnboardingCreateProfilePending: jest.fn(),
       setOnboardingInviteTeamPending: jest.fn(),
       createOnboardingStatusForWorkspaceMember: jest.fn(),
@@ -97,6 +103,7 @@ const createSignInUpServiceForTests = () => {
     {
       uploadWorkspaceLogoFromUrl: jest.fn(),
     } as any,
+    mockEnterprisePlanService as any,
     {
       createQueryRunner: jest.fn(() => queryRunnerMock),
     } as any,
@@ -107,6 +114,7 @@ const createSignInUpServiceForTests = () => {
     mockUserRepository,
     mockWorkspaceRepository,
     mockConfigurationValues,
+    mockEnterprisePlanService,
   };
 };
 
@@ -300,5 +308,183 @@ describe('SignInUpService workspace-creation policy', () => {
     ).rejects.toMatchObject({
       code: AuthExceptionCode.SIGNUP_DISABLED,
     });
+  });
+
+  it('throws FORBIDDEN when workspace count reaches limit without enterprise key', async () => {
+    const {
+      service,
+      mockWorkspaceRepository,
+      mockConfigurationValues,
+      mockEnterprisePlanService,
+    } = createSignInUpServiceForTests();
+
+    mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
+      false;
+    mockWorkspaceRepository.count.mockResolvedValue(
+      MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY,
+    );
+    mockEnterprisePlanService.isValid.mockReturnValue(false);
+
+    await expect(
+      service.signUpOnNewWorkspace({
+        type: 'existingUser',
+        existingUser: {
+          id: 'existing-user-id',
+          email: 'user@acme.dev',
+          canAccessFullAdminPanel: true,
+        } as any,
+      }),
+    ).rejects.toMatchObject({
+      code: AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    });
+  });
+
+  it('allows workspace creation beyond limit with valid enterprise key', async () => {
+    const {
+      service,
+      mockUserRepository,
+      mockWorkspaceRepository,
+      mockConfigurationValues,
+      mockEnterprisePlanService,
+    } = createSignInUpServiceForTests();
+
+    mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
+      false;
+    mockWorkspaceRepository.count.mockResolvedValue(
+      MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY + 10,
+    );
+    mockUserRepository.count.mockResolvedValue(1);
+    mockEnterprisePlanService.isValid.mockReturnValue(true);
+
+    jest
+      .spyOn((service as any).applicationService, 'createWorkspaceCustomApplication')
+      .mockResolvedValue({ universalIdentifier: 'mock-app-id' });
+
+    const queryRunnerSaveMock = jest.fn(async (_entity: any, data: any) => ({
+      id: 'new-workspace-id',
+      ...data,
+    }));
+
+    jest
+      .spyOn((service as any).dataSource, 'createQueryRunner')
+      .mockReturnValue({
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+        rollbackTransaction: jest.fn(),
+        release: jest.fn(),
+        manager: { save: queryRunnerSaveMock, update: jest.fn() },
+      });
+
+    await expect(
+      service.signUpOnNewWorkspace({
+        type: 'existingUser',
+        existingUser: {
+          id: 'existing-user-id',
+          email: 'admin@acme.dev',
+          canAccessFullAdminPanel: true,
+        } as any,
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('allows workspace creation below limit without enterprise key', async () => {
+    const {
+      service,
+      mockUserRepository,
+      mockWorkspaceRepository,
+      mockConfigurationValues,
+      mockEnterprisePlanService,
+    } = createSignInUpServiceForTests();
+
+    mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
+      false;
+    mockWorkspaceRepository.count.mockResolvedValue(
+      MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY - 1,
+    );
+    mockUserRepository.count.mockResolvedValue(1);
+    mockEnterprisePlanService.isValid.mockReturnValue(false);
+
+    jest
+      .spyOn((service as any).applicationService, 'createWorkspaceCustomApplication')
+      .mockResolvedValue({ universalIdentifier: 'mock-app-id' });
+
+    const queryRunnerSaveMock = jest.fn(async (_entity: any, data: any) => ({
+      id: 'new-workspace-id',
+      ...data,
+    }));
+
+    jest
+      .spyOn((service as any).dataSource, 'createQueryRunner')
+      .mockReturnValue({
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+        rollbackTransaction: jest.fn(),
+        release: jest.fn(),
+        manager: { save: queryRunnerSaveMock, update: jest.fn() },
+      });
+
+    await expect(
+      service.signUpOnNewWorkspace({
+        type: 'existingUser',
+        existingUser: {
+          id: 'existing-user-id',
+          email: 'admin@acme.dev',
+          canAccessFullAdminPanel: true,
+        } as any,
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('does not query enterprise plan validity when workspace count is zero', async () => {
+    const {
+      service,
+      mockUserRepository,
+      mockWorkspaceRepository,
+      mockConfigurationValues,
+      mockEnterprisePlanService,
+    } = createSignInUpServiceForTests();
+
+    mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
+      false;
+    mockWorkspaceRepository.count.mockResolvedValue(0);
+    mockUserRepository.count.mockResolvedValue(0);
+    mockEnterprisePlanService.isValid.mockReturnValue(false);
+
+    jest
+      .spyOn((service as any).applicationService, 'createWorkspaceCustomApplication')
+      .mockResolvedValue({ universalIdentifier: 'mock-app-id' });
+
+    const queryRunnerSaveMock = jest.fn(async (_entity: any, data: any) => ({
+      id: 'new-workspace-id',
+      ...data,
+    }));
+
+    jest
+      .spyOn((service as any).dataSource, 'createQueryRunner')
+      .mockReturnValue({
+        connect: jest.fn(),
+        startTransaction: jest.fn(),
+        commitTransaction: jest.fn(),
+        rollbackTransaction: jest.fn(),
+        release: jest.fn(),
+        manager: { save: queryRunnerSaveMock, update: jest.fn() },
+      });
+
+    await service.signUpOnNewWorkspace({
+      type: 'existingUser',
+      existingUser: {
+        id: 'existing-user-id',
+        email: 'admin@acme.dev',
+        canAccessFullAdminPanel: true,
+      } as any,
+    });
+
+    expect(mockEnterprisePlanService.isValid).not.toHaveBeenCalled();
   });
 });
