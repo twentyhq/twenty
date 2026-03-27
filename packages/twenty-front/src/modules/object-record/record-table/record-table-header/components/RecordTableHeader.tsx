@@ -50,15 +50,13 @@ export const RecordTableHeader = () => {
       )}
       <RecordTableHeaderFirstCell />
       <RecordTableHeaderFirstScrollableCell />
-      {recordFieldsWithoutFirstTwo.map(
-        (recordField, index) => (
-          <RecordTableHeaderCell
-            key={recordField.fieldMetadataItemId}
-            recordField={recordField}
-            recordFieldIndex={index + 2}
-          />
-        ),
-      )}
+      {recordFieldsWithoutFirstTwo.map((recordField, index) => (
+        <RecordTableHeaderCell
+          key={recordField.fieldMetadataItemId}
+          recordField={recordField}
+          recordFieldIndex={index + 2}
+        />
+      ))}
       {isRecordTableColumnHeadersReadOnly ? (
         <RecordTableHeaderEmptyLastColumn />
       ) : (
