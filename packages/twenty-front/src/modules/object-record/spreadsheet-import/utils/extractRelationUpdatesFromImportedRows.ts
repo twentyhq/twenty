@@ -16,6 +16,17 @@ export type RelationUpdateEntry = {
   updateRecords: Record<string, any>[];
 };
 
+export type UnresolvedRelationUpdateEntry = {
+  targetObjectMetadataItem: ObjectMetadataItem;
+  relationFieldName: string;
+  updateDataByParentId: Record<string, Record<string, any>>;
+};
+
+export type ExtractRelationUpdatesResult = {
+  resolved: RelationUpdateEntry[];
+  unresolved: UnresolvedRelationUpdateEntry[];
+};
+
 const COMPOSITE_FIELD_TRANSFORM_CONFIGS: Partial<
   Record<FieldMetadataType, Record<string, ((value: any) => any) | undefined>>
 > = {
@@ -128,6 +139,36 @@ const buildUpdateRecordFromField = (
   return { fieldName: targetField.name, value };
 };
 
+const buildUpdateDataFromFields = (
+  row: ImportedStructuredRow,
+  updateFields: ReadonlySpreadsheetImportField[],
+): Record<string, any> => {
+  const record: Record<string, any> = {};
+
+  for (const field of updateFields) {
+    const rawValue = row[field.key];
+    if (!isDefined(rawValue) || !isNonEmptyString(String(rawValue))) {
+      continue;
+    }
+
+    const result = buildUpdateRecordFromField(field, rawValue);
+    if (!isDefined(result)) continue;
+
+    if (isDefined(result.subFieldKey)) {
+      record[result.fieldName] = {
+        ...(isDefined(record[result.fieldName])
+          ? record[result.fieldName]
+          : {}),
+        [result.subFieldKey]: result.value,
+      };
+    } else {
+      record[result.fieldName] = result.value;
+    }
+  }
+
+  return record;
+};
+
 export const extractRelationUpdatesFromImportedRows = ({
   importedStructuredRows,
   spreadsheetImportFields,
@@ -138,13 +179,13 @@ export const extractRelationUpdatesFromImportedRows = ({
   spreadsheetImportFields: SpreadsheetImportFields;
   fieldMetadataItems: FieldMetadataItem[];
   objectMetadataItems: ObjectMetadataItem[];
-}): RelationUpdateEntry[] => {
+}): ExtractRelationUpdatesResult => {
   const updateFields = spreadsheetImportFields.filter(
     (field): field is ReadonlySpreadsheetImportField =>
       field.isRelationUpdateField === true,
   );
 
-  if (updateFields.length === 0) return [];
+  if (updateFields.length === 0) return { resolved: [], unresolved: [] };
 
   const relationGroups = buildRelationGroups(
     updateFields,
@@ -153,57 +194,61 @@ export const extractRelationUpdatesFromImportedRows = ({
     spreadsheetImportFields,
   );
 
-  const result: RelationUpdateEntry[] = [];
+  const resolved: RelationUpdateEntry[] = [];
+  const unresolved: UnresolvedRelationUpdateEntry[] = [];
 
   for (const [, group] of relationGroups) {
-    if (
-      !isDefined(group.targetObjectMetadataItem) ||
-      !isDefined(group.connectIdFieldKey)
-    ) {
+    if (!isDefined(group.targetObjectMetadataItem)) {
       continue;
     }
 
-    const updateRecords: Record<string, any>[] = [];
+    if (isDefined(group.connectIdFieldKey)) {
+      // Resolved path: relation target ID is provided in the CSV
+      const updateRecords: Record<string, any>[] = [];
 
-    for (const row of importedStructuredRows) {
-      const recordId = row[group.connectIdFieldKey];
-      if (!isDefined(recordId) || !isNonEmptyString(recordId)) continue;
+      for (const row of importedStructuredRows) {
+        const recordId = row[group.connectIdFieldKey];
+        if (!isDefined(recordId) || !isNonEmptyString(recordId)) continue;
 
-      const record: Record<string, any> = { id: recordId };
+        const record = buildUpdateDataFromFields(row, group.updateFields);
+        record.id = recordId;
 
-      for (const field of group.updateFields) {
-        const rawValue = row[field.key];
-        if (!isDefined(rawValue) || !isNonEmptyString(String(rawValue))) {
-          continue;
-        }
-
-        const result = buildUpdateRecordFromField(field, rawValue);
-        if (!isDefined(result)) continue;
-
-        if (isDefined(result.subFieldKey)) {
-          record[result.fieldName] = {
-            ...(isDefined(record[result.fieldName])
-              ? record[result.fieldName]
-              : {}),
-            [result.subFieldKey]: result.value,
-          };
-        } else {
-          record[result.fieldName] = result.value;
+        if (!isEmptyObject(record) && Object.keys(record).length > 1) {
+          updateRecords.push(record);
         }
       }
 
-      if (!isEmptyObject(record) && Object.keys(record).length > 1) {
-        updateRecords.push(record);
+      if (updateRecords.length > 0) {
+        resolved.push({
+          targetObjectMetadataItem: group.targetObjectMetadataItem,
+          updateRecords,
+        });
       }
-    }
+    } else {
+      // Unresolved path: no relation target ID in CSV, but rows may have
+      // a parent record ID that can be used to look up the existing relation
+      const updateDataByParentId: Record<string, Record<string, any>> = {};
 
-    if (updateRecords.length > 0) {
-      result.push({
-        targetObjectMetadataItem: group.targetObjectMetadataItem,
-        updateRecords,
-      });
+      for (const row of importedStructuredRows) {
+        const parentId = row['id'];
+        if (!isDefined(parentId) || !isNonEmptyString(parentId)) continue;
+
+        const record = buildUpdateDataFromFields(row, group.updateFields);
+
+        if (!isEmptyObject(record)) {
+          updateDataByParentId[parentId] = record;
+        }
+      }
+
+      if (Object.keys(updateDataByParentId).length > 0) {
+        unresolved.push({
+          targetObjectMetadataItem: group.targetObjectMetadataItem,
+          relationFieldName: group.relationFieldName,
+          updateDataByParentId,
+        });
+      }
     }
   }
 
-  return result;
+  return { resolved, unresolved };
 };

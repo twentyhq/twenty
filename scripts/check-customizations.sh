@@ -651,6 +651,13 @@ check_file_exists \
 check_file_exists \
   "packages/twenty-front/src/modules/object-record/spreadsheet-import/utils/executeRelationUpdatesViaMutation.ts" \
   "Execute relation updates utility"
+check_file_exists \
+  "packages/twenty-front/src/modules/object-record/spreadsheet-import/utils/resolveRelationIdsFromExistingRecords.ts" \
+  "Resolve relation IDs from existing records utility"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts" \
+  "stripNonIdRelationConnects" \
+  "Upsert relation resolution: strip non-ID connects and resolve existing relation IDs"
 
 echo ""
 echo "--- CSV Export: Composite Field Splitting ---"
