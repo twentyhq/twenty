@@ -82,12 +82,16 @@ const CoatApprovalBodyContent = ({
     [debouncedUpdate],
   );
 
-  const handleTabChange = useCallback((tab: CoatTab) => {
-    setActiveTab(tab);
-    setSortAscending(tab === 'all' ? false : true);
-    setFilterValues(INITIAL_FILTER_VALUES);
-    setQueryFilterValues(INITIAL_FILTER_VALUES);
-  }, []);
+  const handleTabChange = useCallback(
+    (tab: CoatTab) => {
+      debouncedUpdate.cancel();
+      setActiveTab(tab);
+      setSortAscending(tab === 'all' ? false : true);
+      setFilterValues(INITIAL_FILTER_VALUES);
+      setQueryFilterValues(INITIAL_FILTER_VALUES);
+    },
+    [debouncedUpdate],
+  );
 
   const [sortAscending, setSortAscending] = useState(true);
 
