@@ -26,11 +26,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @CoreResolver()
-@UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
-  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
-)
+@UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   WorkflowTriggerGraphqlApiExceptionFilter,
@@ -44,6 +40,7 @@ export class WorkflowTriggerResolver {
   ) {}
 
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async activateWorkflowVersion(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
@@ -56,6 +53,7 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async deactivateWorkflowVersion(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowVersionId', { type: () => UUIDScalarType })
@@ -111,6 +109,7 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => WorkflowRunDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async stopWorkflowRun(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workflowRunId', { type: () => UUIDScalarType })
