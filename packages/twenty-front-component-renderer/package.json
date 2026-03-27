@@ -32,6 +32,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@chakra-ui/react": "^3.33.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.3.8",
@@ -43,6 +44,7 @@
     "@vitest/browser-playwright": "^4.0.18",
     "playwright": "^1.56.1",
     "storybook": "^10.2.13",
+    "styled-components": "^6.1.0",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
     "twenty-ui": "workspace:*",

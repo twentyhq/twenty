@@ -42,8 +42,6 @@
   },
   "license": "AGPL-3.0",
   "dependencies": {
-    "@chakra-ui/react": "^3.33.0",
-    "@emotion/react": "^11.14.0",
     "@genql/cli": "^3.0.3",
     "@genql/runtime": "^2.10.0",
     "@sniptt/guards": "^0.2.0",
