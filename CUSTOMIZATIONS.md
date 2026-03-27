@@ -138,7 +138,7 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `spreadsheet-import/types/SpreadsheetImportField.ts`                                    | Added `isRelationUpdateField` and `targetFieldMetadataItem` properties                |
 | `object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields.ts`             | Added relation update fields to import dropdown                                       |
-| `object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts` | Execute relation updates after parent upsert; resolve relation IDs for upsert rows    |
+| `object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts` | Execute relation updates after parent upsert                                          |
 | `object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow.ts`        | Explicit `isRelationConnectField` filter                                              |
 | `object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV.ts`          | Keep composite fields as objects for proper sub-field export                          |
 | `command-menu-item/record/multiple-records/components/ExportMultipleRecordsCommand.tsx` | Restore the related-fields modal before export when visible relations exist           |
@@ -155,7 +155,6 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | `object-record/spreadsheet-import/utils/executeRelationUpdatesViaMutation.ts`               | Execute batched createMany upserts for relation updates |
 | `object-record/spreadsheet-import/utils/extractRelationUpdatesFromImportedRows.ts`          | Extract relation update data from imported rows         |
-| `object-record/spreadsheet-import/utils/resolveRelationIdsFromExistingRecords.ts`           | Query parent records to resolve relation foreign keys   |
 | `object-record/spreadsheet-import/utils/spreadsheetImportGetRelationUpdateSubFieldKey.ts`   | Key format for update fields                            |
 | `object-record/spreadsheet-import/utils/spreadsheetImportGetRelationUpdateSubFieldLabel.ts` | Label format for update fields                          |
 
