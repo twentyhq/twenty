@@ -245,13 +245,17 @@ describe('Field permission upsert should fail', () => {
       expectToFail: false,
       input: {
         filter: { objectMetadataId: { eq: nonSystemObjectMetadataId } },
-        paging: { first: 1 },
+        paging: { first: 50 },
       },
-      gqlFields: 'id',
+      gqlFields: 'id type',
     });
     jestExpectToBeDefined(fields);
     expect(fields?.length).toBeGreaterThan(0);
-    oneFieldMetadataId = fields[0].node.id;
+    const nonRelationField = fields.find(
+      (field: { node: { type: string } }) => field.node.type !== 'RELATION',
+    );
+    jestExpectToBeDefined(nonRelationField);
+    oneFieldMetadataId = nonRelationField.node.id;
 
     await upsertObjectPermissions({
       expectToFail: false,
