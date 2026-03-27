@@ -8370,6 +8370,11 @@ msgstr "ID dello spazio di lavoro e ruolo non corrispondono."
 msgid "Workspace is not ready to welcome new members"
 msgstr "Lo spazio di lavoro non è pronto ad accogliere nuovi membri"
 
+#. js-lingui-id: iN7doz
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+msgstr ""
+
 #. js-lingui-id: CbGxon
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Workspace member"
