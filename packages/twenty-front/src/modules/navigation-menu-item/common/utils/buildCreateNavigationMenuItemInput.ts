@@ -3,7 +3,7 @@ import type {
   NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
+import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
@@ -14,6 +14,7 @@ export const buildCreateNavigationMenuItemInput = (
   resolveFolderId: (draftFolderId: string) => string,
 ): CreateNavigationMenuItemInput => {
   const input: CreateNavigationMenuItemInput = {
+    id: draftItem.id,
     type: draftItem.type,
     position: draftItem.position,
   };
@@ -24,12 +25,7 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? 'Link';
     const linkUrl = (draftItem.link ?? '').trim();
-    input.link =
-      linkUrl.startsWith('http://') || linkUrl.startsWith('https://')
-        ? linkUrl
-        : linkUrl
-          ? `https://${linkUrl}`
-          : undefined;
+    input.link = linkUrl ? ensureAbsoluteUrl(linkUrl) : undefined;
   } else if (isNavigationMenuItemObject(draftItem)) {
     input.targetObjectMetadataId =
       draftItem.targetObjectMetadataId ?? undefined;

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
@@ -14,7 +14,7 @@ export const useRemoveNavigationMenuItemByTargetRecordId = () => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
   const cache = apolloCoreClient.cache;
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const removeNavigationMenuItemsByTargetRecordIds = useCallback(
     (targetRecordIds: string[]) => {

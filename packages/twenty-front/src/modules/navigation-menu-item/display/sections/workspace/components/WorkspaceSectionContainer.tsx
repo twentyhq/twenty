@@ -169,7 +169,6 @@ export const WorkspaceSectionContainer = ({
             filteredItems={filteredItems}
             getEditModeProps={getEditModeProps}
             folderChildrenById={folderChildrenById}
-            selectedNavigationMenuItemId={selectedNavigationMenuItemId}
             onNavigationMenuItemClick={onNavigationMenuItemClick}
             onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
           />

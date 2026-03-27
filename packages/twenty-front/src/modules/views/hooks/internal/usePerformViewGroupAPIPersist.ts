@@ -8,43 +8,44 @@ import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
 import {
-  type UpdateViewGroupMutationVariables,
-  UpdateViewGroupDocument,
+  type UpdateManyViewGroupsMutationVariables,
+  UpdateManyViewGroupsDocument,
 } from '~/generated-metadata/graphql';
 
 export const usePerformViewGroupAPIPersist = () => {
-  const [updateViewGroupMutation] = useMutation(UpdateViewGroupDocument);
+  const [updateManyViewGroupsMutation] = useMutation(
+    UpdateManyViewGroupsDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const performViewGroupAPIUpdate = useCallback(
     async (
-      updateViewGroupInputs: UpdateViewGroupMutationVariables[],
+      updateViewGroupInputs: UpdateManyViewGroupsMutationVariables,
     ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof updateViewGroupMutation>>[]
-      >
+      MetadataRequestResult<Awaited<
+        ReturnType<typeof updateManyViewGroupsMutation>
+      > | null>
     > => {
-      if (updateViewGroupInputs.length === 0) {
+      if (
+        !Array.isArray(updateViewGroupInputs.inputs) ||
+        updateViewGroupInputs.inputs.length === 0
+      ) {
         return {
           status: 'successful',
-          response: [],
+          response: null,
         };
       }
 
       try {
-        const results = await Promise.all(
-          updateViewGroupInputs.map((variables) =>
-            updateViewGroupMutation({
-              variables,
-            }),
-          ),
-        );
+        const result = await updateManyViewGroupsMutation({
+          variables: updateViewGroupInputs,
+        });
 
         return {
           status: 'successful',
-          response: results,
+          response: result,
         };
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
@@ -62,7 +63,7 @@ export const usePerformViewGroupAPIPersist = () => {
         };
       }
     },
-    [updateViewGroupMutation, handleMetadataError, enqueueErrorSnackBar],
+    [updateManyViewGroupsMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   return {

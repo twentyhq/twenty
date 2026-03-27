@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
 import { isNonEmptyString, isNull } from '@sniptt/guards';
@@ -26,7 +27,41 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
+import { isQueryTimingEnabled } from 'src/engine/core-modules/graphql/storage/query-timing-context.storage';
+
+const formatResultLogger = new Logger('formatResult');
+
 export function formatResult<T>(
+  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  data: any,
+  flatObjectMetadata: FlatObjectMetadata | undefined,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  fieldMapsForObject?: FieldMapsForObject,
+): T {
+  const timingEnabled = isQueryTimingEnabled();
+  const startTime = timingEnabled ? performance.now() : 0;
+  const result = formatResultInternal<T>(
+    data,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    fieldMapsForObject,
+  );
+
+  if (timingEnabled && isDefined(flatObjectMetadata)) {
+    const durationMs = (performance.now() - startTime).toFixed(2);
+    const recordCount = Array.isArray(data) ? data.length : 1;
+
+    formatResultLogger.log(
+      `${flatObjectMetadata.nameSingular} — ${durationMs}ms (${recordCount} records)`,
+    );
+  }
+
+  return result;
+}
+
+function formatResultInternal<T>(
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   data: any,
   flatObjectMetadata: FlatObjectMetadata | undefined,
@@ -41,7 +76,7 @@ export function formatResult<T>(
   if (!isPlainObject(data)) {
     if (Array.isArray(data)) {
       return data.map((item) =>
-        formatResult(
+        formatResultInternal(
           item,
           flatObjectMetadata,
           flatObjectMetadataMaps,
@@ -65,7 +100,7 @@ export function formatResult<T>(
       flatObjectMetadata,
     );
 
-  const { fieldIdByName } = fieldMaps;
+  const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
 
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
     flatObjectMetadata,
@@ -79,6 +114,7 @@ export function formatResult<T>(
 
     const fieldMetadataId =
       fieldIdByName[key] ||
+      fieldIdByJoinColumnName[key] ||
       fieldIdByName[compositePropertyArgs?.parentField ?? ''];
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -86,30 +122,13 @@ export function formatResult<T>(
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    if (!isDefined(fieldMetadata)) {
+      continue;
+    }
+
     const isRelation = fieldMetadata
       ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       : false;
-
-    if (!compositePropertyArgs && !isRelation) {
-      if (isPlainObject(value)) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatResult(
-          value,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          fieldMaps,
-        );
-      } else if (fieldMetadata) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
-      } else {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = value;
-      }
-
-      continue;
-    }
 
     if (isRelation) {
       if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
@@ -130,34 +149,41 @@ export function formatResult<T>(
       }
 
       // @ts-expect-error legacy noImplicitAny
-      newData[key] = formatResult(
+      newData[key] = formatResultInternal(
         value,
         targetObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
-    }
-
-    if (!compositePropertyArgs || !isDefined(fieldMetadata)) {
       continue;
     }
 
-    const { parentField, ...compositeProperty } = compositePropertyArgs;
+    if (isDefined(compositePropertyArgs)) {
+      const { parentField, ...compositeProperty } = compositePropertyArgs;
 
-    // @ts-expect-error legacy noImplicitAny
-    if (!newData[parentField]) {
       // @ts-expect-error legacy noImplicitAny
-      newData[parentField] = {};
+      if (!newData[parentField]) {
+        // @ts-expect-error legacy noImplicitAny
+        newData[parentField] = {};
+      }
+
+      // @ts-expect-error legacy noImplicitAny
+      newData[parentField][compositeProperty.name] = isNull(value)
+        ? transformCompositeFieldNullValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          )
+        : formatCompositeFieldValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          );
+      continue;
     }
 
     // @ts-expect-error legacy noImplicitAny
-    newData[parentField][compositeProperty.name] = isNull(value)
-      ? transformCompositeFieldNullValue(
-          value,
-          compositeProperty.name,
-          fieldMetadata,
-        )
-      : formatCompositeFieldValue(value, compositeProperty.name, fieldMetadata);
+    newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
   }
 
   // After assembling composite fields, handle those with missing required subfields

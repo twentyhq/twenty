@@ -1,13 +1,10 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
   CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
   CONDITIONAL_DISPLAY_DEVICE_MOBILE,
-  GRID_POSITIONS,
   TAB_PROPS,
-  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -31,15 +28,6 @@ const TASK_PAGE_TABS = {
         gridPosition: WIDGET_PROPS.taskRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
-      },
-      assignee: {
-        universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5513',
-        title: 'Assignee',
-        type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
-        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
-        fieldUniversalIdentifier:
-          STANDARD_OBJECTS.task.fields.assignee.universalIdentifier,
       },
     },
   },

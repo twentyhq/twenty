@@ -13,6 +13,7 @@ import {
   type LineChartConfiguration,
   type NotesConfiguration,
   type PieChartConfiguration,
+  type RecordTableConfiguration,
   type StandaloneRichTextConfiguration,
   type TasksConfiguration,
   type TimelineConfiguration,
@@ -78,6 +79,12 @@ type WidgetConfigurationTypenameMap = {
   };
   PieChartConfiguration: Omit<PieChartConfiguration, 'configurationType'> & {
     configurationType: WidgetConfigurationType.PIE_CHART;
+  };
+  RecordTableConfiguration: Omit<
+    RecordTableConfiguration,
+    'configurationType'
+  > & {
+    configurationType: WidgetConfigurationType.RECORD_TABLE;
   };
   StandaloneRichTextConfiguration: Omit<
     StandaloneRichTextConfiguration,

@@ -6,7 +6,7 @@ description: Průvodce pro přispěvatele (nebo zvídavé vývojáře), kteří 
 ## Předpoklady
 
 <Tabs>
-<Tab title="Linux a MacOS">
+<Tab title="Linux a macOS">
 
 Než nainstalujete a použijete Twenty, ujistěte se, že máte na svém počítači nainstalovány následující balíčky:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -30,7 +30,7 @@ wsl --install
 ```
 Nyní byste měli vidět výzvu k restartování počítače. Pokud ne, restartujte jej ručně.
 
-Při restartu se otevře okno PowerShell a nainstaluje Ubuntu. Tento proces může chvíli trvat.
+Při restartu se otevře okno PowerShellu a nainstaluje Ubuntu. Tento proces může chvíli trvat.
 Zobrazí se výzva k vytvoření uživatelského jména a hesla pro vaši instalaci Ubuntu.
 
 2. Nainstalujte a nastavte git
@@ -102,8 +102,8 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
 
 <Tabs>
   <Tab title="Linux">
-    **Možnost 1 (doporučeno):** Pro lokalní vytvoření databáze:
-    Použijte následující odkaz pro instalaci PostgreSQL na vašem Linuxovém stroji: [Instalace PostgreSQL](https://www.postgresql.org/download/linux/)
+    **Možnost 1 (doporučeno):** Pro lokální vytvoření databáze:
+    Použijte následující odkaz pro instalaci PostgreSQL na vašem linuxovém stroji: [Instalace PostgreSQL](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -129,8 +129,8 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
       brew services list
     ```
 
-    Instalátor nemusí automaticky vytvořit uživatele `postgres` při instalaci
-    přes Homebrew na MacOS. Místo toho vytvoří PostgreSQL roli, která odpovídá vašemu uživatelskému jménu v MacOS (např. "john").
+    Instalátor nemusí ve výchozím nastavení vytvořit uživatele `postgres` při instalaci
+    přes Homebrew na macOS. Místo toho vytvoří PostgreSQL roli, která odpovídá vašemu uživatelskému jménu v MacOS (např. "john").
     Pro zkontrolování a vytvoření uživatele `postgres`, pokud je to nutné, postupujte takto:
     ```bash
       # Připojit se k PostgreSQL
@@ -172,8 +172,8 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
   <Tab title="Windows (WSL)">
     Všechny následující kroky je třeba provádět v terminálu WSL (v rámci vaší virtuálního stroje).
 
-    **Možnost 1:** Pro lokalní vytvoření PostgreSQL:
-    Použijte následující odkaz pro instalaci PostgreSQL na vašem Linuxovém virtuálním stroji: [Instalace PostgreSQL](https://www.postgresql.org/download/linux/)
+    **Možnost 1:** Pro lokální zprovoznění PostgreSQL:
+    Použijte následující odkaz pro instalaci PostgreSQL na vašem linuxovém virtuálním stroji: [Instalace PostgreSQL](https://www.postgresql.org/download/linux/)
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
@@ -188,7 +188,9 @@ Všechny příkazy v následujících krocích byste měli provádět z kořene 
   </Tab>
 </Tabs>
 
-Nyní můžete přistupovat k databázi na [localhost:5432](localhost:5432), s uživatelem `postgres` a heslem `postgres`.
+Nyní můžete přistupovat k databázi na adrese `localhost:5432`.
+
+Pokud jste použili výše uvedenou možnost Dockeru, výchozí přihlašovací údaje jsou uživatelské jméno `postgres` a heslo `postgres`. U nativních instalací PostgreSQL použijte přihlašovací údaje a role nakonfigurované na vašem počítači.
 
 ## Krok 4: Nastavení Redis databáze (cache)
 
@@ -209,8 +211,10 @@ Twenty vyžaduje ke svému provozu Redis cache pro zajištění nejlepšího vý
     ```bash
     brew install redis
     ```
-    Spusťte redis server:
-    `brew services start redis`
+    Spusťte svůj server Redis:
+    ```bash
+    brew services start redis
+    ```
 
     **Možnost 2:** Pokud máte nainstalován docker:
     ```bash
@@ -228,11 +232,11 @@ Twenty vyžaduje ke svému provozu Redis cache pro zajištění nejlepšího vý
   </Tab>
 </Tabs>
 
-Pokud potřebujete GUI klienta, doporučujeme [redis insight](https://redis.io/insight/) (dostupná je bezplatná verze)
+Pokud potřebujete GUI klienta, doporučujeme [Redis Insight](https://redis.io/insight/) (k dispozici je bezplatná verze).
 
 ## Krok 5: Nastavení proměnných prostředí
 
-Použijte proměnné prostředí nebo `.env` soubory, abyste nakonfigurovali váš projekt. Více informací [zde](/l/cs/developers/self-host/capabilities/setup)
+Použijte proměnné prostředí nebo `.env` soubory, abyste nakonfigurovali váš projekt. Více informací [zde](/l/cs/developers/self-host/capabilities/setup).
 
 Zkopírujte soubory `.env.example` v `/front` a `/server`:
 

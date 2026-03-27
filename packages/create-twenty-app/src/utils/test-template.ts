@@ -149,18 +149,17 @@ const createIntegrationTest = async ({
   fileName: string;
 }) => {
   const content = `import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
-import { appBuild, appUninstall } from 'twenty-sdk/cli';
-import { MetadataApiClient } from 'twenty-sdk/clients';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 const APP_PATH = process.cwd();
 
 describe('App installation', () => {
-  let appInstalled = false;
-
   beforeAll(async () => {
     const buildResult = await appBuild({
       appPath: APP_PATH,
+      tarball: true,
       onProgress: (message: string) => console.log(\`[build] \${message}\`),
     });
 
@@ -170,14 +169,27 @@ describe('App installation', () => {
       );
     }
 
-    appInstalled = true;
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(\`[deploy] \${message}\`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(
+        \`Deploy failed: \${deployResult.error?.message ?? 'Unknown error'}\`,
+      );
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(
+        \`Install failed: \${installResult.error?.message ?? 'Unknown error'}\`,
+      );
+    }
   });
 
   afterAll(async () => {
-    if (!appInstalled) {
-      return;
-    }
-
     const uninstallResult = await appUninstall({ appPath: APP_PATH });
 
     if (!uninstallResult.success) {
@@ -257,7 +269,7 @@ jobs:
         run: yarn test
         env:
           TWENTY_API_URL: \${{ steps.twenty.outputs.server-url }}
-          TWENTY_TEST_API_KEY: \${{ steps.twenty.outputs.access-token }}
+          TWENTY_API_KEY: \${{ steps.twenty.outputs.access-token }}
 `;
 
   const workflowDir = join(appDirectory, '.github', 'workflows');

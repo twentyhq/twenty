@@ -11,24 +11,47 @@ export const computeFlatViewFieldsToCreate = ({
   viewUniversalIdentifier,
   flatApplication,
   labelIdentifierFieldMetadataUniversalIdentifier,
+  excludeLabelIdentifier = false,
 }: {
   flatApplication: FlatApplication;
   objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   viewUniversalIdentifier: string;
   labelIdentifierFieldMetadataUniversalIdentifier: string | null;
+  excludeLabelIdentifier?: boolean;
 }): UniversalFlatViewField[] => {
   const createdAt = new Date().toISOString();
   const defaultViewFields = objectFlatFieldMetadatas
     .filter(
       (field) =>
         field.name !== 'deletedAt' &&
+        field.type !== FieldMetadataType.TS_VECTOR &&
+        field.type !== FieldMetadataType.POSITION &&
         field.type !== FieldMetadataType.MORPH_RELATION &&
         field.type !== FieldMetadataType.RELATION &&
         // Include 'id' only if it's the label identifier (e.g., for junction tables)
         (field.name !== 'id' ||
           field.universalIdentifier ===
+            labelIdentifierFieldMetadataUniversalIdentifier) &&
+        // Exclude label identifier field when requested (e.g., for FIELDS_WIDGET views)
+        (!excludeLabelIdentifier ||
+          field.universalIdentifier !==
             labelIdentifierFieldMetadataUniversalIdentifier),
     )
+    .sort((a, b) => {
+      const aIsLabelIdentifierFieldMetadata =
+        a.universalIdentifier ===
+        labelIdentifierFieldMetadataUniversalIdentifier;
+      const bIsLabelIdentifierFieldMetadata =
+        b.universalIdentifier ===
+        labelIdentifierFieldMetadataUniversalIdentifier;
+
+      if (aIsLabelIdentifierFieldMetadata && !bIsLabelIdentifierFieldMetadata)
+        return -1;
+      if (!aIsLabelIdentifierFieldMetadata && bIsLabelIdentifierFieldMetadata)
+        return 1;
+
+      return 0;
+    })
     .map<UniversalFlatViewField>((field, index) => ({
       fieldMetadataUniversalIdentifier: field.universalIdentifier,
       viewUniversalIdentifier,

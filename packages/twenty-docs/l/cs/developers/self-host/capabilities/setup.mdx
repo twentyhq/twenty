@@ -297,46 +297,70 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
 </Warning>
 
-## Logické funkce
-
-Twenty podporuje logické funkce pro pracovní postupy a vlastní logiku. Běhové prostředí se konfiguruje pomocí proměnné prostředí `SERVERLESS_TYPE`.
+## Úložiště S3
 
 <Warning>
-**Upozornění na zabezpečení:** Místní ovladač (`SERVERLESS_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, důrazně doporučujeme použít `SERVERLESS_TYPE=LAMBDA` nebo `SERVERLESS_TYPE=DISABLED`.
+Ve výchozím nastavení Twenty ukládá nahrané soubory do místního souborového systému. Pro produkční nasazení použijte S3 nebo službu kompatibilní se S3 (MinIO, DigitalOcean Spaces atd.). aby byly soubory zachovány při restartech kontejnerů a bylo možné škálovat napříč více instancemi serveru.
 </Warning>
 
-### Dostupné ovladače
+Nastavte `STORAGE_TYPE=S_3` a nakonfigurujte proměnné `STORAGE_S3_*` prostřednictvím administračního panelu nebo `.env`. Viz [referenci config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) pro úplný seznam proměnných S3.
 
-| Ovladač   | Proměnná prostředí         | Případ použití                             | Úroveň zabezpečení                  |
-| --------- | -------------------------- | ------------------------------------------ | ----------------------------------- |
-| Neaktivní | `SERVERLESS_TYPE=DISABLED` | Úplně zakázat logické funkce               | N/A                                 |
-| Lokální   | `SERVERLESS_TYPE=LOCAL`    | Vývojová a důvěryhodná prostředí           | Nízká (bez sandboxu)                |
-| Lambda    | `SERVERLESS_TYPE=LAMBDA`   | Produkční prostředí s nedůvěryhodným kódem | Vysoká (izolace na úrovni hardwaru) |
+Při používání S3 s funkcemi závislými na CORS (např. stahování souborů v prohlížeči) se ujistěte, že váš bucket povoluje origin vašeho frontendu Twenty ve své konfiguraci CORS.
 
-### Doporučená konfigurace
+## Logické funkce a interpret kódu
+
+Twenty podporuje logické funkce pro pracovní postupy a interpret kódu pro analýzu dat s využitím AI. Obě spouštějí kód poskytnutý uživatelem a z důvodu zabezpečení vyžadují explicitní konfiguraci.
+
+### Výchozí nastavení zabezpečení
+
+**V produkci (NODE_ENV=production):** Jak logické funkce, tak interpret kódu mají ve výchozím nastavení stav **Zakázáno**. Pokud tyto funkce potřebujete, musíte je explicitně povolit pomocí `LOGIC_FUNCTION_TYPE` a `CODE_INTERPRETER_TYPE`.
+
+**V prostředí vývoje (NODE_ENV=development):** Obě mají ve výchozím nastavení **LOCAL** pro pohodlí při lokálním spuštění.
+
+<Warning>
+**Upozornění na zabezpečení:** Místní ovladač (`LOGIC_FUNCTION_TYPE=LOCAL` nebo `CODE_INTERPRETER_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, použijte `LOGIC_FUNCTION_TYPE=LAMBDA` nebo `CODE_INTERPRETER_TYPE=E2B` (se sandboxem), případně je ponechte vypnuté.
+</Warning>
+
+### Logické funkce - dostupné ovladače
+
+| Ovladač   | Proměnná prostředí             | Případ použití                             | Úroveň zabezpečení                  |
+| --------- | ------------------------------ | ------------------------------------------ | ----------------------------------- |
+| Neaktivní | `LOGIC_FUNCTION_TYPE=DISABLED` | Úplně zakázat logické funkce               | N/A                                 |
+| Lokální   | `LOGIC_FUNCTION_TYPE=LOCAL`    | Vývojová a důvěryhodná prostředí           | Nízká (bez sandboxu)                |
+| Lambda    | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Produkční prostředí s nedůvěryhodným kódem | Vysoká (izolace na úrovni hardwaru) |
+
+### Logické funkce - doporučená konfigurace
 
 **Pro vývoj:**
 
 ```bash
-SERVERLESS_TYPE=LOCAL  # default
+LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **Pro produkci (AWS):**
 
 ```bash
-SERVERLESS_TYPE=LAMBDA
-SERVERLESS_LAMBDA_REGION=us-east-1
-SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
-SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
-SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+LOGIC_FUNCTION_TYPE=LAMBDA
+LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
+LOGIC_FUNCTION_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID=your-access-key
+LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **Pro zakázání logických funkcí:**
 
 ```bash
-SERVERLESS_TYPE=DISABLED
+LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+### Interpret kódu - dostupné ovladače
+
+| Ovladač   | Proměnná prostředí               | Případ použití                                  | Úroveň zabezpečení         |
+| --------- | -------------------------------- | ----------------------------------------------- | -------------------------- |
+| Neaktivní | `CODE_INTERPRETER_TYPE=DISABLED` | Zakázat spouštění kódu AI                       | N/A                        |
+| Lokální   | `CODE_INTERPRETER_TYPE=LOCAL`    | Pouze pro vývoj                                 | Nízká (bez sandboxu)       |
+| E2B       | `CODE_INTERPRETER_TYPE=E_2_B`    | Produkční prostředí se sandboxovaným spouštěním | Vysoká (izolovaný sandbox) |
+
 <Note>
-Při použití `SERVERLESS_TYPE=DISABLED` skončí každý pokus o spuštění logické funkce chybou. To je užitečné, pokud chcete provozovat Twenty bez podpory logických funkcí.
+Při použití `LOGIC_FUNCTION_TYPE=DISABLED` nebo `CODE_INTERPRETER_TYPE=DISABLED` vrátí každý pokus o spuštění chybu. To je užitečné, pokud chcete provozovat Twenty bez těchto schopností.
 </Note>

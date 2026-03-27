@@ -45,19 +45,6 @@ export const computeStandardBlocklistViewFields = (
       },
     }),
 
-    blocklistRecordPageFieldsHandle: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'blocklist',
-      context: {
-        viewName: 'blocklistRecordPageFields',
-        viewFieldName: 'handle',
-        fieldName: 'handle',
-        position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     blocklistRecordPageFieldsWorkspaceMember:
       createStandardViewFieldFlatMetadata({
         ...args,

@@ -1,13 +1,14 @@
 import fs from 'fs';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { runSafe } from '@/cli/utilities/run-safe';
-import { appBuild } from './build';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
 export type AppDeployOptions = {
-  appPath: string;
-  serverUrl: string;
+  tarballPath: string;
+  remote?: string;
+  serverUrl?: string;
   token?: string;
   onProgress?: (message: string) => void;
 };
@@ -19,25 +20,19 @@ export type AppDeployResult = {
 const innerAppDeploy = async (
   options: AppDeployOptions,
 ): Promise<CommandResult<AppDeployResult>> => {
-  const { appPath, serverUrl, token, onProgress } = options;
+  const { tarballPath, onProgress } = options;
 
-  const buildResult = await appBuild({
-    appPath,
-    tarball: true,
-    onProgress,
-  });
-
-  if (!buildResult.success) {
-    return buildResult;
+  if (options.remote) {
+    ConfigService.setActiveRemote(options.remote);
   }
 
-  onProgress?.(`Uploading ${buildResult.data.tarballPath}...`);
+  onProgress?.(`Uploading ${tarballPath}...`);
 
-  const tarballBuffer = fs.readFileSync(buildResult.data.tarballPath!);
+  const tarballBuffer = fs.readFileSync(tarballPath);
 
   const apiService = new ApiService({
-    serverUrl,
-    token,
+    serverUrl: options.serverUrl,
+    token: options.token,
   });
 
   const uploadResult = await apiService.uploadAppTarball({ tarballBuffer });
@@ -48,22 +43,6 @@ const innerAppDeploy = async (
       error: {
         code: APP_ERROR_CODES.DEPLOY_FAILED,
         message: `Upload failed: ${uploadResult.error}`,
-      },
-    };
-  }
-
-  onProgress?.('Installing application...');
-
-  const installResult = await apiService.installTarballApp({
-    universalIdentifier: uploadResult.data.universalIdentifier,
-  });
-
-  if (!installResult.success) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.DEPLOY_FAILED,
-        message: `Install failed: ${installResult.error}`,
       },
     };
   }

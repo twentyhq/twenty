@@ -100,7 +100,7 @@ export const useCommandMenuHotKeys = () => {
       }
 
       if (
-        sidePanelPage === SidePanelPages.Root &&
+        sidePanelPage === SidePanelPages.CommandMenuDisplay &&
         !(
           contextStoreTargetedRecordsRule.mode === 'selection' &&
           contextStoreTargetedRecordsRule.selectedRecordIds.length === 0
@@ -108,7 +108,7 @@ export const useCommandMenuHotKeys = () => {
       ) {
         setGlobalCommandMenuContext();
       }
-      if (sidePanelPage !== SidePanelPages.Root) {
+      if (sidePanelPage !== SidePanelPages.CommandMenuDisplay) {
         goBackOneSubPageOrMainPage();
       }
     },

@@ -19,7 +19,7 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
+import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
@@ -432,21 +432,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const workflowVersion =
-          await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-            workflowVersionId,
-            workspaceId,
-          });
-
         const newAgent = await this.agentService.createOneAgent(
           {
-            label:
-              'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
+            label: 'Workflow Agent ' + baseStep.id.substring(0, 4),
             icon: 'IconRobot',
             description: '',
             prompt:
               'You are a helpful AI assistant. Complete the task based on the workflow context.',
-            modelId: DEFAULT_SMART_MODEL,
+            modelId: AUTO_SELECT_SMART_MODEL_ID,
             responseFormat: { type: 'text' },
             isCustom: true,
           },
@@ -707,9 +700,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           workspaceId,
         });
 
+        const clonedStepId = v4();
+
         const clonedAgent = await this.agentService.createOneAgent(
           {
-            label: existingAgent.label,
+            label: existingAgent.label + ' ' + clonedStepId.substring(0, 4),
             icon: existingAgent.icon ?? undefined,
             description: existingAgent.description ?? undefined,
             prompt: existingAgent.prompt,
@@ -723,7 +718,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         return {
           ...step,
-          id: v4(),
+          id: clonedStepId,
           nextStepIds: [],
           position: duplicatedStepPosition,
           settings: {

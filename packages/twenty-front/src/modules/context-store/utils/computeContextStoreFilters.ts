@@ -58,15 +58,17 @@ export const computeContextStoreFilters = ({
     ]);
   }
   if (contextStoreTargetedRecordsRule.mode === 'selection') {
+    if (contextStoreTargetedRecordsRule.selectedRecordIds.length === 0) {
+      return { id: { in: [] } };
+    }
+
     queryFilter = makeAndFilterVariables([
       recordGqlFilterForAnyFieldFilter,
-      contextStoreTargetedRecordsRule.selectedRecordIds.length > 0
-        ? {
-            id: {
-              in: contextStoreTargetedRecordsRule.selectedRecordIds,
-            },
-          }
-        : undefined,
+      {
+        id: {
+          in: contextStoreTargetedRecordsRule.selectedRecordIds,
+        },
+      },
       computeRecordGqlOperationFilter({
         filterValueDependencies,
         fields: objectMetadataItem?.fields ?? [],

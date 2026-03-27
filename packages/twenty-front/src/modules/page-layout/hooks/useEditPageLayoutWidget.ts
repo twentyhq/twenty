@@ -66,7 +66,23 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         return;
       }
 
-      setSidePanelPage(SidePanelPages.Root);
+      if (widgetType === WidgetType.RECORD_TABLE) {
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutRecordTableSettings,
+          pageTitle: t`Edit Record Table`,
+          resetNavigationStack: true,
+        });
+        setPageLayoutEditingWidgetId(widgetId);
+        return;
+      }
+
+      if (widgetType === WidgetType.STANDALONE_RICH_TEXT) {
+        setPageLayoutEditingWidgetId(widgetId);
+        closeSidePanelMenu();
+        return;
+      }
+
+      setSidePanelPage(SidePanelPages.CommandMenuDisplay);
       closeSidePanelMenu();
     },
     [

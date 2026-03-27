@@ -6,26 +6,27 @@ import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
+import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
+import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
+import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/edit/folder/hooks/useAddFolderToNavigationMenuDraft';
+import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { useAddLinkToNavigationMenuDraft } from '@/navigation-menu-item/edit/link/hooks/useAddLinkToNavigationMenuDraft';
 import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/edit/object/hooks/useAddObjectToNavigationMenuDraft';
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/edit/record/hooks/useAddRecordToNavigationMenuDraft';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/view/hooks/useAddViewToNavigationMenuDraft';
-import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
-import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
-import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
-import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+
 import { useStore } from 'jotai';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 export const useHandleAddToNavigationDrop = () => {
   const store = useStore();
@@ -138,16 +139,17 @@ export const useHandleAddToNavigationDrop = () => {
           const objectMetadataItem = objectMetadataItems.find(
             (item) => item.id === payload.objectMetadataId,
           );
-          const newItemId = addObjectToDraft(
-            payload.objectMetadataId,
+          const newItemId = addObjectToDraft({
+            objectMetadataId: payload.objectMetadataId,
             currentDraft,
-            folderId,
-            index,
-            payload.iconColor ??
+            targetFolderId: folderId,
+            targetIndex: index,
+            color:
+              payload.iconColor ??
               (objectMetadataItem
-                ? getStandardObjectIconColor(objectMetadataItem.nameSingular)
+                ? getObjectColorWithFallback(objectMetadataItem)
                 : undefined),
-          );
+          });
           openEditForNewNavItem(newItemId, {
             pageTitle: objectMetadataItem?.labelPlural ?? payload.label,
             pageIcon: objectMetadataItem
@@ -169,7 +171,7 @@ export const useHandleAddToNavigationDrop = () => {
             folderId,
             index,
             viewObjectMetadataItem
-              ? getStandardObjectIconColor(viewObjectMetadataItem.nameSingular)
+              ? getObjectColorWithFallback(viewObjectMetadataItem)
               : undefined,
           );
           openEditForNewNavItem(newItemId, {

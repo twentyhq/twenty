@@ -12,6 +12,7 @@ import {
   IconFrame,
   IconList,
   IconPlus,
+  IconTable,
   type IconComponent,
 } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -167,6 +168,36 @@ export const usePageLayoutHeaderInfo = ({
         headerIcon: IconList,
         headerIconColor: iconColor,
         headerType: t`Fields Widget`,
+        title,
+        isReadonly: false,
+        tab: undefined,
+        widgetInEditMode,
+      };
+    }
+
+    case SidePanelPages.PageLayoutRecordTableSettings: {
+      if (!isDefined(pageLayoutEditingWidgetId)) {
+        return null;
+      }
+
+      const widgetInEditMode = draftPageLayout.tabs
+        .flatMap((tab) => tab.widgets)
+        .find((widget) => widget.id === pageLayoutEditingWidgetId);
+
+      if (!isDefined(widgetInEditMode)) {
+        return null;
+      }
+
+      const title = isDefined(editedTitle)
+        ? editedTitle
+        : isDefined(widgetInEditMode.title) && widgetInEditMode.title !== ''
+          ? widgetInEditMode.title
+          : '';
+
+      return {
+        headerIcon: IconTable,
+        headerIconColor: iconColor,
+        headerType: t`Record Table`,
         title,
         isReadonly: false,
         tab: undefined,

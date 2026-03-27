@@ -1,7 +1,7 @@
+import { appBuild } from '@/cli/operations/build';
 import { appDeploy } from '@/cli/operations/deploy';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
-import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 
 export type DeployCommandOptions = {
@@ -15,35 +15,26 @@ export class DeployCommand {
 
     await checkSdkVersionCompatibility(appPath);
 
-    const configService = new ConfigService();
-    let serverUrl: string;
-    let token: string | undefined;
+    console.log(chalk.blue('Deploying application...'));
+    console.log(chalk.gray(`App path: ${appPath}\n`));
 
-    if (options.remote) {
-      const remoteConfig = await configService.getConfigForRemote(
-        options.remote,
-      );
+    const onProgress = (message: string) => console.log(chalk.gray(message));
 
-      serverUrl = remoteConfig.apiUrl;
-      token = remoteConfig.accessToken ?? remoteConfig.apiKey;
-    } else {
-      const config = await configService.getConfig();
+    const buildResult = await appBuild({
+      appPath,
+      tarball: true,
+      onProgress,
+    });
 
-      serverUrl = config.apiUrl;
-      token = config.accessToken ?? config.apiKey;
+    if (!buildResult.success) {
+      console.error(chalk.red(buildResult.error.message));
+      process.exit(1);
     }
 
-    const remoteName = options.remote ?? ConfigService.getActiveRemote();
-
-    console.log(chalk.blue(`Deploying to ${remoteName} (${serverUrl})...`));
-    console.log(chalk.gray(`App path: ${appPath}`));
-    console.log('');
-
     const result = await appDeploy({
-      appPath,
-      serverUrl,
-      token,
-      onProgress: (message) => console.log(chalk.gray(message)),
+      tarballPath: buildResult.data.tarballPath!,
+      remote: options.remote,
+      onProgress,
     });
 
     if (!result.success) {

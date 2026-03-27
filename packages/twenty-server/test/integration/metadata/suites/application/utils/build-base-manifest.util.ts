@@ -18,7 +18,6 @@ export const buildBaseManifest = ({
     applicationVariables: {},
     packageJsonChecksum: null,
     yarnLockChecksum: null,
-    apiClientChecksum: null,
   },
   roles: [
     {

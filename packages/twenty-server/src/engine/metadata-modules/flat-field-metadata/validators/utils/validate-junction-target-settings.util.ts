@@ -34,6 +34,10 @@ export const validateJunctionTargetSettings = ({
 }: ValidateJunctionTargetSettingsArgs): FlatFieldMetadataValidationError[] => {
   const { universalSettings } = universalFlatFieldMetadata;
 
+  if (!isDefined(universalSettings)) {
+    return [];
+  }
+
   const junctionTargetFieldUniversalIdentifier =
     universalSettings.junctionTargetFieldUniversalIdentifier;
 

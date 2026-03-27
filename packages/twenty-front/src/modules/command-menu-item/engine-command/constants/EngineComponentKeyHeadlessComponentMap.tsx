@@ -42,13 +42,15 @@ import { SeeRunsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-c
 import { SeeVersionsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeVersionsWorkflowSingleRecordCommand';
 import { TestWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TestWorkflowSingleRecordCommand';
 import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TidyUpWorkflowSingleRecordCommand';
+import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
+import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
 import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
-export const ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP: Record<
+export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   EngineComponentKey,
   React.ReactNode
 > = {
@@ -250,5 +252,11 @@ export const ENGINE_COMPONENT_KEY_HEADLESS_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.SEE_VERSIONS_WORKFLOW_VERSION]: (
     <SeeVersionsWorkflowVersionSingleRecordCommand />
+  ),
+  [EngineComponentKey.TRIGGER_WORKFLOW_VERSION]: (
+    <TriggerWorkflowVersionEngineCommand />
+  ),
+  [EngineComponentKey.FRONT_COMPONENT_RENDERER]: (
+    <HeadlessFrontComponentRendererEngineCommand />
   ),
 };
