@@ -20,6 +20,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type SidePanelEditObjectViewBaseProps = OrganizeActionsProps & {
   onOpenFolderPicker: () => void;
+  showMoveToFolder?: boolean;
   showColorOption?: boolean;
   selectedItem?: NavigationMenuItem | null;
 };
@@ -33,11 +34,13 @@ export const SidePanelEditObjectViewBase = ({
   onRemove,
   onAddBefore,
   onAddAfter,
+  showMoveToFolder = false,
   showColorOption = false,
   selectedItem,
 }: SidePanelEditObjectViewBaseProps) => {
   const { t } = useLingui();
-  const selectableItemIds = getOrganizeActionsSelectableItemIds(true);
+  const selectableItemIds =
+    getOrganizeActionsSelectableItemIds(showMoveToFolder);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
@@ -88,7 +91,7 @@ export const SidePanelEditObjectViewBase = ({
         onRemove={onRemove}
         onAddBefore={onAddBefore}
         onAddAfter={onAddAfter}
-        showMoveToFolder
+        showMoveToFolder={showMoveToFolder}
         onMoveToFolder={onOpenFolderPicker}
       />
     </SidePanelList>

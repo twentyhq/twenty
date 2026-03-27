@@ -1,6 +1,5 @@
 import { useStore } from 'jotai';
 
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
@@ -8,6 +7,7 @@ import { type RecordGroupDefinition } from '@/object-record/record-group/types/R
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useCallback, useContext } from 'react';
@@ -35,7 +35,10 @@ export const useUpdateDroppedRecordOnBoard = () => {
       {
         recordId,
         position: newPosition,
-      }: { recordId: string; position?: number },
+      }: {
+        recordId: string;
+        position?: number;
+      },
       targetRecordGroupValue: RecordGroupDefinition['value'],
     ) => {
       const initialRecord = store.get(
@@ -50,17 +53,31 @@ export const useUpdateDroppedRecordOnBoard = () => {
         return;
       }
 
-      const initialRecordGroupValue = initialRecord[
-        selectFieldMetadataItem.name
-      ] as string | undefined;
+      let currentRecordIdsInInitialRecordGroup: string[] = [];
 
       const initialRecordGroup = recordGroupDefinitions.find(
-        findByProperty('value', initialRecordGroupValue),
+        (recordGroupDefinition) => {
+          const recordIdsInGroup = store.get(
+            recordIndexRecordIdsByGroupCallbackFamilyState(
+              recordGroupDefinition.id,
+            ),
+          );
+
+          const recordIsInGroup = recordIdsInGroup.includes(recordId);
+
+          if (recordIsInGroup) {
+            currentRecordIdsInInitialRecordGroup = recordIdsInGroup;
+          }
+
+          return recordIsInGroup;
+        },
       );
 
       if (!isDefined(initialRecordGroup)) {
         return;
       }
+
+      const initialRecordGroupId = initialRecordGroup.id;
 
       const targetRecordGroup = recordGroupDefinitions.find(
         findByProperty('value', targetRecordGroupValue),
@@ -70,7 +87,6 @@ export const useUpdateDroppedRecordOnBoard = () => {
         return;
       }
 
-      const initialRecordGroupId = initialRecordGroup.id;
       const targetRecordGroupId = targetRecordGroup.id;
 
       const movingInsideSameRecordGroup =
@@ -82,26 +98,22 @@ export const useUpdateDroppedRecordOnBoard = () => {
         return;
       }
 
-      const currentRecordIdsInInitialRecordGroup = store.get(
-        recordIndexRecordIdsByGroupCallbackFamilyState(initialRecordGroupId),
-      ) as string[];
-
-      const positionOfDroppedRecordInInitialRecordIds =
+      const indexOfDroppedRecordInInitialRecordGroup =
         currentRecordIdsInInitialRecordGroup.findIndex((id) => id === recordId);
 
       let currentRecordIdsInTargetRecordGroup = store.get(
         recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
       ) as string[];
 
-      if (positionOfDroppedRecordInInitialRecordIds === -1) {
+      if (indexOfDroppedRecordInInitialRecordGroup === -1) {
         throw new Error(
-          `Cannot find record id in initial record group ids on drop, this should not happen`,
+          `Cannot find record id in initial record group ids on drop, this should not happen, recordId: ${recordId}, initialRecordGroupId: ${initialRecordGroupId}`,
         );
       }
 
       const newInitialGroupRecordIds =
         currentRecordIdsInInitialRecordGroup.toSpliced(
-          positionOfDroppedRecordInInitialRecordIds,
+          indexOfDroppedRecordInInitialRecordGroup,
           1,
         );
 

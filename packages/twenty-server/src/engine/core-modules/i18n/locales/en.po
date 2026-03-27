@@ -29,6 +29,11 @@ msgstr "{fieldType} fields cannot be unique."
 msgid "{fieldType} fields cannot have a default value."
 msgstr "{fieldType} fields cannot have a default value."
 
+#. js-lingui-id: VEmyIu
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util.ts
+msgid "{fullMessage}"
+msgstr "{fullMessage}"
+
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
@@ -94,11 +99,6 @@ msgstr "A front component with this name already exists."
 msgid "A function with this name already exists."
 msgstr "A function with this name already exists."
 
-#. js-lingui-id: 1Pylbk
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "A many to one relation field should always declare a join column"
-msgstr "A many to one relation field should always declare a join column"
-
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
@@ -118,11 +118,6 @@ msgstr "A note"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A note target"
 msgstr "A note target"
-
-#. js-lingui-id: MtcxLV
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "A one to many relation field should never declare a join column"
-msgstr "A one to many relation field should never declare a join column"
 
 #. js-lingui-id: W6LTzL
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -1548,11 +1543,6 @@ msgstr "Could not find index field related field metadata"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index related object metadata"
 msgstr "Could not find index related object metadata"
-
-#. js-lingui-id: YzCaIm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "Could not find relation field parent flat object"
-msgstr "Could not find relation field parent flat object"
 
 #. js-lingui-id: KwGZ0m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts

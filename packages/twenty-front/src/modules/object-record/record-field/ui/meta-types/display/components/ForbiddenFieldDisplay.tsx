@@ -8,14 +8,17 @@ const StyledContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.transparent.light};
 
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[3]};
+  overflow: hidden;
 
   padding: ${themeCssVariables.spacing[1]};
+  user-select: none;
 `;
 
 export const ForbiddenFieldDisplay = () => {

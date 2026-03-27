@@ -34,6 +34,11 @@ msgstr "{fieldType}型のフィールドは一意に設定できません。"
 msgid "{fieldType} fields cannot have a default value."
 msgstr "{fieldType}フィールドにはデフォルト値を設定できません。"
 
+#. js-lingui-id: VEmyIu
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util.ts
+msgid "{fullMessage}"
+msgstr ""
+
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
 msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
@@ -99,11 +104,6 @@ msgstr "この名前のフロントコンポーネントはすでに存在しま
 msgid "A function with this name already exists."
 msgstr "この名前の関数はすでに存在します。"
 
-#. js-lingui-id: 1Pylbk
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "A many to one relation field should always declare a join column"
-msgstr "多対一のリレーションフィールドには必ず結合カラムを宣言する必要があります"
-
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
@@ -123,11 +123,6 @@ msgstr "ノート"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A note target"
 msgstr "ノートターゲット"
-
-#. js-lingui-id: MtcxLV
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "A one to many relation field should never declare a join column"
-msgstr "一対多のリレーションフィールドには結合カラムを宣言しないでください"
 
 #. js-lingui-id: W6LTzL
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -1553,11 +1548,6 @@ msgstr "インデックスフィールドに関連するフィールドメタデ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index related object metadata"
 msgstr "インデックス関連オブジェクトメタデータが見つかりませんでした"
-
-#. js-lingui-id: YzCaIm
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
-msgid "Could not find relation field parent flat object"
-msgstr "リレーションフィールドの親フラットオブジェクトが見つかりません"
 
 #. js-lingui-id: KwGZ0m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts

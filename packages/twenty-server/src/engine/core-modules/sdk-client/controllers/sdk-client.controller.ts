@@ -59,6 +59,7 @@ export class SdkClientController {
     const fileBuffer =
       await this.sdkClientArchiveService.getClientModuleFromArchive({
         workspaceId: workspace.id,
+        applicationId,
         applicationUniversalIdentifier: application.universalIdentifier,
         moduleName,
       });

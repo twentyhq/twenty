@@ -11,6 +11,7 @@ import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   StyledActionTableCell,
   StyledNameTableCell,
+  StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIcons } from 'twenty-ui/display';
@@ -70,25 +71,27 @@ export const SettingsObjectMetadataItemTableRow = ({
       key={objectMetadataItem.namePlural}
       to={link}
     >
-      <StyledNameTableCell>
-        {isDefined(Icon) && (
-          <Icon
-            style={{
-              minWidth: theme.icon.size.md,
-            }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
-        <StyledNameContainer>
-          <StyledNameLabel title={objectMetadataItem.labelPlural}>
-            {objectMetadataItem.labelPlural}
-          </StyledNameLabel>
-          {!objectMetadataItem.isActive && (
-            <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+      <StyledStickyFirstCell>
+        <StyledNameTableCell>
+          {isDefined(Icon) && (
+            <Icon
+              style={{
+                minWidth: theme.icon.size.md,
+              }}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
           )}
-        </StyledNameContainer>
-      </StyledNameTableCell>
+          <StyledNameContainer>
+            <StyledNameLabel title={objectMetadataItem.labelPlural}>
+              {objectMetadataItem.labelPlural}
+            </StyledNameLabel>
+            {!objectMetadataItem.isActive && (
+              <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+            )}
+          </StyledNameContainer>
+        </StyledNameTableCell>
+      </StyledStickyFirstCell>
       <TableCell>
         <SettingsItemTypeTag item={objectMetadataItem} />
       </TableCell>

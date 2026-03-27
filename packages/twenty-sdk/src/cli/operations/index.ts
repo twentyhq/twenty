@@ -22,11 +22,16 @@ export type { AppUninstallOptions } from './uninstall';
 export { functionExecute } from './execute';
 export type { FunctionExecuteOptions } from './execute';
 
+// Server
+export { serverStart } from './server-start';
+export type { ServerStartOptions, ServerStartResult } from './server-start';
+
 // Shared types and error codes
 export {
   APP_ERROR_CODES,
   AUTH_ERROR_CODES,
   FUNCTION_ERROR_CODES,
+  SERVER_ERROR_CODES,
 } from '@/cli/types';
 export type {
   AuthListRemote,

@@ -15,7 +15,10 @@ type ProcessGroupDropParams = {
   selectedRecordIds: string[];
   recordIdsByGroupFamilyState: any;
   onUpdateRecord: (
-    update: { recordId: string; position?: number },
+    update: {
+      recordId: string;
+      position?: number;
+    },
     targetRecordGroupId: RecordGroupDefinition['value'],
   ) => void;
 };

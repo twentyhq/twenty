@@ -455,6 +455,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
         viewUniversalIdentifier:
           flatRecordPageFieldsViewToCreate.universalIdentifier,
+        excludeLabelIdentifier: true,
       });
 
       flatDefaultRecordPageLayoutsToCreate =

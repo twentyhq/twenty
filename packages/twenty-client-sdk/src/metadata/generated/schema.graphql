@@ -2275,6 +2275,11 @@ type FieldConnection {
   edges: [FieldEdge!]!
 }
 
+type LogicFunctionLogs {
+  """Execution Logs"""
+  logs: String!
+}
+
 type DeleteTwoFactorAuthenticationMethod {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -2593,11 +2598,6 @@ type UsageAnalytics {
   periodStart: DateTime!
   periodEnd: DateTime!
   userDailyUsage: UsageUserDaily
-}
-
-type LogicFunctionLogs {
-  """Execution Logs"""
-  logs: String!
 }
 
 type FrontComponent {
@@ -3504,6 +3504,7 @@ type Mutation {
   createViewGroup(input: CreateViewGroupInput!): ViewGroup!
   createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
   updateViewGroup(input: UpdateViewGroupInput!): ViewGroup!
+  updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
   deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!

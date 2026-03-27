@@ -93,20 +93,6 @@ export const computeStandardMessageParticipantViewFields = (
       },
     }),
 
-    messageParticipantRecordPageFieldsHandle:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'messageParticipant',
-        context: {
-          viewName: 'messageParticipantRecordPageFields',
-          viewFieldName: 'handle',
-          fieldName: 'handle',
-          position: 0,
-          isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      }),
     messageParticipantRecordPageFieldsMessage:
       createStandardViewFieldFlatMetadata({
         ...args,

@@ -34,13 +34,16 @@ export const useSingleRecordPickerPerformSearch = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const selectedIdsFilter = { id: { in: selectedIds } };
+  const hasSelectedIds = selectedIds.length > 0;
+  const selectedIdsFilter = hasSelectedIds
+    ? { id: { in: selectedIds } }
+    : undefined;
 
   const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =
     useObjectRecordSearchRecords({
       objectNameSingulars,
       filter: selectedIdsFilter,
-      skip: !selectedIds.length,
+      skip: !hasSelectedIds,
       searchInput: '',
     });
 
@@ -50,7 +53,7 @@ export const useSingleRecordPickerPerformSearch = ({
   } = useObjectRecordSearchRecords({
     objectNameSingulars,
     filter: selectedIdsFilter,
-    skip: !selectedIds.length,
+    skip: !hasSelectedIds,
     searchInput: searchFilter,
   });
 

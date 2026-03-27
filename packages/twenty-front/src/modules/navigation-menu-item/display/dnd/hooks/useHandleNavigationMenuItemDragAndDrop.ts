@@ -1,7 +1,8 @@
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+
+import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/navigationMenuItemDropResult';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
@@ -115,10 +116,8 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     });
   };
 
-  const handleNavigationMenuItemDragAndDrop: OnDragEndResponder = async (
-    result: Parameters<OnDragEndResponder>[0] & {
-      insertBeforeItemId?: string | null;
-    },
+  const handleNavigationMenuItemDragAndDrop = async (
+    result: NavigationMenuItemDropResult,
   ) => {
     const { destination, source, draggableId } = result;
 

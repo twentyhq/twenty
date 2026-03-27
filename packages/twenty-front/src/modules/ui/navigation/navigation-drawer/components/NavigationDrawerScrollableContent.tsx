@@ -7,10 +7,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledItemsContainer = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
-  margin-bottom: auto;
-  overflow: hidden;
+  height: 100%;
 `;
 
 const StyledScrollableInnerContainer = styled.div<{ isMobile?: boolean }>`

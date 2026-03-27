@@ -129,7 +129,7 @@ export const NavigationDrawer = ({
           isExpanded={isNavigationDrawerExpanded}
         >
           {isSettingsDrawer && title ? (
-            !isMobile && <NavigationDrawerBackButton title={title} />
+            <NavigationDrawerBackButton title={title} />
           ) : (
             <NavigationDrawerHeader showCollapseButton />
           )}

@@ -1,5 +1,4 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -29,7 +28,6 @@ export const useSidePanelMenu = () => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
     if (isSidePanelOpened) {
-      store.set(addToNavPayloadRegistryState.atom, new Map());
       store.set(isSidePanelOpenedState.atom, false);
       store.set(isSidePanelClosingState.atom, true);
       closeAnyOpenDropdown();
@@ -67,7 +65,7 @@ export const useSidePanelMenu = () => {
       });
     } else {
       navigateSidePanel({
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: t`Command Menu`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,

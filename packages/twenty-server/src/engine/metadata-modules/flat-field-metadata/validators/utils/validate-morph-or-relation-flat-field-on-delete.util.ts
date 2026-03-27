@@ -14,6 +14,10 @@ export const validateMorphOrRelationFlatFieldOnDelete = ({
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
+  if (!isDefined(universalFlatFieldMetadata.universalSettings?.relationType)) {
+    return errors;
+  }
+
   if (
     isDefined(universalFlatFieldMetadata.universalSettings.onDelete) &&
     universalFlatFieldMetadata.universalSettings.relationType !==

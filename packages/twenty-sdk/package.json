@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.8.0-canary.2",
+  "version": "0.8.0-canary.5",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/sdk/index.d.ts",
@@ -75,6 +75,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tinyglobby": "^0.2.15",
+    "twenty-client-sdk": "workspace:*",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
@@ -96,7 +97,6 @@
     "storybook": "^10.2.13",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
-    "twenty-client-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",

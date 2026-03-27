@@ -17,7 +17,6 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { ViewKey } from '@/views/types/ViewKey';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
@@ -43,11 +42,6 @@ export const NavigationMenuItemIcon = ({
   const view = isDefined(navigationMenuItem.viewId)
     ? views.find((view) => view.id === navigationMenuItem.viewId)
     : undefined;
-  const isViewWithOverlay =
-    navigationMenuItem.type === NavigationMenuItemType.VIEW &&
-    isDefined(view) &&
-    view.key !== ViewKey.INDEX;
-
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === objectNameSingular,
   );
@@ -57,7 +51,10 @@ export const NavigationMenuItemIcon = ({
       : StandardIcon;
 
   const canShowViewOverlay =
-    isViewWithOverlay && isDefined(objectIconForView) && isDefined(view?.icon);
+    navigationMenuItem.type === NavigationMenuItemType.VIEW &&
+    isDefined(view) &&
+    isDefined(objectIconForView) &&
+    isDefined(view?.icon);
 
   if (canShowViewOverlay) {
     return (

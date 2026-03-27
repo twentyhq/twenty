@@ -53,6 +53,8 @@ jobs:
         image: redis
         ports:
           - 6379:6379
+    env:
+      PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-sdk create-twenty-app
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -66,13 +68,13 @@ jobs:
         run: |
           CI_VERSION="0.0.0-ci.$(date +%s)"
           echo "CI_VERSION=$CI_VERSION" >> $GITHUB_ENV
-          npx nx run-many -t set-local-version -p twenty-sdk twenty-client-sdk create-twenty-app --releaseVersion=$CI_VERSION
+          npx nx run-many -t set-local-version -p $PUBLISHABLE_PACKAGES --releaseVersion=$CI_VERSION
 
       - name: Build packages
         run: |
-          npx nx build twenty-sdk
-          npx nx build twenty-client-sdk
-          npx nx build create-twenty-app
+          for pkg in $PUBLISHABLE_PACKAGES; do
+            npx nx build $pkg
+          done
 
       - name: Install and start Verdaccio
         run: |
@@ -89,11 +91,13 @@ jobs:
 
       - name: Publish packages to local registry
         run: |
-          npm set //localhost:4873/:_authToken "ci-auth-token"
+          yarn config set npmRegistryServer http://localhost:4873
+          yarn config set unsafeHttpWhitelist --json '["localhost"]'
+          yarn config set npmAuthToken ci-auth-token
 
-          for pkg in twenty-sdk twenty-client-sdk create-twenty-app; do
+          for pkg in $PUBLISHABLE_PACKAGES; do
             cd packages/$pkg
-            npm publish --registry http://localhost:4873 --tag ci
+            yarn npm publish --tag ci
             cd ../..
           done
 

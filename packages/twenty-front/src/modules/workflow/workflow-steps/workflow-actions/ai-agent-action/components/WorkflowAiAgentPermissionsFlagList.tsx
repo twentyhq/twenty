@@ -1,7 +1,7 @@
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { type PermissionFlagType } from '~/generated-metadata/graphql';
 import { WorkflowAiAgentPermissionsFlagRow } from './WorkflowAiAgentPermissionsFlagRow';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsFlagListProps = {
   title: string;
@@ -22,40 +22,27 @@ export const WorkflowAiAgentPermissionsFlagList = ({
   onAddPermissionFlag,
   onDeletePermissionFlag,
 }: WorkflowAiAgentPermissionsFlagListProps) => {
-  const hasPermissions = permissions.length > 0;
-
-  if (!hasPermissions) {
+  if (permissions.length === 0) {
     return null;
   }
 
   return (
-    <div>
-      <StyledLabel>{title}</StyledLabel>
-      <StyledList>
-        {permissions.map((permission) => {
-          const isEnabled = enabledPermissionFlagKeys.includes(permission.key);
+    <SidePanelGroup heading={title}>
+      {permissions.map((permission) => {
+        const isEnabled = enabledPermissionFlagKeys.includes(permission.key);
 
-          return (
-            <WorkflowAiAgentPermissionsFlagRow
-              key={permission.key}
-              permission={permission}
-              isEnabled={isEnabled}
-              readonly={readonly}
-              showDeleteButton={showDeleteButton}
-              onAdd={
-                isEnabled
-                  ? undefined
-                  : () => onAddPermissionFlag?.(permission.key)
-              }
-              onDelete={
-                showDeleteButton
-                  ? () => onDeletePermissionFlag?.(permission.key)
-                  : undefined
-              }
-            />
-          );
-        })}
-      </StyledList>
-    </div>
+        return (
+          <WorkflowAiAgentPermissionsFlagRow
+            key={permission.key}
+            permission={permission}
+            isEnabled={isEnabled}
+            readonly={readonly}
+            showDeleteButton={showDeleteButton}
+            onAdd={() => onAddPermissionFlag?.(permission.key)}
+            onDelete={() => onDeletePermissionFlag?.(permission.key)}
+          />
+        );
+      })}
+    </SidePanelGroup>
   );
 };

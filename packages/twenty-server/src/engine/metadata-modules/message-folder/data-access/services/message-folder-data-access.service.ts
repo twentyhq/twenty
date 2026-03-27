@@ -38,15 +38,17 @@ export class MessageFolderDataAccessService {
   private async toCore(
     workspaceId: string,
     data: Partial<MessageFolderWorkspaceEntity>,
+    messageChannelId?: string,
   ): Promise<Record<string, unknown>> {
     const coreData: Record<string, unknown> = { ...data, workspaceId };
     const parentFolderId = coreData.parentFolderId as string | null;
+    const channelId = (coreData.messageChannelId as string) ?? messageChannelId;
 
-    if (parentFolderId && !uuidValidate(parentFolderId)) {
+    if (parentFolderId && !uuidValidate(parentFolderId) && channelId) {
       const parentFolder = await this.coreRepository.findOne({
         where: {
           workspaceId,
-          messageChannelId: coreData.messageChannelId as string,
+          messageChannelId: channelId,
           externalId: parentFolderId,
         },
         select: ['id'],
@@ -116,11 +118,11 @@ export class MessageFolderDataAccessService {
   ): Promise<void> {
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
 
-    await workspaceRepository.save(data);
+    const savedData = await workspaceRepository.save(data);
 
     if (await this.isMigrated(workspaceId)) {
       try {
-        const coreData = await this.toCore(workspaceId, data);
+        const coreData = await this.toCore(workspaceId, savedData);
 
         await this.coreRepository.save(
           coreData as unknown as MessageFolderEntity,
@@ -146,9 +148,15 @@ export class MessageFolderDataAccessService {
 
     if (await this.isMigrated(workspaceId)) {
       try {
+        const coreData = await this.toCore(
+          workspaceId,
+          data,
+          (where as Record<string, unknown>).messageChannelId as string,
+        );
+
         await this.coreRepository.update(
           { ...where, workspaceId } as FindOptionsWhere<MessageFolderEntity>,
-          data as Record<string, unknown>,
+          coreData,
         );
       } catch (error) {
         this.logger.error(
