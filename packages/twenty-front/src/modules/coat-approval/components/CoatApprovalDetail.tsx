@@ -5,6 +5,7 @@ import {
   type CoatTab,
 } from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
+import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type CoatApprovalDetailProps = {
@@ -29,6 +30,12 @@ const StyledContractTitle = styled.h2`
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin: 0 0 ${({ theme }) => theme.spacing(3)} 0;
+`;
+
+const StyledChangeInfo = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledWarningBanner = styled.div`
@@ -303,6 +310,21 @@ export const CoatApprovalDetail = ({
           {contract.name || 'Untitled Contract'}
         </StyledContractTitle>
 
+        {isDefined(contract.updatedBy) && isDefined(contract.updatedAt) && (
+          <StyledChangeInfo>
+            Last changed by{' '}
+            {contract.updatedBy.name || contract.updatedBy.source}
+            {' -- '}
+            {new Date(contract.updatedAt).toLocaleDateString('de-DE', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </StyledChangeInfo>
+        )}
+
         {showSpecialAgreementsWarning && (
           <StyledWarningBanner>
             Zusatzvereinbarung vorhanden -- bitte pruefen
@@ -500,6 +522,15 @@ export const CoatApprovalDetail = ({
             <StyledInfoValue>
               {formatCurrency(contract.valueGrossBase, contract.currencyBase)}
             </StyledInfoValue>
+
+            <StyledInfoLabel>Send Invoice Email</StyledInfoLabel>
+            <StyledInfoValue>
+              <CoatEditableField
+                fieldName="sendInvoiceEmail"
+                value={contract.sendInvoiceEmail === false ? 'NEIN' : 'JA'}
+                objectId={contract.id}
+              />
+            </StyledInfoValue>
           </StyledInfoGrid>
 
           <StyledInfoGrid>
@@ -514,27 +545,66 @@ export const CoatApprovalDetail = ({
           </StyledInfoGrid>
 
           {isDefined(contract.paymentTerms) &&
-          contract.paymentTerms.trim().length > 0 ? (
-            <>
+            contract.paymentTerms.trim().length > 0 && (
               <StyledPaymentTermsText>
                 {contract.paymentTerms}
               </StyledPaymentTermsText>
-              <StyledTotalRow isValid={true}>
-                <span>Total (from contract value)</span>
-                <span>
-                  {formatCurrency(
-                    contract.valueGrossBase,
-                    contract.currencyBase,
-                  )}
-                </span>
-              </StyledTotalRow>
-            </>
-          ) : (
-            <StyledPaymentTermsText>
-              No payment terms available. Parsed installments will be generated
-              by the AI module.
-            </StyledPaymentTermsText>
-          )}
+            )}
+
+          <StyledSectionTitle>Installments</StyledSectionTitle>
+          <StyledInfoGrid>
+            {Array.from({ length: 12 }, (_, index) => {
+              const num = index + 1;
+              const dateField = `payment${num}Date` as keyof CoatContractRecord;
+              const amountField =
+                `payment${num}Amount` as keyof CoatContractRecord;
+              const dateValue = contract[dateField] as string | null;
+              const amountValue = contract[amountField] as number | null;
+
+              if (
+                !isDefined(dateValue) &&
+                !isDefined(amountValue) &&
+                index > 0
+              ) {
+                const prevAmountField =
+                  `payment${num - 1}Amount` as keyof CoatContractRecord;
+                const prevAmount = contract[prevAmountField] as number | null;
+                if (!isDefined(prevAmount)) return null;
+              }
+
+              return (
+                <React.Fragment key={num}>
+                  <StyledInfoLabel>Rate {num} Date</StyledInfoLabel>
+                  <StyledInfoValue>
+                    <CoatEditableField
+                      fieldName={`payment${num}Date`}
+                      value={dateValue}
+                      objectId={contract.id}
+                      type="date"
+                    />
+                  </StyledInfoValue>
+                  <StyledInfoLabel>Rate {num} Amount</StyledInfoLabel>
+                  <StyledInfoValue>
+                    <CoatEditableField
+                      fieldName={`payment${num}Amount`}
+                      value={
+                        isDefined(amountValue) ? String(amountValue) : null
+                      }
+                      objectId={contract.id}
+                      type="number"
+                    />
+                  </StyledInfoValue>
+                </React.Fragment>
+              );
+            })}
+          </StyledInfoGrid>
+
+          <StyledTotalRow isValid={true}>
+            <span>Total (from contract value)</span>
+            <span>
+              {formatCurrency(contract.valueGrossBase, contract.currencyBase)}
+            </span>
+          </StyledTotalRow>
         </StyledSection>
 
         <StyledSection>
