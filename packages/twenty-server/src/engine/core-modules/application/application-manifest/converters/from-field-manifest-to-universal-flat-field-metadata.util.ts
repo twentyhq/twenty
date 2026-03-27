@@ -94,6 +94,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     relationTargetObjectMetadataUniversalIdentifier,
     viewFieldUniversalIdentifiers: [],
     viewFilterUniversalIdentifiers: [],
+    fieldPermissionUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],

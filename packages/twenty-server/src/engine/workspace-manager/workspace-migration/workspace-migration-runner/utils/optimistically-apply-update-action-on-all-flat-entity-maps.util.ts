@@ -63,6 +63,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'navigationMenuItem':
     case 'permissionFlag':
     case 'objectPermission':
+    case 'fieldPermission':
     case 'webhook': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,

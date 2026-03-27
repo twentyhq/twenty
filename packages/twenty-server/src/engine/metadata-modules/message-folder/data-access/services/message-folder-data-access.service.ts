@@ -118,11 +118,11 @@ export class MessageFolderDataAccessService {
   ): Promise<void> {
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
 
-    await workspaceRepository.save(data);
+    const savedData = await workspaceRepository.save(data);
 
     if (await this.isMigrated(workspaceId)) {
       try {
-        const coreData = await this.toCore(workspaceId, data);
+        const coreData = await this.toCore(workspaceId, savedData);
 
         await this.coreRepository.save(
           coreData as unknown as MessageFolderEntity,

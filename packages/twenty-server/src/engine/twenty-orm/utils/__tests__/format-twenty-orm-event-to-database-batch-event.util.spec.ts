@@ -74,6 +74,7 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
     fieldIds: ['name-id'],
     indexMetadataIds: [],
     objectPermissionIds: [],
+    fieldPermissionIds: [],
     viewIds: [],
     applicationId: null,
   } as unknown as FlatObjectMetadata;

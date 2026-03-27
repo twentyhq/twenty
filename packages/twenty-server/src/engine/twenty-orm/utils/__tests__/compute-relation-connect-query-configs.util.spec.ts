@@ -225,6 +225,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       isSearchable: true,
       universalIdentifier: partial.id,
       objectPermissionIds: [],
+      fieldPermissionIds: [],
       viewIds: [],
       applicationId: null,
       isLabelSyncedWithName: false,
