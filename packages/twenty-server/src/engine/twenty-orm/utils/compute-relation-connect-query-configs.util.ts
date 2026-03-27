@@ -260,7 +260,13 @@ const checkUniqueConstraintFullyPopulated = (
     );
   }
 
-  return Object.keys(connectObject.connect.where).map((key) => {
+  const whereKeys = Object.keys(connectObject.connect.where);
+
+  // When `id` is provided, use it exclusively — it's the most reliable
+  // identifier and other fields (like email) may be stale.
+  const keysToUse = whereKeys.includes('id') ? ['id'] : whereKeys;
+
+  return keysToUse.map((key) => {
     const field = uniqueConstraintsFields
       .flat()
       .find((uniqueConstraintField) => uniqueConstraintField.name === key);

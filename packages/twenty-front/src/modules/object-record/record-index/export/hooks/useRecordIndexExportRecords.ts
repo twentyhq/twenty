@@ -318,8 +318,18 @@ export const useRecordIndexExportRecords = ({
       config: ExportConfig,
       relationDataMap: Map<string, Map<string, ObjectRecord>>,
     ) => {
+      // Always include 'id' for each relation so re-imports can match by ID
+      const augmentedConfig: ExportConfig = {
+        ...config,
+        relationConfigs: config.relationConfigs.map((rc) =>
+          rc.selectedFieldPaths.includes('id')
+            ? rc
+            : { ...rc, selectedFieldPaths: ['id', ...rc.selectedFieldPaths] },
+        ),
+      };
+
       const configuredRelationFieldNames = new Set(
-        config.relationConfigs.map((rc) => rc.relationFieldName),
+        augmentedConfig.relationConfigs.map((rc) => rc.relationFieldName),
       );
 
       const expandedColumns: Pick<
@@ -335,7 +345,7 @@ export const useRecordIndexExportRecords = ({
           continue;
         }
 
-        const relationConfig = config.relationConfigs.find(
+        const relationConfig = augmentedConfig.relationConfigs.find(
           (rc) => rc.relationFieldName === fieldName,
         );
 
@@ -399,7 +409,7 @@ export const useRecordIndexExportRecords = ({
         string,
         Map<string, FieldMetadataType>
       >();
-      for (const rc of config.relationConfigs) {
+      for (const rc of augmentedConfig.relationConfigs) {
         const targetMeta = objectMetadataItems.find(
           (item) => item.nameSingular === rc.targetObjectNameSingular,
         );
@@ -429,7 +439,7 @@ export const useRecordIndexExportRecords = ({
       const expandedRows = records.map((record) => {
         const expandedRecord = { ...record };
 
-        for (const relationConfig of config.relationConfigs) {
+        for (const relationConfig of augmentedConfig.relationConfigs) {
           const lookupMap = relationDataMap.get(
             relationConfig.relationFieldName,
           );

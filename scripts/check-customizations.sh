@@ -662,6 +662,21 @@ check_file_contains \
   "packages/twenty-server/src/engine/twenty-orm/repository/workspace-insert-query-builder.ts" \
   "isUpsert" \
   "Insert query builder must pass isUpsert flag to relation nested queries"
+check_file_contains \
+  "packages/twenty-server/src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts" \
+  "keysToUse" \
+  "Connect matching must prefer id over other unique constraint fields"
+
+echo ""
+echo "--- CSV Export: Relation ID Embedding ---"
+check_file_not_contains \
+  "packages/twenty-front/src/modules/object-record/record-index/export/utils/relationExportFieldPaths.ts" \
+  "'id'" \
+  "id must not be in EXCLUDED_FIELD_NAMES so relation IDs are exportable"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts" \
+  "augmentedConfig" \
+  "Export must auto-include relation id in selected field paths"
 
 echo ""
 echo "--- CSV Export: Composite Field Splitting ---"

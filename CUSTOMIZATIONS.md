@@ -145,7 +145,8 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `command-menu-item/engine-command/record/multiple-records/components/ExportMultipleRecordsCommand.tsx` | Restore the related-fields modal in the engine-command export path             |
 | `object-record/record-index/export/components/ExportRelationFieldConfigModal.tsx`       | Select relation export leaves by field path so nested relational fields can be chosen |
 | `object-record/record-index/export/hooks/useExportableRelationFields.ts`                | Recursively enumerate exportable `MANY_TO_ONE` relation leaves                        |
-| `object-record/record-index/export/hooks/useRecordIndexExportRecords.ts`                | Split composite relation sub-fields into separate CSV columns                         |
+| `object-record/record-index/export/hooks/useRecordIndexExportRecords.ts`                | Split composite relation sub-fields into separate CSV columns; auto-include relation IDs |
+| `object-record/record-index/export/utils/relationExportFieldPaths.ts`                   | Allow `id` field in relation exports (removed from EXCLUDED_FIELD_NAMES)              |
 | `spreadsheet-import/utils/dataMutations.ts`                                             | Trim whitespace before validation                                                     |
 | `spreadsheet-import/utils/normalizeTableData.ts`                                        | Trim whitespace on matched column values                                              |
 
@@ -171,6 +172,7 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries.ts`                 | Skip failed relation connects on upsert rows (preserve existing relation) instead of aborting the batch     |
 | `engine/twenty-orm/repository/workspace-insert-query-builder.ts`                                        | Pass `isUpsert` flag to relation nested query processing                                                    |
+| `engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts`                                | When `id` is in connect where clause, use only `id` for matching (ignore stale email/other fields)          |
 
 ### RLS and Permissions
 

@@ -25,7 +25,6 @@ const EXCLUDED_FIELD_NAMES = new Set([
   'updatedAt',
   'deletedAt',
   'position',
-  'id',
 ]);
 
 const EXPORTABLE_FIELD_TYPES = new Set([
@@ -52,7 +51,7 @@ const getObjectMetadataKey = (
 
 const shouldSkipField = (field: RelationExportFieldMetadataItem) =>
   field.isActive === false ||
-  field.isSystem === true ||
+  (field.isSystem === true && field.name !== 'id') ||
   EXCLUDED_FIELD_NAMES.has(field.name);
 
 const isExportableLeafField = (field: RelationExportFieldMetadataItem) => {
