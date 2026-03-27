@@ -3504,6 +3504,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/types@npm:^7.26.0":
+  version: 7.29.0
+  resolution: "@babel/types@npm:7.29.0"
+  dependencies:
+    "@babel/helper-string-parser": "npm:^7.27.1"
+    "@babel/helper-validator-identifier": "npm:^7.28.5"
+  checksum: 10c0/23cc3466e83bcbfab8b9bd0edaafdb5d4efdb88b82b3be6728bbade5ba2f0996f84f63b1c5f7a8c0d67efded28300898a5f930b171bb40b311bca2029c4e9b4f
+  languageName: node
+  linkType: hard
+
 "@babel/types@npm:^7.28.4, @babel/types@npm:^7.28.5":
   version: 7.28.5
   resolution: "@babel/types@npm:7.28.5"
@@ -3511,6 +3521,46 @@ __metadata:
     "@babel/helper-string-parser": "npm:^7.27.1"
     "@babel/helper-validator-identifier": "npm:^7.28.5"
   checksum: 10c0/a5a483d2100befbf125793640dec26b90b95fd233a94c19573325898a5ce1e52cdfa96e495c7dcc31b5eca5b66ce3e6d4a0f5a4a62daec271455959f208ab08a
+  languageName: node
+  linkType: hard
+
+"@base-ui/react@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@base-ui/react@npm:1.3.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.28.6"
+    "@base-ui/utils": "npm:0.2.6"
+    "@floating-ui/react-dom": "npm:^2.1.8"
+    "@floating-ui/utils": "npm:^0.2.11"
+    tabbable: "npm:^6.4.0"
+    use-sync-external-store: "npm:^1.6.0"
+  peerDependencies:
+    "@types/react": ^17 || ^18 || ^19
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/36c9d2d77a82b41cb3783be39340aa0713bbe102fb18213f8f3e2c4f1295beb8359dd97067248bea34925f4a40eab281ddc42f05009179db1d5a7a99e4bfecdc
+  languageName: node
+  linkType: hard
+
+"@base-ui/utils@npm:0.2.6, @base-ui/utils@npm:^0.2.6":
+  version: 0.2.6
+  resolution: "@base-ui/utils@npm:0.2.6"
+  dependencies:
+    "@babel/runtime": "npm:^7.28.6"
+    "@floating-ui/utils": "npm:^0.2.11"
+    reselect: "npm:^5.1.1"
+    use-sync-external-store: "npm:^1.6.0"
+  peerDependencies:
+    "@types/react": ^17 || ^18 || ^19
+    react: ^17 || ^18 || ^19
+    react-dom: ^17 || ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/5611442ac37066774277cd3360d16ebc3f599dc7b8efdfdfbf5b66b6d2eb6e87a18c0f9922b061818850e781d9bbc70aa5fc4ffb1dfd7fb234eefc401e070090
   languageName: node
   linkType: hard
 
@@ -10770,6 +10820,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@linaria/core@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@linaria/core@npm:7.0.0"
+  dependencies:
+    "@wyw-in-js/processor-utils": "npm:^1.0.4"
+  checksum: 10c0/10d760409dc07e5f023eb1cf7207a93ab9be187e82b2117d3bff592598ecef01cc74598c767ca93c2912a1527ff73033c2719b4a9992705c26c58759296741d4
+  languageName: node
+  linkType: hard
+
 "@linaria/react@npm:^6.2.1":
   version: 6.2.1
   resolution: "@linaria/react@npm:6.2.1"
@@ -10785,6 +10844,24 @@ __metadata:
   peerDependencies:
     react: ">=16"
   checksum: 10c0/102480195bc6e5f41cf3da4c7181640cf617256fcdd48847238cdc7def30536f132f29f35530bd261cbf5580a87981f5a6f7717e791b73cc309552141a10d256
+  languageName: node
+  linkType: hard
+
+"@linaria/react@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "@linaria/react@npm:7.0.1"
+  dependencies:
+    "@emotion/is-prop-valid": "npm:^1.2.0"
+    "@linaria/core": "npm:^7.0.0"
+    "@wyw-in-js/processor-utils": "npm:^1.0.4"
+    "@wyw-in-js/shared": "npm:^1.0.4"
+    minimatch: "npm:^9.0.3"
+    react-html-attributes: "npm:^1.4.6"
+    resolve: "npm:^1.22.8"
+    ts-invariant: "npm:^0.10.3"
+  peerDependencies:
+    react: ">=16"
+  checksum: 10c0/6771d9229de38fe39a01d2d4b331094ad7b9bb9ad00ba4b8469709702e1540eeb090a028abf904528d5399f57f16540d052071916111451a8827792ad6625cb9
   languageName: node
   linkType: hard
 
@@ -12845,6 +12922,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/env@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/env@npm:16.1.7"
+  checksum: 10c0/89a9e657b29d01be04394cd8a4c917cfdd76aec76ea9a0f7670896efe7668e665713adcf72632958b0c19ce66cf7e1f39961cfd9ba69d10c5a3e08ee20d2370a
+  languageName: node
+  linkType: hard
+
 "@next/swc-darwin-arm64@npm:14.2.33":
   version: 14.2.33
   resolution: "@next/swc-darwin-arm64@npm:14.2.33"
@@ -12855,6 +12939,13 @@ __metadata:
 "@next/swc-darwin-arm64@npm:16.0.10":
   version: 16.0.10
   resolution: "@next/swc-darwin-arm64@npm:16.0.10"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@next/swc-darwin-arm64@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-darwin-arm64@npm:16.1.7"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -12873,6 +12964,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-darwin-x64@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-darwin-x64@npm:16.1.7"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@next/swc-linux-arm64-gnu@npm:14.2.33":
   version: 14.2.33
   resolution: "@next/swc-linux-arm64-gnu@npm:14.2.33"
@@ -12883,6 +12981,13 @@ __metadata:
 "@next/swc-linux-arm64-gnu@npm:16.0.10":
   version: 16.0.10
   resolution: "@next/swc-linux-arm64-gnu@npm:16.0.10"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@next/swc-linux-arm64-gnu@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-linux-arm64-gnu@npm:16.1.7"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
@@ -12901,6 +13006,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-linux-arm64-musl@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-linux-arm64-musl@npm:16.1.7"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@next/swc-linux-x64-gnu@npm:14.2.33":
   version: 14.2.33
   resolution: "@next/swc-linux-x64-gnu@npm:14.2.33"
@@ -12911,6 +13023,13 @@ __metadata:
 "@next/swc-linux-x64-gnu@npm:16.0.10":
   version: 16.0.10
   resolution: "@next/swc-linux-x64-gnu@npm:16.0.10"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@next/swc-linux-x64-gnu@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-linux-x64-gnu@npm:16.1.7"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -12929,6 +13048,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/swc-linux-x64-musl@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-linux-x64-musl@npm:16.1.7"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@next/swc-win32-arm64-msvc@npm:14.2.33":
   version: 14.2.33
   resolution: "@next/swc-win32-arm64-msvc@npm:14.2.33"
@@ -12939,6 +13065,13 @@ __metadata:
 "@next/swc-win32-arm64-msvc@npm:16.0.10":
   version: 16.0.10
   resolution: "@next/swc-win32-arm64-msvc@npm:16.0.10"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@next/swc-win32-arm64-msvc@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-win32-arm64-msvc@npm:16.1.7"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -12960,6 +13093,13 @@ __metadata:
 "@next/swc-win32-x64-msvc@npm:16.0.10":
   version: 16.0.10
   resolution: "@next/swc-win32-x64-msvc@npm:16.0.10"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@next/swc-win32-x64-msvc@npm:16.1.7":
+  version: 16.1.7
+  resolution: "@next/swc-win32-x64-msvc@npm:16.1.7"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -25204,6 +25344,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^20":
+  version: 20.19.37
+  resolution: "@types/node@npm:20.19.37"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/8420353aee776ae5c1e9720058949909a0e908fa2af85501e9db2645bb9f9acd7d767890f8aaee34d375e6f8b5f550a9a169e908d2d8cf7d5daf63dce64092a0
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^20.0.0":
   version: 20.19.19
   resolution: "@types/node@npm:20.19.19"
@@ -27389,6 +27538,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wyw-in-js/babel-preset@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "@wyw-in-js/babel-preset@npm:0.8.1"
+  dependencies:
+    "@babel/core": "npm:^7.23.5"
+    "@wyw-in-js/transform": "npm:0.8.1"
+  checksum: 10c0/69adedcf3c49cf4f3c181feae6fb8df26c5168a4e5abf4c47b36c2d01da2a77fde6bab46d4b8111e59d28046fdf04c2c8d5dccdeff677033351be2408ffcb2a3
+  languageName: node
+  linkType: hard
+
 "@wyw-in-js/babel-preset@npm:^1.0.6":
   version: 1.0.6
   resolution: "@wyw-in-js/babel-preset@npm:1.0.6"
@@ -27409,7 +27568,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wyw-in-js/processor-utils@npm:1.0.4":
+"@wyw-in-js/processor-utils@npm:0.8.1":
+  version: 0.8.1
+  resolution: "@wyw-in-js/processor-utils@npm:0.8.1"
+  dependencies:
+    "@babel/generator": "npm:^7.23.5"
+    "@wyw-in-js/shared": "npm:0.8.1"
+  checksum: 10c0/40e89fbc6a714f121b54b0201f5ad49409cda1ea522237c4554e50bb378a10f051275f631ce8db534f840173d842835e8db87c332b796f5764983bd89006907b
+  languageName: node
+  linkType: hard
+
+"@wyw-in-js/processor-utils@npm:1.0.4, @wyw-in-js/processor-utils@npm:^1.0.4":
   version: 1.0.4
   resolution: "@wyw-in-js/processor-utils@npm:1.0.4"
   dependencies:
@@ -27472,7 +27641,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wyw-in-js/shared@npm:1.0.4":
+"@wyw-in-js/shared@npm:0.8.1":
+  version: 0.8.1
+  resolution: "@wyw-in-js/shared@npm:0.8.1"
+  dependencies:
+    debug: "npm:^4.3.4"
+    find-up: "npm:^5.0.0"
+    minimatch: "npm:^9.0.3"
+  checksum: 10c0/3539fc6179517a0ee33984c68dbc155d824aedd789f321825fd3bb4c67414459c45553690185c968695d4e23628b87bd79031ed935072e4da4f499dea62949e4
+  languageName: node
+  linkType: hard
+
+"@wyw-in-js/shared@npm:1.0.4, @wyw-in-js/shared@npm:^1.0.4":
   version: 1.0.4
   resolution: "@wyw-in-js/shared@npm:1.0.4"
   dependencies:
@@ -27503,6 +27683,29 @@ __metadata:
     stylis: "npm:^4.3.0"
     ts-invariant: "npm:^0.10.3"
   checksum: 10c0/643dd854759eef29a82161d89a803e9f8e414917d0fcc4ce3aecb3f5da7c0ba85afae205fd2ee155807ff92ad1644a74ca557ef7c6b210be869099f08bd5543e
+  languageName: node
+  linkType: hard
+
+"@wyw-in-js/transform@npm:0.8.1":
+  version: 0.8.1
+  resolution: "@wyw-in-js/transform@npm:0.8.1"
+  dependencies:
+    "@babel/core": "npm:^7.23.5"
+    "@babel/generator": "npm:^7.23.5"
+    "@babel/helper-module-imports": "npm:^7.22.15"
+    "@babel/plugin-transform-modules-commonjs": "npm:^7.23.3"
+    "@babel/template": "npm:^7.22.15"
+    "@babel/traverse": "npm:^7.23.5"
+    "@babel/types": "npm:^7.23.5"
+    "@wyw-in-js/processor-utils": "npm:0.8.1"
+    "@wyw-in-js/shared": "npm:0.8.1"
+    babel-merge: "npm:^3.0.0"
+    cosmiconfig: "npm:^8.0.0"
+    happy-dom: "npm:^20.0.10"
+    source-map: "npm:^0.7.4"
+    stylis: "npm:^4.3.0"
+    ts-invariant: "npm:^0.10.3"
+  checksum: 10c0/8d35bbaeb57164e7002f072e182a0495cc8380d689e7f43c038d19c9fe2d2b78f2b4fe22bde9137c227eccc80e74516f80fb492be93de14065a1c3eea801b95d
   languageName: node
   linkType: hard
 
@@ -30429,6 +30632,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-react-compiler@npm:1.0.0":
+  version: 1.0.0
+  resolution: "babel-plugin-react-compiler@npm:1.0.0"
+  dependencies:
+    "@babel/types": "npm:^7.26.0"
+  checksum: 10c0/9406267ada8d7dbdfe8906b40ecadb816a5f4cee2922bee23f7729293b369624ee135b5a9b0f263851c263c9787522ac5d97016c9a2b82d1668300e42b18aff8
+  languageName: node
+  linkType: hard
+
 "babel-plugin-syntax-trailing-function-commas@npm:^7.0.0-beta.0":
   version: 7.0.0-beta.0
   resolution: "babel-plugin-syntax-trailing-function-commas@npm:7.0.0-beta.0"
@@ -30727,6 +30939,15 @@ __metadata:
   bin:
     baseline-browser-mapping: dist/cli.js
   checksum: 10c0/569928db78bcd081953d7db79e4243a59a579a34b4ae1806b9b42d3b7f84e5bc40e6e82ae4fa06e7bef8291bf747b33b3f9ef5d3c6e1e420cb129d9295536129
+  languageName: node
+  linkType: hard
+
+"baseline-browser-mapping@npm:^2.9.19":
+  version: 2.10.11
+  resolution: "baseline-browser-mapping@npm:2.10.11"
+  bin:
+    baseline-browser-mapping: dist/cli.cjs
+  checksum: 10c0/6ae44b653c26de8ea7b75a109c0771c95c9676c32a11aff25f7c10b2ddeb864d2c387243a0ec083dffe3b76a7aacf2d777fa7e5a6df16e3a2624c1573e116285
   languageName: node
   linkType: hard
 
@@ -40004,6 +40225,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"happy-dom@npm:^20.0.10":
+  version: 20.8.9
+  resolution: "happy-dom@npm:20.8.9"
+  dependencies:
+    "@types/node": "npm:>=20.0.0"
+    "@types/whatwg-mimetype": "npm:^3.0.2"
+    "@types/ws": "npm:^8.18.1"
+    entities: "npm:^7.0.1"
+    whatwg-mimetype: "npm:^3.0.0"
+    ws: "npm:^8.18.3"
+  checksum: 10c0/12fe9b85891b1289935b2a4f726e2839e7c92e3f55401bd20cb5500763dd994364645acaab20a754fd90d5e1b2ffdf734b39a32ea02704c3e3ee0c4d30cf958e
+  languageName: node
+  linkType: hard
+
 "happy-dom@npm:^20.1.0":
   version: 20.8.3
   resolution: "happy-dom@npm:20.8.3"
@@ -48613,6 +48848,66 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next@npm:16.1.7":
+  version: 16.1.7
+  resolution: "next@npm:16.1.7"
+  dependencies:
+    "@next/env": "npm:16.1.7"
+    "@next/swc-darwin-arm64": "npm:16.1.7"
+    "@next/swc-darwin-x64": "npm:16.1.7"
+    "@next/swc-linux-arm64-gnu": "npm:16.1.7"
+    "@next/swc-linux-arm64-musl": "npm:16.1.7"
+    "@next/swc-linux-x64-gnu": "npm:16.1.7"
+    "@next/swc-linux-x64-musl": "npm:16.1.7"
+    "@next/swc-win32-arm64-msvc": "npm:16.1.7"
+    "@next/swc-win32-x64-msvc": "npm:16.1.7"
+    "@swc/helpers": "npm:0.5.15"
+    baseline-browser-mapping: "npm:^2.9.19"
+    caniuse-lite: "npm:^1.0.30001579"
+    postcss: "npm:8.4.31"
+    sharp: "npm:^0.34.4"
+    styled-jsx: "npm:5.1.6"
+  peerDependencies:
+    "@opentelemetry/api": ^1.1.0
+    "@playwright/test": ^1.51.1
+    babel-plugin-react-compiler: "*"
+    react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+    react-dom: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+    sass: ^1.3.0
+  dependenciesMeta:
+    "@next/swc-darwin-arm64":
+      optional: true
+    "@next/swc-darwin-x64":
+      optional: true
+    "@next/swc-linux-arm64-gnu":
+      optional: true
+    "@next/swc-linux-arm64-musl":
+      optional: true
+    "@next/swc-linux-x64-gnu":
+      optional: true
+    "@next/swc-linux-x64-musl":
+      optional: true
+    "@next/swc-win32-arm64-msvc":
+      optional: true
+    "@next/swc-win32-x64-msvc":
+      optional: true
+    sharp:
+      optional: true
+  peerDependenciesMeta:
+    "@opentelemetry/api":
+      optional: true
+    "@playwright/test":
+      optional: true
+    babel-plugin-react-compiler:
+      optional: true
+    sass:
+      optional: true
+  bin:
+    next: dist/bin/next
+  checksum: 10c0/f6cebb3ce57d267cd92fb364b56710004c883baafea9cfed36434c0cd51db74299d59094ab782674d9813f10ce2891b633bc6d94e7e38aa9af7a1870194818d0
+  languageName: node
+  linkType: hard
+
 "next@npm:^14, next@npm:^14.2.25":
   version: 14.2.35
   resolution: "next@npm:14.2.35"
@@ -52966,7 +53261,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
+"react-dom@npm:19.2.3, react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version: 19.2.3
   resolution: "react-dom@npm:19.2.3"
   dependencies:
@@ -53589,7 +53884,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
+"react@npm:19.2.3, react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version: 19.2.3
   resolution: "react@npm:19.2.3"
   checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
@@ -54564,6 +54859,13 @@ __metadata:
   version: 4.1.8
   resolution: "reselect@npm:4.1.8"
   checksum: 10c0/06a305a504affcbb67dd0561ddc8306b35796199c7e15b38934c80606938a021eadcf68cfd58e7bb5e17786601c37602a3362a4665c7bf0a96c1041ceee9d0b7
+  languageName: node
+  linkType: hard
+
+"reselect@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "reselect@npm:5.1.1"
+  checksum: 10c0/219c30da122980f61853db3aebd173524a2accd4b3baec770e3d51941426c87648a125ca08d8c57daa6b8b086f2fdd2703cb035dd6231db98cdbe1176a71f489
   languageName: node
   linkType: hard
 
@@ -57999,6 +58301,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tabbable@npm:^6.4.0":
+  version: 6.4.0
+  resolution: "tabbable@npm:6.4.0"
+  checksum: 10c0/d931427f4a96b801fd8801ba296a702119e06f70ad262fed8abc5271225c9f1ca51b89fdec4fb2f22e1d35acb3d2881db0a17cedc758272e9ecb540d00299d76
+  languageName: node
+  linkType: hard
+
 "tailwind-merge@npm:^2.5.5":
   version: 2.6.0
   resolution: "tailwind-merge@npm:2.6.0"
@@ -59720,6 +60029,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-website-new@workspace:packages/twenty-website-new":
+  version: 0.0.0-use.local
+  resolution: "twenty-website-new@workspace:packages/twenty-website-new"
+  dependencies:
+    "@base-ui/react": "npm:^1.3.0"
+    "@base-ui/utils": "npm:^0.2.6"
+    "@linaria/core": "npm:^7.0.0"
+    "@linaria/react": "npm:^7.0.1"
+    "@types/node": "npm:^20"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@wyw-in-js/babel-preset": "npm:^0.8.1"
+    babel-plugin-react-compiler: "npm:1.0.0"
+    next: "npm:16.1.7"
+    next-with-linaria: "npm:^1.3.0"
+    react: "npm:19.2.3"
+    react-dom: "npm:19.2.3"
+  languageName: unknown
+  linkType: soft
+
 "twenty-website@workspace:packages/twenty-website":
   version: 0.0.0-use.local
   resolution: "twenty-website@workspace:packages/twenty-website"
@@ -61245,7 +61574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:1.6.0, use-sync-external-store@npm:^1.5.0":
+"use-sync-external-store@npm:1.6.0, use-sync-external-store@npm:^1.5.0, use-sync-external-store@npm:^1.6.0":
   version: 1.6.0
   resolution: "use-sync-external-store@npm:1.6.0"
   peerDependencies:
