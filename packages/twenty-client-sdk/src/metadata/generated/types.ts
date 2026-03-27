@@ -8130,6 +8130,15 @@ export default {
                     ]
                 }
             ],
+            "updateManyViewGroups": [
+                56,
+                {
+                    "inputs": [
+                        450,
+                        "[UpdateViewGroupInput!]!"
+                    ]
+                }
+            ],
             "deleteViewGroup": [
                 56,
                 {
