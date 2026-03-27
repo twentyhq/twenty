@@ -1,6 +1,6 @@
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
-import { performQuery } from './utils';
+import { performQuery } from './setup-db-utils';
 
 async function dropSchemasSequentially() {
   try {

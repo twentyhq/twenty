@@ -38,12 +38,6 @@ RUN npx nx run twenty-server:lingui:extract && \
 
 RUN npx nx run twenty-server:build
 
-# Bundle setup-db script into a standalone JS file so the final image
-# doesn't need tsx or the TypeScript source tree at runtime.
-RUN npx esbuild packages/twenty-server/scripts/setup-db.ts \
-      --bundle --platform=node --outfile=packages/twenty-server/dist/scripts/setup-db.js \
-      --external:typeorm --external:dotenv --external:pg
-
 # Clean server build output (type declarations and compiled tests are not needed at runtime;
 # source maps are kept because twenty-infra extracts them from the image for Sentry uploads)
 RUN find /app/packages/twenty-server/dist -name '*.d.ts' -delete \

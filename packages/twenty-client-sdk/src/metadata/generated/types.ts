@@ -777,6 +777,9 @@ export default {
             "settings": [
                 15
             ],
+            "objectMetadataId": [
+                3
+            ],
             "isLabelSyncedWithName": [
                 6
             ],
@@ -1163,6 +1166,9 @@ export default {
             ],
             "isUIReadOnly": [
                 43
+            ],
+            "objectMetadataId": [
+                42
             ],
             "__typename": [
                 1
@@ -10754,11 +10760,11 @@ export default {
             "settings": [
                 15
             ],
-            "isLabelSyncedWithName": [
-                6
-            ],
             "objectMetadataId": [
                 3
+            ],
+            "isLabelSyncedWithName": [
+                6
             ],
             "isRemoteCreation": [
                 6
@@ -10823,6 +10829,9 @@ export default {
             ],
             "settings": [
                 15
+            ],
+            "objectMetadataId": [
+                3
             ],
             "isLabelSyncedWithName": [
                 6

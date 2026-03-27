@@ -122,7 +122,6 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:init:prod
-          npx nx run twenty-server:database:migrate:prod
       - name: Worker / Run
         run: |
           timeout 30s npx nx run twenty-server:worker || exit_code=$?

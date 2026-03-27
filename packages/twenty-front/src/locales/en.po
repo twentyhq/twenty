@@ -6681,6 +6681,11 @@ msgstr "Field Name"
 msgid "Field on destination"
 msgstr "Field on destination"
 
+#. js-lingui-id: P8JCfj
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field permission"
+msgstr "field permission"
+
 #. js-lingui-id: RnX5oc
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "fields"

@@ -21,6 +21,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   navigationMenuItem: true,
   permissionFlag: true,
   objectPermission: true,
+  fieldPermission: true,
   rowLevelPermissionPredicate: true,
   rowLevelPermissionPredicateGroup: true,
   index: true,

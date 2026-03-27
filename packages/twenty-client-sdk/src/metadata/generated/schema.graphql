@@ -343,6 +343,7 @@ type Field {
   defaultValue: JSON
   options: JSON
   settings: JSON
+  objectMetadataId: UUID!
   isLabelSyncedWithName: Boolean
   morphId: UUID
   createdAt: DateTime!
@@ -540,6 +541,7 @@ input FieldFilter {
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
   isUIReadOnly: BooleanFieldComparison
+  objectMetadataId: UUIDFilterComparison
 }
 
 input IndexFilter {
@@ -3090,6 +3092,7 @@ enum AllMetadataName {
   navigationMenuItem
   permissionFlag
   objectPermission
+  fieldPermission
   frontComponent
   webhook
 }
@@ -4273,8 +4276,8 @@ input CreateFieldInput {
   defaultValue: JSON
   options: JSON
   settings: JSON
-  isLabelSyncedWithName: Boolean
   objectMetadataId: UUID!
+  isLabelSyncedWithName: Boolean
   isRemoteCreation: Boolean
   relationCreationPayload: JSON
   morphRelationsCreationPayload: [JSON!]
@@ -4302,6 +4305,7 @@ input UpdateFieldInput {
   defaultValue: JSON
   options: JSON
   settings: JSON
+  objectMetadataId: UUID
   isLabelSyncedWithName: Boolean
   morphRelationsUpdatePayload: [JSON!]
 }

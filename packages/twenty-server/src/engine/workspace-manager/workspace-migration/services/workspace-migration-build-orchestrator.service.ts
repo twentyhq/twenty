@@ -15,6 +15,7 @@ import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager
 import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
+import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
 import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
 import { WorkspaceMigrationIndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-index-actions-builder.service';
@@ -52,6 +53,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
     private readonly workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
     private readonly workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
+    private readonly workspaceMigrationFieldPermissionActionsBuilderService: WorkspaceMigrationFieldPermissionActionsBuilderService,
     private readonly workspaceMigrationObjectPermissionActionsBuilderService: WorkspaceMigrationObjectPermissionActionsBuilderService,
     private readonly workspaceMigrationPermissionFlagActionsBuilderService: WorkspaceMigrationPermissionFlagActionsBuilderService,
     private readonly workspaceMigrationLogicFunctionActionsBuilderService: WorkspaceMigrationLogicFunctionActionsBuilderService,
@@ -145,6 +147,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatRowLevelPermissionPredicateGroupMaps,
       flatRoleMaps,
       flatObjectPermissionMaps,
+      flatFieldPermissionMaps,
       flatPermissionFlagMaps,
       flatRoleTargetMaps,
       flatAgentMaps,
@@ -515,6 +518,34 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatFieldPermissionMaps)) {
+      const {
+        from: fromFlatFieldPermissionMaps,
+        to: toFlatFieldPermissionMaps,
+      } = flatFieldPermissionMaps;
+
+      const fieldPermissionResult =
+        await this.workspaceMigrationFieldPermissionActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatFieldPermissionMaps,
+            to: toFlatFieldPermissionMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (fieldPermissionResult.status === 'fail') {
+        orchestratorFailureReport.fieldPermission.push(
+          ...fieldPermissionResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.fieldPermission =
+          fieldPermissionResult.actions;
+      }
+    }
+
     if (isDefined(flatPermissionFlagMaps)) {
       const { from: fromFlatPermissionFlagMaps, to: toFlatPermissionFlagMaps } =
         flatPermissionFlagMaps;
@@ -874,6 +905,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.objectPermission.delete,
           ...aggregatedOrchestratorActionsReport.objectPermission.create,
           ...aggregatedOrchestratorActionsReport.objectPermission.update,
+          ///
+
+          // Field permissions
+          ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
+          ...aggregatedOrchestratorActionsReport.fieldPermission.create,
+          ...aggregatedOrchestratorActionsReport.fieldPermission.update,
           ///
 
           // Permission flags
