@@ -1,9 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
-import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
@@ -63,11 +61,9 @@ export const SettingsAdminWorkspaceContent = ({
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentUser] = useAtomState(currentUserState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument);
   const [isImpersonateLoading, setIsImpersonationLoading] = useState(false);
-  const { executeImpersonationAuth } = useImpersonationAuth();
   const { executeImpersonationRedirect } = useImpersonationRedirect();
   const [impersonate] = useMutation(ImpersonateDocument);
 
@@ -88,12 +84,9 @@ export const SettingsAdminWorkspaceContent = ({
       variables: { userId: userLookupResult.user.id, workspaceId },
       onCompleted: async (data) => {
         const { loginToken, workspace } = data.impersonate;
-        const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
-        if (isCurrentWorkspace) {
-          await executeImpersonationAuth(loginToken.token);
-          return;
-        }
-
+        // Always open in a new tab. The in-session token swap breaks the
+        // SSE event stream connection, causing "An error occurred" on any
+        // view load immediately after impersonating.
         return executeImpersonationRedirect(
           workspace.workspaceUrls,
           loginToken.token,
