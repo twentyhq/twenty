@@ -1,6 +1,6 @@
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
-import { camelToSnakeCase, performQuery } from './utils';
+import { camelToSnakeCase, performQuery } from './setup-db-utils';
 
 rawDataSource
   .initialize()
