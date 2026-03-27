@@ -67,8 +67,8 @@ export const prefillWorkflows = async (
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).find(
     (fieldMetadata) =>
-      fieldMetadata.objectMetadataId === companyObjectMetadataId &&
-      fieldMetadata.name === 'domainName',
+      fieldMetadata?.objectMetadataId === companyObjectMetadataId &&
+      fieldMetadata?.name === 'domainName',
   );
 
   if (!isDefined(companyDomainNameFieldMetadata)) {
