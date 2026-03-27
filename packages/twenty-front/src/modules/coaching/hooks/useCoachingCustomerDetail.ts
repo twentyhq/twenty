@@ -10,6 +10,9 @@ const COACHING_DETAIL_GQL_FIELDS: RecordGqlOperationGqlRecordFields = {
   email: true,
   phone: true,
   city: true,
+  appUserId: true,
+  appRegisteredDate: true,
+  contractName: true,
 };
 
 export const useCoachingCustomerDetail = (customerId: string) => {

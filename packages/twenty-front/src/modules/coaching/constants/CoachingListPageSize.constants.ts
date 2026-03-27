@@ -1,1 +1,1 @@
-export const COACHING_LIST_PAGE_SIZE = 50;
+export const COACHING_LIST_PAGE_SIZE = 10000;

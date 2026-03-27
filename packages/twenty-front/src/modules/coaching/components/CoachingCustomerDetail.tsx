@@ -1,4 +1,8 @@
+import { CoachingAnamneseTab } from '@/coaching/components/CoachingAnamneseTab';
+import { CoachingSessionsTab } from '@/coaching/components/CoachingSessionsTab';
+import { CoachingTicketsTab } from '@/coaching/components/CoachingTicketsTab';
 import { useCoachingCustomerDetail } from '@/coaching/hooks/useCoachingCustomerDetail';
+import { useCoachingSubscriptions } from '@/coaching/hooks/useCoachingSubscriptions';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconLink, IconPencil } from 'twenty-ui/display';
@@ -232,6 +236,10 @@ export const CoachingCustomerDetail = ({
 }: CoachingCustomerDetailProps) => {
   const [activeTab, setActiveTab] = useState<TabName>('Overview');
   const { customer, loading } = useCoachingCustomerDetail(customerId);
+  const customerEmail = (customer?.email as string | null) ?? null;
+  const wpUserId = (customer?.appUserId as string | null) ?? null;
+  const { subscriptions, loading: subsLoading } =
+    useCoachingSubscriptions(customerEmail);
 
   if (loading) {
     return <StyledLoadingContainer>Loading...</StyledLoadingContainer>;
@@ -334,13 +342,39 @@ export const CoachingCustomerDetail = ({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <StyledTableCell colSpan={5}>
-                      <StyledEmptyText>
-                        No subscriptions linked yet
-                      </StyledEmptyText>
-                    </StyledTableCell>
-                  </tr>
+                  {subsLoading ? (
+                    <tr>
+                      <StyledTableCell colSpan={5}>
+                        Loading...
+                      </StyledTableCell>
+                    </tr>
+                  ) : subscriptions.length === 0 ? (
+                    <tr>
+                      <StyledTableCell colSpan={5}>
+                        <StyledEmptyText>
+                          No subscriptions linked yet
+                        </StyledEmptyText>
+                      </StyledTableCell>
+                    </tr>
+                  ) : (
+                    subscriptions.map((sub) => (
+                      <tr key={sub.id}>
+                        <StyledTableCell>
+                          {String(sub.programName ?? '')}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {String(sub.subscriptionAppStatus ?? '')}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {formatDate(sub.startDate as string | null) ?? ''}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {formatDate(sub.endDate as string | null) ?? ''}
+                        </StyledTableCell>
+                        <StyledTableCell />
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </StyledTable>
             </StyledSectionBody>
@@ -386,7 +420,15 @@ export const CoachingCustomerDetail = ({
           </StyledSection>
         </StyledDetailContent>
       ) : (
+        activeTab === 'Sessions Analysis' ? (
+        <CoachingSessionsTab email={customerEmail} wpUserId={wpUserId} />
+      ) : activeTab === 'Anamnesebogen' ? (
+        <CoachingAnamneseTab email={customerEmail} wpUserId={wpUserId} />
+      ) : activeTab === 'Tickets' ? (
+        <CoachingTicketsTab wpUserId={wpUserId} />
+      ) : (
         <StyledPlaceholder>{activeTab} — coming soon</StyledPlaceholder>
+      )
       )}
     </StyledDetailContainer>
   );
