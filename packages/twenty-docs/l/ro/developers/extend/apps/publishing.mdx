@@ -72,7 +72,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `npx twenty build`, then `npm publish` from `.twenty/output`.
+Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `npx twenty build`, apoi `npm publish` din `.twenty/output`.
 
 <Tip>
 **npm provenance** este opțională, dar recomandată. Publicarea cu `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru instrucțiuni de configurare.
@@ -97,7 +97,7 @@ Orice spațiu de lucru de pe acel server poate apoi instala și actualiza aplica
 Pentru a lansa o actualizare:
 
 1. Actualizează câmpul `version` din `package.json`
-2. Push a new tarball with `npx twenty publish --server <server-url>`
+2. Trimite un tarball nou cu `npx twenty publish --server <server-url>`
 3. Spațiile de lucru de pe acel server vor vedea actualizarea disponibilă în setările lor
 
 <Note>
@@ -110,7 +110,7 @@ Twenty organizează aplicațiile în trei categorii, în funcție de modul în c
 
 | Categorie      | Cum funcționează                                                                                                                  | Vizibilă în marketplace? |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| **Dezvoltare** | Local dev mode apps running via `yarn twenty dev`. Folosite pentru construire și testare.                                         | Nu                       |
+| **Dezvoltare** | Aplicații în modul de dezvoltare local, rulate prin `yarn twenty dev`. Folosite pentru construire și testare.                     | Nu                       |
 | **Publicat**   | Aplicații publicate pe npm cu prefixul `twenty-app-`. Listate în marketplace pentru ca orice spațiu de lucru să le poată instala. | Da                       |
 | **Intern**     | Aplicații implementate prin tarball pe un server specific. Disponibile doar pentru spațiile de lucru de pe acel server.           | Nu                       |
 

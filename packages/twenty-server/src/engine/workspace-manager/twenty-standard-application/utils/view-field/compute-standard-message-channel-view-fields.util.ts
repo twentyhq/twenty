@@ -93,19 +93,6 @@ export const computeStandardMessageChannelViewFields = (
       },
     }),
 
-    messageChannelRecordPageFieldsHandle: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'messageChannel',
-      context: {
-        viewName: 'messageChannelRecordPageFields',
-        viewFieldName: 'handle',
-        fieldName: 'handle',
-        position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     messageChannelRecordPageFieldsConnectedAccount:
       createStandardViewFieldFlatMetadata({
         ...args,

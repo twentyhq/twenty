@@ -99,6 +99,17 @@ export class ValidatedStorageDriver implements StorageDriver {
     return this.delegate.copy(params);
   }
 
+  async getPresignedUrl(params: {
+    filePath: string;
+    expiresInSeconds?: number;
+    responseContentType?: string;
+    responseContentDisposition?: string;
+  }): Promise<string | null> {
+    assertStoragePathIsSafe(params.filePath);
+
+    return this.delegate.getPresignedUrl(params);
+  }
+
   async checkFileExists(params: { filePath: string }): Promise<boolean> {
     assertStoragePathIsSafe(params.filePath);
 

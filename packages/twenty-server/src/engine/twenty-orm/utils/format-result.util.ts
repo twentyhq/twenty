@@ -100,7 +100,7 @@ function formatResultInternal<T>(
       flatObjectMetadata,
     );
 
-  const { fieldIdByName } = fieldMaps;
+  const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
 
   const compositeFieldMetadataMap = getCompositeFieldMetadataMap(
     flatObjectMetadata,
@@ -114,6 +114,7 @@ function formatResultInternal<T>(
 
     const fieldMetadataId =
       fieldIdByName[key] ||
+      fieldIdByJoinColumnName[key] ||
       fieldIdByName[compositePropertyArgs?.parentField ?? ''];
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -121,30 +122,13 @@ function formatResultInternal<T>(
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    if (!isDefined(fieldMetadata)) {
+      continue;
+    }
+
     const isRelation = fieldMetadata
       ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       : false;
-
-    if (!compositePropertyArgs && !isRelation) {
-      if (isPlainObject(value)) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatResultInternal(
-          value,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          fieldMaps,
-        );
-      } else if (fieldMetadata) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
-      } else {
-        // @ts-expect-error legacy noImplicitAny
-        newData[key] = value;
-      }
-
-      continue;
-    }
 
     if (isRelation) {
       if (!isDefined(fieldMetadata?.relationTargetObjectMetadataId)) {
@@ -171,28 +155,35 @@ function formatResultInternal<T>(
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
-    }
-
-    if (!compositePropertyArgs || !isDefined(fieldMetadata)) {
       continue;
     }
 
-    const { parentField, ...compositeProperty } = compositePropertyArgs;
+    if (isDefined(compositePropertyArgs)) {
+      const { parentField, ...compositeProperty } = compositePropertyArgs;
 
-    // @ts-expect-error legacy noImplicitAny
-    if (!newData[parentField]) {
       // @ts-expect-error legacy noImplicitAny
-      newData[parentField] = {};
+      if (!newData[parentField]) {
+        // @ts-expect-error legacy noImplicitAny
+        newData[parentField] = {};
+      }
+
+      // @ts-expect-error legacy noImplicitAny
+      newData[parentField][compositeProperty.name] = isNull(value)
+        ? transformCompositeFieldNullValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          )
+        : formatCompositeFieldValue(
+            value,
+            compositeProperty.name,
+            fieldMetadata,
+          );
+      continue;
     }
 
     // @ts-expect-error legacy noImplicitAny
-    newData[parentField][compositeProperty.name] = isNull(value)
-      ? transformCompositeFieldNullValue(
-          value,
-          compositeProperty.name,
-          fieldMetadata,
-        )
-      : formatCompositeFieldValue(value, compositeProperty.name, fieldMetadata);
+    newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
   }
 
   // After assembling composite fields, handle those with missing required subfields

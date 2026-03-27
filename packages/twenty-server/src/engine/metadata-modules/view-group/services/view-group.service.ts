@@ -7,6 +7,7 @@ import { IsNull, Repository } from 'typeorm';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
@@ -152,6 +153,32 @@ export class ViewGroupService {
     workspaceId: string;
     updateViewGroupInput: UpdateViewGroupInput;
   }): Promise<ViewGroupDTO> {
+    const [updatedViewGroup] = await this.updateMany({
+      updateViewGroupInputs: [updateViewGroupInput],
+      workspaceId,
+    });
+
+    if (!isDefined(updatedViewGroup)) {
+      throw new ViewGroupException(
+        'Failed to update view group',
+        ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
+      );
+    }
+
+    return updatedViewGroup;
+  }
+
+  async updateMany({
+    updateViewGroupInputs,
+    workspaceId,
+  }: {
+    updateViewGroupInputs: UpdateViewGroupInput[];
+    workspaceId: string;
+  }): Promise<ViewGroupDTO[]> {
+    if (updateViewGroupInputs.length === 0) {
+      return [];
+    }
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -167,11 +194,13 @@ export class ViewGroupService {
         },
       );
 
-    const optimisticallyUpdatedFlatViewGroup =
-      fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow({
-        flatViewGroupMaps: existingFlatViewGroupMaps,
-        updateViewGroupInput,
-      });
+    const flatViewGroupsToUpdate = updateViewGroupInputs.map(
+      (updateViewGroupInput) =>
+        fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow({
+          flatViewGroupMaps: existingFlatViewGroupMaps,
+          updateViewGroupInput,
+        }),
+    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -180,7 +209,7 @@ export class ViewGroupService {
             viewGroup: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatViewGroup],
+              flatEntityToUpdate: flatViewGroupsToUpdate,
             },
           },
           workspaceId,
@@ -193,7 +222,7 @@ export class ViewGroupService {
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
-        'Multiple validation errors occurred while updating view group',
+        'Multiple validation errors occurred while updating view groups',
       );
     }
 
@@ -205,12 +234,13 @@ export class ViewGroupService {
         },
       );
 
-    return fromFlatViewGroupToViewGroupDto(
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          optimisticallyUpdatedFlatViewGroup.universalIdentifier,
-        flatEntityMaps: recomputedExistingFlatViewGroupMaps,
-      }),
+    return updateViewGroupInputs.map(({ id }) =>
+      fromFlatViewGroupToViewGroupDto(
+        findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityId: id,
+          flatEntityMaps: recomputedExistingFlatViewGroupMaps,
+        }),
+      ),
     );
   }
 

@@ -1,7 +1,7 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -27,7 +27,6 @@ type NavigationMenuItemFolderProps = Pick<
   | 'isDragging'
   | 'folderChildrenById'
   | 'folderCount'
-  | 'selectedNavigationMenuItemId'
   | 'onNavigationMenuItemClick'
   | 'readOnly'
   | 'orphanIndex'
@@ -40,7 +39,6 @@ export const NavigationMenuItemFolder = ({
   isDragging,
   folderChildrenById,
   folderCount,
-  selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   readOnly = false,
   orphanIndex,
@@ -88,7 +86,6 @@ export const NavigationMenuItemFolder = ({
         isEditInPlace={isEditInPlace}
         editModeProps={editModeProps}
         isDragging={isDragging}
-        selectedNavigationMenuItemId={selectedNavigationMenuItemId}
         onNavigationMenuItemClick={onNavigationMenuItemClick}
         orphanIndex={orphanIndex}
       />
@@ -115,6 +112,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
 }: NavigationMenuItemFolderReadOnlyContentProps) => {
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
+  const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
 
   const { isOpen, handleToggle, selectedNavigationMenuItemIndex } =
@@ -140,14 +138,14 @@ const NavigationMenuItemFolderReadOnlyContent = ({
           rightOptions={
             isOpen ? (
               <IconChevronDown
-                size={themeCssVariables.icon.size.sm}
-                stroke={themeCssVariables.icon.stroke.sm}
+                size={theme.icon.size.sm}
+                stroke={theme.icon.stroke.sm}
                 color={themeCssVariables.font.color.tertiary}
               />
             ) : (
               <IconChevronRight
-                size={themeCssVariables.icon.size.sm}
-                stroke={themeCssVariables.icon.stroke.sm}
+                size={theme.icon.size.sm}
+                stroke={theme.icon.stroke.sm}
                 color={themeCssVariables.font.color.tertiary}
               />
             )

@@ -65,6 +65,24 @@ describe('SearchService', () => {
 
       expect(objectMetadataItems).toEqual([mockFlatObjectMetadatas[1]]);
     });
+    it('should allow non-searchable objects when explicitly included', () => {
+      const objectMetadataItems = service.filterObjectMetadataItems({
+        flatObjectMetadatas: mockFlatObjectMetadatas,
+        includedObjectNameSingulars: ['non-searchable-object'],
+        excludedObjectNameSingulars: [],
+      });
+
+      expect(objectMetadataItems).toEqual([mockFlatObjectMetadatas[3]]);
+    });
+    it('should block objects with channel visibility constraints even when explicitly included', () => {
+      const objectMetadataItems = service.filterObjectMetadataItems({
+        flatObjectMetadatas: mockFlatObjectMetadatas,
+        includedObjectNameSingulars: ['message'],
+        excludedObjectNameSingulars: [],
+      });
+
+      expect(objectMetadataItems).toEqual([]);
+    });
   });
 
   describe('getLabelIdentifierColumns', () => {

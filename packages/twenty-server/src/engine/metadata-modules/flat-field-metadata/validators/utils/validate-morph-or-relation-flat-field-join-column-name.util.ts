@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { RelationType } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -25,6 +24,15 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
+  if (!isDefined(universalFlatFieldMetadata.universalSettings?.relationType)) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message: `Relation field "${universalFlatFieldMetadata.name}" is missing relationType in universalSettings. Expected MANY_TO_ONE or ONE_TO_MANY.`,
+    });
+
+    return errors;
+  }
+
   switch (universalFlatFieldMetadata.universalSettings.relationType) {
     case RelationType.MANY_TO_ONE: {
       if (
@@ -34,7 +42,6 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message:
             'Many to one field metadata should carry the join column name in its settings',
-          userFriendlyMessage: msg`A many to one relation field should always declare a join column`,
         });
 
         return errors;
@@ -50,7 +57,6 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message: 'Could not find relation field parent flat object',
-          userFriendlyMessage: msg`Could not find relation field parent flat object`,
         });
 
         return errors;
@@ -74,7 +80,6 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message:
             'One to many field metadata should not carry the join column name in its settings',
-          userFriendlyMessage: msg`A one to many relation field should never declare a join column`,
         });
       }
       break;

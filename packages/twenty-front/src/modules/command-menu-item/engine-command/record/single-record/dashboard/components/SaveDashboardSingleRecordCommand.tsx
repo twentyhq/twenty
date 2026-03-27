@@ -1,6 +1,7 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
+import { useSavePageLayoutWidgetsData } from '@/page-layout/hooks/useSavePageLayoutWidgetsData';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,6 +18,8 @@ export const SaveDashboardSingleRecordCommand = () => {
 
   const { savePageLayout } = useSavePageLayout(pageLayoutId);
 
+  const { savePageLayoutWidgetsData } = useSavePageLayoutWidgetsData();
+
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
@@ -26,6 +29,7 @@ export const SaveDashboardSingleRecordCommand = () => {
     const result = await savePageLayout();
 
     if (result.status === 'successful') {
+      await savePageLayoutWidgetsData(pageLayoutId);
       closeSidePanelMenu();
       setIsPageLayoutInEditMode(false);
     }

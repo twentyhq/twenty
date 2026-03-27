@@ -58,7 +58,6 @@ export const SignInAppNavigationDrawerMock = ({
       )}
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={t`Workspace`}
-        isRemote={false}
         objectMetadataItems={objectMetadataItems.filter((item) =>
           WORKSPACE_FAVORITES.includes(item.nameSingular),
         )}

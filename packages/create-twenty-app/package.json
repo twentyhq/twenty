@@ -1,6 +1,6 @@
 {
   "name": "create-twenty-app",
-  "version": "0.8.0-canary.2",
+  "version": "0.8.0-canary.5",
   "description": "Command-line interface to create Twenty application",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
@@ -36,6 +36,7 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.kebabcase": "^4.1.1",
     "lodash.startcase": "^4.4.0",
+    "twenty-sdk": "workspace:*",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -45,7 +46,6 @@
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.startcase": "^4",
     "@types/node": "^20.0.0",
-    "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "typescript": "^5.9.2",
     "vite": "^7.0.0",

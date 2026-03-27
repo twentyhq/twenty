@@ -15,6 +15,7 @@ import {
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { renewToken } from '@/auth/services/AuthService';
@@ -30,8 +31,6 @@ import { useCallback, useState } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { cookieStorage } from '~/utils/cookie-storage';
-
 export const useAgentChat = (
   uiMessages: ExtendedUIMessage[],
   ensureThreadIdForSend: () => Promise<string | null>,
@@ -40,6 +39,7 @@ export const useAgentChat = (
   const setTokenPair = useSetAtomState(tokenPairState);
   const setAgentChatUsage = useSetAtomState(agentChatUsageState);
 
+  const { modelIdForRequest } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
   const setCurrentAIChatThreadTitle = useSetAtomState(
     currentAIChatThreadTitleState,
@@ -92,7 +92,6 @@ export const useAgentChat = (
         return null;
       }
 
-      cookieStorage.setItem('tokenPair', JSON.stringify(renewedTokens));
       setTokenPair(renewedTokens);
 
       const updatedHeaders = new Headers(init?.headers ?? {});
@@ -258,6 +257,9 @@ export const useAgentChat = (
         body: {
           threadId,
           browsingContext,
+          ...(isDefined(modelIdForRequest) && {
+            modelId: modelIdForRequest,
+          }),
         },
       },
     );
@@ -273,6 +275,7 @@ export const useAgentChat = (
     agentChatUploadedFiles,
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
+    modelIdForRequest,
   ]);
 
   useListenToBrowserEvent({

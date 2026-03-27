@@ -167,7 +167,7 @@ export default defineObject({
 
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
-* `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+* `yarn twenty dev` generiert automatisch zwei typisierte API-Clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (für Arbeitsbereichsdaten über `/graphql`) und `MetadataApiClient` (für Arbeitsbereichskonfiguration und Datei-Uploads über `/metadata`).
 * `yarn twenty entity:add` fügt unter `src/` Entitätsdefinitionsdateien für Ihre benutzerdefinierten Objekte, Funktionen, Frontend-Komponenten, Rollen, Skills und mehr hinzu.
 
 ## Authentifizierung
@@ -221,7 +221,7 @@ Fügen Sie dann ein `twenty`-Skript hinzu:
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
+Jetzt können Sie alle Befehle über `yarn twenty <command>` ausführen, z. B. `yarn twenty dev`, `yarn twenty help` usw.
 
 ## So verwenden Sie eine lokale Twenty-Instanz
 
@@ -239,7 +239,7 @@ yarn twenty remote add --local --port 3000
 
 * Authentifizierungsfehler: Führen Sie `yarn twenty auth:login` aus und stellen Sie sicher, dass Ihr API-Schlüssel die erforderlichen Berechtigungen hat.
 * Verbindung zum Server nicht möglich: Überprüfen Sie die API-URL und dass der Twenty-Server erreichbar ist.
-* Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
-* Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
+* Typen oder Client fehlen oder sind veraltet: Starten Sie `yarn twenty dev` neu — der typisierte Client wird automatisch generiert.
+* Dev-Modus synchronisiert nicht: Stellen Sie sicher, dass `yarn twenty dev` läuft und dass Änderungen von Ihrer Umgebung nicht ignoriert werden.
 
 Discord-Hilfekanal: https://discord.com/channels/1130383047699738754/1130386664812982322

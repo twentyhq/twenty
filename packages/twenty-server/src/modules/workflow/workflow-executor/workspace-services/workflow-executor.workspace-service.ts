@@ -253,7 +253,8 @@ export class WorkflowExecutorWorkspaceService {
 
       if (
         !iteratorStepResult?.hasProcessedAllItems &&
-        !executedStepOutput.shouldFailSafely
+        !executedStepOutput.shouldFailSafely &&
+        !executedStepOutput.shouldSkipStepExecution
       ) {
         const nextStepIdsToExecute = isString(
           executedStep.settings.input.initialLoopStepIds,

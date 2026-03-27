@@ -167,7 +167,7 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
+* سيقوم `yarn twenty dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/generated`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
 * `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
@@ -221,7 +221,7 @@ yarn add -D twenty-sdk
 }
 ```
 
-Now you can run all commands via `yarn twenty <command>`, e.g. `yarn twenty dev`, `yarn twenty help`, etc.
+الآن يمكنك تشغيل جميع الأوامر عبر `yarn twenty <command>`، مثلًا: `yarn twenty dev`، `yarn twenty help`، إلخ.
 
 ## كيفية استخدام مثيل محلي من Twenty
 
@@ -239,7 +239,7 @@ yarn twenty remote add --local --port 3000
 
 * أخطاء المصادقة: شغّل `yarn twenty auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
 * يتعذّر الاتصال بالخادم: تحقق من عنوان URL لواجهة برمجة التطبيقات وأن خادم Twenty قابل للوصول.
-* Types or client missing/outdated: restart `yarn twenty dev` — it auto-generates the typed client.
-* Dev mode not syncing: ensure `yarn twenty dev` is running and that changes are not ignored by your environment.
+* الأنواع أو العميل مفقود/قديم: أعد تشغيل `yarn twenty dev` — فهو يولِّد العميل مضبوط الأنواع تلقائيًا.
+* وضع التطوير لا يزامن: تأكد من أن `yarn twenty dev` قيد التشغيل وأن التغييرات غير متجاهلة في بيئتك.
 
 قناة المساعدة على Discord: https://discord.com/channels/1130383047699738754/1130386664812982322
