@@ -28,7 +28,7 @@
       "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/scripts/remote-dom/**/*",
-        "{workspaceRoot}/packages/twenty-sdk/src/sdk/front-component-api/**/*",
+        "{projectRoot}/src/constants/**/*",
         "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
         "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
       ],
