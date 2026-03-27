@@ -1,6 +1,6 @@
 import type { Project, SourceFile } from 'ts-morph';
 
-import { EVENT_TO_REACT } from '../../../src/sdk/front-component-api/constants/EventToReact';
+import { EVENT_TO_REACT } from '../../../src/constants/EventToReact';
 import { type ComponentSchema } from './schemas';
 import { addExportedConst } from './utils';
 
