@@ -19,6 +19,12 @@ inputs:
     description: 'GitHub token for cross-repo checkout. Required when calling from an external repository.'
     required: false
     default: ${{ github.token }}
+  dockerhub-username:
+    description: 'Docker Hub username for authenticated pulls.'
+    required: false
+  dockerhub-password:
+    description: 'Docker Hub password/token for authenticated pulls.'
+    required: false
 
 outputs:
   server-url:
@@ -67,6 +73,11 @@ runs:
         echo "TAG=${{ steps.resolve.outputs.docker-tag }}" >> .env
         echo "APP_SECRET=replace_me_with_a_random_string" >> .env
         echo "SERVER_URL=http://localhost:3000" >> .env
+
+    - name: Login to Docker Hub
+      if: inputs.dockerhub-username != '' && inputs.dockerhub-password != ''
+      shell: bash
+      run: echo "${{ inputs.dockerhub-password }}" | docker login -u "${{ inputs.dockerhub-username }}" --password-stdin
 
     - name: Start Twenty instance
       shell: bash
