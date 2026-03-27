@@ -8365,6 +8365,11 @@ msgstr "Workspace ID and role mismatch."
 msgid "Workspace is not ready to welcome new members"
 msgstr "Workspace is not ready to welcome new members"
 
+#. js-lingui-id: iN7doz
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+msgstr "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+
 #. js-lingui-id: CbGxon
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgid "Workspace member"
