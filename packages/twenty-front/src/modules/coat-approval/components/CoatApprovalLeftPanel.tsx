@@ -19,6 +19,9 @@ type CoatApprovalLeftPanelProps = {
   activeTab: CoatTab;
   onTabChange: (tab: CoatTab) => void;
   tabCounts: CoatTabCounts;
+  sortAscending: boolean;
+  onToggleSort: () => void;
+  onRefresh: () => void;
   selectedContractId: string | null;
   onSelectContract: (contractId: string) => void;
 };
@@ -43,6 +46,9 @@ export const CoatApprovalLeftPanel = ({
   activeTab,
   onTabChange,
   tabCounts,
+  sortAscending,
+  onToggleSort,
+  onRefresh,
   selectedContractId,
   onSelectContract,
 }: CoatApprovalLeftPanelProps) => {
@@ -57,6 +63,9 @@ export const CoatApprovalLeftPanel = ({
         filterValues={filterValues}
         onFilterChange={onFilterChange}
         activeTab={activeTab}
+        sortAscending={sortAscending}
+        onToggleSort={onToggleSort}
+        onRefresh={onRefresh}
       />
       <CoatApprovalList
         contracts={contracts}

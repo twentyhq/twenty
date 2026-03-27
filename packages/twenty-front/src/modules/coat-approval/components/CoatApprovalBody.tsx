@@ -84,10 +84,21 @@ const CoatApprovalBodyContent = ({
 
   const handleTabChange = useCallback((tab: CoatTab) => {
     setActiveTab(tab);
+    setSortAscending(tab === 'all' ? false : true);
   }, []);
 
-  const { contracts, loading, fetchMoreRecords, hasNextPage } =
-    useCoatContractsList(queryFilterValues, activeTab);
+  const [sortAscending, setSortAscending] = useState(true);
+
+  const handleToggleSort = useCallback(() => {
+    setSortAscending((prev) => !prev);
+  }, []);
+
+  const { contracts, loading, fetchMoreRecords, hasNextPage, refetch } =
+    useCoatContractsList(queryFilterValues, activeTab, sortAscending);
+
+  const handleRefresh = useCallback(() => {
+    refetch?.();
+  }, [refetch]);
 
   const tabCounts = useCoatTabCounts(queryFilterValues);
 
@@ -103,10 +114,16 @@ const CoatApprovalBodyContent = ({
         activeTab={activeTab}
         onTabChange={handleTabChange}
         tabCounts={tabCounts}
+        sortAscending={sortAscending}
+        onToggleSort={handleToggleSort}
+        onRefresh={handleRefresh}
         selectedContractId={selectedContractId}
         onSelectContract={onSelectContract}
       />
-      <CoatApprovalRightPanel selectedContractId={selectedContractId} />
+      <CoatApprovalRightPanel
+        selectedContractId={selectedContractId}
+        activeTab={activeTab}
+      />
     </StyledBodyContainer>
   );
 };

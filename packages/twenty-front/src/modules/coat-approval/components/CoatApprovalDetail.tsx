@@ -1,11 +1,15 @@
 import { CoatApprovalActions } from '@/coat-approval/components/CoatApprovalActions';
 import { CoatEditableField } from '@/coat-approval/components/CoatEditableField';
-import { type CoatContractRecord } from '@/coat-approval/types/coat-approval.types';
+import {
+  type CoatContractRecord,
+  type CoatTab,
+} from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
 type CoatApprovalDetailProps = {
   contract: CoatContractRecord;
+  activeTab: CoatTab;
 };
 
 const StyledDetailContainer = styled.div`
@@ -182,7 +186,9 @@ const getExportStatusLabel = (
     case null:
     case undefined:
     case '':
-      return contractStatus === 'Completed' ? 'Needs Approval' : contractStatus ?? 'Unknown';
+      return contractStatus === 'Completed'
+        ? 'Needs Approval'
+        : (contractStatus ?? 'Unknown');
     default:
       return exportStatus;
   }
@@ -208,8 +214,12 @@ const getProductBadge = (programName: string | null): ProductBadgeInfo => {
 
   const lower = programName.toLowerCase();
 
-  if (lower.includes('schmerzfrei')) {
-    return { label: 'Schmerzfrei', color: '#3b82f6' };
+  if (lower.includes('fundament')) {
+    return { label: 'Fundament', color: '#f97316' };
+  }
+
+  if (lower.includes('schmerzfrei') || lower.includes('coaching')) {
+    return { label: 'Coaching', color: '#3b82f6' };
   }
 
   if (lower.includes('blueprint')) {
@@ -218,10 +228,6 @@ const getProductBadge = (programName: string | null): ProductBadgeInfo => {
 
   if (lower.includes('ausbildung')) {
     return { label: 'Ausbildung', color: '#8b5cf6' };
-  }
-
-  if (lower.includes('fundament')) {
-    return { label: 'Fundament', color: '#f97316' };
   }
 
   return { label: programName, color: '#6b7280' };
@@ -277,8 +283,14 @@ const hasNonEmptySpecialAgreements = (value: string | null): boolean => {
   return trimmed.length > 0 && trimmed !== '.';
 };
 
-export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
-  const exportStatusColor = getExportStatusColorWithContract(contract.coatExportStatus, contract.status);
+export const CoatApprovalDetail = ({
+  contract,
+  activeTab,
+}: CoatApprovalDetailProps) => {
+  const exportStatusColor = getExportStatusColorWithContract(
+    contract.coatExportStatus,
+    contract.status,
+  );
   const productBadge = getProductBadge(contract.program);
   const showSpecialAgreementsWarning = hasNonEmptySpecialAgreements(
     contract.specialAgreements,
@@ -545,10 +557,12 @@ export const CoatApprovalDetail = ({ contract }: CoatApprovalDetailProps) => {
         </StyledSection>
       </StyledDetailContent>
 
-      <CoatApprovalActions
-        contractId={contract.id}
-        currentExportStatus={contract.coatExportStatus}
-      />
+      {activeTab !== 'all' && (
+        <CoatApprovalActions
+          contractId={contract.id}
+          currentExportStatus={contract.coatExportStatus}
+        />
+      )}
     </StyledDetailContainer>
   );
 };

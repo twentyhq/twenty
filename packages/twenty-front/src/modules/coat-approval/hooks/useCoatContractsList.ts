@@ -43,16 +43,6 @@ const buildTabFilter = (activeTab: CoatTab): RecordGqlOperationFilter[] => {
   return clauses;
 };
 
-const getTabOrderBy = (activeTab: CoatTab) => {
-  switch (activeTab) {
-    case 'analyze':
-    case 'warnings':
-      return [{ createdAt: 'AscNullsLast' as const }];
-    case 'all':
-      return [{ createdAt: 'DescNullsLast' as const }];
-  }
-};
-
 const buildCoatFilter = (
   filterValues: CoatFilterValues,
   activeTab: CoatTab,
@@ -112,19 +102,35 @@ const buildCoatFilter = (
 export const useCoatContractsList = (
   filterValues: CoatFilterValues,
   activeTab: CoatTab,
+  sortOverride?: boolean,
 ) => {
   const filter = buildCoatFilter(filterValues, activeTab);
 
-  const orderBy = getTabOrderBy(activeTab);
+  const defaultAsc = activeTab === 'all' ? false : true;
+  const isAscending = sortOverride !== undefined ? sortOverride : defaultAsc;
+  const orderBy = [
+    {
+      createdAt: isAscending
+        ? ('AscNullsLast' as const)
+        : ('DescNullsLast' as const),
+    },
+  ];
 
-  const { records, loading, error, fetchMoreRecords, hasNextPage, totalCount } =
-    useFindManyRecords({
-      objectNameSingular: COAT_OBJECT_NAME_SINGULAR,
-      filter,
-      orderBy,
-      recordGqlFields: COAT_LIST_GQL_FIELDS,
-      limit: COAT_LIST_PAGE_SIZE,
-    });
+  const {
+    records,
+    loading,
+    error,
+    fetchMoreRecords,
+    hasNextPage,
+    totalCount,
+    refetch,
+  } = useFindManyRecords({
+    objectNameSingular: COAT_OBJECT_NAME_SINGULAR,
+    filter,
+    orderBy,
+    recordGqlFields: COAT_LIST_GQL_FIELDS,
+    limit: COAT_LIST_PAGE_SIZE,
+  });
 
   return {
     contracts: records,
@@ -133,5 +139,6 @@ export const useCoatContractsList = (
     fetchMoreRecords,
     hasNextPage,
     totalCount,
+    refetch,
   };
 };

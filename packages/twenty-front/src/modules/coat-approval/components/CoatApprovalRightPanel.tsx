@@ -1,12 +1,16 @@
 import { CoatApprovalDetail } from '@/coat-approval/components/CoatApprovalDetail';
 import { CoatApprovalEmptyDetail } from '@/coat-approval/components/CoatApprovalEmptyDetail';
 import { useCoatContractDetail } from '@/coat-approval/hooks/useCoatContractDetail';
-import { type CoatContractRecord } from '@/coat-approval/types/coat-approval.types';
+import {
+  type CoatContractRecord,
+  type CoatTab,
+} from '@/coat-approval/types/coat-approval.types';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
 type CoatApprovalRightPanelProps = {
   selectedContractId: string | null;
+  activeTab: CoatTab;
 };
 
 const StyledRightPanel = styled.div`
@@ -38,6 +42,7 @@ const StyledErrorContainer = styled.div`
 
 export const CoatApprovalRightPanel = ({
   selectedContractId,
+  activeTab,
 }: CoatApprovalRightPanelProps) => {
   const { contract, loading, error } =
     useCoatContractDetail(selectedContractId);
@@ -78,12 +83,11 @@ export const CoatApprovalRightPanel = ({
     );
   }
 
-  const contractRecord =
-    contract as unknown as CoatContractRecord;
+  const contractRecord = contract as unknown as CoatContractRecord;
 
   return (
     <StyledRightPanel>
-      <CoatApprovalDetail contract={contractRecord} />
+      <CoatApprovalDetail contract={contractRecord} activeTab={activeTab} />
     </StyledRightPanel>
   );
 };
