@@ -2,7 +2,7 @@ import { type EntityManager } from 'typeorm';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { QUICK_LEAD_WORKFLOW_VERSION_ID } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
+import { QUICK_LEAD_WORKFLOW_VERSION_ID } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const QUICK_LEAD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER =

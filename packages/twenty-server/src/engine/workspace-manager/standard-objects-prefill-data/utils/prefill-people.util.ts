@@ -7,7 +7,7 @@ import {
   FIGMA_ID,
   NOTION_ID,
   STRIPE_ID,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 
 export const BRIAN_CHESKY_ID = 'a2e78a5e-338b-46df-8811-fa08c7d19d35'; // Airbnb
 export const DARIO_AMODEI_ID = '93c72d2e-e65c-44c4-99ad-f87f50349dcf'; // Anthropic

@@ -10,7 +10,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
-import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflow-code-step-logic-functions';
+import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
 
 export const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
 export const QUICK_LEAD_WORKFLOW_VERSION_ID =

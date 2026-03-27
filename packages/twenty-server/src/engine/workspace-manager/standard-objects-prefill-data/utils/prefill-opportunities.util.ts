@@ -7,14 +7,14 @@ import {
   FIGMA_ID,
   NOTION_ID,
   STRIPE_ID,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 import {
   BRIAN_CHESKY_ID,
   DARIO_AMODEI_ID,
   DYLAN_FIELD_ID,
   IVAN_ZHAO_ID,
   PATRICK_COLLISON_ID,
-} from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-people.util';
 
 export const OPPORTUNITY_STRIPE_PLATFORM_MIGRATION_ID =
   '822639e5-9bf7-40f1-8882-a11140362339';
