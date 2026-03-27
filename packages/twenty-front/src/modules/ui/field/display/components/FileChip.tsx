@@ -98,6 +98,7 @@ export const FileChip = ({
             anchorSelect={tooltipAnchorSelect}
             content={t`File no longer exists`}
             delay={TooltipDelay.shortDelay}
+            isOpen={true}
             noArrow
             place={TooltipPosition.Top}
             positionStrategy="fixed"
