@@ -3153,8 +3153,6 @@ export const STANDARD_OBJECTS = {
       updatedBy: {
         universalIdentifier: '730dc1c9-34f5-4c22-84a6-bcb55b7604e2',
       },
-      output: { universalIdentifier: '20202020-7be4-4db2-8ac6-3ff0d740843d' },
-      context: { universalIdentifier: '20202020-189c-478a-b867-d72feaf5926a' },
       state: { universalIdentifier: '20202020-611f-45f3-9cde-d64927e8ec57' },
       favorites: {
         universalIdentifier: '20202020-4baf-4604-b899-2f7fcfbbf90d',
@@ -3227,12 +3225,6 @@ export const STANDARD_OBJECTS = {
           },
           enqueuedAt: {
             universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfd',
-          },
-          output: {
-            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfe',
-          },
-          context: {
-            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcff',
           },
           state: {
             universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abd01',

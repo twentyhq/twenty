@@ -66,11 +66,27 @@ const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
 const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   Record<AllStandardObjectName, string>
 > = {
+  blocklist: 'blocklistRecordPageFields',
+  calendarChannel: 'calendarChannelRecordPageFields',
+  calendarChannelEventAssociation:
+    'calendarChannelEventAssociationRecordPageFields',
+  calendarEventParticipant: 'calendarEventParticipantRecordPageFields',
   company: 'companyRecordPageFields',
-  person: 'personRecordPageFields',
-  opportunity: 'opportunityRecordPageFields',
-  task: 'taskRecordPageFields',
+  connectedAccount: 'connectedAccountRecordPageFields',
+  favorite: 'favoriteRecordPageFields',
+  favoriteFolder: 'favoriteFolderRecordPageFields',
+  messageChannel: 'messageChannelRecordPageFields',
+  messageChannelMessageAssociation:
+    'messageChannelMessageAssociationRecordPageFields',
+  messageChannelMessageAssociationMessageFolder:
+    'messageChannelMessageAssociationMessageFolderRecordPageFields',
+  messageFolder: 'messageFolderRecordPageFields',
+  messageParticipant: 'messageParticipantRecordPageFields',
   note: 'noteRecordPageFields',
+  opportunity: 'opportunityRecordPageFields',
+  person: 'personRecordPageFields',
+  task: 'taskRecordPageFields',
+  workflowAutomatedTrigger: 'workflowAutomatedTriggerRecordPageFields',
   workflowRun: 'workflowRunRecordPageFields',
   workflowVersion: 'workflowVersionRecordPageFields',
 };
