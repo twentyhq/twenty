@@ -95,7 +95,7 @@ const meta: Meta<typeof SidePanelRootPage> = {
       });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
-          page: SidePanelPages.Root,
+          page: SidePanelPages.CommandMenuDisplay,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
           pageId: '1',

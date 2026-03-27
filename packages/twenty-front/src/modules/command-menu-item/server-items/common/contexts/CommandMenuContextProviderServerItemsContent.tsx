@@ -2,7 +2,7 @@ import {
   CommandMenuContext,
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCommandMenuItemsFromBackend } from '@/command-menu-item/server-items/hooks/useCommandMenuItemsFromBackend';
+import { useCommandMenuItemsFromBackend } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsFromBackend';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 
 type CommandMenuContextProviderServerItemsContentProps = {

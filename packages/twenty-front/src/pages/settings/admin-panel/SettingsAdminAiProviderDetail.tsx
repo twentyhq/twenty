@@ -257,6 +257,12 @@ export const SettingsAdminAiProviderDetail = () => {
         label: t`Credentials`,
         value: t`IAM credentials configured`,
       });
+    } else if (provider.authType === 'role') {
+      items.push({
+        Icon: IconKey,
+        label: t`Credentials`,
+        value: t`IAM role (instance profile)`,
+      });
     }
 
     if (isCustomProvider && provider.dataResidency) {

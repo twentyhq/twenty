@@ -31,21 +31,12 @@ const COMPANY_PAGE_TABS = {
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.company.fields.people.universalIdentifier,
       },
-      accountOwner: {
-        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0113',
-        title: 'Account Owner',
-        type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
-        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
-        fieldUniversalIdentifier:
-          STANDARD_OBJECTS.company.fields.accountOwner.universalIdentifier,
-      },
       opportunities: {
         universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0114',
         title: 'Opportunities',
         type: WidgetType.FIELD,
         gridPosition: GRID_POSITIONS.FULL_WIDTH,
-        position: VERTICAL_LIST_LAYOUT_POSITIONS.FOURTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.company.fields.opportunities.universalIdentifier,
       },

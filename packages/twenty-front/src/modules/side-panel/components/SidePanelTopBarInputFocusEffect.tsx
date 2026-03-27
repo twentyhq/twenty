@@ -14,7 +14,7 @@ export const SidePanelTopBarInputFocusEffect = ({
 
   useEffect(() => {
     if (
-      sidePanelPage === SidePanelPages.Root ||
+      sidePanelPage === SidePanelPages.CommandMenuDisplay ||
       sidePanelPage === SidePanelPages.SearchRecords
     ) {
       inputRef.current?.focus();

@@ -2954,6 +2954,7 @@ export interface Mutation {
     createViewGroup: ViewGroup
     createManyViewGroups: ViewGroup[]
     updateViewGroup: ViewGroup
+    updateManyViewGroups: ViewGroup[]
     deleteViewGroup: ViewGroup
     destroyViewGroup: ViewGroup
     updateMessageFolder: MessageFolder
@@ -6207,6 +6208,7 @@ export interface MutationGenqlSelection{
     createViewGroup?: (ViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
     createManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
     updateViewGroup?: (ViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
+    updateManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: UpdateViewGroupInput[]} })
     deleteViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
     destroyViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })

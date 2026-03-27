@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -61,6 +62,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     MetricsModule,
     CalendarChannelDataAccessModule,
     ConnectedAccountDataAccessModule,
+    FeatureFlagModule,
   ],
   providers: [
     CalendarAccountAuthenticationService,
