@@ -659,6 +659,10 @@ check_file_contains \
   "isUpsert" \
   "Relation connect must skip gracefully for upsert rows"
 check_file_contains \
+  "packages/twenty-server/src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries.ts" \
+  "createMissingConnectRecords" \
+  "Auto-create missing related records during upsert imports"
+check_file_contains \
   "packages/twenty-server/src/engine/twenty-orm/repository/workspace-insert-query-builder.ts" \
   "isUpsert" \
   "Insert query builder must pass isUpsert flag to relation nested queries"

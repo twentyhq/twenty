@@ -1,3 +1,5 @@
+import { randomUUID } from 'crypto';
+
 import { isDefined } from 'class-validator';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import {
@@ -144,6 +146,14 @@ export class RelationNestedQueries {
       queryBuilder,
     );
 
+    // For upserts, create missing related records instead of failing
+    if (isUpsert) {
+      await this.createMissingConnectRecords(
+        recordsToConnectWithConfig,
+        queryBuilder,
+      );
+    }
+
     const updatedEntities = this.updateEntitiesWithRecordToConnectId<Entity>(
       entities,
       recordsToConnectWithConfig,
@@ -151,6 +161,77 @@ export class RelationNestedQueries {
     );
 
     return updatedEntities;
+  }
+
+  /**
+   * For upsert operations, creates new records in the target table when the
+   * connect query found no matches. This allows CSV imports to automatically
+   * create related records (e.g. a new Lead) when they don't already exist.
+   */
+  private async createMissingConnectRecords<Entity extends ObjectLiteral>(
+    recordsToConnectWithConfig: [
+      RelationConnectQueryConfig,
+      Record<string, unknown>[],
+    ][],
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>,
+  ): Promise<void> {
+    for (const [
+      connectQueryConfig,
+      recordsToConnect,
+    ] of recordsToConnectWithConfig) {
+      const seenConditionKeys = new Set<string>();
+      const missingConditions: [string, unknown][][] = [];
+
+      for (const condition of Object.values(
+        connectQueryConfig.recordToConnectConditionByEntityIndex,
+      )) {
+        const matches = recordsToConnect.filter((record) =>
+          condition.every(([field, value]) => record[field] === value),
+        );
+
+        if (matches.length > 0) continue;
+
+        const conditionKey = JSON.stringify(condition);
+
+        if (seenConditionKeys.has(conditionKey)) continue;
+        seenConditionKeys.add(conditionKey);
+
+        missingConditions.push(condition);
+      }
+
+      if (missingConditions.length === 0) continue;
+
+      for (const condition of missingConditions) {
+        const now = new Date().toISOString();
+        const newRecord: Record<string, unknown> = {
+          id: randomUUID(),
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        for (const [field, value] of condition) {
+          newRecord[field] = value;
+        }
+
+        try {
+          await queryBuilder.connection
+            .createQueryBuilder()
+            .insert()
+            .into(connectQueryConfig.targetObjectName)
+            .values(newRecord)
+            .execute();
+
+          // Add to results so updateEntitiesWithRecordToConnectId finds it
+          recordsToConnect.push(newRecord);
+        } catch {
+          // If creation fails (e.g. NOT NULL constraints, unique violation),
+          // the upsert tolerance in updateEntitiesWithRecordToConnectId
+          // will skip gracefully.
+        }
+      }
+    }
   }
 
   private async executeConnectQueries<Entity extends ObjectLiteral>(
