@@ -3226,12 +3226,6 @@ export const STANDARD_OBJECTS = {
           enqueuedAt: {
             universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfd',
           },
-          output: {
-            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfe',
-          },
-          context: {
-            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcff',
-          },
           state: {
             universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abd01',
           },
