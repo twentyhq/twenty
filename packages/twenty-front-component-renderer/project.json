@@ -69,9 +69,7 @@
         "{projectRoot}/src/__stories__/example-sources/*",
         "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*"
       ],
-      "outputs": [
-        "{projectRoot}/src/__stories__/example-sources-built/*"
-      ],
+      "outputs": ["{projectRoot}/src/__stories__/example-sources-built/*"],
       "options": {
         "command": "tsx {projectRoot}/scripts/front-component-stories/build-source-examples.ts"
       }
