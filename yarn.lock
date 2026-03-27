@@ -59755,8 +59755,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
-    "@chakra-ui/react": "npm:^3.33.0"
-    "@emotion/react": "npm:^11.14.0"
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
     "@prettier/sync": "npm:^0.5.2"
