@@ -88,6 +88,7 @@ export class RelationNestedQueries {
     entities,
     relationNestedConfig,
     queryBuilder,
+    isUpsert = false,
   }: {
     entities:
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
@@ -99,6 +100,7 @@ export class RelationNestedQueries {
     queryBuilder:
       | WorkspaceSelectQueryBuilder<Entity>
       | SelectQueryBuilder<Entity>;
+    isUpsert?: boolean;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
@@ -116,6 +118,7 @@ export class RelationNestedQueries {
       entities: updatedEntitiesWithDisconnect,
       relationConnectQueryConfigs,
       queryBuilder,
+      isUpsert,
     });
 
     return updatedEntitiesWithConnect;
@@ -125,12 +128,14 @@ export class RelationNestedQueries {
     entities,
     relationConnectQueryConfigs,
     queryBuilder,
+    isUpsert = false,
   }: {
     entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
     relationConnectQueryConfigs: RelationConnectQueryConfig[];
     queryBuilder:
       | WorkspaceSelectQueryBuilder<Entity>
       | SelectQueryBuilder<Entity>;
+    isUpsert?: boolean;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (relationConnectQueryConfigs.length === 0) return entities;
 
@@ -142,6 +147,7 @@ export class RelationNestedQueries {
     const updatedEntities = this.updateEntitiesWithRecordToConnectId<Entity>(
       entities,
       recordsToConnectWithConfig,
+      isUpsert,
     );
 
     return updatedEntities;
@@ -191,6 +197,7 @@ export class RelationNestedQueries {
       RelationConnectQueryConfig,
       Record<string, unknown>[],
     ][],
+    isUpsert = false,
   ): QueryDeepPartialEntity<Entity>[] {
     return entities.map((entity, index) => {
       for (const [
@@ -209,6 +216,17 @@ export class RelationNestedQueries {
           );
 
           if (recordToConnect.length !== 1) {
+            // For upserts with an existing record ID, skip the failed connect
+            // and preserve the existing relation in the database rather than
+            // failing the entire import batch.
+            if (isUpsert && isDefined((entity as any).id)) {
+              entity = {
+                ...entity,
+                [connectQueryConfig.connectFieldName]: null,
+              };
+              continue;
+            }
+
             const { errorMessage, userFriendlyMessage } =
               formatConnectRecordNotFoundErrorMessage(
                 connectQueryConfig.connectFieldName,

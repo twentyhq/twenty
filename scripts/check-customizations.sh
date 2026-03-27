@@ -653,6 +653,17 @@ check_file_exists \
   "Execute relation updates utility"
 
 echo ""
+echo "--- Server: Upsert Relation Connect Tolerance ---"
+check_file_contains \
+  "packages/twenty-server/src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries.ts" \
+  "isUpsert" \
+  "Relation connect must skip gracefully for upsert rows"
+check_file_contains \
+  "packages/twenty-server/src/engine/twenty-orm/repository/workspace-insert-query-builder.ts" \
+  "isUpsert" \
+  "Insert query builder must pass isUpsert flag to relation nested queries"
+
+echo ""
 echo "--- CSV Export: Composite Field Splitting ---"
 check_file_not_contains \
   "packages/twenty-front/src/modules/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV.ts" \

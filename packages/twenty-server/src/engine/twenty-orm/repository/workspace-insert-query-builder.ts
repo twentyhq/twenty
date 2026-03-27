@@ -214,6 +214,7 @@ export class WorkspaceInsertQueryBuilder<
               | QueryDeepPartialEntityWithNestedRelationFields<T>[],
             relationNestedConfig: this.relationNestedConfig,
             queryBuilder: nestedRelationQueryBuilder,
+            isUpsert: isDefined(this.expressionMap.onUpdate),
           });
 
         this.expressionMap.valuesSet = updatedValues;

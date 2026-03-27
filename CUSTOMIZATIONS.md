@@ -165,6 +165,13 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `object-record/record-index/export/utils/relationExportFieldPaths.ts` | Builds recursive relation export field paths, nested GraphQL selections, and flat CSV keys |
 | `object-record/record-index/export/types/ExportConfig.ts`             | Stores selected related export fields as dotted field paths (`selectedFieldPaths`)         |
 
+### Server-Side Import: Upsert Relation Connect Tolerance
+
+| File                                                                                                    | Modification                                                                                                |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries.ts`                 | Skip failed relation connects on upsert rows (preserve existing relation) instead of aborting the batch     |
+| `engine/twenty-orm/repository/workspace-insert-query-builder.ts`                                        | Pass `isUpsert` flag to relation nested query processing                                                    |
+
 ### RLS and Permissions
 
 | File                                                                  | Modification                                                            |
