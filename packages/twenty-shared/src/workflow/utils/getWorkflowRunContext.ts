@@ -7,6 +7,14 @@ export const getWorkflowRunContext = (
   return Object.fromEntries(
     Object.entries(stepInfos)
       .filter(([, value]) => isDefined(value?.['result']))
-      .map(([key, value]) => [key, value?.['result']]),
+      .map(([key, value]) => {
+        const result = value?.['result'];
+
+        if (typeof result === 'object' && result !== null) {
+          return [key, { ...result, result }];
+        }
+
+        return [key, result];
+      }),
   );
 };

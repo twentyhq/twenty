@@ -130,6 +130,46 @@ describe('resolveInput', () => {
     ).toBe('{ "a": "str" }');
   });
 
+  describe('CODE step output variable resolution', () => {
+    const codeStepContext = {
+      'transform-step-001': {
+        memberName: 'Mike Chen',
+        eventName: 'Microsoft Gala',
+        result: {
+          memberName: 'Mike Chen',
+          eventName: 'Microsoft Gala',
+        },
+      },
+    };
+
+    it('should resolve CODE step output via direct path', () => {
+      expect(
+        resolveInput(
+          '{{transform-step-001.memberName}}',
+          codeStepContext,
+        ),
+      ).toBe('Mike Chen');
+    });
+
+    it('should resolve CODE step output via result path', () => {
+      expect(
+        resolveInput(
+          '{{transform-step-001.result.memberName}}',
+          codeStepContext,
+        ),
+      ).toBe('Mike Chen');
+    });
+
+    it('should resolve multiple CODE step variables in a string', () => {
+      expect(
+        resolveInput(
+          'Confirmed - {{transform-step-001.result.memberName}} for {{transform-step-001.result.eventName}}',
+          codeStepContext,
+        ),
+      ).toBe('Confirmed - Mike Chen for Microsoft Gala');
+    });
+  });
+
   describe('bracket notation for keys with special characters', () => {
     it('should resolve variables with keys containing spaces', () => {
       const contextWithSpaces = {
