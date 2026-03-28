@@ -3,7 +3,7 @@ import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,7 +18,8 @@ export const usePerformMergePreview = ({
   const [mergePreviewRecord, setMergePreviewRecord] =
     useState<ObjectRecord | null>(null);
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
+
+  const isGeneratingPreviewRef = useRef(false);
 
   const mergeSettings = useAtomStateValue(mergeSettingsState);
   const isMergeInProgress = useAtomStateValue(isMergeInProgressState);
@@ -31,21 +32,22 @@ export const usePerformMergePreview = ({
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  useEffect(() => {
-    const fetchPreview = async () => {
-      if (
-        selectedRecords.length < 2 ||
-        isMergeInProgress ||
-        isInitialized ||
-        isGeneratingPreview
-      ) {
+  const selectedRecordIds = selectedRecords
+    .map((record) => record.id)
+    .sort()
+    .join(',');
+
+  const fetchPreview = useCallback(
+    async (records: ObjectRecord[]) => {
+      if (records.length < 2 || isGeneratingPreviewRef.current) {
         return;
       }
 
+      isGeneratingPreviewRef.current = true;
       setIsGeneratingPreview(true);
       try {
         const previewRecord = await mergeManyRecords({
-          recordIds: selectedRecords.map((record) => record.id),
+          recordIds: records.map((record) => record.id),
           mergeSettings,
           preview: true,
         });
@@ -63,23 +65,23 @@ export const usePerformMergePreview = ({
       } catch {
         setMergePreviewRecord(null);
       } finally {
+        isGeneratingPreviewRef.current = false;
         setIsGeneratingPreview(false);
-        setIsInitialized(true);
       }
-    };
+    },
+    [mergeManyRecords, mergeSettings, upsertRecordsInStore],
+  );
 
-    if (selectedRecords.length > 0 && !isMergeInProgress) {
-      fetchPreview();
+  useEffect(() => {
+    if (
+      selectedRecords.length >= 2 &&
+      !isMergeInProgress &&
+      !isGeneratingPreviewRef.current
+    ) {
+      fetchPreview(selectedRecords);
     }
-  }, [
-    selectedRecords,
-    mergeSettings,
-    isMergeInProgress,
-    isGeneratingPreview,
-    mergeManyRecords,
-    upsertRecordsInStore,
-    isInitialized,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRecordIds, mergeSettings, isMergeInProgress, fetchPreview]);
 
   return {
     mergePreviewRecord,
