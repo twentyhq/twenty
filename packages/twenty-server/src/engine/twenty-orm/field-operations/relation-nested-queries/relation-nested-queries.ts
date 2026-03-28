@@ -244,18 +244,8 @@ export class RelationNestedQueries {
           recordsToConnect.push(newRecord);
         } catch {
           // If creation fails (e.g. NOT NULL constraints, unique violation),
-          // the upsert tolerance in updateEntitiesWithRecordToConnectId
-          // will skip gracefully. Record a warning for the results summary.
-          this.importWarnings.push({
-            entityIndex: -1,
-            fieldName: connectQueryConfig.relationFieldName,
-            connectFieldName: connectQueryConfig.connectFieldName,
-            targetObjectName: connectQueryConfig.targetObjectName,
-            condition: condition
-              .map(([field, value]) => `${field} = ${value}`)
-              .join(' AND '),
-            reason: 'CONNECT_CREATE_FAILED',
-          });
+          // updateEntitiesWithRecordToConnectId will find 0 matches and
+          // record a CONNECT_NOT_FOUND warning with the entity's recordId.
         }
       }
     }

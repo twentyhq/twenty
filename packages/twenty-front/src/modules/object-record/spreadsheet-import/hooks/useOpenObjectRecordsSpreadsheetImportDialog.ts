@@ -125,9 +125,10 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
             const totalRecords = data.validStructuredRows.length;
             const successCount =
               totalRecords - warnings.length - failures.length;
-            const columnHeaders = spreadsheetImportFields.map(
-              (field) => field.key,
-            );
+            const columns = spreadsheetImportFields.map((field) => ({
+              key: field.key,
+              label: field.label,
+            }));
 
             enqueueDialog({
               title: t`Import Results`,
@@ -137,7 +138,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
                 warnings,
                 failures,
                 originalRows: data.validStructuredRows,
-                columnHeaders,
+                columns,
                 objectNameSingular,
               }),
               buttons: [

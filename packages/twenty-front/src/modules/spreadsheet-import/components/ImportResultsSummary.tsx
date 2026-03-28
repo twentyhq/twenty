@@ -78,7 +78,7 @@ type ImportResultsSummaryProps = {
   warnings: ImportRecordWarning[];
   failures: BatchCreateResult<any>['failures'];
   originalRows: Record<string, unknown>[];
-  columnHeaders: string[];
+  columns: Array<{ key: string; label: string }>;
   objectNameSingular: string;
 };
 
@@ -88,7 +88,7 @@ export const ImportResultsSummary = ({
   warnings,
   failures,
   originalRows,
-  columnHeaders,
+  columns,
   objectNameSingular,
 }: ImportResultsSummaryProps) => {
   const warningCount = warnings.length;
@@ -100,7 +100,7 @@ export const ImportResultsSummary = ({
       warnings,
       failures,
       originalRows,
-      columnHeaders,
+      columns,
       objectNameSingular,
     });
   };
