@@ -492,6 +492,7 @@ msgstr "예상치 못한 설정 오류가 발생했습니다."
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+#: src/engine/core-entity-cache/exceptions/core-entity-cache.exception.ts
 msgid "An unexpected error occurred."
 msgstr "예상치 못한 오류가 발생했습니다."
 
@@ -3504,6 +3505,7 @@ msgstr "잘못된 페이지 레이아웃 위젯 데이터입니다."
 
 #. js-lingui-id: HiaWGB
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+#: src/engine/core-entity-cache/exceptions/core-entity-cache.exception.ts
 msgid "Invalid parameters provided."
 msgstr "잘못된 매개변수가 제공되었습니다."
 
