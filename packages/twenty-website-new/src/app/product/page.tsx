@@ -24,8 +24,7 @@ export default function ProductPage() {
           />
         </Hero.Cta>
         <Hero.Illustration
-          src="https://app.endlesstools.io/embed/0bcf3ac2-58cf-4cd5-90bd-e8fada9816a9"
-          title="Endless Tools Editor"
+          illustration={HERO_DATA.illustration}
           backgroundColor={theme.colors.secondary.background[5]}
         />
 

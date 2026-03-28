@@ -1,4 +1,5 @@
 import { Image } from '@/design-system/components';
+import { ImageType } from '@/design-system/components/Image/types/Image';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -45,11 +46,16 @@ const StyledForegroundImage = styled(Image)`
   }
 `;
 
-export function HomeVisual() {
+type HomeVisualProps = {
+  background: ImageType;
+  foreground: ImageType;
+};
+
+export function HomeVisual({ background, foreground }: HomeVisualProps) {
   return (
     <StyledHomeVisual>
-      <StyledBackgroundImage src="/images/home/hero/background.png" alt="" />
-      <StyledForegroundImage src="/images/home/hero/foreground.png" alt="" />
+      <StyledBackgroundImage src={background.src} alt={background.alt} />
+      <StyledForegroundImage src={foreground.src} alt={foreground.alt} />
     </StyledHomeVisual>
   );
 }

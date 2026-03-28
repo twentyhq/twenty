@@ -31,8 +31,7 @@ export default function PartnerPage() {
           />
         </Hero.Cta>
         <Hero.Illustration
-          src="https://app.endlesstools.io/embed/1c6c8259-3276-4cf2-84d8-6b7e87e7ec95"
-          title="Endless Tools Editor"
+          illustration={HERO_DATA.illustration}
           backgroundColor={theme.colors.secondary.background[100]}
         />
       </Hero.Root>
@@ -46,7 +45,7 @@ export default function PartnerPage() {
       </TrustedBy.Root>
 
       <ThreeCards.Root backgroundColor={theme.colors.secondary.background[5]}>
-        <ThreeCards.Intro align="left">
+        <ThreeCards.Intro page={Pages.Partner} align="left">
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}

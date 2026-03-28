@@ -6,9 +6,16 @@ import { theme } from '@/theme';
 export default function WhyTwentyPage() {
   return (
     <Hero.Root backgroundColor={theme.colors.secondary.background[100]}>
-      <Hero.Heading page={Pages.WhyTwenty} segments={HERO_DATA.heading} size="xl" />
+      <Hero.Heading
+        page={Pages.WhyTwenty}
+        segments={HERO_DATA.heading}
+        size="xl"
+      />
       <Hero.Body page={Pages.WhyTwenty} body={HERO_DATA.body} />
-      <Hero.WhyTwentyVisual />
+      <Hero.WhyTwentyVisual
+        image={HERO_DATA.image}
+        illustration={HERO_DATA.illustration}
+      />
     </Hero.Root>
   );
 }
