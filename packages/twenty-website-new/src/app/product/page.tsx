@@ -27,33 +27,33 @@ export default function ProductPage() {
           illustration={HERO_DATA.illustration}
           backgroundColor={theme.colors.secondary.background[5]}
         />
-
-        <TrustedBy.Root>
-          <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
-          <TrustedBy.Logos
-            clientCountLabel={TRUSTED_BY_DATA.clientCountLabel}
-            logos={TRUSTED_BY_DATA.logos}
-          />
-        </TrustedBy.Root>
-
-        <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
-          <ThreeCards.Intro page={Pages.Product} align="left">
-            <Eyebrow
-              colorScheme="primary"
-              heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
-            />
-            <Heading
-              segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
-              size="lg"
-              weight="light"
-            />
-            <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
-          </ThreeCards.Intro>
-          <ThreeCards.IllustrationCards
-            illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
-          />
-        </ThreeCards.Root>
       </Hero.Root>
+
+      <TrustedBy.Root>
+        <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
+        <TrustedBy.Logos
+          clientCountLabel={TRUSTED_BY_DATA.clientCountLabel}
+          logos={TRUSTED_BY_DATA.logos}
+        />
+      </TrustedBy.Root>
+
+      <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
+        <ThreeCards.Intro page={Pages.Product} align="left">
+          <Eyebrow
+            colorScheme="primary"
+            heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+          />
+          <Heading
+            segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
+            size="lg"
+            weight="light"
+          />
+          <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
+        </ThreeCards.Intro>
+        <ThreeCards.IllustrationCards
+          illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
+        />
+      </ThreeCards.Root>
     </>
   );
 }
