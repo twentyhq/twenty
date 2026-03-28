@@ -9,7 +9,8 @@ import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexLoadBaseOnContextStoreEffect = () => {
-  const { loadRecordIndexStates } = useLoadRecordIndexStates();
+  const { loadRecordIndexStates, syncRecordIndexViewFields } =
+    useLoadRecordIndexStates();
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
@@ -17,6 +18,9 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   const [loadedViewId, setLoadedViewId] = useState<string | undefined>(
     undefined,
   );
+  const [syncedViewFieldsSignature, setSyncedViewFieldsSignature] = useState<
+    string | undefined
+  >(undefined);
 
   const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: contextStoreCurrentViewId ?? '',
@@ -26,21 +30,36 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
 
   const { createDefaultViewForObject } = useCreateDefaultViewForObject();
 
-  useEffect(() => {
-    if (
-      isDefined(contextStoreCurrentViewId) &&
-      loadedViewId === contextStoreCurrentViewId
-    ) {
-      return;
-    }
+  const viewFieldsSignature = isDefined(view)
+    ? JSON.stringify(
+        view.viewFields.map((viewField) => ({
+          aggregateOperation: viewField.aggregateOperation,
+          fieldMetadataId: viewField.fieldMetadataId,
+          id: viewField.id,
+          isVisible: viewField.isVisible,
+          position: viewField.position,
+          size: viewField.size,
+        })),
+      )
+    : undefined;
 
+  useEffect(() => {
     if (!isDefined(objectMetadataItem)) {
       return;
     }
 
     if (isDefined(view)) {
-      loadRecordIndexStates(view, objectMetadataItem);
-      setLoadedViewId(contextStoreCurrentViewId);
+      if (loadedViewId !== contextStoreCurrentViewId) {
+        loadRecordIndexStates(view, objectMetadataItem);
+        setLoadedViewId(contextStoreCurrentViewId);
+        setSyncedViewFieldsSignature(viewFieldsSignature);
+        return;
+      }
+
+      if (syncedViewFieldsSignature !== viewFieldsSignature) {
+        syncRecordIndexViewFields(view, objectMetadataItem);
+        setSyncedViewFieldsSignature(viewFieldsSignature);
+      }
     } else {
       createDefaultViewForObject(objectMetadataItem);
     }
@@ -49,7 +68,10 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
     loadRecordIndexStates,
     loadedViewId,
     objectMetadataItem,
+    syncedViewFieldsSignature,
+    syncRecordIndexViewFields,
     view,
+    viewFieldsSignature,
     createDefaultViewForObject,
   ]);
 

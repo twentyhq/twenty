@@ -10,6 +10,7 @@ import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromV
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const ViewBarRecordFieldEffect = () => {
   const contextStoreCurrentViewId = useAtomComponentStateValue(
@@ -35,23 +36,33 @@ export const ViewBarRecordFieldEffect = () => {
   const setCurrentRecordFields = useSetAtomComponentState(
     currentRecordFieldsComponentState,
   );
+  const currentRecordFields = useAtomComponentStateValue(
+    currentRecordFieldsComponentState,
+  );
 
   useEffect(() => {
-    if (!hasInitializedCurrentRecordFields && isDefined(currentView)) {
-      if (currentView.objectMetadataId !== objectMetadataItem.id) {
-        return;
-      }
+    if (!isDefined(currentView)) {
+      return;
+    }
 
-      const recordFields = currentView.viewFields
-        .map(mapViewFieldToRecordField)
-        .filter(isDefined);
+    if (currentView.objectMetadataId !== objectMetadataItem.id) {
+      return;
+    }
 
+    const recordFields = currentView.viewFields
+      .map(mapViewFieldToRecordField)
+      .filter(isDefined);
+
+    if (!isDeeplyEqual(currentRecordFields, recordFields)) {
       setCurrentRecordFields(recordFields);
+    }
 
+    if (!hasInitializedCurrentRecordFields) {
       setHasInitializedCurrentRecordFields(true);
     }
   }, [
     contextStoreCurrentViewId,
+    currentRecordFields,
     setCurrentRecordFields,
     hasInitializedCurrentRecordFields,
     setHasInitializedCurrentRecordFields,
