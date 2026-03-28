@@ -80,7 +80,7 @@ export const applyLeadResolutions = async ({
 
           if (Object.keys(updateData).length > 0) {
             const mutation = gql`
-              mutation UpdateLead($idToUpdate: ID!, $input: ${capitalize(targetObjectNameSingular)}UpdateInput!) {
+              mutation UpdateLead($idToUpdate: UUID!, $input: ${capitalize(targetObjectNameSingular)}UpdateInput!) {
                 update${capitalize(targetObjectNameSingular)}(id: $idToUpdate, data: $input) {
                   id
                 }
@@ -106,7 +106,7 @@ export const applyLeadResolutions = async ({
 
           // Reassign Policy
           const reassignMutation = gql`
-            mutation ReassignPolicyLead($idToUpdate: ID!, $input: ${capitalize(parentObjectNameSingular)}UpdateInput!) {
+            mutation ReassignPolicyLead($idToUpdate: UUID!, $input: ${capitalize(parentObjectNameSingular)}UpdateInput!) {
               update${capitalize(parentObjectNameSingular)}(id: $idToUpdate, data: $input) {
                 id
               }
@@ -126,7 +126,7 @@ export const applyLeadResolutions = async ({
 
           if (Object.keys(updateData).length > 0) {
             const updateMutation = gql`
-              mutation UpdateReassignedLead($idToUpdate: ID!, $input: ${capitalize(targetObjectNameSingular)}UpdateInput!) {
+              mutation UpdateReassignedLead($idToUpdate: UUID!, $input: ${capitalize(targetObjectNameSingular)}UpdateInput!) {
                 update${capitalize(targetObjectNameSingular)}(id: $idToUpdate, data: $input) {
                   id
                 }
@@ -171,7 +171,7 @@ export const applyLeadResolutions = async ({
 
           if (newLeadId && resolution.policyId) {
             const assignMutation = gql`
-              mutation AssignNewLead($idToUpdate: ID!, $input: ${capitalize(parentObjectNameSingular)}UpdateInput!) {
+              mutation AssignNewLead($idToUpdate: UUID!, $input: ${capitalize(parentObjectNameSingular)}UpdateInput!) {
                 update${capitalize(parentObjectNameSingular)}(id: $idToUpdate, data: $input) {
                   id
                 }
