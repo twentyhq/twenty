@@ -13,6 +13,8 @@ export type LeadCandidate = {
   nameLastName?: string;
   emailsPrimaryEmail?: string;
   phonesPrimaryPhoneNumber?: string;
+  addressCity?: string;
+  addressState?: string;
 };
 
 export type MatchResult = {
@@ -89,6 +91,26 @@ export const scoreLeadMatch = (
     ) {
       breakdown.phone = 20;
       score += 20;
+    }
+  }
+
+  // City — 5 points
+  if (candidate.addressCity && csvData.city) {
+    if (
+      candidate.addressCity.toLowerCase() === csvData.city.toLowerCase()
+    ) {
+      breakdown.city = 5;
+      score += 5;
+    }
+  }
+
+  // State — 5 points
+  if (candidate.addressState && csvData.state) {
+    if (
+      candidate.addressState.toLowerCase() === csvData.state.toLowerCase()
+    ) {
+      breakdown.state = 5;
+      score += 5;
     }
   }
 

@@ -10,9 +10,8 @@ const CANDIDATE_BATCH_SIZE = 200;
 
 /**
  * Searches for candidate Lead/Person records that might match the given CSV
- * data. Uses OR filters on email and name (case-insensitive) to find
- * potential matches. Only queries guaranteed composite fields (name, emails,
- * phones) to avoid schema validation failures on custom fields.
+ * data. Uses a two-step query: first fetches candidates by email/name using
+ * guaranteed fields, then enriches with address data if available.
  */
 export const findLeadCandidates = async ({
   apolloClient,
@@ -69,10 +68,8 @@ export const findLeadCandidates = async ({
     targetObjectNameSingular.charAt(0).toUpperCase() +
     targetObjectNameSingular.slice(1);
 
-  // Only request standard composite fields guaranteed to exist on Person.
-  // Custom fields like addressCustom vary per workspace and cause query
-  // validation failures if they don't match the schema exactly.
-  const query = gql`
+  // Step 1: Query with guaranteed standard fields only
+  const baseQuery = gql`
     query FindLeadCandidates($filter: ${capitalizedSingular}FilterInput, $limit: Int) {
       ${targetObjectNamePlural}(filter: $filter, limit: $limit) {
         edges {
@@ -94,9 +91,11 @@ export const findLeadCandidates = async ({
     }
   `;
 
+  let candidates: LeadCandidate[];
+
   try {
     const { data } = await apolloClient.query({
-      query,
+      query: baseQuery,
       variables: {
         filter: { or: orConditions },
         limit: CANDIDATE_BATCH_SIZE,
@@ -107,7 +106,7 @@ export const findLeadCandidates = async ({
     const queryData = data as Record<string, any>;
     const edges = queryData?.[targetObjectNamePlural]?.edges ?? [];
 
-    return edges
+    candidates = edges
       .map((edge: any) => edge.node)
       .filter(isDefined)
       .map(
@@ -120,8 +119,69 @@ export const findLeadCandidates = async ({
         }),
       );
   } catch (error) {
-    console.warn('[findLeadCandidates] Query failed:', error);
+    console.warn('[findLeadCandidates] Base query failed:', error);
 
     return [];
   }
+
+  if (candidates.length === 0) {
+    return candidates;
+  }
+
+  // Step 2: Enrich with address data (separate query so it can't break step 1)
+  try {
+    const addressQuery = gql`
+      query FindLeadAddresses($filter: ${capitalizedSingular}FilterInput, $limit: Int) {
+        ${targetObjectNamePlural}(filter: $filter, limit: $limit) {
+          edges {
+            node {
+              id
+              addressCustom {
+                addressCity
+                addressState
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const candidateIds = candidates.map((c) => c.id);
+    const { data } = await apolloClient.query({
+      query: addressQuery,
+      variables: {
+        filter: { id: { in: candidateIds } },
+        limit: candidateIds.length,
+      },
+      fetchPolicy: 'network-only',
+    });
+
+    const queryData = data as Record<string, any>;
+    const edges = queryData?.[targetObjectNamePlural]?.edges ?? [];
+    const addressById = new Map<string, { city?: string; state?: string }>();
+
+    for (const edge of edges) {
+      if (edge.node?.id) {
+        addressById.set(edge.node.id, {
+          city: edge.node.addressCustom?.addressCity,
+          state: edge.node.addressCustom?.addressState,
+        });
+      }
+    }
+
+    // Merge address data into candidates
+    for (const candidate of candidates) {
+      const address = addressById.get(candidate.id);
+
+      if (address) {
+        candidate.addressCity = address.city;
+        candidate.addressState = address.state;
+      }
+    }
+  } catch {
+    // Address enrichment failed — continue with basic fields only.
+    // Scoring will just skip the address component.
+  }
+
+  return candidates;
 };
