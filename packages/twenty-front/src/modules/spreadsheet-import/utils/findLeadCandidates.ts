@@ -10,8 +10,8 @@ const CANDIDATE_BATCH_SIZE = 200;
 
 /**
  * Searches for candidate Lead/Person records that might match the given CSV
- * data. Uses a two-step query: first fetches candidates by email/name using
- * guaranteed fields, then enriches with address data if available.
+ * data. Uses OR filters on email and name (case-insensitive) to find
+ * potential matches.
  */
 export const findLeadCandidates = async ({
   apolloClient,
@@ -68,10 +68,9 @@ export const findLeadCandidates = async ({
     targetObjectNameSingular.charAt(0).toUpperCase() +
     targetObjectNameSingular.slice(1);
 
-  // Step 1: Query with guaranteed standard fields only
-  const baseQuery = gql`
-    query FindLeadCandidates($filter: ${capitalizedSingular}FilterInput, $limit: Int) {
-      ${targetObjectNamePlural}(filter: $filter, limit: $limit) {
+  const query = gql`
+    query FindLeadCandidates($filter: ${capitalizedSingular}FilterInput, $first: Int) {
+      ${targetObjectNamePlural}(filter: $filter, first: $first) {
         edges {
           node {
             id
@@ -85,20 +84,22 @@ export const findLeadCandidates = async ({
             phones {
               primaryPhoneNumber
             }
+            addressCustom {
+              addressCity
+              addressState
+            }
           }
         }
       }
     }
   `;
 
-  let candidates: LeadCandidate[];
-
   try {
     const { data } = await apolloClient.query({
-      query: baseQuery,
+      query,
       variables: {
         filter: { or: orConditions },
-        limit: CANDIDATE_BATCH_SIZE,
+        first: CANDIDATE_BATCH_SIZE,
       },
       fetchPolicy: 'network-only',
     });
@@ -106,7 +107,7 @@ export const findLeadCandidates = async ({
     const queryData = data as Record<string, any>;
     const edges = queryData?.[targetObjectNamePlural]?.edges ?? [];
 
-    candidates = edges
+    return edges
       .map((edge: any) => edge.node)
       .filter(isDefined)
       .map(
@@ -116,72 +117,13 @@ export const findLeadCandidates = async ({
           nameLastName: node.name?.lastName,
           emailsPrimaryEmail: node.emails?.primaryEmail,
           phonesPrimaryPhoneNumber: node.phones?.primaryPhoneNumber,
+          addressCity: node.addressCustom?.addressCity,
+          addressState: node.addressCustom?.addressState,
         }),
       );
   } catch (error) {
-    console.warn('[findLeadCandidates] Base query failed:', error);
+    console.warn('[findLeadCandidates] Query failed:', error);
 
     return [];
   }
-
-  if (candidates.length === 0) {
-    return candidates;
-  }
-
-  // Step 2: Enrich with address data (separate query so it can't break step 1)
-  try {
-    const addressQuery = gql`
-      query FindLeadAddresses($filter: ${capitalizedSingular}FilterInput, $limit: Int) {
-        ${targetObjectNamePlural}(filter: $filter, limit: $limit) {
-          edges {
-            node {
-              id
-              addressCustom {
-                addressCity
-                addressState
-              }
-            }
-          }
-        }
-      }
-    `;
-
-    const candidateIds = candidates.map((c) => c.id);
-    const { data } = await apolloClient.query({
-      query: addressQuery,
-      variables: {
-        filter: { id: { in: candidateIds } },
-        limit: candidateIds.length,
-      },
-      fetchPolicy: 'network-only',
-    });
-
-    const queryData = data as Record<string, any>;
-    const edges = queryData?.[targetObjectNamePlural]?.edges ?? [];
-    const addressById = new Map<string, { city?: string; state?: string }>();
-
-    for (const edge of edges) {
-      if (edge.node?.id) {
-        addressById.set(edge.node.id, {
-          city: edge.node.addressCustom?.addressCity,
-          state: edge.node.addressCustom?.addressState,
-        });
-      }
-    }
-
-    // Merge address data into candidates
-    for (const candidate of candidates) {
-      const address = addressById.get(candidate.id);
-
-      if (address) {
-        candidate.addressCity = address.city;
-        candidate.addressState = address.state;
-      }
-    }
-  } catch {
-    // Address enrichment failed — continue with basic fields only.
-    // Scoring will just skip the address component.
-  }
-
-  return candidates;
 };
