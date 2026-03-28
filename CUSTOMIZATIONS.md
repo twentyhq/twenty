@@ -161,6 +161,9 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `object-record/spreadsheet-import/utils/spreadsheetImportGetRelationUpdateSubFieldLabel.ts` | Label format for update fields                          |
 | `spreadsheet-import/components/ImportResultsSummary.tsx`                                    | Post-import summary dialog with issue list and CSV download |
 | `spreadsheet-import/utils/generateProblemRowsCsv.ts`                                        | Generate downloadable CSV of problem rows for re-import |
+| `spreadsheet-import/utils/scoreLeadMatch.ts`                                                | Fuzzy Lead matching: 100-point scoring (email/name/phone/address) |
+| `spreadsheet-import/utils/findLeadCandidates.ts`                                            | Search for candidate Leads by email/name via GraphQL ILIKE |
+| `spreadsheet-import/utils/applyLeadResolutions.ts`                                          | Execute fuzzy match decisions: update/reassign/create Lead |
 
 ### New Export Utilities
 

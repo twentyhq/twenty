@@ -692,6 +692,15 @@ check_file_exists \
 check_file_exists \
   "packages/twenty-front/src/modules/spreadsheet-import/utils/generateProblemRowsCsv.ts" \
   "Problem rows CSV download utility"
+check_file_exists \
+  "packages/twenty-front/src/modules/spreadsheet-import/utils/scoreLeadMatch.ts" \
+  "Fuzzy Lead scoring utility"
+check_file_exists \
+  "packages/twenty-front/src/modules/spreadsheet-import/utils/findLeadCandidates.ts" \
+  "Lead candidate search utility"
+check_file_exists \
+  "packages/twenty-front/src/modules/spreadsheet-import/utils/applyLeadResolutions.ts" \
+  "Lead resolution executor utility"
 
 echo ""
 echo "--- CSV Export: Relation ID Embedding ---"

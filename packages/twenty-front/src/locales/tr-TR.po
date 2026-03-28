@@ -223,6 +223,11 @@ msgstr "{aggregateLabel}, {fieldLabel}'in"
 msgid "{appName} wants to access your account"
 msgstr "{appName} hesabınıza erişmek istiyor"
 
+#. js-lingui-id: onCEj6
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{autoResolvedCount} lead(s) auto-matched and updated"
+msgstr ""
+
 #. js-lingui-id: SU5Crx
 #: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "{cachedPercent}% cached"
@@ -401,6 +406,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {{retriedCount} iş başarıyla yeniden denendi} other {{retriedCount} iş başarıyla yeniden denendi}}"
+
+#. js-lingui-id: RqGdl8
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{reviewCount} lead(s) need manual review (70-94% match)"
+msgstr ""
 
 #. js-lingui-id: hcRYEH
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx

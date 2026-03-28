@@ -2,6 +2,7 @@ import {
   type BatchCreateResult,
   type ImportRecordWarning,
 } from '@/object-record/hooks/useBatchCreateManyRecords';
+import { type LeadResolutionResult } from '@/spreadsheet-import/utils/applyLeadResolutions';
 import { generateProblemRowsCsv } from '@/spreadsheet-import/utils/generateProblemRowsCsv';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -80,6 +81,7 @@ type ImportResultsSummaryProps = {
   originalRows: Record<string, unknown>[];
   columns: Array<{ key: string; label: string }>;
   objectNameSingular: string;
+  fuzzyResolutionResult?: LeadResolutionResult;
 };
 
 export const ImportResultsSummary = ({
@@ -90,9 +92,14 @@ export const ImportResultsSummary = ({
   originalRows,
   columns,
   objectNameSingular,
+  fuzzyResolutionResult,
 }: ImportResultsSummaryProps) => {
   const warningCount = warnings.length;
   const failureCount = failures.length;
+  const reviewCount = fuzzyResolutionResult?.flaggedForReview?.length ?? 0;
+  const autoResolvedCount =
+    (fuzzyResolutionResult?.autoResolved ?? 0) +
+    (fuzzyResolutionResult?.created ?? 0);
   const issueCount = warningCount + failureCount;
 
   const handleDownload = () => {
@@ -110,6 +117,18 @@ export const ImportResultsSummary = ({
       <StyledStatusLine color={themeCssVariables.color.green}>
         {t`${successCount} of ${totalRecords} records imported successfully`}
       </StyledStatusLine>
+
+      {autoResolvedCount > 0 && (
+        <StyledStatusLine color={themeCssVariables.color.blue}>
+          {t`${autoResolvedCount} lead(s) auto-matched and updated`}
+        </StyledStatusLine>
+      )}
+
+      {reviewCount > 0 && (
+        <StyledStatusLine color={themeCssVariables.color.orange}>
+          {t`${reviewCount} lead(s) need manual review (70-94% match)`}
+        </StyledStatusLine>
+      )}
 
       {warningCount > 0 && (
         <StyledStatusLine color={themeCssVariables.color.yellow}>
