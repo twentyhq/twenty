@@ -115,6 +115,19 @@ export const useTriggerEventStreamCreation = () => {
           dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
         },
         error: (error) => {
+          const isTokenExpiredError =
+            (error instanceof Error &&
+              (error.message.includes('401') ||
+                error.message.includes('UNAUTHENTICATED') ||
+                error.message.includes('Unauthorized'))) ||
+            ('status' in error && (error as { status: number }).status === 401);
+
+          if (isTokenExpiredError) {
+            store.set(shouldDestroyEventStreamState.atom, true);
+
+            return;
+          }
+
           captureException(error);
         },
         complete: () => {},
