@@ -216,6 +216,49 @@ This handles everything: starts Postgres + Redis (auto-detects local services vs
 
 **Note:** CI workflows (GitHub Actions) manage services via Actions service containers and run setup steps individually — they don't use this script.
 
+## Enabling the Ask AI Feature on a New Environment
+
+The AI chat feature requires three steps. There is no admin UI for the feature flag — it must be set directly in the database.
+
+### 1. Set the API key as a Railway env var
+
+The AI provider key must be set as a server environment variable, not just in the Twenty Settings UI. The Settings UI stores it in the DB but the server also reads it at startup to register models.
+
+```bash
+railway variable set ANTHROPIC_API_KEY=sk-ant-... --service twenty --environment <env> --skip-deploys
+railway variable set ANTHROPIC_API_KEY=sk-ant-... --service twenty-worker --environment <env> --skip-deploys
+```
+
+### 2. Enable the IS_AI_ENABLED feature flag in the database
+
+```bash
+railway ssh --environment <env> --service twenty -- \
+  'psql "$PG_DATABASE_URL" -c "INSERT INTO core.\"featureFlag\" (id, key, value, \"workspaceId\") SELECT gen_random_uuid(), '"'"'IS_AI_ENABLED'"'"', true, id FROM core.workspace ON CONFLICT DO NOTHING;"'
+```
+
+Then flush the workspace cache so the feature flag service picks up the new value (it caches flag state in Redis):
+
+```bash
+railway ssh --service twenty --environment <env> -- \
+  "cd /app/packages/twenty-server && node dist/command/command.js cache:flush"
+```
+
+### 3. Redeploy to register AI models at startup
+
+```bash
+railway environment <env> && railway redeploy --service twenty --yes
+railway environment <env> && railway redeploy --service twenty-worker --yes
+```
+
+The model registry is built once at server startup from the resolved provider config. Without a redeploy after setting the API key, no models are registered and the AI returns "not configured".
+
+### Notes
+
+- **`IS_AI_ENABLED` is a workspace-level feature flag** gated by `FeatureFlagGuard`. If the flag is absent from the DB, the `createChatThread` GraphQL mutation (on `/metadata`) returns 403 and no thread is created. The stream endpoint then receives no valid thread ID and returns 502.
+- **`cache:flush` is essential** after direct DB inserts of feature flags. The `FeatureFlagService` reads from `WorkspaceCacheService` (Redis), not the DB directly. Skipping the flush means the guard still sees the flag as disabled.
+- The AI mutations (`createChatThread`, `chatThread`, `chatMessages`) are on the `/metadata` GraphQL endpoint, not `/graphql`. They require a user JWT, not a workspace API key.
+- The stream endpoint is at `POST /rest/agent-chat/stream` and uses server-sent events.
+
 ## Important Files
 - `nx.json` - Nx workspace configuration with task definitions
 - `tsconfig.base.json` - Base TypeScript configuration
