@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type FindManyOptions, Repository } from 'typeorm';
@@ -17,8 +17,6 @@ import { DataSourceEntity } from './data-source.entity';
 // or the deterministic getWorkspaceSchemaName(workspaceId) utility.
 @Injectable()
 export class DataSourceService {
-  private readonly logger = new Logger(DataSourceService.name);
-
   constructor(
     @InjectRepository(DataSourceEntity)
     private readonly dataSourceMetadataRepository: Repository<DataSourceEntity>,

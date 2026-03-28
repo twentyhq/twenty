@@ -23,13 +23,13 @@ export class DropWorkspaceDatabaseUrlColumn1774688563000
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ALTER COLUMN "databaseSchema" SET DEFAULT ''`,
+      `UPDATE "core"."workspace" SET "databaseSchema" = '' WHERE "databaseSchema" IS NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ALTER COLUMN "databaseSchema" SET NOT NULL`,
     );
     await queryRunner.query(
-      `UPDATE "core"."workspace" SET "databaseSchema" = '' WHERE "databaseSchema" IS NULL`,
+      `ALTER TABLE "core"."workspace" ALTER COLUMN "databaseSchema" SET DEFAULT ''`,
     );
 
     await queryRunner.query(

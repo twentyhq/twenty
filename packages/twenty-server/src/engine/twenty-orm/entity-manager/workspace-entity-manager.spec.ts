@@ -256,6 +256,7 @@ describe('WorkspaceEntityManager', () => {
         IS_CONNECTED_ACCOUNT_MIGRATED: false,
         IS_GRAPHQL_QUERY_TIMING_ENABLED: false,
         IS_RECORD_TABLE_WIDGET_ENABLED: false,
+        IS_DATASOURCE_MIGRATED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
