@@ -11,7 +11,8 @@ const CANDIDATE_BATCH_SIZE = 200;
 /**
  * Searches for candidate Lead/Person records that might match the given CSV
  * data. Uses OR filters on email and name (case-insensitive) to find
- * potential matches.
+ * potential matches. Only queries guaranteed composite fields (name, emails,
+ * phones) to avoid schema validation failures on custom fields.
  */
 export const findLeadCandidates = async ({
   apolloClient,
@@ -24,7 +25,6 @@ export const findLeadCandidates = async ({
   targetObjectNamePlural: string;
   csvDataRows: LeadCsvData[];
 }): Promise<LeadCandidate[]> => {
-  // Collect unique search terms from all warning rows
   const emails = new Set<string>();
   const namePairs: Array<{ firstName: string; lastName: string }> = [];
   const seenNames = new Set<string>();
@@ -46,7 +46,6 @@ export const findLeadCandidates = async ({
     return [];
   }
 
-  // Build OR filter conditions
   const orConditions: Record<string, unknown>[] = [];
 
   if (emails.size > 0) {
@@ -70,9 +69,9 @@ export const findLeadCandidates = async ({
     targetObjectNameSingular.charAt(0).toUpperCase() +
     targetObjectNameSingular.slice(1);
 
-  // Query only standard composite fields that exist on all Person objects.
-  // Avoid custom fields (like addressCustom) that may not exist and would
-  // cause the entire query to fail.
+  // Only request standard composite fields guaranteed to exist on Person.
+  // Custom fields like addressCustom vary per workspace and cause query
+  // validation failures if they don't match the schema exactly.
   const query = gql`
     query FindLeadCandidates($filter: ${capitalizedSingular}FilterInput, $limit: Int) {
       ${targetObjectNamePlural}(filter: $filter, limit: $limit) {
@@ -89,7 +88,6 @@ export const findLeadCandidates = async ({
             phones {
               primaryPhoneNumber
             }
-            city
           }
         }
       }
@@ -119,8 +117,6 @@ export const findLeadCandidates = async ({
           nameLastName: node.name?.lastName,
           emailsPrimaryEmail: node.emails?.primaryEmail,
           phonesPrimaryPhoneNumber: node.phones?.primaryPhoneNumber,
-          addressCustomAddressCity: node.city,
-          addressCustomAddressState: undefined,
         }),
       );
   } catch (error) {
