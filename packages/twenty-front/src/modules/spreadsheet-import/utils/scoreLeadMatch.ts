@@ -146,5 +146,5 @@ export const extractLeadCsvData = (
   ] as string | undefined,
 });
 
-export const AUTO_RESOLVE_THRESHOLD = 95;
-export const REVIEW_THRESHOLD = 70;
+export const AUTO_RESOLVE_THRESHOLD = 80;
+export const REVIEW_THRESHOLD = 55;
