@@ -32,6 +32,7 @@ import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handle
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { ImportJobModule } from 'src/engine/core-modules/import-job/import-job.module';
 import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { ImapSmtpCaldavModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
@@ -87,6 +88,7 @@ import { FileModule } from './file/file.module';
     ClientConfigModule,
     FeatureFlagModule,
     FileModule,
+    ImportJobModule,
     RowLevelPermissionModule,
     OpenApiModule,
     ApplicationRegistrationModule,

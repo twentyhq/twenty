@@ -24,6 +24,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { ImportJobModule } from 'src/engine/core-modules/import-job/import-job.module';
 import { IngestionJobModule } from 'src/engine/metadata-modules/ingestion-pipeline/jobs/ingestion-job.module';
 import { WebhookJobModule } from 'src/engine/metadata-modules/webhook/jobs/webhook-job.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
@@ -61,6 +62,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
     WebhookJobModule,
+    ImportJobModule,
     IngestionJobModule,
     WorkflowModule,
     FavoriteModule,

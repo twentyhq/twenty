@@ -106,6 +106,7 @@ export class RelationNestedQueries {
     relationNestedConfig,
     queryBuilder,
     isUpsert = false,
+    parentObjectName,
   }: {
     entities:
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
@@ -118,6 +119,7 @@ export class RelationNestedQueries {
       | WorkspaceSelectQueryBuilder<Entity>
       | SelectQueryBuilder<Entity>;
     isUpsert?: boolean;
+    parentObjectName?: string;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
@@ -136,6 +138,7 @@ export class RelationNestedQueries {
       relationConnectQueryConfigs,
       queryBuilder,
       isUpsert,
+      parentObjectName,
     });
 
     return updatedEntitiesWithConnect;
@@ -146,6 +149,7 @@ export class RelationNestedQueries {
     relationConnectQueryConfigs,
     queryBuilder,
     isUpsert = false,
+    parentObjectName,
   }: {
     entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
     relationConnectQueryConfigs: RelationConnectQueryConfig[];
@@ -153,6 +157,7 @@ export class RelationNestedQueries {
       | WorkspaceSelectQueryBuilder<Entity>
       | SelectQueryBuilder<Entity>;
     isUpsert?: boolean;
+    parentObjectName?: string;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (relationConnectQueryConfigs.length === 0) return entities;
 

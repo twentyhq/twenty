@@ -10,4 +10,5 @@ export const MESSAGE_QUEUE_CONCURRENCY: Partial<Record<MessageQueue, number>> =
     [MessageQueue.logicFunctionQueue]: 3,
     [MessageQueue.webhookQueue]: 3,
     [MessageQueue.ingestionQueue]: 3,
+    [MessageQueue.importQueue]: 2,
   };

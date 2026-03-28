@@ -20,4 +20,5 @@ export enum MessageQueue {
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
   ingestionQueue = 'ingestion-queue',
+  importQueue = 'import-queue',
 }
