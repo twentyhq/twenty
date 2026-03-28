@@ -4,6 +4,7 @@ import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/constants/three-car
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Hero } from '@/sections/Hero/components';
+import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
@@ -36,6 +37,8 @@ export default function ProductPage() {
           logos={TRUSTED_BY_DATA.logos}
         />
       </TrustedBy.Root>
+
+      <Tabs.Root></Tabs.Root>
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Product} align="left">
