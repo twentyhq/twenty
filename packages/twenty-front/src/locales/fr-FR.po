@@ -184,10 +184,10 @@ msgstr ""
 msgid "{0} credits used"
 msgstr ""
 
-#. js-lingui-id: /cb326
-#. placeholder {0}: data.validStructuredRows.length
-#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
-msgid "{0} records imported successfully."
+#. js-lingui-id: TzIoTO
+#. placeholder {0}: data.successCount
+#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
+msgid "{0} records imported successfully"
 msgstr ""
 
 #. js-lingui-id: X8FG1C
@@ -3126,7 +3126,6 @@ msgstr ""
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
-#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
 msgid "Close"
 msgstr "Fermer"
 
@@ -7880,10 +7879,31 @@ msgstr "Importer"
 msgid "Import all emails"
 msgstr "Importer tous les e-mails"
 
+#. js-lingui-id: q0pkll
+#. placeholder {0}: data.processedRecords
+#. placeholder {1}: data.totalRecords
+#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
+msgid "Import cancelled: {0} of {1} records processed"
+msgstr ""
+
+#. js-lingui-id: KLB3qj
+#. placeholder {0}: data.successCount
+#. placeholder {1}: data.warningCount
+#. placeholder {2}: data.failureCount
+#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
+msgid "Import complete: {0} succeeded, {1} warnings, {2} failed"
+msgstr ""
+
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Import CSV"
 msgstr "Importer CSV"
+
+#. js-lingui-id: P3ovv7
+#. placeholder {0}: data.processedRecords
+#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
+msgid "Import failed after processing {0} records"
+msgstr ""
 
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -7894,11 +7914,6 @@ msgstr "Importer uniquement les dossiers/étiquettes sélectionnés"
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import records"
 msgstr "Importer les enregistrements"
-
-#. js-lingui-id: IM/cxW
-#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
-msgid "Import Results"
-msgstr ""
 
 #. js-lingui-id: ZsIcZZ
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
@@ -7915,10 +7930,22 @@ msgstr "Données importées"
 msgid "Importing"
 msgstr "Importation"
 
+#. js-lingui-id: qdxjGq
+#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
+msgid "Importing {objectNameSingular} records... (0 / {totalRecords})"
+msgstr ""
+
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "Importing Data ..."
 msgstr "Importation des données ..."
+
+#. js-lingui-id: fhz3X/
+#. placeholder {0}: data.processedRecords
+#. placeholder {1}: data.totalRecords
+#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
+msgid "Importing records... ({0} / {1})"
+msgstr ""
 
 #. js-lingui-id: HiyKEP
 #: src/modules/settings/developers/utils/formatExpiration.ts
