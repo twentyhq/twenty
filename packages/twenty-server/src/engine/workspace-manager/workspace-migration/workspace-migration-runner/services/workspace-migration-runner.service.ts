@@ -85,9 +85,15 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatRoleMaps') ||
       flatMapsKeysSet.has('flatRoleTargetMaps');
 
+    const shouldInvalidateRolesPermissionsCache =
+      flatMapsKeysSet.has('flatObjectPermissionMaps') ||
+      flatMapsKeysSet.has('flatFieldPermissionMaps') ||
+      flatMapsKeysSet.has('flatPermissionFlagMaps');
+
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
-      shouldInvalidateRoleMapCache
+      shouldInvalidateRoleMapCache ||
+      shouldInvalidateRolesPermissionsCache
     ) {
       asyncOperations.push(
         this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
