@@ -780,8 +780,7 @@ type Workspace {
   viewGroups: [ViewGroup!]
   viewSorts: [ViewSort!]
   metadataVersion: Float!
-  databaseUrl: String!
-  databaseSchema: String!
+  databaseSchema: String
   subdomain: String!
   customDomain: String
   isGoogleAuthEnabled: Boolean!
@@ -1749,6 +1748,7 @@ enum FeatureFlagKey {
   IS_CONNECTED_ACCOUNT_MIGRATED
   IS_GRAPHQL_QUERY_TIMING_ENABLED
   IS_RECORD_TABLE_WIDGET_ENABLED
+  IS_DATASOURCE_MIGRATED
 }
 
 type ClientConfig {

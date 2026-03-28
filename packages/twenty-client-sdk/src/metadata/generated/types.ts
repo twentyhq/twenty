@@ -1637,9 +1637,6 @@ export default {
             "metadataVersion": [
                 11
             ],
-            "databaseUrl": [
-                1
-            ],
             "databaseSchema": [
                 1
             ],
