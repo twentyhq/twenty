@@ -18,8 +18,7 @@ export class AppTypecheckCommand {
     const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
     console.log(chalk.blue('Running type check...'));
-    console.log(chalk.gray(`App path: ${appPath}`));
-    console.log('');
+    console.log(chalk.gray(`App path: ${appPath}\n`));
 
     const errors = await runTypecheck(appPath);
 
@@ -32,8 +31,8 @@ export class AppTypecheckCommand {
       console.log(formatTypecheckError(error));
     }
 
-    console.log('');
     console.log(
+      '\n',
       chalk.red(
         `✗ Found ${errors.length} type error${errors.length === 1 ? '' : 's'}`,
       ),

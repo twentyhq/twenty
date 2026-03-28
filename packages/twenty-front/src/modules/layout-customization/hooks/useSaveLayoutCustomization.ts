@@ -1,10 +1,12 @@
+import { useSaveCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useSaveCommandMenuItemsDraft';
+import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
-import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/edit/hooks/useSaveNavigationMenuItemsDraft';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
-import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
+import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/edit/hooks/useSaveNavigationMenuItemsDraft';
+import { useSavePageLayoutWidgetsData } from '@/page-layout/hooks/useSavePageLayoutWidgetsData';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -16,11 +18,12 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
@@ -30,11 +33,17 @@ export const useSaveLayoutCustomization = () => {
   const { t } = useLingui();
 
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
+  const { saveCommandMenuItemsDraft } = useSaveCommandMenuItemsDraft();
+  const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
-  const { saveFieldsWidgetGroups } = useSaveFieldsWidgetGroups();
+  const { savePageLayoutWidgetsData } = useSavePageLayoutWidgetsData();
+
+  const featureFlags = useFeatureFlagsMap();
+  const isRecordPageLayoutEditingEnabled =
+    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
 
   const save = useCallback(async () => {
     setIsSaving(true);
@@ -52,6 +61,10 @@ export const useSaveLayoutCustomization = () => {
       // while page layouts fail.
       if (isNavigationDirty) {
         await saveDraft();
+      }
+
+      if (isCommandMenuItemsDirty) {
+        await saveCommandMenuItemsDraft();
       }
 
       const activePageLayoutIds = store.get(
@@ -92,7 +105,10 @@ export const useSaveLayoutCustomization = () => {
         );
 
         if (isPageLayoutStructureDirty) {
-          const updateInput = convertPageLayoutDraftToUpdateInput(draft);
+          const updateInput = convertPageLayoutDraftToUpdateInput(draft, {
+            shouldFilterDynamicRelationWidgets:
+              !isRecordPageLayoutEditingEnabled,
+          });
           const result = await updatePageLayoutWithTabsAndWidgets(
             pageLayoutId,
             updateInput,
@@ -107,6 +123,7 @@ export const useSaveLayoutCustomization = () => {
                 transformPageLayout(updatedPageLayout);
 
               const pageLayoutToPersist =
+                !isRecordPageLayoutEditingEnabled &&
                 persistedLayout.type === PageLayoutType.RECORD_PAGE
                   ? reInjectDynamicRelationWidgetsFromDraft(
                       persistedLayout,
@@ -134,7 +151,7 @@ export const useSaveLayoutCustomization = () => {
           }
         }
 
-        await saveFieldsWidgetGroups(pageLayoutId);
+        await savePageLayoutWidgetsData(pageLayoutId);
       }
 
       if (hasAnyFailure) {
@@ -155,10 +172,13 @@ export const useSaveLayoutCustomization = () => {
     }
   }, [
     saveDraft,
+    saveCommandMenuItemsDraft,
+    isCommandMenuItemsDirty,
     updatePageLayoutWithTabsAndWidgets,
-    saveFieldsWidgetGroups,
+    savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,
     enqueueErrorSnackBar,
+    isRecordPageLayoutEditingEnabled,
     store,
     t,
   ]);

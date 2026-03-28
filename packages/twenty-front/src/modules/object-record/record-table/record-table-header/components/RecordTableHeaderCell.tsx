@@ -2,9 +2,12 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
+import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -27,6 +30,14 @@ export const RecordTableHeaderCell = ({
   recordFieldIndex,
 }: RecordTableHeaderCellProps) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
+
+  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
+    isRecordTableColumnHeadersReadOnlyComponentState,
+  );
+
+  const isRecordTableColumnResizable = useAtomComponentStateValue(
+    isRecordTableColumnResizableComponentState,
+  );
 
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
@@ -74,19 +85,28 @@ export const RecordTableHeaderCell = ({
       key={recordField.fieldMetadataItemId}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       isResizing={isResizingAnyColumn}
+      isReadOnly={isRecordTableColumnHeadersReadOnly}
     >
-      <RecordTableHeaderResizeHandler
-        recordFieldIndex={recordFieldIndex}
-        position="left"
-      />
-      <RecordTableColumnHeadWithDropdown
-        recordField={recordField}
-        objectMetadataId={objectMetadataItem.id}
-      />
-      <RecordTableHeaderResizeHandler
-        recordFieldIndex={recordFieldIndex}
-        position="right"
-      />
+      {isRecordTableColumnResizable && (
+        <RecordTableHeaderResizeHandler
+          recordFieldIndex={recordFieldIndex}
+          position="left"
+        />
+      )}
+      {isRecordTableColumnHeadersReadOnly ? (
+        <RecordTableColumnHead recordField={recordField} />
+      ) : (
+        <RecordTableColumnHeadWithDropdown
+          recordField={recordField}
+          objectMetadataId={objectMetadataItem.id}
+        />
+      )}
+      {isRecordTableColumnResizable && (
+        <RecordTableHeaderResizeHandler
+          recordFieldIndex={recordFieldIndex}
+          position="right"
+        />
+      )}
     </RecordTableHeaderCellContainer>
   );
 };

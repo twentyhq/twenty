@@ -15,7 +15,7 @@ import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sectio
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/components/WorkspaceSectionListEditModeFallback';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
@@ -39,7 +39,7 @@ type WorkspaceSectionContainerProps = {
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
-    objectMetadataItem: ObjectMetadataItem,
+    objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
 };
@@ -169,7 +169,6 @@ export const WorkspaceSectionContainer = ({
             filteredItems={filteredItems}
             getEditModeProps={getEditModeProps}
             folderChildrenById={folderChildrenById}
-            selectedNavigationMenuItemId={selectedNavigationMenuItemId}
             onNavigationMenuItemClick={onNavigationMenuItemClick}
             onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
           />

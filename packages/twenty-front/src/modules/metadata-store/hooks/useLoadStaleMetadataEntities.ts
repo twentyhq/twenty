@@ -1,18 +1,20 @@
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
-import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
+import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
 import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayoutWithRelated';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
-import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  FeatureFlagKey,
   FindAllViewsDocument,
+  FindManyCommandMenuItemsDocument,
   FindAllRecordPageLayoutsDocument,
   FindFieldsWidgetViewsDocument,
   FindManyLogicFunctionsDocument,
@@ -54,7 +56,10 @@ const hasOverlap = (
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
   const store = useStore();
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const isCommandMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+  );
 
   const loadStaleMetadataEntities = useCallback(
     async (staleEntityKeys: MetadataEntityKey[]) => {
@@ -72,13 +77,8 @@ export const useLoadStaleMetadataEntities = () => {
               fetchPolicy: 'network-only',
             })
             .then((result) => {
-              const compositeObjects =
-                mapPaginatedObjectMetadataItemsToObjectMetadataItems({
-                  pagedObjectMetadataItems: result.data,
-                });
-
               const { flatObjects, flatFields, flatIndexes } =
-                splitObjectMetadataItemWithRelated(compositeObjects);
+                splitObjectMetadataGqlResponse(result.data);
 
               replaceDraft('objectMetadataItems', flatObjects);
               replaceDraft('fieldMetadataItems', flatFields);
@@ -199,10 +199,30 @@ export const useLoadStaleMetadataEntities = () => {
         );
       }
 
+      if (
+        staleEntityKeys.includes('commandMenuItems') &&
+        isCommandMenuItemEnabled
+      ) {
+        fetchPromises.push(
+          client
+            .query({
+              query: FindManyCommandMenuItemsDocument,
+              fetchPolicy: 'network-only',
+            })
+            .then((result) => {
+              if (!isDefined(result.data?.commandMenuItems)) {
+                return;
+              }
+
+              replaceDraft('commandMenuItems', result.data.commandMenuItems);
+            }),
+        );
+      }
+
       await Promise.all(fetchPromises);
       applyChanges();
     },
-    [client, store, replaceDraft, applyChanges],
+    [client, store, replaceDraft, applyChanges, isCommandMenuItemEnabled],
   );
 
   return { loadStaleMetadataEntities };

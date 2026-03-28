@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { styled } from '@linaria/react';
 
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
+
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -11,23 +14,17 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import {
-  H2Title,
-  IconBolt,
-  IconRobot,
-  IconSearch,
-  IconTwentyStar,
-} from 'twenty-ui/display';
+import { H2Title, IconBolt, IconTwentyStar } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
-import { getModelIcon } from '~/pages/settings/ai/utils/getModelIcon';
-import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
+import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
+import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -46,47 +43,50 @@ export const SettingsAIModelsTab = () => {
     allModelsWithAvailability,
     enabledModels,
     useRecommendedModels,
-    autoEnableNewAiModels,
     realModels,
   } = useWorkspaceAiModelAvailability();
 
   const currentSmartModel = currentWorkspace?.smartModel;
   const currentFastModel = currentWorkspace?.fastModel;
 
-  const buildVirtualModelOption = (virtualModelId: string) => {
-    const virtualModel = aiModels.find(
-      (model) => model.modelId === virtualModelId,
+  const buildPinnedOption = (autoSelectModelId: string) => {
+    const autoSelectEntry = aiModels.find(
+      (model) => model.modelId === autoSelectModelId,
     );
 
-    return virtualModel
-      ? {
-          value: virtualModelId,
-          label: virtualModel.label,
-          Icon: IconTwentyStar,
-        }
-      : null;
+    if (!autoSelectEntry) {
+      return undefined;
+    }
+
+    return {
+      value: autoSelectModelId,
+      label: autoSelectEntry.label,
+      Icon: getModelIcon(
+        autoSelectEntry.modelFamily,
+        autoSelectEntry.providerName,
+      ),
+      contextualText: t`Best`,
+    };
   };
 
-  const smartAutoOption = buildVirtualModelOption(DEFAULT_SMART_MODEL);
-  const fastAutoOption = buildVirtualModelOption(DEFAULT_FAST_MODEL);
+  const smartPinnedOption = buildPinnedOption(AUTO_SELECT_SMART_MODEL_ID);
+  const fastPinnedOption = buildPinnedOption(AUTO_SELECT_FAST_MODEL_ID);
 
-  const modelOptions = enabledModels.map((model) => ({
-    value: model.modelId,
-    label: model.label,
-    Icon: getModelIcon(model.modelFamily),
-  }));
+  const buildModelOptions = () =>
+    enabledModels.map((model) => {
+      const residencyFlag = model.dataResidency
+        ? ` ${getDataResidencyDisplay(model.dataResidency)}`
+        : '';
 
-  const smartModelOptions = [...modelOptions];
+      return {
+        value: model.modelId,
+        label: `${model.label}${residencyFlag}`,
+        Icon: getModelIcon(model.modelFamily, model.providerName),
+      };
+    });
 
-  if (smartAutoOption !== null) {
-    smartModelOptions.unshift(smartAutoOption);
-  }
-
-  const fastModelOptions = [...modelOptions];
-
-  if (fastAutoOption !== null) {
-    fastModelOptions.unshift(fastAutoOption);
-  }
+  const smartModelOptions = buildModelOptions();
+  const fastModelOptions = buildModelOptions();
 
   const handleModelFieldChange = async (
     field: 'smartModel' | 'fastModel',
@@ -167,61 +167,6 @@ export const SettingsAIModelsTab = () => {
     }
   };
 
-  const handleAutoEnableToggle = async (checked: boolean) => {
-    if (!currentWorkspace?.id) {
-      return;
-    }
-
-    const previousAutoEnable = currentWorkspace.autoEnableNewAiModels;
-    const previousDisabled = currentWorkspace.disabledAiModelIds ?? [];
-    const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
-
-    let newDisabledIds: string[] = [];
-    let newEnabledIds: string[] = [];
-
-    if (checked) {
-      newDisabledIds = realModels
-        .filter((model) => !previousEnabled.includes(model.modelId))
-        .map((model) => model.modelId);
-      newEnabledIds = [];
-    } else {
-      newEnabledIds = realModels
-        .filter((model) => !previousDisabled.includes(model.modelId))
-        .map((model) => model.modelId);
-      newDisabledIds = [];
-    }
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        autoEnableNewAiModels: checked,
-        disabledAiModelIds: newDisabledIds,
-        enabledAiModelIds: newEnabledIds,
-      });
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            autoEnableNewAiModels: checked,
-            disabledAiModelIds: newDisabledIds,
-            enabledAiModelIds: newEnabledIds,
-          },
-        },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        autoEnableNewAiModels: previousAutoEnable,
-        disabledAiModelIds: previousDisabled,
-        enabledAiModelIds: previousEnabled,
-      });
-
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability settings`,
-      });
-    }
-  };
-
   const handleModelToggle = async (
     modelId: string,
     isCurrentlyEnabled: boolean,
@@ -230,37 +175,21 @@ export const SettingsAIModelsTab = () => {
       return;
     }
 
-    const previousDisabled = currentWorkspace.disabledAiModelIds ?? [];
     const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
 
-    let newDisabledIds = [...previousDisabled];
-    let newEnabledIds = [...previousEnabled];
-
-    if (autoEnableNewAiModels) {
-      if (isCurrentlyEnabled) {
-        newDisabledIds = [...previousDisabled, modelId];
-      } else {
-        newDisabledIds = previousDisabled.filter((id) => id !== modelId);
-      }
-    } else {
-      if (isCurrentlyEnabled) {
-        newEnabledIds = previousEnabled.filter((id) => id !== modelId);
-      } else {
-        newEnabledIds = [...previousEnabled, modelId];
-      }
-    }
+    const newEnabledIds = isCurrentlyEnabled
+      ? previousEnabled.filter((id) => id !== modelId)
+      : [...previousEnabled, modelId];
 
     try {
       setCurrentWorkspace({
         ...currentWorkspace,
-        disabledAiModelIds: newDisabledIds,
         enabledAiModelIds: newEnabledIds,
       });
 
       await updateWorkspace({
         variables: {
           input: {
-            disabledAiModelIds: newDisabledIds,
             enabledAiModelIds: newEnabledIds,
           },
         },
@@ -268,7 +197,6 @@ export const SettingsAIModelsTab = () => {
     } catch {
       setCurrentWorkspace({
         ...currentWorkspace,
-        disabledAiModelIds: previousDisabled,
         enabledAiModelIds: previousEnabled,
       });
 
@@ -285,7 +213,7 @@ export const SettingsAIModelsTab = () => {
         return (
           model.label.toLowerCase().includes(query) ||
           (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
-          model.inferenceProvider.toLowerCase().includes(query)
+          (model.sdkPackage?.toLowerCase().includes(query) ?? false)
         );
       })
     : allModelsWithAvailability;
@@ -309,6 +237,7 @@ export const SettingsAIModelsTab = () => {
               value={currentSmartModel}
               onChange={(value) => handleModelFieldChange('smartModel', value)}
               options={smartModelOptions}
+              pinnedOption={smartPinnedOption}
               selectSizeVariant="small"
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             />
@@ -323,6 +252,7 @@ export const SettingsAIModelsTab = () => {
               value={currentFastModel}
               onChange={(value) => handleModelFieldChange('fastModel', value)}
               options={fastModelOptions}
+              pinnedOption={fastPinnedOption}
               selectSizeVariant="small"
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             />
@@ -335,15 +265,6 @@ export const SettingsAIModelsTab = () => {
             onChange={handleUseRecommendedToggle}
             divider={!useRecommendedModels}
           />
-          {!useRecommendedModels && (
-            <SettingsOptionCardContentToggle
-              Icon={IconRobot}
-              title={t`Automatically mark new models as available`}
-              description={t`When enabled, new AI models will be available to users by default`}
-              checked={autoEnableNewAiModels}
-              onChange={handleAutoEnableToggle}
-            />
-          )}
         </Card>
       </Section>
 
@@ -355,30 +276,37 @@ export const SettingsAIModelsTab = () => {
           />
 
           <StyledSearchContainer>
-            <SettingsTextInput
-              instanceId="model-table-search"
-              LeftIcon={IconSearch}
+            <SearchInput
               placeholder={t`Search a model...`}
               value={searchQuery}
               onChange={setSearchQuery}
-              fullWidth
             />
           </StyledSearchContainer>
 
           <Card rounded>
-            {filteredModels.map((model, index) => (
-              <SettingsOptionCardContentToggle
-                key={model.modelId}
-                Icon={getModelIcon(model.modelFamily)}
-                title={model.label}
-                description={getModelProviderLabel(model.modelFamily)}
-                checked={model.isEnabled}
-                onChange={() =>
-                  handleModelToggle(model.modelId, model.isEnabled)
-                }
-                divider={index < filteredModels.length - 1}
-              />
-            ))}
+            {filteredModels.map((model, index) => {
+              const familyLabel = model.modelFamilyLabel ?? '';
+              const residency = model.dataResidency
+                ? getDataResidencyDisplay(model.dataResidency)
+                : undefined;
+              const description = residency
+                ? `${familyLabel} · ${residency}`
+                : familyLabel;
+
+              return (
+                <SettingsOptionCardContentToggle
+                  key={model.modelId}
+                  Icon={getModelIcon(model.modelFamily, model.providerName)}
+                  title={model.label}
+                  description={description}
+                  checked={model.isEnabled}
+                  onChange={() =>
+                    handleModelToggle(model.modelId, model.isEnabled)
+                  }
+                  divider={index < filteredModels.length - 1}
+                />
+              );
+            })}
           </Card>
         </Section>
       )}

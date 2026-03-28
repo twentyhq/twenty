@@ -39,9 +39,9 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 @Controller('rest/agent-chat')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(
+  RestApiExceptionFilter,
   AgentRestApiExceptionFilter,
   BillingRestApiExceptionFilter,
-  RestApiExceptionFilter,
 )
 export class AgentChatController {
   constructor(
@@ -59,6 +59,7 @@ export class AgentChatController {
       threadId: string;
       messages: ExtendedUIMessage[];
       browsingContext?: BrowsingContextType | null;
+      modelId?: string;
     },
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -66,12 +67,12 @@ export class AgentChatController {
   ) {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AgentException(
-        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
+        'No AI models are available. Configure at least one AI provider.',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
 
-    const resolvedModelId = workspace.smartModel;
+    const resolvedModelId = body.modelId ?? workspace.smartModel;
 
     this.aiModelRegistryService.validateModelAvailability(
       resolvedModelId,
@@ -96,6 +97,7 @@ export class AgentChatController {
       threadId: body.threadId,
       messages: body.messages,
       browsingContext: body.browsingContext ?? null,
+      modelId: body.modelId,
       userWorkspaceId,
       workspace,
       response,

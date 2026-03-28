@@ -1,31 +1,22 @@
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import { isAutoSelectModelId } from 'twenty-shared/utils';
+
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
-
-const VIRTUAL_MODEL_IDS: Set<string> = new Set([
-  DEFAULT_SMART_MODEL,
-  DEFAULT_FAST_MODEL,
-]);
-
-const isVirtualModel = (modelId: string) => VIRTUAL_MODEL_IDS.has(modelId);
 
 export const useWorkspaceAiModelAvailability = () => {
   const aiModels = useAtomStateValue(aiModelsState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const useRecommendedModels = currentWorkspace?.useRecommendedModels ?? true;
-  const autoEnableNewAiModels = currentWorkspace?.autoEnableNewAiModels ?? true;
-  const disabledAiModelIds = currentWorkspace?.disabledAiModelIds ?? [];
   const enabledAiModelIds = currentWorkspace?.enabledAiModelIds ?? [];
 
   const isModelEnabled = (
     modelId: string,
     model?: ClientAiModelConfig,
   ): boolean => {
-    if (isVirtualModel(modelId)) {
+    if (isAutoSelectModelId(modelId)) {
       return true;
     }
 
@@ -33,13 +24,11 @@ export const useWorkspaceAiModelAvailability = () => {
       return model?.isRecommended === true;
     }
 
-    return autoEnableNewAiModels
-      ? !disabledAiModelIds.includes(modelId)
-      : enabledAiModelIds.includes(modelId);
+    return enabledAiModelIds.includes(modelId);
   };
 
   const realModels = aiModels.filter(
-    (model) => !isVirtualModel(model.modelId) && !model.deprecated,
+    (model) => !isAutoSelectModelId(model.modelId) && !model.isDeprecated,
   );
 
   const enabledModels = realModels.filter((model) =>
@@ -57,8 +46,6 @@ export const useWorkspaceAiModelAvailability = () => {
     realModels,
     allModelsWithAvailability,
     useRecommendedModels,
-    autoEnableNewAiModels,
-    disabledAiModelIds,
     enabledAiModelIds,
   };
 };

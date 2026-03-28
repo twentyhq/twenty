@@ -4,6 +4,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DYNAMIC_RELATION_WIDGET_ID_PREFIX } from '@/page-layout/utils/isDynamicRelationWidget';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  FieldDisplayMode,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -38,7 +39,7 @@ const getRelationFieldWidgetToInsert = (
     __typename: 'FieldConfiguration' as const,
     configurationType: WidgetConfigurationType.FIELD,
     fieldMetadataId: field.id,
-    layout: 'CARD' as const,
+    fieldDisplayMode: FieldDisplayMode.CARD,
   },
   isOverridden: false,
   createdAt: '2024-01-01T00:00:00.000Z',

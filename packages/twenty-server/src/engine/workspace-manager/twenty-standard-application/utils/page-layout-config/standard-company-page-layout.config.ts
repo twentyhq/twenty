@@ -1,8 +1,11 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  GRID_POSITIONS,
   TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
@@ -18,6 +21,24 @@ const COMPANY_PAGE_TABS = {
       fields: {
         universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0111',
         ...WIDGET_PROPS.fields,
+      },
+      people: {
+        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0112',
+        title: 'People',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.company.fields.people.universalIdentifier,
+      },
+      opportunities: {
+        universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0114',
+        title: 'Opportunities',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.company.fields.opportunities.universalIdentifier,
       },
     },
   },

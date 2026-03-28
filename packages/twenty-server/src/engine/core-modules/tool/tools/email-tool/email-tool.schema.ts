@@ -37,4 +37,10 @@ export const EmailToolInputZodSchema = z.object({
     .describe('Array of file objects to attach to the email')
     .optional()
     .default([]),
+  inReplyTo: z
+    .string()
+    .describe(
+      'The RFC 2822 Message-ID of an existing email to reply to. When provided, the email is sent as a reply in the same thread.',
+    )
+    .optional(),
 });

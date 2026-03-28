@@ -16,18 +16,27 @@ A CLI and SDK to develop, build, and publish applications that extend [Twenty CR
 
 - Typed GraphQL clients: `CoreApiClient` (auto-generated per app for workspace data) and `MetadataApiClient` (pre-built with the SDK for workspace configuration & file uploads)
 - Built‑in CLI for auth, dev mode (watch & sync), uninstall, and function management
-- Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
 
-## Documentation
+## Getting Started
 
-See Twenty application documentation https://docs.twenty.com/developers/extend/capabilities/apps
+The recommended way to start building a Twenty app is with [**create-twenty-app**](https://www.npmjs.com/package/create-twenty-app), which scaffolds a project with everything preconfigured:
+
+```bash
+npx create-twenty-app@latest my-app
+cd my-app
+yarn twenty dev
+```
+
+See the [create-twenty-app README](https://www.npmjs.com/package/create-twenty-app) or the [full documentation](https://docs.twenty.com/developers/extend/capabilities/apps) for details.
 
 ## Prerequisites
 
 - Node.js 24+ (recommended) and Yarn 4
 - Docker (for the local Twenty dev server) or a remote Twenty workspace
 
-## Installation
+## Manual Installation
+
+If you're adding `twenty-sdk` to an existing project instead of using `create-twenty-app`:
 
 ```bash
 npm install twenty-sdk
@@ -62,7 +71,7 @@ Commands:
   help [command]      display help for command
 ```
 
-In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
+In a project created with `create-twenty-app` (recommended), use `yarn twenty <command>` instead of calling `twenty` directly. For example: `yarn twenty help`, `yarn twenty dev`, etc.
 
 ## Global Options
 
@@ -74,7 +83,7 @@ In a scaffolded project (via `create-twenty-app`), use `yarn twenty <command>` i
 
 Manage a local Twenty dev server (all-in-one Docker image).
 
-- `twenty server start` — Start the local server (pulls image if needed).
+- `twenty server start` — Start the local server (pulls image if needed). Automatically configures the `local` remote.
   - Options:
     - `-p, --port <port>`: HTTP port (default: `2020`).
 - `twenty server stop` — Stop the local server.
@@ -115,7 +124,6 @@ Manage remote server connections and authentication.
     - `--token <token>`: API key for non-interactive auth.
     - `--url <url>`: Server URL (alternative to positional arg).
     - `--as <name>`: Name for this remote (otherwise derived from URL hostname).
-    - `--local`: Connect to local development server (`http://localhost:2020`) via OAuth.
   - Behavior: If `nameOrUrl` matches an existing remote name, re-authenticates it. Otherwise, creates a new remote and authenticates via OAuth (with API key fallback).
 
 - `twenty remote remove <name>` — Remove a remote and its credentials.
@@ -136,9 +144,6 @@ twenty remote add
 
 # Provide values in flags (non-interactive, for CI)
 twenty remote add https://api.twenty.com --token $TWENTY_API_KEY
-
-# Add a local development remote
-twenty remote add --local
 
 # Name a remote explicitly
 twenty remote add https://api.twenty.com --as production
@@ -326,6 +331,14 @@ Notes:
 - `twenty remote add --as my-remote` saves under a custom name.
 - `twenty remote switch` sets the `defaultRemote` field, used when `-r` is not specified.
 - `twenty remote list` shows all configured remotes and their authentication status.
+
+## How to use a local Twenty instance
+
+If you're already running a local Twenty instance, you can connect to it instead of using Docker:
+
+```bash
+twenty remote add http://localhost:3000 --as local
+```
 
 ## Troubleshooting
 

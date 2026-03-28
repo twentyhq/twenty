@@ -1,31 +1,25 @@
 import { type SelectOption } from 'twenty-ui/input';
+import { isAutoSelectModelId } from 'twenty-shared/utils';
 
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getModelProviderLabel } from '~/pages/settings/ai/utils/getModelProviderLabel';
 
-export const useAiModelOptions = (
-  includeDeprecated = false,
-): SelectOption<string>[] => {
+export const useAiModelOptions = (): SelectOption<string>[] => {
   const aiModels = useAtomStateValue(aiModelsState);
   const { isModelEnabled } = useWorkspaceAiModelAvailability();
 
   return aiModels
     .filter(
-      (model) =>
-        (includeDeprecated || !model.deprecated) &&
-        isModelEnabled(model.modelId, model),
+      (model) => !model.isDeprecated && isModelEnabled(model.modelId, model),
     )
     .map((model) => ({
       value: model.modelId,
-      label:
-        model.modelId === DEFAULT_FAST_MODEL ||
-        model.modelId === DEFAULT_SMART_MODEL
-          ? model.label
-          : `${model.label} (${getModelProviderLabel(model.modelFamily) || model.inferenceProvider})`,
+      label: isAutoSelectModelId(model.modelId)
+        ? model.label
+        : model.modelFamilyLabel
+          ? `${model.label} (${model.modelFamilyLabel})`
+          : model.label,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };
@@ -46,13 +40,11 @@ export const useAiModelLabel = (
     return modelId;
   }
 
-  if (
-    model.modelId === DEFAULT_FAST_MODEL ||
-    model.modelId === DEFAULT_SMART_MODEL ||
-    !includeProvider
-  ) {
+  if (isAutoSelectModelId(model.modelId) || !includeProvider) {
     return model.label;
   }
 
-  return `${model.label} (${getModelProviderLabel(model.modelFamily) || model.inferenceProvider})`;
+  return model.modelFamilyLabel
+    ? `${model.label} (${model.modelFamilyLabel})`
+    : model.label;
 };

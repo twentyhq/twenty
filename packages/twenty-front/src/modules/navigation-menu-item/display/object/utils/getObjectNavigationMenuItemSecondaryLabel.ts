@@ -1,8 +1,8 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type GetObjectNavigationMenuItemSecondaryLabelProps = {
   objectMetadataItems: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'nameSingular' | 'labelSingular'
   >[];
   navigationMenuItemObjectNameSingular: string;

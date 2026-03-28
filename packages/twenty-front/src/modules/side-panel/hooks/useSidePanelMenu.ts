@@ -1,11 +1,11 @@
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
+import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/side-panel/utils/emitSidePanelOpenEvent';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -28,7 +28,6 @@ export const useSidePanelMenu = () => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
     if (isSidePanelOpened) {
-      store.set(addToNavPayloadRegistryState.atom, new Map());
       store.set(isSidePanelOpenedState.atom, false);
       store.set(isSidePanelClosingState.atom, true);
       closeAnyOpenDropdown();
@@ -45,7 +44,7 @@ export const useSidePanelMenu = () => {
       isLayoutCustomizationModeEnabledState.atom,
     );
     const selectedNavigationItemId = store.get(
-      selectedNavigationMenuItemInEditModeState.atom,
+      selectedNavigationMenuItemIdInEditModeState.atom,
     );
     if (
       isLayoutCustomizationModeEnabled &&
@@ -60,13 +59,13 @@ export const useSidePanelMenu = () => {
     } else if (isLayoutCustomizationModeEnabled) {
       navigateSidePanel({
         page: SidePanelPages.NavigationMenuAddItem,
-        pageTitle: t`New sidebar item`,
+        pageTitle: t`New menu item`,
         pageIcon: IconColumnInsertRight,
         resetNavigationStack: true,
       });
     } else {
       navigateSidePanel({
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: t`Command Menu`,
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
@@ -80,6 +79,7 @@ export const useSidePanelMenu = () => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
     store.set(sidePanelSearchState.atom, '');
+    store.set(sidePanelSearchObjectFilterState.atom, null);
 
     if (isSidePanelOpened) {
       closeSidePanelMenu();

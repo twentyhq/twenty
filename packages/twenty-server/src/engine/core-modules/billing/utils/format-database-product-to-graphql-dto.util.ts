@@ -7,7 +7,7 @@ import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entitie
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
-import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 export const formatBillingDatabaseProductToGraphqlDTO = (
   plan: BillingGetPlanResult,

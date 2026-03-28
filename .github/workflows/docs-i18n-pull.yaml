@@ -150,3 +150,11 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger i18n automerge
+        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          repository: twentyhq/twenty-infra
+          event-type: i18n-pr-ready

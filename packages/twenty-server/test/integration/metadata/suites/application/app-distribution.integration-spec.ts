@@ -57,7 +57,6 @@ const createValidManifest = (universalIdentifier: string) =>
       applicationVariables: {},
       packageJsonChecksum: null,
       yarnLockChecksum: null,
-      apiClientChecksum: null,
     },
     roles: [],
     skills: [],

@@ -4,7 +4,7 @@ import { type ReactNode, useContext } from 'react';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useIcons, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type Skill } from '~/generated-metadata/graphql';
@@ -44,7 +44,7 @@ export const SettingsSkillTableRow = ({
         overflow="hidden"
       >
         <StyledIconContainer>
-          <Icon size={theme.icon.size.md} />
+          <Icon size={theme.icon.size.md} color={theme.color.blue9} />
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={skill.label} />
       </TableCell>

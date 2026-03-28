@@ -111,6 +111,7 @@ describe('WorkspaceEntityManager', () => {
       fieldIds: ['field-id'],
       indexMetadataIds: [],
       objectPermissionIds: [],
+      fieldPermissionIds: [],
       viewIds: [],
       universalIdentifier: 'test-entity-id',
       description: null,
@@ -127,6 +128,7 @@ describe('WorkspaceEntityManager', () => {
       applicationUniversalIdentifier: 'test-application-id',
       fieldUniversalIdentifiers: ['field-id'],
       objectPermissionUniversalIdentifiers: [],
+      fieldPermissionUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier: null,
@@ -162,6 +164,7 @@ describe('WorkspaceEntityManager', () => {
       workspaceId: 'test-workspace-id',
       viewFieldIds: [],
       viewFilterIds: [],
+      fieldPermissionIds: [],
       kanbanAggregateOperationViewIds: [],
       calendarViewIds: [],
       mainGroupByFieldMetadataViewIds: [],
@@ -178,6 +181,7 @@ describe('WorkspaceEntityManager', () => {
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       calendarViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      fieldPermissionUniversalIdentifiers: [],
       viewSortIds: [],
       viewSortUniversalIdentifiers: [],
       universalSettings: null,
@@ -245,10 +249,14 @@ describe('WorkspaceEntityManager', () => {
         IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED: false,
         IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: false,
         IS_DRAFT_EMAIL_ENABLED: false,
+        IS_USAGE_ANALYTICS_ENABLED: false,
         IS_RICH_TEXT_V1_MIGRATED: false,
         IS_DIRECT_GRAPHQL_EXECUTION_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: false,
         IS_CONNECTED_ACCOUNT_MIGRATED: false,
+        IS_GRAPHQL_QUERY_TIMING_ENABLED: false,
+        IS_RECORD_TABLE_WIDGET_ENABLED: false,
+        IS_DATASOURCE_MIGRATED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
@@ -319,6 +327,7 @@ describe('WorkspaceEntityManager', () => {
       userWorkspaceRoleMap: {
         'user-workspace-id': 'role-id',
       },
+      apiKeyRoleMap: {},
     };
 
     setWorkspaceContext(mockWorkspaceContext);

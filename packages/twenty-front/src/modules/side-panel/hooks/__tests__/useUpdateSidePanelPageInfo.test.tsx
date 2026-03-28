@@ -16,7 +16,7 @@ const mockedPageInfo = {
 
 const mockedNavigationStack = [
   {
-    page: SidePanelPages.Root,
+    page: SidePanelPages.CommandMenuDisplay,
     pageTitle: 'Initial Title',
     pageIcon: IconDotsVertical,
     pageId: 'test-page-id',
@@ -65,7 +65,7 @@ describe('useUpdateSidePanelPageInfo', () => {
     );
     expect(sidePanelNavigationStack).toEqual([
       {
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'New Title',
         pageIcon: IconArrowDown,
         pageId: 'test-page-id',
@@ -94,7 +94,7 @@ describe('useUpdateSidePanelPageInfo', () => {
     );
     expect(sidePanelNavigationStack).toEqual([
       {
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'New Title',
         pageIcon: IconDotsVertical,
         pageId: 'test-page-id',
@@ -123,7 +123,7 @@ describe('useUpdateSidePanelPageInfo', () => {
     );
     expect(sidePanelNavigationStack).toEqual([
       {
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'Initial Title',
         pageIcon: IconArrowDown,
         pageId: 'test-page-id',

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,7 +8,7 @@ import { useStore } from 'jotai';
 
 export const useOptimisticRemoveNavigationMenuItemsByViewId = () => {
   const store = useStore();
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const removeNavigationMenuItemsByViewIds = useCallback(
     (viewIds: string[]) => {

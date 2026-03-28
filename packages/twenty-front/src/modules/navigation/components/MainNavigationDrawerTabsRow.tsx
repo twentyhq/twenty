@@ -4,13 +4,14 @@ import {
   IconComment,
   IconHome,
   IconMessageCirclePlus,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useContext } from 'react';
 
-import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
+import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -31,7 +32,7 @@ const StyledRow = styled.div<{ isExpanded: boolean }>`
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'space-between' : 'center'};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-  width: 100%;
+  width: ${({ isExpanded }) => (isExpanded ? '100%' : 'max-content')};
 `;
 
 const StyledTabsPill = styled.div`
@@ -41,6 +42,7 @@ const StyledTabsPill = styled.div`
   border-radius: ${themeCssVariables.border.radius.pill};
   box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[0.5]};
   height: ${themeCssVariables.spacing[7]};
   padding: 3px;
@@ -78,6 +80,14 @@ const StyledTabIcon = styled.div`
   width: ${themeCssVariables.spacing[5]};
 `;
 
+const StyledNewChatIcon = styled.div`
+  align-items: center;
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  justify-content: center;
+`;
+
 const StyledNewChatButtonWrapper = styled.div<{ isExpanded: boolean }>`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
@@ -108,6 +118,9 @@ const StyledNewChatButton = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: 100%;
   justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+  padding-inline: ${themeCssVariables.spacing[1]};
   transition:
     background calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
@@ -127,7 +140,7 @@ export const MainNavigationDrawerTabsRow = () => {
   );
   const [navigationDrawerActiveTab, setNavigationDrawerActiveTab] =
     useAtomState(navigationDrawerActiveTabState);
-  const { switchToNewChat } = useCreateNewAIChatThread();
+  const { switchToNewChat } = useSwitchToNewAIChat();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
@@ -194,7 +207,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconHome
-                size={theme.icon.size.sm}
+                size={theme.icon.size.md}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
@@ -224,7 +237,7 @@ export const MainNavigationDrawerTabsRow = () => {
           >
             <StyledTabIcon>
               <IconComment
-                size={theme.icon.size.sm}
+                size={theme.icon.size.md}
                 color={getTabIconColor(
                   navigationDrawerActiveTab ===
                     NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
@@ -242,8 +255,10 @@ export const MainNavigationDrawerTabsRow = () => {
           onClick={handleNewChatClick}
           onKeyDown={handleNewChatKeyDown}
         >
-          <IconMessageCirclePlus size={theme.icon.size.md} />
-          {isExpanded && t`New chat`}
+          <StyledNewChatIcon>
+            <IconMessageCirclePlus size={theme.icon.size.md} />
+          </StyledNewChatIcon>
+          {isExpanded && <OverflowingTextWithTooltip text={t`New chat`} />}
         </StyledNewChatButton>
       </StyledNewChatButtonWrapper>
     </StyledRow>

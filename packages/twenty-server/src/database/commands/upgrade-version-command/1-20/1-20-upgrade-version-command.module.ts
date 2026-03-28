@@ -3,16 +3,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
-import { BackfillPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts.command';
+import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
 import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
+import { IdentifyFieldPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-field-permission-metadata.command';
 import { IdentifyObjectPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-object-permission-metadata.command';
 import { IdentifyPermissionFlagMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-permission-flag-metadata.command';
+import { MakeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-field-permission-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-object-permission-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeWorkflowSearchableCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-workflow-searchable.command';
 import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
+import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -29,6 +33,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 
 @Module({
   imports: [
@@ -50,34 +55,43 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationRegistrationModule,
     WorkspaceMigrationModule,
     FeatureFlagModule,
+    WorkflowCommonModule,
   ],
   providers: [
     IdentifyPermissionFlagMetadataCommand,
     MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     IdentifyObjectPermissionMetadataCommand,
     MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    IdentifyFieldPermissionMetadataCommand,
+    MakeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     BackfillCommandMenuItemsCommand,
     BackfillNavigationMenuItemTypeCommand,
-    BackfillPageLayoutsCommand,
+    BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     BackfillSelectFieldOptionIdsCommand,
     DeleteOrphanNavigationMenuItemsCommand,
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
+    UpdateStandardIndexViewNamesCommand,
+    MakeWorkflowSearchableCommand,
   ],
   exports: [
     IdentifyPermissionFlagMetadataCommand,
     MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     IdentifyObjectPermissionMetadataCommand,
     MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    IdentifyFieldPermissionMetadataCommand,
+    MakeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     BackfillCommandMenuItemsCommand,
     BackfillNavigationMenuItemTypeCommand,
-    BackfillPageLayoutsCommand,
+    BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     BackfillSelectFieldOptionIdsCommand,
     DeleteOrphanNavigationMenuItemsCommand,
     SeedCliApplicationRegistrationCommand,
     MigrateRichTextToTextCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
+    UpdateStandardIndexViewNamesCommand,
+    MakeWorkflowSearchableCommand,
   ],
 })
 export class V1_20_UpgradeVersionCommandModule {}

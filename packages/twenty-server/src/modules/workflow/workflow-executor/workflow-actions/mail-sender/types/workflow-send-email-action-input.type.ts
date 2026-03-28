@@ -5,4 +5,5 @@ export type WorkflowSendEmailActionInput = {
   recipients: EmailRecipients;
   subject?: string;
   body?: string;
+  inReplyTo?: string;
 };

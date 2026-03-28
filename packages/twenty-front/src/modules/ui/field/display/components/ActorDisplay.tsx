@@ -23,11 +23,13 @@ type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
 };
 
-const PROVIDORS_ICON_MAPPING = {
+const PROVIDERS_ICON_MAPPING = {
   EMAIL: {
     [ConnectedAccountProvider.MICROSOFT]: IconMicrosoftOutlook,
     [ConnectedAccountProvider.GOOGLE]: IconGmail,
     [ConnectedAccountProvider.IMAP_SMTP_CALDAV]: IconMail,
+    [ConnectedAccountProvider.OIDC]: IconMail,
+    [ConnectedAccountProvider.SAML]: IconMail,
     default: IconMail,
   },
   CALENDAR: {
@@ -51,12 +53,12 @@ export const ActorDisplay = ({
       case 'IMPORT':
         return IconUpload;
       case 'EMAIL':
-        return PROVIDORS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
+        return PROVIDERS_ICON_MAPPING.EMAIL[context?.provider ?? 'default'];
       case 'CALENDAR':
         return (
-          PROVIDORS_ICON_MAPPING.CALENDAR[
-            context?.provider as keyof typeof PROVIDORS_ICON_MAPPING.CALENDAR
-          ] ?? PROVIDORS_ICON_MAPPING.CALENDAR.default
+          PROVIDERS_ICON_MAPPING.CALENDAR[
+            context?.provider as keyof typeof PROVIDERS_ICON_MAPPING.CALENDAR
+          ] ?? PROVIDERS_ICON_MAPPING.CALENDAR.default
         );
       case 'SYSTEM':
         return IconRobot;

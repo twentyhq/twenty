@@ -96,8 +96,6 @@ export default defineConfig(({ mode }) => {
             '**/testing/cache/**',
             '**/*.test.{ts,tsx}',
             '**/*.spec.{ts,tsx}',
-            '**/*.stories.{ts,tsx}',
-            '**/__stories__/**',
             '**/__tests__/**',
             '**/__mocks__/**',
             '**/types/**',
@@ -145,7 +143,7 @@ export default defineConfig(({ mode }) => {
     build: {
       minify: 'esbuild',
       outDir: 'build',
-      sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      sourcemap: VITE_BUILD_SOURCEMAP === 'true' ? 'hidden' : false,
       chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
       rollupOptions: {
         //  Don't use manual chunks as it causes many issue

@@ -1,9 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
+import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -18,7 +20,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   isDeleting: boolean;
   setIsDeleting: (isDeleting: boolean) => void;
 };
@@ -114,6 +116,20 @@ export const ObjectSettings = ({
           />
         </Section>
       </StyledFormSectionContainer>
+      <AdvancedSettingsWrapper>
+        <StyledFormSectionContainer>
+          <Section>
+            <H2Title
+              title={t`Search`}
+              description={t`Configure how this object appears in search results`}
+            />
+            <SettingsObjectSearchSection
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isReadOnly}
+            />
+          </Section>
+        </StyledFormSectionContainer>
+      </AdvancedSettingsWrapper>
       {!isReadOnly && (
         <StyledFormSectionContainer>
           <Section>

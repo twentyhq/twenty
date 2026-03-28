@@ -1,31 +1,22 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
 export const RecordIndexPageHeaderIcon = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem?: ObjectMetadataItem;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
 }) => {
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem?.icon);
 
-  if (!isDefined(ObjectIcon)) {
+  if (!isDefined(ObjectIcon) || !isDefined(objectMetadataItem)) {
     return null;
   }
 
-  const iconColor = isNonEmptyString(objectMetadataItem?.color)
-    ? objectMetadataItem.color
-    : getStandardObjectIconColor(objectMetadataItem?.nameSingular ?? '');
+  const iconColor = getObjectColorWithFallback(objectMetadataItem);
 
-  return (
-    <NavigationMenuItemStyleIcon
-      Icon={ObjectIcon}
-      color={iconColor ?? undefined}
-    />
-  );
+  return <NavigationMenuItemStyleIcon Icon={ObjectIcon} color={iconColor} />;
 };

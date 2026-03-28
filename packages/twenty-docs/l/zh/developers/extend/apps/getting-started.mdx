@@ -20,7 +20,7 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 ## 先决条件
 
 * Node.js 24+ 和 Yarn 4
-* 一个 Twenty 工作空间和一个 API 密钥（在 https://app.twenty.com/settings/api-webhooks 创建）
+* Docker (用于本地 Twenty 开发服务器)
 
 ## 开始使用
 
@@ -32,13 +32,13 @@ npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
 # Start dev mode: automatically syncs local changes to your workspace
-yarn twenty app:dev
+yarn twenty dev
 ```
 
 脚手架工具支持两种模式，用于控制包含哪些示例文件：
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill)
+# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
 npx create-twenty-app@latest my-app
 
 # Minimal: only core files (application-config.ts and default-role.ts)
@@ -64,7 +64,7 @@ yarn twenty function:execute --preInstall
 yarn twenty function:execute --postInstall
 
 # Uninstall the application from the current workspace
-yarn twenty app:uninstall
+yarn twenty uninstall
 
 # Display commands' help
 yarn twenty help
@@ -167,7 +167,7 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty app:dev` 会在 `node_modules/twenty-sdk/generated` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
+* `yarn twenty dev` 会在 `node_modules/twenty-sdk/generated` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
 * `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件、角色、技能等添加实体定义文件。
 
 ## 身份验证
@@ -221,13 +221,25 @@ yarn add -D twenty-sdk
 }
 ```
 
-现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty app:dev`、`yarn twenty help` 等。
+现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty dev`、`yarn twenty help` 等。
+
+## 如何使用本地 Twenty 实例
+
+如果你已经在本地运行一个 Twenty 实例（例如通过 `npx nx start twenty-server`），你可以连接到它，而不是使用 Docker:
+
+```bash filename="Terminal"
+# During scaffolding — skip Docker, connect to your running instance
+npx create-twenty-app@latest my-app --port 3000
+
+# Or after scaffolding — add a remote pointing to your instance
+yarn twenty remote add --local --port 3000
+```
 
 ## 故障排除
 
 * 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* 类型或客户端缺失/过期：重启 `yarn twenty app:dev` — 它会自动生成类型化客户端。
-* 开发模式未同步：确保 `yarn twenty app:dev` 正在运行，并且你的环境不会忽略变更。
+* 类型或客户端缺失/过期：重启 `yarn twenty dev` — 它会自动生成类型化客户端。
+* 开发模式未同步：确保 `yarn twenty dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

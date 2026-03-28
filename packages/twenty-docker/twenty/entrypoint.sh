@@ -13,8 +13,7 @@ setup_and_migrate_db() {
     has_schema=$(psql -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')" ${PG_DATABASE_URL})
     if [ "$has_schema" = "f" ]; then
         echo "Database appears to be empty, running migrations."
-        NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
-        yarn database:migrate:prod
+        yarn database:init:prod
     fi
 
     yarn command:prod cache:flush

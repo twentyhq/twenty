@@ -3,8 +3,8 @@ import { IconSettings, useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
@@ -12,11 +12,11 @@ import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanel
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelNewSidebarItemViewObjectPickerSubViewProps = {
-  objects: ObjectMetadataItem[];
+  objects: EnrichedObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
   onOpenSystemPicker: () => void;
-  onSelectObject: (objectMetadataItem: ObjectMetadataItem) => void;
+  onSelectObject: (objectMetadataItem: EnrichedObjectMetadataItem) => void;
   showSystemObjectsOption?: boolean;
 };
 
@@ -64,9 +64,7 @@ export const SidePanelNewSidebarItemViewObjectPickerSubView = ({
                 Icon={() => (
                   <NavigationMenuItemStyleIcon
                     Icon={getIcon(objectMetadataItem.icon)}
-                    color={getStandardObjectIconColor(
-                      objectMetadataItem.nameSingular,
-                    )}
+                    color={getObjectColorWithFallback(objectMetadataItem)}
                   />
                 )}
                 label={objectMetadataItem.labelPlural}

@@ -95,7 +95,7 @@ const meta: Meta<typeof SidePanelRootPage> = {
       });
       jotaiStore.set(sidePanelNavigationStackState.atom, [
         {
-          page: SidePanelPages.Root,
+          page: SidePanelPages.CommandMenuDisplay,
           pageTitle: 'Command Menu',
           pageIcon: IconDotsVertical,
           pageId: '1',
@@ -269,7 +269,9 @@ export const SubPageNavigation: Story = {
     const backButton = await canvas.findByRole('button', { name: 'Go back' });
     await userEvent.click(backButton);
 
-    expect(await canvas.findByText('Object')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.getByText('Object')).toBeVisible();
+    });
   },
   decorators: [
     (Story) => {

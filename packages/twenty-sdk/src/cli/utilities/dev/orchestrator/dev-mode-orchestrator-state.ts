@@ -54,6 +54,7 @@ export type OrchestratorStateBuiltFileInfo = {
   builtPath: string;
   sourcePath: string;
   fileFolder: FileFolder;
+  usesSdkClient?: boolean;
 };
 
 export type OrchestratorStatePipeline = {

@@ -2,8 +2,9 @@ import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useLoadMinimalMetadata } from '@/metadata-store/hooks/useLoadMinimalMetadata';
-import { useLoadMockedMinimalMetadata } from '@/metadata-store/hooks/useLoadMockedMinimalMetadata';
+import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
 import { useLoadStaleMetadataEntities } from '@/metadata-store/hooks/useLoadStaleMetadataEntities';
+import { metadataLoadedVersionState } from '@/metadata-store/states/metadataLoadedVersionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
@@ -25,10 +26,14 @@ export const MinimalMetadataLoadEffect = () => {
   const hasAccessTokenPair = useHasAccessTokenPair();
   const isCurrentUserLoaded = useAtomStateValue(isCurrentUserLoadedState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const [loadedState, setLoadedState] = useState<LoadedState>('none');
+  const metadataLoadedVersion = useAtomStateValue(metadataLoadedVersionState);
+  const [lastMetadataLoadData, setLastMetadataLoadData] = useState<{
+    state: LoadedState;
+    version: number;
+  }>({ state: 'none', version: -1 });
 
   const { loadMinimalMetadata } = useLoadMinimalMetadata();
-  const { loadMockedMinimalMetadata } = useLoadMockedMinimalMetadata();
+  const { loadMockedMetadataAtomic } = useLoadMockedMetadata();
   const { loadStaleMetadataEntities } = useLoadStaleMetadataEntities();
 
   const isActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
@@ -39,15 +44,25 @@ export const MinimalMetadataLoadEffect = () => {
   );
 
   useEffect(() => {
-    if (!isCurrentUserLoaded || loadedState === desiredLoadState) {
+    if (!isCurrentUserLoaded) {
       return;
     }
 
-    setLoadedState(desiredLoadState);
+    const versionChanged =
+      metadataLoadedVersion !== lastMetadataLoadData.version;
+
+    if (!versionChanged && lastMetadataLoadData.state === desiredLoadState) {
+      return;
+    }
+
+    setLastMetadataLoadData({
+      state: desiredLoadState,
+      version: metadataLoadedVersion,
+    });
 
     const performLoad = async () => {
       if (desiredLoadState === 'mocked') {
-        await loadMockedMinimalMetadata();
+        await loadMockedMetadataAtomic();
         return;
       }
 
@@ -64,9 +79,10 @@ export const MinimalMetadataLoadEffect = () => {
     hasAccessTokenPair,
     isActiveWorkspace,
     desiredLoadState,
-    loadedState,
+    lastMetadataLoadData,
+    metadataLoadedVersion,
     loadMinimalMetadata,
-    loadMockedMinimalMetadata,
+    loadMockedMetadataAtomic,
     loadStaleMetadataEntities,
   ]);
 

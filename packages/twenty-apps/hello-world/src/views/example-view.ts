@@ -1,7 +1,7 @@
 import { defineView, ViewKey } from 'twenty-sdk';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER, NAME_FIELD_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
 
-export const EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER = 'e004df40-29f3-47ba-b39d-d3a5c444367a';
+export const EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER = '965e3776-b966-4be8-83f7-6cd3bce5e1bd';
 
 export default defineView({
   universalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
@@ -12,7 +12,7 @@ export default defineView({
   position: 0,
   fields: [
     {
-      universalIdentifier: '496c40c2-5766-419c-93bf-20fdad3f34bb',
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
       fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
       position: 0,
       isVisible: true,

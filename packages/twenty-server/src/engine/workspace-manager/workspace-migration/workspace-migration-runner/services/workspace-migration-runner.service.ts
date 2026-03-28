@@ -85,9 +85,15 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatRoleMaps') ||
       flatMapsKeysSet.has('flatRoleTargetMaps');
 
+    const shouldInvalidateRolesPermissionsCache =
+      flatMapsKeysSet.has('flatObjectPermissionMaps') ||
+      flatMapsKeysSet.has('flatFieldPermissionMaps') ||
+      flatMapsKeysSet.has('flatPermissionFlagMaps');
+
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
-      shouldInvalidateRoleMapCache
+      shouldInvalidateRoleMapCache ||
+      shouldInvalidateRolesPermissionsCache
     ) {
       asyncOperations.push(
         this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -160,11 +166,13 @@ export class WorkspaceMigrationRunnerService {
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
+    hasSchemaMetadataChanged: boolean;
   }> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
     const queryRunner = this.coreDataSource.createQueryRunner();
+
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
     ];
@@ -214,12 +222,12 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.time('Runner', 'Transaction execution');
 
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const allMetadataEvents: MetadataEvent[] = [];
+
     try {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-
-      const allMetadataEvents: MetadataEvent[] = [];
-
       for (const action of actions) {
         const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
@@ -246,22 +254,13 @@ export class WorkspaceMigrationRunnerService {
       await queryRunner.commitTransaction();
 
       this.logger.timeEnd('Runner', 'Transaction execution');
-
-      await this.invalidateCache({
-        allFlatEntityMapsKeys,
-        workspaceId,
-      });
-
-      this.logger.timeEnd('Runner', 'Total execution');
-
-      return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
     } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction().catch((error) =>
-          // oxlint-disable-next-line no-console
-          console.trace(`Failed to rollback transaction: ${error.message}`),
-        );
-      }
+      await queryRunner.rollbackTransaction().catch((rollbackError) =>
+        // oxlint-disable-next-line no-console
+        console.trace(
+          `Failed to rollback transaction: ${rollbackError.message}`,
+        ),
+      );
 
       const invertedActions = [...actions].reverse();
 
@@ -290,5 +289,29 @@ export class WorkspaceMigrationRunnerService {
     } finally {
       await queryRunner.release();
     }
+
+    try {
+      await this.invalidateCache({
+        allFlatEntityMapsKeys,
+        workspaceId,
+      });
+    } catch (cacheError) {
+      this.logger.error(
+        `Cache invalidation failed after committed transaction: ${cacheError}`,
+        'Runner',
+      );
+    }
+
+    const hasSchemaMetadataChanged =
+      allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
+      allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
+
+    this.logger.timeEnd('Runner', 'Total execution');
+
+    return {
+      allFlatEntityMaps,
+      metadataEvents: allMetadataEvents,
+      hasSchemaMetadataChanged,
+    };
   };
 }

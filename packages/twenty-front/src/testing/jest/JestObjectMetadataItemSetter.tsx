@@ -1,24 +1,25 @@
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
-import { splitObjectMetadataItemWithRelated } from '@/metadata-store/utils/splitObjectMetadataItemWithRelated';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { splitCompositeObjectMetadataItems } from '@/metadata-store/utils/splitCompositeObjectMetadataItems';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 export const JestObjectMetadataItemSetter = ({
   children,
   objectMetadataItems,
 }: {
   children: ReactNode;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }) => {
-  const { replaceDraft, applyChanges } = useMetadataStore();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const items = objectMetadataItems ?? generatedMockObjectMetadataItems;
+    const items =
+      objectMetadataItems ?? getTestEnrichedObjectMetadataItemsMock();
     const { flatObjects, flatFields, flatIndexes } =
-      splitObjectMetadataItemWithRelated(items);
+      splitCompositeObjectMetadataItems(items);
 
     replaceDraft('objectMetadataItems', flatObjects);
     replaceDraft('fieldMetadataItems', flatFields);

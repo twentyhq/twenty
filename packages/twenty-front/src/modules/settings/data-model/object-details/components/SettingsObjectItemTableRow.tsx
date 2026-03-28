@@ -3,7 +3,7 @@ import { type ReactNode, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -11,6 +11,7 @@ import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   StyledActionTableCell,
   StyledNameTableCell,
+  StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useIcons } from 'twenty-ui/display';
@@ -18,7 +19,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   link?: string;
   totalObjectCount: number;
 };
@@ -70,25 +71,27 @@ export const SettingsObjectMetadataItemTableRow = ({
       key={objectMetadataItem.namePlural}
       to={link}
     >
-      <StyledNameTableCell>
-        {isDefined(Icon) && (
-          <Icon
-            style={{
-              minWidth: theme.icon.size.md,
-            }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
-        <StyledNameContainer>
-          <StyledNameLabel title={objectMetadataItem.labelPlural}>
-            {objectMetadataItem.labelPlural}
-          </StyledNameLabel>
-          {!objectMetadataItem.isActive && (
-            <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+      <StyledStickyFirstCell>
+        <StyledNameTableCell>
+          {isDefined(Icon) && (
+            <Icon
+              style={{
+                minWidth: theme.icon.size.md,
+              }}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
           )}
-        </StyledNameContainer>
-      </StyledNameTableCell>
+          <StyledNameContainer>
+            <StyledNameLabel title={objectMetadataItem.labelPlural}>
+              {objectMetadataItem.labelPlural}
+            </StyledNameLabel>
+            {!objectMetadataItem.isActive && (
+              <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+            )}
+          </StyledNameContainer>
+        </StyledNameTableCell>
+      </StyledStickyFirstCell>
       <TableCell>
         <SettingsItemTypeTag item={objectMetadataItem} />
       </TableCell>

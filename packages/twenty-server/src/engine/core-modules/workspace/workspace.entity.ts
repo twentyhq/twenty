@@ -35,10 +35,10 @@ import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
-  DEFAULT_FAST_MODEL,
-  DEFAULT_SMART_MODEL,
-  type ModelId,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
+import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -234,13 +234,9 @@ export class WorkspaceEntity {
   @Column({ default: 1 })
   metadataVersion: number;
 
-  @Field()
-  @Column({ default: '' })
-  databaseUrl: string;
-
-  @Field()
-  @Column({ default: '' })
-  databaseSchema: string;
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true, default: null })
+  databaseSchema: string | null;
 
   @Field()
   @Column({ unique: true })
@@ -303,29 +299,24 @@ export class WorkspaceEntity {
   version: string | null;
 
   @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: DEFAULT_FAST_MODEL })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AUTO_SELECT_FAST_MODEL_ID,
+  })
   fastModel: ModelId;
 
   @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: DEFAULT_SMART_MODEL })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AUTO_SELECT_SMART_MODEL_ID,
+  })
   smartModel: ModelId;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiAdditionalInstructions: string | null;
-
-  @Field(() => Boolean, { nullable: false })
-  @Column({ type: 'boolean', nullable: false, default: true })
-  autoEnableNewAiModels: boolean;
-
-  @Field(() => [String], { nullable: true })
-  @Column({
-    type: 'varchar',
-    array: true,
-    nullable: false,
-    default: '{}',
-  })
-  disabledAiModelIds: string[];
 
   @Field(() => [String], { nullable: true })
   @Column({

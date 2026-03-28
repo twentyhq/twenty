@@ -2,17 +2,16 @@ import type { ReactNode } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
-import { useObjectNavItemColor } from '@/navigation-menu-item/common/hooks/useObjectNavItemColor';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { ViewKey } from '@/views/types/ViewKey';
 import { useLocation } from 'react-router-dom';
 import {
   AppPath,
@@ -24,7 +23,7 @@ import { Avatar, useIcons } from 'twenty-ui/display';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   navigationMenuItem?: NavigationMenuItem;
   isSelectedInEditMode?: boolean;
   onEditModeClick?: () => void;
@@ -55,9 +54,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     lastVisitedViewPerObjectMetadataItem?.[objectMetadataItem.id];
 
   const { getIcon } = useIcons();
-  const objectNavItemColor = useObjectNavItemColor(
-    objectMetadataItem.nameSingular,
-  );
+  const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
   const location = useLocation();
   const currentPath = location.pathname;
   const currentPathWithSearch = `${location.pathname}${location.search}`;
@@ -104,10 +101,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const view = isDefined(navigationMenuItem?.viewId)
     ? views.find((view) => view.id === navigationMenuItem!.viewId)
     : undefined;
-  const viewKey = view?.key ?? null;
-
-  const isViewWithCustomName =
-    isView && viewKey !== ViewKey.INDEX && isDefined(view);
+  const isViewWithResolvedView = isView && isDefined(view);
 
   const itemLabel = isDefined(navigationMenuItem)
     ? getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views)
@@ -115,7 +109,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const label = isRecord
     ? itemLabel
-    : isViewWithCustomName
+    : isViewWithResolvedView
       ? itemLabel
       : objectMetadataItem.labelPlural;
 
@@ -140,7 +134,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
           placeholder={itemLabel}
         />
       )
-    : isViewWithCustomName && isDefined(view?.icon)
+    : isViewWithResolvedView && isDefined(view?.icon)
       ? () => (
           <ObjectIconWithViewOverlay
             ObjectIcon={getIcon(objectMetadataItem.icon)}
@@ -153,7 +147,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const iconThemeColor = !isRecord ? objectNavItemColor : undefined;
 
   const secondaryLabel =
-    isRecord || isViewWithCustomName
+    isRecord || isViewWithResolvedView
       ? objectMetadataItem.labelSingular
       : undefined;
 

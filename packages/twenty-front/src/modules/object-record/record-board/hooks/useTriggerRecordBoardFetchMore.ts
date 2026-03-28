@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE } from '@/object-record/record-board/constants/RecordBoardFetchMoreThrottlingWaitTimeInMillisecondsToAvoidReactFreeze';
@@ -16,12 +16,13 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 import { sleep } from '~/utils/sleep';
 
@@ -93,8 +94,7 @@ export const useTriggerRecordBoardFetchMore = () => {
           ),
         );
       })
-      .map((recordGroupDefinition) => recordGroupDefinition.value)
-      .filter(isDefined);
+      .map((recordGroupDefinition) => recordGroupDefinition.value);
 
     if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
       cleanStateBeforeExit();
@@ -102,15 +102,18 @@ export const useTriggerRecordBoardFetchMore = () => {
       return;
     }
 
+    const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
+      recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
+      recordGroupValues: recordGroupValuesThatShouldBeFetched,
+    });
+
     const recordIndexGroupsRecordsGroupByLazyQueryResult =
       await executeRecordIndexGroupsRecordsLazyGroupBy({
         variables: {
           offsetForRecords: newOffset,
           filter: {
             ...combinedFilters,
-            [recordIndexGroupFieldMetadataItem?.name ?? '']: {
-              in: [...recordGroupValuesThatShouldBeFetched],
-            },
+            ...recordGroupOptionsFilter,
           },
         },
       });

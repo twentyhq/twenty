@@ -5,6 +5,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -59,16 +60,33 @@ const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
   [WidgetType.WORKFLOW]: WidgetConfigurationType.WORKFLOW,
   [WidgetType.WORKFLOW_VERSION]: WidgetConfigurationType.WORKFLOW_VERSION,
   [WidgetType.WORKFLOW_RUN]: WidgetConfigurationType.WORKFLOW_RUN,
+  [WidgetType.RECORD_TABLE]: WidgetConfigurationType.RECORD_TABLE,
 };
 
 const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   Record<AllStandardObjectName, string>
 > = {
+  blocklist: 'blocklistRecordPageFields',
+  calendarChannel: 'calendarChannelRecordPageFields',
+  calendarChannelEventAssociation:
+    'calendarChannelEventAssociationRecordPageFields',
+  calendarEventParticipant: 'calendarEventParticipantRecordPageFields',
   company: 'companyRecordPageFields',
-  person: 'personRecordPageFields',
-  opportunity: 'opportunityRecordPageFields',
-  task: 'taskRecordPageFields',
+  connectedAccount: 'connectedAccountRecordPageFields',
+  favorite: 'favoriteRecordPageFields',
+  favoriteFolder: 'favoriteFolderRecordPageFields',
+  messageChannel: 'messageChannelRecordPageFields',
+  messageChannelMessageAssociation:
+    'messageChannelMessageAssociationRecordPageFields',
+  messageChannelMessageAssociationMessageFolder:
+    'messageChannelMessageAssociationMessageFolderRecordPageFields',
+  messageFolder: 'messageFolderRecordPageFields',
+  messageParticipant: 'messageParticipantRecordPageFields',
   note: 'noteRecordPageFields',
+  opportunity: 'opportunityRecordPageFields',
+  person: 'personRecordPageFields',
+  task: 'taskRecordPageFields',
+  workflowAutomatedTrigger: 'workflowAutomatedTriggerRecordPageFields',
   workflowRun: 'workflowRunRecordPageFields',
   workflowVersion: 'workflowVersionRecordPageFields',
 };
@@ -77,10 +95,12 @@ const buildRecordPageWidgetConfigurations = ({
   widgetType,
   layoutObjectName,
   standardObjectMetadataRelatedEntityIds,
+  fieldUniversalIdentifier,
 }: {
   widgetType: WidgetType;
   layoutObjectName: AllStandardObjectName | null;
   standardObjectMetadataRelatedEntityIds: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs['standardObjectMetadataRelatedEntityIds'];
+  fieldUniversalIdentifier?: string;
 }): {
   configuration: AllPageLayoutWidgetConfiguration;
   universalConfiguration: CreateStandardPageLayoutWidgetContext['universalConfiguration'];
@@ -89,6 +109,18 @@ const buildRecordPageWidgetConfigurations = ({
     return buildFieldsWidgetConfiguration({
       objectName: layoutObjectName,
       standardObjectMetadataRelatedEntityIds,
+    });
+  }
+
+  if (
+    widgetType === WidgetType.FIELD &&
+    isDefined(layoutObjectName) &&
+    isDefined(fieldUniversalIdentifier)
+  ) {
+    return buildFieldWidgetConfiguration({
+      objectName: layoutObjectName,
+      standardObjectMetadataRelatedEntityIds,
+      fieldUniversalIdentifier,
     });
   }
 
@@ -175,6 +207,47 @@ const buildFieldsWidgetConfiguration = ({
   };
 };
 
+const buildFieldWidgetConfiguration = ({
+  objectName,
+  standardObjectMetadataRelatedEntityIds,
+  fieldUniversalIdentifier,
+}: {
+  objectName: AllStandardObjectName;
+  standardObjectMetadataRelatedEntityIds: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs['standardObjectMetadataRelatedEntityIds'];
+  fieldUniversalIdentifier: string;
+}): {
+  configuration: AllPageLayoutWidgetConfiguration;
+  universalConfiguration: CreateStandardPageLayoutWidgetContext['universalConfiguration'];
+} => {
+  const fields = standardObjectMetadataRelatedEntityIds[objectName]
+    .fields as Record<string, { id: string }>;
+
+  const fieldName = Object.keys(STANDARD_OBJECTS[objectName].fields).find(
+    (name) =>
+      (
+        STANDARD_OBJECTS[objectName].fields as Record<
+          string,
+          { universalIdentifier: string }
+        >
+      )[name]?.universalIdentifier === fieldUniversalIdentifier,
+  );
+
+  const fieldMetadataId = fieldName ? (fields[fieldName]?.id ?? null) : null;
+
+  return {
+    configuration: {
+      configurationType: WidgetConfigurationType.FIELD,
+      fieldMetadataId: fieldMetadataId ?? fieldUniversalIdentifier,
+      fieldDisplayMode: FieldDisplayMode.CARD,
+    },
+    universalConfiguration: {
+      configurationType: WidgetConfigurationType.FIELD,
+      fieldMetadataId: fieldUniversalIdentifier,
+      fieldDisplayMode: FieldDisplayMode.CARD,
+    },
+  };
+};
+
 const computeRecordPageWidgets = ({
   now,
   workspaceId,
@@ -225,6 +298,7 @@ const computeRecordPageWidgets = ({
             widgetType: widget.type,
             layoutObjectName,
             standardObjectMetadataRelatedEntityIds,
+            fieldUniversalIdentifier: widget.fieldUniversalIdentifier,
           });
 
         allWidgets.push(

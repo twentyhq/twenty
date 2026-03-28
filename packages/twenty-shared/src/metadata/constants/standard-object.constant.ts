@@ -188,9 +188,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          handle: {
-            universalIdentifier: 'e22a1d19-c1bb-4265-ae48-2054513c21fe',
-          },
           workspaceMember: {
             universalIdentifier: 'f2f5732f-7435-44be-986b-4c4d834fdfeb',
           },
@@ -405,9 +402,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          handle: {
-            universalIdentifier: 'cd1f641b-5746-49db-9a7e-82dd9a63593d',
-          },
           connectedAccount: {
             universalIdentifier: 'bdb40f41-f9ba-4b59-a8cf-878c23701ab3',
           },
@@ -808,6 +802,33 @@ export const STANDARD_OBJECTS = {
           createdBy: {
             universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1210',
           },
+          updatedAt: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1212',
+          },
+          updatedBy: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1213',
+          },
+          people: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1214',
+          },
+          taskTargets: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1215',
+          },
+          noteTargets: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1216',
+          },
+          opportunities: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1217',
+          },
+          favorites: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1218',
+          },
+          attachments: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1219',
+          },
+          timelineActivities: {
+            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c121a',
+          },
         },
       },
     },
@@ -914,9 +935,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          handle: {
-            universalIdentifier: '41d86e23-ceb2-41ab-975f-8ec5a1023ece',
-          },
           provider: {
             universalIdentifier: '83171d2a-0d11-42b1-991d-8d4346b02cff',
           },
@@ -1213,9 +1231,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          name: {
-            universalIdentifier: 'cac4f0f7-3a6a-49b1-b86f-41b20f2455c0',
-          },
           createdAt: {
             universalIdentifier: 'a4e42591-844c-47d1-b72e-5ded3d541694',
           },
@@ -1554,9 +1569,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          handle: {
-            universalIdentifier: 'a9cbb9a5-a6b4-417e-93ad-a5e578c222db',
-          },
           connectedAccount: {
             universalIdentifier: '19079cf6-2a9c-40b9-b6c2-58d63c6e37ad',
           },
@@ -1670,9 +1682,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          name: {
-            universalIdentifier: '6fa8c474-ee22-47f1-b830-4f169ff82315',
-          },
           messageChannel: {
             universalIdentifier: '2fb6ff09-bed5-4b31-af0f-7fa3df5612da',
           },
@@ -1790,9 +1799,6 @@ export const STANDARD_OBJECTS = {
           },
           role: {
             universalIdentifier: '5d1f9a65-85cc-41b2-a8bf-8e2c97aab4b3',
-          },
-          handle: {
-            universalIdentifier: '97295fc0-cdb8-4d84-8c1b-327837255c0d',
           },
           displayName: {
             universalIdentifier: 'c50748fe-9f54-4e09-b572-111f076ec7db',
@@ -2018,9 +2024,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          title: {
-            universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115201',
-          },
           createdAt: {
             universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115202',
           },
@@ -2029,6 +2032,24 @@ export const STANDARD_OBJECTS = {
           },
           noteTargets: {
             universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115204',
+          },
+          bodyV2: {
+            universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115205',
+          },
+          updatedAt: {
+            universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115206',
+          },
+          updatedBy: {
+            universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115207',
+          },
+          attachments: {
+            universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115208',
+          },
+          timelineActivities: {
+            universalIdentifier: '20202020-af05-4a05-8a05-a0be5a115209',
+          },
+          favorites: {
+            universalIdentifier: '20202020-af05-4a05-8a05-a0be5a11520a',
           },
         },
       },
@@ -2278,6 +2299,27 @@ export const STANDARD_OBJECTS = {
           createdBy: {
             universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca3208',
           },
+          updatedAt: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca320a',
+          },
+          updatedBy: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca320b',
+          },
+          favorites: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca320c',
+          },
+          taskTargets: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca320d',
+          },
+          noteTargets: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca320e',
+          },
+          attachments: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca320f',
+          },
+          timelineActivities: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca3210',
+          },
         },
       },
     },
@@ -2436,6 +2478,39 @@ export const STANDARD_OBJECTS = {
           },
           createdBy: {
             universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12210',
+          },
+          updatedAt: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12212',
+          },
+          updatedBy: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12213',
+          },
+          avatarFile: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12214',
+          },
+          pointOfContactForOpportunities: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12215',
+          },
+          taskTargets: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12216',
+          },
+          noteTargets: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12217',
+          },
+          favorites: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12218',
+          },
+          attachments: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12219',
+          },
+          messageParticipants: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea1221a',
+          },
+          calendarEventParticipants: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea1221b',
+          },
+          timelineActivities: {
+            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea1221c',
           },
         },
       },
@@ -2610,9 +2685,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          title: {
-            universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a6201',
-          },
           dueAt: {
             universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a6202',
           },
@@ -2630,6 +2702,24 @@ export const STANDARD_OBJECTS = {
           },
           taskTargets: {
             universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a6207',
+          },
+          bodyV2: {
+            universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a6208',
+          },
+          updatedAt: {
+            universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a6209',
+          },
+          updatedBy: {
+            universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a620a',
+          },
+          attachments: {
+            universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a620b',
+          },
+          timelineActivities: {
+            universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a620c',
+          },
+          favorites: {
+            universalIdentifier: '20202020-af06-4a06-8a06-ba5ca11a620d',
           },
         },
       },
@@ -3063,8 +3153,6 @@ export const STANDARD_OBJECTS = {
       updatedBy: {
         universalIdentifier: '730dc1c9-34f5-4c22-84a6-bcb55b7604e2',
       },
-      output: { universalIdentifier: '20202020-7be4-4db2-8ac6-3ff0d740843d' },
-      context: { universalIdentifier: '20202020-189c-478a-b867-d72feaf5926a' },
       state: { universalIdentifier: '20202020-611f-45f3-9cde-d64927e8ec57' },
       favorites: {
         universalIdentifier: '20202020-4baf-4604-b899-2f7fcfbbf90d',
@@ -3114,9 +3202,6 @@ export const STANDARD_OBJECTS = {
       workflowRunRecordPageFields: {
         universalIdentifier: '20202020-a011-4a11-8a11-a0bcf10abcf1',
         viewFields: {
-          name: {
-            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcf5',
-          },
           status: {
             universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcf6',
           },
@@ -3137,6 +3222,24 @@ export const STANDARD_OBJECTS = {
           },
           createdBy: {
             universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfc',
+          },
+          enqueuedAt: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abcfd',
+          },
+          state: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abd01',
+          },
+          updatedAt: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abd02',
+          },
+          updatedBy: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abd03',
+          },
+          favorites: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abd04',
+          },
+          timelineActivities: {
+            universalIdentifier: '20202020-af11-4a11-8a11-a0bcf10abd05',
           },
         },
         viewFieldGroups: {
@@ -3229,9 +3332,6 @@ export const STANDARD_OBJECTS = {
       workflowVersionRecordPageFields: {
         universalIdentifier: '20202020-a010-4a10-8a10-a0bcf10aaef1',
         viewFields: {
-          name: {
-            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef5',
-          },
           status: {
             universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef6',
           },
@@ -3243,6 +3343,27 @@ export const STANDARD_OBJECTS = {
           },
           createdAt: {
             universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaef9',
+          },
+          steps: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaefa',
+          },
+          createdBy: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaefb',
+          },
+          updatedAt: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaefc',
+          },
+          updatedBy: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaefd',
+          },
+          runs: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaefe',
+          },
+          favorites: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaeff',
+          },
+          timelineActivities: {
+            universalIdentifier: '20202020-af10-4a10-8a10-a0bcf10aaf01',
           },
         },
         viewFieldGroups: {

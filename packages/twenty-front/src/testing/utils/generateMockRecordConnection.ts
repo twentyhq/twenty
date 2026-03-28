@@ -1,5 +1,5 @@
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { generateMockRecord } from '~/testing/utils/generateMockRecord';
 
@@ -20,7 +20,7 @@ export const generateMockRecordConnection = ({
   );
 
   return getRecordConnectionFromRecords({
-    objectMetadataItems: generatedMockObjectMetadataItems,
+    objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
     objectMetadataItem,
     records: prefilledRecords,
     computeReferences,

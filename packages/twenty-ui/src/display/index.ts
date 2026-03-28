@@ -35,6 +35,7 @@ export type { IconProps } from './icon/components/Icon';
 export { Icon } from './icon/components/Icon';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconBrandAnthropic } from './icon/components/IconBrandAnthropic';
+export { IconBrandGemini } from './icon/components/IconBrandGemini';
 export { IconBrandGroq } from './icon/components/IconBrandGroq';
 export { IconBrandMistral } from './icon/components/IconBrandMistral';
 export { IconBrandXai } from './icon/components/IconBrandXai';
@@ -46,6 +47,8 @@ export { IconLockCustom } from './icon/components/IconLock';
 export { IconMicrosoft } from './icon/components/IconMicrosoft';
 export { IconMicrosoftCalendar } from './icon/components/IconMicrosoftCalendar';
 export { IconMicrosoftOutlook } from './icon/components/IconMicrosoftOutlook';
+export { IconModelClaude } from './icon/components/IconModelClaude';
+export { IconProviderOpenai } from './icon/components/IconProviderOpenai';
 export { IconRelationManyToOne } from './icon/components/IconRelationManyToOne';
 export { IconTrashXOff } from './icon/components/IconTrashXOff';
 export { IconTwentyStar } from './icon/components/IconTwentyStar';
@@ -83,8 +86,8 @@ export {
   IconAlignLeft,
   IconAlignRight,
   IconApi,
-  IconApps,
   IconAppWindow,
+  IconApps,
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
@@ -92,12 +95,12 @@ export {
   IconArrowLeft,
   IconArrowMerge,
   IconArrowRight,
+  IconArrowUp,
+  IconArrowUpRight,
   IconArrowsDiagonal,
   IconArrowsSort,
   IconArrowsSplit2,
   IconArrowsVertical,
-  IconArrowUp,
-  IconArrowUpRight,
   IconAt,
   IconAxisX,
   IconAxisY,
@@ -150,8 +153,8 @@ export {
   IconChevronLeft,
   IconChevronRight,
   IconChevronRightPipe,
-  IconChevronsRight,
   IconChevronUp,
+  IconChevronsRight,
   IconCircle,
   IconCircleDashed,
   IconCircleDot,
@@ -256,8 +259,8 @@ export {
   IconFilterCog,
   IconFilterOff,
   IconFilterPlus,
-  IconFilters,
   IconFilterX,
+  IconFilters,
   IconFlag,
   IconFlask,
   IconFocusCentered,
@@ -313,6 +316,7 @@ export {
   IconLayoutList,
   IconLayoutNavbar,
   IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarLeftExpand,
   IconLayoutSidebarRight,
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
@@ -326,6 +330,7 @@ export {
   IconListCheck,
   IconListDetails,
   IconListNumbers,
+  IconListSearch,
   IconLoader,
   IconLock,
   IconLockOpen,
@@ -364,6 +369,7 @@ export {
   IconPhoto,
   IconPhotoUp,
   IconPilcrow,
+  IconPin,
   IconPinned,
   IconPinnedOff,
   IconPlayerPause,
@@ -413,10 +419,10 @@ export {
   IconShield,
   IconSitemap,
   IconSlash,
+  IconSortAZ,
   IconSortAscending,
   IconSortAscendingLetters,
   IconSortAscendingNumbers,
-  IconSortAZ,
   IconSortDescending,
   IconSortDescendingLetters,
   IconSortDescendingNumbers,
@@ -425,6 +431,7 @@ export {
   IconSpy,
   IconSql,
   IconSquare,
+  IconSquareCheck,
   IconSquareKey,
   IconSquareNumber1,
   IconSquareNumber2,
@@ -435,8 +442,10 @@ export {
   IconSquareNumber7,
   IconSquareNumber8,
   IconSquareNumber9,
+  IconSquarePlus,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
+  IconSquareX,
   IconStack2,
   IconStatusChange,
   IconStepInto,

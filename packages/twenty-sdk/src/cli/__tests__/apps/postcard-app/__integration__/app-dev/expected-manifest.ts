@@ -49,7 +49,6 @@ export const EXPECTED_MANIFEST: Manifest = {
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
     yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
     packageJsonChecksum: '2851d0e2c3621a57e1fd103a245b6fde',
-    apiClientChecksum: null,
   },
   frontComponents: [
     {
@@ -61,6 +60,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/root.front-component.tsx',
       universalIdentifier: 'a0a1a2a3-a4a5-4000-8000-000000000001',
       isHeadless: false,
+      usesSdkClient: false,
     },
     {
       builtComponentPath: 'src/components/card.front-component.mjs',
@@ -71,6 +71,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/components/card.front-component.tsx',
       universalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
       isHeadless: false,
+      usesSdkClient: false,
     },
     {
       builtComponentPath: 'src/components/greeting.front-component.mjs',
@@ -81,6 +82,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/components/greeting.front-component.tsx',
       universalIdentifier: '370ae182-743f-4ecb-b625-7ac48e21f0e5',
       isHeadless: false,
+      usesSdkClient: false,
     },
     {
       builtComponentPath: 'src/components/test.front-component.mjs',
@@ -91,6 +93,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       sourceComponentPath: 'src/components/test.front-component.tsx',
       universalIdentifier: 'f1234567-abcd-4000-8000-000000000001',
       isHeadless: false,
+      usesSdkClient: false,
     },
   ],
 
@@ -269,7 +272,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       ],
       type: FieldType.SELECT,
-      universalIdentifier: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+      universalIdentifier: 'b602dbd9-e511-49ce-b6d3-b697218dc69c',
     },
     {
       objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
@@ -277,7 +280,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Priority',
       name: 'priority',
       type: FieldType.NUMBER,
-      universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+      universalIdentifier: '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
     },
     {
       label: 'Recipient',
@@ -1266,8 +1269,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
         {
           icon: 'IconHome',
-          label: 'Address',
-          name: 'address',
+          label: 'Mailing Address',
+          name: 'mailingAddress',
           type: FieldType.ADDRESS,
           universalIdentifier: 'd3a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
         },

@@ -6,7 +6,7 @@ import { In, MoreThanOrEqual, type Repository } from 'typeorm';
 
 import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { type DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -178,7 +178,10 @@ export abstract class WorkspacesMigrationCommandRunner<
     }
 
     this.migrationReport.fail.forEach(({ error, workspaceId }) =>
-      this.logger.error(`Error in workspace ${workspaceId}: ${error.message}`),
+      this.logger.error(
+        `Error in workspace ${workspaceId}: ${error.message}`,
+        error.stack,
+      ),
     );
   }
 

@@ -1,7 +1,8 @@
+import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -15,8 +16,8 @@ export const useExitLayoutCustomizationMode = () => {
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
-  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeState,
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
   );
   const setIsLayoutCustomizationModeEnabled = useSetAtomState(
     isLayoutCustomizationModeEnabledState,
@@ -24,7 +25,8 @@ export const useExitLayoutCustomizationMode = () => {
 
   const exitLayoutCustomizationMode = useCallback(() => {
     setNavigationMenuItemsDraft(null);
-    setSelectedNavigationMenuItemInEditMode(null);
+    setSelectedNavigationMenuItemIdInEditMode(null);
+    store.set(commandMenuItemsDraftState.atom, null);
 
     store.set(currentPageLayoutIdState.atom, null);
     store.set(activeCustomizationPageLayoutIdsState.atom, []);
@@ -32,7 +34,7 @@ export const useExitLayoutCustomizationMode = () => {
     closeSidePanelMenu();
   }, [
     setNavigationMenuItemsDraft,
-    setSelectedNavigationMenuItemInEditMode,
+    setSelectedNavigationMenuItemIdInEditMode,
     setIsLayoutCustomizationModeEnabled,
     closeSidePanelMenu,
     store,

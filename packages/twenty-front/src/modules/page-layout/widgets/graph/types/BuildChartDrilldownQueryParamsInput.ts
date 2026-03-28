@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { type FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
@@ -8,7 +8,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type BuildChartDrilldownQueryParamsInput = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   configuration:
     | BarChartConfiguration
     | LineChartConfiguration
