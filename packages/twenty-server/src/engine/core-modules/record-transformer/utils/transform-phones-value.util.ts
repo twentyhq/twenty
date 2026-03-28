@@ -139,9 +139,12 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
   }
 
   const finalPrimaryPhoneCallingCode =
-    callingCode ??
-    (`+${phone.countryCallingCode}` as undefined | CountryCallingCode);
-  const finalPrimaryPhoneCountryCode = countryCode ?? phone.country;
+    (isNonEmptyString(callingCode)
+      ? callingCode
+      : (`+${phone.countryCallingCode}` as undefined | CountryCallingCode));
+  const finalPrimaryPhoneCountryCode = isNonEmptyString(countryCode)
+    ? countryCode
+    : phone.country;
 
   return {
     countryCode: finalPrimaryPhoneCountryCode,
