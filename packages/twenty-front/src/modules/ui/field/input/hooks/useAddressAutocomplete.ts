@@ -79,8 +79,30 @@ export const useAddressAutocomplete = (
       const placeData = await getPlaceDetailsData(placeId, token);
       const countryName = findCountryNameByCountryCode(placeData?.country);
 
+      let cleanedStreet1 =
+        addressStreet1 || (internalValue?.addressStreet1 ?? '');
+
+      if (isDefined(addressStreet1)) {
+        const partsToRemove = [
+          placeData?.city,
+          placeData?.state,
+          placeData?.postcode,
+          countryName,
+        ].filter(isDefined);
+
+        for (const part of partsToRemove) {
+          cleanedStreet1 = cleanedStreet1.replace(part, '');
+        }
+
+        cleanedStreet1 = cleanedStreet1
+          .replace(/,\s*,/g, ',')
+          .replace(/,\s*$/, '')
+          .replace(/^\s*,/, '')
+          .trim();
+      }
+
       const updatedAddress = {
-        addressStreet1: addressStreet1 || (internalValue?.addressStreet1 ?? ''),
+        addressStreet1: cleanedStreet1,
         addressStreet2: internalValue?.addressStreet2 ?? null,
         addressCity: placeData?.city || (internalValue?.addressCity ?? null),
         addressState: placeData?.state || (internalValue?.addressState ?? null),
