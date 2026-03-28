@@ -506,7 +506,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
   });
 
   describe('Priority order - Standard objects', () => {
-    it('should prioritize translation override over SOURCE_LOCALE override for non-SOURCE_LOCALE', () => {
+    it('should prioritize direct override over translation override for non-SOURCE_LOCALE (preserves user customizations)', () => {
       const objectMetadata = {
         labelSingular: 'Standard Label',
         labelPlural: 'Standard Labels',
@@ -514,8 +514,8 @@ describe('resolveObjectMetadataStandardOverride', () => {
         icon: 'default-icon',
         isCustom: false,
         standardOverrides: {
-          labelSingular: 'Source Override',
-          labelPlural: 'Source Overrides',
+          labelSingular: 'User Custom Name',
+          labelPlural: 'User Custom Names',
           translations: {
             'fr-FR': {
               labelSingular: 'Translation Override',
@@ -532,7 +532,7 @@ describe('resolveObjectMetadataStandardOverride', () => {
         mockI18n,
       );
 
-      expect(result).toBe('Translation Override');
+      expect(result).toBe('User Custom Name');
       expect(mockGenerateMessageId).not.toHaveBeenCalled();
       expect(mockI18n._).not.toHaveBeenCalled();
     });

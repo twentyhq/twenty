@@ -34,6 +34,14 @@ export const resolveObjectMetadataStandardOverride = (
     return objectMetadata.standardOverrides[labelKey];
   }
 
+  // Direct standardOverrides (user customizations) take priority over
+  // locale-specific translations and auto i18n translations.
+  // This ensures that user-customized names (e.g., renaming "Company" to "ASTF")
+  // are preserved regardless of the active UI locale. See #18950.
+  if (isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])) {
+    return objectMetadata.standardOverrides[labelKey] ?? '';
+  }
+
   if (
     isDefined(objectMetadata.standardOverrides?.translations) &&
     labelKey !== 'icon' &&
@@ -45,10 +53,6 @@ export const resolveObjectMetadataStandardOverride = (
     if (isDefined(translationValue)) {
       return translationValue;
     }
-  }
-
-  if (isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])) {
-    return objectMetadata.standardOverrides[labelKey] ?? '';
   }
 
   const messageId = generateMessageId(objectMetadata[labelKey] ?? '');

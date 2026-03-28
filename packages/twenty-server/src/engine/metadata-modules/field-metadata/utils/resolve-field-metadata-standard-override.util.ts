@@ -1,6 +1,6 @@
 import { type I18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
@@ -24,6 +24,14 @@ export const resolveFieldMetadataStandardOverride = (
     return fieldMetadata.standardOverrides.icon;
   }
 
+  // Direct standardOverrides (user customizations) take priority over
+  // locale-specific translations and auto i18n translations.
+  // This ensures that user-customized labels are preserved regardless
+  // of the active UI locale. See #18950.
+  if (isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])) {
+    return fieldMetadata.standardOverrides[labelKey] ?? '';
+  }
+
   if (
     isDefined(fieldMetadata.standardOverrides?.translations) &&
     isDefined(locale) &&
@@ -35,13 +43,6 @@ export const resolveFieldMetadataStandardOverride = (
     if (isDefined(translationValue)) {
       return translationValue;
     }
-  }
-
-  if (
-    locale === SOURCE_LOCALE &&
-    isNonEmptyString(fieldMetadata.standardOverrides?.[labelKey])
-  ) {
-    return fieldMetadata.standardOverrides[labelKey] ?? '';
   }
 
   const messageId = generateMessageId(fieldMetadata[labelKey] ?? '');

@@ -262,7 +262,7 @@ describe('resolveFieldMetadataStandardOverride', () => {
       ).toBe('overridden-icon');
     });
 
-    it('should not use direct override for non-SOURCE_LOCALE', () => {
+    it('should use direct override for non-SOURCE_LOCALE (preserves user customizations)', () => {
       const fieldMetadata = {
         label: 'Standard Label',
         description: 'Standard Description',
@@ -273,9 +273,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         },
       };
 
-      mockGenerateMessageId.mockReturnValue('generated-message-id');
-      mockI18n._.mockReturnValue('generated-message-id');
-
       const result = resolveFieldMetadataStandardOverride(
         fieldMetadata,
         'label',
@@ -283,7 +280,7 @@ describe('resolveFieldMetadataStandardOverride', () => {
         mockI18n,
       );
 
-      expect(result).toBe('Standard Label');
+      expect(result).toBe('Overridden Label');
     });
 
     it('should not use empty string override for SOURCE_LOCALE', () => {
@@ -386,14 +383,14 @@ describe('resolveFieldMetadataStandardOverride', () => {
   });
 
   describe('Priority order - Standard fields', () => {
-    it('should prioritize translation override over SOURCE_LOCALE override for non-SOURCE_LOCALE', () => {
+    it('should prioritize direct override over translation override for non-SOURCE_LOCALE (preserves user customizations)', () => {
       const fieldMetadata = {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
         isCustom: false,
         standardOverrides: {
-          label: 'Source Override',
+          label: 'User Custom Name',
           translations: {
             'fr-FR': {
               label: 'Translation Override',
@@ -409,7 +406,7 @@ describe('resolveFieldMetadataStandardOverride', () => {
         mockI18n,
       );
 
-      expect(result).toBe('Translation Override');
+      expect(result).toBe('User Custom Name');
       expect(mockGenerateMessageId).not.toHaveBeenCalled();
       expect(mockI18n._).not.toHaveBeenCalled();
     });
