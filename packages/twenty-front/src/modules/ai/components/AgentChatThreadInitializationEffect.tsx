@@ -7,6 +7,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { AGENT_CHAT_UNKNOWN_THREAD_ID } from '@/ai/constants/AgentChatUnknownThreadId';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
@@ -94,7 +95,7 @@ export const AgentChatThreadInitializationEffect = () => {
 
   useQueryWithCallbacks(GetChatThreadsDocument, {
     variables: { paging: { first: CHAT_THREADS_PAGE_SIZE } },
-    skip: isDefined(currentAIChatThread),
+    skip: isDefined(currentAIChatThread) && currentAIChatThread !== AGENT_CHAT_UNKNOWN_THREAD_ID,
     onFirstLoad: handleFirstLoad,
     onLoadingChange: handleLoadingChange,
   });

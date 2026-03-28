@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { AGENT_CHAT_UNKNOWN_THREAD_ID } from '@/ai/constants/AgentChatUnknownThreadId';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
@@ -20,7 +21,10 @@ export const useEnsureAgentChatThreadIdForSend = (
   > => {
     const currentThreadId = store.get(currentAIChatThreadState.atom);
 
-    if (currentThreadId !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+    if (
+      currentThreadId !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY &&
+      currentThreadId !== AGENT_CHAT_UNKNOWN_THREAD_ID
+    ) {
       return currentThreadId;
     }
 
