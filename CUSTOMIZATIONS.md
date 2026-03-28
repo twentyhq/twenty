@@ -172,6 +172,7 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries.ts`                 | Skip failed relation connects on upsert rows; auto-create missing related records during upsert imports     |
 | `engine/twenty-orm/repository/workspace-insert-query-builder.ts`                                        | Pass `isUpsert` flag to relation nested query processing                                                    |
+| `engine/twenty-orm/repository/workspace-update-query-builder.ts`                                       | Pass `isUpsert: true` to relation nested query processing (update path used by upsert)                     |
 | `engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts`                                | When `id` is in connect where clause, use only `id` for matching (ignore stale email/other fields)          |
 
 ### RLS and Permissions

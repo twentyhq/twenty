@@ -667,6 +667,10 @@ check_file_contains \
   "isUpsert" \
   "Insert query builder must pass isUpsert flag to relation nested queries"
 check_file_contains \
+  "packages/twenty-server/src/engine/twenty-orm/repository/workspace-update-query-builder.ts" \
+  "isUpsert" \
+  "Update query builder must pass isUpsert flag to relation nested queries"
+check_file_contains \
   "packages/twenty-server/src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts" \
   "keysToUse" \
   "Connect matching must prefer id over other unique constraint fields"

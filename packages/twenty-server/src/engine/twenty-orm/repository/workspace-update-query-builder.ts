@@ -207,6 +207,7 @@ export class WorkspaceUpdateQueryBuilder<
               | QueryDeepPartialEntityWithNestedRelationFields<T>[],
             relationNestedConfig: this.relationNestedConfig,
             queryBuilder: nestedRelationQueryBuilder,
+            isUpsert: true,
           });
 
         this.expressionMap.valuesSet =
@@ -402,6 +403,7 @@ export class WorkspaceUpdateQueryBuilder<
               | QueryDeepPartialEntityWithNestedRelationFields<T>[],
             relationNestedConfig: this.relationNestedConfig,
             queryBuilder: nestedRelationQueryBuilder,
+            isUpsert: true,
           });
 
         this.manyInputs = updatedValues.map((updatedValue, index) => ({
