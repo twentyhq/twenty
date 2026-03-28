@@ -9,13 +9,17 @@ import { executeRelationUpdatesViaMutation } from '@/object-record/spreadsheet-i
 import { extractRelationUpdatesFromImportedRows } from '@/object-record/spreadsheet-import/utils/extractRelationUpdatesFromImportedRows';
 import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-record/spreadsheet-import/utils/spreadsheetImportFilterAvailableFieldMetadataItems';
 import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
+import { ImportResultsSummary } from '@/spreadsheet-import/components/ImportResultsSummary';
 import { SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE } from '@/spreadsheet-import/constants/SpreadsheetImportCreateRecordsBatchSize';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { type SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
+import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { t } from '@lingui/core/macro';
+import React from 'react';
 
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
@@ -25,7 +29,8 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueDialog } = useDialogManager();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -87,7 +92,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
         });
 
         try {
-          await batchCreateManyRecords({
+          const { warnings, failures } = await batchCreateManyRecords({
             recordsToCreate: createInputs,
             upsert: true,
           });
@@ -112,6 +117,42 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
               }
             },
           });
+
+          // Show results summary if there were any issues
+          const hasIssues = warnings.length > 0 || failures.length > 0;
+
+          if (hasIssues) {
+            const totalRecords = data.validStructuredRows.length;
+            const successCount =
+              totalRecords - warnings.length - failures.length;
+            const columnHeaders = spreadsheetImportFields.map(
+              (field) => field.key,
+            );
+
+            enqueueDialog({
+              title: t`Import Results`,
+              children: React.createElement(ImportResultsSummary, {
+                totalRecords,
+                successCount,
+                warnings,
+                failures,
+                originalRows: data.validStructuredRows,
+                columnHeaders,
+                objectNameSingular,
+              }),
+              buttons: [
+                {
+                  title: t`Close`,
+                  variant: 'secondary' as const,
+                  role: 'confirm' as const,
+                },
+              ],
+            });
+          } else {
+            enqueueSuccessSnackBar({
+              message: t`${data.validStructuredRows.length} records imported successfully.`,
+            });
+          }
         } catch (error: any) {
           enqueueErrorSnackBar({
             apolloError: error,

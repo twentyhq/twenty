@@ -74,6 +74,12 @@ msgstr ": Today{timeZoneAbbreviationSuffix}"
 msgid ". The change will be applied the {beautifiedRenewDate}."
 msgstr ". The change will be applied the {beautifiedRenewDate}."
 
+#. js-lingui-id: YdOjT+
+#. placeholder {0}: issueCount - MAX_DISPLAYED_ISSUES
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "...and {0} more (see downloaded CSV)"
+msgstr "...and {0} more (see downloaded CSV)"
+
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 msgid "· {objectFilterDropdownSearchInput}"
@@ -172,6 +178,12 @@ msgstr "{0} credits"
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 msgid "{0} credits used"
 msgstr "{0} credits used"
+
+#. js-lingui-id: /cb326
+#. placeholder {0}: data.validStructuredRows.length
+#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
+msgid "{0} records imported successfully."
+msgstr "{0} records imported successfully."
 
 #. js-lingui-id: X8FG1C
 #. placeholder {0}: testResult.validRecords
@@ -272,6 +284,11 @@ msgstr "{eventAction} a related {eventObject}"
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr "{failedCount} file(s) failed to upload"
+
+#. js-lingui-id: 3ymTS5
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{failureCount} batch(es) failed"
+msgstr "{failureCount} batch(es) failed"
 
 #. js-lingui-id: bPZh8X
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -430,6 +447,11 @@ msgstr "{stepCount, plural, one {# step} other {# steps}}"
 msgid "{stepNumber}. Calendar"
 msgstr "{stepNumber}. Calendar"
 
+#. js-lingui-id: 01tExc
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{successCount} of {totalRecords} records imported successfully"
+msgstr "{successCount} of {totalRecords} records imported successfully"
+
 #. js-lingui-id: A9Y2Sy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "{totalCost} credits"
@@ -450,6 +472,11 @@ msgstr "{totalFieldsCount} fields"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "{visibleFieldsCount} shown"
 msgstr "{visibleFieldsCount} shown"
+
+#. js-lingui-id: Hjd/Fz
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{warningCount} records imported with warnings"
+msgstr "{warningCount} records imported with warnings"
 
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -2421,6 +2448,12 @@ msgstr "Base URL"
 msgid "Base URL is required"
 msgstr "Base URL is required"
 
+#. js-lingui-id: Mviyui
+#. placeholder {0}: failure.error
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "Batch error: {0}"
+msgstr "Batch error: {0}"
+
 #. js-lingui-id: PFohi3
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
@@ -3078,6 +3111,7 @@ msgstr "Clipboard requires a secure connection (HTTPS). Please access this app o
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
 msgid "Close"
 msgstr "Close"
 
@@ -5082,6 +5116,11 @@ msgstr "Download File"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Download Files"
 msgstr "Download Files"
+
+#. js-lingui-id: xopoY/
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "Download problem rows CSV"
+msgstr "Download problem rows CSV"
 
 #. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -7840,6 +7879,11 @@ msgstr "Import only selected folders/labels"
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import records"
 msgstr "Import records"
+
+#. js-lingui-id: IM/cxW
+#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
+msgid "Import Results"
+msgstr "Import Results"
 
 #. js-lingui-id: ZsIcZZ
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx

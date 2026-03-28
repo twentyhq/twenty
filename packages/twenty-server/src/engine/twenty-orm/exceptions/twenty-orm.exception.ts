@@ -27,6 +27,7 @@ export enum TwentyORMExceptionCode {
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
   RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'NO_ROLE_FOUND_FOR_USER_WORKSPACE',
+  IMPORT_PARTIAL_SUCCESS = 'IMPORT_PARTIAL_SUCCESS',
 }
 
 const getTwentyORMExceptionUserFriendlyMessage = (
@@ -74,6 +75,8 @@ const getTwentyORMExceptionUserFriendlyMessage = (
       return STANDARD_ERROR_MESSAGE;
     case TwentyORMExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
       return msg`No role found for user.`;
+    case TwentyORMExceptionCode.IMPORT_PARTIAL_SUCCESS:
+      return msg`Some records were imported with warnings.`;
     default:
       assertUnreachable(code);
   }

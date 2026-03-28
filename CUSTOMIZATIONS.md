@@ -138,7 +138,8 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `spreadsheet-import/types/SpreadsheetImportField.ts`                                    | Added `isRelationUpdateField` and `targetFieldMetadataItem` properties                |
 | `object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields.ts`             | Added relation update fields to import dropdown                                       |
-| `object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts` | Execute relation updates after parent upsert                                          |
+| `object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts` | Execute relation updates after parent upsert; show import results summary dialog      |
+| `object-record/hooks/useBatchCreateManyRecords.ts`                                      | Handle IMPORT_PARTIAL_SUCCESS per-batch, collect warnings, continue remaining batches |
 | `object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow.ts`        | Explicit `isRelationConnectField` filter                                              |
 | `object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV.ts`          | Keep composite fields as objects for proper sub-field export                          |
 | `command-menu-item/record/multiple-records/components/ExportMultipleRecordsCommand.tsx` | Restore the related-fields modal before export when visible relations exist           |
@@ -158,6 +159,8 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `object-record/spreadsheet-import/utils/extractRelationUpdatesFromImportedRows.ts`          | Extract relation update data from imported rows         |
 | `object-record/spreadsheet-import/utils/spreadsheetImportGetRelationUpdateSubFieldKey.ts`   | Key format for update fields                            |
 | `object-record/spreadsheet-import/utils/spreadsheetImportGetRelationUpdateSubFieldLabel.ts` | Label format for update fields                          |
+| `spreadsheet-import/components/ImportResultsSummary.tsx`                                    | Post-import summary dialog with issue list and CSV download |
+| `spreadsheet-import/utils/generateProblemRowsCsv.ts`                                        | Generate downloadable CSV of problem rows for re-import |
 
 ### New Export Utilities
 
@@ -170,10 +173,12 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 
 | File                                                                                                    | Modification                                                                                                |
 | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries.ts`                 | Skip failed relation connects on upsert rows; auto-create missing related records during upsert imports     |
-| `engine/twenty-orm/repository/workspace-insert-query-builder.ts`                                        | Pass `isUpsert` flag to relation nested query processing                                                    |
-| `engine/twenty-orm/repository/workspace-update-query-builder.ts`                                       | Pass `isUpsert: true` to relation nested query processing (update path used by upsert)                     |
+| `engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries.ts`                 | Skip failed connects on upsert; auto-create missing records; collect `ImportRecordWarning`s                 |
+| `engine/twenty-orm/repository/workspace-insert-query-builder.ts`                                        | Pass `isUpsert` flag; throw `IMPORT_PARTIAL_SUCCESS` with warnings after data committed                    |
+| `engine/twenty-orm/repository/workspace-update-query-builder.ts`                                       | Pass `isUpsert: true`; throw `IMPORT_PARTIAL_SUCCESS` with warnings after data committed                    |
 | `engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts`                                | When `id` is in connect where clause, use only `id` for matching (ignore stale email/other fields)          |
+| `engine/twenty-orm/exceptions/twenty-orm.exception.ts`                                                  | Added `IMPORT_PARTIAL_SUCCESS` exception code                                                               |
+| `engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util.ts`                              | Handle `IMPORT_PARTIAL_SUCCESS` — return `importWarnings` and `savedRecordCount` in GraphQL extensions      |
 
 ### RLS and Permissions
 

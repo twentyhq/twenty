@@ -30,11 +30,26 @@ import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
+export type ImportRecordWarning = {
+  entityIndex: number;
+  recordId?: string;
+  fieldName: string;
+  connectFieldName: string;
+  targetObjectName: string;
+  condition: string;
+  reason: 'CONNECT_NOT_FOUND' | 'CONNECT_AMBIGUOUS' | 'CONNECT_CREATE_FAILED';
+};
+
 export class RelationNestedQueries {
   private readonly internalContext: WorkspaceInternalContext;
+  private importWarnings: ImportRecordWarning[] = [];
 
   constructor(internalContext: WorkspaceInternalContext) {
     this.internalContext = internalContext;
+  }
+
+  getImportWarnings(): ImportRecordWarning[] {
+    return this.importWarnings;
   }
 
   prepareNestedRelationQueries<Entity extends ObjectLiteral>(
@@ -141,6 +156,8 @@ export class RelationNestedQueries {
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (relationConnectQueryConfigs.length === 0) return entities;
 
+    this.importWarnings = [];
+
     const recordsToConnectWithConfig = await this.executeConnectQueries(
       relationConnectQueryConfigs,
       queryBuilder,
@@ -228,7 +245,17 @@ export class RelationNestedQueries {
         } catch {
           // If creation fails (e.g. NOT NULL constraints, unique violation),
           // the upsert tolerance in updateEntitiesWithRecordToConnectId
-          // will skip gracefully.
+          // will skip gracefully. Record a warning for the results summary.
+          this.importWarnings.push({
+            entityIndex: -1,
+            fieldName: connectQueryConfig.relationFieldName,
+            connectFieldName: connectQueryConfig.connectFieldName,
+            targetObjectName: connectQueryConfig.targetObjectName,
+            condition: condition
+              .map(([field, value]) => `${field} = ${value}`)
+              .join(' AND '),
+            reason: 'CONNECT_CREATE_FAILED',
+          });
         }
       }
     }
@@ -301,6 +328,22 @@ export class RelationNestedQueries {
             // and preserve the existing relation in the database rather than
             // failing the entire import batch.
             if (isUpsert && isDefined((entity as any).id)) {
+              this.importWarnings.push({
+                entityIndex: index,
+                recordId: (entity as any).id as string,
+                fieldName: connectQueryConfig.relationFieldName,
+                connectFieldName: connectQueryConfig.connectFieldName,
+                targetObjectName: connectQueryConfig.targetObjectName,
+                condition:
+                  connectQueryConfig.recordToConnectConditionByEntityIndex[index]
+                    .map(([field, value]) => `${field} = ${value}`)
+                    .join(' AND '),
+                reason:
+                  recordToConnect.length === 0
+                    ? 'CONNECT_NOT_FOUND'
+                    : 'CONNECT_AMBIGUOUS',
+              });
+
               entity = {
                 ...entity,
                 [connectQueryConfig.connectFieldName]: null,

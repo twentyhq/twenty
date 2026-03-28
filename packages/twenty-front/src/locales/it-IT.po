@@ -79,6 +79,12 @@ msgstr ": Oggi{timeZoneAbbreviationSuffix}"
 msgid ". The change will be applied the {beautifiedRenewDate}."
 msgstr ". La modifica verrà applicata il {beautifiedRenewDate}."
 
+#. js-lingui-id: YdOjT+
+#. placeholder {0}: issueCount - MAX_DISPLAYED_ISSUES
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "...and {0} more (see downloaded CSV)"
+msgstr ""
+
 #. js-lingui-id: 4tCM3o
 #: src/modules/views/components/ViewBarFilterDropdownAnyFieldSearchButtonMenuItem.tsx
 msgid "· {objectFilterDropdownSearchInput}"
@@ -176,6 +182,12 @@ msgstr ""
 #. placeholder {0}: formatNumber(totalCredits)
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 msgid "{0} credits used"
+msgstr ""
+
+#. js-lingui-id: /cb326
+#. placeholder {0}: data.validStructuredRows.length
+#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
+msgid "{0} records imported successfully."
 msgstr ""
 
 #. js-lingui-id: X8FG1C
@@ -277,6 +289,11 @@ msgstr "{eventAction} un {eventObject} correlato"
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr "{failedCount} file(s) non sono stati caricati"
+
+#. js-lingui-id: 3ymTS5
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{failureCount} batch(es) failed"
+msgstr ""
 
 #. js-lingui-id: bPZh8X
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
@@ -435,6 +452,11 @@ msgstr ""
 msgid "{stepNumber}. Calendar"
 msgstr "{stepNumber}. Calendario"
 
+#. js-lingui-id: 01tExc
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{successCount} of {totalRecords} records imported successfully"
+msgstr ""
+
 #. js-lingui-id: A9Y2Sy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "{totalCost} credits"
@@ -455,6 +477,11 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "{visibleFieldsCount} shown"
 msgstr "{visibleFieldsCount} visualizzati"
+
+#. js-lingui-id: Hjd/Fz
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "{warningCount} records imported with warnings"
+msgstr ""
 
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -2426,6 +2453,12 @@ msgstr ""
 msgid "Base URL is required"
 msgstr ""
 
+#. js-lingui-id: Mviyui
+#. placeholder {0}: failure.error
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "Batch error: {0}"
+msgstr ""
+
 #. js-lingui-id: PFohi3
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
@@ -3083,6 +3116,7 @@ msgstr ""
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
 msgid "Close"
 msgstr "Chiudi"
 
@@ -5087,6 +5121,11 @@ msgstr "Scarica file"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Download Files"
 msgstr "Scarica file"
+
+#. js-lingui-id: xopoY/
+#: src/modules/spreadsheet-import/components/ImportResultsSummary.tsx
+msgid "Download problem rows CSV"
+msgstr ""
 
 #. js-lingui-id: BU+6gf
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -7845,6 +7884,11 @@ msgstr "Importa solo cartelle/etichette selezionate"
 #: src/modules/command-menu-item/record/constants/DefaultRecordCommandMenuItemsConfig.tsx
 msgid "Import records"
 msgstr "Importa record"
+
+#. js-lingui-id: IM/cxW
+#: src/modules/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog.ts
+msgid "Import Results"
+msgstr ""
 
 #. js-lingui-id: ZsIcZZ
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx

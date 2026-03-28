@@ -33,6 +33,19 @@ export const twentyORMGraphqlApiExceptionHandler = (
       throw new UserInputError(error.message, extensions);
     }
 
+    case TwentyORMExceptionCode.IMPORT_PARTIAL_SUCCESS: {
+      const partialError = error as any;
+
+      const extensions: Record<string, unknown> = {
+        userFriendlyMessage: error.userFriendlyMessage,
+        subCode: 'IMPORT_PARTIAL_SUCCESS',
+        importWarnings: partialError.importWarnings ?? [],
+        savedRecordCount: partialError.savedRecordCount ?? 0,
+      };
+
+      throw new UserInputError(error.message, extensions);
+    }
+
     case TwentyORMExceptionCode.INVALID_INPUT:
     case TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND:
     case TwentyORMExceptionCode.CONNECT_NOT_ALLOWED:

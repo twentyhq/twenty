@@ -297,6 +297,22 @@ export class WorkspaceInsertQueryBuilder<
         this.internalContext.flatFieldMetadataMaps,
       );
 
+      // After data is committed, surface any relation connect warnings
+      const importWarnings =
+        this._relationNestedQueries?.getImportWarnings() ?? [];
+
+      if (importWarnings.length > 0) {
+        const exception = new TwentyORMException(
+          `Import completed with ${importWarnings.length} warning(s)`,
+          TwentyORMExceptionCode.IMPORT_PARTIAL_SUCCESS,
+        );
+
+        (exception as any).importWarnings = importWarnings;
+        (exception as any).savedRecordCount = result.identifiers.length;
+
+        throw exception;
+      }
+
       return {
         raw: resultWithoutInsertionExtraColumns,
         generatedMaps: formattedResult,

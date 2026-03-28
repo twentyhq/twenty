@@ -674,6 +674,24 @@ check_file_contains \
   "packages/twenty-server/src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts" \
   "keysToUse" \
   "Connect matching must prefer id over other unique constraint fields"
+check_file_contains \
+  "packages/twenty-server/src/engine/twenty-orm/exceptions/twenty-orm.exception.ts" \
+  "IMPORT_PARTIAL_SUCCESS" \
+  "IMPORT_PARTIAL_SUCCESS exception code must exist"
+check_file_contains \
+  "packages/twenty-server/src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util.ts" \
+  "IMPORT_PARTIAL_SUCCESS" \
+  "GraphQL handler must route IMPORT_PARTIAL_SUCCESS with importWarnings"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/hooks/useBatchCreateManyRecords.ts" \
+  "isPartialSuccessError" \
+  "Batch hook must detect and handle IMPORT_PARTIAL_SUCCESS"
+check_file_exists \
+  "packages/twenty-front/src/modules/spreadsheet-import/components/ImportResultsSummary.tsx" \
+  "Import results summary component"
+check_file_exists \
+  "packages/twenty-front/src/modules/spreadsheet-import/utils/generateProblemRowsCsv.ts" \
+  "Problem rows CSV download utility"
 
 echo ""
 echo "--- CSV Export: Relation ID Embedding ---"
