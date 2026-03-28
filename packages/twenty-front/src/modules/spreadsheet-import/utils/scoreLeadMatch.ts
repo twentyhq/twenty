@@ -44,14 +44,15 @@ export const scoreLeadMatch = (
   const breakdown: Record<string, number> = {};
   let score = 0;
 
-  // Email — 40 points (exact, case-insensitive)
+  // Email — 50 points (exact, case-insensitive)
+  // Email is practically unique per person — strongest signal
   if (candidate.emailsPrimaryEmail && csvData.email) {
     if (
       candidate.emailsPrimaryEmail.toLowerCase() ===
       csvData.email.toLowerCase()
     ) {
-      breakdown.email = 40;
-      score += 40;
+      breakdown.email = 50;
+      score += 50;
     }
   }
 

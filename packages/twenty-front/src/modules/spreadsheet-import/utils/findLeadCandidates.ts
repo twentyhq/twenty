@@ -1,6 +1,9 @@
 import { type ApolloClient } from '@apollo/client';
 import gql from 'graphql-tag';
-import { type LeadCsvData, type LeadCandidate } from '@/spreadsheet-import/utils/scoreLeadMatch';
+import {
+  type LeadCsvData,
+  type LeadCandidate,
+} from '@/spreadsheet-import/utils/scoreLeadMatch';
 import { isDefined } from 'twenty-shared/utils';
 
 const CANDIDATE_BATCH_SIZE = 200;
@@ -46,7 +49,6 @@ export const findLeadCandidates = async ({
   // Build OR filter conditions
   const orConditions: Record<string, unknown>[] = [];
 
-  // Email conditions (batch all emails into IN clause)
   if (emails.size > 0) {
     for (const email of emails) {
       orConditions.push({
@@ -55,7 +57,6 @@ export const findLeadCandidates = async ({
     }
   }
 
-  // Name conditions
   for (const { firstName, lastName } of namePairs) {
     orConditions.push({
       and: [
@@ -69,6 +70,9 @@ export const findLeadCandidates = async ({
     targetObjectNameSingular.charAt(0).toUpperCase() +
     targetObjectNameSingular.slice(1);
 
+  // Query only standard composite fields that exist on all Person objects.
+  // Avoid custom fields (like addressCustom) that may not exist and would
+  // cause the entire query to fail.
   const query = gql`
     query FindLeadCandidates($filter: ${capitalizedSingular}FilterInput, $limit: Int) {
       ${targetObjectNamePlural}(filter: $filter, limit: $limit) {
@@ -85,10 +89,7 @@ export const findLeadCandidates = async ({
             phones {
               primaryPhoneNumber
             }
-            addressCustom {
-              addressCity
-              addressState
-            }
+            city
           }
         }
       }
@@ -118,11 +119,13 @@ export const findLeadCandidates = async ({
           nameLastName: node.name?.lastName,
           emailsPrimaryEmail: node.emails?.primaryEmail,
           phonesPrimaryPhoneNumber: node.phones?.primaryPhoneNumber,
-          addressCustomAddressCity: node.addressCustom?.addressCity,
-          addressCustomAddressState: node.addressCustom?.addressState,
+          addressCustomAddressCity: node.city,
+          addressCustomAddressState: undefined,
         }),
       );
-  } catch {
+  } catch (error) {
+    console.warn('[findLeadCandidates] Query failed:', error);
+
     return [];
   }
 };
