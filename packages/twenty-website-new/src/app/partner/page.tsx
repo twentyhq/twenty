@@ -1,3 +1,4 @@
+import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/partner/constants/hero';
@@ -5,6 +6,7 @@ import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partner/constants/three-car
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { EngagementBand } from '@/sections/EngagementBand/components';
+import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
@@ -87,6 +89,48 @@ export default function PartnerPage() {
           variant="simple"
         />
       </ThreeCards.Root>
+
+      <Faq.Root illustration={FAQ_DATA.illustration}>
+        <Faq.Intro>
+          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+          <Heading
+            as="h2"
+            segments={FAQ_DATA.heading}
+            size="lg"
+            weight="light"
+          />
+          <div
+            style={{
+              columnGap: theme.spacing(2),
+              display: 'grid',
+              gridTemplateColumns: 'auto auto',
+              justifyContent: 'start',
+            }}
+          >
+            <LinkButton
+              color="primary"
+              href="https://app.twenty.com/welcome"
+              label="Get started"
+              type="anchor"
+              variant="contained"
+            />
+            <LinkButton
+              color="primary"
+              href="https://twenty.com/contact"
+              label="Talk to us"
+              type="anchor"
+              variant="outlined"
+            />
+          </div>
+        </Faq.Intro>
+        <Faq.Items
+          items={FAQ_DATA.questions.map((faqQuestion, index) => ({
+            answer: faqQuestion.answer.text,
+            question: faqQuestion.question.text,
+            value: `faq-${index}`,
+          }))}
+        />
+      </Faq.Root>
     </>
   );
 }

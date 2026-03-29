@@ -1,8 +1,10 @@
+import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/pricing/constants/hero';
-import { LinkButton } from '@/design-system/components';
+import { Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { EngagementBand } from '@/sections/EngagementBand/components';
+import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Plans } from '@/sections/Plans/components';
 import { theme } from '@/theme';
@@ -41,6 +43,48 @@ export default function PricingPage() {
           </EngagementBand.Actions>
         </EngagementBand.Strip>
       </EngagementBand.Root>
+
+      <Faq.Root illustration={FAQ_DATA.illustration}>
+        <Faq.Intro>
+          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+          <Heading
+            as="h2"
+            segments={FAQ_DATA.heading}
+            size="lg"
+            weight="light"
+          />
+          <div
+            style={{
+              columnGap: theme.spacing(2),
+              display: 'grid',
+              gridTemplateColumns: 'auto auto',
+              justifyContent: 'start',
+            }}
+          >
+            <LinkButton
+              color="primary"
+              href="https://app.twenty.com/welcome"
+              label="Get started"
+              type="anchor"
+              variant="contained"
+            />
+            <LinkButton
+              color="primary"
+              href="https://twenty.com/contact"
+              label="Talk to us"
+              type="anchor"
+              variant="outlined"
+            />
+          </div>
+        </Faq.Intro>
+        <Faq.Items
+          items={FAQ_DATA.questions.map((faqQuestion, index) => ({
+            answer: faqQuestion.answer.text,
+            question: faqQuestion.question.text,
+            value: `faq-${index}`,
+          }))}
+        />
+      </Faq.Root>
     </>
   );
 }

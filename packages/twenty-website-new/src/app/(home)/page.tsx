@@ -1,3 +1,4 @@
+import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { HERO_DATA } from '@/app/(home)/constants/hero';
 import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
 import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/constants/three-cards-feature';
@@ -5,6 +6,7 @@ import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/constants/three-card
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Problem } from '@/sections/Problem/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
@@ -88,6 +90,51 @@ export default function HomePage() {
           featureCards={THREE_CARDS_FEATURE_DATA.featureCards}
         />
       </ThreeCards.Root>
+
+      <Faq.Root illustration={FAQ_DATA.illustration}>
+        <Faq.Intro>
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+          />
+          <Heading
+            as="h2"
+            segments={FAQ_DATA.heading}
+            size="lg"
+            weight="light"
+          />
+          <div
+            style={{
+              columnGap: theme.spacing(2),
+              display: 'grid',
+              gridTemplateColumns: 'auto auto',
+              justifyContent: 'start',
+            }}
+          >
+            <LinkButton
+              color="primary"
+              href="https://app.twenty.com/welcome"
+              label="Get started"
+              type="anchor"
+              variant="contained"
+            />
+            <LinkButton
+              color="primary"
+              href="https://twenty.com/contact"
+              label="Talk to us"
+              type="anchor"
+              variant="outlined"
+            />
+          </div>
+        </Faq.Intro>
+        <Faq.Items
+          items={FAQ_DATA.questions.map((faqQuestion, index) => ({
+            answer: faqQuestion.answer.text,
+            question: faqQuestion.question.text,
+            value: `faq-${index}`,
+          }))}
+        />
+      </Faq.Root>
     </>
   );
 }
