@@ -84,9 +84,6 @@ jobs:
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
@@ -101,9 +98,6 @@ jobs:
           --health-retries 5
       redis:
         image: redis
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
     steps:
@@ -232,9 +226,6 @@ jobs:
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
@@ -249,16 +240,10 @@ jobs:
           --health-retries 5
       redis:
         image: redis
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
       clickhouse:
         image: clickhouse/clickhouse-server:25.8.8
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
           CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
