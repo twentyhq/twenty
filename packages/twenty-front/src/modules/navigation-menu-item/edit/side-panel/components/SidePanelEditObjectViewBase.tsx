@@ -80,6 +80,7 @@ export const SidePanelEditObjectViewBase = ({
             <SidePanelEditColorOption
               navigationMenuItemId={selectedItem.id}
               color={parseThemeColor(displayColor)}
+              objectMetadataItemId={objectMetadataItem?.id}
             />
           </SidePanelGroup>
         )}
