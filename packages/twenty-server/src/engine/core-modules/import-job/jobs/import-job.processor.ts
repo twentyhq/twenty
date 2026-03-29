@@ -98,9 +98,10 @@ export class ImportJobProcessor {
             );
 
             try {
-              // The validated rows are already in record input format
-              // (transformed by the frontend's buildRecordFromImportedStructuredRow)
-              await repository.insert(batchRows, undefined, undefined);
+              // The validated rows are already in record input format.
+              // Use upsert with 'id' as the conflict key so existing records
+              // are updated and new records are inserted.
+              await repository.upsert(batchRows, ['id']);
 
               successCount += batchRows.length;
             } catch (error: unknown) {
