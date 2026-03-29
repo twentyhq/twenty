@@ -1,5 +1,8 @@
+import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/pricing/constants/hero';
+import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Hero } from '@/sections/Hero/components';
 import { theme } from '@/theme';
 
@@ -10,6 +13,29 @@ export default function PricingPage() {
         <Hero.Heading page={Pages.Pricing} segments={HERO_DATA.heading} />
         <Hero.Body page={Pages.Pricing} body={HERO_DATA.body} />
       </Hero.Root>
+
+      <EngagementBand.Root
+        backgroundColor={theme.colors.secondary.background[5]}
+      >
+        <EngagementBand.Strip
+          fillColor={theme.colors.primary.background[100]}
+          variant="primary"
+        >
+          <EngagementBand.Copy>
+            <EngagementBand.Heading segments={ENGAGEMENT_BAND_DATA.heading} />
+            <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
+          </EngagementBand.Copy>
+          <EngagementBand.Actions>
+            <LinkButton
+              color="secondary"
+              href="https://app.twenty.com/welcome"
+              label="Read our case studies"
+              type="anchor"
+              variant="contained"
+            />
+          </EngagementBand.Actions>
+        </EngagementBand.Strip>
+      </EngagementBand.Root>
     </>
   );
 }

@@ -1,8 +1,10 @@
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
+import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/partner/constants/hero';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partner/constants/three-cards-illustration';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Hero } from '@/sections/Hero/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
@@ -43,6 +45,29 @@ export default function PartnerPage() {
           logos={TRUSTED_BY_DATA.logos}
         />
       </TrustedBy.Root>
+
+      <EngagementBand.Root
+        backgroundColor={theme.colors.primary.background[100]}
+      >
+        <EngagementBand.Strip
+          fillColor={theme.colors.secondary.background[100]}
+          variant="secondary"
+        >
+          <EngagementBand.Copy>
+            <EngagementBand.Heading segments={ENGAGEMENT_BAND_DATA.heading} />
+            <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
+          </EngagementBand.Copy>
+          <EngagementBand.Actions>
+            <LinkButton
+              color="primary"
+              href="https://app.twenty.com/welcome"
+              label="Read our case studies"
+              type="anchor"
+              variant="contained"
+            />
+          </EngagementBand.Actions>
+        </EngagementBand.Strip>
+      </EngagementBand.Root>
 
       <ThreeCards.Root backgroundColor={theme.colors.secondary.background[5]}>
         <ThreeCards.Intro page={Pages.Partner} align="left">
