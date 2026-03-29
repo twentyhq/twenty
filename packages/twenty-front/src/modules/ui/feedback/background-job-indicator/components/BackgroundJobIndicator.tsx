@@ -5,80 +5,90 @@ import {
 import type { BackgroundJobData } from '@/ui/feedback/background-job-indicator/states/backgroundJobState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconCheck, IconAlertTriangle, IconX } from 'twenty-ui/display';
+import {
+  IconCheck,
+  IconAlertTriangle,
+  IconX,
+  IconSquareRoundedCheck,
+} from 'twenty-ui/display';
+import { CircularProgressBar, ProgressBar } from 'twenty-ui/feedback';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledStack = styled.div`
   position: fixed;
-  bottom: ${themeCssVariables.spacing[4]};
-  right: ${themeCssVariables.spacing[4]};
+  bottom: ${themeCssVariables.spacing[3]};
+  right: ${themeCssVariables.spacing[3]};
   z-index: 10000;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
 `;
 
 const StyledCard = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
+  backdrop-filter: ${themeCssVariables.blur.medium};
+  background-color: ${themeCssVariables.background.transparent.primary};
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
-  min-width: 320px;
-  max-width: 420px;
-`;
-
-const StyledContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledLabel = styled.div`
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  color: ${themeCssVariables.font.color.primary};
-`;
-
-const StyledSubLabel = styled.div`
-  font-size: ${themeCssVariables.font.size.xs};
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledBarTrack = styled.div`
-  width: 100%;
-  height: 4px;
-  background: ${themeCssVariables.background.quaternary};
-  border-radius: 2px;
+  box-sizing: border-box;
+  padding: ${themeCssVariables.spacing[2]};
+  position: relative;
+  width: 296px;
   overflow: hidden;
-`;
 
-const StyledBarFill = styled.div<{ percent: number; color: string }>`
-  height: 100%;
-  width: ${({ percent }) => percent}%;
-  background: ${({ color }) => color};
-  border-radius: 2px;
-  transition: width 0.5s ease;
-`;
-
-const StyledSpinner = styled.div`
-  width: 16px;
-  height: 16px;
-  border: 2px solid ${themeCssVariables.border.color.medium};
-  border-top-color: ${themeCssVariables.color.blue};
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-radius: 0;
+    width: 100%;
   }
+`;
+
+const StyledHeader = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledIcon = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const StyledMessage = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledActions = styled.div`
+  align-items: center;
+  display: flex;
+  margin-left: auto;
+  flex-shrink: 0;
+`;
+
+const StyledDetails = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.xs};
+  padding-left: ${themeCssVariables.spacing[6]};
+  padding-top: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledProgressContainer = styled.div`
+  padding-left: ${themeCssVariables.spacing[6]};
+  padding-top: ${themeCssVariables.spacing[2]};
+  padding-bottom: ${themeCssVariables.spacing[1]};
 `;
 
 const BackgroundJobCard = ({ job }: { job: BackgroundJobData }) => {
@@ -100,17 +110,31 @@ const BackgroundJobCard = ({ job }: { job: BackgroundJobData }) => {
 
   return (
     <StyledCard>
-      {isRunning && <StyledSpinner />}
-      {isDone && (
-        <IconCheck size={16} color={themeCssVariables.color.green} />
-      )}
-      {isFailed && (
-        <IconAlertTriangle size={16} color={themeCssVariables.color.red} />
-      )}
-      {job.status === 'cancelled' && <IconX size={16} />}
+      <StyledHeader>
+        <StyledIcon>
+          {isRunning && (
+            <CircularProgressBar
+              size={16}
+              barWidth={2}
+              barColor={themeCssVariables.color.blue}
+            />
+          )}
+          {isDone && (
+            <IconSquareRoundedCheck
+              size={16}
+              color={themeCssVariables.color.green}
+            />
+          )}
+          {isFailed && (
+            <IconAlertTriangle
+              size={16}
+              color={themeCssVariables.color.red}
+            />
+          )}
+          {job.status === 'cancelled' && <IconX size={16} />}
+        </StyledIcon>
 
-      <StyledContent>
-        <StyledLabel>
+        <StyledMessage>
           {isRunning && job.label}
           {isDone &&
             (job.warningCount > 0
@@ -118,32 +142,39 @@ const BackgroundJobCard = ({ job }: { job: BackgroundJobData }) => {
               : t`${job.label} — done`)}
           {isFailed && t`${job.label} — failed`}
           {job.status === 'cancelled' && t`${job.label} — cancelled`}
-        </StyledLabel>
+        </StyledMessage>
 
-        {isRunning && (
-          <>
-            <StyledBarTrack>
-              <StyledBarFill percent={percent} color={barColor} />
-            </StyledBarTrack>
-            <StyledSubLabel>
-              {t`${job.processedItems} of ${job.totalItems} (${percent}%)`}
-              {job.warningCount > 0 && ` · ${job.warningCount} warnings`}
-            </StyledSubLabel>
-          </>
-        )}
+        <StyledActions>
+          {!isRunning && (
+            <LightIconButton
+              Icon={IconX}
+              size="small"
+              onClick={() => removeJob(job.id)}
+              accent="tertiary"
+            />
+          )}
+        </StyledActions>
+      </StyledHeader>
 
-        {!isRunning && job.failureCount > 0 && (
-          <StyledSubLabel>{t`${job.failureCount} failures`}</StyledSubLabel>
-        )}
-      </StyledContent>
+      {isRunning && (
+        <>
+          <StyledProgressContainer>
+            <ProgressBar
+              value={percent}
+              barColor={barColor}
+              backgroundColor={themeCssVariables.background.quaternary}
+              withBorderRadius
+            />
+          </StyledProgressContainer>
+          <StyledDetails>
+            {t`${job.processedItems} of ${job.totalItems} (${percent}%)`}
+            {job.warningCount > 0 && ` · ${job.warningCount} warnings`}
+          </StyledDetails>
+        </>
+      )}
 
-      {!isRunning && (
-        <LightIconButton
-          Icon={IconX}
-          size="small"
-          onClick={() => removeJob(job.id)}
-          accent="tertiary"
-        />
+      {!isRunning && job.failureCount > 0 && (
+        <StyledDetails>{t`${job.failureCount} failures`}</StyledDetails>
       )}
     </StyledCard>
   );

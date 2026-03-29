@@ -1,9 +1,14 @@
 import { useApolloClient } from '@apollo/client/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { GET_IMPORT_JOB } from '@/spreadsheet-import/graphql/queries/importJob';
+import {
+  activeImportJobState,
+  type ActiveImportJob,
+} from '@/spreadsheet-import/states/activeImportJobState';
 import { useBackgroundJob } from '@/ui/feedback/background-job-indicator/hooks/useBackgroundJob';
-import { t } from '@lingui/core/macro';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const IMPORT_JOB_STORAGE_KEY = 'activeImportJobId';
 const POLL_INTERVAL_MS = 3000;
@@ -25,80 +30,13 @@ type ImportJobData = {
   failureCount: number;
 };
 
+/**
+ * Hook to start tracking an import job.
+ * Sets the global atom + localStorage so the always-mounted poller picks it up.
+ */
 export const useImportJobProgress = () => {
-  const apolloClient = useApolloClient();
+  const setActiveJob = useSetAtomState(activeImportJobState);
   const { upsertJob } = useBackgroundJob();
-  const [activeJobId, setActiveJobId] = useState<string | null>(null);
-  const activeObjectNameRef = useRef<string>('records');
-  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const stopPolling = useCallback(() => {
-    if (pollTimerRef.current) {
-      clearInterval(pollTimerRef.current);
-      pollTimerRef.current = null;
-    }
-  }, []);
-
-  const handleJobUpdate = useCallback(
-    (job: ImportJobData) => {
-      const isTerminal =
-        job.status === 'completed' ||
-        job.status === 'failed' ||
-        job.status === 'cancelled';
-
-      upsertJob({
-        id: job.id,
-        label: `Importing ${activeObjectNameRef.current} records`,
-        status: job.status,
-        totalItems: job.totalRecords,
-        processedItems: job.processedRecords,
-        successCount: job.successCount,
-        warningCount: job.warningCount,
-        failureCount: job.failureCount,
-      });
-
-      if (isTerminal) {
-        stopPolling();
-        setActiveJobId(null);
-
-        try {
-          localStorage.removeItem(IMPORT_JOB_STORAGE_KEY);
-        } catch {
-          // ignore
-        }
-      }
-    },
-    [upsertJob, stopPolling],
-  );
-
-  useEffect(() => {
-    if (!activeJobId) return;
-
-    const poll = async () => {
-      try {
-        const { data } = await apolloClient.query({
-          query: GET_IMPORT_JOB,
-          variables: { importJobId: activeJobId },
-          fetchPolicy: 'network-only',
-        });
-
-        const job = (data as Record<string, any>)?.importJob;
-
-        if (job) {
-          handleJobUpdate(job as ImportJobData);
-        }
-      } catch {
-        // Polling failure — will retry next interval
-      }
-    };
-
-    poll();
-    pollTimerRef.current = setInterval(poll, POLL_INTERVAL_MS);
-
-    return () => {
-      stopPolling();
-    };
-  }, [activeJobId, apolloClient, handleJobUpdate, stopPolling]);
 
   const startTracking = useCallback(
     ({
@@ -110,8 +48,6 @@ export const useImportJobProgress = () => {
       objectNameSingular: string;
       totalRecords: number;
     }) => {
-      activeObjectNameRef.current = objectNameSingular;
-
       try {
         localStorage.setItem(
           IMPORT_JOB_STORAGE_KEY,
@@ -132,16 +68,111 @@ export const useImportJobProgress = () => {
         failureCount: 0,
       });
 
-      setActiveJobId(importJobId);
+      setActiveJob({ importJobId, objectNameSingular, totalRecords });
     },
-    [upsertJob],
+    [upsertJob, setActiveJob],
   );
 
   return { startTracking };
 };
 
+/**
+ * Poller effect — must be mounted in a permanently-rendered component
+ * (e.g. AppRouterProviders). Watches the global activeImportJobState atom
+ * and polls the server for progress updates.
+ */
+export const useImportJobPoller = () => {
+  const apolloClient = useApolloClient();
+  const activeJob = useAtomStateValue(activeImportJobState);
+  const setActiveJob = useSetAtomState(activeImportJobState);
+  const { upsertJob } = useBackgroundJob();
+  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const activeJobRef = useRef<ActiveImportJob>(null);
+
+  // Keep a ref in sync so the interval callback always sees the latest value
+  activeJobRef.current = activeJob;
+
+  const stopPolling = useCallback(() => {
+    if (pollTimerRef.current) {
+      clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!activeJob) {
+      stopPolling();
+
+      return;
+    }
+
+    const poll = async () => {
+      const current = activeJobRef.current;
+
+      if (!current) return;
+
+      try {
+        const { data } = await apolloClient.query({
+          query: GET_IMPORT_JOB,
+          variables: { importJobId: current.importJobId },
+          fetchPolicy: 'network-only',
+        });
+
+        const job = (data as Record<string, any>)?.importJob;
+
+        if (!job) return;
+
+        const typedJob = job as ImportJobData;
+        const isTerminal =
+          typedJob.status === 'completed' ||
+          typedJob.status === 'failed' ||
+          typedJob.status === 'cancelled';
+
+        upsertJob({
+          id: typedJob.id,
+          label: `Importing ${current.objectNameSingular} records`,
+          status: typedJob.status,
+          totalItems: typedJob.totalRecords,
+          processedItems: typedJob.processedRecords,
+          successCount: typedJob.successCount,
+          warningCount: typedJob.warningCount,
+          failureCount: typedJob.failureCount,
+        });
+
+        if (isTerminal) {
+          stopPolling();
+          setActiveJob(null);
+
+          try {
+            localStorage.removeItem(IMPORT_JOB_STORAGE_KEY);
+          } catch {
+            // ignore
+          }
+        }
+      } catch {
+        // Polling failure — will retry next interval
+      }
+    };
+
+    poll();
+    pollTimerRef.current = setInterval(poll, POLL_INTERVAL_MS);
+
+    return () => {
+      stopPolling();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeJob?.importJobId]);
+
+  return null;
+};
+
+/**
+ * Recovery effect — runs once on mount to check localStorage for an
+ * in-progress import from a previous session.
+ */
 export const useImportJobRecovery = () => {
-  const { startTracking } = useImportJobProgress();
+  const setActiveJob = useSetAtomState(activeImportJobState);
+  const { upsertJob } = useBackgroundJob();
 
   useEffect(() => {
     try {
@@ -155,7 +186,20 @@ export const useImportJobRecovery = () => {
         totalRecords: number;
       };
 
-      startTracking(stored);
+      // Seed the background job indicator immediately
+      upsertJob({
+        id: stored.importJobId,
+        label: `Importing ${stored.objectNameSingular} records`,
+        status: 'processing',
+        totalItems: stored.totalRecords,
+        processedItems: 0,
+        successCount: 0,
+        warningCount: 0,
+        failureCount: 0,
+      });
+
+      // Set the global atom — the poller effect will pick it up
+      setActiveJob(stored);
     } catch {
       // ignore
     }
