@@ -1,9 +1,11 @@
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
+import { DEMO_DATA } from '@/app/product/constants/demo';
 import { HERO_DATA } from '@/app/product/constants/hero';
 import { TABS_DATA } from '@/app/product/constants/tabs';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/constants/three-cards';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { Demo } from '@/sections/Demo/components';
 import { Hero } from '@/sections/Hero/components';
 import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
@@ -40,15 +42,8 @@ export default function ProductPage() {
       </TrustedBy.Root>
 
       <Tabs.Root>
-        <Eyebrow
-          colorScheme="secondary"
-          heading={TABS_DATA.eyebrow.heading}
-        />
-        <Heading
-          segments={TABS_DATA.heading}
-          size="lg"
-          weight="light"
-        />
+        <Eyebrow colorScheme="secondary" heading={TABS_DATA.eyebrow.heading} />
+        <Heading segments={TABS_DATA.heading} size="lg" weight="light" />
         <Body body={TABS_DATA.body} size="sm" />
         <Tabs.TabGroup tabs={TABS_DATA.tabs} />
       </Tabs.Root>
@@ -70,6 +65,21 @@ export default function ProductPage() {
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
         />
       </ThreeCards.Root>
+
+      <Demo.Root>
+        <Eyebrow colorScheme="primary" heading={DEMO_DATA.eyebrow.heading} />
+        <Heading segments={DEMO_DATA.heading} size="lg" weight="light" />
+        <Demo.Cta>
+          <LinkButton
+            color="secondary"
+            href="https://app.twenty.com/welcome"
+            label="Try twenty cloud"
+            type="anchor"
+            variant="contained"
+          />
+        </Demo.Cta>
+        <Demo.Screenshot image={DEMO_DATA.image} />
+      </Demo.Root>
     </>
   );
 }
