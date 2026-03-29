@@ -7,12 +7,14 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { SettingsPath } from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import {
   H2Title,
+  IconChartBar,
   IconCpu,
   IconFileText,
   IconSettingsBolt,
@@ -23,6 +25,7 @@ import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { SettingsAIMCP } from './components/SettingsAIMCP';
 import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
+import { SettingsAIUsageTab } from './components/SettingsAIUsageTab';
 import { SettingsAgentSkills } from './components/SettingsAgentSkills';
 import { SettingsToolsTable } from './components/SettingsToolsTable';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
@@ -37,6 +40,10 @@ export const SettingsAI = () => {
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
+  );
+
+  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
   );
 
   const tabs = [
@@ -55,6 +62,15 @@ export const SettingsAI = () => {
       title: t`Tools`,
       Icon: IconTool,
     },
+    ...(isUsageAnalyticsEnabled
+      ? [
+          {
+            id: SETTINGS_AI_TABS.TABS_IDS.USAGE,
+            title: t`Usage`,
+            Icon: IconChartBar,
+          },
+        ]
+      : []),
     {
       id: SETTINGS_AI_TABS.TABS_IDS.MORE,
       title: t`More`,
@@ -65,6 +81,7 @@ export const SettingsAI = () => {
   const isModelsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
   const isSkillsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
   const isToolsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
+  const isUsageTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
   const isMoreTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MORE;
 
   return (
@@ -86,6 +103,7 @@ export const SettingsAI = () => {
         {isModelsTab && <SettingsAIModelsTab />}
         {isSkillsTab && <SettingsAgentSkills />}
         {isToolsTab && <SettingsToolsTable />}
+        {isUsageTab && <SettingsAIUsageTab />}
         {isMoreTab && (
           <>
             <Section>

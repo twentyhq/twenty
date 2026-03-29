@@ -8,6 +8,7 @@ import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/works
 import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -27,6 +28,7 @@ export class WorkspaceMemberUpdateOnePreQueryHook
     private readonly workspaceMemberPreQueryHookService: WorkspaceMemberPreQueryHookService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async execute(
@@ -73,6 +75,11 @@ export class WorkspaceMemberUpdateOnePreQueryHook
         ...userWorkspace,
         locale: payload.data.locale,
       });
+
+      await this.coreEntityCacheService.invalidate(
+        'userWorkspaceEntity',
+        authContext.userWorkspaceId,
+      );
     }
 
     await this.workspaceMemberPreQueryHookService.completeOnboardingProfileStepIfNameProvided(

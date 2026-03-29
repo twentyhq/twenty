@@ -14,6 +14,7 @@ import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/api-key-token
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ApiKeyService {
@@ -22,6 +23,7 @@ export class ApiKeyService {
     private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly roleTargetService: RoleTargetService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async create(
@@ -43,6 +45,8 @@ export class ApiKeyService {
       await this.apiKeyRepository.delete(savedApiKey.id);
       throw error;
     }
+
+    await this.invalidateApiKeyCache(savedApiKey.workspaceId);
 
     return savedApiKey;
   }
@@ -88,6 +92,7 @@ export class ApiKeyService {
     }
 
     await this.apiKeyRepository.update(id, updateData);
+    await this.invalidateApiKeyCache(workspaceId);
 
     return this.findById(id, workspaceId);
   }
@@ -183,5 +188,11 @@ export class ApiKeyService {
 
   isActive(apiKey: ApiKeyEntity): boolean {
     return !this.isRevoked(apiKey) && !this.isExpired(apiKey);
+  }
+
+  private async invalidateApiKeyCache(workspaceId: string): Promise<void> {
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'apiKeyMap',
+    ]);
   }
 }

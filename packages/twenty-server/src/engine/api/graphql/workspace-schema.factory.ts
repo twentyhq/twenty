@@ -12,7 +12,7 @@ import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FlatEntityMapsException,
@@ -41,7 +41,7 @@ export class WorkspaceSchemaFactory {
   ) {}
 
   async createGraphQLSchema(
-    workspace: WorkspaceEntity,
+    workspace: FlatWorkspace,
     applicationId?: string,
   ): Promise<GraphQLSchema> {
     const isDataSourceMigrated = await this.featureFlagService.isFeatureEnabled(
