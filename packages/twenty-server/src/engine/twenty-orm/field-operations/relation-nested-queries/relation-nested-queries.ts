@@ -320,8 +320,10 @@ export class RelationNestedQueries {
         }
 
         try {
-          await queryBuilder.connection
-            .createQueryBuilder()
+          queryBuilder.expressionMap.aliases = [];
+          queryBuilder.expressionMap.mainAlias = undefined;
+
+          await (queryBuilder as any)
             .insert()
             .into(connectQueryConfig.targetObjectName)
             .values(newRecord)
@@ -351,8 +353,10 @@ export class RelationNestedQueries {
     entityIndex: number,
   ): Promise<boolean> {
     try {
-      let fallbackQuery = queryBuilder.connection
-        .createQueryBuilder()
+      queryBuilder.expressionMap.aliases = [];
+      queryBuilder.expressionMap.mainAlias = undefined;
+
+      let fallbackQuery = queryBuilder
         .select('*')
         .from(
           connectQueryConfig.targetObjectName,
@@ -361,12 +365,11 @@ export class RelationNestedQueries {
 
       for (const [field, value] of conditions) {
         fallbackQuery = fallbackQuery.andWhere(
-          `"${connectQueryConfig.targetObjectName}"."${field}" = :${field}`,
-          { [field]: value },
+          `"${connectQueryConfig.targetObjectName}"."${field}" = :fb_${field}`,
+          { [`fb_${field}`]: value },
         );
       }
 
-      // Only match non-deleted records
       fallbackQuery = fallbackQuery.andWhere(
         `"${connectQueryConfig.targetObjectName}"."deletedAt" IS NULL`,
       );
@@ -410,16 +413,18 @@ export class RelationNestedQueries {
     if (!emailField) return false;
 
     try {
-      const results = await queryBuilder.connection
-        .createQueryBuilder()
+      queryBuilder.expressionMap.aliases = [];
+      queryBuilder.expressionMap.mainAlias = undefined;
+
+      const results = await queryBuilder
         .select('*')
         .from(
           connectQueryConfig.targetObjectName,
           connectQueryConfig.targetObjectName,
         )
         .where(
-          `"${connectQueryConfig.targetObjectName}"."emailsPrimaryEmail" = :email`,
-          { email: emailField[1] },
+          `"${connectQueryConfig.targetObjectName}"."emailsPrimaryEmail" = :cd_email`,
+          { cd_email: emailField[1] },
         )
         .andWhere(
           `"${connectQueryConfig.targetObjectName}"."deletedAt" IS NULL`,
