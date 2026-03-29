@@ -20,6 +20,7 @@ import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/
 
 import { HeadlessEngineCommandMountRoot } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandMountRoot';
 import { HeadlessFrontComponentMountRoot } from '@/front-components/components/HeadlessFrontComponentMountRoot';
+import { ImportJobRecoveryEffect } from '@/spreadsheet-import/components/ImportJobRecoveryEffect';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
 import { SupportChatEffect } from '@/support/components/SupportChatEffect';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -72,6 +73,7 @@ export const AppRouterProviders = () => {
                                 <CommandMenuConfirmationModalManager />
                                 <HeadlessFrontComponentMountRoot />
                                 <HeadlessEngineCommandMountRoot />
+                                <ImportJobRecoveryEffect />
                               </StrictMode>
                             </DialogManager>
                           </DialogComponentInstanceContext.Provider>
