@@ -175,7 +175,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Apps`,
           path: SettingsPath.Applications,
           Icon: IconPlug,
-          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
           modifier: 'new',
         },
         {
