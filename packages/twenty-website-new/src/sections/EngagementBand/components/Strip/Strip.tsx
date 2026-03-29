@@ -1,7 +1,27 @@
 import { EngagementBandShape } from '@/sections/EngagementBand/EngagementBandShape';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import NextImage from 'next/image';
 import type { ReactNode } from 'react';
+
+const ENGAGEMENT_BAND_OVERLAY_SRC =
+  '/images/pricing/engagement-band/overlay.png';
+
+const OverlayLayer = styled.div`
+  bottom: 0;
+  left: 60%;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+`;
+
+const overlayImageClassName = css`
+  object-fit: cover;
+  object-position: right center;
+`;
 
 const StyledStrip = styled.div`
   border-radius: ${theme.radius(1)};
@@ -45,6 +65,15 @@ export function Strip({ children, fillColor, variant }: StripProps) {
   return (
     <StyledStrip data-variant={variant}>
       <EngagementBandShape fillColor={fillColor} />
+      <OverlayLayer aria-hidden>
+        <NextImage
+          alt=""
+          className={overlayImageClassName}
+          fill
+          sizes="50vw"
+          src={ENGAGEMENT_BAND_OVERLAY_SRC}
+        />
+      </OverlayLayer>
       {children}
     </StyledStrip>
   );
