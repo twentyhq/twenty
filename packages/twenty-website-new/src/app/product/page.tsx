@@ -1,12 +1,14 @@
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { DEMO_DATA } from '@/app/product/constants/demo';
 import { HERO_DATA } from '@/app/product/constants/hero';
+import { STEPPER_DATA } from '@/app/product/constants/stepper';
 import { TABS_DATA } from '@/app/product/constants/tabs';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/constants/three-cards';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Demo } from '@/sections/Demo/components';
 import { Hero } from '@/sections/Hero/components';
+import { Stepper } from '@/sections/Stepper/components';
 import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
@@ -65,6 +67,13 @@ export default function ProductPage() {
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
         />
       </ThreeCards.Root>
+
+      <Stepper.ProductStepper
+        body={STEPPER_DATA.body}
+        eyebrow={STEPPER_DATA.eyebrow}
+        heading={STEPPER_DATA.heading}
+        steps={STEPPER_DATA.steps}
+      />
 
       <Demo.Root>
         <Eyebrow colorScheme="primary" heading={DEMO_DATA.eyebrow.heading} />

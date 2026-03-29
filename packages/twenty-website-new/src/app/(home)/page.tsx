@@ -1,5 +1,6 @@
 import { HERO_DATA } from '@/app/(home)/constants/hero';
 import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
+import { STEPPER_DATA } from '@/app/(home)/constants/stepper';
 import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/constants/three-cards-feature';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/constants/three-cards-illustration';
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
@@ -7,6 +8,7 @@ import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Hero } from '@/sections/Hero/components';
 import { Problem } from '@/sections/Problem/components';
+import { Stepper } from '@/sections/Stepper/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
@@ -69,6 +71,8 @@ export default function HomePage() {
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
         />
       </ThreeCards.Root>
+
+      <Stepper.HomeStepper steps={STEPPER_DATA.steps} />
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Home} align="center">
