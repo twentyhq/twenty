@@ -31,7 +31,7 @@ export class ImportJobResolver {
     columnMappings: Record<string, unknown>,
     @Args('validatedRows', { type: () => GraphQLJSON })
     validatedRows: Record<string, unknown>[],
-    @Args('fileName', { nullable: true }) fileName: string | undefined,
+    @Args('fileName', { type: () => String, nullable: true }) fileName: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
   ): Promise<ImportJobDTO> {
