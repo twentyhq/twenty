@@ -169,6 +169,31 @@ msgstr "{0, plural, one {# Об'єкт} few {# Об'єкти} many {# Об'єк�
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, one {Ви не маєте доступу до поля {fieldsList}} few {Ви не маєте доступу до полів {fieldsList}} many {Ви не маєте доступу до полів {fieldsList}} other {Ви не маєте доступу до полів {fieldsList}}}"
 
+#. js-lingui-id: mmJJ59
+#. placeholder {0}: job.label
+#: src/modules/ui/feedback/background-job-indicator/components/BackgroundJobIndicator.tsx
+msgid "{0} — cancelled"
+msgstr ""
+
+#. js-lingui-id: VLjrdS
+#. placeholder {0}: job.label
+#: src/modules/ui/feedback/background-job-indicator/components/BackgroundJobIndicator.tsx
+msgid "{0} — done"
+msgstr ""
+
+#. js-lingui-id: cnsILa
+#. placeholder {0}: job.label
+#. placeholder {1}: job.warningCount
+#: src/modules/ui/feedback/background-job-indicator/components/BackgroundJobIndicator.tsx
+msgid "{0} — done with {1} warnings"
+msgstr ""
+
+#. js-lingui-id: 5rCwYb
+#. placeholder {0}: job.label
+#: src/modules/ui/feedback/background-job-indicator/components/BackgroundJobIndicator.tsx
+msgid "{0} — failed"
+msgstr ""
+
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(totalCredits)
 #. placeholder {0}: formatNumber(datum.value)
@@ -184,10 +209,17 @@ msgstr ""
 msgid "{0} credits used"
 msgstr ""
 
-#. js-lingui-id: TzIoTO
-#. placeholder {0}: job.successCount
-#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
-msgid "{0} records imported successfully"
+#. js-lingui-id: zTGXpa
+#. placeholder {0}: job.failureCount
+#: src/modules/ui/feedback/background-job-indicator/components/BackgroundJobIndicator.tsx
+msgid "{0} failures"
+msgstr ""
+
+#. js-lingui-id: FAIVhz
+#. placeholder {0}: job.processedItems
+#. placeholder {1}: job.totalItems
+#: src/modules/ui/feedback/background-job-indicator/components/BackgroundJobIndicator.tsx
+msgid "{0} of {1} ({percent}%)"
 msgstr ""
 
 #. js-lingui-id: X8FG1C
@@ -7879,31 +7911,10 @@ msgstr "Імпорт"
 msgid "Import all emails"
 msgstr "Імпортуйте всі електронні листи"
 
-#. js-lingui-id: q0pkll
-#. placeholder {0}: job.processedRecords
-#. placeholder {1}: job.totalRecords
-#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
-msgid "Import cancelled: {0} of {1} records processed"
-msgstr ""
-
-#. js-lingui-id: KLB3qj
-#. placeholder {0}: job.successCount
-#. placeholder {1}: job.warningCount
-#. placeholder {2}: job.failureCount
-#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
-msgid "Import complete: {0} succeeded, {1} warnings, {2} failed"
-msgstr ""
-
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Import CSV"
 msgstr "Імпорт CSV"
-
-#. js-lingui-id: P3ovv7
-#. placeholder {0}: job.processedRecords
-#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
-msgid "Import failed after processing {0} records"
-msgstr ""
 
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -7930,22 +7941,10 @@ msgstr "Імпортовані дані"
 msgid "Importing"
 msgstr "Імпортовано"
 
-#. js-lingui-id: qdxjGq
-#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
-msgid "Importing {objectNameSingular} records... (0 / {totalRecords})"
-msgstr ""
-
 #. js-lingui-id: YgmSaz
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "Importing Data ..."
 msgstr "Імпорт даних ..."
-
-#. js-lingui-id: fhz3X/
-#. placeholder {0}: job.processedRecords
-#. placeholder {1}: job.totalRecords
-#: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
-msgid "Importing records... ({0} / {1})"
-msgstr ""
 
 #. js-lingui-id: HiyKEP
 #: src/modules/settings/developers/utils/formatExpiration.ts
