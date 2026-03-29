@@ -687,33 +687,25 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       </Route>
 
       <Route
-        element={
-          <SettingsProtectedRouteWrapper
-            requiredFeatureFlag={FeatureFlagKey.IS_APPLICATION_ENABLED}
-          />
-        }
-      >
-        <Route
-          path={SettingsPath.Applications}
-          element={<SettingsApplications />}
-        />
-        <Route
-          path={SettingsPath.ApplicationDetail}
-          element={<SettingsApplicationDetails />}
-        />
-        <Route
-          path={SettingsPath.AvailableApplicationDetail}
-          element={<SettingsAvailableApplicationDetails />}
-        />
-        <Route
-          path={SettingsPath.ApplicationRegistrationDetail}
-          element={<SettingsApplicationRegistrationDetails />}
-        />
-        <Route
-          path={SettingsPath.ApplicationLogicFunctionDetail}
-          element={<SettingsLogicFunctionDetail />}
-        />
-      </Route>
+        path={SettingsPath.Applications}
+        element={<SettingsApplications />}
+      />
+      <Route
+        path={SettingsPath.ApplicationDetail}
+        element={<SettingsApplicationDetails />}
+      />
+      <Route
+        path={SettingsPath.AvailableApplicationDetail}
+        element={<SettingsAvailableApplicationDetails />}
+      />
+      <Route
+        path={SettingsPath.ApplicationRegistrationDetail}
+        element={<SettingsApplicationRegistrationDetails />}
+      />
+      <Route
+        path={SettingsPath.ApplicationLogicFunctionDetail}
+        element={<SettingsLogicFunctionDetail />}
+      />
 
       <Route
         element={
