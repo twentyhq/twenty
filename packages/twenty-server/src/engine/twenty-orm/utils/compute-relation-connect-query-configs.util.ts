@@ -57,6 +57,7 @@ export const computeRelationConnectQueryConfigs = (
     )) {
       const {
         recordToConnectCondition,
+        fullRecordToConnectCondition,
         uniqueConstraintFields,
         targetObjectNameSingular,
       } = computeRecordToConnectCondition(
@@ -82,6 +83,7 @@ export const computeRelationConnectQueryConfigs = (
           connectQueryConfig,
           recordToConnectCondition,
           entityIndex,
+          fullRecordToConnectCondition,
         );
       } else {
         allConnectQueryConfigs[connectFieldName] = createConnectQueryConfig(
@@ -90,6 +92,7 @@ export const computeRelationConnectQueryConfigs = (
           uniqueConstraintFields,
           targetObjectNameSingular,
           entityIndex,
+          fullRecordToConnectCondition,
         );
       }
     }
@@ -102,6 +105,7 @@ const updateConnectQueryConfigs = (
   connectQueryConfig: RelationConnectQueryConfig,
   recordToConnectCondition: UniqueConstraintCondition,
   entityIndex: number,
+  fullRecordToConnectCondition?: UniqueConstraintCondition,
 ) => {
   return {
     ...connectQueryConfig,
@@ -113,6 +117,14 @@ const updateConnectQueryConfigs = (
       ...connectQueryConfig.recordToConnectConditionByEntityIndex,
       [entityIndex]: recordToConnectCondition,
     },
+    ...(isDefined(fullRecordToConnectCondition)
+      ? {
+          fullRecordToConnectConditionByEntityIndex: {
+            ...connectQueryConfig.fullRecordToConnectConditionByEntityIndex,
+            [entityIndex]: fullRecordToConnectCondition,
+          },
+        }
+      : {}),
   };
 };
 
@@ -122,6 +134,7 @@ const createConnectQueryConfig = (
   uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
   targetObjectNameSingular: string,
   entityIndex: number,
+  fullRecordToConnectCondition?: UniqueConstraintCondition,
 ) => {
   return {
     targetObjectName: targetObjectNameSingular,
@@ -132,6 +145,13 @@ const createConnectQueryConfig = (
     recordToConnectConditionByEntityIndex: {
       [entityIndex]: recordToConnectCondition,
     },
+    ...(isDefined(fullRecordToConnectCondition)
+      ? {
+          fullRecordToConnectConditionByEntityIndex: {
+            [entityIndex]: fullRecordToConnectCondition,
+          },
+        }
+      : {}),
   };
 };
 
@@ -146,6 +166,7 @@ const computeRecordToConnectCondition = (
   fieldMaps: FieldMapsForObject,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
+  fullRecordToConnectCondition?: UniqueConstraintCondition;
   uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
@@ -197,11 +218,58 @@ const computeRecordToConnectCondition = (
     connectFieldName,
   );
 
+  const recordToConnectCondition = computeUniqueConstraintCondition(
+    uniqueConstraintFields,
+    connectObject,
+  );
+
+  // When ID-priority filtered out non-ID fields, build a full condition for
+  // fallback matching during upserts (e.g. when the lead ID is stale but
+  // the email/phone still match an existing record).
+  const whereKeys = Object.keys(connectObject.connect.where);
+  const wasIdFiltered = whereKeys.includes('id') && whereKeys.length > 1;
+  let fullRecordToConnectCondition: UniqueConstraintCondition | undefined;
+
+  if (wasIdFiltered) {
+    const allTargetFields = getFlatFieldsFromFlatObjectMetadata(
+      targetObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const nonIdConditionEntries: [string, string][] = [];
+
+    for (const key of whereKeys) {
+      if (key === 'id') continue;
+
+      const targetField = allTargetFields.find((f) => f.name === key);
+
+      if (!isDefined(targetField)) continue;
+
+      if (isCompositeFieldMetadataType(targetField.type)) {
+        const formatted = formatCompositeField(
+          connectObject.connect.where[key],
+          targetField,
+        );
+
+        nonIdConditionEntries.push(
+          ...(Object.entries(formatted) as [string, string][]),
+        );
+      } else {
+        nonIdConditionEntries.push([
+          key,
+          String(connectObject.connect.where[key]),
+        ]);
+      }
+    }
+
+    if (nonIdConditionEntries.length > 0) {
+      fullRecordToConnectCondition = nonIdConditionEntries;
+    }
+  }
+
   return {
-    recordToConnectCondition: computeUniqueConstraintCondition(
-      uniqueConstraintFields,
-      connectObject,
-    ),
+    recordToConnectCondition,
+    fullRecordToConnectCondition,
     uniqueConstraintFields,
     targetObjectNameSingular: targetObjectMetadata.nameSingular,
   };

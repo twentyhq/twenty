@@ -186,9 +186,10 @@ export class RelationNestedQueries {
   }
 
   /**
-   * For upsert operations, creates new records in the target table when the
-   * connect query found no matches. This allows CSV imports to automatically
-   * create related records (e.g. a new Lead) when they don't already exist.
+   * For upsert operations, resolves missing connect records by:
+   * 1. Trying a fallback lookup using non-ID fields (email, phone, etc.)
+   *    when the primary ID-based lookup found no match
+   * 2. Creating new records in the target table as a last resort
    */
   private async createMissingConnectRecords<Entity extends ObjectLiteral>(
     recordsToConnectWithConfig: [
@@ -204,9 +205,12 @@ export class RelationNestedQueries {
       recordsToConnect,
     ] of recordsToConnectWithConfig) {
       const seenConditionKeys = new Set<string>();
-      const missingConditions: [string, unknown][][] = [];
+      const missingEntries: {
+        condition: [string, unknown][];
+        entityIndex: number;
+      }[] = [];
 
-      for (const condition of Object.values(
+      for (const [entityIndexStr, condition] of Object.entries(
         connectQueryConfig.recordToConnectConditionByEntityIndex,
       )) {
         const matches = recordsToConnect.filter((record) =>
@@ -220,12 +224,80 @@ export class RelationNestedQueries {
         if (seenConditionKeys.has(conditionKey)) continue;
         seenConditionKeys.add(conditionKey);
 
-        missingConditions.push(condition);
+        missingEntries.push({
+          condition,
+          entityIndex: Number(entityIndexStr),
+        });
       }
 
-      if (missingConditions.length === 0) continue;
+      if (missingEntries.length === 0) continue;
 
-      for (const condition of missingConditions) {
+      // Step 1: Try fallback lookup using non-ID fields (email, phone, name)
+      // when the primary condition was ID-only.
+      const fullConditions =
+        connectQueryConfig.fullRecordToConnectConditionByEntityIndex ?? {};
+
+      if (Object.keys(fullConditions).length > 0) {
+        for (const entry of missingEntries) {
+          const fallbackCondition = fullConditions[entry.entityIndex];
+
+          if (!isDefined(fallbackCondition) || fallbackCondition.length === 0) {
+            continue;
+          }
+
+          try {
+            let fallbackQuery = queryBuilder.connection
+              .createQueryBuilder()
+              .select('*')
+              .from(
+                connectQueryConfig.targetObjectName,
+                connectQueryConfig.targetObjectName,
+              );
+
+            for (const [field, value] of fallbackCondition) {
+              fallbackQuery = fallbackQuery.andWhere(
+                `"${connectQueryConfig.targetObjectName}"."${field}" = :${field}`,
+                { [field]: value },
+              );
+            }
+
+            const fallbackResults = await fallbackQuery.getRawMany();
+
+            if (fallbackResults.length === 1) {
+              // Found exactly one match — use it. Update the primary condition
+              // results so updateEntitiesWithRecordToConnectId picks it up by
+              // replacing the stale ID condition with the matched record.
+              const matched = fallbackResults[0];
+
+              recordsToConnect.push(matched);
+
+              // Rewrite the entity's condition to use the found record's ID
+              // so the downstream matching logic works.
+              connectQueryConfig.recordToConnectConditionByEntityIndex[
+                entry.entityIndex
+              ] = [['id', matched.id]];
+
+              continue;
+            }
+          } catch {
+            // Fallback query failed — proceed to creation attempt
+          }
+        }
+      }
+
+      // Step 2: Create missing records that couldn't be resolved via fallback
+      for (const entry of missingEntries) {
+        // Re-check after fallback — the condition may have been rewritten
+        const currentCondition =
+          connectQueryConfig.recordToConnectConditionByEntityIndex[
+            entry.entityIndex
+          ];
+        const alreadyResolved = recordsToConnect.some((record) =>
+          currentCondition.every(([field, value]) => record[field] === value),
+        );
+
+        if (alreadyResolved) continue;
+
         const now = new Date().toISOString();
         const newRecord: Record<string, unknown> = {
           id: randomUUID(),
@@ -233,7 +305,7 @@ export class RelationNestedQueries {
           updatedAt: now,
         };
 
-        for (const [field, value] of condition) {
+        for (const [field, value] of entry.condition) {
           newRecord[field] = value;
         }
 

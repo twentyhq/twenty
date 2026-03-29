@@ -13,4 +13,9 @@ export type RelationConnectQueryConfig = {
   recordToConnectConditionByEntityIndex: {
     [entityIndex: number]: UniqueConstraintCondition;
   };
+  /** Full condition including all unique fields (before ID-priority filtering).
+   *  Used for fallback lookups when ID-based matching fails during upserts. */
+  fullRecordToConnectConditionByEntityIndex?: {
+    [entityIndex: number]: UniqueConstraintCondition;
+  };
 };
