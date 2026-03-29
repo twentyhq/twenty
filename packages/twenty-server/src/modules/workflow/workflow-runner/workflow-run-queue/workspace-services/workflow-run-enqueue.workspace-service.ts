@@ -153,10 +153,14 @@ export class WorkflowRunEnqueueWorkspaceService {
         authContext,
       );
     } catch (error) {
-      this.metricsService.incrementCounter({
-        key: MetricsKeys.WorkflowRunFailedToEnqueue,
-        eventId: workspaceId,
-      });
+      try {
+        await this.metricsService.incrementCounter({
+          key: MetricsKeys.WorkflowRunFailedToEnqueue,
+          eventId: workspaceId,
+        });
+      } catch {
+        // Metrics may fail if Redis is shutting down — safe to ignore
+      }
 
       this.logger.error(
         `Failed to enqueue workflow runs for workspace: ${workspaceId}`,
