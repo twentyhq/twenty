@@ -50,7 +50,7 @@ export default function ProductPage() {
           weight="light"
         />
         <Body body={TABS_DATA.body} size="sm" />
-        <Tabs.Content />
+        <Tabs.TabGroup tabs={TABS_DATA.tabs} />
       </Tabs.Root>
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
