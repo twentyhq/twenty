@@ -1,6 +1,6 @@
 'use client';
 
-import { SearchIcon } from '@/icons';
+import { INFORMATIVE_ICONS } from '@/icons';
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -79,8 +79,10 @@ type TabButtonProps = {
 
 export function TabButton({ tab, isActive, onSelect }: TabButtonProps) {
   const iconColor = isActive
-    ? theme.colors.primary.text[100]
+    ? theme.colors.highlight[100]
     : theme.colors.secondary.text[100];
+
+  const Icon = INFORMATIVE_ICONS[tab.icon];
 
   return (
     <StyledButton
@@ -92,7 +94,7 @@ export function TabButton({ tab, isActive, onSelect }: TabButtonProps) {
     >
       {tab.body.text}
       <TabIconBox data-active={String(isActive)}>
-        <SearchIcon size={16} color={iconColor} />
+        {Icon ? <Icon size={16} color={iconColor} /> : null}
       </TabIconBox>
     </StyledButton>
   );

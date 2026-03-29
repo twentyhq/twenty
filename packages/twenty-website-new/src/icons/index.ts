@@ -1,4 +1,13 @@
 export { CLIENT_ICONS, FlexportIcon, ZapierIcon } from "./clients";
+export {
+  CheckIcon,
+  EditIcon,
+  EyeIcon,
+  INFORMATIVE_ICONS,
+  SearchIcon,
+  UsersIcon,
+  type InformativeIconProps,
+} from "./informative";
 export { ArrowLeftIcon } from "./functional/ArrowLeft";
 export { ArrowRightIcon } from "./functional/ArrowRight";
 export { ArrowRightUpIcon } from "./functional/ArrowRightUp";
@@ -8,10 +17,6 @@ export { MinusIcon } from "./functional/Minus";
 export { PlusIcon } from "./functional/Plus";
 export { RectangleFillIcon } from "./functional/RectangleFill";
 export { RectangleOutlineIcon } from "./functional/RectangleOutline";
-export { HistoryIcon } from "./informative/History";
-export { SearchIcon } from "./informative/Search";
-export { TaskIcon } from "./informative/Task";
-export { WorkflowIcon } from "./informative/Workflow";
 export { Logo } from "./logo/Logo";
 export { DiscordIcon } from "./social/Discord";
 export { GitHubIcon } from "./social/GitHub";

@@ -1,4 +1,4 @@
-import { TabsDataType } from '@/sections/Tabs/types';
+import type { TabsDataType } from '@/sections/Tabs/types';
 
 export const TABS_DATA: TabsDataType = {
   eyebrow: {
@@ -25,6 +25,7 @@ export const TABS_DATA: TabsDataType = {
       body: {
         text: 'Show me all deals closing this month',
       },
+      icon: 'search',
       image: {
         src: '/images/product/tabs/deals.png',
         alt: 'Deals view',
@@ -34,6 +35,7 @@ export const TABS_DATA: TabsDataType = {
       body: {
         text: 'Create follow-up tasks for my top 10 accounts',
       },
+      icon: 'eye',
       image: {
         src: '/images/product/tabs/tasks.png',
         alt: 'Tasks view',
@@ -43,6 +45,7 @@ export const TABS_DATA: TabsDataType = {
       body: {
         text: "Summarize this customer's history",
       },
+      icon: 'edit',
       image: {
         src: '/images/product/tabs/history.png',
         alt: 'History view',
@@ -52,6 +55,7 @@ export const TABS_DATA: TabsDataType = {
       body: {
         text: 'Create a workflow that send an email sequence',
       },
+      icon: 'check',
       image: {
         src: '/images/product/tabs/workflow.png',
         alt: 'Workflow view',

@@ -1,6 +1,6 @@
-type SearchIconProps = { size: number; color: string };
+type CheckIconProps = { size: number; color: string };
 
-export function SearchIcon({ size, color }: SearchIconProps) {
+export function CheckIcon({ size, color }: CheckIconProps) {
   return (
     <svg
       width={size}
@@ -10,19 +10,15 @@ export function SearchIcon({ size, color }: SearchIconProps) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <circle
-        cx={6.5}
-        cy={6.5}
-        r={4.5}
+      <path
+        d="m11 6-3.75 4L5 8"
         stroke={color}
         strokeWidth={2}
-        strokeLinejoin="round"
       />
       <path
-        d="m11 11 4 4"
+        d="M8 14a6 6 0 1 0-4.243-1.757"
         stroke={color}
         strokeWidth={2}
-        strokeLinejoin="round"
       />
     </svg>
   );
