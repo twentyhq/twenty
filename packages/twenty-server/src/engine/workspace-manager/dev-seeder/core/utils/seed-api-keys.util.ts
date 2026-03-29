@@ -29,7 +29,9 @@ export const seedApiKeys = async ({
       {
         id: API_KEY_DATA_SEED_IDS.ID_1,
         name: 'My api key',
-        expiresAt: '2025-12-31T23:59:59.000Z',
+        expiresAt: new Date(
+          Date.now() + 1000 * 60 * 60 * 24 * 365 * 100,
+        ).toISOString(),
         workspaceId: workspaceId,
       },
     ])

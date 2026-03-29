@@ -55,6 +55,7 @@ export class AiBillingService {
     modelId: ModelId,
     billingInput: BillingUsageInput,
     workspaceId: string,
+    operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
   ): void {
@@ -73,6 +74,7 @@ export class AiBillingService {
       creditsUsedMicro,
       totalTokens,
       modelId,
+      operationType,
       agentId,
       userWorkspaceId,
     );
@@ -83,6 +85,7 @@ export class AiBillingService {
     creditsUsedMicro: number,
     totalTokens: number,
     modelId: ModelId,
+    operationType: UsageOperationType,
     agentId?: string | null,
     userWorkspaceId?: string | null,
   ): void {
@@ -91,7 +94,7 @@ export class AiBillingService {
       [
         {
           resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.AI_TOKEN,
+          operationType,
           creditsUsedMicro,
           quantity: totalTokens,
           unit: UsageUnit.TOKEN,

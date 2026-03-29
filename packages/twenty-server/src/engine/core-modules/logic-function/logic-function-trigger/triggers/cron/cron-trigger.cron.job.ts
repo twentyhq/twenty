@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -15,7 +15,7 @@ import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
@@ -27,8 +27,7 @@ export class CronTriggerCronJob {
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -44,19 +43,27 @@ export class CronTriggerCronJob {
     const now = new Date();
 
     for (const activeWorkspace of activeWorkspaces) {
-      const logicFunctionsWithCronTrigger =
-        await this.logicFunctionRepository.find({
-          where: {
-            workspaceId: activeWorkspace.id,
-            cronTriggerSettings: Not(IsNull()),
-          },
-          select: ['id', 'cronTriggerSettings', 'workspaceId'],
-        });
+      const { flatLogicFunctionMaps } =
+        await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
+          'flatLogicFunctionMaps',
+        ]);
 
-      for (const logicFunction of logicFunctionsWithCronTrigger) {
+      const logicFunctions = Object.values(
+        flatLogicFunctionMaps.byUniversalIdentifier,
+      );
+
+      for (const logicFunction of logicFunctions) {
+        if (!isDefined(logicFunction)) {
+          continue;
+        }
+
         const cronSettings = logicFunction.cronTriggerSettings;
 
         if (!isDefined(cronSettings?.pattern)) {
+          continue;
+        }
+
+        if (isDefined(logicFunction.deletedAt)) {
           continue;
         }
 
@@ -69,7 +76,7 @@ export class CronTriggerCronJob {
           [
             {
               logicFunctionId: logicFunction.id,
-              workspaceId: logicFunction.workspaceId,
+              workspaceId: activeWorkspace.id,
               payload: {},
             },
           ],

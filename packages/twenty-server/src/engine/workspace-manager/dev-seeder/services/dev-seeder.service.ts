@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -146,15 +145,11 @@ export class DevSeederService {
       relations: { fields: true },
     });
 
-    const isDashboardV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
-
     await seedPageLayoutWidgets({
       dataSource: this.coreDataSource,
       schemaName: 'core',
       workspaceId,
       objectMetadataItems,
-      isDashboardV2Enabled,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 

@@ -17,6 +17,7 @@ import {
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -34,6 +35,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 export class UsageResolver {
   constructor(
     private readonly usageAnalyticsService: UsageAnalyticsService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -56,21 +58,26 @@ export class UsageResolver {
 
     const periodStart = input?.periodStart ?? defaultPeriodStart;
     const periodEnd = input?.periodEnd ?? defaultPeriodEnd;
+    const useDollarMode = !this.twentyConfigService.get('IS_BILLING_ENABLED');
 
     const periodParams = {
       workspaceId: workspace.id,
       periodStart,
       periodEnd,
+      operationTypes: input?.operationTypes ?? undefined,
+      useDollarMode,
     };
 
-    const [usageByUser, usageByOperationType, timeSeries] = await Promise.all([
-      this.usageAnalyticsService.getUsageByUser(periodParams),
-      this.usageAnalyticsService.getUsageByOperationType({
-        ...periodParams,
-        userWorkspaceId: input?.userWorkspaceId ?? undefined,
-      }),
-      this.usageAnalyticsService.getUsageTimeSeries(periodParams),
-    ]);
+    const [usageByUser, usageByOperationType, usageByModel, timeSeries] =
+      await Promise.all([
+        this.usageAnalyticsService.getUsageByUser(periodParams),
+        this.usageAnalyticsService.getUsageByOperationType({
+          ...periodParams,
+          userWorkspaceId: input?.userWorkspaceId ?? undefined,
+        }),
+        this.usageAnalyticsService.getUsageByModel(periodParams),
+        this.usageAnalyticsService.getUsageTimeSeries(periodParams),
+      ]);
 
     const resolvedUsageByUser = await this.resolveBreakdownKeys(
       usageByUser,
@@ -80,6 +87,7 @@ export class UsageResolver {
     const result: UsageAnalyticsDTO = {
       usageByUser: resolvedUsageByUser,
       usageByOperationType,
+      usageByModel,
       timeSeries,
       periodStart,
       periodEnd,

@@ -780,8 +780,7 @@ type Workspace {
   viewGroups: [ViewGroup!]
   viewSorts: [ViewSort!]
   metadataVersion: Float!
-  databaseUrl: String!
-  databaseSchema: String!
+  databaseSchema: String
   subdomain: String!
   customDomain: String
   isGoogleAuthEnabled: Boolean!
@@ -1726,20 +1725,13 @@ enum FeatureFlagKey {
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_AI_ENABLED
-  IS_APPLICATION_ENABLED
   IS_MARKETPLACE_ENABLED
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
   IS_PUBLIC_DOMAIN_ENABLED
   IS_EMAILING_DOMAIN_ENABLED
-  IS_DASHBOARD_V2_ENABLED
-  IS_ATTACHMENT_MIGRATED
-  IS_NOTE_TARGET_MIGRATED
-  IS_TASK_TARGET_MIGRATED
-  IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_COMMAND_MENU_ITEM_ENABLED
   IS_NAVIGATION_MENU_ITEM_ENABLED
-  IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_USAGE_ANALYTICS_ENABLED
@@ -1749,6 +1741,7 @@ enum FeatureFlagKey {
   IS_CONNECTED_ACCOUNT_MIGRATED
   IS_GRAPHQL_QUERY_TIMING_ENABLED
   IS_RECORD_TABLE_WIDGET_ENABLED
+  IS_DATASOURCE_MIGRATED
 }
 
 type ClientConfig {
@@ -1779,6 +1772,12 @@ type ClientConfig {
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
+}
+
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
 }
 
 type ConfigVariable {
@@ -2380,6 +2379,26 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  usageByModel: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
+
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
@@ -2573,31 +2592,6 @@ type PostgresCredentials {
   user: String!
   password: String!
   workspaceId: UUID!
-}
-
-type UsageBreakdownItem {
-  key: String!
-  label: String
-  creditsUsed: Float!
-}
-
-type UsageTimeSeries {
-  date: String!
-  creditsUsed: Float!
-}
-
-type UsageUserDaily {
-  userWorkspaceId: String!
-  dailyUsage: [UsageTimeSeries!]!
-}
-
-type UsageAnalytics {
-  usageByUser: [UsageBreakdownItem!]!
-  usageByOperationType: [UsageBreakdownItem!]!
-  timeSeries: [UsageTimeSeries!]!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  userDailyUsage: UsageUserDaily
 }
 
 type FrontComponent {
@@ -3274,6 +3268,8 @@ type Query {
   getAiProviders: JSON!
   getModelsDevProviders: [ModelsDevProviderSuggestion!]!
   getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
+  getAdminAiUsageByWorkspace(periodStart: DateTime, periodEnd: DateTime): [UsageBreakdownItem!]!
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
@@ -3281,7 +3277,6 @@ type Query {
   findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
 }
 
 input GetApiKeyInput {
@@ -3394,6 +3389,14 @@ input UsageAnalyticsInput {
   periodStart: DateTime
   periodEnd: DateTime
   userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
+}
+
+enum UsageOperationType {
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
 }
 
 type Mutation {

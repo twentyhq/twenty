@@ -3,7 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
@@ -41,10 +41,6 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -75,8 +71,7 @@ export class ApplicationRegistrationResolver {
     return this.applicationRegistrationService.findPublicByClientId(clientId);
   }
 
-  @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
   @Query(() => ApplicationRegistrationEntity, { nullable: true })
   async findApplicationRegistrationByUniversalIdentifier(
     @Args('universalIdentifier') universalIdentifier: string,
@@ -88,10 +83,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Query(() => [ApplicationRegistrationEntity])
   async findManyApplicationRegistrations(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -101,10 +94,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Query(() => ApplicationRegistrationEntity)
   async findOneApplicationRegistration(
     @Args('id') id: string,
@@ -115,10 +106,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Query(() => ApplicationRegistrationStatsDTO)
   async findApplicationRegistrationStats(
     @Args('id') id: string,
@@ -129,10 +118,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => CreateApplicationRegistrationDTO)
   async createApplicationRegistration(
     @Args('input') input: CreateApplicationRegistrationInput,
@@ -148,10 +135,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => ApplicationRegistrationEntity)
   async updateApplicationRegistration(
     @Args('input') input: UpdateApplicationRegistrationInput,
@@ -162,10 +147,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => Boolean)
   async deleteApplicationRegistration(
     @Args('id') id: string,
@@ -176,10 +159,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => RotateClientSecretDTO)
   async rotateApplicationRegistrationClientSecret(
     @Args('id') id: string,
@@ -196,10 +177,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Query(() => [ApplicationRegistrationVariableEntity])
   async findApplicationRegistrationVariables(
     @Args('applicationRegistrationId') applicationRegistrationId: string,
@@ -213,10 +192,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => ApplicationRegistrationVariableEntity)
   async createApplicationRegistrationVariable(
     @Args('input') input: CreateApplicationRegistrationVariableInput,
@@ -230,10 +207,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => ApplicationRegistrationVariableEntity)
   async updateApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
@@ -247,10 +222,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => Boolean)
   async deleteApplicationRegistrationVariable(
     @Args('id') id: string,
@@ -264,10 +237,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => ApplicationRegistrationEntity)
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -295,10 +266,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Query(() => String, { nullable: true })
   async applicationRegistrationTarballUrl(
     @Args('id') id: string,
@@ -325,10 +294,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Query(() => String)
   async getApplicationShareLink(
     @Args('id') id: string,
@@ -346,10 +313,8 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   @Mutation(() => ApplicationRegistrationEntity)
   async transferApplicationRegistrationOwnership(
     @Args()
