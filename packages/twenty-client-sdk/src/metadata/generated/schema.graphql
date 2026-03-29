@@ -38,9 +38,6 @@ type ApplicationRegistration {
   id: UUID!
   universalIdentifier: String!
   name: String!
-  description: String
-  logoUrl: String
-  author: String
   oAuthClientId: String!
   oAuthRedirectUris: [String!]!
   oAuthScopes: [String!]!
@@ -48,8 +45,6 @@ type ApplicationRegistration {
   sourceType: ApplicationRegistrationSourceType!
   sourcePackage: String
   latestAvailableVersion: String
-  websiteUrl: String
-  termsUrl: String
   isListed: Boolean!
   isFeatured: Boolean!
   createdAt: DateTime!
@@ -2421,89 +2416,28 @@ type File {
   createdAt: DateTime!
 }
 
-type MarketplaceAppField {
-  name: String!
-  type: String!
-  label: String!
-  description: String
-  icon: String
-  objectUniversalIdentifier: String
-  universalIdentifier: String
-}
-
-type MarketplaceAppObject {
-  universalIdentifier: String!
-  nameSingular: String!
-  namePlural: String!
-  labelSingular: String!
-  labelPlural: String!
-  description: String
-  icon: String
-  fields: [MarketplaceAppField!]!
-}
-
-type MarketplaceAppLogicFunction {
-  name: String!
-  description: String
-  timeoutSeconds: Int
-}
-
-type MarketplaceAppFrontComponent {
-  name: String!
-  description: String
-}
-
-type MarketplaceAppRoleObjectPermission {
-  objectUniversalIdentifier: String!
-  canReadObjectRecords: Boolean
-  canUpdateObjectRecords: Boolean
-  canSoftDeleteObjectRecords: Boolean
-  canDestroyObjectRecords: Boolean
-}
-
-type MarketplaceAppRoleFieldPermission {
-  objectUniversalIdentifier: String!
-  fieldUniversalIdentifier: String!
-  canReadFieldValue: Boolean
-  canUpdateFieldValue: Boolean
-}
-
-type MarketplaceAppDefaultRole {
-  id: String!
-  label: String!
-  description: String
-  canReadAllObjectRecords: Boolean!
-  canUpdateAllObjectRecords: Boolean!
-  canSoftDeleteAllObjectRecords: Boolean!
-  canDestroyAllObjectRecords: Boolean!
-  canUpdateAllSettings: Boolean!
-  canAccessAllTools: Boolean!
-  objectPermissions: [MarketplaceAppRoleObjectPermission!]!
-  fieldPermissions: [MarketplaceAppRoleFieldPermission!]!
-  permissionFlags: [String!]!
-}
-
 type MarketplaceApp {
   id: String!
   name: String!
   description: String!
   icon: String!
-  version: String!
   author: String!
   category: String!
   logo: String
-  screenshots: [String!]!
-  aboutDescription: String!
-  providers: [String!]!
-  websiteUrl: String
-  termsUrl: String
-  objects: [MarketplaceAppObject!]!
-  fields: [MarketplaceAppField!]!
-  logicFunctions: [MarketplaceAppLogicFunction!]!
-  frontComponents: [MarketplaceAppFrontComponent!]!
-  defaultRole: MarketplaceAppDefaultRole
   sourcePackage: String
   isFeatured: Boolean!
+}
+
+type MarketplaceAppDetail {
+  universalIdentifier: String!
+  id: String!
+  name: String!
+  sourceType: ApplicationRegistrationSourceType!
+  sourcePackage: String
+  latestAvailableVersion: String
+  isListed: Boolean!
+  isFeatured: Boolean!
+  manifest: JSON
 }
 
 type PublicDomain {
@@ -3249,6 +3183,7 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   applicationRegistrationTarballUrl(id: String!): String
+  getApplicationShareLink(id: String!): String!
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
@@ -3274,7 +3209,7 @@ type Query {
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
   findManyMarketplaceApps: [MarketplaceApp!]!
-  findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
+  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
 }
@@ -3596,6 +3531,7 @@ type Mutation {
   verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean!
+  syncMarketplaceCatalog: Boolean!
   installApplication(appRegistrationId: String!, version: String): Boolean!
   runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
   uninstallApplication(universalIdentifier: String!): Boolean!
@@ -4441,14 +4377,9 @@ input GetAuthorizationUrlForSSOInput {
 
 input CreateApplicationRegistrationInput {
   name: String!
-  description: String
-  logoUrl: String
-  author: String
   universalIdentifier: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-  websiteUrl: String
-  termsUrl: String
 }
 
 input UpdateApplicationRegistrationInput {
@@ -4458,13 +4389,8 @@ input UpdateApplicationRegistrationInput {
 
 input UpdateApplicationRegistrationPayload {
   name: String
-  description: String
-  logoUrl: String
-  author: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-  websiteUrl: String
-  termsUrl: String
   isListed: Boolean
 }
 

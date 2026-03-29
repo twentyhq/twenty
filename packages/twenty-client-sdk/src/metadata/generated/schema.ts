@@ -42,9 +42,6 @@ export interface ApplicationRegistration {
     id: Scalars['UUID']
     universalIdentifier: Scalars['String']
     name: Scalars['String']
-    description?: Scalars['String']
-    logoUrl?: Scalars['String']
-    author?: Scalars['String']
     oAuthClientId: Scalars['String']
     oAuthRedirectUris: Scalars['String'][]
     oAuthScopes: Scalars['String'][]
@@ -52,8 +49,6 @@ export interface ApplicationRegistration {
     sourceType: ApplicationRegistrationSourceType
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
-    websiteUrl?: Scalars['String']
-    termsUrl?: Scalars['String']
     isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
     createdAt: Scalars['DateTime']
@@ -2120,97 +2115,30 @@ export interface File {
     __typename: 'File'
 }
 
-export interface MarketplaceAppField {
-    name: Scalars['String']
-    type: Scalars['String']
-    label: Scalars['String']
-    description?: Scalars['String']
-    icon?: Scalars['String']
-    objectUniversalIdentifier?: Scalars['String']
-    universalIdentifier?: Scalars['String']
-    __typename: 'MarketplaceAppField'
-}
-
-export interface MarketplaceAppObject {
-    universalIdentifier: Scalars['String']
-    nameSingular: Scalars['String']
-    namePlural: Scalars['String']
-    labelSingular: Scalars['String']
-    labelPlural: Scalars['String']
-    description?: Scalars['String']
-    icon?: Scalars['String']
-    fields: MarketplaceAppField[]
-    __typename: 'MarketplaceAppObject'
-}
-
-export interface MarketplaceAppLogicFunction {
-    name: Scalars['String']
-    description?: Scalars['String']
-    timeoutSeconds?: Scalars['Int']
-    __typename: 'MarketplaceAppLogicFunction'
-}
-
-export interface MarketplaceAppFrontComponent {
-    name: Scalars['String']
-    description?: Scalars['String']
-    __typename: 'MarketplaceAppFrontComponent'
-}
-
-export interface MarketplaceAppRoleObjectPermission {
-    objectUniversalIdentifier: Scalars['String']
-    canReadObjectRecords?: Scalars['Boolean']
-    canUpdateObjectRecords?: Scalars['Boolean']
-    canSoftDeleteObjectRecords?: Scalars['Boolean']
-    canDestroyObjectRecords?: Scalars['Boolean']
-    __typename: 'MarketplaceAppRoleObjectPermission'
-}
-
-export interface MarketplaceAppRoleFieldPermission {
-    objectUniversalIdentifier: Scalars['String']
-    fieldUniversalIdentifier: Scalars['String']
-    canReadFieldValue?: Scalars['Boolean']
-    canUpdateFieldValue?: Scalars['Boolean']
-    __typename: 'MarketplaceAppRoleFieldPermission'
-}
-
-export interface MarketplaceAppDefaultRole {
-    id: Scalars['String']
-    label: Scalars['String']
-    description?: Scalars['String']
-    canReadAllObjectRecords: Scalars['Boolean']
-    canUpdateAllObjectRecords: Scalars['Boolean']
-    canSoftDeleteAllObjectRecords: Scalars['Boolean']
-    canDestroyAllObjectRecords: Scalars['Boolean']
-    canUpdateAllSettings: Scalars['Boolean']
-    canAccessAllTools: Scalars['Boolean']
-    objectPermissions: MarketplaceAppRoleObjectPermission[]
-    fieldPermissions: MarketplaceAppRoleFieldPermission[]
-    permissionFlags: Scalars['String'][]
-    __typename: 'MarketplaceAppDefaultRole'
-}
-
 export interface MarketplaceApp {
     id: Scalars['String']
     name: Scalars['String']
     description: Scalars['String']
     icon: Scalars['String']
-    version: Scalars['String']
     author: Scalars['String']
     category: Scalars['String']
     logo?: Scalars['String']
-    screenshots: Scalars['String'][]
-    aboutDescription: Scalars['String']
-    providers: Scalars['String'][]
-    websiteUrl?: Scalars['String']
-    termsUrl?: Scalars['String']
-    objects: MarketplaceAppObject[]
-    fields: MarketplaceAppField[]
-    logicFunctions: MarketplaceAppLogicFunction[]
-    frontComponents: MarketplaceAppFrontComponent[]
-    defaultRole?: MarketplaceAppDefaultRole
     sourcePackage?: Scalars['String']
     isFeatured: Scalars['Boolean']
     __typename: 'MarketplaceApp'
+}
+
+export interface MarketplaceAppDetail {
+    universalIdentifier: Scalars['String']
+    id: Scalars['String']
+    name: Scalars['String']
+    sourceType: ApplicationRegistrationSourceType
+    sourcePackage?: Scalars['String']
+    latestAvailableVersion?: Scalars['String']
+    isListed: Scalars['Boolean']
+    isFeatured: Scalars['Boolean']
+    manifest?: Scalars['JSON']
+    __typename: 'MarketplaceAppDetail'
 }
 
 export interface PublicDomain {
@@ -2805,6 +2733,7 @@ export interface Query {
     findApplicationRegistrationStats: ApplicationRegistrationStats
     findApplicationRegistrationVariables: ApplicationRegistrationVariable[]
     applicationRegistrationTarballUrl?: Scalars['String']
+    getApplicationShareLink: Scalars['String']
     currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
@@ -2830,7 +2759,7 @@ export interface Query {
     findManyPublicDomains: PublicDomain[]
     getEmailingDomains: EmailingDomain[]
     findManyMarketplaceApps: MarketplaceApp[]
-    findOneMarketplaceApp: MarketplaceApp
+    findMarketplaceAppDetail: MarketplaceAppDetail
     findManyApplications: Application[]
     findOneApplication: Application
     __typename: 'Query'
@@ -3047,6 +2976,7 @@ export interface Mutation {
     verifyEmailingDomain: EmailingDomain
     createOneAppToken: AppToken
     installMarketplaceApp: Scalars['Boolean']
+    syncMarketplaceCatalog: Scalars['Boolean']
     installApplication: Scalars['Boolean']
     runWorkspaceMigration: Scalars['Boolean']
     uninstallApplication: Scalars['Boolean']
@@ -3114,9 +3044,6 @@ export interface ApplicationRegistrationGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
     name?: boolean | number
-    description?: boolean | number
-    logoUrl?: boolean | number
-    author?: boolean | number
     oAuthClientId?: boolean | number
     oAuthRedirectUris?: boolean | number
     oAuthScopes?: boolean | number
@@ -3124,8 +3051,6 @@ export interface ApplicationRegistrationGenqlSelection{
     sourceType?: boolean | number
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
-    websiteUrl?: boolean | number
-    termsUrl?: boolean | number
     isListed?: boolean | number
     isFeatured?: boolean | number
     createdAt?: boolean | number
@@ -5314,103 +5239,30 @@ export interface FileGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface MarketplaceAppFieldGenqlSelection{
-    name?: boolean | number
-    type?: boolean | number
-    label?: boolean | number
-    description?: boolean | number
-    icon?: boolean | number
-    objectUniversalIdentifier?: boolean | number
-    universalIdentifier?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MarketplaceAppObjectGenqlSelection{
-    universalIdentifier?: boolean | number
-    nameSingular?: boolean | number
-    namePlural?: boolean | number
-    labelSingular?: boolean | number
-    labelPlural?: boolean | number
-    description?: boolean | number
-    icon?: boolean | number
-    fields?: MarketplaceAppFieldGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MarketplaceAppLogicFunctionGenqlSelection{
-    name?: boolean | number
-    description?: boolean | number
-    timeoutSeconds?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MarketplaceAppFrontComponentGenqlSelection{
-    name?: boolean | number
-    description?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MarketplaceAppRoleObjectPermissionGenqlSelection{
-    objectUniversalIdentifier?: boolean | number
-    canReadObjectRecords?: boolean | number
-    canUpdateObjectRecords?: boolean | number
-    canSoftDeleteObjectRecords?: boolean | number
-    canDestroyObjectRecords?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MarketplaceAppRoleFieldPermissionGenqlSelection{
-    objectUniversalIdentifier?: boolean | number
-    fieldUniversalIdentifier?: boolean | number
-    canReadFieldValue?: boolean | number
-    canUpdateFieldValue?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MarketplaceAppDefaultRoleGenqlSelection{
-    id?: boolean | number
-    label?: boolean | number
-    description?: boolean | number
-    canReadAllObjectRecords?: boolean | number
-    canUpdateAllObjectRecords?: boolean | number
-    canSoftDeleteAllObjectRecords?: boolean | number
-    canDestroyAllObjectRecords?: boolean | number
-    canUpdateAllSettings?: boolean | number
-    canAccessAllTools?: boolean | number
-    objectPermissions?: MarketplaceAppRoleObjectPermissionGenqlSelection
-    fieldPermissions?: MarketplaceAppRoleFieldPermissionGenqlSelection
-    permissionFlags?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface MarketplaceAppGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     description?: boolean | number
     icon?: boolean | number
-    version?: boolean | number
     author?: boolean | number
     category?: boolean | number
     logo?: boolean | number
-    screenshots?: boolean | number
-    aboutDescription?: boolean | number
-    providers?: boolean | number
-    websiteUrl?: boolean | number
-    termsUrl?: boolean | number
-    objects?: MarketplaceAppObjectGenqlSelection
-    fields?: MarketplaceAppFieldGenqlSelection
-    logicFunctions?: MarketplaceAppLogicFunctionGenqlSelection
-    frontComponents?: MarketplaceAppFrontComponentGenqlSelection
-    defaultRole?: MarketplaceAppDefaultRoleGenqlSelection
     sourcePackage?: boolean | number
     isFeatured?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MarketplaceAppDetailGenqlSelection{
+    universalIdentifier?: boolean | number
+    id?: boolean | number
+    name?: boolean | number
+    sourceType?: boolean | number
+    sourcePackage?: boolean | number
+    latestAvailableVersion?: boolean | number
+    isListed?: boolean | number
+    isFeatured?: boolean | number
+    manifest?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6042,6 +5894,7 @@ export interface QueryGenqlSelection{
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
+    getApplicationShareLink?: { __args: {id: Scalars['String']} }
     currentUser?: UserGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
@@ -6067,7 +5920,7 @@ export interface QueryGenqlSelection{
     findManyPublicDomains?: PublicDomainGenqlSelection
     getEmailingDomains?: EmailingDomainGenqlSelection
     findManyMarketplaceApps?: MarketplaceAppGenqlSelection
-    findOneMarketplaceApp?: (MarketplaceAppGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     findManyApplications?: ApplicationGenqlSelection
     findOneApplication?: (ApplicationGenqlSelection & { __args?: {id?: (Scalars['UUID'] | null), universalIdentifier?: (Scalars['UUID'] | null)} })
     __typename?: boolean | number
@@ -6303,6 +6156,7 @@ export interface MutationGenqlSelection{
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     createOneAppToken?: (AppTokenGenqlSelection & { __args: {input: CreateOneAppTokenInput} })
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
+    syncMarketplaceCatalog?: boolean | number
     installApplication?: { __args: {appRegistrationId: Scalars['String'], version?: (Scalars['String'] | null)} }
     runWorkspaceMigration?: { __args: {workspaceMigration: WorkspaceMigrationInput} }
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
@@ -6597,11 +6451,11 @@ export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String']
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
-export interface CreateApplicationRegistrationInput {name: Scalars['String'],description?: (Scalars['String'] | null),logoUrl?: (Scalars['String'] | null),author?: (Scalars['String'] | null),universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),websiteUrl?: (Scalars['String'] | null),termsUrl?: (Scalars['String'] | null)}
+export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
 
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),logoUrl?: (Scalars['String'] | null),author?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),websiteUrl?: (Scalars['String'] | null),termsUrl?: (Scalars['String'] | null),isListed?: (Scalars['Boolean'] | null)}
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationVariableInput {applicationRegistrationId: Scalars['String'],key: Scalars['String'],value: Scalars['String'],description?: (Scalars['String'] | null),isSecret?: (Scalars['Boolean'] | null)}
 
@@ -8295,66 +8149,18 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const MarketplaceAppField_possibleTypes: string[] = ['MarketplaceAppField']
-    export const isMarketplaceAppField = (obj?: { __typename?: any } | null): obj is MarketplaceAppField => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppField"')
-      return MarketplaceAppField_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MarketplaceAppObject_possibleTypes: string[] = ['MarketplaceAppObject']
-    export const isMarketplaceAppObject = (obj?: { __typename?: any } | null): obj is MarketplaceAppObject => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppObject"')
-      return MarketplaceAppObject_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MarketplaceAppLogicFunction_possibleTypes: string[] = ['MarketplaceAppLogicFunction']
-    export const isMarketplaceAppLogicFunction = (obj?: { __typename?: any } | null): obj is MarketplaceAppLogicFunction => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppLogicFunction"')
-      return MarketplaceAppLogicFunction_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MarketplaceAppFrontComponent_possibleTypes: string[] = ['MarketplaceAppFrontComponent']
-    export const isMarketplaceAppFrontComponent = (obj?: { __typename?: any } | null): obj is MarketplaceAppFrontComponent => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppFrontComponent"')
-      return MarketplaceAppFrontComponent_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MarketplaceAppRoleObjectPermission_possibleTypes: string[] = ['MarketplaceAppRoleObjectPermission']
-    export const isMarketplaceAppRoleObjectPermission = (obj?: { __typename?: any } | null): obj is MarketplaceAppRoleObjectPermission => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleObjectPermission"')
-      return MarketplaceAppRoleObjectPermission_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MarketplaceAppRoleFieldPermission_possibleTypes: string[] = ['MarketplaceAppRoleFieldPermission']
-    export const isMarketplaceAppRoleFieldPermission = (obj?: { __typename?: any } | null): obj is MarketplaceAppRoleFieldPermission => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppRoleFieldPermission"')
-      return MarketplaceAppRoleFieldPermission_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MarketplaceAppDefaultRole_possibleTypes: string[] = ['MarketplaceAppDefaultRole']
-    export const isMarketplaceAppDefaultRole = (obj?: { __typename?: any } | null): obj is MarketplaceAppDefaultRole => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppDefaultRole"')
-      return MarketplaceAppDefaultRole_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const MarketplaceApp_possibleTypes: string[] = ['MarketplaceApp']
     export const isMarketplaceApp = (obj?: { __typename?: any } | null): obj is MarketplaceApp => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceApp"')
       return MarketplaceApp_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MarketplaceAppDetail_possibleTypes: string[] = ['MarketplaceAppDetail']
+    export const isMarketplaceAppDetail = (obj?: { __typename?: any } | null): obj is MarketplaceAppDetail => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMarketplaceAppDetail"')
+      return MarketplaceAppDetail_possibleTypes.includes(obj.__typename)
     }
     
 
