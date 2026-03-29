@@ -1,7 +1,6 @@
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CANCEL_IMPORT_JOB } from '@/spreadsheet-import/graphql/mutations/cancelImportJob';
 import { GET_IMPORT_JOB } from '@/spreadsheet-import/graphql/queries/importJob';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -35,7 +34,8 @@ export const useImportJobProgress = () => {
     enqueueInfoSnackBar,
   } = useSnackBar();
 
-  const apolloClient = useApolloCoreClient();
+  // Default Apollo client points to /metadata where ImportJobResolver lives
+  const apolloClient = useApolloClient();
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 

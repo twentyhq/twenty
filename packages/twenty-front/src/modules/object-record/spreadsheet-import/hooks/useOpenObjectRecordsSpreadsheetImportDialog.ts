@@ -1,4 +1,5 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useApolloClient } from '@apollo/client/react';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
@@ -13,7 +14,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
 ) => {
-  const apolloCoreClient = useApolloCoreClient();
+  // The default Apollo client points to /metadata where ImportJobResolver lives.
+  // (apolloCoreClient from useApolloCoreClient points to /graphql — workspace data)
+  const apolloMetadataClient = useApolloClient();
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -41,7 +44,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
     openSpreadsheetImportDialog({
       ...options,
       onSubmit: async (data) => {
-        // Transform validated rows into record inputs
         const createInputs = data.validStructuredRows.map((record) =>
           buildRecordFromImportedStructuredRow({
             importedStructuredRow: record,
@@ -51,8 +53,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
         );
 
         try {
-          // Send to server for background processing via core/metadata endpoint
-          const { data: result } = await apolloCoreClient.mutate({
+          const { data: result } = await apolloMetadataClient.mutate({
             mutation: START_IMPORT_JOB,
             variables: {
               objectNameSingular,
