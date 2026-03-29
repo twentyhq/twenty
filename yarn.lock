@@ -37673,6 +37673,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expr-eval@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "expr-eval@npm:2.0.2"
+  checksum: 10c0/642f112ff28ea34574c595c3ad73ccd8e638498879a4dd28620c4dabebab2e11987a851266ba81883dae85a5800e0c93b3d06f81718b71a215f831534646e4f2
+  languageName: node
+  linkType: hard
+
 "express-rate-limit@npm:5.5.1":
   version: 5.5.1
   resolution: "express-rate-limit@npm:5.5.1"
@@ -59868,6 +59875,7 @@ __metadata:
     deep-equal: "npm:2.2.3"
     dompurify: "npm:3.3.3"
     dotenv: "npm:16.4.5"
+    expr-eval: "npm:^2.0.2"
     express: "npm:4.22.1"
     express-session: "npm:^1.18.2"
     file-type: "npm:^21.3.1"

@@ -10,11 +10,15 @@ import { NUMBER_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/f
 import { Select } from '@/ui/input/components/Select';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { IconDecimal, IconEye } from 'twenty-ui/display';
+import { IconDecimal, IconEye, IconFunction } from 'twenty-ui/display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+import { SettingsOptionCardContentInput } from '@/settings/components/SettingsOptions/SettingsOptionCardContentInput';
+import { TextInput } from '@/ui/input/components/TextInput';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
-  settings: numberFieldDefaultValueSchema,
+  settings: numberFieldDefaultValueSchema.extend({
+    calculationFormula: z.string().optional(),
+  }),
 });
 
 export type SettingsDataModelFieldNumberFormValues = z.infer<
@@ -44,6 +48,7 @@ export const SettingsDataModelFieldNumberForm = ({
         decimals:
           fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
         type: fieldMetadataItem?.settings?.type ?? 'number',
+        calculationFormula: fieldMetadataItem?.settings?.calculationFormula ?? '',
       }}
       control={control}
       render={({ field: { onChange, value } }) => {
@@ -93,6 +98,21 @@ export const SettingsDataModelFieldNumberForm = ({
                 maxValue={100} // needs to be changed
               />
             )}
+            <Separator />
+            <SettingsOptionCardContentInput
+              Icon={IconFunction}
+              title={t`Calculation formula`}
+              description={t`Excel-like formula (e.g. Price * Quantity)`}
+            >
+              <TextInput
+                value={value?.calculationFormula ?? ''}
+                onChange={(formula) =>
+                  onChange({ ...value, calculationFormula: formula })
+                }
+                disabled={disabled}
+                placeholder={t`Enter formula`}
+              />
+            </SettingsOptionCardContentInput>
           </>
         );
       }}

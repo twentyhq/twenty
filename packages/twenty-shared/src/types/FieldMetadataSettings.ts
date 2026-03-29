@@ -24,6 +24,7 @@ type FieldMetadataNumberSettings = {
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
+  calculationFormula?: string;
 };
 
 type FieldMetadataTextSettings = {

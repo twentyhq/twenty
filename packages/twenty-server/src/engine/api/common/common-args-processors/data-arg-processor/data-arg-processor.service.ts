@@ -63,10 +63,14 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FieldCalculationService } from 'src/engine/api/common/field-calculation/field-calculation.service';
 
 @Injectable()
 export class DataArgProcessorService {
-  constructor(private readonly recordPositionService: RecordPositionService) {}
+  constructor(
+    private readonly recordPositionService: RecordPositionService,
+    private readonly fieldCalculationService: FieldCalculationService,
+  ) {}
 
   async process({
     partialRecordInputs,
@@ -82,6 +86,7 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
+    existingRecords?: Partial<ObjectRecord>[];
   }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
       return [];
@@ -167,7 +172,61 @@ export class DataArgProcessorService {
       processedRecords.push(processedRecord);
     }
 
-    return processedRecords;
+    return this.calculateFields({
+      processedRecords,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+      existingRecords: arguments[0].existingRecords,
+    });
+  }
+
+  private async calculateFields({
+    processedRecords,
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
+    existingRecords,
+  }: {
+    processedRecords: Partial<ObjectRecord>[];
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatObjectMetadata: FlatObjectMetadata;
+    existingRecords?: Partial<ObjectRecord>[];
+  }): Promise<Partial<ObjectRecord>[]> {
+    const fields = Object.values(flatFieldMetadataMaps).flat();
+    const objectFields = fields.filter(
+      (f) => f.objectMetadataId === flatObjectMetadata.id,
+    );
+    const calculatedFields =
+      this.fieldCalculationService.getCalculatedFields(objectFields);
+
+    if (calculatedFields.length === 0) {
+      return processedRecords;
+    }
+
+    const sortedCalculatedFields =
+      this.fieldCalculationService.sortFieldsByDependency(calculatedFields);
+
+    return processedRecords.map((record, index) => {
+      const existingRecord = existingRecords?.[index] ?? {};
+      const fullRecord = { ...existingRecord, ...record };
+
+      for (const field of sortedCalculatedFields) {
+        const formula = field.settings?.calculationFormula;
+        if (formula) {
+          try {
+            record[field.name] = this.fieldCalculationService.evaluate(
+              formula,
+              fullRecord,
+            );
+            fullRecord[field.name] = record[field.name];
+          } catch (error) {
+            // Log error or set to null/error value
+            console.error(error.message);
+          }
+        }
+      }
+
+      return record;
+    });
   }
 
   private async processField(

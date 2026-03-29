@@ -13,6 +13,7 @@ import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFiel
 import { isFieldDateValue } from '@/object-record/record-field/ui/types/guards/isFieldDateValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
+import { type FieldNumberMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
@@ -153,7 +154,13 @@ export const usePersistField = ({
       const fieldIsFiles =
         isFieldFiles(fieldDefinition) && isFieldFilesValue(valueToPersist);
 
-      const fieldIsUIReadOnly = fieldDefinition.metadata.isUIReadOnly ?? false;
+      const fieldIsCalculated =
+        isFieldNumber(fieldDefinition) &&
+        !!(fieldDefinition.metadata as FieldNumberMetadata).settings
+          ?.calculationFormula;
+
+      const fieldIsUIReadOnly =
+        (fieldDefinition.metadata.isUIReadOnly ?? false) || fieldIsCalculated;
 
       if (fieldIsRawJson && fieldIsUIReadOnly) {
         return;

@@ -72,6 +72,14 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadataMaps,
     } = queryRunnerContext;
 
+    const dataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+    const repository = dataSource.getRepository(flatObjectMetadata.nameSingular);
+
+    const existingRecord = await repository.findOne({
+      where: { id: args.id },
+    });
+
     return {
       ...args,
       data: (
@@ -82,6 +90,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
           shouldBackfillPositionIfUndefined: false,
+          existingRecords: existingRecord ? [existingRecord] : undefined,
         })
       )[0],
     };

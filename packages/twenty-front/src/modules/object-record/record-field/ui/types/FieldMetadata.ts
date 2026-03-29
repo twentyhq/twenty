@@ -75,6 +75,7 @@ export type FieldNumberMetadata = BaseFieldMetadata & {
   settings?: {
     decimals?: number;
     type?: FieldNumberVariant;
+    calculationFormula?: string;
   };
 };
 

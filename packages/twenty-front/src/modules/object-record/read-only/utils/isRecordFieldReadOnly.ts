@@ -7,7 +7,7 @@ type IsRecordFieldReadOnlyParams = {
   isSystemObject?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'id' | 'isUIReadOnly' | 'isCustom'
+    'id' | 'isUIReadOnly' | 'isCustom' | 'settings'
   >;
   objectPermissions: ObjectPermission;
 };
@@ -27,6 +27,7 @@ export const isRecordFieldReadOnly = ({
     isRecordReadOnly ||
     (isSystemObject === true && fieldMetadataItem.isCustom !== true) ||
     fieldMetadataItem.isUIReadOnly ||
-    fieldReadOnlyByPermissions
+    fieldReadOnlyByPermissions ||
+    !!(fieldMetadataItem.settings as any)?.calculationFormula
   );
 };
