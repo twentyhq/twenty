@@ -5,23 +5,29 @@ import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
+const Label = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StyledButton = styled.button`
   align-items: center;
   border-radius: ${theme.radius(2)};
   box-sizing: border-box;
   cursor: pointer;
   display: grid;
-  max-width: 100%;
   font-family: ${theme.font.family.sans};
   font-size: ${theme.font.size(3.5)};
   font-weight: ${theme.font.weight.regular};
   gap: ${theme.spacing(2)};
-  grid-template-columns: auto auto;
-  justify-content: space-between;
+  grid-template-columns: minmax(0, 1fr) auto;
   line-height: ${theme.lineHeight(3.5)};
+  max-width: 100%;
+  min-width: 0;
   padding: ${theme.spacing(2)};
   text-align: left;
-  white-space: nowrap;
   transition:
     background-color 0.2s ease,
     background-image 0.2s ease,
@@ -55,11 +61,14 @@ const TabIconBox = styled.span`
   border-radius: ${theme.radius(1)};
   display: grid;
   height: ${theme.spacing(6)};
+  overflow: hidden;
   place-items: center;
   width: ${theme.spacing(6)};
 
   & svg {
     display: block;
+    max-height: 100%;
+    max-width: 100%;
   }
 
   &[data-active='true'] {
@@ -92,7 +101,7 @@ export function TabButton({ tab, isActive, onSelect }: TabButtonProps) {
       data-active={String(isActive)}
       onClick={onSelect}
     >
-      {tab.body.text}
+      <Label>{tab.body.text}</Label>
       <TabIconBox data-active={String(isActive)}>
         {Icon ? <Icon size={16} color={iconColor} /> : null}
       </TabIconBox>

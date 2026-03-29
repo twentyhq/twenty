@@ -9,7 +9,7 @@ export const TABS_DATA: TabsDataType = {
   },
   heading: [
     {
-      text: 'AI that actually helps you ',
+      text: 'AI that actually\nhelps you ',
       fontFamily: 'serif',
     },
     {

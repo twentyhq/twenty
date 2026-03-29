@@ -43,8 +43,8 @@ export default function ProductPage() {
 
       <Tabs.Root>
         <Eyebrow colorScheme="secondary" heading={TABS_DATA.eyebrow.heading} />
-        <Heading segments={TABS_DATA.heading} size="lg" weight="light" />
-        <Body body={TABS_DATA.body} size="sm" />
+        <Tabs.Heading segments={TABS_DATA.heading} />
+        <Tabs.Body body={TABS_DATA.body} />
         <Tabs.TabGroup tabs={TABS_DATA.tabs} />
       </Tabs.Root>
 

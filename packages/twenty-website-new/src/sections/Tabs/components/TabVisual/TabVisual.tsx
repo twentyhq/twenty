@@ -5,7 +5,7 @@ import type { ImageType } from '@/design-system/components/Image/types/Image';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
-const PanelRoot = styled.div`
+const VisualRoot = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -15,16 +15,16 @@ const PanelRoot = styled.div`
   }
 `;
 
-const PanelImage = styled(Image)`
+const VisualImage = styled(Image)`
   border-radius: ${theme.radius(1)};
 `;
 
-type TabPanelProps = { image: ImageType };
+type TabVisualProps = { image: ImageType };
 
-export function TabPanel({ image }: TabPanelProps) {
+export function TabVisual({ image }: TabVisualProps) {
   return (
-    <PanelRoot role="tabpanel">
-      <PanelImage src={image.src} alt={image.alt} />
-    </PanelRoot>
+    <VisualRoot role="tabpanel">
+      <VisualImage src={image.src} alt={image.alt} />
+    </VisualRoot>
   );
 }
