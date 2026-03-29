@@ -101,6 +101,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     this.allCommands = {
+      '1.19.0': [],
       '1.20.0': commands_1200,
     };
   }
