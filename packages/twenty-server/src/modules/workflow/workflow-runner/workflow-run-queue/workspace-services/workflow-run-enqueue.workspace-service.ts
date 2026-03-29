@@ -163,9 +163,16 @@ export class WorkflowRunEnqueueWorkspaceService {
         error,
       );
     } finally {
-      await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
-        workspaceId,
-      );
+      try {
+        await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
+          workspaceId,
+        );
+      } catch (releaseError) {
+        this.logger.warn(
+          `Failed to release workflow enqueue lock for workspace: ${workspaceId}`,
+          releaseError,
+        );
+      }
     }
   }
 }
