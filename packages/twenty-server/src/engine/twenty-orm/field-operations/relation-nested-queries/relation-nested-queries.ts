@@ -173,6 +173,7 @@ export class RelationNestedQueries {
       await this.createMissingConnectRecords(
         recordsToConnectWithConfig,
         queryBuilder,
+        entities,
       );
     }
 
@@ -187,9 +188,9 @@ export class RelationNestedQueries {
 
   /**
    * For upsert operations, resolves missing connect records by:
-   * 1. Trying a fallback lookup using non-ID fields (email, phone, etc.)
-   *    when the primary ID-based lookup found no match
-   * 2. Creating new records in the target table as a last resort
+   * 1. Trying a fallback lookup using createData fields (email, name, etc.)
+   *    when the primary unique-constraint lookup found no match
+   * 2. Creating new records in the target table with full data as a last resort
    */
   private async createMissingConnectRecords<Entity extends ObjectLiteral>(
     recordsToConnectWithConfig: [
@@ -199,6 +200,7 @@ export class RelationNestedQueries {
     queryBuilder:
       | WorkspaceSelectQueryBuilder<Entity>
       | SelectQueryBuilder<Entity>,
+    entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
   ): Promise<void> {
     for (const [
       connectQueryConfig,
@@ -232,62 +234,55 @@ export class RelationNestedQueries {
 
       if (missingEntries.length === 0) continue;
 
-      // Step 1: Try fallback lookup using non-ID fields (email, phone, name)
-      // when the primary condition was ID-only.
-      const fullConditions =
-        connectQueryConfig.fullRecordToConnectConditionByEntityIndex ?? {};
+      // Step 1: Try fallback lookups — first using fullRecordToConnectCondition
+      // (for ID-priority scenarios), then using createData fields from the entity
+      for (const entry of missingEntries) {
+        // 1a: Try full condition fallback (for ID-priority filtered scenarios)
+        const fullConditions =
+          connectQueryConfig.fullRecordToConnectConditionByEntityIndex ?? {};
+        const fullCondition = fullConditions[entry.entityIndex];
 
-      if (Object.keys(fullConditions).length > 0) {
-        for (const entry of missingEntries) {
-          const fallbackCondition = fullConditions[entry.entityIndex];
+        if (isDefined(fullCondition) && fullCondition.length > 0) {
+          const resolved = await this.tryFallbackLookup(
+            fullCondition,
+            connectQueryConfig,
+            recordsToConnect,
+            queryBuilder,
+            entry.entityIndex,
+          );
 
-          if (!isDefined(fallbackCondition) || fallbackCondition.length === 0) {
-            continue;
-          }
+          if (resolved) continue;
+        }
 
-          try {
-            let fallbackQuery = queryBuilder.connection
-              .createQueryBuilder()
-              .select('*')
-              .from(
-                connectQueryConfig.targetObjectName,
-                connectQueryConfig.targetObjectName,
-              );
+        // 1b: Try createData fallback — extract email/name from the entity's
+        // connect.createData and search the target table
+        const entity = entities[entry.entityIndex];
+        const connectObj = (entity as any)?.[
+          connectQueryConfig.connectFieldName
+        ]?.connect;
+        const createData = connectObj?.createData as
+          | Record<string, unknown>
+          | undefined;
 
-            for (const [field, value] of fallbackCondition) {
-              fallbackQuery = fallbackQuery.andWhere(
-                `"${connectQueryConfig.targetObjectName}"."${field}" = :${field}`,
-                { [field]: value },
-              );
-            }
+        if (createData !== undefined) {
+          const fallbackFields = this.flattenCreateData(createData);
 
-            const fallbackResults = await fallbackQuery.getRawMany();
+          if (fallbackFields.length > 0) {
+            const resolved = await this.tryFallbackLookup(
+              fallbackFields,
+              connectQueryConfig,
+              recordsToConnect,
+              queryBuilder,
+              entry.entityIndex,
+            );
 
-            if (fallbackResults.length === 1) {
-              // Found exactly one match — use it. Update the primary condition
-              // results so updateEntitiesWithRecordToConnectId picks it up by
-              // replacing the stale ID condition with the matched record.
-              const matched = fallbackResults[0];
-
-              recordsToConnect.push(matched);
-
-              // Rewrite the entity's condition to use the found record's ID
-              // so the downstream matching logic works.
-              connectQueryConfig.recordToConnectConditionByEntityIndex[
-                entry.entityIndex
-              ] = [['id', matched.id]];
-
-              continue;
-            }
-          } catch {
-            // Fallback query failed — proceed to creation attempt
+            if (resolved) continue;
           }
         }
       }
 
       // Step 2: Create missing records that couldn't be resolved via fallback
       for (const entry of missingEntries) {
-        // Re-check after fallback — the condition may have been rewritten
         const currentCondition =
           connectQueryConfig.recordToConnectConditionByEntityIndex[
             entry.entityIndex
@@ -298,6 +293,15 @@ export class RelationNestedQueries {
 
         if (alreadyResolved) continue;
 
+        // Build the new record using condition data + createData for richer records
+        const entity = entities[entry.entityIndex];
+        const connectObj = (entity as any)?.[
+          connectQueryConfig.connectFieldName
+        ]?.connect;
+        const createData = connectObj?.createData as
+          | Record<string, unknown>
+          | undefined;
+
         const now = new Date().toISOString();
         const newRecord: Record<string, unknown> = {
           id: randomUUID(),
@@ -305,8 +309,18 @@ export class RelationNestedQueries {
           updatedAt: now,
         };
 
+        // Add the connect condition fields (e.g., phone number)
         for (const [field, value] of entry.condition) {
           newRecord[field] = value;
+        }
+
+        // Add createData fields (name, email, address, etc.)
+        if (createData !== undefined) {
+          for (const [field, value] of this.flattenCreateData(createData)) {
+            if (!(field in newRecord)) {
+              newRecord[field] = value;
+            }
+          }
         }
 
         try {
@@ -317,15 +331,97 @@ export class RelationNestedQueries {
             .values(newRecord)
             .execute();
 
-          // Add to results so updateEntitiesWithRecordToConnectId finds it
           recordsToConnect.push(newRecord);
         } catch {
-          // If creation fails (e.g. NOT NULL constraints, unique violation),
-          // updateEntitiesWithRecordToConnectId will find 0 matches and
-          // record a CONNECT_NOT_FOUND warning with the entity's recordId.
+          // If creation fails, updateEntitiesWithRecordToConnectId will
+          // record a CONNECT_NOT_FOUND warning.
         }
       }
     }
+  }
+
+  /**
+   * Try a fallback lookup against the target table using the given conditions.
+   * If exactly one record matches, add it to results and rewrite the entity's
+   * condition to use the matched record's ID.
+   */
+  private async tryFallbackLookup<Entity extends ObjectLiteral>(
+    conditions: [string, unknown][],
+    connectQueryConfig: RelationConnectQueryConfig,
+    recordsToConnect: Record<string, unknown>[],
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>,
+    entityIndex: number,
+  ): Promise<boolean> {
+    try {
+      let fallbackQuery = queryBuilder.connection
+        .createQueryBuilder()
+        .select('*')
+        .from(
+          connectQueryConfig.targetObjectName,
+          connectQueryConfig.targetObjectName,
+        );
+
+      for (const [field, value] of conditions) {
+        fallbackQuery = fallbackQuery.andWhere(
+          `"${connectQueryConfig.targetObjectName}"."${field}" = :${field}`,
+          { [field]: value },
+        );
+      }
+
+      // Only match non-deleted records
+      fallbackQuery = fallbackQuery.andWhere(
+        `"${connectQueryConfig.targetObjectName}"."deletedAt" IS NULL`,
+      );
+
+      const fallbackResults = await fallbackQuery.getRawMany();
+
+      if (fallbackResults.length === 1) {
+        const matched = fallbackResults[0];
+
+        recordsToConnect.push(matched);
+
+        connectQueryConfig.recordToConnectConditionByEntityIndex[entityIndex] =
+          [['id', matched.id]];
+
+        return true;
+      }
+    } catch {
+      // Fallback query failed
+    }
+
+    return false;
+  }
+
+  /**
+   * Flatten createData (which uses composite object notation like
+   * `{ name: { firstName: "X" } }`) into DB column pairs like
+   * `[["nameFirstName", "X"]]`.
+   */
+  private flattenCreateData(
+    createData: Record<string, unknown>,
+  ): [string, string][] {
+    const result: [string, string][] = [];
+
+    for (const [fieldName, value] of Object.entries(createData)) {
+      if (value !== null && typeof value === 'object') {
+        // Composite field — flatten subfields
+        for (const [subKey, subValue] of Object.entries(
+          value as Record<string, unknown>,
+        )) {
+          if (isDefined(subValue) && subValue !== '') {
+            const columnName = `${fieldName}${subKey.charAt(0).toUpperCase()}${subKey.slice(1)}`;
+
+            result.push([columnName, String(subValue)]);
+          }
+        }
+      } else if (isDefined(value) && value !== '') {
+        result.push([fieldName, String(value)]);
+      }
+    }
+
+    return result;
   }
 
   private async executeConnectQueries<Entity extends ObjectLiteral>(

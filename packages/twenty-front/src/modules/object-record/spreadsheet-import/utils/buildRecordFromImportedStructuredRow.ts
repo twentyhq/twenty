@@ -102,9 +102,52 @@ const buildRelationConnectFieldRecord = (
     {} as Record<string, any>,
   );
 
-  return isEmptyObject(relationConnectFieldValue)
-    ? undefined
-    : { connect: { where: relationConnectFieldValue } };
+  if (isEmptyObject(relationConnectFieldValue)) return undefined;
+
+  // Collect relation update fields (name, email, address, etc.) so the server
+  // can use them to create missing related records with full data.
+  const relationUpdateFields = spreadsheetImportFields.filter(
+    (field) =>
+      field.isRelationUpdateField === true &&
+      field.fieldMetadataItemId === fieldMetadataItem.id &&
+      isDefined(importedStructuredRow[field.key]) &&
+      isNonEmptyString(importedStructuredRow[field.key]),
+  );
+
+  const createData: Record<string, any> = {};
+
+  for (const field of relationUpdateFields) {
+    const targetField = field.targetFieldMetadataItem;
+
+    if (!isDefined(targetField)) continue;
+
+    if (
+      isCompositeFieldType(targetField.type) &&
+      isDefined(field.compositeSubFieldKey)
+    ) {
+      const rawValue = importedStructuredRow[field.key];
+      const transformConfig =
+        compositeFieldTransformConfigs[targetField.type];
+      const transform = transformConfig?.[field.compositeSubFieldKey];
+      const value = transform ? transform(rawValue) : rawValue;
+
+      createData[targetField.name] = {
+        ...(isDefined(createData[targetField.name])
+          ? createData[targetField.name]
+          : {}),
+        [field.compositeSubFieldKey]: value,
+      };
+    } else {
+      createData[targetField.name] = importedStructuredRow[field.key];
+    }
+  }
+
+  return {
+    connect: {
+      where: relationConnectFieldValue,
+      ...(isEmptyObject(createData) ? {} : { createData }),
+    },
+  };
 };
 
 export const buildRecordFromImportedStructuredRow = ({
