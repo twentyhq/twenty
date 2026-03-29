@@ -4,6 +4,7 @@ import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Hero } from '@/sections/Hero/components';
+import { Plans } from '@/sections/Plans/components';
 import { theme } from '@/theme';
 
 export default function PricingPage() {
@@ -13,6 +14,10 @@ export default function PricingPage() {
         <Hero.Heading page={Pages.Pricing} segments={HERO_DATA.heading} />
         <Hero.Body page={Pages.Pricing} body={HERO_DATA.body} />
       </Hero.Root>
+
+      <Plans.Root backgroundColor={theme.colors.secondary.background[5]}>
+        <Plans.Content />
+      </Plans.Root>
 
       <EngagementBand.Root
         backgroundColor={theme.colors.secondary.background[5]}

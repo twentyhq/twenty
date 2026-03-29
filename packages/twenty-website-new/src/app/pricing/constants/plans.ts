@@ -25,6 +25,13 @@ const PRO_BULLETS_DEFAULT = [
   { text: 'Add-on AI (1-month trial)' },
 ];
 
+const PRO_BULLETS_SELF_HOST_MONTHLY = [
+  { text: 'Full customisation' },
+  { text: 'AI Agents with custom skills' },
+  { text: 'Standard support' },
+  { text: 'Add-on AI (1-month trial)' },
+];
+
 const PRO_BULLETS_SELF_HOST_YEARLY = [
   { text: 'Full customisation' },
   { text: 'AI Agents with custom skills' },
@@ -39,6 +46,8 @@ const ORGANIZATION_BULLETS = [
   { text: 'Priority support' },
   { text: 'Add-on AI full time' },
 ];
+
+import type { PlansDataType } from '@/sections/Plans/types';
 
 export const PLANS_DATA = {
   organization: {
@@ -100,7 +109,7 @@ export const PLANS_DATA = {
       },
       selfHost: {
         monthly: {
-          featureBullets: PRO_BULLETS_DEFAULT,
+          featureBullets: PRO_BULLETS_SELF_HOST_MONTHLY,
           price: {
             body: { text: '/month, paid monthly' },
             heading: { fontFamily: 'sans', text: '$0 USD' },
@@ -119,4 +128,4 @@ export const PLANS_DATA = {
     heading: PRO_HEADING,
     illustration: PRO_ILLUSTRATION,
   },
-};
+} satisfies PlansDataType;
