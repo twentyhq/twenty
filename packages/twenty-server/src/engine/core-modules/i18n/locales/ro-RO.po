@@ -3212,11 +3212,6 @@ msgstr "Captcha invalidă. Vă rugăm să încercați din nou."
 msgid "Invalid command menu item input."
 msgstr "Intrare invalidă pentru elementul de meniu de comandă."
 
-#. js-lingui-id: C25VTR
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
-msgstr "Configurație invalidă pentru widgetul \"{widgetTitle}\": Tipul de diagramă {chartType} necesită flagul de funcționalitate IS_DASHBOARD_V2_ENABLED"
-
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget"
@@ -7005,11 +7000,6 @@ msgstr "Această cheie API a expirat. Vă rugăm să creați una nouă."
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
 msgstr "Această cheie API nu are niciun rol atribuit."
-
-#. js-lingui-id: FY4xDH
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "This chart type requires the Dashboard V2 feature to be enabled"
-msgstr "Acest tip de diagramă necesită activarea funcționalității Dashboard V2"
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

@@ -3212,11 +3212,6 @@ msgstr "Captcha invalide. Veuillez réessayer."
 msgid "Invalid command menu item input."
 msgstr "Entrée invalide pour l'élément de menu de commandes."
 
-#. js-lingui-id: C25VTR
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
-msgstr "Configuration invalide pour le widget \"{widgetTitle}\" : le type de graphique {chartType} nécessite le feature flag IS_DASHBOARD_V2_ENABLED"
-
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget"
@@ -7005,11 +7000,6 @@ msgstr "Cette clé API a expiré. Veuillez en créer une nouvelle."
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
 msgstr "Cette clé API n'a aucun rôle attribué."
-
-#. js-lingui-id: FY4xDH
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "This chart type requires the Dashboard V2 feature to be enabled"
-msgstr "Ce type de graphique nécessite que la fonctionnalité Dashboard V2 soit activée"
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
