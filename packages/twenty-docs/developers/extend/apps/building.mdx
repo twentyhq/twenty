@@ -850,7 +850,7 @@ const { createCompany } = await client.mutation({
 The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you try to use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema, generates a typed client using `@genql/cli`, and replaces the stub in `node_modules/twenty-client-sdk/dist/core/`.
+**CoreApiClient is generated at dev/build time.** If you try to use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema, generates a typed client using `@genql/cli`, writes the generated sources to `node_modules/twenty-client-sdk/dist/core/generated/`, and replaces the stubs in `node_modules/twenty-client-sdk/dist/core.mjs` and `node_modules/twenty-client-sdk/dist/core.cjs`.
 </Note>
 
 #### Using CoreSchema for type annotations
