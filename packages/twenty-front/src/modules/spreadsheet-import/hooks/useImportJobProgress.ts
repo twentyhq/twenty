@@ -123,15 +123,16 @@ export const useImportJobPoller = () => {
         if (!job) return;
 
         const typedJob = job as ImportJobData;
+        const normalizedStatus = typedJob.status.toLowerCase() as ImportJobStatus;
         const isTerminal =
-          typedJob.status === 'completed' ||
-          typedJob.status === 'failed' ||
-          typedJob.status === 'cancelled';
+          normalizedStatus === 'completed' ||
+          normalizedStatus === 'failed' ||
+          normalizedStatus === 'cancelled';
 
         upsertJob({
           id: typedJob.id,
           label: `Importing ${current.objectNameSingular} records`,
-          status: typedJob.status,
+          status: normalizedStatus,
           totalItems: typedJob.totalRecords,
           processedItems: typedJob.processedRecords,
           successCount: typedJob.successCount,
