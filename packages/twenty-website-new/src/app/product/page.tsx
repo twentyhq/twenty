@@ -1,5 +1,6 @@
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { HERO_DATA } from '@/app/product/constants/hero';
+import { TABS_DATA } from '@/app/product/constants/tabs';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/constants/three-cards';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
@@ -38,7 +39,19 @@ export default function ProductPage() {
         />
       </TrustedBy.Root>
 
-      <Tabs.Root></Tabs.Root>
+      <Tabs.Root>
+        <Eyebrow
+          colorScheme="secondary"
+          heading={TABS_DATA.eyebrow.heading}
+        />
+        <Heading
+          segments={TABS_DATA.heading}
+          size="lg"
+          weight="light"
+        />
+        <Body body={TABS_DATA.body} size="sm" />
+        <Tabs.Content />
+      </Tabs.Root>
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Product} align="left">
