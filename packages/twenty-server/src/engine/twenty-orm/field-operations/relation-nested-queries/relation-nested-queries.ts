@@ -254,8 +254,8 @@ export class RelationNestedQueries {
           if (resolved) continue;
         }
 
-        // 1b: Try createData fallback — extract email/name from the entity's
-        // connect.createData and search the target table
+        // 1b: Try createData fallback — search by email, then verify name
+        // similarity (≥95%) to avoid matching spouses who share an email.
         const entity = entities[entry.entityIndex];
         const connectObj = (entity as any)?.[
           connectQueryConfig.connectFieldName
@@ -265,19 +265,15 @@ export class RelationNestedQueries {
           | undefined;
 
         if (createData !== undefined) {
-          const fallbackFields = this.flattenCreateData(createData);
+          const resolved = await this.tryCreateDataFallback(
+            createData,
+            connectQueryConfig,
+            recordsToConnect,
+            queryBuilder,
+            entry.entityIndex,
+          );
 
-          if (fallbackFields.length > 0) {
-            const resolved = await this.tryFallbackLookup(
-              fallbackFields,
-              connectQueryConfig,
-              recordsToConnect,
-              queryBuilder,
-              entry.entityIndex,
-            );
-
-            if (resolved) continue;
-          }
+          if (resolved) continue;
         }
       }
 
@@ -384,6 +380,102 @@ export class RelationNestedQueries {
 
         connectQueryConfig.recordToConnectConditionByEntityIndex[entityIndex] =
           [['id', matched.id]];
+
+        return true;
+      }
+    } catch {
+      // Fallback query failed
+    }
+
+    return false;
+  }
+
+  /**
+   * Fallback lookup using createData: queries by email, then verifies the
+   * matched record's name is ≥95% similar to avoid matching spouses who
+   * share an email address.
+   */
+  private async tryCreateDataFallback<Entity extends ObjectLiteral>(
+    createData: Record<string, unknown>,
+    connectQueryConfig: RelationConnectQueryConfig,
+    recordsToConnect: Record<string, unknown>[],
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>,
+    entityIndex: number,
+  ): Promise<boolean> {
+    const flat = this.flattenCreateData(createData);
+    const emailField = flat.find(([k]) => k === 'emailsPrimaryEmail');
+
+    if (!emailField) return false;
+
+    try {
+      const results = await queryBuilder.connection
+        .createQueryBuilder()
+        .select('*')
+        .from(
+          connectQueryConfig.targetObjectName,
+          connectQueryConfig.targetObjectName,
+        )
+        .where(
+          `"${connectQueryConfig.targetObjectName}"."emailsPrimaryEmail" = :email`,
+          { email: emailField[1] },
+        )
+        .andWhere(
+          `"${connectQueryConfig.targetObjectName}"."deletedAt" IS NULL`,
+        )
+        .getRawMany();
+
+      if (results.length === 0) return false;
+
+      // Extract the expected name from createData
+      const expectedFirst = String(
+        flat.find(([k]) => k === 'nameFirstName')?.[1] ?? '',
+      ).toLowerCase();
+      const expectedLast = String(
+        flat.find(([k]) => k === 'nameLastName')?.[1] ?? '',
+      ).toLowerCase();
+      const expectedFull = `${expectedFirst} ${expectedLast}`.trim();
+
+      if (expectedFull.length === 0) {
+        // No name to verify — accept single email match only
+        if (results.length === 1) {
+          recordsToConnect.push(results[0]);
+
+          connectQueryConfig.recordToConnectConditionByEntityIndex[
+            entityIndex
+          ] = [['id', results[0].id]];
+
+          return true;
+        }
+
+        return false;
+      }
+
+      // Score each result by name similarity and pick the best ≥95% match
+      let bestMatch: Record<string, unknown> | null = null;
+      let bestScore = 0;
+
+      for (const record of results) {
+        const recordFirst = String(
+          record.nameFirstName ?? '',
+        ).toLowerCase();
+        const recordLast = String(record.nameLastName ?? '').toLowerCase();
+        const recordFull = `${recordFirst} ${recordLast}`.trim();
+
+        const similarity = stringSimilarity(expectedFull, recordFull);
+
+        if (similarity >= 0.95 && similarity > bestScore) {
+          bestScore = similarity;
+          bestMatch = record;
+        }
+      }
+
+      if (bestMatch) {
+        recordsToConnect.push(bestMatch);
+
+        connectQueryConfig.recordToConnectConditionByEntityIndex[entityIndex] =
+          [['id', String(bestMatch.id)]];
 
         return true;
       }
@@ -571,4 +663,70 @@ export class RelationNestedQueries {
       return entity;
     });
   }
+}
+
+/**
+ * Jaro-Winkler similarity (0–1). Gives extra weight to common prefixes,
+ * making it well-suited for person name matching.
+ */
+function stringSimilarity(a: string, b: string): number {
+  if (a === b) return 1;
+  if (a.length === 0 || b.length === 0) return 0;
+
+  const jaro = jaroSimilarity(a, b);
+
+  // Winkler prefix bonus (up to 4 chars, scaling factor 0.1)
+  let prefixLen = 0;
+  const maxPrefix = Math.min(4, a.length, b.length);
+
+  while (prefixLen < maxPrefix && a[prefixLen] === b[prefixLen]) {
+    prefixLen++;
+  }
+
+  return jaro + prefixLen * 0.1 * (1 - jaro);
+}
+
+function jaroSimilarity(a: string, b: string): number {
+  const aLen = a.length;
+  const bLen = b.length;
+  const matchWindow = Math.max(0, Math.floor(Math.max(aLen, bLen) / 2) - 1);
+
+  const aMatched = new Array<boolean>(aLen).fill(false);
+  const bMatched = new Array<boolean>(bLen).fill(false);
+
+  let matches = 0;
+  let transpositions = 0;
+
+  // Find matches
+  for (let i = 0; i < aLen; i++) {
+    const lo = Math.max(0, i - matchWindow);
+    const hi = Math.min(bLen - 1, i + matchWindow);
+
+    for (let j = lo; j <= hi; j++) {
+      if (bMatched[j] || a[i] !== b[j]) continue;
+      aMatched[i] = true;
+      bMatched[j] = true;
+      matches++;
+      break;
+    }
+  }
+
+  if (matches === 0) return 0;
+
+  // Count transpositions
+  let k = 0;
+
+  for (let i = 0; i < aLen; i++) {
+    if (!aMatched[i]) continue;
+
+    while (!bMatched[k]) k++;
+
+    if (a[i] !== b[k]) transpositions++;
+    k++;
+  }
+
+  return (
+    (matches / aLen + matches / bLen + (matches - transpositions / 2) / matches) /
+    3
+  );
 }
