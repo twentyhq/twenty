@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { FeatureFlagKey, type ObjectsPermissions } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   UpdateQueryBuilder,
@@ -615,14 +615,6 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     if (this.shouldBypassPermissionChecks) {
       return;
     }
@@ -648,14 +640,6 @@ export class WorkspaceUpdateQueryBuilder<
   }: {
     updatedRecords: T[];
   }): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     const mainAliasTarget = this.getMainAliasTarget();
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
