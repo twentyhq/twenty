@@ -20,7 +20,7 @@ export type ImportJobData = {
 @Injectable()
 export class ImportJobService {
   constructor(
-    @InjectRepository(ImportJobEntity, 'core')
+    @InjectRepository(ImportJobEntity)
     private readonly importJobRepository: Repository<ImportJobEntity>,
     @InjectMessageQueue(MessageQueue.importQueue)
     private readonly importQueueService: MessageQueueService,
