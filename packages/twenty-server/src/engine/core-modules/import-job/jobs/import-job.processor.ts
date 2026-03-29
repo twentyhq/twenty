@@ -68,6 +68,7 @@ export class ImportJobProcessor {
             await this.globalWorkspaceOrmManager.getRepository(
               workspaceId,
               importJob.objectNameSingular,
+              { shouldBypassPermissionChecks: true },
             );
 
           const numberOfBatches = Math.ceil(totalRecords / BATCH_SIZE);

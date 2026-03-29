@@ -185,7 +185,7 @@ msgid "{0} credits used"
 msgstr ""
 
 #. js-lingui-id: TzIoTO
-#. placeholder {0}: data.successCount
+#. placeholder {0}: job.successCount
 #: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
 msgid "{0} records imported successfully"
 msgstr ""
@@ -7880,16 +7880,16 @@ msgid "Import all emails"
 msgstr "Importera alla e-postmeddelanden"
 
 #. js-lingui-id: q0pkll
-#. placeholder {0}: data.processedRecords
-#. placeholder {1}: data.totalRecords
+#. placeholder {0}: job.processedRecords
+#. placeholder {1}: job.totalRecords
 #: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
 msgid "Import cancelled: {0} of {1} records processed"
 msgstr ""
 
 #. js-lingui-id: KLB3qj
-#. placeholder {0}: data.successCount
-#. placeholder {1}: data.warningCount
-#. placeholder {2}: data.failureCount
+#. placeholder {0}: job.successCount
+#. placeholder {1}: job.warningCount
+#. placeholder {2}: job.failureCount
 #: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
 msgid "Import complete: {0} succeeded, {1} warnings, {2} failed"
 msgstr ""
@@ -7900,7 +7900,7 @@ msgid "Import CSV"
 msgstr "Importera CSV"
 
 #. js-lingui-id: P3ovv7
-#. placeholder {0}: data.processedRecords
+#. placeholder {0}: job.processedRecords
 #: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
 msgid "Import failed after processing {0} records"
 msgstr ""
@@ -7941,8 +7941,8 @@ msgid "Importing Data ..."
 msgstr "Importerar data ..."
 
 #. js-lingui-id: fhz3X/
-#. placeholder {0}: data.processedRecords
-#. placeholder {1}: data.totalRecords
+#. placeholder {0}: job.processedRecords
+#. placeholder {1}: job.totalRecords
 #: src/modules/spreadsheet-import/hooks/useImportJobProgress.ts
 msgid "Importing records... ({0} / {1})"
 msgstr ""

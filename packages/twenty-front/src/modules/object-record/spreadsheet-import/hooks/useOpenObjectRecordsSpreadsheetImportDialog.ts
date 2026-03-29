@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/client/react';
-
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
@@ -14,6 +13,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
 ) => {
+  const apolloCoreClient = useApolloCoreClient();
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog();
   const { buildSpreadsheetImportFields } = useBuildSpreadsheetImportFields();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -22,8 +22,6 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-
-  const [startImportJob] = useMutation(START_IMPORT_JOB);
 
   const openObjectRecordsSpreadsheetImportDialog = (
     options?: Omit<
@@ -53,16 +51,19 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
         );
 
         try {
-          // Send to server for background processing
-          const { data: result } = await startImportJob({
+          // Send to server for background processing via core/metadata endpoint
+          const { data: result } = await apolloCoreClient.mutate({
+            mutation: START_IMPORT_JOB,
             variables: {
               objectNameSingular,
               columnMappings: spreadsheetImportFields.map((field) => ({
                 key: field.key,
                 label: field.label,
                 fieldMetadataItemId: field.fieldMetadataItemId,
-                isRelationConnectField: field.isRelationConnectField ?? false,
-                isRelationUpdateField: field.isRelationUpdateField ?? false,
+                isRelationConnectField:
+                  field.isRelationConnectField ?? false,
+                isRelationUpdateField:
+                  field.isRelationUpdateField ?? false,
               })),
               validatedRows: createInputs,
               fileName: undefined,
@@ -72,15 +73,12 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
           const importJob = (result as any)?.startImportJob;
 
           if (importJob?.id) {
-            // Start tracking progress — this shows the persistent snackbar
             startTracking({
               importJobId: importJob.id,
               objectNameSingular,
               totalRecords: importJob.totalRecords,
             });
           }
-
-          // Modal closes automatically after onSubmit returns
         } catch (error: any) {
           enqueueErrorSnackBar({
             apolloError: error,
