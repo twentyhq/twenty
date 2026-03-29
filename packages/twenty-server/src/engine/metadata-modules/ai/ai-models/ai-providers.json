@@ -853,6 +853,16 @@
         "supportsReasoning": true
       },
       {
+        "name": "gemma-3-27b-it",
+        "label": "Gemma 3 27B",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0,
+        "outputCostPerMillionTokens": 0,
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 8192,
+        "modalities": ["image"]
+      },
+      {
         "name": "gemini-2.5-pro-preview-06-05",
         "label": "Gemini 2.5 Pro Preview 06-05",
         "modelFamily": "GEMINI",
