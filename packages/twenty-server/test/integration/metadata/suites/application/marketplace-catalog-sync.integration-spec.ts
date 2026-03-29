@@ -14,8 +14,9 @@ const MARKETPLACE_QUERY = `
       author
       sourcePackage
       icon
-      version
       category
+      logo
+      isFeatured
     }
   }
 `;

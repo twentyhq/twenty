@@ -117,9 +117,7 @@ export const registerRemoteCommands = (program: Command): void => {
 
             apiUrl = detectedUrl;
           } else if (detectedUrl) {
-            console.log(
-              chalk.gray(`Found local server at ${detectedUrl}`),
-            );
+            console.log(chalk.gray(`Found local server at ${detectedUrl}`));
             apiUrl = detectedUrl;
           } else if (options.token) {
             apiUrl = 'http://localhost:2020';

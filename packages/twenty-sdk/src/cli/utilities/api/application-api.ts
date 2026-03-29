@@ -101,7 +101,6 @@ export class ApplicationApi {
 
   async createApplicationRegistration(input: {
     name: string;
-    description?: string;
     universalIdentifier: string;
   }): Promise<
     ApiResponse<{

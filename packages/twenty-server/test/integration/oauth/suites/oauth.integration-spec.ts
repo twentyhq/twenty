@@ -14,7 +14,6 @@ type TestRegistration = {
   id: string;
   universalIdentifier: string;
   name: string;
-  description: string | null;
   oAuthClientId: string;
   oAuthRedirectUris: string[];
   oAuthScopes: string[];
@@ -28,7 +27,6 @@ const insertRegistration = async (
   ds: DataSource,
   params: {
     name: string;
-    description?: string;
     clientSecretHash: string;
     redirectUris: string[];
     scopes: string[];
@@ -167,7 +165,6 @@ describe('OAuth (integration)', () => {
 
     autoInstallRegistration = await insertRegistration(ds, {
       name: 'OAuth Auto-Install Test App',
-      description: 'App for testing OAuth auto-install',
       clientSecretHash: autoInstallSecretHash,
       redirectUris: ['https://example.com/callback'],
       scopes: ['api'],
@@ -581,9 +578,6 @@ describe('OAuth (integration)', () => {
       const autoCreatedApp = rows[0];
 
       expect(autoCreatedApp.name).toBe('OAuth Auto-Install Test App');
-      expect(autoCreatedApp.description).toBe(
-        'App for testing OAuth auto-install',
-      );
       expect(autoCreatedApp.sourcePath).toBe('oauth-install');
       expect(autoCreatedApp.universalIdentifier).toBe(
         autoInstallRegistration.universalIdentifier,
