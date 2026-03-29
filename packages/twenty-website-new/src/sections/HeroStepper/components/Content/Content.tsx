@@ -1,7 +1,7 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import type { StepperHomeContentProps } from '@/sections/Stepper/types';
+import type { HeroStepperContentProps } from '@/sections/HeroStepper/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, type ReactNode } from 'react';
@@ -106,12 +106,16 @@ const StepBlock = styled.div`
 `;
 
 type ProgressRailProps = {
-  activeStepIndex: number;
   activeImageIndex: number;
-  steps: StepperHomeContentProps['steps'];
+  activeStepIndex: number;
+  steps: HeroStepperContentProps['steps'];
 };
 
-function HomeProgressRail({ activeStepIndex, activeImageIndex, steps }: ProgressRailProps) {
+function HeroProgressRail({
+  activeImageIndex,
+  activeStepIndex,
+  steps,
+}: ProgressRailProps) {
   const nodes: ReactNode[] = [];
   const stepCount = steps.length;
 
@@ -126,13 +130,13 @@ function HomeProgressRail({ activeStepIndex, activeImageIndex, steps }: Progress
             <PillFill style={{ height: `${fillPercentage}%` }} />
           </PillBackground>
           <ActiveLabel>{String(index + 1).padStart(2, '0')}</ActiveLabel>
-        </StepIndicatorRow>
+        </StepIndicatorRow>,
       );
     } else {
       nodes.push(
         <InactiveDotWrapper key={`step-${index}`}>
           <InactiveDot />
-        </InactiveDotWrapper>
+        </InactiveDotWrapper>,
       );
     }
   }
@@ -140,12 +144,12 @@ function HomeProgressRail({ activeStepIndex, activeImageIndex, steps }: Progress
   return <ProgressRail>{nodes}</ProgressRail>;
 }
 
-export function HomeContent({
+export function Content({
   activeImageIndex,
   activeStepIndex,
   onActiveStepChange,
   steps,
-}: StepperHomeContentProps) {
+}: HeroStepperContentProps) {
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -188,7 +192,7 @@ export function HomeContent({
 
   return (
     <ContentRoot>
-      <HomeProgressRail
+      <HeroProgressRail
         activeImageIndex={activeImageIndex}
         activeStepIndex={activeStepIndex}
         steps={steps}

@@ -8,7 +8,7 @@ import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Hero } from '@/sections/Hero/components';
 import { Problem } from '@/sections/Problem/components';
-import { Stepper } from '@/sections/Stepper/components';
+import { HeroStepper } from '@/sections/HeroStepper/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
@@ -72,7 +72,7 @@ export default function HomePage() {
         />
       </ThreeCards.Root>
 
-      <Stepper.HomeStepper steps={STEPPER_DATA.steps} />
+      <HeroStepper.Flow steps={STEPPER_DATA.steps} />
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Home} align="center">

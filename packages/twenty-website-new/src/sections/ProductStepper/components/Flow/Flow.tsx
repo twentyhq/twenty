@@ -3,25 +3,20 @@
 import type { BodyType } from '@/design-system/components/Body/types/Body';
 import type { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebrow';
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { StepperProductStepType } from '@/sections/Stepper/types/StepperProductStep';
+import type { ProductStepperStepType } from '@/sections/ProductStepper/types/ProductStepperStep';
 import { useMemo, useState } from 'react';
-import { ProductContent } from '../ProductContent/ProductContent';
-import { ProductVisual } from '../ProductVisual/ProductVisual';
+import { Content } from '../Content/Content';
 import { Root } from '../Root/Root';
+import { Visual } from '../Visual/Visual';
 
-type ProductStepperProps = {
+type FlowProps = {
   body: BodyType;
   eyebrow: EyebrowType;
   heading: HeadingType[];
-  steps: StepperProductStepType[];
+  steps: ProductStepperStepType[];
 };
 
-export function ProductStepper({
-  body,
-  eyebrow,
-  heading,
-  steps,
-}: ProductStepperProps) {
+export function Flow({ body, eyebrow, heading, steps }: FlowProps) {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
 
   const contentSteps = useMemo(
@@ -38,7 +33,7 @@ export function ProductStepper({
 
   return (
     <Root>
-      <ProductContent
+      <Content
         activeStepIndex={activeStepIndex}
         body={body}
         eyebrow={eyebrow}
@@ -46,7 +41,7 @@ export function ProductStepper({
         onStepSelect={setActiveStepIndex}
         steps={contentSteps}
       />
-      <ProductVisual activeStepIndex={activeStepIndex} images={images} />
+      <Visual activeStepIndex={activeStepIndex} images={images} />
     </Root>
   );
 }

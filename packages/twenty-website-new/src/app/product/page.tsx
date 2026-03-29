@@ -8,7 +8,7 @@ import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Demo } from '@/sections/Demo/components';
 import { Hero } from '@/sections/Hero/components';
-import { Stepper } from '@/sections/Stepper/components';
+import { ProductStepper } from '@/sections/ProductStepper/components';
 import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
@@ -68,7 +68,7 @@ export default function ProductPage() {
         />
       </ThreeCards.Root>
 
-      <Stepper.ProductStepper
+      <ProductStepper.Flow
         body={STEPPER_DATA.body}
         eyebrow={STEPPER_DATA.eyebrow}
         heading={STEPPER_DATA.heading}

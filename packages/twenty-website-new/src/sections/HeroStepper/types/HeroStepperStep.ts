@@ -2,9 +2,8 @@ import type { BodyType } from '@/design-system/components/Body/types/Body';
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
 import type { ImageType } from '@/design-system/components/Image/types/Image';
 
-export type StepperProductStepType = {
-  icon: string;
-  heading: HeadingType;
+export type HeroStepperStepType = {
   body: BodyType;
-  image: ImageType;
+  heading: HeadingType[];
+  images: ImageType[];
 };

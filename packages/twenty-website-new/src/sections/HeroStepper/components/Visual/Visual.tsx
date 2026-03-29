@@ -1,4 +1,4 @@
-import type { StepperHomeVisualProps } from '@/sections/Stepper/types';
+import type { HeroStepperVisualProps } from '@/sections/HeroStepper/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -30,10 +30,10 @@ const slideImageClassName = css`
   }
 `;
 
-export function HomeVisual({
+export function Visual({
   activeImageIndex = 0,
   images,
-}: StepperHomeVisualProps) {
+}: HeroStepperVisualProps) {
   if (!images || images.length === 0) {
     return null;
   }

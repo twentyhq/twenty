@@ -1,4 +1,4 @@
-import type { StepperProductVisualProps } from '@/sections/Stepper/types';
+import type { ProductStepperVisualProps } from '@/sections/ProductStepper/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -30,7 +30,7 @@ const slideImageClassName = css`
   }
 `;
 
-export function ProductVisual({ activeStepIndex, images }: StepperProductVisualProps) {
+export function Visual({ activeStepIndex, images }: ProductStepperVisualProps) {
   if (!images || images.length === 0) {
     return null;
   }

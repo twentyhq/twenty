@@ -2,10 +2,9 @@
 
 import { Body, Eyebrow, Heading } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
-import type { StepperProductContentProps } from '@/sections/Stepper/types';
+import type { ProductStepperContentProps } from '@/sections/ProductStepper/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-
 import { useEffect, useRef } from 'react';
 
 const ContentRoot = styled.div`
@@ -124,7 +123,10 @@ type ProgressRailProps = {
   stepCount: number;
 };
 
-function ProductProgressRail({ activeStepIndex, stepCount }: ProgressRailProps) {
+function ProductProgressRail({
+  activeStepIndex,
+  stepCount,
+}: ProgressRailProps) {
   const nodes = [];
 
   for (let index = 0; index < stepCount; index += 1) {
@@ -135,13 +137,13 @@ function ProductProgressRail({ activeStepIndex, stepCount }: ProgressRailProps) 
             <PillFill style={{ height: '100%' }} />
           </PillBackground>
           <ActiveLabel>{String(index + 1).padStart(2, '0')}</ActiveLabel>
-        </StepIndicatorRow>
+        </StepIndicatorRow>,
       );
     } else {
       nodes.push(
         <InactiveDotWrapper key={`step-${index}`}>
           <InactiveDot />
-        </InactiveDotWrapper>
+        </InactiveDotWrapper>,
       );
     }
   }
@@ -172,14 +174,14 @@ const StepIconBox = styled.div`
   }
 `;
 
-export function ProductContent({
+export function Content({
   activeStepIndex,
   body,
   eyebrow,
   heading,
   onStepSelect,
   steps,
-}: StepperProductContentProps) {
+}: ProductStepperContentProps) {
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {

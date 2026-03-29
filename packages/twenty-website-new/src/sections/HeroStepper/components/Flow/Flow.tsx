@@ -1,16 +1,16 @@
 'use client';
 
-import type { StepperHomeStepType } from '@/sections/Stepper/types/StepperHomeStep';
+import type { HeroStepperStepType } from '@/sections/HeroStepper/types/HeroStepperStep';
 import { useEffect, useState } from 'react';
-import { HomeContent } from '../HomeContent/HomeContent';
-import { HomeVisual } from '../HomeVisual/HomeVisual';
+import { Content } from '../Content/Content';
 import { Root } from '../Root/Root';
+import { Visual } from '../Visual/Visual';
 
-type HomeStepperProps = {
-  steps: StepperHomeStepType[];
+type FlowProps = {
+  steps: HeroStepperStepType[];
 };
 
-export function HomeStepper({ steps }: HomeStepperProps) {
+export function Flow({ steps }: FlowProps) {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -24,9 +24,7 @@ export function HomeStepper({ steps }: HomeStepperProps) {
       return;
     }
     const timerId = window.setInterval(() => {
-      setActiveImageIndex(
-        (previous) => (previous + 1) % imageList.length,
-      );
+      setActiveImageIndex((previous) => (previous + 1) % imageList.length);
     }, 5000);
     return () => window.clearInterval(timerId);
   }, [activeStepIndex, steps]);
@@ -35,13 +33,13 @@ export function HomeStepper({ steps }: HomeStepperProps) {
 
   return (
     <Root>
-      <HomeContent
+      <Content
         activeImageIndex={activeImageIndex}
         activeStepIndex={activeStepIndex}
         onActiveStepChange={setActiveStepIndex}
         steps={steps}
       />
-      <HomeVisual activeImageIndex={activeImageIndex} images={images} />
+      <Visual activeImageIndex={activeImageIndex} images={images} />
     </Root>
   );
 }

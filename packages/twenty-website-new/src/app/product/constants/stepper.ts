@@ -1,6 +1,6 @@
-import type { StepperProductDataType } from '@/sections/Stepper/types';
+import type { ProductStepperDataType } from '@/sections/ProductStepper/types';
 
-export const STEPPER_DATA: StepperProductDataType = {
+export const STEPPER_DATA: ProductStepperDataType = {
   eyebrow: {
     heading: {
       text: 'Customization',
