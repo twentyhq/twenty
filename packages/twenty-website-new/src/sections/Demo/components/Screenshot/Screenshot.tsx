@@ -10,9 +10,14 @@ const ScreenshotRoot = styled.div`
   overflow: hidden;
   position: relative;
   width: 100%;
+  max-width: 800px;
+  margin-top: ${theme.spacing(12)};
+  margin-bottom: ${theme.spacing(11)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     border-radius: ${theme.radius(6)};
+    margin-top: ${theme.spacing(19)};
+    margin-bottom: ${theme.spacing(11)};
   }
 `;
 

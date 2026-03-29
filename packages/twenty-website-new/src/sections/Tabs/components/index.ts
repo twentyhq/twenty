@@ -1,5 +1,5 @@
-import { Body } from '@/sections/Tabs/components/Body/Body';
-import { Heading } from '@/sections/Tabs/components/Heading/Heading';
+import { Body } from './Body/Body';
+import { Heading } from './Heading/Heading';
 import { Root } from './Root/Root';
 import { TabButton } from './TabButton/TabButton';
 import { TabButtons } from './TabButtons/TabButtons';

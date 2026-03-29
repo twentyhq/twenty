@@ -5,8 +5,7 @@ import { CloseIcon, MenuIcon } from '@/icons';
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from '../../effect-components/CloseDrawerWhenNavigationExpandsEffect';
 import { MenuDrawer } from '../Drawer/Drawer';
 
@@ -21,8 +20,10 @@ const StyledNav = styled.nav`
   background-color: ${theme.colors.primary.background[100]};
   border-radius: ${theme.radius(2)};
   display: flex;
-  height: 48px;
+  min-height: 48px;
+  height: auto;
   justify-content: space-between;
+  min-width: 0;
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   width: 100%;

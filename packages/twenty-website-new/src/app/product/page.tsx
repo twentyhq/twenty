@@ -75,7 +75,7 @@ export default function ProductPage() {
 
       <Demo.Root>
         <Eyebrow colorScheme="primary" heading={DEMO_DATA.eyebrow.heading} />
-        <Heading segments={DEMO_DATA.heading} size="lg" weight="light" />
+        <Demo.Heading segments={DEMO_DATA.heading} />
         <Demo.Cta>
           <LinkButton
             color="secondary"

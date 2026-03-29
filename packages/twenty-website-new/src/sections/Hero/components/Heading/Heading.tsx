@@ -7,11 +7,12 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 const HeadingContainer = styled.div`
-  width: 360px;
+  max-width: 360px;
+  width: 100%;
   word-wrap: break-word;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    width: 672px;
+    max-width: 672px;
 
     &[data-page=${Pages.WhyTwenty}] {
       color: ${theme.colors.secondary.text[100]};

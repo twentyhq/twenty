@@ -1,5 +1,5 @@
 import { Image } from '@/design-system/components';
-import { ImageType } from '@/design-system/components/Image/types/Image';
+import type { ImageType } from '@/design-system/components/Image/types/Image';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -26,7 +26,8 @@ const StyledBackgroundImage = styled(Image)`
   width: 98%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    width: 850px;
+    max-width: 850px;
+    width: 100%;
   }
 `;
 
@@ -42,7 +43,8 @@ const StyledForegroundImage = styled(Image)`
     justify-self: center;
     margin-right: ${theme.spacing(40)};
     margin-top: ${theme.spacing(17.5)};
-    width: 800px;
+    max-width: 800px;
+    width: 100%;
   }
 `;
 

@@ -49,20 +49,19 @@ const StyledContainer = styled(Container)`
   display: grid;
   grid-template-columns: 1fr;
   justify-items: center;
-  padding-bottom: ${theme.spacing(12)};
+  padding-bottom: ${theme.spacing(16)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
-  padding-top: ${theme.spacing(12)};
+  padding-top: ${theme.spacing(16)};
   row-gap: ${theme.spacing(6)};
   text-align: center;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    padding-bottom: ${theme.spacing(20)};
+    padding-bottom: ${theme.spacing(24)};
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
-    padding-top: ${theme.spacing(20)};
-    row-gap: ${theme.spacing(8)};
+    padding-top: ${theme.spacing(24)};
   }
 `;
 

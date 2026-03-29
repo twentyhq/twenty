@@ -75,7 +75,11 @@ const CtaContainer = styled.div`
 const SocialContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: ${theme.spacing(6)};
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
 `;
 
 const SocialItem = styled.a`
@@ -83,11 +87,13 @@ const SocialItem = styled.a`
   border-radius: ${theme.radius(1)};
   color: ${theme.colors.primary.text[100]};
   display: flex;
+  flex-shrink: 0;
   font-size: ${theme.font.size(3)};
   font-weight: ${theme.font.weight.medium};
   gap: ${theme.spacing(3)};
   line-height: 14px;
   text-decoration: none;
+  white-space: nowrap;
 
   &:focus-visible {
     outline: 1px solid ${theme.colors.highlight[100]};
