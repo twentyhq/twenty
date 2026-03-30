@@ -71,10 +71,6 @@ export class StreamAgentChatJob {
       return;
     }
 
-    // Set up cross-instance cancellation: subscribe to a Redis channel
-    // so any pod can cancel this stream by publishing to it. Uses a
-    // shared subscriber connection (one per worker process) instead of
-    // creating a new Redis connection per job.
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(data.threadId);
 
@@ -86,9 +82,6 @@ export class StreamAgentChatJob {
       await this.executeStream(data, workspace, abortController.signal);
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
-      // Ensure activeStreamId is cleared even on abort or error.
-      // On normal completion handleStreamFinish clears it, but on
-      // abort/crash this is the safety net.
       await this.threadRepository
         .update(data.threadId, { activeStreamId: null })
         .catch(() => {});
@@ -100,7 +93,6 @@ export class StreamAgentChatJob {
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
   ): Promise<void> {
-    // We need the turnId in onFinish to associate the assistant message.
     const userMessagePromise = this.agentChatService.addMessage({
       threadId: data.threadId,
       uiMessage: {
@@ -140,6 +132,7 @@ export class StreamAgentChatJob {
       streamId: data.streamId,
       userMessagePromise,
       titlePromise,
+      abortSignal,
     });
   }
 
@@ -150,6 +143,7 @@ export class StreamAgentChatJob {
     streamId,
     userMessagePromise,
     titlePromise,
+    abortSignal,
   }: {
     stream: ReturnType<typeof import('ai').streamText>;
     modelConfig: AIModelConfig;
@@ -157,6 +151,7 @@ export class StreamAgentChatJob {
     streamId: string;
     userMessagePromise: Promise<{ turnId: string }>;
     titlePromise: Promise<string | null>;
+    abortSignal: AbortSignal;
   }): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       let streamUsage = {
@@ -168,11 +163,12 @@ export class StreamAgentChatJob {
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
 
+      // On abort, onFinish does not fire, so we settle the promise
+      // here to unblock handle()'s finally cleanup.
+      abortSignal.addEventListener('abort', () => resolve(), { once: true });
+
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
-          // Write the title to the stream as soon as it resolves,
-          // so the client sees it immediately — not after the full
-          // LLM response finishes.
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
               writer.write({
@@ -216,7 +212,6 @@ export class StreamAgentChatJob {
                     modelConfig,
                     userMessagePromise,
                   });
-                  // Ensure the title was written before closing the stream
                   await titleWritePromise;
                   resolve();
                 } catch (error) {

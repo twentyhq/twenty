@@ -78,13 +78,6 @@ export class AgentChatStreamingService {
     const lastUserText =
       lastUserMessage?.parts.find((part) => part.type === 'text')?.text ?? '';
 
-    // Mark the thread as actively streaming so clients can resume
-    await this.threadRepository.update(thread.id, {
-      activeStreamId: streamId,
-    });
-
-    // Enqueue the streaming job — a BullMQ worker will run streamText()
-    // and write SSE chunks to the Redis resumable stream.
     await this.messageQueueService.add<StreamAgentChatJobData>(
       STREAM_AGENT_CHAT_JOB_NAME,
       {
@@ -100,9 +93,10 @@ export class AgentChatStreamingService {
       },
     );
 
-    // Pipe the Redis resumable stream to the HTTP response.
-    // The worker may not have started writing yet, so we poll until
-    // the stream appears in Redis (typically <200ms).
+    await this.threadRepository.update(thread.id, {
+      activeStreamId: streamId,
+    });
+
     try {
       const nodeReadable = await this.waitForResumableStream(streamId);
 
