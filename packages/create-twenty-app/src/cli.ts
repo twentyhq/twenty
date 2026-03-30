@@ -41,7 +41,6 @@ const program = new Command(packageJson.name)
         name?: string;
         displayName?: string;
         description?: string;
-        skipLocalInstance?: boolean;
       },
     ) => {
       const modeFlags = [options?.exhaustive, options?.minimal].filter(Boolean);
@@ -77,7 +76,6 @@ const program = new Command(packageJson.name)
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        skipLocalInstance: options?.skipLocalInstance,
       });
     },
   );

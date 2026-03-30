@@ -40,14 +40,21 @@ registerCommands(program);
 
 program.exitOverride();
 
-try {
-  program.parse();
-} catch (error) {
+const isExitPromptError = (error: unknown): boolean =>
+  error instanceof Error && error.name === 'ExitPromptError';
+
+program.parseAsync().catch((error) => {
+  if (isExitPromptError(error)) {
+    process.exit(0);
+  }
+
   if (error instanceof CommanderError) {
     process.exit(error.exitCode);
   }
+
   if (error instanceof Error) {
     console.error(chalk.red('Error:'), error.message);
-    process.exit(1);
   }
-}
+
+  process.exit(1);
+});

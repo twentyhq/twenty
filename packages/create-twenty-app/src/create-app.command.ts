@@ -10,6 +10,8 @@ import * as path from 'path';
 import { basename } from 'path';
 import {
   authLoginOAuth,
+  ConfigService,
+  detectLocalServer,
   serverStart,
   type ServerStartResult,
 } from 'twenty-sdk/cli';
@@ -28,7 +30,6 @@ type CreateAppOptions = {
   name?: string;
   displayName?: string;
   description?: string;
-  skipLocalInstance?: boolean;
 };
 
 export class CreateAppCommand {
@@ -61,14 +62,16 @@ export class CreateAppCommand {
 
       let serverResult: ServerStartResult | undefined;
 
-      if (!options.skipLocalInstance) {
+      const shouldStartServer = await this.shouldStartServer();
+
+      if (shouldStartServer) {
         const startResult = await serverStart({
           onProgress: (message: string) => console.log(chalk.gray(message)),
         });
 
         if (startResult.success) {
           serverResult = startResult.data;
-          await this.connectToLocal(serverResult.url);
+          await this.promptConnectToLocal(serverResult.url);
         } else {
           console.log(chalk.yellow(`\n${startResult.error.message}`));
         }
@@ -201,7 +204,63 @@ export class CreateAppCommand {
     );
   }
 
-  private async connectToLocal(serverUrl: string): Promise<void> {
+  private async shouldStartServer(): Promise<boolean> {
+    const existingServerUrl = await detectLocalServer();
+
+    if (existingServerUrl) {
+      return true;
+    }
+
+    const { startDocker } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'startDocker',
+        message:
+          'No running Twenty instance found. Would you like to start one using Docker?',
+        default: true,
+      },
+    ]);
+
+    if (!startDocker) {
+      console.log(
+        chalk.gray(
+          'Skipping server setup. You can start one later with `yarn twenty server start`.',
+        ),
+      );
+    }
+
+    return startDocker;
+  }
+
+  private async promptConnectToLocal(serverUrl: string): Promise<void> {
+    const configService = new ConfigService();
+    const config = await configService.getConfigForRemote('local');
+
+    if (config.accessToken || config.apiKey) {
+      console.log(chalk.gray('Already authenticated to local instance.'));
+
+      return;
+    }
+
+    const { shouldAuthenticate } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'shouldAuthenticate',
+        message: `Would you like to authenticate to the local Twenty instance (${serverUrl})?`,
+        default: true,
+      },
+    ]);
+
+    if (!shouldAuthenticate) {
+      console.log(
+        chalk.gray(
+          'Authentication skipped. Run `yarn twenty remote add` manually.',
+        ),
+      );
+
+      return;
+    }
+
     try {
       const result = await authLoginOAuth({
         apiUrl: serverUrl,
@@ -211,14 +270,14 @@ export class CreateAppCommand {
       if (!result.success) {
         console.log(
           chalk.yellow(
-            'Authentication skipped. Run `yarn twenty remote add` manually.',
+            'Authentication failed. Run `yarn twenty remote add` manually.',
           ),
         );
       }
     } catch {
       console.log(
         chalk.yellow(
-          'Authentication skipped. Run `yarn twenty remote add` manually.',
+          'Authentication failed. Run `yarn twenty remote add` manually.',
         ),
       );
     }
