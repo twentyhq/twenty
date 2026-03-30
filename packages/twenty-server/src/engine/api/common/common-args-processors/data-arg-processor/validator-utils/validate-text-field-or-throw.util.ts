@@ -27,6 +27,7 @@ export const validateTextFieldOrThrow = (
 
   if (
     typeof value === 'string' &&
+    value.trim() !== '' &&
     settings?.validationPattern
   ) {
     const regex = new RegExp(settings.validationPattern);
