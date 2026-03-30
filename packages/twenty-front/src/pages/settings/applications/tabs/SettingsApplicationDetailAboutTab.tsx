@@ -71,31 +71,6 @@ export const SettingsApplicationDetailAboutTab = ({
   return (
     <>
       <Section>
-        <H2Title title={t`Name`} description={t`Name of the application`} />
-        <SettingsTextInput
-          instanceId={`application-name-${id}`}
-          value={name}
-          disabled
-          fullWidth
-        />
-      </Section>
-      <Section>
-        <H2Title
-          title={t`Description`}
-          description={t`Description of the application`}
-        />
-        <SettingsTextInput
-          instanceId={`application-description-${id}`}
-          value={description ?? undefined}
-          disabled
-          fullWidth
-        />
-      </Section>
-      <Section>
-        <H2Title
-          title={t`Version`}
-          description={t`Version of the application`}
-        />
         <SettingsApplicationVersionContainer
           application={application}
           latestAvailableVersion={latestAvailableVersion}

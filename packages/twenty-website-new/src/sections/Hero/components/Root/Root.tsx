@@ -4,13 +4,15 @@ import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 const StyledSection = styled.section`
+  min-width: 0;
   width: 100%;
 `;
 
 const StyledContainer = styled(Container)`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
+  min-width: 0;
   text-align: center;
   padding-top: ${theme.spacing(7.5)};
   padding-left: ${theme.spacing(4)};

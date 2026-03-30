@@ -6,6 +6,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -13,6 +14,10 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
 @MetadataResolver()
 @UseFilters(ApplicationRegistrationExceptionFilter)
@@ -21,6 +26,8 @@ export class MarketplaceResolver {
   constructor(
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly applicationInstallService: ApplicationInstallService,
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
@@ -28,11 +35,11 @@ export class MarketplaceResolver {
     return this.marketplaceQueryService.findManyMarketplaceApps();
   }
 
-  @Query(() => MarketplaceAppDTO)
-  async findOneMarketplaceApp(
+  @Query(() => MarketplaceAppDetailDTO)
+  async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
-  ): Promise<MarketplaceAppDTO> {
-    return this.marketplaceQueryService.findOneMarketplaceApp(
+  ): Promise<MarketplaceAppDetailDTO> {
+    return this.marketplaceQueryService.findMarketplaceAppDetail(
       universalIdentifier,
     );
   }
@@ -55,5 +62,17 @@ export class MarketplaceResolver {
       version,
       workspaceId: workspace.id,
     });
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
+  async syncMarketplaceCatalog(): Promise<boolean> {
+    await this.messageQueueService.add(
+      MarketplaceCatalogSyncCronJob.name,
+      {},
+      { id: 'marketplace-catalog-sync' }, // Avoids triggering multiple pending jobs
+    );
+
+    return true;
   }
 }

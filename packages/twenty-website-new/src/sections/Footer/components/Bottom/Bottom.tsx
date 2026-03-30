@@ -6,8 +6,10 @@ const BottomGrid = styled.div`
   display: grid;
   font-size: ${theme.font.size(3)};
   gap: ${theme.spacing(6)};
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: auto auto;
+  min-width: 0;
+  width: 100%;
 `;
 
 const Copyright = styled.div`
