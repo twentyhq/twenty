@@ -456,9 +456,10 @@ export class RelationNestedQueries {
   }
 
   /**
-   * Fallback lookup using createData: queries by email, then verifies the
-   * matched record's name is ≥95% similar to avoid matching spouses who
-   * share an email address.
+   * Fallback lookup using createData. Tries two strategies:
+   * 1. Email lookup + ≥95% Jaro-Winkler name similarity (avoids spouse matches)
+   * 2. Exact name match — for records missing contact info entirely
+   *    (only accepts if exactly 1 record matches the full name)
    */
   private async tryCreateDataFallback<Entity extends ObjectLiteral>(
     createData: Record<string, unknown>,
@@ -470,71 +471,90 @@ export class RelationNestedQueries {
     entityIndex: number,
   ): Promise<boolean> {
     const flat = this.flattenCreateData(createData);
-    const emailField = flat.find(([k]) => k === 'emailsPrimaryEmail');
+    const emailValue = flat.find(([k]) => k === 'emailsPrimaryEmail')?.[1];
+    const expectedFirst = String(
+      flat.find(([k]) => k === 'nameFirstName')?.[1] ?? '',
+    ).toLowerCase();
+    const expectedLast = String(
+      flat.find(([k]) => k === 'nameLastName')?.[1] ?? '',
+    ).toLowerCase();
+    const expectedFull = `${expectedFirst} ${expectedLast}`.trim();
+    const table = connectQueryConfig.targetObjectName;
 
-    if (!emailField) return false;
+    // Strategy 1: Email + name similarity
+    if (emailValue) {
+      const matched = await this.lookupByEmailWithNameCheck(
+        table,
+        emailValue,
+        expectedFull,
+        queryBuilder,
+      );
 
+      if (matched) {
+        return this.acceptFallbackMatch(
+          matched,
+          connectQueryConfig,
+          recordsToConnect,
+          entityIndex,
+        );
+      }
+    }
+
+    // Strategy 2: Exact name match — for records with missing contact info.
+    // Only accept if exactly 1 non-deleted record matches the full name.
+    if (expectedFirst.length > 0 && expectedLast.length > 0) {
+      const matched = await this.lookupByExactName(
+        table,
+        expectedFirst,
+        expectedLast,
+        queryBuilder,
+      );
+
+      if (matched) {
+        return this.acceptFallbackMatch(
+          matched,
+          connectQueryConfig,
+          recordsToConnect,
+          entityIndex,
+        );
+      }
+    }
+
+    return false;
+  }
+
+  private async lookupByEmailWithNameCheck<Entity extends ObjectLiteral>(
+    table: string,
+    email: string,
+    expectedFull: string,
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>,
+  ): Promise<Record<string, unknown> | null> {
     try {
       queryBuilder.expressionMap.aliases = [];
       queryBuilder.expressionMap.mainAlias = undefined;
 
       const results = await queryBuilder
         .select('*')
-        .from(
-          connectQueryConfig.targetObjectName,
-          connectQueryConfig.targetObjectName,
-        )
-        .where(
-          `"${connectQueryConfig.targetObjectName}"."emailsPrimaryEmail" = :cd_email`,
-          { cd_email: emailField[1] },
-        )
-        .andWhere(
-          `"${connectQueryConfig.targetObjectName}"."deletedAt" IS NULL`,
-        )
+        .from(table, table)
+        .where(`"${table}"."emailsPrimaryEmail" = :cd_email`, { cd_email: email })
+        .andWhere(`"${table}"."deletedAt" IS NULL`)
         .getRawMany();
 
-      if (results.length === 0) return false;
-
-      // Extract the expected name from createData
-      const expectedFirst = String(
-        flat.find(([k]) => k === 'nameFirstName')?.[1] ?? '',
-      ).toLowerCase();
-      const expectedLast = String(
-        flat.find(([k]) => k === 'nameLastName')?.[1] ?? '',
-      ).toLowerCase();
-      const expectedFull = `${expectedFirst} ${expectedLast}`.trim();
+      if (results.length === 0) return null;
 
       if (expectedFull.length === 0) {
-        // No name to verify — accept single email match only
-        if (results.length === 1) {
-          const singleMatch = results[0];
-          const singleId = singleMatch?.id;
-
-          if (typeof singleId !== 'string') return false;
-
-          recordsToConnect.push(singleMatch);
-
-          connectQueryConfig.recordToConnectConditionByEntityIndex[
-            entityIndex
-          ] = [['id', singleId]];
-
-          return true;
-        }
-
-        return false;
+        return results.length === 1 ? results[0] : null;
       }
 
-      // Score each result by name similarity and pick the best ≥95% match
       let bestMatch: Record<string, unknown> | null = null;
       let bestScore = 0;
 
       for (const record of results) {
-        const recordFirst = String(
-          record.nameFirstName ?? '',
-        ).toLowerCase();
+        const recordFirst = String(record.nameFirstName ?? '').toLowerCase();
         const recordLast = String(record.nameLastName ?? '').toLowerCase();
         const recordFull = `${recordFirst} ${recordLast}`.trim();
-
         const similarity = stringSimilarity(expectedFull, recordFull);
 
         if (similarity >= 0.95 && similarity > bestScore) {
@@ -543,23 +563,55 @@ export class RelationNestedQueries {
         }
       }
 
-      if (bestMatch) {
-        const bestId = bestMatch.id;
-
-        if (typeof bestId !== 'string') return false;
-
-        recordsToConnect.push(bestMatch);
-
-        connectQueryConfig.recordToConnectConditionByEntityIndex[entityIndex] =
-          [['id', bestId]];
-
-        return true;
-      }
+      return bestMatch;
     } catch {
-      // Fallback query failed
+      return null;
     }
+  }
 
-    return false;
+  private async lookupByExactName<Entity extends ObjectLiteral>(
+    table: string,
+    firstName: string,
+    lastName: string,
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>,
+  ): Promise<Record<string, unknown> | null> {
+    try {
+      queryBuilder.expressionMap.aliases = [];
+      queryBuilder.expressionMap.mainAlias = undefined;
+
+      const results = await queryBuilder
+        .select('*')
+        .from(table, table)
+        .where(`LOWER("${table}"."nameFirstName") = :fn`, { fn: firstName })
+        .andWhere(`LOWER("${table}"."nameLastName") = :ln`, { ln: lastName })
+        .andWhere(`"${table}"."deletedAt" IS NULL`)
+        .getRawMany();
+
+      // Only accept if exactly 1 record — multiple means ambiguous
+      return results.length === 1 ? results[0] : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private acceptFallbackMatch(
+    matched: Record<string, unknown>,
+    connectQueryConfig: RelationConnectQueryConfig,
+    recordsToConnect: Record<string, unknown>[],
+    entityIndex: number,
+  ): boolean {
+    const matchedId = matched.id;
+
+    if (typeof matchedId !== 'string') return false;
+
+    recordsToConnect.push(matched);
+
+    connectQueryConfig.recordToConnectConditionByEntityIndex[entityIndex] =
+      [['id', matchedId]];
+
+    return true;
   }
 
   /**
