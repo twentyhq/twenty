@@ -1,9 +1,9 @@
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 
 type BuildCreatedByFromApiKeyArgs = {
-  apiKey: ApiKeyEntity;
+  apiKey: FlatApiKey;
 };
 export const buildCreatedByFromApiKey = ({
   apiKey,

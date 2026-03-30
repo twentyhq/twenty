@@ -794,6 +794,7 @@ const createPackageJson = async ({
       npm: 'please-use-yarn',
       yarn: '>=4.0.2',
     },
+    keywords: ['twenty-app'],
     packageManager: 'yarn@4.9.2',
     scripts,
     devDependencies,

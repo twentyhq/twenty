@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import * as bcrypt from 'bcrypt';
+import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -102,7 +103,7 @@ export class ApplicationRegistrationService {
   ): Promise<PublicApplicationRegistrationDTO | null> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
-      select: ['id', 'name', 'logoUrl', 'websiteUrl', 'oAuthScopes'],
+      select: ['id', 'name', 'manifest', 'oAuthScopes'],
     });
 
     if (!registration) {
@@ -112,22 +113,12 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      logoUrl: registration.logoUrl,
-      websiteUrl: registration.websiteUrl,
+      logoUrl: registration.manifest?.application?.logoUrl ?? null,
+      websiteUrl: registration.manifest?.application?.websiteUrl ?? null,
       oAuthScopes: registration.oAuthScopes,
     };
   }
 
-  async isOwnedByWorkspace(id: string, workspaceId: string): Promise<boolean> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id },
-      select: ['id', 'ownerWorkspaceId'],
-    });
-
-    return registration?.ownerWorkspaceId === workspaceId;
-  }
-
-  // Global lookup — used by app sync to find existing registrations
   async findOneByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
@@ -172,17 +163,12 @@ export class ApplicationRegistrationService {
       this.applicationRegistrationRepository.create({
         universalIdentifier,
         name: input.name,
-        description: input.description ?? null,
-        logoUrl: input.logoUrl ?? null,
-        author: input.author ?? null,
         oAuthClientId: clientId,
         oAuthClientSecretHash: clientSecretHash,
         oAuthRedirectUris: input.oAuthRedirectUris ?? [],
         oAuthScopes: input.oAuthScopes ?? [],
         createdByUserId,
         ownerWorkspaceId,
-        websiteUrl: input.websiteUrl ?? null,
-        termsUrl: input.termsUrl ?? null,
       });
 
     const saved = await this.applicationRegistrationRepository.save(
@@ -211,16 +197,10 @@ export class ApplicationRegistrationService {
     const updateData: Record<string, unknown> = {};
 
     if (isDefined(update.name)) updateData.name = update.name;
-    if (isDefined(update.description))
-      updateData.description = update.description;
-    if (isDefined(update.logoUrl)) updateData.logoUrl = update.logoUrl;
-    if (isDefined(update.author)) updateData.author = update.author;
     if (isDefined(update.oAuthRedirectUris))
       updateData.oAuthRedirectUris = update.oAuthRedirectUris;
     if (isDefined(update.oAuthScopes))
       updateData.oAuthScopes = update.oAuthScopes;
-    if (isDefined(update.websiteUrl)) updateData.websiteUrl = update.websiteUrl;
-    if (isDefined(update.termsUrl)) updateData.termsUrl = update.termsUrl;
     if (isDefined(update.isListed)) updateData.isListed = update.isListed;
 
     if (Object.keys(updateData).length > 0) {
@@ -228,6 +208,21 @@ export class ApplicationRegistrationService {
     }
 
     return this.findOneById(id, ownerWorkspaceId);
+  }
+
+  async updateFromManifest(
+    applicationRegistrationId: string,
+    manifest: Manifest,
+  ): Promise<void> {
+    const existing = await this.applicationRegistrationRepository.findOneOrFail(
+      { where: { id: applicationRegistrationId } },
+    );
+
+    await this.applicationRegistrationRepository.save({
+      ...existing,
+      name: manifest.application.displayName,
+      manifest,
+    });
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
@@ -269,17 +264,12 @@ export class ApplicationRegistrationService {
       ApplicationRegistrationEntity,
       | 'universalIdentifier'
       | 'name'
-      | 'description'
-      | 'author'
       | 'sourceType'
       | 'sourcePackage'
-      | 'logoUrl'
-      | 'websiteUrl'
-      | 'termsUrl'
       | 'latestAvailableVersion'
       | 'isListed'
       | 'isFeatured'
-      | 'marketplaceDisplayData'
+      | 'manifest'
       | 'ownerWorkspaceId'
     >,
   ): Promise<void> {
@@ -291,15 +281,12 @@ export class ApplicationRegistrationService {
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: params.name,
-        description: params.description,
-        author: params.author,
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
-        logoUrl: params.logoUrl,
-        websiteUrl: params.websiteUrl,
-        termsUrl: params.termsUrl,
         latestAvailableVersion: params.latestAvailableVersion,
-        marketplaceDisplayData: params.marketplaceDisplayData,
+        manifest: params.manifest,
+        isListed: params.isListed,
+        isFeatured: params.isFeatured,
       });
 
       return;
@@ -308,17 +295,12 @@ export class ApplicationRegistrationService {
     const registration = this.applicationRegistrationRepository.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
-      description: params.description,
-      author: params.author,
       sourceType: params.sourceType,
       sourcePackage: params.sourcePackage,
-      logoUrl: params.logoUrl,
-      websiteUrl: params.websiteUrl,
-      termsUrl: params.termsUrl,
       latestAvailableVersion: params.latestAvailableVersion,
       isListed: params.isListed,
       isFeatured: params.isFeatured,
-      marketplaceDisplayData: params.marketplaceDisplayData,
+      manifest: params.manifest,
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
@@ -341,7 +323,6 @@ export class ApplicationRegistrationService {
       universalIdentifier:
         TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
       name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
-      description: TWENTY_CLI_APPLICATION_REGISTRATION.description,
       oAuthClientId: v4(),
       oAuthClientSecretHash: null,
       oAuthRedirectUris: [],

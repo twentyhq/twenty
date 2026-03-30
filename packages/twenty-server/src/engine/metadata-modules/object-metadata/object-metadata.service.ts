@@ -406,7 +406,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createObjectInput,
       flatApplication: resolvedOwnerFlatApplication,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      existingFeatureFlagsMap,
     });
 
     const flatDefaultViewToCreate = this.computeFlatViewToCreate({

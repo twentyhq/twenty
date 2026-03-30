@@ -348,10 +348,9 @@ export const GraphWidgetLineChart = ({
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}
       />
-      <GraphWidgetLegend
-        show={showLegend && data.length > 0}
-        items={legendItems}
-      />
+      {showLegend && data.length > 0 && (
+        <GraphWidgetLegend show items={legendItems} />
+      )}
     </StyledContainer>
   );
 };

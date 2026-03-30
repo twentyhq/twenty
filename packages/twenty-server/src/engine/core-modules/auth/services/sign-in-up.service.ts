@@ -21,7 +21,6 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrPartialUserWithPicture,
@@ -314,7 +313,7 @@ export class SignInUpService {
       workspace,
       shouldShowConnectAccountStep,
     }: {
-      user: AuthContextUser;
+      user: Pick<UserEntity, 'id' | 'firstName' | 'lastName'>;
       workspace: WorkspaceEntity;
       shouldShowConnectAccountStep: boolean;
     },
@@ -577,7 +576,11 @@ export class SignInUpService {
       );
 
       await this.activateOnboardingForUser(
-        { user, workspace, shouldShowConnectAccountStep: true },
+        {
+          user,
+          workspace,
+          shouldShowConnectAccountStep: true,
+        },
         queryRunner,
       );
 
