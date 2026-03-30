@@ -1,8 +1,10 @@
 import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { HERO_DATA } from '@/app/why-twenty/constants/hero';
+import { QUOTE_DATA } from '@/app/why-twenty/constants/quote';
 import { Pages } from '@/enums/pages';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
+import { Quote } from '@/sections/Quote/components';
 import { theme } from '@/theme';
 
 export default function WhyTwentyPage() {
@@ -32,6 +34,11 @@ export default function WhyTwentyPage() {
           illustration={HERO_DATA.illustration}
         />
       </Hero.Root>
+
+      <Quote.Root backgroundColor={theme.colors.secondary.background[100]}>
+        <Quote.Visual illustration={QUOTE_DATA.illustration} />
+        <Quote.Heading segments={QUOTE_DATA.heading} />
+      </Quote.Root>
     </>
   );
 }
