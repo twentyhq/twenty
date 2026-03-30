@@ -250,10 +250,20 @@ export class AgentChatStreamingService {
             activeStreamId: streamId,
           });
 
-          await this.resumableStreamService.createResumableStream(
-            streamId,
-            () => stream,
-          );
+          try {
+            await this.resumableStreamService.createResumableStream(
+              streamId,
+              () => stream,
+            );
+          } catch {
+            await this.threadRepository.update(thread.id, {
+              activeStreamId: null,
+            });
+
+            // Fall back to consuming the stream without persistence
+            // so onFinish still fires even if Redis is unavailable.
+            stream.pipeTo(new WritableStream()).catch(() => {});
+          }
         },
       });
     } catch (error) {

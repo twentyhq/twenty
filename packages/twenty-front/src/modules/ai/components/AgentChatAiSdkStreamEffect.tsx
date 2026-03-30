@@ -74,10 +74,12 @@ export const AgentChatAiSdkStreamEffect = () => {
     }
 
     chatState.resumeStream();
-    // We intentionally only trigger when the thread changes, not on
-    // every status transition, to avoid resume loops.
+    // We intentionally omit chatState.resumeStream and status from deps
+    // to avoid resume loops. We do include agentChatFetchedMessages.length
+    // so that resume fires once messages are fetched (they may arrive
+    // after the thread ID is set).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentAIChatThread]);
+  }, [currentAIChatThread, agentChatFetchedMessages.length]);
 
   const setAgentChatMessages = useSetAtomComponentFamilyState(
     agentChatMessagesComponentFamilyState,
