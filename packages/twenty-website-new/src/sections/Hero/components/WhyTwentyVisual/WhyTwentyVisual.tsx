@@ -1,4 +1,6 @@
 import { Image } from '@/design-system/components';
+import { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
+import { ImageType } from '@/design-system/components/Image/types/Image';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -26,13 +28,18 @@ const StyledIframe = styled.iframe`
   width: 200%;
 `;
 
-export function WhyTwentyVisual() {
+type WhyTwentyVisualProps = {
+  image: ImageType;
+  illustration: IllustrationType;
+};
+
+export function WhyTwentyVisual({ image, illustration }: WhyTwentyVisualProps) {
   return (
     <VisualContainer>
-      <StyledBackground src="/images/why-twenty/hero/background.png" alt="" />
+      <StyledBackground src={image.src} alt={image.alt} />
       <StyledIframe
-        src="https://app.endlesstools.io/embed/479566da-0f55-44ef-99fe-90350aa88b9c"
-        title="Endless Tools Editor"
+        src={illustration.src}
+        title={illustration.title}
         allow="clipboard-write; encrypted-media; gyroscope; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen

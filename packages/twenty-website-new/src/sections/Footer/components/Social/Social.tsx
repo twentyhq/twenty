@@ -8,12 +8,18 @@ import React from 'react';
 const SocialContainer = styled.nav`
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: ${theme.spacing(6)};
   grid-column: 1 / -1;
   grid-row: 1;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    flex-wrap: nowrap;
     grid-column: 2;
+    justify-content: flex-end;
     justify-self: end;
   }
 `;
@@ -29,11 +35,13 @@ const SocialItem = styled.a`
   align-items: center;
   color: ${theme.colors.primary.text[100]};
   display: flex;
+  flex-shrink: 0;
   font-size: ${theme.font.size(3)};
   font-weight: ${theme.font.weight.medium};
   gap: ${theme.spacing(3)};
   line-height: 14px;
   text-decoration: none;
+  white-space: nowrap;
 
   &:focus-visible {
     outline: 1px solid ${theme.colors.highlight[100]};

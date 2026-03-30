@@ -1,6 +1,6 @@
-import { HeroDataType } from '@/sections/Hero/types';
+import { HeroBaseDataType } from '@/sections/Hero/types';
 
-export const HERO_DATA: HeroDataType = {
+export const HERO_DATA: HeroBaseDataType = {
   heading: [
     { text: 'A pricing that scales ', fontFamily: 'serif' },
     { text: 'with your need', fontFamily: 'sans' },
