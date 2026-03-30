@@ -2,13 +2,39 @@ import type { Bundle, ZObject } from 'zapier-platform-core';
 
 import requestDb from 'src/utils/requestDb';
 
+const CURRENT_WORKSPACE_QUERY =
+  'query currentWorkspace {currentWorkspace {id displayName}}';
+
+const shouldRetryOnAlternateEndpoint = (error: unknown) => {
+  const message =
+    error instanceof Error ? error.message : String(error ?? '');
+
+  return (
+    message.includes('Cannot query field "currentWorkspace"') ||
+    message.includes('404')
+  );
+};
+
 const testAuthentication = async (z: ZObject, bundle: Bundle) => {
-  return await requestDb({
-    z,
-    bundle,
-    query: 'query currentWorkspace {currentWorkspace {id displayName}}',
-    endpoint: 'metadata',
-  });
+  try {
+    return await requestDb({
+      z,
+      bundle,
+      query: CURRENT_WORKSPACE_QUERY,
+      endpoint: 'metadata',
+    });
+  } catch (error) {
+    if (!shouldRetryOnAlternateEndpoint(error)) {
+      throw error;
+    }
+
+    return await requestDb({
+      z,
+      bundle,
+      query: CURRENT_WORKSPACE_QUERY,
+      endpoint: 'graphql',
+    });
+  }
 };
 
 export default {
