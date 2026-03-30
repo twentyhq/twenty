@@ -13,7 +13,7 @@
         "commands": [
           "rimraf dist",
           "nest build --path ./tsconfig.build.json",
-          "mkdir -p dist/assets/twenty-client-sdk && cp ../twenty-client-sdk/package.json dist/assets/twenty-client-sdk/ && cp -r ../twenty-client-sdk/dist dist/assets/twenty-client-sdk/dist"
+          "node -e \"const fs=require('fs');const p=require('path');fs.mkdirSync(p.join('dist','assets','twenty-client-sdk','dist'),{recursive:true});fs.copyFileSync(p.join('..','twenty-client-sdk','package.json'),p.join('dist','assets','twenty-client-sdk','package.json'));const src=p.join('..','twenty-client-sdk','dist');const dst=p.join('dist','assets','twenty-client-sdk','dist');fs.cpSync(src,dst,{recursive:true});\""
         ]
       },
       "dependsOn": ["^build"]
@@ -54,7 +54,8 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "rimraf dist && NODE_ENV=development nest start --watch"
+        "command": "rimraf dist && nest start --watch",
+        "env": { "NODE_ENV": "development" }
       }
     },
     "start:ci": {
