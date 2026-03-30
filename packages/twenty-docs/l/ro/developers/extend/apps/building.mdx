@@ -15,21 +15,21 @@ Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare 
 
 SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. După cum este descris în [Detectarea entităților](/l/ro/developers/extend/apps/getting-started#entity-detection), trebuie să folosiți `export default define<Entity>({...})` pentru ca entitățile să fie detectate:
 
-| Funcție                          | Scop                                                                                |
-| -------------------------------- | ----------------------------------------------------------------------------------- |
-| `defineApplication`              | Configurați metadatele aplicației (obligatoriu, una per aplicație)                  |
-| `defineObject`                   | Definiți obiecte personalizate cu câmpuri                                           |
-| `defineField`                    | Extend existing objects with additional fields or define standalone relation fields |
-| `defineLogicFunction`            | Definiți funcții de logică cu handleri                                              |
-| `definePreInstallLogicFunction`  | Definește o funcție logică de pre-instalare (una per aplicație)                     |
-| `definePostInstallLogicFunction` | Definește o funcție logică post-instalare (una per aplicație)                       |
-| `defineFrontComponent`           | Definiți componente Front pentru interfața de utilizator personalizată              |
-| `defineRole`                     | Configurați permisiunile rolurilor și accesul la obiecte                            |
-| `defineView`                     | Definește vizualizări salvate pentru obiecte                                        |
-| `defineNavigationMenuItem`       | Definește linkuri de navigare în bara laterală                                      |
-| `defineSkill`                    | Definiți abilități pentru agentul AI                                                |
-| `defineAgent`                    | Define AI agents                                                                    |
-| `definePageLayout`               | Define custom page layouts                                                          |
+| Funcție                          | Scop                                                                                               |
+| -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `defineApplication`              | Configurați metadatele aplicației (obligatoriu, una per aplicație)                                 |
+| `defineObject`                   | Definiți obiecte personalizate cu câmpuri                                                          |
+| `defineField`                    | Extindeți obiectele existente cu câmpuri suplimentare sau definiți câmpuri de relație independente |
+| `defineLogicFunction`            | Definiți funcții de logică cu handleri                                                             |
+| `definePreInstallLogicFunction`  | Definește o funcție logică de pre-instalare (una per aplicație)                                    |
+| `definePostInstallLogicFunction` | Definește o funcție logică post-instalare (una per aplicație)                                      |
+| `defineFrontComponent`           | Definiți componente Front pentru interfața de utilizator personalizată                             |
+| `defineRole`                     | Configurați permisiunile rolurilor și accesul la obiecte                                           |
+| `defineView`                     | Definește vizualizări salvate pentru obiecte                                                       |
+| `defineNavigationMenuItem`       | Definește linkuri de navigare în bara laterală                                                     |
+| `defineSkill`                    | Definiți abilități pentru agentul AI                                                               |
+| `defineAgent`                    | Definiți agenți AI                                                                                 |
+| `definePageLayout`               | Definiți machete de pagină personalizate                                                           |
 
 Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
@@ -112,7 +112,7 @@ Puncte cheie:
 * `universalIdentifier` trebuie să fie unic și stabil între implementări.
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
-* You can scaffold new objects using `yarn twenty add`, which guides you through naming, fields, and relationships.
+* Puteți genera obiecte noi folosind `yarn twenty add`, care vă ghidează prin denumire, câmpuri și relații.
 
 <Note>
 **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
@@ -124,7 +124,7 @@ dar acest lucru nu este recomandat.
 
 ### Definirea câmpurilor pe obiecte existente
 
-Use `defineField()` to add fields to objects you don't own — such as standard Twenty objects (Person, Company, etc.) or objects from other apps. Unlike inline fields in `defineObject()`, standalone fields require an `objectUniversalIdentifier` to specify which object they extend:
+Utilizați `defineField()` pentru a adăuga câmpuri la obiecte pe care nu le dețineți — cum ar fi obiectele standard Twenty (Person, Company etc.). sau obiecte din alte aplicații. Spre deosebire de câmpurile inline din `defineObject()`, câmpurile independente necesită un `objectUniversalIdentifier` pentru a specifica obiectul pe care îl extind:
 
 ```typescript
 // src/fields/company-loyalty-tier.field.ts
@@ -147,35 +147,35 @@ export default defineField({
 
 Puncte cheie:
 
-* `objectUniversalIdentifier` identifies the target object. For standard objects, use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` exported from `twenty-sdk`.
-* When defining fields inline in `defineObject()`, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
-* `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
+* `objectUniversalIdentifier` identifică obiectul țintă. Pentru obiectele standard, utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` exportați din `twenty-sdk`.
+* Atunci când definiți câmpuri inline în `defineObject()`, nu aveți nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte.
+* `defineField()` este singura modalitate de a adăuga câmpuri la obiecte pe care nu le-ați creat cu `defineObject()`.
 
 ### Relații
 
-Relations connect objects together. In Twenty, relations are always **bidirectional** — you define both sides, and each side references the other.
+Relațiile conectează obiectele între ele. În Twenty, relațiile sunt întotdeauna bidirecționale — definiți ambele părți, iar fiecare parte o referențiază pe cealaltă.
 
-There are two relation types:
+Există două tipuri de relații:
 
-| Tip relație   | Descriere                                                     | Has foreign key?       |
-| ------------- | ------------------------------------------------------------- | ---------------------- |
-| `MANY_TO_ONE` | Many records of this object point to one record of the target | Yes (`joinColumnName`) |
-| `ONE_TO_MANY` | One record of this object has many records of the target      | No (inverse side)      |
+| Tip relație   | Descriere                                                                          | Are cheie străină?    |
+| ------------- | ---------------------------------------------------------------------------------- | --------------------- |
+| `MANY_TO_ONE` | Multe înregistrări ale acestui obiect indică către o singură înregistrare a țintei | Da (`joinColumnName`) |
+| `ONE_TO_MANY` | O înregistrare a acestui obiect are multe înregistrări ale țintei                  | Nu (partea inversă)   |
 
-#### How relations work
+#### Cum funcționează relațiile
 
-Every relation requires **two fields** that reference each other:
+Fiecare relație necesită **două câmpuri** care se referențiază reciproc:
 
-1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key
-2. The **ONE_TO_MANY** side — lives on the object that owns the collection
+1. Partea **MANY_TO_ONE** — se află pe obiectul care deține cheia străină
+2. Partea **ONE_TO_MANY** — se află pe obiectul care deține colecția
 
-Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+Ambele câmpuri folosesc `FieldType.RELATION` și se referențiază încrucișat prin `relationTargetFieldMetadataUniversalIdentifier`.
 
-#### Example: Post Card has many Recipients
+#### Exemplu: Post Card are mulți destinatari
 
-Suppose a `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+Presupuneți că un `PostCard` poate fi trimis către multe înregistrări `PostCardRecipient`. Fiecare destinatar aparține exact unui Post Card.
 
-**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+**Pasul 1: Definiți partea ONE_TO_MANY pe PostCard** (partea "one"):
 
 ```typescript
 // src/fields/post-card-recipients-on-post-card.field.ts
@@ -203,7 +203,7 @@ export default defineField({
 });
 ```
 
-**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+**Pasul 2: Definiți partea MANY_TO_ONE pe PostCardRecipient** (partea "many" — deține cheia străină):
 
 ```typescript
 // src/fields/post-card-on-post-card-recipient.field.ts
@@ -234,12 +234,12 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** Both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file, and import them in the other file. The build system resolves these at compile time.
+**Importuri circulare:** Ambele câmpuri de relație se referă unul la celălalt prin `universalIdentifier`. Pentru a evita problemele de import circular, exportați ID-urile câmpurilor ca constante denumite din fiecare fișier și importați-le în celălalt fișier. Sistemul de build le rezolvă în timpul compilării.
 </Note>
 
-#### Relating to standard objects
+#### Relaționarea cu obiectele standard
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Pentru a crea o relație cu un obiect Twenty încorporat (Person, Company etc.), utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
 
 ```typescript
 // src/fields/person-on-self-hosting-user.field.ts
@@ -274,20 +274,20 @@ export default defineField({
 });
 ```
 
-#### Relation field properties
+#### Proprietăți ale câmpului de relație
 
-| Proprietate                                       | Obligatoriu      | Descriere                                                                                             |
-| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `tip`                                             | Da               | Must be `FieldType.RELATION`                                                                          |
-| `relationTargetObjectMetadataUniversalIdentifier` | Da               | The `universalIdentifier` of the target object                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Da               | The `universalIdentifier` of the matching field on the target object                                  |
-| `universalSettings.relationType`                  | Da               | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+| Proprietate                                       | Obligatoriu      | Descriere                                                                                                             |
+| ------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `tip`                                             | Da               | Trebuie să fie `FieldType.RELATION`                                                                                   |
+| `relationTargetObjectMetadataUniversalIdentifier` | Da               | `universalIdentifier` al obiectului țintă                                                                             |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Da               | `universalIdentifier` al câmpului corespunzător de pe obiectul țintă                                                  |
+| `universalSettings.relationType`                  | Da               | `RelationType.MANY_TO_ONE` sau `RelationType.ONE_TO_MANY`                                                             |
+| `universalSettings.onDelete`                      | Doar MANY_TO_ONE | Ce se întâmplă atunci când înregistrarea referențiată este ștearsă: `CASCADE`, `SET_NULL`, `RESTRICT` sau `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Doar MANY_TO_ONE | Numele coloanei din baza de date pentru cheia străină (de ex., `postCardId`)                                          |
 
-#### Inline relation fields in defineObject
+#### Câmpuri de relație inline în defineObject
 
-You can also define relation fields directly inside `defineObject()`. In that case, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+Puteți defini, de asemenea, câmpuri de relație direct în `defineObject()`. În acest caz, omiteți `objectUniversalIdentifier` — este moștenit de la obiectul părinte:
 
 ```typescript
 export default defineObject({
@@ -354,21 +354,21 @@ Notițe:
 * `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
 * Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului. Vezi [Funcții de pre-instalare](#pre-install-functions) și [Funcții post-instalare](#post-install-functions).
 
-#### Marketplace metadata
+#### Metadate pentru marketplace
 
-If you plan to [publish your app](/l/ro/developers/extend/apps/publishing), these optional fields control how your app appears in the marketplace:
+Dacă intenționați să [publicați aplicația](/l/ro/developers/extend/apps/publishing), aceste câmpuri opționale controlează modul în care aplicația apare în marketplace:
 
-| Câmp               | Descriere                                           |
-| ------------------ | --------------------------------------------------- |
-| `autor`            | Author or company name                              |
-| `categorie`        | App category for marketplace filtering              |
-| `logoUrl`          | Path to your app logo (relative to `./assets/`)     |
-| `screenshots`      | Array of screenshot paths (relative to `./assets/`) |
-| `aboutDescription` | Longer markdown description for the "About" tab     |
-| `websiteUrl`       | Link to your website                                |
-| `termsUrl`         | Link to terms of service                            |
-| `emailSupport`     | Support email address                               |
-| `issueReportUrl`   | Link to issue tracker                               |
+| Câmp               | Descriere                                                     |
+| ------------------ | ------------------------------------------------------------- |
+| `autor`            | Numele autorului sau al companiei                             |
+| `categorie`        | Categoria aplicației pentru filtrarea în marketplace          |
+| `logoUrl`          | Calea către logo-ul aplicației (relativă la `./assets/`)      |
+| `screenshots`      | Listă de căi către capturi de ecran (relative la `./assets/`) |
+| `aboutDescription` | Descriere markdown mai lungă pentru fila "About"              |
+| `websiteUrl`       | Link către site-ul dvs.                                       |
+| `termsUrl`         | Link către termenii de serviciu                               |
+| `emailSupport`     | Adresă de e-mail pentru suport                                |
+| `issueReportUrl`   | Link către sistemul de urmărire a problemelor                 |
 
 #### Roluri și permisiuni
 
@@ -376,7 +376,7 @@ Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor 
 
 * Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
 * Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
-* Follow least-privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* Respectați principiul celui mai mic privilegiu: creați un rol dedicat doar cu permisiunile de care au nevoie funcțiile, apoi referiți identificatorul său universal.
 
 ##### Rol implicit pentru funcții (*.role.ts)
 
@@ -429,7 +429,7 @@ export default defineRole({
 
 Notițe:
 
-* Start from the scaffolded role, then progressively restrict it following least-privilege.
+* Porniți de la rolul generat, apoi restrângeți-l progresiv urmând principiul celui mai mic privilegiu.
 * Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele/câmpurile de care au nevoie funcțiile.
 * `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum; adăugați doar ceea ce aveți nevoie.
 * Vedeți un exemplu funcțional în aplicația Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
@@ -543,7 +543,7 @@ Puncte cheie:
 * Este permisă o singură funcție de pre-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
 * Proprietatea `universalIdentifier` a funcției este setată automat ca `preInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de pregătire mai lungi.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `exec --preInstall`.
+* Funcțiile de pre-instalare nu au nevoie de declanșatoare — sunt invocate de platformă înainte de instalare sau manual prin `exec --preInstall`.
 
 ### Funcții post-instalare
 
@@ -581,7 +581,7 @@ Puncte cheie:
 * Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
 * Proprietatea `universalIdentifier` a funcției este setată automat ca `postInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
-* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `exec --postInstall`.
+* Funcțiile post-instalare nu au nevoie de declanșatoare — sunt invocate de platformă în timpul instalării sau manual prin `exec --postInstall`.
 
 ### Payload-ul declanșatorului de rută
 
@@ -625,15 +625,15 @@ const handler = async (event: RoutePayload) => {
 
 Tipul `RoutePayload` are următoarea structură:
 
-| Proprietate                  | Tip                                   | Descriere                                                                                |
-| ---------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                              |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` -> `{ id: '123' }`) |
-| `body`                       | `object \| null`                      | Corpul cererii analizat (JSON)                                                           |
-| `isBase64Encoded`            | `boolean`                             | Indică dacă corpul este codificat în base64                                              |
-| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                              |
-| `requestContext.http.path`   | `string`                              | Calea brută a cererii                                                                    |
+| Proprietate                  | Tip                                   | Descriere                                                                             |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                        |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                           |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametri de cale extrași din modelul rutei (de ex., `/users/:id` -> `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Corpul cererii analizat (JSON)                                                        |
+| `isBase64Encoded`            | `boolean`                             | Indică dacă corpul este codificat în base64                                           |
+| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                           |
+| `requestContext.http.path`   | `string`                              | Calea brută a cererii                                                                 |
 
 ### Transmiterea anteturilor HTTP
 
@@ -675,7 +675,7 @@ const handler = async (event: RoutePayload) => {
 
 Puteți crea funcții noi în două moduri:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new logic function. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Generat**: Rulați `yarn twenty add` și alegeți opțiunea de a adăuga o funcție de logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
 * **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
 
 ### Marcarea unei funcții logice drept instrument
@@ -776,7 +776,7 @@ Puncte cheie:
 
 Puteți crea componente Front noi în două moduri:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new front component.
+* **Generat**: Rulați `yarn twenty add` și alegeți opțiunea de a adăuga o componentă Front nouă.
 * **Manual**: Creați un fișier nou `.tsx` și folosiți `defineFrontComponent()`, urmând același model.
 
 ### Abilități
@@ -811,21 +811,21 @@ Puncte cheie:
 
 Puteți crea abilități noi în două moduri:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new skill.
+* **Generat**: Rulați `yarn twenty add` și alegeți opțiunea de a adăuga o abilitate nouă.
 * **Manual**: Creați un fișier nou și folosiți `defineSkill()`, urmând același model.
 
-### Typed API clients (`twenty-client-sdk`)
+### Clienți API tipați (`twenty-client-sdk`)
 
-The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components:
+Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a interacționa cu API-ul Twenty din funcțiile de logică și componentele Front:
 
-| Client              | Importați                    | Endpoint                                       | Generated?             |
-| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
-| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
+| Client              | Importați                    | Endpoint                                                            | Generat?                     |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------- | ---------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — date ale spațiului de lucru (înregistrări, obiecte)    | Da, în timpul dev/build      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurarea spațiului de lucru, încărcări de fișiere | Nu, este livrat preconstruit |
 
 #### CoreApiClient
 
-`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it's fully typed to match your objects and fields.
+`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. Este generat din schema spațiului dvs. de lucru în timpul `yarn twenty dev` sau `yarn twenty build`, astfel încât este complet tipat pentru a corespunde obiectelor și câmpurilor dvs.
 
 ```typescript
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -859,15 +859,15 @@ const { createCompany } = await client.mutation({
 });
 ```
 
-The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
+Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare a tipurilor complete, pe baza schemei spațiului dvs. de lucru.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you try to use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema, generates a typed client using `@genql/cli`, writes the generated sources to `node_modules/twenty-client-sdk/dist/core/generated/`, and replaces the stubs in `node_modules/twenty-client-sdk/dist/core.mjs` and `node_modules/twenty-client-sdk/dist/core.cjs`.
+**CoreApiClient este generat în timpul dev/build.** Dacă încercați să îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare. Generarea are loc automat — CLI-ul introspectează schema GraphQL a spațiului dvs. de lucru, generează un client tipat folosind `@genql/cli`, scrie sursele generate în `node_modules/twenty-client-sdk/dist/core/generated/` și înlocuiește stubs-urile din `node_modules/twenty-client-sdk/dist/core.mjs` și `node_modules/twenty-client-sdk/dist/core.cjs`.
 </Note>
 
-#### Using CoreSchema for type annotations
+#### Folosirea CoreSchema pentru adnotări de tip
 
-`CoreSchema` provides TypeScript types matching your workspace objects, useful for typing component state or function parameters:
+`CoreSchema` oferă tipuri TypeScript care se potrivesc obiectelor din spațiul dvs. de lucru, utile pentru tiparea stării componentelor sau a parametrilor funcțiilor:
 
 ```typescript
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -890,7 +890,7 @@ setCompany(result.company);
 
 #### MetadataApiClient
 
-`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads:
+`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere:
 
 ```typescript
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -912,18 +912,18 @@ const { findManyApplications } = await metadataClient.query({
 });
 ```
 
-#### Runtime credentials
+#### Acreditări la rulare
 
-When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
+Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
-* `TWENTY_API_URL` — Base URL of the Twenty API
-* `TWENTY_API_KEY` — Short-lived key scoped to your application's default function role
+* `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
+* `TWENTY_API_KEY` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
 
-You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role referenced in `defaultRoleUniversalIdentifier` in your `application-config.ts`.
+Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul referențiat în `defaultRoleUniversalIdentifier` din `application-config.ts`.
 
 #### Încărcarea fișierelor
 
-`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields. It implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec):
+`MetadataApiClient` include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier. Implementează [specificația pentru cereri GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec):
 
 ```typescript
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -953,7 +953,7 @@ console.log(uploadedFile);
 
 Puncte cheie:
 
-* Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
+* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
 * `url` returnat este un URL semnat pe care îl poți folosi pentru a accesa fișierul încărcat.
 
 ### Exemplu Hello World
