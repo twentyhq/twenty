@@ -24,7 +24,7 @@ test('Create Industry Select Field', async ({ page }) => {
 
 test('Create Kanban View from Industry Select Field', async ({ page }) => {
   await page.getByRole('link', { name: 'Opportunities' }).click();
-  await page.getByRole('button', { name: 'All Opportunities ·' }).click();
+  await page.getByRole('button', { name: /All Opportunities/ }).click();
   await page.getByText('Add view').click();
   await page.getByRole('textbox').press('ControlOrMeta+a');
   await page.getByRole('textbox').fill('By industry');
