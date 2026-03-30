@@ -28,7 +28,7 @@ const buildUsageEventRow = (
   workspaceId,
   userWorkspaceId: overrides.userWorkspaceId ?? '',
   resourceType: overrides.resourceType ?? UsageResourceType.AI,
-  operationType: overrides.operationType ?? UsageOperationType.AI_TOKEN,
+  operationType: overrides.operationType ?? UsageOperationType.AI_CHAT_TOKEN,
   quantity: overrides.quantity ?? 0,
   unit: overrides.unit ?? UsageUnit.TOKEN,
   creditsUsedMicro: overrides.creditsUsedMicro ?? 0,
@@ -66,7 +66,7 @@ describe('ClickHouse Usage Event Writer (integration)', () => {
     const row = buildUsageEventRow(workspaceId, {
       userWorkspaceId: '00000000-0000-0000-0000-000000000002',
       resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.AI_TOKEN,
+      operationType: UsageOperationType.AI_CHAT_TOKEN,
       quantity: 1500,
       unit: UsageUnit.TOKEN,
       creditsUsedMicro: 7500,
@@ -94,7 +94,7 @@ describe('ClickHouse Usage Event Writer (integration)', () => {
     expect(rows).toHaveLength(1);
     expect(rows[0].workspaceId).toBe(workspaceId);
     expect(rows[0].resourceType).toBe(UsageResourceType.AI);
-    expect(rows[0].operationType).toBe(UsageOperationType.AI_TOKEN);
+    expect(rows[0].operationType).toBe(UsageOperationType.AI_CHAT_TOKEN);
     expect(rows[0].quantity).toBe(1500);
     expect(rows[0].unit).toBe(UsageUnit.TOKEN);
     expect(rows[0].creditsUsedMicro).toBe(7500);

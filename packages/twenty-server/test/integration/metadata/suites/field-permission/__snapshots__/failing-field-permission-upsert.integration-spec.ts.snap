@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Field permission upsert should fail when canReadFieldValue is true (only restriction allowed) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "ONLY_FIELD_RESTRICTION_ALLOWED",
+    "userFriendlyMessage": "Field permissions can only be used to restrict access, not to grant additional permissions.",
+  },
+  "message": "Field permission can only introduce a restriction",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Field permission upsert should fail when canUpdateFieldValue is true (only restriction allowed) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "ONLY_FIELD_RESTRICTION_ALLOWED",
+    "userFriendlyMessage": "Field permissions can only be used to restrict access, not to grant additional permissions.",
+  },
+  "message": "Field permission can only introduce a restriction",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Field permission upsert should fail when fieldMetadataId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "FIELD_METADATA_NOT_FOUND",
+    "userFriendlyMessage": "The field you are trying to set permissions for could not be found. It may have been deleted.",
+  },
+  "message": "Field metadata not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Field permission upsert should fail when object is system object 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT",
+    "userFriendlyMessage": "You cannot set field permissions on system objects as they are managed by the platform.",
+  },
+  "message": "Cannot add field permission on system object",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Field permission upsert should fail when objectMetadataId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "OBJECT_METADATA_NOT_FOUND_PERMISSIONS",
+    "userFriendlyMessage": "The object you are trying to set permissions for could not be found. It may have been deleted.",
+  },
+  "message": "Object metadata not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Field permission upsert should fail when role is not editable (system role) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while upserting field permissions",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field permission upsert should fail when roleId does not exist 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "OBJECT_METADATA_NOT_FOUND_PERMISSIONS",
+    "userFriendlyMessage": "The object you are trying to set permissions for could not be found. It may have been deleted.",
+  },
+  "message": "Object metadata not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Field permission upsert should fail when roleId is not a valid UUID 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "invalid-uuid",
+  },
+  "message": "Invalid UUID: 'invalid-uuid'",
+  "name": "ValidationError",
+}
+`;

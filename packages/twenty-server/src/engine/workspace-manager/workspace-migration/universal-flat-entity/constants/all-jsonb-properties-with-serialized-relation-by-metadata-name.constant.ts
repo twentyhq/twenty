@@ -39,6 +39,7 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   navigationMenuItem: {},
   permissionFlag: {},
   objectPermission: {},
+  fieldPermission: {},
   frontComponent: {},
 } as const satisfies {
   [P in AllMetadataName]: Partial<{

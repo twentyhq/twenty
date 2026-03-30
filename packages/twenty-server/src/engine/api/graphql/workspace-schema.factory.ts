@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { isNonEmptyString } from '@sniptt/guards';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
 import { WorkspaceGraphQLSchemaGenerator } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FlatEntityMapsException,
@@ -28,24 +31,33 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 @Injectable()
 export class WorkspaceSchemaFactory {
   constructor(
-    private readonly dataSourceService: DataSourceService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
     private readonly workspaceGraphQLSchemaGenerator: WorkspaceGraphQLSchemaGenerator,
     private readonly workspaceResolverFactory: WorkspaceResolverFactory,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly dataSourceService: DataSourceService,
   ) {}
 
   async createGraphQLSchema(
-    workspace: WorkspaceEntity,
+    workspace: FlatWorkspace,
     applicationId?: string,
   ): Promise<GraphQLSchema> {
-    const dataSourcesMetadata =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        workspace.id,
-      );
+    const isDataSourceMigrated = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_DATASOURCE_MIGRATED,
+      workspace.id,
+    );
 
-    if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
+    const hasSchema = isDataSourceMigrated
+      ? isNonEmptyString(workspace.databaseSchema)
+      : (
+          await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+            workspace.id,
+          )
+        ).length > 0;
+
+    if (!hasSchema) {
       return new GraphQLSchema({});
     }
 

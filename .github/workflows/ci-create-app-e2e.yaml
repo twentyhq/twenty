@@ -37,6 +37,9 @@ jobs:
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
+        credentials:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
@@ -51,6 +54,9 @@ jobs:
           --health-retries 5
       redis:
         image: redis
+        credentials:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
     env:
@@ -182,7 +188,7 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           EXEC_OUTPUT=$(npx --no-install twenty exec --functionName create-hello-world-company)
           echo "$EXEC_OUTPUT"
-          echo "$EXEC_OUTPUT" | grep -q "Created company"
+          echo "$EXEC_OUTPUT" | grep -q 'Created company.*Hello World.*with id'
 
       - name: Run scaffolded app integration test
         env:

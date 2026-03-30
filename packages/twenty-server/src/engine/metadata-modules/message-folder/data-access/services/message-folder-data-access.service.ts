@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { validate as uuidValidate } from 'uuid';
 import {
   type FindOneOptions,
@@ -33,28 +35,50 @@ export class MessageFolderDataAccessService {
     );
   }
 
-  // Workspace stores parentFolderId as an externalId (text),
-  // core stores it as a uuid FK. Resolve during dual-write.
+  private async resolveParentFolderIdForCore(
+    workspaceId: string,
+    parentFolderId: string | null,
+    messageChannelId: string | undefined,
+  ): Promise<string | null> {
+    if (!isNonEmptyString(parentFolderId)) {
+      return null;
+    }
+
+    if (uuidValidate(parentFolderId)) {
+      return parentFolderId;
+    }
+
+    if (!isDefined(messageChannelId)) {
+      return null;
+    }
+
+    const parentFolder = await this.coreRepository.findOne({
+      where: {
+        workspaceId,
+        messageChannelId,
+        externalId: parentFolderId,
+      },
+      select: ['id'],
+    });
+
+    return parentFolder?.id ?? null;
+  }
+
   private async toCore(
     workspaceId: string,
     data: Partial<MessageFolderWorkspaceEntity>,
     messageChannelId?: string,
   ): Promise<Record<string, unknown>> {
     const coreData: Record<string, unknown> = { ...data, workspaceId };
-    const parentFolderId = coreData.parentFolderId as string | null;
+
     const channelId = (coreData.messageChannelId as string) ?? messageChannelId;
 
-    if (parentFolderId && !uuidValidate(parentFolderId) && channelId) {
-      const parentFolder = await this.coreRepository.findOne({
-        where: {
-          workspaceId,
-          messageChannelId: channelId,
-          externalId: parentFolderId,
-        },
-        select: ['id'],
-      });
-
-      coreData.parentFolderId = parentFolder?.id ?? null;
+    if ('parentFolderId' in coreData) {
+      coreData.parentFolderId = await this.resolveParentFolderIdForCore(
+        workspaceId,
+        coreData.parentFolderId as string | null,
+        channelId,
+      );
     }
 
     return coreData;
@@ -118,11 +142,11 @@ export class MessageFolderDataAccessService {
   ): Promise<void> {
     const workspaceRepository = await this.getWorkspaceRepository(workspaceId);
 
-    await workspaceRepository.save(data);
+    const savedData = await workspaceRepository.save(data);
 
     if (await this.isMigrated(workspaceId)) {
       try {
-        const coreData = await this.toCore(workspaceId, data);
+        const coreData = await this.toCore(workspaceId, savedData);
 
         await this.coreRepository.save(
           coreData as unknown as MessageFolderEntity,
