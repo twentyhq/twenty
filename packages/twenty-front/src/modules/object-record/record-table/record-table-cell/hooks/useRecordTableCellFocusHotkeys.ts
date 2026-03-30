@@ -12,9 +12,13 @@ export const useRecordTableCellFocusHotkeys = ({
 
   const { moveFocus } = useRecordTableMoveFocusedCell(recordTableId);
 
+  const isActiveElementInput = () =>
+    document.activeElement?.tagName === 'INPUT';
+
   useHotkeysOnFocusedElement({
     keys: [Key.ArrowUp],
     callback: () => {
+      if (isActiveElementInput()) return;
       moveFocus('up');
     },
     focusId,
@@ -24,6 +28,7 @@ export const useRecordTableCellFocusHotkeys = ({
   useHotkeysOnFocusedElement({
     keys: [Key.ArrowDown],
     callback: () => {
+      if (isActiveElementInput()) return;
       moveFocus('down');
     },
     focusId,
@@ -33,6 +38,7 @@ export const useRecordTableCellFocusHotkeys = ({
   useHotkeysOnFocusedElement({
     keys: [Key.ArrowLeft],
     callback: () => {
+      if (isActiveElementInput()) return;
       moveFocus('left');
     },
     focusId,
@@ -42,6 +48,7 @@ export const useRecordTableCellFocusHotkeys = ({
   useHotkeysOnFocusedElement({
     keys: [Key.ArrowRight],
     callback: () => {
+      if (isActiveElementInput()) return;
       moveFocus('right');
     },
     focusId,
