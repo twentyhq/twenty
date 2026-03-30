@@ -120,6 +120,68 @@ export class MessagingMessageCleanerService {
     }, authContext);
   }
 
+  async deleteMessageChannelMessageAssociationsByChannelId({
+    workspaceId,
+    messageChannelId,
+  }: {
+    workspaceId: string;
+    messageChannelId: string;
+  }) {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageChannelMessageAssociationRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          workspaceId,
+          'messageChannelMessageAssociation',
+        );
+
+      const workspaceDataSource =
+        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+      await workspaceDataSource.transaction(async (manager) => {
+        const transactionManager = manager as WorkspaceEntityManager;
+
+        await deleteUsingPagination(
+          workspaceId,
+          500,
+          async (
+            limit: number,
+            offset: number,
+            _workspaceId: string,
+            transactionManager?: WorkspaceEntityManager,
+          ) => {
+            const associations =
+              await messageChannelMessageAssociationRepository.find(
+                {
+                  where: { messageChannelId },
+                  take: limit,
+                  skip: offset,
+                },
+                transactionManager,
+              );
+
+            return associations.map(({ id }) => id);
+          },
+          async (
+            ids: string[],
+            workspaceId: string,
+            transactionManager?: WorkspaceEntityManager,
+          ) => {
+            this.logger.log(
+              `WorkspaceId: ${workspaceId} Deleting ${ids.length} message channel message associations for channel ${messageChannelId}`,
+            );
+            await messageChannelMessageAssociationRepository.delete(
+              ids,
+              transactionManager,
+            );
+          },
+          transactionManager,
+        );
+      });
+    }, authContext);
+  }
+
   public async cleanOrphanMessagesAndThreads(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 

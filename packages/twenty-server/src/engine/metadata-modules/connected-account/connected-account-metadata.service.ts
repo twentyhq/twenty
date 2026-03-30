@@ -1,20 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { In, Repository } from 'typeorm';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
+  private readonly logger = new Logger(ConnectedAccountMetadataService.name);
+
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly repository: Repository<ConnectedAccountEntity>,
+    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async findAll(workspaceId: string): Promise<ConnectedAccountDTO[]> {
@@ -141,7 +157,56 @@ export class ConnectedAccountMetadataService {
       where: { id, workspaceId },
     });
 
-    await this.repository.delete({ id, workspaceId });
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const messageChannels =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          return this.messageChannelDataAccessService.find(workspaceId, {
+            connectedAccountId: id,
+          });
+        },
+        authContext,
+      );
+
+    this.logger.log(
+      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s)`,
+    );
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      universalIdentifier: STANDARD_OBJECTS.messageChannel.universalIdentifier,
+    });
+
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'messageChannel',
+      action: DatabaseEventAction.DESTROYED,
+      objectMetadata: flatObjectMetadata,
+      events: messageChannels.map((messageChannel) => ({
+        recordId: messageChannel.id,
+        properties: {
+          before: messageChannel,
+        },
+      })),
+      workspaceId,
+    });
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        await this.connectedAccountDataAccessService.delete(workspaceId, {
+          id,
+        });
+      },
+      authContext,
+    );
 
     return connectedAccount;
   }
