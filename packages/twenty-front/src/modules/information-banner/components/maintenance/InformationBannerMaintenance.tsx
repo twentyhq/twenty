@@ -42,18 +42,19 @@ export const InformationBannerMaintenance = () => {
   );
 
   const message = t`Scheduled maintenance: ${startFormatted} — ${endFormatted}`;
+  const maintenanceLink = maintenanceMode.link ?? undefined;
 
   return (
     <InformationBanner
       componentInstanceId="information-banner-maintenance"
       variant="default"
       message={message}
-      buttonTitle={maintenanceMode.link ? t`Learn more` : undefined}
-      buttonIcon={maintenanceMode.link ? IconExternalLink : undefined}
+      buttonTitle={isDefined(maintenanceLink) ? t`Learn more` : undefined}
+      buttonIcon={isDefined(maintenanceLink) ? IconExternalLink : undefined}
       buttonOnClick={
-        maintenanceMode.link
+        isDefined(maintenanceLink)
           ? () =>
-              window.open(maintenanceMode.link, '_blank', 'noopener,noreferrer')
+              window.open(maintenanceLink, '_blank', 'noopener,noreferrer')
           : undefined
       }
     />

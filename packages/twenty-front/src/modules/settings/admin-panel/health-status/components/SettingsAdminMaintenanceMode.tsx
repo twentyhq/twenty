@@ -75,7 +75,7 @@ export const SettingsAdminMaintenanceMode = () => {
     GET_MAINTENANCE_MODE,
     {
       fetchPolicy: 'network-only',
-      onCompleted: (result) => {
+      onCompleted: (result: GetMaintenanceModeResult) => {
         const maintenance = result?.getMaintenanceMode;
 
         if (isDefined(maintenance)) {
