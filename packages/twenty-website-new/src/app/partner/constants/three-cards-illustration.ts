@@ -24,6 +24,10 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         { text: 'Soon: earn revenue' },
       ],
       attribution: undefined,
+      illustration: {
+        src: 'https://app.endlesstools.io/embed/627cb43a-5b5f-41a7-9642-26e66b9c4890',
+        title: 'Endless Tools Editor',
+      },
     },
     {
       heading: { text: 'Content & Community Partners', fontFamily: 'sans' },
@@ -36,6 +40,10 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         { text: 'Marketing assets & brand resources' },
       ],
       attribution: undefined,
+      illustration: {
+        src: 'https://app.endlesstools.io/embed/4ef11ab1-d013-46dd-bf2e-cbf913370a8a',
+        title: 'Endless Tools Editor',
+      },
     },
     {
       heading: { text: 'Solutions Partners', fontFamily: 'sans' },
@@ -48,6 +56,10 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         { text: 'Dedicated partner support' },
       ],
       attribution: undefined,
+      illustration: {
+        src: 'https://app.endlesstools.io/embed/624e9b40-f52c-4da2-9a2e-72d1fb2b5356',
+        title: 'Endless Tools Editor',
+      },
     },
   ],
 };
