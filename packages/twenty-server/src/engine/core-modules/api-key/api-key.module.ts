@@ -6,6 +6,7 @@ import { ApiKeyResolver } from 'src/engine/core-modules/api-key/api-key.resolver
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { WorkspaceApiKeyMapCacheService } from 'src/engine/core-modules/api-key/services/workspace-api-key-map-cache.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -39,6 +40,7 @@ import { ApiKeyController } from './controllers/api-key.controller';
     ApiKeyService,
     ApiKeyResolver,
     ApiKeyRoleService,
+    WorkspaceApiKeyMapCacheService,
     GenerateApiKeyCommand,
   ],
   controllers: [ApiKeyController],

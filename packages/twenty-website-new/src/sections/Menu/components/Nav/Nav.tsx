@@ -1,4 +1,4 @@
-import { NAV_ITEMS } from '@/sections/Menu/constants/nav-items';
+import type { MenuNavItemType, MenuScheme } from '@/sections/Menu/types';
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { Separator } from '@base-ui/react/separator';
@@ -14,19 +14,27 @@ const NavList = styled(NavigationMenu.List)`
 
   @media (min-width: ${theme.breakpoints.md}px) {
     align-items: center;
-    display: flex;
-    gap: ${theme.spacing(8)};
+    column-gap: ${theme.spacing(8)};
+    display: grid;
+    grid-auto-flow: column;
   }
 `;
 
 const NavLink = styled(NavigationMenu.Link)`
-  color: ${theme.colors.primary.text[100]};
   font-family: ${theme.font.family.mono};
   font-size: ${theme.font.size(3)};
   font-weight: ${theme.font.weight.medium};
   letter-spacing: 0;
   text-decoration: none;
   text-transform: uppercase;
+
+  &[data-scheme='primary'] {
+    color: ${theme.colors.primary.text[100]};
+  }
+
+  &[data-scheme='secondary'] {
+    color: ${theme.colors.secondary.text[100]};
+  }
 
   &:focus-visible {
     outline: 1px solid ${theme.colors.highlight[100]};
@@ -35,24 +43,39 @@ const NavLink = styled(NavigationMenu.Link)`
 `;
 
 const Divider = styled(Separator)`
-  border-left: 1px solid ${theme.colors.primary.border[40]};
   height: 10px;
   width: 0px;
+
+  &[data-scheme='primary'] {
+    border-left: 1px solid ${theme.colors.primary.border[40]};
+  }
+
+  &[data-scheme='secondary'] {
+    border-left: 1px solid ${theme.colors.secondary.border[40]};
+  }
 `;
 
-export function Nav() {
+type NavProps = {
+  navItems: MenuNavItemType[];
+  scheme: MenuScheme;
+};
+
+export function Nav({ navItems, scheme }: NavProps) {
   return (
     <NavigationMenu.Root render={<div />}>
       <NavList>
-        {NAV_ITEMS.map((item, index) => (
+        {navItems.map((item, index) => (
           <React.Fragment key={item.href}>
             <NavigationMenu.Item>
-              <NavLink render={<Link href={item.href} />}>
+              <NavLink
+                data-scheme={scheme}
+                render={<Link href={item.href} />}
+              >
                 {item.label}
               </NavLink>
             </NavigationMenu.Item>
-            {index < NAV_ITEMS.length - 1 && (
-              <Divider orientation="vertical" />
+            {index < navItems.length - 1 && (
+              <Divider data-scheme={scheme} orientation="vertical" />
             )}
           </React.Fragment>
         ))}

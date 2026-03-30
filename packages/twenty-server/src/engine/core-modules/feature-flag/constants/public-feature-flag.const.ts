@@ -20,15 +20,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'Enable many-to-many relations through junction tables configuration',
     },
   },
-  {
-    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
-    metadata: {
-      label: 'Row Level Permissions',
-      description: 'Enable row level permission',
-      imagePath:
-        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

@@ -31,6 +31,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
@@ -156,6 +157,12 @@ describe('WorkspaceService', () => {
           provide: getQueueToken(MessageQueue.deleteCascadeQueue),
           useValue: {
             add: jest.fn(),
+          },
+        },
+        {
+          provide: CoreEntityCacheService,
+          useValue: {
+            invalidate: jest.fn(),
           },
         },
         {

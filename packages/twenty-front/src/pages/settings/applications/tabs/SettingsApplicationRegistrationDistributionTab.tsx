@@ -6,6 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import {
   H2Title,
   IconChartBar,
+  IconCopy,
   IconDownload,
   IconExternalLink,
   IconTag,
@@ -17,8 +18,10 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationSourceType,
   FindApplicationRegistrationStatsDocument,
+  GetApplicationShareLinkDocument,
 } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 
 const StyledButtonGroup = styled.div`
@@ -36,8 +39,20 @@ export const SettingsApplicationRegistrationDistributionTab = ({
 
   const applicationRegistrationId = registration.id;
 
+  const { copyToClipboard } = useCopyToClipboard();
+
   const isNpmSource =
     registration.sourceType === ApplicationRegistrationSourceType.NPM;
+
+  const isTarballSource =
+    registration.sourceType === ApplicationRegistrationSourceType.TARBALL;
+
+  const { data: shareLinkData } = useQuery(GetApplicationShareLinkDocument, {
+    variables: { id: applicationRegistrationId },
+    skip: !isTarballSource || !applicationRegistrationId,
+  });
+
+  const shareLink = shareLinkData?.getApplicationShareLink;
 
   const { data: statsData } = useQuery(
     FindApplicationRegistrationStatsDocument,
@@ -101,6 +116,34 @@ export const SettingsApplicationRegistrationDistributionTab = ({
             />
           </Card>
           <StyledButtonGroup>
+            <Button
+              Icon={IconExternalLink}
+              title={t`View marketplace page`}
+              variant="secondary"
+              to={marketplacePageUrl}
+            />
+          </StyledButtonGroup>
+        </Section>
+      )}
+
+      {isTarballSource && (
+        <Section>
+          <H2Title
+            title={t`Share`}
+            description={t`Share this link with other workspaces on this server to let them install this application.`}
+          />
+          <StyledButtonGroup>
+            <Button
+              Icon={IconCopy}
+              title={t`Copy share link`}
+              variant="secondary"
+              disabled={!shareLink}
+              onClick={() => {
+                if (shareLink) {
+                  copyToClipboard(shareLink, t`Share link copied to clipboard`);
+                }
+              }}
+            />
             <Button
               Icon={IconExternalLink}
               title={t`View marketplace page`}

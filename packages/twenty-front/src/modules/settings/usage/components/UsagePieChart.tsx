@@ -1,10 +1,11 @@
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
+import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { ResponsivePie } from '@nivo/pie';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type UsagePieChartDatum = {
   id: string;
@@ -19,6 +20,35 @@ type UsagePieChartProps = {
 const StyledContainer = styled.div`
   height: 220px;
   width: 100%;
+`;
+
+const StyledTooltip = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledTooltipRow = styled.div`
+  align-items: center;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.xs};
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledTooltipLabel = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
+const StyledTooltipValue = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  white-space: nowrap;
 `;
 
 export const UsagePieChart = ({ data }: UsagePieChartProps) => {
@@ -44,7 +74,15 @@ export const UsagePieChart = ({ data }: UsagePieChartProps) => {
         animate
         motionConfig={CHART_MOTION_CONFIG}
         tooltip={({ datum }) => (
-          <div>{`${String(datum.id)}: ${t`${formatNumber(datum.value)} credits`}`}</div>
+          <StyledTooltip>
+            <StyledTooltipRow>
+              <GraphWidgetLegendDot color={datum.color} />
+              <StyledTooltipLabel>{String(datum.id)}</StyledTooltipLabel>
+              <StyledTooltipValue>
+                {t`${formatNumber(datum.value)} credits`}
+              </StyledTooltipValue>
+            </StyledTooltipRow>
+          </StyledTooltip>
         )}
       />
     </StyledContainer>

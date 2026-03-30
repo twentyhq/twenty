@@ -23,7 +23,6 @@ import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/u
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -103,7 +102,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       : this.userWorkspaceRepository.save(userWorkspace);
   }
 
-  async createWorkspaceMember(workspaceId: string, user: AuthContextUser) {
+  async createWorkspaceMember(
+    workspaceId: string,
+    user: Pick<
+      UserEntity,
+      'id' | 'firstName' | 'lastName' | 'email' | 'locale'
+    >,
+  ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -536,7 +541,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         appToken?: AppTokenEntity;
       }>;
     },
-    user: AuthContextUser,
+    user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
   ) {
     return {
