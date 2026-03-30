@@ -20,14 +20,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     request,
   }: {
     operationName: string;
-    request: Pick<
-      Request,
-      | 'workspace'
-      | 'locale'
-      | 'body'
-      | 'userWorkspaceId'
-      | 'workspaceMetadataVersion'
-    >;
+    request: Pick<Request, 'workspace' | 'locale' | 'body' | 'userWorkspaceId'>;
   }) => {
     const workspace = request.workspace;
 
@@ -35,8 +28,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       throw new InternalServerError('Workspace is not defined');
     }
 
-    const workspaceMetadataVersion =
-      request.workspaceMetadataVersion ?? workspace.metadataVersion ?? '0';
+    const workspaceMetadataVersion = workspace.metadataVersion ?? '0';
     const locale = request.locale;
     const queryHash = createHash('sha256')
       .update(request.body.query)
