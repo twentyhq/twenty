@@ -18,9 +18,7 @@ export type CalendarChannelDeletionCleanupJobData = {
   scope: Scope.REQUEST,
 })
 export class CalendarChannelDeletionCleanupJob {
-  private readonly logger = new Logger(
-    CalendarChannelDeletionCleanupJob.name,
-  );
+  private readonly logger = new Logger(CalendarChannelDeletionCleanupJob.name);
 
   constructor(
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
@@ -28,9 +26,7 @@ export class CalendarChannelDeletionCleanupJob {
   ) {}
 
   @Process(CalendarChannelDeletionCleanupJob.name)
-  async handle(
-    data: CalendarChannelDeletionCleanupJobData,
-  ): Promise<void> {
+  async handle(data: CalendarChannelDeletionCleanupJobData): Promise<void> {
     const isMigrated = await this.featureFlagService.isFeatureEnabled(
       FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
       data.workspaceId,

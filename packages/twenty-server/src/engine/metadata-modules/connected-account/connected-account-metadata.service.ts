@@ -234,14 +234,11 @@ export class ConnectedAccountMetadataService {
       });
     }
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        await this.connectedAccountDataAccessService.delete(workspaceId, {
-          id,
-        });
-      },
-      authContext,
-    );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.connectedAccountDataAccessService.delete(workspaceId, {
+        id,
+      });
+    }, authContext);
 
     return connectedAccount;
   }
