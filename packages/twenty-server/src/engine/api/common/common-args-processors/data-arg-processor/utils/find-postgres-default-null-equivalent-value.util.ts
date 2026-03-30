@@ -117,7 +117,8 @@ export const findPostgresDefaultNullEquivalentValue = (
           return undefined;
       }
     }
-    case FieldMetadataType.RICH_TEXT: {
+    case FieldMetadataType.RICH_TEXT:
+    case FieldMetadataType.RICH_TEXT_V2: {
       switch (key) {
         case 'markdown':
           return isNullEquivalentTextFieldValue(value) || value === 'NULL'

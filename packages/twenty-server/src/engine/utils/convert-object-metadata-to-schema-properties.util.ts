@@ -325,6 +325,7 @@ export const convertObjectMetadataToSchemaProperties = ({
         };
         break;
       case FieldMetadataType.RICH_TEXT:
+      case FieldMetadataType.RICH_TEXT_V2:
         itemProperty = {
           type: 'object',
           properties: {
