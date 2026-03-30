@@ -19,12 +19,13 @@ export enum MessageQueue {
   logicFunctionQueue = 'logic-function-queue',
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
-  // Dedicated queue for AI chat streaming jobs. Separate from aiQueue
-  // so long-running streams (potentially minutes) don't starve short
-  // evaluation jobs.
-  // TODO: Increase concurrency for production. Streaming is I/O-bound
-  // (waiting for LLM tokens), so a single worker can handle 50+
-  // concurrent streams. Default concurrency is 1 — set it in
-  // QUEUE_WORKER_OPTIONS when ready to support concurrent users.
   aiStreamQueue = 'ai-stream-queue',
 }
+
+export const QUEUE_WORKER_OPTIONS: Partial<
+  Record<MessageQueue, { concurrency: number }>
+> = {
+  // Streaming is I/O-bound (waiting for LLM tokens), so a single
+  // worker process can handle many concurrent streams.
+  [MessageQueue.aiStreamQueue]: { concurrency: 50 },
+};
