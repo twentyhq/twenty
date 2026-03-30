@@ -23,6 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCallback, useEffect } from 'react';
+import { isValidUuid } from 'twenty-shared/utils';
 
 export const AgentChatAiSdkStreamEffect = () => {
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
@@ -63,6 +64,7 @@ export const AgentChatAiSdkStreamEffect = () => {
   useEffect(() => {
     if (
       currentAIChatThread !== null &&
+      isValidUuid(currentAIChatThread) &&
       chatState.status !== 'streaming' &&
       chatState.status !== 'submitted'
     ) {
