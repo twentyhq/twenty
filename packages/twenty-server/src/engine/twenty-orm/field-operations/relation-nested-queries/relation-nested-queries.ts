@@ -11,7 +11,10 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import {
+  type ConnectObject,
+  type QueryDeepPartialEntityWithNestedRelationFields,
+} from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import {
   type RelationConnectQueryFieldsByEntityIndex,
@@ -29,6 +32,59 @@ import { extractNestedRelationFieldsByEntityIndex } from 'src/engine/twenty-orm/
 import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return isDefined(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * Safely reads a string-keyed property from an object without casting.
+ */
+function getProperty(obj: Record<string, unknown>, key: string): unknown {
+  return obj[key];
+}
+
+/**
+ * Extracts the `createData` from an entity's connect object for the given
+ * connect field name, or returns `undefined` if not present.
+ */
+function extractCreateData<Entity extends ObjectLiteral>(
+  entity: QueryDeepPartialEntityWithNestedRelationFields<Entity>,
+  connectFieldName: string,
+): Record<string, unknown> | undefined {
+  const fieldValue: unknown = Object.entries(entity).find(
+    ([key]) => key === connectFieldName,
+  )?.[1];
+
+  if (!isRecord(fieldValue)) return undefined;
+
+  const connect = getProperty(fieldValue, RELATION_NESTED_QUERY_KEYWORDS.CONNECT);
+
+  if (!isRecord(connect)) return undefined;
+
+  const where = getProperty(connect, RELATION_NESTED_QUERY_KEYWORDS.CONNECT_WHERE);
+
+  if (!isRecord(where)) return undefined;
+
+  const createData = getProperty(connect, 'createData');
+
+  if (!isRecord(createData)) return undefined;
+
+  return createData;
+}
+
+/**
+ * Extracts the `id` field from an entity, or `undefined` if not set.
+ */
+function getEntityId<Entity extends ObjectLiteral>(
+  entity: QueryDeepPartialEntityWithNestedRelationFields<Entity>,
+): string | undefined {
+  const id: unknown = Object.entries(entity).find(
+    ([key]) => key === 'id',
+  )?.[1];
+
+  return typeof id === 'string' ? id : undefined;
+}
 
 export type ImportRecordWarning = {
   entityIndex: number;
@@ -264,12 +320,10 @@ export class RelationNestedQueries {
         // 1b: Try createData fallback — search by email, then verify name
         // similarity (≥95%) to avoid matching spouses who share an email.
         const entity = entities[entry.entityIndex];
-        const connectObj = (entity as any)?.[
-          connectQueryConfig.connectFieldName
-        ]?.connect;
-        const createData = connectObj?.createData as
-          | Record<string, unknown>
-          | undefined;
+        const createData = extractCreateData(
+          entity,
+          connectQueryConfig.connectFieldName,
+        );
 
         if (createData !== undefined) {
           const resolved = await this.tryCreateDataFallback(
@@ -298,12 +352,10 @@ export class RelationNestedQueries {
 
         // Build the new record using condition data + createData for richer records
         const entity = entities[entry.entityIndex];
-        const connectObj = (entity as any)?.[
-          connectQueryConfig.connectFieldName
-        ]?.connect;
-        const createData = connectObj?.createData as
-          | Record<string, unknown>
-          | undefined;
+        const createData = extractCreateData(
+          entity,
+          connectQueryConfig.connectFieldName,
+        );
 
         const now = new Date().toISOString();
         const newRecord: Record<string, unknown> = {
@@ -330,7 +382,7 @@ export class RelationNestedQueries {
           queryBuilder.expressionMap.aliases = [];
           queryBuilder.expressionMap.mainAlias = undefined;
 
-          await (queryBuilder as any)
+          await queryBuilder
             .insert()
             .into(connectQueryConfig.targetObjectName)
             .values(newRecord)
@@ -385,11 +437,14 @@ export class RelationNestedQueries {
 
       if (fallbackResults.length === 1) {
         const matched = fallbackResults[0];
+        const matchedId = matched?.id;
+
+        if (typeof matchedId !== 'string') return false;
 
         recordsToConnect.push(matched);
 
         connectQueryConfig.recordToConnectConditionByEntityIndex[entityIndex] =
-          [['id', matched.id]];
+          [['id', matchedId]];
 
         return true;
       }
@@ -452,11 +507,16 @@ export class RelationNestedQueries {
       if (expectedFull.length === 0) {
         // No name to verify — accept single email match only
         if (results.length === 1) {
-          recordsToConnect.push(results[0]);
+          const singleMatch = results[0];
+          const singleId = singleMatch?.id;
+
+          if (typeof singleId !== 'string') return false;
+
+          recordsToConnect.push(singleMatch);
 
           connectQueryConfig.recordToConnectConditionByEntityIndex[
             entityIndex
-          ] = [['id', results[0].id]];
+          ] = [['id', singleId]];
 
           return true;
         }
@@ -484,10 +544,14 @@ export class RelationNestedQueries {
       }
 
       if (bestMatch) {
+        const bestId = bestMatch.id;
+
+        if (typeof bestId !== 'string') return false;
+
         recordsToConnect.push(bestMatch);
 
         connectQueryConfig.recordToConnectConditionByEntityIndex[entityIndex] =
-          [['id', String(bestMatch.id)]];
+          [['id', bestId]];
 
         return true;
       }
@@ -522,12 +586,10 @@ export class RelationNestedQueries {
       )) {
         const entityIndex = Number(entityIndexStr);
         const entity = entities[entityIndex];
-        const connectObj = (entity as any)?.[
-          connectQueryConfig.connectFieldName
-        ]?.connect;
-        const createData = connectObj?.createData as
-          | Record<string, unknown>
-          | undefined;
+        const createData = extractCreateData(
+          entity,
+          connectQueryConfig.connectFieldName,
+        );
 
         if (createData === undefined) continue;
 
@@ -536,7 +598,9 @@ export class RelationNestedQueries {
           condition.every(([field, value]) => record[field] === value),
         );
 
-        if (!matchedRecord?.id) continue;
+        const matchedId = matchedRecord?.id;
+
+        if (typeof matchedId !== 'string') continue;
 
         const updateFields = this.flattenCreateData(createData);
 
@@ -551,14 +615,22 @@ export class RelationNestedQueries {
         setClause['updatedAt'] = new Date().toISOString();
 
         try {
-          queryBuilder.expressionMap.aliases = [];
-          queryBuilder.expressionMap.mainAlias = undefined;
+          const table = connectQueryConfig.targetObjectName;
+          const setCols = updateFields
+            .map(([col], i) => `"${col}" = :setVal_${i}`)
+            .join(', ');
+          const setParams: Record<string, string> = {};
 
-          await (queryBuilder as any)
-            .update(connectQueryConfig.targetObjectName)
-            .set(setClause)
-            .where('id = :updateId', { updateId: matchedRecord.id })
-            .execute();
+          for (const [col, val] of updateFields.entries()) {
+            setParams[`setVal_${col}`] = val[1];
+          }
+
+          // Use the workspace connection's query runner for the UPDATE
+          // to ensure correct schema context
+          await queryBuilder.connection.query(
+            `UPDATE "${table}" SET ${setCols}, "updatedAt" = NOW() WHERE "id" = $${updateFields.length + 1}`,
+            [...updateFields.map(([, val]) => val), matchedId],
+          );
         } catch {
           // Update failed — non-critical, the connect still worked
         }
@@ -577,11 +649,9 @@ export class RelationNestedQueries {
     const result: [string, string][] = [];
 
     for (const [fieldName, value] of Object.entries(createData)) {
-      if (value !== null && typeof value === 'object') {
+      if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
         // Composite field — flatten subfields
-        for (const [subKey, subValue] of Object.entries(
-          value as Record<string, unknown>,
-        )) {
+        for (const [subKey, subValue] of Object.entries(value)) {
           if (isDefined(subValue) && subValue !== '') {
             const columnName = `${fieldName}${subKey.charAt(0).toUpperCase()}${subKey.slice(1)}`;
 
@@ -662,10 +732,12 @@ export class RelationNestedQueries {
             // For upserts with an existing record ID, skip the failed connect
             // and preserve the existing relation in the database rather than
             // failing the entire import batch.
-            if (isUpsert && isDefined((entity as any).id)) {
+            const entityId = getEntityId(entity);
+
+            if (isUpsert && isDefined(entityId)) {
               this.importWarnings.push({
                 entityIndex: index,
-                recordId: (entity as any).id as string,
+                recordId: entityId,
                 fieldName: connectQueryConfig.relationFieldName,
                 connectFieldName: connectQueryConfig.connectFieldName,
                 targetObjectName: connectQueryConfig.targetObjectName,

@@ -13,22 +13,81 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 const IMPORT_JOB_STORAGE_KEY = 'activeImportJobId';
 const POLL_INTERVAL_MS = 3000;
 
-type ImportJobStatus =
-  | 'pending'
-  | 'processing'
-  | 'completed'
-  | 'failed'
-  | 'cancelled';
+const IMPORT_JOB_STATUSES = [
+  'pending',
+  'processing',
+  'completed',
+  'failed',
+  'cancelled',
+] as const;
+
+type ImportJobStatus = (typeof IMPORT_JOB_STATUSES)[number];
+
+function toImportJobStatus(raw: string): ImportJobStatus {
+  const lower = raw.toLowerCase();
+
+  if (IMPORT_JOB_STATUSES.includes(lower as ImportJobStatus)) {
+    return lower as ImportJobStatus;
+  }
+
+  return 'pending';
+}
 
 type ImportJobData = {
   id: string;
-  status: ImportJobStatus;
+  status: string;
   processedRecords: number;
   totalRecords: number;
   successCount: number;
   warningCount: number;
   failureCount: number;
 };
+
+type ImportJobQueryResponse = {
+  importJob?: ImportJobData;
+};
+
+function isImportJobResponse(
+  data: unknown,
+): data is ImportJobQueryResponse {
+  if (!data || typeof data !== 'object') return false;
+
+  if (!('importJob' in data)) return false;
+
+  const job = (data as ImportJobQueryResponse).importJob;
+
+  if (!job || typeof job !== 'object') return false;
+
+  return (
+    'id' in job &&
+    typeof job.id === 'string' &&
+    'status' in job &&
+    typeof job.status === 'string' &&
+    'processedRecords' in job &&
+    typeof job.processedRecords === 'number' &&
+    'totalRecords' in job &&
+    typeof job.totalRecords === 'number'
+  );
+}
+
+type StoredImportJob = {
+  importJobId: string;
+  objectNameSingular: string;
+  totalRecords: number;
+};
+
+function isStoredImportJob(value: unknown): value is StoredImportJob {
+  if (!value || typeof value !== 'object') return false;
+
+  return (
+    'importJobId' in value &&
+    typeof value.importJobId === 'string' &&
+    'objectNameSingular' in value &&
+    typeof value.objectNameSingular === 'string' &&
+    'totalRecords' in value &&
+    typeof value.totalRecords === 'number'
+  );
+}
 
 /**
  * Hook to start tracking an import job.
@@ -118,26 +177,27 @@ export const useImportJobPoller = () => {
           fetchPolicy: 'network-only',
         });
 
-        const job = (data as Record<string, any>)?.importJob;
+        if (!isImportJobResponse(data)) return;
+
+        const job = data.importJob;
 
         if (!job) return;
 
-        const typedJob = job as ImportJobData;
-        const normalizedStatus = typedJob.status.toLowerCase() as ImportJobStatus;
+        const normalizedStatus = toImportJobStatus(job.status);
         const isTerminal =
           normalizedStatus === 'completed' ||
           normalizedStatus === 'failed' ||
           normalizedStatus === 'cancelled';
 
         upsertJob({
-          id: typedJob.id,
+          id: job.id,
           label: `Importing ${current.objectNameSingular} records`,
           status: normalizedStatus,
-          totalItems: typedJob.totalRecords,
-          processedItems: typedJob.processedRecords,
-          successCount: typedJob.successCount,
-          warningCount: typedJob.warningCount,
-          failureCount: typedJob.failureCount,
+          totalItems: job.totalRecords,
+          processedItems: job.processedRecords,
+          successCount: job.successCount,
+          warningCount: job.warningCount,
+          failureCount: job.failureCount,
         });
 
         if (isTerminal) {
@@ -181,11 +241,11 @@ export const useImportJobRecovery = () => {
 
       if (!raw) return;
 
-      const stored = JSON.parse(raw) as {
-        importJobId: string;
-        objectNameSingular: string;
-        totalRecords: number;
-      };
+      const parsed: unknown = JSON.parse(raw);
+
+      if (!isStoredImportJob(parsed)) return;
+
+      const stored = parsed;
 
       // Seed the background job indicator immediately
       upsertJob({
