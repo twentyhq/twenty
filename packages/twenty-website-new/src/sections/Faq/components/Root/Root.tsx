@@ -12,31 +12,6 @@ const StyledSection = styled.section`
   width: 100%;
 `;
 
-const IllustrationWrapper = styled.div`
-  bottom: 0;
-  left: 0;
-  mix-blend-mode: difference;
-  opacity: 0.7;
-  overflow: hidden;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 0;
-`;
-
-const IllustrationEmbed = styled.iframe`
-  aspect-ratio: 1;
-  border: none;
-  height: 120%;
-  width: 120%;
-  position: absolute;
-  right: 0;
-  left: 25%;
-  top: 30%;
-  transform: translateY(-50%) rotate(-90deg);
-`;
-
 const StyledContainer = styled(Container)`
   display: grid;
   grid-template-columns: 1fr;
@@ -62,14 +37,6 @@ type RootProps = {
 export function Root({ children, illustration }: RootProps) {
   return (
     <StyledSection>
-      {/* <IllustrationWrapper aria-hidden>
-        <IllustrationEmbed
-          allow="clipboard-write; encrypted-media; gyroscope; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          src={illustration.src}
-          title={illustration.title}
-        />
-      </IllustrationWrapper> */}
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );
