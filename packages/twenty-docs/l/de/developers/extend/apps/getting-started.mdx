@@ -123,7 +123,7 @@ Mit `--minimal` werden nur die Kerndateien erstellt (`application-config.ts`, `r
 Auf hoher Ebene:
 
 * **package.json**: Deklariert den App-Namen, die Version und die Engines (Node 24+, Yarn 4) und fügt `twenty-sdk` sowie ein `twenty`-Skript hinzu, das an die lokale `twenty`-CLI delegiert. Führen Sie `yarn twenty help` aus, um alle verfügbaren Befehle aufzulisten.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, coverage folders, log files, and `.env*` files.
+* **.gitignore**: Ignoriert übliche Artefakte wie `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, Coverage-Ordner, Logdateien und `.env*`-Dateien.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Fixieren und konfigurieren die vom Projekt verwendete Yarn-4-Toolchain.
 * **.nvmrc**: Legt die vom Projekt erwartete Node.js-Version fest.
 * **.oxlintrc.json** und **tsconfig.json**: Stellen Linting und TypeScript-Konfiguration für die TypeScript-Quellen Ihrer App bereit.
@@ -167,8 +167,8 @@ export default defineObject({
 
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
-* `yarn twenty dev` will auto-generate the typed `CoreApiClient` (for workspace data via `/graphql`) into `node_modules/twenty-client-sdk/`. The `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`) ships pre-built and is available immediately. Import them from `twenty-client-sdk/core` and `twenty-client-sdk/metadata` respectively.
-* `yarn twenty add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty dev` generiert den typisierten `CoreApiClient` (für Arbeitsbereichsdaten über `/graphql`) automatisch in `node_modules/twenty-client-sdk/`. Der `MetadataApiClient` (für Arbeitsbereichskonfiguration und Datei-Uploads über `/metadata`) wird vorkompiliert ausgeliefert und ist sofort verfügbar. Importieren Sie sie jeweils aus `twenty-client-sdk/core` und `twenty-client-sdk/metadata`.
+* `yarn twenty add` fügt unter `src/` Entitätsdefinitionsdateien für Ihre benutzerdefinierten Objekte, Funktionen, Frontend-Komponenten, Rollen, Skills und mehr hinzu.
 
 ## Authentifizierung
 

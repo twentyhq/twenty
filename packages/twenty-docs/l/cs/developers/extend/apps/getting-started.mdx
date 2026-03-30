@@ -123,7 +123,7 @@ S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.
 V kostce:
 
 * **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skript `twenty`, který deleguje na lokální `twenty` CLI. Spusťte `yarn twenty help` pro výpis všech dostupných příkazů.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, coverage folders, log files, and `.env*` files.
+* **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, složky s coverage, soubory s logy a soubory `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
 * **.oxlintrc.json** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
@@ -167,8 +167,8 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty dev` will auto-generate the typed `CoreApiClient` (for workspace data via `/graphql`) into `node_modules/twenty-client-sdk/`. The `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`) ships pre-built and is available immediately. Import them from `twenty-client-sdk/core` and `twenty-client-sdk/metadata` respectively.
-* `yarn twenty add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty dev` automaticky vygeneruje typovaný `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) do `node_modules/twenty-client-sdk/`. `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`) je dodáván předpřipravený a je okamžitě k dispozici. Importujte je z `twenty-client-sdk/core` a `twenty-client-sdk/metadata` v uvedeném pořadí.
+* `yarn twenty add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
 
 ## Ověření
 

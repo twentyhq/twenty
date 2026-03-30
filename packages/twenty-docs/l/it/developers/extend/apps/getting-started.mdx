@@ -123,7 +123,7 @@ Con `--minimal`, vengono creati solo i file principali (`application-config.ts`,
 A livello generale:
 
 * **package.json**: Dichiara il nome dell'app, la versione, i motori (Node 24+, Yarn 4) e aggiunge `twenty-sdk` più uno script `twenty` che delega alla CLI locale `twenty`. Esegui `yarn twenty help` per elencare tutti i comandi disponibili.
-* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, coverage folders, log files, and `.env*` files.
+* **.gitignore**: Ignora i file generati comuni come `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, cartelle di coverage, file di log e file `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloccano e configurano la toolchain Yarn 4 utilizzata dal progetto.
 * **.nvmrc**: Fissa la versione di Node.js prevista dal progetto.
 * **.oxlintrc.json** e **tsconfig.json**: Forniscono linting e configurazione TypeScript per i sorgenti TypeScript della tua app.
@@ -167,8 +167,8 @@ export default defineObject({
 
 Comandi successivi aggiungeranno altri file e cartelle:
 
-* `yarn twenty dev` will auto-generate the typed `CoreApiClient` (for workspace data via `/graphql`) into `node_modules/twenty-client-sdk/`. The `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`) ships pre-built and is available immediately. Import them from `twenty-client-sdk/core` and `twenty-client-sdk/metadata` respectively.
-* `yarn twenty add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+* `yarn twenty dev` genererà automaticamente il `CoreApiClient` tipizzato (per i dati dell'area di lavoro via `/graphql`) in `node_modules/twenty-client-sdk/`. Il `MetadataApiClient` (per la configurazione dell'area di lavoro e il caricamento di file via `/metadata`) è fornito precompilato ed è disponibile immediatamente. Importali da `twenty-client-sdk/core` e `twenty-client-sdk/metadata` rispettivamente.
+* `yarn twenty add` aggiungerà file di definizione delle entità sotto `src/` per i tuoi oggetti personalizzati, funzioni, componenti front-end, ruoli, competenze e altro ancora.
 
 ## Autenticazione
 
