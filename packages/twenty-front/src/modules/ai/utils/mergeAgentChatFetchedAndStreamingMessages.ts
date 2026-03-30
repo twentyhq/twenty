@@ -9,9 +9,7 @@ export const mergeAgentChatFetchedAndStreamingMessages = (
   fetchedMessages: ExtendedUIMessage[],
   streamingMessages: ExtendedUIMessage[],
 ): ExtendedUIMessage[] => {
-  const newStreamingMessages = streamingMessages.slice(
-    fetchedMessages.length,
-  );
+  const newStreamingMessages = streamingMessages.slice(fetchedMessages.length);
 
   return [...fetchedMessages, ...newStreamingMessages];
 };
