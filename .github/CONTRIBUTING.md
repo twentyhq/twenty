@@ -11,6 +11,16 @@ Please make sure to go through the [documentation](https://docs.twenty.com) befo
 
 Good first issues are a great way to start contributing and get familiar with the codebase. You can find them on by filtering on the [good first issue](https://github.com/twentyhq/twenty/labels/good%20first%20issue) label.
 
+## No Good First Issues? Try These 👇
+
+If there are no open issues labeled `good first issue`, you can explore other beginner-friendly tasks using these filters:
+
+- [For experienced contributors (no assignee)](https://github.com/twentyhq/twenty/issues?q=is%3Aissue+state%3Aopen+no%3Aassignee+label%3A%22for+experienced+contributor%22)
+- [Low priority issues (no assignee)](https://github.com/twentyhq/twenty/issues?q=is%3Aissue+state%3Aopen+no%3Aassignee+label%3A%22prio%3A+low%22)
+- [Medium priority issues (no assignee)](https://github.com/twentyhq/twenty/issues?q=is%3Aissue+state%3Aopen+no%3Aassignee+label%3A%22prio%3A+medium%22)
+
+These are great places to start contributing when no beginner-tagged issues are available.
+
 ## Issue assignment
 
 To avoid conflicts, we follow these guidelines:
