@@ -34,10 +34,8 @@ export type StreamAgentChatOptions = {
   modelId?: string;
 };
 
-// Max time to wait for the BullMQ worker to create the resumable stream
-// in Redis before giving up and returning an error to the client.
-const STREAM_READY_TIMEOUT_MS = 10_000;
-const STREAM_READY_POLL_INTERVAL_MS = 100;
+const STREAM_READY_TIMEOUT_MS = 5_000;
+const STREAM_READY_POLL_INTERVAL_MS = 50;
 
 @Injectable()
 export class AgentChatStreamingService {
