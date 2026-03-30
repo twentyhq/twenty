@@ -1,7 +1,7 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/pricing/constants/hero';
-import { Eyebrow, Heading, LinkButton } from '@/design-system/components';
+import { Eyebrow, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
@@ -47,20 +47,8 @@ export default function PricingPage() {
       <Faq.Root illustration={FAQ_DATA.illustration}>
         <Faq.Intro>
           <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Heading
-            as="h2"
-            segments={FAQ_DATA.heading}
-            size="lg"
-            weight="light"
-          />
-          <div
-            style={{
-              columnGap: theme.spacing(2),
-              display: 'grid',
-              gridTemplateColumns: 'auto auto',
-              justifyContent: 'start',
-            }}
-          >
+          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
@@ -75,15 +63,9 @@ export default function PricingPage() {
               type="anchor"
               variant="outlined"
             />
-          </div>
+          </Faq.Cta>
         </Faq.Intro>
-        <Faq.Items
-          items={FAQ_DATA.questions.map((faqQuestion, index) => ({
-            answer: faqQuestion.answer.text,
-            question: faqQuestion.question.text,
-            value: `faq-${index}`,
-          }))}
-        />
+        <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
     </>
   );

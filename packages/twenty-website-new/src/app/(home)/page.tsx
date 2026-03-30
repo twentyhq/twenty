@@ -97,20 +97,8 @@ export default function HomePage() {
             colorScheme="secondary"
             heading={FAQ_DATA.eyebrow.heading}
           />
-          <Heading
-            as="h2"
-            segments={FAQ_DATA.heading}
-            size="lg"
-            weight="light"
-          />
-          <div
-            style={{
-              columnGap: theme.spacing(2),
-              display: 'grid',
-              gridTemplateColumns: 'auto auto',
-              justifyContent: 'start',
-            }}
-          >
+          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
@@ -125,15 +113,9 @@ export default function HomePage() {
               type="anchor"
               variant="outlined"
             />
-          </div>
+          </Faq.Cta>
         </Faq.Intro>
-        <Faq.Items
-          items={FAQ_DATA.questions.map((faqQuestion, index) => ({
-            answer: faqQuestion.answer.text,
-            question: faqQuestion.question.text,
-            value: `faq-${index}`,
-          }))}
-        />
+        <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
     </>
   );

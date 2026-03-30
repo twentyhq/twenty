@@ -13,7 +13,7 @@ export const FAQ_DATA: FaqDataType = {
   },
   heading: [
     {
-      text: 'Stop fighting custom.',
+      text: 'Stop fighting custom.\n',
       fontFamily: 'serif',
     },
     {
