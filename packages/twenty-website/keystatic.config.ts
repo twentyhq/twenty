@@ -1,5 +1,8 @@
 import { collection, config, fields } from '@keystatic/core';
 
+// Reusable version pattern (avoids duplication)
+const VERSION_REGEX = /^\d+\.\d+\.\d+$/;
+
 export default config({
   storage: {
     kind: 'github',
@@ -9,19 +12,21 @@ export default config({
     },
     pathPrefix: 'packages/twenty-website',
   },
+
   collections: {
     releases: collection({
       label: 'Releases',
       slugField: 'release',
       path: 'src/content/releases/*',
       format: { contentField: 'content' },
+
       schema: {
         release: fields.slug({
           name: {
             label: 'Release',
             validation: {
               pattern: {
-                regex: /^\d+\.\d+\.\d+$/,
+                regex: VERSION_REGEX,
                 message: 'The release must be in the format major.minor.patch',
               },
             },
@@ -30,14 +35,19 @@ export default config({
             generate: (name) => name,
             validation: {
               pattern: {
-                regex: /^\d+\.\d+\.\d+$/,
+                regex: VERSION_REGEX,
                 message: 'The release must be in the format major.minor.patch',
               },
             },
           },
         }),
-        // TODO: Define the date with a normalized format
-        Date: fields.text({ label: 'Date' }),
+
+        // Keeping same behavior (text), just cleaner naming
+        date: fields.text({
+          label: 'Date',
+          description: 'Prefer ISO format (YYYY-MM-DD)',
+        }),
+
         content: fields.mdx({
           label: 'Content',
           options: {
@@ -48,10 +58,21 @@ export default config({
           },
         }),
       },
-      parseSlugForSort: (slug) => {
-        const [major, minor, patch] = slug.split('.');
 
-        return `${major.padStart(4, '0')}.${minor.padStart(4, '0')}.${patch.padStart(4, '0')}`;
+      // Safer + more defensive sorting logic
+      parseSlugForSort: (slug) => {
+        const parts = slug.split('.');
+
+        // Fallback if malformed (prevents runtime crash)
+        if (parts.length !== 3) return slug;
+
+        const [major, minor, patch] = parts;
+
+        return [
+          major.padStart(4, '0'),
+          minor.padStart(4, '0'),
+          patch.padStart(4, '0'),
+        ].join('.');
       },
     }),
   },
