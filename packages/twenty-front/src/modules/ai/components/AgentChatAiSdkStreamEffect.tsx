@@ -55,21 +55,25 @@ export const AgentChatAiSdkStreamEffect = () => {
     onStreamingComplete,
   );
 
-  // Attempt to resume an active stream when switching threads.
-  // We call resumeStream() manually instead of using useChat's
+  // Attempt to resume an active stream when navigating to an existing
+  // thread. We call resumeStream() manually instead of using useChat's
   // resume:true option so that the stop button can coexist with
   // resumption (resume:true is incompatible with abort signals).
-  // The SDK is idempotent — calling resumeStream while already
-  // streaming is a no-op, so we only need to guard on status.
+  // Only resume when the thread already has fetched messages — this
+  // avoids resuming on newly created threads where the thread ID
+  // transitions from a placeholder to a real UUID mid-conversation.
   useEffect(() => {
     if (
-      currentAIChatThread !== null &&
-      isValidUuid(currentAIChatThread) &&
-      chatState.status !== 'streaming' &&
-      chatState.status !== 'submitted'
+      currentAIChatThread === null ||
+      !isValidUuid(currentAIChatThread) ||
+      agentChatFetchedMessages.length === 0 ||
+      chatState.status === 'streaming' ||
+      chatState.status === 'submitted'
     ) {
-      chatState.resumeStream();
+      return;
     }
+
+    chatState.resumeStream();
     // We intentionally only trigger when the thread changes, not on
     // every status transition, to avoid resume loops.
     // eslint-disable-next-line react-hooks/exhaustive-deps
