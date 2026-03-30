@@ -1424,6 +1424,13 @@ export interface PublicFeatureFlag {
 
 export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_USAGE_ANALYTICS_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_GRAPHQL_QUERY_TIMING_ENABLED' | 'IS_RECORD_TABLE_WIDGET_ENABLED' | 'IS_DATASOURCE_MIGRATED'
 
+export interface ClientConfigMaintenanceMode {
+    startAt: Scalars['String']
+    endAt: Scalars['String']
+    link?: Scalars['String']
+    __typename: 'ClientConfigMaintenanceMode'
+}
+
 export interface ClientConfig {
     appVersion?: Scalars['String']
     authProviders: AuthProviders
@@ -1452,6 +1459,7 @@ export interface ClientConfig {
     calendarBookingPageId?: Scalars['String']
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
+    maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
 }
 
@@ -1619,6 +1627,13 @@ export interface AdminPanelHealthServiceData {
     details?: Scalars['String']
     queues?: AdminPanelWorkerQueueHealth[]
     __typename: 'AdminPanelHealthServiceData'
+}
+
+export interface MaintenanceMode {
+    startAt: Scalars['String']
+    endAt: Scalars['String']
+    link?: Scalars['String']
+    __typename: 'MaintenanceMode'
 }
 
 export interface ModelsDevModelSuggestion {
@@ -2754,6 +2769,7 @@ export interface Query {
     getModelsDevProviders: ModelsDevProviderSuggestion[]
     getModelsDevSuggestions: ModelsDevModelSuggestion[]
     getAdminAiUsageByWorkspace: UsageBreakdownItem[]
+    getMaintenanceMode?: MaintenanceMode
     getUsageAnalytics: UsageAnalytics
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
@@ -2966,6 +2982,8 @@ export interface Mutation {
     removeAiProvider: Scalars['Boolean']
     addModelToProvider: Scalars['Boolean']
     removeModelFromProvider: Scalars['Boolean']
+    setMaintenanceMode: Scalars['Boolean']
+    clearMaintenanceMode: Scalars['Boolean']
     enablePostgresProxy: PostgresCredentials
     disablePostgresProxy: PostgresCredentials
     createPublicDomain: PublicDomain
@@ -4482,6 +4500,14 @@ export interface PublicFeatureFlagGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ClientConfigMaintenanceModeGenqlSelection{
+    startAt?: boolean | number
+    endAt?: boolean | number
+    link?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ClientConfigGenqlSelection{
     appVersion?: boolean | number
     authProviders?: AuthProvidersGenqlSelection
@@ -4510,6 +4536,7 @@ export interface ClientConfigGenqlSelection{
     calendarBookingPageId?: boolean | number
     isCloudflareIntegrationEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
+    maintenance?: ClientConfigMaintenanceModeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4681,6 +4708,14 @@ export interface AdminPanelHealthServiceDataGenqlSelection{
     errorMessage?: boolean | number
     details?: boolean | number
     queues?: AdminPanelWorkerQueueHealthGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MaintenanceModeGenqlSelection{
+    startAt?: boolean | number
+    endAt?: boolean | number
+    link?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5915,6 +5950,7 @@ export interface QueryGenqlSelection{
     getModelsDevProviders?: ModelsDevProviderSuggestionGenqlSelection
     getModelsDevSuggestions?: (ModelsDevModelSuggestionGenqlSelection & { __args: {providerType: Scalars['String']} })
     getAdminAiUsageByWorkspace?: (UsageBreakdownItemGenqlSelection & { __args?: {periodStart?: (Scalars['DateTime'] | null), periodEnd?: (Scalars['DateTime'] | null)} })
+    getMaintenanceMode?: MaintenanceModeGenqlSelection
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
@@ -6146,6 +6182,8 @@ export interface MutationGenqlSelection{
     removeAiProvider?: { __args: {providerName: Scalars['String']} }
     addModelToProvider?: { __args: {providerName: Scalars['String'], modelConfig: Scalars['JSON']} }
     removeModelFromProvider?: { __args: {providerName: Scalars['String'], modelName: Scalars['String']} }
+    setMaintenanceMode?: { __args: {startAt: Scalars['String'], endAt: Scalars['String'], link?: (Scalars['String'] | null)} }
+    clearMaintenanceMode?: boolean | number
     enablePostgresProxy?: PostgresCredentialsGenqlSelection
     disablePostgresProxy?: PostgresCredentialsGenqlSelection
     createPublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String']} })
@@ -7445,6 +7483,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ClientConfigMaintenanceMode_possibleTypes: string[] = ['ClientConfigMaintenanceMode']
+    export const isClientConfigMaintenanceMode = (obj?: { __typename?: any } | null): obj is ClientConfigMaintenanceMode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfigMaintenanceMode"')
+      return ClientConfigMaintenanceMode_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ClientConfig_possibleTypes: string[] = ['ClientConfig']
     export const isClientConfig = (obj?: { __typename?: any } | null): obj is ClientConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfig"')
@@ -7601,6 +7647,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAdminPanelHealthServiceData = (obj?: { __typename?: any } | null): obj is AdminPanelHealthServiceData => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelHealthServiceData"')
       return AdminPanelHealthServiceData_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MaintenanceMode_possibleTypes: string[] = ['MaintenanceMode']
+    export const isMaintenanceMode = (obj?: { __typename?: any } | null): obj is MaintenanceMode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMaintenanceMode"')
+      return MaintenanceMode_possibleTypes.includes(obj.__typename)
     }
     
 

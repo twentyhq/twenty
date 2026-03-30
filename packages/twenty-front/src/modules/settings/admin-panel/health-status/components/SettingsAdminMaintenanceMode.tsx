@@ -10,7 +10,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/graphql/mutations/clearMaintenanceMode';
 import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/graphql/mutations/setMaintenanceMode';
-import { GET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/graphql/queries/getMaintenanceMode';
+import {
+  GET_MAINTENANCE_MODE,
+  GetMaintenanceModeResult,
+} from '@/settings/admin-panel/health-status/graphql/queries/getMaintenanceMode';
 
 const StyledFormRow = styled.div`
   align-items: center;
@@ -67,9 +70,12 @@ const fromDatetimeLocalToISO = (localValue: string): string => {
 };
 
 export const SettingsAdminMaintenanceMode = () => {
-  const { data, refetch } = useQuery(GET_MAINTENANCE_MODE, {
-    fetchPolicy: 'network-only',
-  });
+  const { data, refetch } = useQuery<GetMaintenanceModeResult>(
+    GET_MAINTENANCE_MODE,
+    {
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const [setMaintenanceModeMutation, { loading: settingMaintenance }] =
     useMutation(SET_MAINTENANCE_MODE);

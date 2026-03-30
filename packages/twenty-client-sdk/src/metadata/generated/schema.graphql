@@ -1739,6 +1739,12 @@ enum FeatureFlagKey {
   IS_DATASOURCE_MIGRATED
 }
 
+type ClientConfigMaintenanceMode {
+  startAt: String!
+  endAt: String!
+  link: String
+}
+
 type ClientConfig {
   appVersion: String
   authProviders: AuthProviders!
@@ -1767,6 +1773,7 @@ type ClientConfig {
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
+  maintenance: ClientConfigMaintenanceMode
 }
 
 type UsageBreakdownItem {
@@ -1961,6 +1968,12 @@ type AdminPanelHealthServiceData {
   errorMessage: String
   details: String
   queues: [AdminPanelWorkerQueueHealth!]
+}
+
+type MaintenanceMode {
+  startAt: String!
+  endAt: String!
+  link: String
 }
 
 type ModelsDevModelSuggestion {
@@ -3204,6 +3217,7 @@ type Query {
   getModelsDevProviders: [ModelsDevProviderSuggestion!]!
   getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
   getAdminAiUsageByWorkspace(periodStart: DateTime, periodEnd: DateTime): [UsageBreakdownItem!]!
+  getMaintenanceMode: MaintenanceMode
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
@@ -3521,6 +3535,8 @@ type Mutation {
   removeAiProvider(providerName: String!): Boolean!
   addModelToProvider(providerName: String!, modelConfig: JSON!): Boolean!
   removeModelFromProvider(providerName: String!, modelName: String!): Boolean!
+  setMaintenanceMode(startAt: String!, endAt: String!, link: String): Boolean!
+  clearMaintenanceMode: Boolean!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
   createPublicDomain(domain: String!): PublicDomain!
