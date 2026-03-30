@@ -9,28 +9,32 @@ import { styled } from '@linaria/react';
 const BodyContainer = styled.div`
   color: ${theme.colors.primary.text[60]};
   margin-top: calc(${theme.spacing(2)} - ${theme.spacing(6)});
-  width: 360px;
+  max-width: 360px;
+  width: 100%;
+
+  &[data-page=${Pages.WhyTwenty}] {
+    color: ${theme.colors.secondary.text[100]};
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     &[data-page=${Pages.Home}] {
-      width: 591px;
+      max-width: 591px;
     }
 
     &[data-page=${Pages.Partner}] {
-      width: 500px;
+      max-width: 500px;
     }
 
     &[data-page=${Pages.Pricing}] {
-      width: 500px;
+      max-width: 500px;
     }
 
     &[data-page=${Pages.Product}] {
-      width: 591px;
+      max-width: 591px;
     }
 
     &[data-page=${Pages.WhyTwenty}] {
-      width: 443px;
-      color: ${theme.colors.secondary.text[100]};
+      max-width: 443px;
     }
   }
 `;

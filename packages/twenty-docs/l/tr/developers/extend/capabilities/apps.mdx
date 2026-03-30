@@ -38,7 +38,7 @@ yarn twenty dev
 
 ### Yerel Sunucu Yönetimi
 
-SDK, yerel bir Twenty geliştirme sunucusunu yönetmek için komutlar içerir (PostgreSQL, Redis, sunucu ve worker içeren hepsi bir arada Docker imajı):
+The SDK includes commands to manage a local Twenty dev server (all-in-one Docker image with PostgreSQL, Redis, server, and worker on port 2020). These commands only apply to the Docker-based dev server — they do not manage a Twenty instance started from source (e.g. `npx nx start twenty-server` on port 3000):
 
 ```bash filename="Terminal"
 # Yerel sunucuyu başlatın (gerekirse imajı indirir)

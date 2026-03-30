@@ -70,7 +70,6 @@ export class RegisterAppOrchestratorStep {
 
     const createResult = await this.apiService.createApplicationRegistration({
       name: input.manifest.application.displayName,
-      description: input.manifest.application.description,
       universalIdentifier,
     });
 

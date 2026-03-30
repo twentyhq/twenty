@@ -2,7 +2,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-} from 'twenty-sdk/front-component-renderer';
+} from 'twenty-front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';

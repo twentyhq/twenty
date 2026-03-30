@@ -231,10 +231,9 @@ export const GraphWidgetPieChart = ({
         displayType={displayType}
         onSliceClick={onSliceClick}
       />
-      <GraphWidgetLegend
-        show={showLegend && data.length > 0}
-        items={legendItems}
-      />
+      {showLegend && data.length > 0 && (
+        <GraphWidgetLegend show items={legendItems} />
+      )}
     </StyledContainer>
   );
 };

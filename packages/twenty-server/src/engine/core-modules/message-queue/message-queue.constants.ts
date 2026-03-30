@@ -19,4 +19,5 @@ export enum MessageQueue {
   logicFunctionQueue = 'logic-function-queue',
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
+  aiStreamQueue = 'ai-stream-queue',
 }

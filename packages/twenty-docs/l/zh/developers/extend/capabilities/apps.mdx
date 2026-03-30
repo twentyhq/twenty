@@ -38,7 +38,7 @@ yarn twenty dev
 
 ### 本地服务器管理
 
-该 SDK 包含用于管理本地 Twenty 开发服务器的命令（该服务器是一体化 Docker 镜像，内含 PostgreSQL、Redis、服务器和工作进程）：
+The SDK includes commands to manage a local Twenty dev server (all-in-one Docker image with PostgreSQL, Redis, server, and worker on port 2020). These commands only apply to the Docker-based dev server — they do not manage a Twenty instance started from source (e.g. `npx nx start twenty-server` on port 3000):
 
 ```bash filename="Terminal"
 # Start the local server (pulls the image if needed)

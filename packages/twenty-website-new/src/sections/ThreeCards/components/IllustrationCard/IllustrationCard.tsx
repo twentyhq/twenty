@@ -85,8 +85,8 @@ export function IllustrationCard({
       />
       <CardRule />
       <CardEmbed
-        src="https://app.endlesstools.io/embed/1a3f6b56-90bb-4951-9401-c01a79fdc4f1"
-        title={illustrationCard.heading.text}
+        src={illustrationCard.illustration.src}
+        title={illustrationCard.illustration.title}
         allow="clipboard-write; encrypted-media; gyroscope; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen

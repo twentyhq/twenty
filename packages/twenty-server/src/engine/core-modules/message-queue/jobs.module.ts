@@ -20,6 +20,7 @@ import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspa
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
+import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
@@ -67,6 +68,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     SubscriptionsModule,
     AuditJobModule,
     AiAgentMonitorModule,
+    AiChatModule,
     LogicFunctionModule,
     EnterpriseModule,
   ],
