@@ -12890,11 +12890,6 @@ msgstr "Zobacz przepływ pracy"
 msgid "See Workflows"
 msgstr "Zobacz przepływy pracy"
 
-#. js-lingui-id: 2PIP/G
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
-msgstr "Wypełnij przykładową przestrzeń roboczą za pomocą dedykowanego narzędzia, zadaj mi pytania o moją aktywność i cele, aby dostosować wprowadzone dane do moich potrzeb, a następnie pomóż mi eksplorować przestrzeń roboczą i dane utworzone przez ciebie."
-
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -13252,11 +13247,6 @@ msgstr "Dostęp do wszystkich ustawień"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "Ustawienia uprawnień"
-
-#. js-lingui-id: dIJGKR
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Setup a tailor-made workspace"
-msgstr "Skonfiguruj przestrzeń roboczą dopasowaną do potrzeb"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx

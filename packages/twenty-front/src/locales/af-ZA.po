@@ -12890,11 +12890,6 @@ msgstr "Sien werksvloei"
 msgid "See Workflows"
 msgstr "Sien werkvloeie"
 
-#. js-lingui-id: 2PIP/G
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
-msgstr "Saai 'n demo-werkruimte met behulp van die toegewyde hulpmiddel, vra my vrae oor my aktiwiteit en doelwitte om die gesaaide data by my behoeftes aan te pas, en help my dan om die werkruimte en data wat jy geskep het, te verken."
-
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -13252,11 +13247,6 @@ msgstr "Instellings Volle Toegang"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "Instellings toestemming"
-
-#. js-lingui-id: dIJGKR
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Setup a tailor-made workspace"
-msgstr "Stel 'n pasgemaakte werkruimte op"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx

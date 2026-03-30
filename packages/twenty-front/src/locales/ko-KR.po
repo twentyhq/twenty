@@ -12890,11 +12890,6 @@ msgstr "워크플로우 보기"
 msgid "See Workflows"
 msgstr "워크플로우 보기"
 
-#. js-lingui-id: 2PIP/G
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
-msgstr "전용 도구를 사용해 데모 워크스페이스에 시드 데이터를 넣고, 내 활동과 목표에 대해 질문하여 시드 데이터를 내 필요에 맞게 조정한 다음, 생성한 워크스페이스와 데이터를 탐색할 수 있도록 도와줘."
-
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -13252,11 +13247,6 @@ msgstr "모든 설정 액세스"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "설정 권한"
-
-#. js-lingui-id: dIJGKR
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Setup a tailor-made workspace"
-msgstr "맞춤형 워크스페이스를 설정해줘"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx

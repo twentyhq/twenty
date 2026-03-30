@@ -12890,11 +12890,6 @@ msgstr "ראה תהליך עבודה"
 msgid "See Workflows"
 msgstr "ראה תהליכי עבודה"
 
-#. js-lingui-id: 2PIP/G
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Seed a demo workspace using the dedicated tool, ask me questions about my activity and goals to tailor the seeded data to my needs, and then help me explore the workspace and data you created."
-msgstr "לאכלס סביבת עבודה לדוגמה באמצעות הכלי הייעודי, לשאול אותי שאלות על הפעילות והיעדים שלי כדי להתאים את נתוני הדוגמה לצרכים שלי, ולאחר מכן לסייע לי לחקור את סביבת העבודה והנתונים שיצרת."
-
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
@@ -13252,11 +13247,6 @@ msgstr "כל אפשרויות ההגדרות פתוחות"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "הרשאות הגדרות"
-
-#. js-lingui-id: dIJGKR
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
-msgid "Setup a tailor-made workspace"
-msgstr "הגדר סביבת עבודה מותאמת אישית"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
