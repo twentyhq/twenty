@@ -64,6 +64,20 @@ describe('getGroupByExpression', () => {
       expect(result).toContain("'UTC'");
     });
 
+    it('should normalize Asia/Calcutta to Asia/Kolkata', () => {
+      const groupByField = buildGroupByDateField({
+        timeZone: 'Asia/Calcutta',
+      });
+
+      const result = getGroupByExpression({
+        groupByField,
+        columnNameWithQuotes,
+      });
+
+      expect(result).toContain("'Asia/Kolkata'");
+      expect(result).not.toContain('Asia/Calcutta');
+    });
+
     it('should reject SQL injection in timezone field', () => {
       const groupByField = buildGroupByDateField({
         timeZone: "UTC'; DROP TABLE users; --",
