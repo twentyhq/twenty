@@ -86,6 +86,12 @@ export class StreamAgentChatJob {
       await this.executeStream(data, workspace, abortController.signal);
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
+      // Ensure activeStreamId is cleared even on abort or error.
+      // On normal completion handleStreamFinish clears it, but on
+      // abort/crash this is the safety net.
+      await this.threadRepository
+        .update(data.threadId, { activeStreamId: null })
+        .catch(() => {});
     }
   }
 
