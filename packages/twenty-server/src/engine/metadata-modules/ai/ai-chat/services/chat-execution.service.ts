@@ -310,6 +310,9 @@ export class ChatExecutionService {
         billUsageFromSteps(steps);
       })
       .catch((error) => {
+        if (error?.name === 'AbortError') {
+          return;
+        }
         this.exceptionHandlerService.captureExceptions([error]);
       });
 

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { type Readable } from 'stream';
 
 import { generateId, UI_MESSAGE_STREAM_HEADERS } from 'ai';
 import { type Response } from 'express';
@@ -98,38 +99,59 @@ export class AgentChatStreamingService {
     });
 
     try {
-      const nodeReadable = await this.waitForResumableStream(streamId);
+      const result = await this.waitForResumableStream(streamId);
 
-      if (!nodeReadable) {
+      if ('error' in result) {
+        response.status(500).json(result.error);
+
+        return;
+      }
+
+      if (!result.readable) {
         this.logger.error(
           `Stream ${streamId} did not become available within timeout`,
         );
-        response.status(500).json({ error: 'Stream failed to start' });
+        response
+          .status(500)
+          .json({ code: 'WORKER_UNREACHABLE', message: 'Stream timed out' });
 
         return;
       }
 
       response.writeHead(200, UI_MESSAGE_STREAM_HEADERS);
-      nodeReadable.pipe(response);
+      result.readable.pipe(response);
     } catch (error) {
       response.end();
       throw error;
     }
   }
 
-  private async waitForResumableStream(streamId: string) {
+  private async waitForResumableStream(
+    streamId: string,
+  ): Promise<
+    | { readable: Readable }
+    | { error: { code: string; message: string } }
+    | { readable: null }
+  > {
     const maxAttempts = Math.ceil(
       STREAM_READY_TIMEOUT_MS / STREAM_READY_POLL_INTERVAL_MS,
     );
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const streamError =
+        await this.resumableStreamService.readStreamError(streamId);
+
+      if (streamError) {
+        return { error: streamError };
+      }
+
       const readable =
         await this.resumableStreamService.resumeExistingStreamAsNodeReadable(
           streamId,
         );
 
       if (readable) {
-        return readable;
+        return { readable };
       }
 
       await new Promise((resolve) =>
@@ -137,6 +159,6 @@ export class AgentChatStreamingService {
       );
     }
 
-    return null;
+    return { readable: null };
   }
 }

@@ -67,6 +67,10 @@ export class StreamAgentChatJob {
 
     if (!workspace) {
       this.logger.error(`Workspace ${data.workspaceId} not found`);
+      await this.resumableStreamService.writeStreamError(data.streamId, {
+        code: 'WORKSPACE_NOT_FOUND',
+        message: `Workspace ${data.workspaceId} not found`,
+      });
 
       return;
     }
@@ -80,6 +84,17 @@ export class StreamAgentChatJob {
 
     try {
       await this.executeStream(data, workspace, abortController.signal);
+    } catch (error) {
+      this.logger.error(
+        `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      await this.resumableStreamService
+        .writeStreamError(data.streamId, {
+          code: 'STREAM_EXECUTION_FAILED',
+          message:
+            error instanceof Error ? error.message : 'Stream execution failed',
+        })
+        .catch(() => {});
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository

@@ -76,4 +76,28 @@ export class AgentChatResumableStreamService implements OnModuleDestroy {
 
     return Readable.fromWeb(webStream as NodeWebReadableStream);
   }
+
+  async writeStreamError(
+    streamId: string,
+    error: { code: string; message: string },
+  ): Promise<void> {
+    await this.publisher.set(
+      `ai-stream:error:${streamId}`,
+      JSON.stringify(error),
+      'EX',
+      60,
+    );
+  }
+
+  async readStreamError(
+    streamId: string,
+  ): Promise<{ code: string; message: string } | null> {
+    const raw = await this.publisher.get(`ai-stream:error:${streamId}`);
+
+    if (!raw) {
+      return null;
+    }
+
+    return JSON.parse(raw);
+  }
 }
