@@ -1,11 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  createUIMessageStream,
-  JsonToSseTransformStream,
-  type UIMessageStreamWriter,
-} from 'ai';
+import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
 import type {
   ExtendedUIMessage,
   ExtendedUIMessagePart,
@@ -46,8 +42,7 @@ export type StreamAgentChatJobData = {
 // Channel name used for cross-instance stream cancellation via Redis pub/sub.
 // The DELETE endpoint publishes to this channel; the running job subscribes
 // and aborts the LLM connection when a message arrives.
-const getCancelChannel = (threadId: string) =>
-  `ai-stream:cancel:${threadId}`;
+const getCancelChannel = (threadId: string) => `ai-stream:cancel:${threadId}`;
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
@@ -99,7 +94,6 @@ export class StreamAgentChatJob {
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
   ): Promise<void> {
-    // Save user message (same as the old streaming service did).
     // We need the turnId in onFinish to associate the assistant message.
     const userMessagePromise = this.agentChatService.addMessage({
       threadId: data.threadId,
@@ -114,30 +108,25 @@ export class StreamAgentChatJob {
 
     userMessagePromise.catch(() => {});
 
-    // Title generation runs in parallel with the LLM stream
     const thread = await this.threadRepository.findOne({
       where: { id: data.threadId },
     });
 
-    const titlePromise =
-      thread?.title
-        ? Promise.resolve(null)
-        : this.agentChatService
-            .generateTitleIfNeeded(data.threadId, data.lastUserMessageText)
-            .catch(() => null);
+    const titlePromise = thread?.title
+      ? Promise.resolve(null)
+      : this.agentChatService
+          .generateTitleIfNeeded(data.threadId, data.lastUserMessageText)
+          .catch(() => null);
 
-    const { stream, modelConfig } =
-      await this.chatExecutionService.streamChat({
-        workspace,
-        userWorkspaceId: data.userWorkspaceId,
-        messages: data.messages,
-        browsingContext: data.browsingContext,
-        modelId: data.modelId,
-        abortSignal,
-      });
+    const { stream, modelConfig } = await this.chatExecutionService.streamChat({
+      workspace,
+      userWorkspaceId: data.userWorkspaceId,
+      messages: data.messages,
+      browsingContext: data.browsingContext,
+      modelId: data.modelId,
+      abortSignal,
+    });
 
-    // Build the UIMessageStream (same logic as the old AgentChatStreamingService)
-    // and pipe it into the Redis resumable stream.
     await this.buildAndPipeStream({
       stream,
       modelConfig,
@@ -156,9 +145,7 @@ export class StreamAgentChatJob {
     userMessagePromise,
     titlePromise,
   }: {
-    stream: ReturnType<
-      typeof import('ai').streamText
-    >;
+    stream: ReturnType<typeof import('ai').streamText>;
     modelConfig: AIModelConfig;
     threadId: string;
     streamId: string;
@@ -177,6 +164,19 @@ export class StreamAgentChatJob {
 
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
+          // Write the title to the stream as soon as it resolves,
+          // so the client sees it immediately — not after the full
+          // LLM response finishes.
+          const titleWritePromise = titlePromise.then((generatedTitle) => {
+            if (generatedTitle) {
+              writer.write({
+                type: 'data-thread-title' as const,
+                id: `thread-title-${threadId}`,
+                data: { title: generatedTitle },
+              });
+            }
+          });
+
           writer.merge(
             stream.toUIMessageStream({
               onError: (error) => {
@@ -209,9 +209,9 @@ export class StreamAgentChatJob {
                     lastStepConversationSize,
                     modelConfig,
                     userMessagePromise,
-                    titlePromise,
-                    writer,
                   });
+                  // Ensure the title was written before closing the stream
+                  await titleWritePromise;
                   resolve();
                 } catch (error) {
                   reject(error);
@@ -223,9 +223,6 @@ export class StreamAgentChatJob {
         },
       });
 
-      // Convert UIMessageChunks to SSE-formatted strings and write into
-      // Redis via the resumable stream. The API server reads these SSE
-      // strings and pipes them directly to the client's HTTP response.
       const sseStream = uiStream.pipeThrough(new JsonToSseTransformStream());
 
       this.resumableStreamService
@@ -243,11 +240,29 @@ export class StreamAgentChatJob {
     onUpdateConversationSize,
     onUpdateCacheCreationTokens,
   }: {
-    part: { type: string; usage?: { inputTokens?: number; inputTokenDetails?: { cacheReadTokens?: number } }; totalUsage?: { inputTokens?: number; outputTokens?: number; inputTokenDetails?: { cacheReadTokens?: number }; outputTokenDetails?: { reasoningTokens?: number } }; providerMetadata?: Record<string, Record<string, unknown> | undefined> };
+    part: {
+      type: string;
+      usage?: {
+        inputTokens?: number;
+        inputTokenDetails?: { cacheReadTokens?: number };
+      };
+      totalUsage?: {
+        inputTokens?: number;
+        outputTokens?: number;
+        inputTokenDetails?: { cacheReadTokens?: number };
+        outputTokenDetails?: { reasoningTokens?: number };
+      };
+      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
+    };
     modelConfig: AIModelConfig;
     lastStepConversationSize: number;
     totalCacheCreationTokens: number;
-    onUpdateUsage: (usage: { inputTokens: number; outputTokens: number; inputCredits: number; outputCredits: number }) => void;
+    onUpdateUsage: (usage: {
+      inputTokens: number;
+      outputTokens: number;
+      inputCredits: number;
+      outputCredits: number;
+    }) => void;
     onUpdateConversationSize: (size: number) => void;
     onUpdateCacheCreationTokens: (tokens: number) => void;
   }) {
@@ -267,8 +282,7 @@ export class StreamAgentChatJob {
         inputTokens: part.totalUsage?.inputTokens,
         outputTokens: part.totalUsage?.outputTokens,
         cachedInputTokens: part.totalUsage?.inputTokenDetails?.cacheReadTokens,
-        reasoningTokens:
-          part.totalUsage?.outputTokenDetails?.reasoningTokens,
+        reasoningTokens: part.totalUsage?.outputTokenDetails?.reasoningTokens,
         cacheCreationTokens: totalCacheCreationTokens,
       });
 
@@ -312,17 +326,18 @@ export class StreamAgentChatJob {
     lastStepConversationSize,
     modelConfig,
     userMessagePromise,
-    titlePromise,
-    writer,
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     threadId: string;
-    streamUsage: { inputTokens: number; outputTokens: number; inputCredits: number; outputCredits: number };
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+      inputCredits: number;
+      outputCredits: number;
+    };
     lastStepConversationSize: number;
     modelConfig: AIModelConfig;
     userMessagePromise: Promise<{ turnId: string }>;
-    titlePromise: Promise<string | null>;
-    writer: UIMessageStreamWriter<ExtendedUIMessage>;
   }): Promise<void> {
     if (responseMessage.parts.length === 0) {
       await this.threadRepository.update(threadId, {
@@ -341,8 +356,7 @@ export class StreamAgentChatJob {
     });
 
     await this.threadRepository.update(threadId, {
-      totalInputTokens: () =>
-        `"totalInputTokens" + ${streamUsage.inputTokens}`,
+      totalInputTokens: () => `"totalInputTokens" + ${streamUsage.inputTokens}`,
       totalOutputTokens: () =>
         `"totalOutputTokens" + ${streamUsage.outputTokens}`,
       totalInputCredits: () =>
@@ -353,18 +367,7 @@ export class StreamAgentChatJob {
       conversationSize: lastStepConversationSize,
       activeStreamId: null,
     });
-
-    const generatedTitle = await titlePromise;
-
-    if (generatedTitle) {
-      writer.write({
-        type: 'data-thread-title' as const,
-        id: `thread-title-${threadId}`,
-        data: { title: generatedTitle },
-      });
-    }
   }
 }
 
-// Re-export the cancel channel helper so the controller can publish to it.
 export { getCancelChannel };
