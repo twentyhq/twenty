@@ -1,8 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 import { H2Title, Status } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
@@ -74,6 +75,15 @@ export const SettingsAdminMaintenanceMode = () => {
     GET_MAINTENANCE_MODE,
     {
       fetchPolicy: 'network-only',
+      onCompleted: (result) => {
+        const maintenance = result?.getMaintenanceMode;
+
+        if (isDefined(maintenance)) {
+          setStartAt(toDatetimeLocalValue(maintenance.startAt));
+          setEndAt(toDatetimeLocalValue(maintenance.endAt));
+          setLink(maintenance.link ?? '');
+        }
+      },
     },
   );
 
@@ -89,16 +99,8 @@ export const SettingsAdminMaintenanceMode = () => {
   const [endAt, setEndAt] = useState('');
   const [link, setLink] = useState('');
 
-  useEffect(() => {
-    if (isDefined(currentMaintenance)) {
-      setStartAt(toDatetimeLocalValue(currentMaintenance.startAt));
-      setEndAt(toDatetimeLocalValue(currentMaintenance.endAt));
-      setLink(currentMaintenance.link ?? '');
-    }
-  }, [currentMaintenance]);
-
   const handleActivate = useCallback(async () => {
-    if (!startAt || !endAt) {
+    if (!isNonEmptyString(startAt) || !isNonEmptyString(endAt)) {
       return;
     }
 
@@ -135,7 +137,6 @@ export const SettingsAdminMaintenanceMode = () => {
               text={isActive ? t`Maintenance Scheduled` : t`No Maintenance`}
             />
           </StyledStatusRow>
-
           <StyledFormRow>
             <StyledLabel>{t`Start (UTC)`}</StyledLabel>
             <StyledInput
@@ -145,7 +146,6 @@ export const SettingsAdminMaintenanceMode = () => {
             />
             <StyledHint>UTC</StyledHint>
           </StyledFormRow>
-
           <StyledFormRow>
             <StyledLabel>{t`End (UTC)`}</StyledLabel>
             <StyledInput
@@ -155,7 +155,6 @@ export const SettingsAdminMaintenanceMode = () => {
             />
             <StyledHint>UTC</StyledHint>
           </StyledFormRow>
-
           <StyledFormRow>
             <StyledLabel>{t`Link`}</StyledLabel>
             <StyledInput
@@ -166,14 +165,17 @@ export const SettingsAdminMaintenanceMode = () => {
               style={{ flex: 1 }}
             />
           </StyledFormRow>
-
           <StyledButtonRow>
             <Button
               title={isActive ? t`Update` : t`Activate`}
               variant="primary"
               size="small"
               onClick={handleActivate}
-              disabled={!startAt || !endAt || settingMaintenance}
+              disabled={
+                !isNonEmptyString(startAt) ||
+                !isNonEmptyString(endAt) ||
+                settingMaintenance
+              }
             />
             {isActive && (
               <Button

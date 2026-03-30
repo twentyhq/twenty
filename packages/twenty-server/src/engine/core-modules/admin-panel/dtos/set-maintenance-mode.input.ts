@@ -1,18 +1,21 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field, GraphQLISODateTime } from '@nestjs/graphql';
 
-import { IsISO8601, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
+import { IsDate, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
+import { Type } from 'class-transformer';
 
 @ArgsType()
 export class SetMaintenanceModeInput {
-  @Field(() => String)
+  @Field(() => GraphQLISODateTime)
   @IsNotEmpty()
-  @IsISO8601()
-  startAt: string;
+  @Type(() => Date)
+  @IsDate()
+  startAt: Date;
 
-  @Field(() => String)
+  @Field(() => GraphQLISODateTime)
   @IsNotEmpty()
-  @IsISO8601()
-  endAt: string;
+  @Type(() => Date)
+  @IsDate()
+  endAt: Date;
 
   @Field(() => String, { nullable: true })
   @IsOptional()

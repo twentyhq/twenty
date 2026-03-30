@@ -1,27 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import {
-  KeyValuePairEntity,
-  KeyValuePairType,
-} from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 
-const MAINTENANCE_MODE_KEY = 'MAINTENANCE_MODE';
+import { type MaintenanceModeValue } from './types/maintenance-mode-value.type';
 
-export type MaintenanceModeValue = {
-  startAt: string;
-  endAt: string;
-  link?: string;
-};
+const MAINTENANCE_MODE_KEY = 'MAINTENANCE_MODE';
 
 @Injectable()
 export class MaintenanceModeService {
   constructor(private readonly keyValuePairService: KeyValuePairService) {}
 
   async getMaintenanceMode(): Promise<MaintenanceModeValue | null> {
-    const results = await this.keyValuePairService.get<
-      typeof MAINTENANCE_MODE_KEY
-    >({
+    const results = await this.keyValuePairService.get({
       userId: null,
       workspaceId: null,
       type: KeyValuePairType.CONFIG_VARIABLE,
@@ -32,23 +26,30 @@ export class MaintenanceModeService {
       return null;
     }
 
-    const row = results[0] as unknown as KeyValuePairEntity;
-    const value = row.value as unknown as MaintenanceModeValue | null;
+    const value = results[0]?.value;
 
-    if (!value || !value.startAt || !value.endAt) {
+    if (
+      !isDefined(value) ||
+      !isNonEmptyString(value.startAt) ||
+      !isNonEmptyString(value.endAt)
+    ) {
       return null;
     }
 
-    return value;
+    return value as MaintenanceModeValue;
   }
 
   async setMaintenanceMode(value: MaintenanceModeValue): Promise<void> {
+    if (new Date(value.endAt) <= new Date(value.startAt)) {
+      throw new BadRequestException('endAt must be after startAt');
+    }
+
     await this.keyValuePairService.set({
       userId: null,
       workspaceId: null,
       type: KeyValuePairType.CONFIG_VARIABLE,
       key: MAINTENANCE_MODE_KEY,
-      value: value as unknown as JSON,
+      value,
     });
   }
 

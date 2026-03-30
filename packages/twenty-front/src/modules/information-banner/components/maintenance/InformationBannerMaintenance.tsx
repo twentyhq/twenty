@@ -1,3 +1,5 @@
+import { Temporal } from 'temporal-polyfill';
+
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
@@ -10,16 +12,16 @@ const formatMaintenanceDateTime = (
   isoString: string,
   timeZone: string,
 ): string => {
-  const date = new Date(isoString);
+  const zonedDateTime =
+    Temporal.Instant.from(isoString).toZonedDateTimeISO(timeZone);
 
-  return new Intl.DateTimeFormat(undefined, {
+  return zonedDateTime.toLocaleString(undefined, {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
-    timeZone,
     timeZoneName: 'short',
-  }).format(date);
+  });
 };
 
 export const InformationBannerMaintenance = () => {
@@ -50,7 +52,8 @@ export const InformationBannerMaintenance = () => {
       buttonIcon={maintenanceMode.link ? IconExternalLink : undefined}
       buttonOnClick={
         maintenanceMode.link
-          ? () => window.open(maintenanceMode.link, '_blank')
+          ? () =>
+              window.open(maintenanceMode.link, '_blank', 'noopener,noreferrer')
           : undefined
       }
     />

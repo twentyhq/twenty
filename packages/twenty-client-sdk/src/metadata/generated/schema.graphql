@@ -1740,8 +1740,8 @@ enum FeatureFlagKey {
 }
 
 type ClientConfigMaintenanceMode {
-  startAt: String!
-  endAt: String!
+  startAt: DateTime!
+  endAt: DateTime!
   link: String
 }
 
@@ -1971,8 +1971,8 @@ type AdminPanelHealthServiceData {
 }
 
 type MaintenanceMode {
-  startAt: String!
-  endAt: String!
+  startAt: DateTime!
+  endAt: DateTime!
   link: String
 }
 
@@ -3535,7 +3535,7 @@ type Mutation {
   removeAiProvider(providerName: String!): Boolean!
   addModelToProvider(providerName: String!, modelConfig: JSON!): Boolean!
   removeModelFromProvider(providerName: String!, modelName: String!): Boolean!
-  setMaintenanceMode(startAt: String!, endAt: String!, link: String): Boolean!
+  setMaintenanceMode(startAt: DateTime!, endAt: DateTime!, link: String): Boolean!
   clearMaintenanceMode: Boolean!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!

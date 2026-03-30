@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
@@ -14,6 +14,10 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  WorkspaceDataSourceException,
+  WorkspaceDataSourceExceptionCode,
+} from 'src/engine/workspace-datasource/exceptions/workspace-datasource.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Injectable()
@@ -30,9 +34,11 @@ export class WorkspaceDataSourceService {
 
   private assertDDLNotLocked(): void {
     if (this.twentyConfigService.get('WORKSPACE_SCHEMA_DDL_LOCKED')) {
-      throw new ForbiddenException(
-        'Workspace schema DDL changes are locked. This is typically set during hot upgrades.',
-      );
+      throw new WorkspaceDataSourceException({
+        message:
+          'Workspace schema DDL changes are locked. This is typically set during hot upgrades.',
+        code: WorkspaceDataSourceExceptionCode.DDL_LOCKED,
+      });
     }
   }
 

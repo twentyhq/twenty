@@ -3466,10 +3466,10 @@ export default {
         "FeatureFlagKey": {},
         "ClientConfigMaintenanceMode": {
             "startAt": [
-                1
+                4
             ],
             "endAt": [
-                1
+                4
             ],
             "link": [
                 1
@@ -3898,10 +3898,10 @@ export default {
         },
         "MaintenanceMode": {
             "startAt": [
-                1
+                4
             ],
             "endAt": [
-                1
+                4
             ],
             "link": [
                 1
@@ -8901,12 +8901,12 @@ export default {
                 6,
                 {
                     "startAt": [
-                        1,
-                        "String!"
+                        4,
+                        "DateTime!"
                     ],
                     "endAt": [
-                        1,
-                        "String!"
+                        4,
+                        "DateTime!"
                     ],
                     "link": [
                         1

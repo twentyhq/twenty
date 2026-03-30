@@ -1425,8 +1425,8 @@ export interface PublicFeatureFlag {
 export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_ENABLED' | 'IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_USAGE_ANALYTICS_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_GRAPHQL_QUERY_TIMING_ENABLED' | 'IS_RECORD_TABLE_WIDGET_ENABLED' | 'IS_DATASOURCE_MIGRATED'
 
 export interface ClientConfigMaintenanceMode {
-    startAt: Scalars['String']
-    endAt: Scalars['String']
+    startAt: Scalars['DateTime']
+    endAt: Scalars['DateTime']
     link?: Scalars['String']
     __typename: 'ClientConfigMaintenanceMode'
 }
@@ -1630,8 +1630,8 @@ export interface AdminPanelHealthServiceData {
 }
 
 export interface MaintenanceMode {
-    startAt: Scalars['String']
-    endAt: Scalars['String']
+    startAt: Scalars['DateTime']
+    endAt: Scalars['DateTime']
     link?: Scalars['String']
     __typename: 'MaintenanceMode'
 }
@@ -6182,7 +6182,7 @@ export interface MutationGenqlSelection{
     removeAiProvider?: { __args: {providerName: Scalars['String']} }
     addModelToProvider?: { __args: {providerName: Scalars['String'], modelConfig: Scalars['JSON']} }
     removeModelFromProvider?: { __args: {providerName: Scalars['String'], modelName: Scalars['String']} }
-    setMaintenanceMode?: { __args: {startAt: Scalars['String'], endAt: Scalars['String'], link?: (Scalars['String'] | null)} }
+    setMaintenanceMode?: { __args: {startAt: Scalars['DateTime'], endAt: Scalars['DateTime'], link?: (Scalars['String'] | null)} }
     clearMaintenanceMode?: boolean | number
     enablePostgresProxy?: PostgresCredentialsGenqlSelection
     disablePostgresProxy?: PostgresCredentialsGenqlSelection

@@ -1,4 +1,9 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  GraphQLISODateTime,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { type AiSdkPackage } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -214,11 +219,11 @@ export class PublicFeatureFlag {
 
 @ObjectType()
 export class ClientConfigMaintenanceMode {
-  @Field(() => String)
-  startAt: string;
+  @Field(() => GraphQLISODateTime)
+  startAt: Date;
 
-  @Field(() => String)
-  endAt: string;
+  @Field(() => GraphQLISODateTime)
+  endAt: Date;
 
   @Field(() => String, { nullable: true })
   link?: string;

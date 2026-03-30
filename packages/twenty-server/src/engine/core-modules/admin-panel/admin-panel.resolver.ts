@@ -559,7 +559,17 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => MaintenanceModeDTO, { nullable: true })
   async getMaintenanceMode(): Promise<MaintenanceModeDTO | null> {
-    return this.maintenanceModeService.getMaintenanceMode();
+    const value = await this.maintenanceModeService.getMaintenanceMode();
+
+    if (!isDefined(value)) {
+      return null;
+    }
+
+    return {
+      startAt: new Date(value.startAt),
+      endAt: new Date(value.endAt),
+      link: value.link,
+    };
   }
 
   @UseGuards(AdminPanelGuard)
@@ -568,8 +578,8 @@ export class AdminPanelResolver {
     @Args() { startAt, endAt, link }: SetMaintenanceModeInput,
   ): Promise<boolean> {
     await this.maintenanceModeService.setMaintenanceMode({
-      startAt,
-      endAt,
+      startAt: startAt.toISOString(),
+      endAt: endAt.toISOString(),
       link,
     });
 

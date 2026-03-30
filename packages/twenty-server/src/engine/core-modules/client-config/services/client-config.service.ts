@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import {
@@ -244,8 +245,12 @@ export class ClientConfigService {
     const maintenanceMode =
       await this.maintenanceModeService.getMaintenanceMode();
 
-    if (maintenanceMode) {
-      clientConfig.maintenance = maintenanceMode;
+    if (isDefined(maintenanceMode)) {
+      clientConfig.maintenance = {
+        startAt: new Date(maintenanceMode.startAt),
+        endAt: new Date(maintenanceMode.endAt),
+        link: maintenanceMode.link,
+      };
     }
 
     return clientConfig;
