@@ -14,6 +14,7 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-contex
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('ApiKeyService', () => {
   let service: ApiKeyService;
@@ -110,6 +111,12 @@ describe('ApiKeyService', () => {
         {
           provide: getDataSourceToken(),
           useValue: mockDataSource,
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            invalidateAndRecompute: jest.fn(),
+          },
         },
       ],
     }).compile();

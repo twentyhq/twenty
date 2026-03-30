@@ -425,8 +425,12 @@ const handler = async (): Promise<{ message: string }> => {
     },
   });
 
+  if (!createCompany?.id || !createCompany?.name) {
+    throw new Error('Failed to create company: missing id or name in response');
+  }
+
   return {
-    message: \`Created company "\${createCompany?.name}" with id \${createCompany?.id}\`,
+    message: \`Created company "\${createCompany.name}" with id \${createCompany.id}\`,
   };
 };
 
@@ -794,6 +798,7 @@ const createPackageJson = async ({
       npm: 'please-use-yarn',
       yarn: '>=4.0.2',
     },
+    keywords: ['twenty-app'],
     packageManager: 'yarn@4.9.2',
     scripts,
     devDependencies,

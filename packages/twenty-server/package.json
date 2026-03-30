@@ -9,8 +9,8 @@
     "start:prod": "node dist/main",
     "command:prod": "node dist/command/command",
     "worker:prod": "node dist/queue-worker/queue-worker",
-    "database:init:prod": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate:prod",
-    "database:migrate:prod": "npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource",
+    "database:init:prod": "node dist/database/scripts/setup-db.js && yarn database:migrate:prod --force",
+    "database:migrate:prod": "node dist/command/command run-typeorm-migration",
     "clickhouse:migrate:prod": "node dist/database/clickHouse/migrations/run-migrations.js",
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
@@ -168,6 +168,7 @@
     "react-dom": "18.3.1",
     "redis": "^4.7.0",
     "reflect-metadata": "0.2.2",
+    "resumable-stream": "^2.2.12",
     "rxjs": "7.8.1",
     "semver": "7.6.3",
     "sharp": "0.32.6",

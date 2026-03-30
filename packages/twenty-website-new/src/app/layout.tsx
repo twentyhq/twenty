@@ -1,0 +1,82 @@
+import { Footer } from '@/sections/Footer/components';
+import { theme } from '@/theme';
+import { cssVariables } from '@/theme/css-variables';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import type { Metadata } from 'next';
+import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
+
+const hostGrotesk = Host_Grotesk({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const aleo = Aleo({
+  subsets: ['latin'],
+  weight: ['300'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+
+const azeretMono = Azeret_Mono({
+  subsets: ['latin'],
+  weight: ['300', '500'],
+  variable: '--font-mono',
+  display: 'swap',
+});
+
+css`
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :global(html) {
+    background-color: ${theme.colors.primary.background[100]};
+  }
+
+  :global(body) {
+    color: ${theme.colors.primary.text[100]};
+    display: flex;
+    font-family: ${theme.font.family.sans};
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+`;
+
+const StyledMain = styled.main`
+  flex-grow: 1;
+`;
+
+export const metadata: Metadata = {
+  title: 'Twenty — Open Source CRM',
+  description: 'Modular, scalable open source CRM for modern teams.',
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en">
+      <body
+        className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
+      >
+        <StyledMain>{children}</StyledMain>
+        <Footer.Root>
+          <Footer.Logo />
+          <Footer.Nav />
+          <Footer.Bottom>
+            <Footer.Social />
+          </Footer.Bottom>
+        </Footer.Root>
+      </body>
+    </html>
+  );
+}

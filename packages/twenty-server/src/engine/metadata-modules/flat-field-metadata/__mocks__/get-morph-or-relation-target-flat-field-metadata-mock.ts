@@ -37,6 +37,8 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     viewFilterIds: [],
     viewFieldIds: [],
     kanbanAggregateOperationViewIds: [],
+    fieldPermissionIds: [],
+    fieldPermissionUniversalIdentifiers: [],
     createdAt,
     updatedAt: createdAt,
     description: 'default flat field metadata description',

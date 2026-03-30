@@ -721,6 +721,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     const sdkArchiveBuffer =
       await this.sdkClientArchiveService.downloadArchiveBuffer({
         workspaceId: flatApplication.workspaceId,
+        applicationId: flatApplication.id,
         applicationUniversalIdentifier,
       });
 

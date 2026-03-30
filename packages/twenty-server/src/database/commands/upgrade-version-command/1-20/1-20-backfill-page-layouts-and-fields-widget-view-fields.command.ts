@@ -229,6 +229,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       );
 
     const {
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatPageLayoutMaps: existingFlatPageLayoutMaps,
       flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
@@ -236,6 +237,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
       'flatPageLayoutMaps',
       'flatPageLayoutTabMaps',
       'flatPageLayoutWidgetMaps',
@@ -319,6 +321,15 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       .filter((viewField) =>
         allStandardFieldsWidgetViewUniversalIds.has(
           viewField.viewUniversalIdentifier,
+        ),
+      )
+      // Skip viewFields whose referenced fieldMetadata doesn't exist in the workspace yet
+      // (e.g. fields added to the standard definition but not yet synced to this workspace)
+      .filter((viewField) =>
+        isDefined(
+          existingFlatFieldMetadataMaps.byUniversalIdentifier[
+            viewField.fieldMetadataUniversalIdentifier
+          ],
         ),
       );
 

@@ -1,0 +1,58 @@
+{
+  "name": "twenty-front-component-renderer",
+  "version": "0.8.0-canary.5",
+  "private": true,
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "npx rimraf dist && npx vite build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@quilted/threads": "^4.0.1",
+    "@remote-dom/core": "^1.10.1",
+    "@remote-dom/react": "^1.2.2",
+    "@sniptt/guards": "^0.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@chakra-ui/react": "^3.33.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.3.8",
+    "@storybook/addon-vitest": "^10.2.13",
+    "@storybook/react-vite": "^10.2.13",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitest/browser-playwright": "^4.0.18",
+    "playwright": "^1.56.1",
+    "storybook": "^10.2.13",
+    "styled-components": "^6.1.0",
+    "ts-morph": "^25.0.0",
+    "tsx": "^4.7.0",
+    "twenty-sdk": "workspace:*",
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-tsconfig-paths": "^4.2.1"
+  },
+  "engines": {
+    "node": "^24.5.0",
+    "yarn": "^4.0.2"
+  }
+}

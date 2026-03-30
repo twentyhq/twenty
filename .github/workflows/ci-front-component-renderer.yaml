@@ -1,0 +1,114 @@
+name: CI Front Component Renderer
+
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    if: github.event_name != 'merge_group'
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        yarn.lock
+        packages/twenty-front-component-renderer/**
+        packages/twenty-sdk/**
+        packages/twenty-shared/**
+        !packages/twenty-sdk/package.json
+  renderer-task:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [build, typecheck, lint]
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Run ${{ matrix.task }}
+        run: npx nx ${{ matrix.task }} twenty-front-component-renderer
+  renderer-sb-build:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build storybook
+        run: npx nx storybook:build twenty-front-component-renderer
+      - name: Upload storybook build
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-twenty-front-component-renderer
+          path: packages/twenty-front-component-renderer/storybook-static
+          retention-days: 1
+  renderer-sb-test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    needs: renderer-sb-build
+    env:
+      STORYBOOK_URL: http://localhost:6008
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+      - name: Build dependencies
+        run: npx nx build twenty-sdk
+      - name: Download storybook build
+        uses: actions/download-artifact@v4
+        with:
+          name: storybook-twenty-front-component-renderer
+          path: packages/twenty-front-component-renderer/storybook-static
+      - name: Install Playwright
+        run: |
+          cd packages/twenty-front-component-renderer
+          npx playwright install
+      - name: Serve storybook & run tests
+        run: |
+          npx http-server packages/twenty-front-component-renderer/storybook-static --port 6008 --silent &
+          timeout 30 bash -c 'until curl -sf http://localhost:6008 > /dev/null 2>&1; do sleep 1; done'
+          npx nx storybook:test twenty-front-component-renderer
+  ci-front-component-renderer-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs:
+      [
+        changed-files-check,
+        renderer-task,
+        renderer-sb-build,
+        renderer-sb-test,
+      ]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

@@ -16,35 +16,28 @@ import { JwtAuthStrategy } from './jwt.auth.strategy';
 
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
-  let workspaceRepository: any;
   let userWorkspaceRepository: any;
-  let userRepository: any;
-  let apiKeyRepository: any;
   let applicationRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
   let workspaceCacheService: any;
-  let workspaceMemberRepository: any;
+  let coreEntityCacheService: any;
 
   const jwt = {
     sub: 'sub-default',
     jti: 'jti-default',
   };
 
-  beforeEach(() => {
-    workspaceRepository = {
-      findOneBy: jest.fn(),
-    };
+  let workspaceStore: Record<string, any>;
+  let userStore: Record<string, any>;
+  let apiKeyStore: Record<string, Record<string, any>>;
 
-    userRepository = {
-      findOne: jest.fn(),
-    };
+  beforeEach(() => {
+    workspaceStore = {};
+    userStore = {};
+    apiKeyStore = {};
 
     userWorkspaceRepository = {
-      findOne: jest.fn(),
-    };
-
-    apiKeyRepository = {
       findOne: jest.fn(),
     };
 
@@ -60,39 +53,71 @@ describe('JwtAuthStrategy', () => {
       userHasWorkspaceSettingPermission: jest.fn(),
     };
 
-    workspaceMemberRepository = {
-      findOne: jest.fn(),
-    };
-    workspaceMemberRepository.findOne.mockResolvedValue({
-      id: 'workspace-member-id',
-    });
-
     workspaceCacheService = {
-      getOrRecompute: jest.fn(async (_workspaceId, _cacheKeys) => {
-        return {
-          flatWorkspaceMemberMaps: {
-            byId: {
-              'workspace-member-id': {
-                id: 'workspace-member-id',
-                userId: 'valid-user-id',
-                workspaceId: 'workspace-id',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                deletedAt: null,
+      getOrRecompute: jest.fn(
+        async (workspaceId: string, cacheKeys: string[]) => {
+          const result: Record<string, any> = {};
+
+          if (cacheKeys.includes('flatWorkspaceMemberMaps')) {
+            result.flatWorkspaceMemberMaps = {
+              byId: {
+                'workspace-member-id': {
+                  id: 'workspace-member-id',
+                  userId: 'valid-user-id',
+                  workspaceId: 'workspace-id',
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                  deletedAt: null,
+                },
               },
-            },
-            idByUserId: {
-              'valid-user-id': 'workspace-member-id',
-            },
-          },
-        };
+              idByUserId: {
+                'valid-user-id': 'workspace-member-id',
+              },
+            };
+          }
+
+          if (cacheKeys.includes('apiKeyMap')) {
+            result.apiKeyMap = apiKeyStore[workspaceId] ?? {};
+          }
+
+          return result;
+        },
+      ),
+    };
+
+    coreEntityCacheService = {
+      get: jest.fn(async (keyName: string, entityId: string) => {
+        if (keyName === 'workspaceEntity') {
+          return workspaceStore[entityId] ?? null;
+        }
+
+        if (keyName === 'user') {
+          return userStore[entityId] ?? null;
+        }
+
+        if (keyName === 'userWorkspaceEntity') {
+          return userWorkspaceRepository.findOne({ where: { id: entityId } });
+        }
+
+        return null;
       }),
+      invalidate: jest.fn(),
     };
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
+
+  const createStrategy = () =>
+    new JwtAuthStrategy(
+      jwtWrapperService,
+      applicationRepository,
+      userWorkspaceRepository,
+      permissionsService,
+      workspaceCacheService,
+      coreEntityCacheService,
+    );
 
   describe('API_KEY validation', () => {
     it('should throw AuthException if type is API_KEY and workspace is not found', async () => {
@@ -101,18 +126,7 @@ describe('JwtAuthStrategy', () => {
         type: JwtTokenTypeEnum.API_KEY,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(null);
-
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -131,20 +145,10 @@ describe('JwtAuthStrategy', () => {
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = 'workspace-id';
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
+      workspaceStore[payload.sub] = mockWorkspace;
+      apiKeyStore['workspace-id'] = {};
 
-      apiKeyRepository.findOne.mockResolvedValue(null);
-
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -163,23 +167,15 @@ describe('JwtAuthStrategy', () => {
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = 'workspace-id';
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
+      workspaceStore[payload.sub] = mockWorkspace;
+      apiKeyStore['workspace-id'] = {
+        [payload.jti]: {
+          id: 'api-key-id',
+          revokedAt: new Date(),
+        },
+      };
 
-      apiKeyRepository.findOne.mockResolvedValue({
-        id: 'api-key-id',
-        revokedAt: new Date(),
-      });
-
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -198,35 +194,20 @@ describe('JwtAuthStrategy', () => {
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = 'workspace-id';
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
+      workspaceStore[payload.sub] = mockWorkspace;
+      apiKeyStore['workspace-id'] = {
+        [payload.jti]: {
+          id: 'api-key-id',
+          revokedAt: null,
+        },
+      };
 
-      apiKeyRepository.findOne.mockResolvedValue({
-        id: 'api-key-id',
-        revokedAt: null,
-      });
-
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       const result = await strategy.validate(payload as JwtPayload);
 
       expect(result).toBeTruthy();
       expect(result.apiKey?.id).toBe('api-key-id');
-
-      expect(apiKeyRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id: payload.jti,
-          workspaceId: mockWorkspace.id,
-        },
-      });
     });
   });
 
@@ -243,20 +224,9 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
+      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
 
-      userRepository.findOne.mockResolvedValue(null);
-
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -287,22 +257,12 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
-
-      userRepository.findOne.mockResolvedValue({ lastName: 'lastNameDefault' });
+      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
+      userStore[validUserId] = { lastName: 'lastNameDefault' };
 
       userWorkspaceRepository.findOne.mockResolvedValue(null);
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -333,29 +293,35 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
-
-      userRepository.findOne.mockResolvedValue({
+      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
+      userStore[validUserId] = {
         id: validUserId,
         lastName: 'lastNameDefault',
-      });
+      };
 
-      userWorkspaceRepository.findOne.mockResolvedValue({
-        id: validUserWorkspaceId,
-        user: { id: validUserId, lastName: 'lastNameDefault' },
-        workspace: { id: validWorkspaceId },
-      });
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: { id: validUserId, lastName: 'lastNameDefault' },
+              workspace: { id: validWorkspaceId },
+            };
+          }
+
+          return null;
+        },
       );
+
+      strategy = createStrategy();
 
       const user = await strategy.validate(payload as JwtPayload);
 
@@ -376,20 +342,11 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
+      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
 
       applicationRepository.findOne.mockResolvedValue(null);
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException('Application not found', expect.any(String), {
@@ -418,32 +375,20 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatedUserWorkspaceId: validUserWorkspaceId,
-        // Missing impersonatorUserWorkspaceId
-      };
-
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: { id: validUserId, lastName: 'lastNameDefault' },
-        workspace: { id: validWorkspaceId },
       };
 
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
+      workspaceStore[validWorkspaceId] = mockWorkspace;
 
-      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+      userWorkspaceRepository.findOne.mockResolvedValue({
+        id: validUserWorkspaceId,
+        user: { id: validUserId, lastName: 'lastNameDefault' },
+        workspace: { id: validWorkspaceId },
+      });
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -466,31 +411,20 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatorUserWorkspaceId,
-        // Missing impersonatedUserWorkspaceId
       };
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: { id: validUserId, lastName: 'lastNameDefault' },
-        workspace: { id: validWorkspaceId },
-      };
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
+      workspaceStore[validWorkspaceId] = mockWorkspace;
 
-      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+      userWorkspaceRepository.findOne.mockResolvedValue({
+        id: validUserWorkspaceId,
+        user: { id: validUserId, lastName: 'lastNameDefault' },
+        workspace: { id: validWorkspaceId },
+      });
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -512,34 +446,23 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatorUserWorkspaceId: validUserWorkspaceId,
-        impersonatedUserWorkspaceId: validUserWorkspaceId, // Same as impersonator
-      };
-
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: { id: validUserId, lastName: 'lastNameDefault' },
-        workspace: { id: validWorkspaceId },
+        impersonatedUserWorkspaceId: validUserWorkspaceId,
       };
 
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      userWorkspaceRepository.findOne.mockResolvedValue({
+        id: validUserWorkspaceId,
+        user: { id: validUserId, lastName: 'lastNameDefault' },
+        workspace: { id: validWorkspaceId },
+      });
       permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
         true,
       );
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -572,34 +495,40 @@ describe('JwtAuthStrategy', () => {
 
       const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      userStore[validUserId] = mockUser;
 
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
+
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: mockUser,
+              workspace: mockWorkspace,
+            };
+          }
+
+          return null;
+        },
+      );
+
       userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
-        .mockResolvedValueOnce(null) // For impersonatorUserWorkspace lookup
+        .mockResolvedValueOnce(null)
         .mockResolvedValueOnce({
-          // For impersonatedUserWorkspace lookup
           id: validUserWorkspaceId,
           user: { id: 'valid-user-id' },
           workspace: mockWorkspace,
         });
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -633,28 +562,34 @@ describe('JwtAuthStrategy', () => {
 
       const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      userStore[validUserId] = mockUser;
 
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
-      userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
-        .mockResolvedValueOnce(null); // For impersonatedUserWorkspace lookup
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: mockUser,
+              workspace: mockWorkspace,
+            };
+          }
+
+          return null;
+        },
       );
+
+      userWorkspaceRepository.findOne.mockResolvedValueOnce(null);
+
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -684,49 +619,52 @@ describe('JwtAuthStrategy', () => {
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
-      mockWorkspace.allowImpersonation = false; // Disabled
+      mockWorkspace.allowImpersonation = false;
 
       const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      userStore[validUserId] = mockUser;
 
-      const mockImpersonatorUserWorkspace = {
-        id: impersonatorUserWorkspaceId,
-        user: { id: 'valid-user-id', canImpersonate: false }, // No server level permission
-        workspace: { id: differentWorkspaceId }, // Different workspace
-      };
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
 
-      const mockImpersonatedUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: { id: 'valid-user-id' },
-        workspace: mockWorkspace,
-      };
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
 
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: mockUser,
+              workspace: mockWorkspace,
+            };
+          }
+
+          return null;
+        },
+      );
+
       userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatedUserWorkspace); // For impersonatedUserWorkspace lookup
+        .mockResolvedValueOnce({
+          id: impersonatorUserWorkspaceId,
+          user: { id: 'valid-user-id', canImpersonate: false },
+          workspace: { id: differentWorkspaceId },
+        })
+        .mockResolvedValueOnce({
+          id: validUserWorkspaceId,
+          user: { id: 'valid-user-id' },
+          workspace: mockWorkspace,
+        });
 
       permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
         false,
       );
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -759,45 +697,48 @@ describe('JwtAuthStrategy', () => {
 
       const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      userStore[validUserId] = mockUser;
 
-      const mockImpersonatorUserWorkspace = {
-        id: impersonatorUserWorkspaceId,
-        user: { id: 'valid-user-id', canImpersonate: false },
-        workspace: mockWorkspace, // Same workspace
-      };
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
 
-      const mockImpersonatedUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: { id: 'valid-user-id' },
-        workspace: mockWorkspace,
-      };
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
 
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: mockUser,
+              workspace: mockWorkspace,
+            };
+          }
+
+          return null;
+        },
+      );
+
       userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatedUserWorkspace); // For impersonatedUserWorkspace lookup
+        .mockResolvedValueOnce({
+          id: impersonatorUserWorkspaceId,
+          user: { id: 'valid-user-id', canImpersonate: false },
+          workspace: mockWorkspace,
+        })
+        .mockResolvedValueOnce({
+          id: validUserWorkspaceId,
+          user: { id: 'valid-user-id' },
+          workspace: mockWorkspace,
+        });
 
       permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
         false,
       );
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -821,7 +762,7 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
         isImpersonating: true,
         impersonatorUserWorkspaceId,
-        impersonatedUserWorkspaceId, // Different from userWorkspaceId
+        impersonatedUserWorkspaceId,
       };
 
       const mockWorkspace = new WorkspaceEntity();
@@ -829,47 +770,9 @@ describe('JwtAuthStrategy', () => {
       mockWorkspace.id = validWorkspaceId;
       mockWorkspace.allowImpersonation = true;
 
-      const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
+      workspaceStore[validWorkspaceId] = mockWorkspace;
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
-
-      const mockImpersonatorUserWorkspace = {
-        id: impersonatorUserWorkspaceId,
-        user: { id: 'valid-user-id', canImpersonate: true },
-        workspace: mockWorkspace,
-      };
-
-      const mockImpersonatedUserWorkspace = {
-        id: impersonatedUserWorkspaceId,
-        user: { id: 'valid-user-id' },
-        workspace: mockWorkspace,
-      };
-
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
-      userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatedUserWorkspace); // For impersonatedUserWorkspace lookup
-
-      permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
-        true,
-      );
-
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
@@ -898,43 +801,52 @@ describe('JwtAuthStrategy', () => {
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
-      mockWorkspace.allowImpersonation = false; // Server level disabled
+      mockWorkspace.allowImpersonation = false;
 
       const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
 
-      const mockUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      userStore[validUserId] = mockUser;
 
-      const mockImpersonatorUserWorkspace = {
-        id: impersonatorUserWorkspaceId,
-        user: { id: 'valid-user-id', canImpersonate: false },
-        workspace: mockWorkspace, // Same workspace
-      };
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
 
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: mockUser,
+              workspace: mockWorkspace,
+            };
+          }
+
+          return null;
+        },
+      );
+
       userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockUserWorkspace) // For the main userWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
-        .mockResolvedValueOnce(mockUserWorkspace); // For impersonatedUserWorkspace lookup (same as main)
+        .mockResolvedValueOnce({
+          id: impersonatorUserWorkspaceId,
+          user: { id: 'valid-user-id', canImpersonate: false },
+          workspace: mockWorkspace,
+        })
+        .mockResolvedValueOnce({
+          id: validUserWorkspaceId,
+          user: mockUser,
+          workspace: mockWorkspace,
+        });
 
       permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
         true,
       );
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
-      );
+      strategy = createStrategy();
 
       const result = await strategy.validate(payload as JwtPayload);
 
@@ -969,39 +881,48 @@ describe('JwtAuthStrategy', () => {
       const mockWorkspace = new WorkspaceEntity();
 
       mockWorkspace.id = validWorkspaceId;
-      mockWorkspace.allowImpersonation = true; // Server level enabled
+      mockWorkspace.allowImpersonation = true;
 
       const mockUser = { id: validUserId, lastName: 'lastNameDefault' };
 
-      const mockImpersonatorUserWorkspace = {
-        id: impersonatorUserWorkspaceId,
-        user: { id: 'valid-user-id', canImpersonate: true }, // Server level permission
-        workspace: { id: differentWorkspaceId }, // Different workspace
-      };
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      userStore[validUserId] = mockUser;
 
-      const mockImpersonatedUserWorkspace = {
-        id: validUserWorkspaceId,
-        user: mockUser,
-        workspace: mockWorkspace,
-      };
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
 
-      workspaceRepository.findOneBy.mockResolvedValue(mockWorkspace);
-      userRepository.findOne.mockResolvedValue(mockUser);
-      userWorkspaceRepository.findOne
-        .mockResolvedValueOnce(mockImpersonatorUserWorkspace) // For impersonatorUserWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatedUserWorkspace) // For impersonatedUserWorkspace lookup
-        .mockResolvedValueOnce(mockImpersonatedUserWorkspace); // For access token lookup
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
 
-      strategy = new JwtAuthStrategy(
-        jwtWrapperService,
-        workspaceRepository,
-        applicationRepository,
-        userRepository,
-        userWorkspaceRepository,
-        apiKeyRepository,
-        permissionsService,
-        workspaceCacheService,
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: mockUser,
+              workspace: mockWorkspace,
+            };
+          }
+
+          return null;
+        },
       );
+
+      userWorkspaceRepository.findOne
+        .mockResolvedValueOnce({
+          id: impersonatorUserWorkspaceId,
+          user: { id: 'valid-user-id', canImpersonate: true },
+          workspace: { id: differentWorkspaceId },
+        })
+        .mockResolvedValueOnce({
+          id: validUserWorkspaceId,
+          user: mockUser,
+          workspace: mockWorkspace,
+        });
+
+      strategy = createStrategy();
 
       const result = await strategy.validate(payload as JwtPayload);
 

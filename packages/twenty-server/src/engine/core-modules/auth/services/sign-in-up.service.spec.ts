@@ -98,6 +98,9 @@ const createSignInUpServiceForTests = () => {
       uploadWorkspaceLogoFromUrl: jest.fn(),
     } as any,
     {
+      isValid: jest.fn().mockReturnValue(false),
+    } as any,
+    {
       createQueryRunner: jest.fn(() => queryRunnerMock),
     } as any,
   );

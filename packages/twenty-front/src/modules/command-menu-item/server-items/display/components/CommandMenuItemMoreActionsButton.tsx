@@ -3,7 +3,6 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import {
   AppTooltip,
@@ -52,7 +51,7 @@ export const CommandMenuItemMoreActionsButton = () => {
       <StyledTooltipWrapper>
         <AppTooltip
           anchorSelect="#toggle-side-panel-button"
-          content={i18n._(ariaLabel)}
+          content={ariaLabel}
           delay={TooltipDelay.longDelay}
           place={TooltipPosition.Bottom}
           offset={5}

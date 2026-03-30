@@ -255,8 +255,11 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
 
           const trigger = workflowVersion.trigger as WorkflowManualTrigger;
 
-          const { availabilityType, availabilityObjectMetadataId } =
-            await this.resolveManualTriggerAvailability(trigger, workspaceId);
+          const {
+            availabilityType,
+            availabilityObjectMetadataId,
+            availabilityObjectMetadataUniversalIdentifier,
+          } = await this.resolveManualTriggerAvailability(trigger, workspaceId);
 
           const id = uuidv4();
           const now = new Date().toISOString();
@@ -276,7 +279,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
             hotKeys: null,
             availabilityType,
             availabilityObjectMetadataId: availabilityObjectMetadataId ?? null,
-            availabilityObjectMetadataUniversalIdentifier: null,
+            availabilityObjectMetadataUniversalIdentifier,
             conditionalAvailabilityExpression: null,
             workspaceId,
             applicationId: workspaceCustomFlatApplication.id,
@@ -340,6 +343,7 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
   ): Promise<{
     availabilityType: CommandMenuItemAvailabilityType;
     availabilityObjectMetadataId: string | undefined;
+    availabilityObjectMetadataUniversalIdentifier: string | null;
   }> {
     const availability = trigger.settings.availability;
 
@@ -347,10 +351,11 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
       return {
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
         availabilityObjectMetadataId: undefined,
+        availabilityObjectMetadataUniversalIdentifier: null,
       };
     }
 
-    const { objectIdByNameSingular } =
+    const { objectIdByNameSingular, flatObjectMetadataMaps } =
       await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
 
     const objectId = objectIdByNameSingular[availability.objectNameSingular];
@@ -363,12 +368,17 @@ export class BackfillCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaces
       return {
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
         availabilityObjectMetadataId: undefined,
+        availabilityObjectMetadataUniversalIdentifier: null,
       };
     }
+
+    const objectUniversalIdentifier =
+      flatObjectMetadataMaps.universalIdentifierById[objectId] ?? null;
 
     return {
       availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       availabilityObjectMetadataId: objectId,
+      availabilityObjectMetadataUniversalIdentifier: objectUniversalIdentifier,
     };
   }
 }

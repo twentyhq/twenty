@@ -2,7 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   convertToModelMessages,
+  type LanguageModelUsage,
   stepCountIs,
+  type StepResult,
   streamText,
   type SystemModelMessage,
   type ToolSet,
@@ -12,6 +14,8 @@ import {
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
@@ -61,6 +65,7 @@ export type ChatExecutionOptions = {
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   modelId?: string;
+  abortSignal?: AbortSignal;
 };
 
 export type ChatExecutionResult = {
@@ -91,6 +96,7 @@ export class ChatExecutionService {
     browsingContext,
     onCodeExecutionUpdate,
     modelId,
+    abortSignal,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -221,12 +227,68 @@ export class ChatExecutionService {
 
     const modelMessages = await convertToModelMessages(processedMessages);
 
+    const billUsageFromSteps = (steps: StepResult<ToolSet>[]) => {
+      const usage = steps.reduce<LanguageModelUsage>(
+        (acc, step) => ({
+          inputTokens: (acc.inputTokens ?? 0) + (step.usage.inputTokens ?? 0),
+          outputTokens:
+            (acc.outputTokens ?? 0) + (step.usage.outputTokens ?? 0),
+          totalTokens: (acc.totalTokens ?? 0) + (step.usage.totalTokens ?? 0),
+          inputTokenDetails: {
+            noCacheTokens:
+              (acc.inputTokenDetails?.noCacheTokens ?? 0) +
+              (step.usage.inputTokenDetails?.noCacheTokens ?? 0),
+            cacheReadTokens:
+              (acc.inputTokenDetails?.cacheReadTokens ?? 0) +
+              (step.usage.inputTokenDetails?.cacheReadTokens ?? 0),
+            cacheWriteTokens:
+              (acc.inputTokenDetails?.cacheWriteTokens ?? 0) +
+              (step.usage.inputTokenDetails?.cacheWriteTokens ?? 0),
+          },
+          outputTokenDetails: {
+            textTokens:
+              (acc.outputTokenDetails?.textTokens ?? 0) +
+              (step.usage.outputTokenDetails?.textTokens ?? 0),
+            reasoningTokens:
+              (acc.outputTokenDetails?.reasoningTokens ?? 0) +
+              (step.usage.outputTokenDetails?.reasoningTokens ?? 0),
+          },
+        }),
+        {
+          inputTokens: 0,
+          outputTokens: 0,
+          totalTokens: 0,
+          inputTokenDetails: {
+            noCacheTokens: 0,
+            cacheReadTokens: 0,
+            cacheWriteTokens: 0,
+          },
+          outputTokenDetails: { textTokens: 0, reasoningTokens: 0 },
+        },
+      );
+
+      const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
+
+      this.aiBillingService.calculateAndBillUsage(
+        registeredModel.modelId,
+        { usage, cacheCreationTokens },
+        workspace.id,
+        UsageOperationType.AI_CHAT_TOKEN,
+        null,
+        userWorkspaceId,
+      );
+    };
+
     const stream = streamText({
       model: registeredModel.model,
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
+      abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
+      onAbort: ({ steps }) => {
+        billUsageFromSteps(steps);
+      },
       experimental_repairToolCall: async ({
         toolCall,
         tools: toolsForRepair,
@@ -244,18 +306,13 @@ export class ChatExecutionService {
     });
 
     Promise.all([stream.usage, stream.steps])
-      .then(([usage, steps]) => {
-        const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
-
-        this.aiBillingService.calculateAndBillUsage(
-          registeredModel.modelId,
-          { usage, cacheCreationTokens },
-          workspace.id,
-          null,
-          userWorkspaceId,
-        );
+      .then(([, steps]) => {
+        billUsageFromSteps(steps);
       })
       .catch((error) => {
+        if (error?.name === 'AbortError') {
+          return;
+        }
         this.exceptionHandlerService.captureExceptions([error]);
       });
 

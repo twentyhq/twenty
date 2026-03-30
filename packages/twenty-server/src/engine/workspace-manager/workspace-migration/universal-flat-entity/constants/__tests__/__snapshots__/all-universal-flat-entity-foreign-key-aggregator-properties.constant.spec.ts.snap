@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should match snapshot 1`] = `
 {
@@ -6,12 +6,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "commandMenuItem": [],
   "fieldMetadata": [
     "viewSortUniversalIdentifiers",
+    "fieldPermissionUniversalIdentifiers",
     "viewFieldUniversalIdentifiers",
     "viewFilterUniversalIdentifiers",
     "kanbanAggregateOperationViewUniversalIdentifiers",
     "calendarViewUniversalIdentifiers",
     "mainGroupByFieldMetadataViewUniversalIdentifiers",
   ],
+  "fieldPermission": [],
   "frontComponent": [],
   "index": [],
   "logicFunction": [],
@@ -20,6 +22,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "fieldUniversalIdentifiers",
     "indexMetadataUniversalIdentifiers",
     "objectPermissionUniversalIdentifiers",
+    "fieldPermissionUniversalIdentifiers",
     "viewUniversalIdentifiers",
   ],
   "objectPermission": [],
@@ -35,6 +38,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "roleTargetUniversalIdentifiers",
     "objectPermissionUniversalIdentifiers",
     "permissionFlagUniversalIdentifiers",
+    "fieldPermissionUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
     "rowLevelPermissionPredicateGroupUniversalIdentifiers",
   ],

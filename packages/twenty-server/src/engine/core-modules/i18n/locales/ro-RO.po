@@ -492,6 +492,7 @@ msgstr "A apărut o eroare neașteptată de configurare."
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+#: src/engine/core-entity-cache/exceptions/core-entity-cache.exception.ts
 msgid "An unexpected error occurred."
 msgstr "A apărut o eroare neașteptată."
 
@@ -1502,20 +1503,10 @@ msgstr "Politica de creare automată a contactelor"
 msgid "Content cannot be empty"
 msgstr "Conținutul nu poate fi gol"
 
-#. js-lingui-id: M73whl
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Context"
-msgstr "Context"
-
-#. js-lingui-id: YPzDDR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Context of the workflow run"
-msgstr ""
-
-#. js-lingui-id: gdbojg
+#. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
-msgstr "Au fost detectate permisiuni contradictorii pe un câmp de relație ({fieldName})."
+msgid "Contradicting field permissions have been detected on a relation field."
+msgstr ""
 
 #. js-lingui-id: xuYXJX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -2510,6 +2501,10 @@ msgstr "Identificatorul etichetei câmpului este necesar"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Field metadata not found"
 msgstr "Metadatele câmpului nu au fost găsite"
 
@@ -2546,6 +2541,44 @@ msgstr "Numele câmpului nu este sincronizat cu eticheta."
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Field not found."
 msgstr "Câmpul nu a fost găsit."
+
+#. js-lingui-id: krbBsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission already exists"
+msgstr ""
+
+#. js-lingui-id: J4IqxN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission for this role, object and field already exists"
+msgstr ""
+
+#. js-lingui-id: 8mkDdX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission not found"
+msgstr ""
+
+#. js-lingui-id: yqmAnC
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Field permission not found."
+msgstr ""
+
+#. js-lingui-id: 7OZNMg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission to delete not found"
+msgstr ""
+
+#. js-lingui-id: rR7vkH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission to update not found"
+msgstr ""
+
+#. js-lingui-id: A2VI9D
+#. placeholder {0}: flatFieldPermissionToValidate.universalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "Field permission with universal identifier {0} already exists"
+msgstr ""
 
 #. js-lingui-id: QXuG8C
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3179,11 +3212,6 @@ msgstr "Captcha invalidă. Vă rugăm să încercați din nou."
 msgid "Invalid command menu item input."
 msgstr "Intrare invalidă pentru elementul de meniu de comandă."
 
-#. js-lingui-id: C25VTR
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
-msgstr "Configurație invalidă pentru widgetul \"{widgetTitle}\": Tipul de diagramă {chartType} necesită flagul de funcționalitate IS_DASHBOARD_V2_ENABLED"
-
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget"
@@ -3472,6 +3500,7 @@ msgstr "Date invalide pentru widgetul layout-ului paginii."
 
 #. js-lingui-id: HiaWGB
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+#: src/engine/core-entity-cache/exceptions/core-entity-cache.exception.ts
 msgid "Invalid parameters provided."
 msgstr "Au fost furnizați parametri invalizi."
 
@@ -5035,6 +5064,10 @@ msgstr "Eticheta obiectului este prea scurtă"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Object metadata not found"
 msgstr "Metadatele obiectului nu au fost găsite"
 
@@ -5314,16 +5347,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Outgoing"
-msgstr ""
-
-#. js-lingui-id: gh06VD
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Output"
-msgstr ""
-
-#. js-lingui-id: 5vO0WN
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Output of the workflow run"
 msgstr ""
 
 #. js-lingui-id: 6ua+9g
@@ -5923,6 +5946,9 @@ msgstr "Rolul nu poate fi atribuit acestei entități."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Role is not editable"
 msgstr "Rolul nu poate fi editat"
 
@@ -5958,6 +5984,10 @@ msgstr "Rolul trebuie să aibă cel puțin o țintă."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "Role not found"
 msgstr ""
 
@@ -6852,11 +6882,6 @@ msgstr "Rolul pe care îl căutați nu a putut fi găsit. Este posibil să fi fo
 msgid "The role you are trying to modify could not be found."
 msgstr "Rolul pe care încercați să îl modificați nu a putut fi găsit."
 
-#. js-lingui-id: HRcugS
-#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
-msgstr "Rolul pe care încercați să îl modificați nu a putut fi găsit. Este posibil să fi fost șters sau este posibil să nu aveți acces la el."
-
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
@@ -6976,11 +7001,6 @@ msgstr "Această cheie API a expirat. Vă rugăm să creați una nouă."
 msgid "This API key has no role assigned."
 msgstr "Această cheie API nu are niciun rol atribuit."
 
-#. js-lingui-id: FY4xDH
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "This chart type requires the Dashboard V2 feature to be enabled"
-msgstr "Acest tip de diagramă necesită activarea funcționalității Dashboard V2"
-
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
@@ -7030,6 +7050,12 @@ msgstr "Acest câmp nu poate fi modificat."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field name is not available."
 msgstr "Acest nume de câmp nu este disponibil."
+
+#. js-lingui-id: IuDcjw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+msgid "This field permission is already set for the role"
+msgstr ""
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -7140,7 +7166,9 @@ msgstr "Acest rol nu poate fi editat."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr ""
 
@@ -8313,6 +8341,11 @@ msgstr "Nepotrivire între ID-ul spațiului de lucru și rol."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "Spațiul de lucru nu este pregătit să primească noi membri"
+
+#. js-lingui-id: iN7doz
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+msgstr ""
 
 #. js-lingui-id: CbGxon
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts

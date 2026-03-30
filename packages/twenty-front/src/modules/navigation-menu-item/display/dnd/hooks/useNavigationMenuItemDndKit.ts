@@ -1,6 +1,5 @@
 import { type DragDropProvider } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
-import type { ResponderProvided } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { type ComponentProps, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,17 +10,16 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
 import type { DraggableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDraggableData';
 import type { DropDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDropDestination';
+import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/navigationMenuItemDropResult';
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitSortableTargetDestination';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { DROP_RESULT_OPTIONS } from '@/navigation-menu-item/display/dnd/constants/navigationMenuItemDndKitDropResultOptions';
 import { useHandleAddToNavigationDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleAddToNavigationDrop';
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { resolveDropTarget } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitResolveDropTarget';
-import { toDropResult } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitToDropResult';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
@@ -172,23 +170,13 @@ export const useNavigationMenuItemDndKit = (
       destination: DropDestination,
       insertBeforeItemId?: string | null,
     ) => {
-      const result = toDropResult(
-        id,
-        {
-          sourceDroppableId: source.droppableId,
-          sourceIndex: source.index,
-        },
+      const result: NavigationMenuItemDropResult = {
+        draggableId: id,
+        source,
         destination,
-      );
-      const provided: ResponderProvided = { announce: () => {} };
-      handleNavigationMenuItemDragAndDrop(
-        {
-          ...result,
-          ...DROP_RESULT_OPTIONS,
-          ...(insertBeforeItemId != null && { insertBeforeItemId }),
-        },
-        provided,
-      );
+        ...(insertBeforeItemId != null && { insertBeforeItemId }),
+      };
+      handleNavigationMenuItemDragAndDrop(result);
     },
     [handleNavigationMenuItemDragAndDrop],
   );
@@ -351,12 +339,18 @@ export const useNavigationMenuItemDndKit = (
       destination = fallback;
     }
 
-    const result = toDropResult(draggableId, data, destination);
-    const provided: ResponderProvided = { announce: () => {} };
-    const dropResult = { ...result, ...DROP_RESULT_OPTIONS };
+    const dropResult: NavigationMenuItemDropResult = {
+      draggableId,
+      source: {
+        droppableId: data?.sourceDroppableId ?? '',
+        index: data?.sourceIndex ?? 0,
+      },
+      destination,
+      ...(insertBeforeItemId != null && { insertBeforeItemId }),
+    };
 
     if (sourceId === ADD_TO_NAV_SOURCE_DROPPABLE_ID) {
-      handleAddToNavigationDrop(dropResult, provided);
+      handleAddToNavigationDrop(dropResult);
       return;
     }
 
@@ -386,7 +380,7 @@ export const useNavigationMenuItemDndKit = (
       return;
     }
 
-    handleNavigationMenuItemDragAndDrop(dropResult, provided);
+    handleNavigationMenuItemDragAndDrop(dropResult);
   };
 
   const contextValues: NavigationMenuItemDndKitContextValues = {

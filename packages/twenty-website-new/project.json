@@ -1,0 +1,48 @@
+{
+  "name": "twenty-website-new",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-website-new/src",
+  "projectType": "application",
+  "tags": ["scope:website"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/.next"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next build"
+      },
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next dev"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next start"
+      }
+    },
+    "lint": {},
+    "lint:diff-with-main": {},
+    "typecheck": {},
+    "fmt": {
+      "options": {
+        "files": "."
+      },
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}

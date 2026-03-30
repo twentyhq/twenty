@@ -86,19 +86,13 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
   const { removePageLayoutWidgetAndPreservePosition } =
     useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
 
-  const isApplicationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APPLICATION_ENABLED,
-  );
-
   const isRecordTableWidgetEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_TABLE_WIDGET_ENABLED,
   );
 
   const { data: frontComponentsData } = useQuery<{
     frontComponents: FrontComponent[];
-  }>(FIND_MANY_FRONT_COMPONENTS, {
-    skip: !isApplicationEnabled,
-  });
+  }>(FIND_MANY_FRONT_COMPONENTS);
 
   const frontComponents = frontComponentsData?.frontComponents ?? [];
 
@@ -288,7 +282,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
         </SelectableListItem>
       </SidePanelGroup>
 
-      {isApplicationEnabled && frontComponentsWithSelectItemId.length > 0 && (
+      {frontComponentsWithSelectItemId.length > 0 && (
         <SidePanelGroup heading={t`Front Components`}>
           {frontComponentsWithSelectItemId.map(
             ({ frontComponent, selectItemId }) => (

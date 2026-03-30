@@ -332,15 +332,6 @@ export const SettingsApplicationRegistrationGeneralTab = ({
       label: t`Name`,
       value: registration.name,
     },
-    ...(isNonEmptyString(registration.description)
-      ? [
-          {
-            Icon: IconTextCaption,
-            label: t`Description`,
-            value: registration.description,
-          },
-        ]
-      : []),
     {
       Icon: IconWorld,
       label: t`Universal ID`,

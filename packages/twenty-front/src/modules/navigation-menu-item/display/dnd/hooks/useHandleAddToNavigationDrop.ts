@@ -1,4 +1,3 @@
-import type { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,7 +9,6 @@ import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/stat
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
 import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/edit/folder/hooks/useAddFolderToNavigationMenuDraft';
@@ -21,12 +19,15 @@ import { useAddObjectToNavigationMenuDraft } from '@/navigation-menu-item/edit/o
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/edit/record/hooks/useAddRecordToNavigationMenuDraft';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/view/hooks/useAddViewToNavigationMenuDraft';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 import { useStore } from 'jotai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+
+import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/navigationMenuItemDropResult';
 
 export const useHandleAddToNavigationDrop = () => {
   const store = useStore();
@@ -50,7 +51,7 @@ export const useHandleAddToNavigationDrop = () => {
   );
 
   const handleAddToNavigationDrop = useCallback(
-    (result: DropResult, _provided: ResponderProvided) => {
+    (result: NavigationMenuItemDropResult) => {
       const { source, destination, draggableId } = result;
       if (
         source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID ||
@@ -129,10 +130,9 @@ export const useHandleAddToNavigationDrop = () => {
           return;
         }
         case NavigationMenuItemType.OBJECT: {
-          const objectMetadataIdsInWorkspace = getObjectMetadataIdsInDraft(
-            currentDraft,
-            views,
-          );
+          const objectMetadataIdsInWorkspace =
+            getObjectMetadataIdsInDraft(currentDraft);
+
           if (objectMetadataIdsInWorkspace.has(payload.objectMetadataId)) {
             return;
           }
