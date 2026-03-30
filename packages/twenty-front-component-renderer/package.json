@@ -25,8 +25,8 @@
     "@remote-dom/core": "^1.10.1",
     "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "zod": "^4.1.11"
