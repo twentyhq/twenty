@@ -94,7 +94,12 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     for (const mailbox of mailboxList) {
-      const uidValidity = await this.getUidValidity(client, mailbox);
+      // Skip STATUS for \Noselect folders (container-only folders with no messages).
+      // getUidValidity would fail with "Mailbox doesn't exist" on these.
+      const isNoselect = mailbox.flags?.has('\\Noselect');
+      const uidValidity = isNoselect
+        ? null
+        : await this.getUidValidity(client, mailbox);
       const externalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
         : mailbox.path;
