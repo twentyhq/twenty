@@ -36,6 +36,7 @@ import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadDTO } from './dtos/agent-chat-thread.dto';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
+import { AgentChatResumableStreamService } from './services/agent-chat-resumable-stream.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
@@ -99,6 +100,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
   controllers: [AgentChatController],
   providers: [
     AgentChatResolver,
+    AgentChatResumableStreamService,
     AgentChatService,
     AgentChatStreamingService,
     AgentTitleGenerationService,

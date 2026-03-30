@@ -27,10 +27,11 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+
 export const useAgentChat = (
   uiMessages: ExtendedUIMessage[],
   ensureThreadIdForSend: () => Promise<string | null>,
@@ -107,11 +108,17 @@ export const useAgentChat = (
     }
   };
 
-  const { sendMessage, messages, status, error, regenerate, stop } = useChat({
-    transport: new DefaultChatTransport({
+  const transportRef = useRef(
+    new DefaultChatTransport({
       api: `${REST_API_BASE_URL}/agent-chat/stream`,
       headers: () => ({
         Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
+      }),
+      prepareReconnectToStreamRequest: ({ id }) => ({
+        api: `${REST_API_BASE_URL}/agent-chat/${id}/stream`,
+        headers: {
+          Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
+        },
       }),
       fetch: async (input, init) => {
         const response = await fetch(input, init);
@@ -122,7 +129,6 @@ export const useAgentChat = (
           return retriedResponse ?? response;
         }
 
-        // For non-2xx responses, parse the error body and throw with the code
         if (!response.ok) {
           const errorBody = await response.json().catch(() => ({}));
           const error = new Error(
@@ -139,8 +145,20 @@ export const useAgentChat = (
         return response;
       },
     }),
+  );
+
+  const {
+    sendMessage,
+    messages,
+    status,
+    error,
+    regenerate,
+    stop,
+    resumeStream,
+  } = useChat({
+    transport: transportRef.current,
     messages: uiMessages,
-    id: `${currentAIChatThread}-${uiMessages.length}`,
+    id: currentAIChatThread ?? undefined,
     experimental_throttle: 100,
     onFinish: ({ message }) => {
       type UsageMetadata = {
@@ -283,9 +301,28 @@ export const useAgentChat = (
     onBrowserEvent: handleSendMessage,
   });
 
+  const handleStop = useCallback(async () => {
+    stop();
+
+    const threadId = store.get(currentAIChatThreadState.atom);
+
+    if (isDefined(threadId)) {
+      const tokenPair = getTokenPair();
+
+      if (isDefined(tokenPair)) {
+        fetch(`${REST_API_BASE_URL}/agent-chat/${threadId}/stream`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${tokenPair.accessOrWorkspaceAgnosticToken.token}`,
+          },
+        }).catch(() => {});
+      }
+    }
+  }, [stop, store]);
+
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,
-    onBrowserEvent: stop,
+    onBrowserEvent: handleStop,
   });
 
   useListenToBrowserEvent({
@@ -296,7 +333,8 @@ export const useAgentChat = (
   return {
     messages,
     handleSendMessage,
-    handleStop: stop,
+    handleStop,
+    resumeStream,
     isLoading,
     error,
     status,
