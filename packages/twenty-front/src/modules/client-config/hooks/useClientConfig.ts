@@ -12,6 +12,7 @@ import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConf
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
+import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
@@ -117,6 +118,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     isClickHouseConfiguredState,
   );
 
+  const setMaintenanceMode = useSetAtomState(maintenanceModeState);
+
   const setAppVersion = useSetAtomState(appVersionState);
 
   const fetchClientConfig = useCallback(async () => {
@@ -195,6 +198,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         clientConfig?.isCloudflareIntegrationEnabled,
       );
       setIsClickHouseConfigured(clientConfig?.isClickHouseConfigured ?? false);
+      setMaintenanceMode(clientConfig?.maintenance ?? null);
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error('Failed to fetch client config');
@@ -230,6 +234,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setLabPublicFeatureFlags,
+    setMaintenanceMode,
     setIsMicrosoftCalendarEnabled,
     setIsMicrosoftMessagingEnabled,
     setSentryConfig,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
@@ -7,6 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { type DataSource, type EntityManager, Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
@@ -24,7 +25,16 @@ export class WorkspaceDataSourceService {
     private readonly coreDataSource: DataSource,
     private readonly featureFlagService: FeatureFlagService,
     private readonly dataSourceService: DataSourceService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  private assertDDLNotLocked(): void {
+    if (this.twentyConfigService.get('WORKSPACE_SCHEMA_DDL_LOCKED')) {
+      throw new ForbiddenException(
+        'Workspace schema DDL changes are locked. This is typically set during hot upgrades.',
+      );
+    }
+  }
 
   public async checkSchemaExists(workspaceId: string) {
     const isDataSourceMigrated = await this.featureFlagService.isFeatureEnabled(
@@ -57,6 +67,8 @@ export class WorkspaceDataSourceService {
    * @returns
    */
   public async createWorkspaceDBSchema(workspaceId: string): Promise<string> {
+    this.assertDDLNotLocked();
+
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -77,6 +89,8 @@ export class WorkspaceDataSourceService {
    * @returns
    */
   public async deleteWorkspaceDBSchema(workspaceId: string): Promise<void> {
+    this.assertDDLNotLocked();
+
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const queryRunner = this.coreDataSource.createQueryRunner();
 

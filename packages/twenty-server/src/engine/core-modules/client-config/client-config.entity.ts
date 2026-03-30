@@ -213,6 +213,18 @@ export class PublicFeatureFlag {
 }
 
 @ObjectType()
+export class ClientConfigMaintenanceMode {
+  @Field(() => String)
+  startAt: string;
+
+  @Field(() => String)
+  endAt: string;
+
+  @Field(() => String, { nullable: true })
+  link?: string;
+}
+
+@ObjectType()
 export class ClientConfig {
   @Field(() => String, { nullable: true })
   appVersion?: string;
@@ -294,4 +306,7 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isClickHouseConfigured: boolean;
+
+  @Field(() => ClientConfigMaintenanceMode, { nullable: true })
+  maintenance?: ClientConfigMaintenanceMode;
 }

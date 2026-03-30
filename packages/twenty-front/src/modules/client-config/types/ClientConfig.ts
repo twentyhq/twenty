@@ -1,3 +1,4 @@
+import { type MaintenanceMode } from '@/client-config/states/maintenanceModeState';
 import {
   type ApiConfig,
   type AuthProviders,
@@ -39,4 +40,5 @@ export type ClientConfig = {
   support: Support;
   isTwoFactorAuthenticationEnabled: boolean;
   allowRequestsToTwentyIcons: boolean;
+  maintenance?: MaintenanceMode;
 };
