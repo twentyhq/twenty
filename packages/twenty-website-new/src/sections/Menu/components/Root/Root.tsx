@@ -37,7 +37,8 @@ const StyledNav = styled.nav`
   align-items: center;
   border-radius: ${theme.radius(2)};
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-auto-flow: column;
+  justify-content: space-between;
   min-height: 48px;
   min-width: 0;
   padding-left: ${theme.spacing(4)};
@@ -79,17 +80,21 @@ type RootProps = {
 export function Root({ children, navItems, scheme, socialLinks }: RootProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const buttonColor =
+  const buttonColor: {
+    border: string;
+    stroke: string;
+    linkButton: 'primary' | 'secondary';
+  } =
     scheme === 'primary'
       ? {
           border: theme.colors.primary.border[20],
           stroke: theme.colors.primary.text[100],
-          linkButton: 'secondary' as const,
+          linkButton: 'secondary',
         }
       : {
           border: theme.colors.secondary.border[20],
           stroke: theme.colors.secondary.text[100],
-          linkButton: 'primary' as const,
+          linkButton: 'primary',
         };
 
   return (
