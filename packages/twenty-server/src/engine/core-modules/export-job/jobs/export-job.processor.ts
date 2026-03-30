@@ -175,9 +175,10 @@ function getRelationFieldFlatKey(
 
 /**
  * Sanitize a string value for CSV export (prevent formula injection).
+ * Allows phone calling codes like "+1" through unchanged.
  */
 function sanitizeForCSV(value: string): string {
-  if (/^[=+\-@\t\r]/.test(value)) {
+  if (/^[=@\t\r]/.test(value)) {
     return `'${value}`;
   }
 
@@ -899,6 +900,8 @@ export class ExportJobProcessor {
 
           if (value === null || value === undefined) {
             processed[col.field] = '';
+          } else if (value instanceof Date) {
+            processed[col.field] = value.toISOString();
           } else if (typeof value === 'string') {
             processed[col.field] = sanitizeForCSV(value);
           } else if (typeof value === 'object') {
