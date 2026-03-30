@@ -11,12 +11,12 @@ const HeadingContainer = styled.div`
   width: 100%;
   word-wrap: break-word;
 
+  &[data-page=${Pages.WhyTwenty}] {
+    color: ${theme.colors.secondary.text[100]};
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 672px;
-
-    &[data-page=${Pages.WhyTwenty}] {
-      color: ${theme.colors.secondary.text[100]};
-    }
   }
 `;
 

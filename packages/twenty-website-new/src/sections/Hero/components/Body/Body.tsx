@@ -12,6 +12,10 @@ const BodyContainer = styled.div`
   max-width: 360px;
   width: 100%;
 
+  &[data-page=${Pages.WhyTwenty}] {
+    color: ${theme.colors.secondary.text[100]};
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     &[data-page=${Pages.Home}] {
       max-width: 591px;
@@ -31,7 +35,6 @@ const BodyContainer = styled.div`
 
     &[data-page=${Pages.WhyTwenty}] {
       max-width: 443px;
-      color: ${theme.colors.secondary.text[100]};
     }
   }
 `;

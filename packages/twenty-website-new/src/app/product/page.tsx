@@ -20,6 +20,7 @@ export default function ProductPage() {
   return (
     <>
       <Menu.Root
+        backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
         navItems={MENU_DATA.navItems}
         socialLinks={MENU_DATA.socialLinks}

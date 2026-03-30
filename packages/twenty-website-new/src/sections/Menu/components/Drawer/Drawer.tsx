@@ -12,7 +12,7 @@ import { styled } from '@linaria/react';
 import Link from 'next/link';
 import React from 'react';
 
-const DrawerPopup = styled(Drawer.Popup)`
+const StyledDrawerContent = styled.div`
   display: grid;
   grid-template-rows: 1fr auto auto;
   height: 100vh;
@@ -142,7 +142,11 @@ type MenuDrawerProps = {
   socialLinks: MenuSocialLinkType[];
 };
 
-export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
+export function MenuDrawer({
+  navItems,
+  scheme,
+  socialLinks,
+}: MenuDrawerProps) {
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
 
   const iconFillColor =
@@ -157,8 +161,9 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
 
   return (
     <Drawer.Portal>
-      <DrawerPopup aria-label="Navigation menu" data-scheme={scheme}>
-        <NavigationContainer aria-label="Mobile navigation">
+      <Drawer.Popup aria-label="Navigation menu">
+        <StyledDrawerContent data-scheme={scheme}>
+          <NavigationContainer aria-label="Mobile navigation">
           {navItems.map((item, index) => (
             <React.Fragment key={item.href}>
               <Drawer.Close
@@ -228,7 +233,8 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
               );
             })}
         </SocialContainer>
-      </DrawerPopup>
+        </StyledDrawerContent>
+      </Drawer.Popup>
     </Drawer.Portal>
   );
 }

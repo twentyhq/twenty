@@ -9,6 +9,7 @@ export default function WhyTwentyPage() {
   return (
     <>
       <Menu.Root
+        backgroundColor={theme.colors.secondary.background[100]}
         scheme="secondary"
         navItems={MENU_DATA.navItems}
         socialLinks={MENU_DATA.socialLinks}

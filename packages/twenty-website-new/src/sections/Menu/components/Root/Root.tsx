@@ -17,14 +17,6 @@ import { MenuDrawer } from '../Drawer/Drawer';
 const StyledSection = styled.section`
   min-width: 0;
   width: 100%;
-
-  &[data-scheme='primary'] {
-    background-color: ${theme.colors.primary.background[100]};
-  }
-
-  &[data-scheme='secondary'] {
-    background-color: ${theme.colors.secondary.background[100]};
-  }
 `;
 
 const StyledContainer = styled(Container)`
@@ -45,14 +37,6 @@ const StyledNav = styled.nav`
   padding-right: ${theme.spacing(4)};
   width: 100%;
 
-  &[data-scheme='primary'] {
-    background-color: ${theme.colors.primary.background[100]};
-  }
-
-  &[data-scheme='secondary'] {
-    background-color: ${theme.colors.secondary.background[100]};
-  }
-
   @media (min-width: ${theme.breakpoints.lg}px) {
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
@@ -71,13 +55,20 @@ const MobileRightContainer = styled.div`
 `;
 
 type RootProps = {
+  backgroundColor: string;
   children: ReactNode;
   navItems: MenuNavItemType[];
   scheme: MenuScheme;
   socialLinks: MenuSocialLinkType[];
 };
 
-export function Root({ children, navItems, scheme, socialLinks }: RootProps) {
+export function Root({
+  backgroundColor,
+  children,
+  navItems,
+  scheme,
+  socialLinks,
+}: RootProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const buttonColor: {
@@ -106,7 +97,7 @@ export function Root({ children, navItems, scheme, socialLinks }: RootProps) {
       <CloseDrawerWhenNavigationExpandsEffect
         onClose={() => setIsDrawerOpen(false)}
       />
-      <StyledSection data-scheme={scheme}>
+      <StyledSection style={{ backgroundColor }}>
         <StyledContainer>
           <StyledNav aria-label="Primary navigation" data-scheme={scheme}>
             {children}

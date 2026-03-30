@@ -15,6 +15,7 @@ export default function PricingPage() {
   return (
     <>
       <Menu.Root
+        backgroundColor={theme.colors.secondary.background[5]}
         scheme="primary"
         navItems={MENU_DATA.navItems}
         socialLinks={MENU_DATA.socialLinks}
