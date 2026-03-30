@@ -15,21 +15,21 @@ twenty-sdk, uygulamanız içinde kullandığınız türlendirilmiş yapı taşla
 
 SDK, uygulama varlıklarınızı tanımlamak için yardımcı fonksiyonlar sağlar. [Varlık algılama](/l/tr/developers/extend/apps/getting-started#entity-detection) bölümünde açıklandığı gibi, varlıklarınızın algılanması için `export default define<Entity>({...})` kullanmalısınız:
 
-| Fonksiyon                        | Amaç                                                                                |
-| -------------------------------- | ----------------------------------------------------------------------------------- |
-| `defineApplication`              | Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet)           |
-| `defineObject`                   | Alanlara sahip özel nesneler tanımlayın                                             |
-| `defineField`                    | Extend existing objects with additional fields or define standalone relation fields |
-| `defineLogicFunction`            | İşleyicilerle mantık fonksiyonları tanımlayın                                       |
-| `definePreInstallLogicFunction`  | Bir kurulum öncesi mantık işlevi tanımlayın (uygulama başına bir adet)              |
-| `definePostInstallLogicFunction` | Bir kurulum sonrası mantık işlevi tanımlayın (uygulama başına bir adet)             |
-| `defineFrontComponent`           | Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın                          |
-| `defineRole`                     | Rol izinlerini ve nesne erişimini yapılandırın                                      |
-| `defineView`                     | Nesneler için kaydedilmiş görünümler tanımlayın                                     |
-| `defineNavigationMenuItem`       | Kenar çubuğu gezinme bağlantılarını tanımlayın                                      |
-| `defineSkill`                    | Yapay zekâ ajanı yeteneklerini tanımlayın                                           |
-| `defineAgent`                    | Define AI agents                                                                    |
-| `definePageLayout`               | Define custom page layouts                                                          |
+| Fonksiyon                        | Amaç                                                                               |
+| -------------------------------- | ---------------------------------------------------------------------------------- |
+| `defineApplication`              | Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet)          |
+| `defineObject`                   | Alanlara sahip özel nesneler tanımlayın                                            |
+| `defineField`                    | Mevcut nesneleri ek alanlarla genişletin veya bağımsız ilişki alanları tanımlayın. |
+| `defineLogicFunction`            | İşleyicilerle mantık fonksiyonları tanımlayın                                      |
+| `definePreInstallLogicFunction`  | Bir kurulum öncesi mantık işlevi tanımlayın (uygulama başına bir adet)             |
+| `definePostInstallLogicFunction` | Bir kurulum sonrası mantık işlevi tanımlayın (uygulama başına bir adet)            |
+| `defineFrontComponent`           | Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın                         |
+| `defineRole`                     | Rol izinlerini ve nesne erişimini yapılandırın                                     |
+| `defineView`                     | Nesneler için kaydedilmiş görünümler tanımlayın                                    |
+| `defineNavigationMenuItem`       | Kenar çubuğu gezinme bağlantılarını tanımlayın                                     |
+| `defineSkill`                    | Yapay zekâ ajanı yeteneklerini tanımlayın                                          |
+| `defineAgent`                    | Yapay zekâ ajanlarını tanımlayın.                                                  |
+| `definePageLayout`               | Özel sayfa düzenlerini tanımlayın.                                                 |
 
 Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
@@ -112,7 +112,7 @@ export default defineObject({
 * `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
 * Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
 * `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
-* You can scaffold new objects using `yarn twenty add`, which guides you through naming, fields, and relationships.
+* `yarn twenty add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
 
 <Note>
 **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, standart alanları otomatik olarak ekler
@@ -124,7 +124,7 @@ ancak bu önerilmez.
 
 ### Mevcut nesneler üzerinde alanları tanımlama
 
-Use `defineField()` to add fields to objects you don't own — such as standard Twenty objects (Person, Company, etc.) or objects from other apps. Unlike inline fields in `defineObject()`, standalone fields require an `objectUniversalIdentifier` to specify which object they extend:
+Sahibi olmadığınız nesnelere alan eklemek için `defineField()` kullanın — standart Twenty nesneleri (Person, Company, vb.) gibi. veya diğer uygulamalardaki nesneler. `defineObject()` içindeki satır içi alanların aksine, bağımsız alanlar hangi nesneyi genişlettiklerini belirtmek için bir `objectUniversalIdentifier` gerektirir:
 
 ```typescript
 // src/fields/company-loyalty-tier.field.ts
@@ -147,35 +147,35 @@ export default defineField({
 
 Önemli noktalar:
 
-* `objectUniversalIdentifier` identifies the target object. For standard objects, use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` exported from `twenty-sdk`.
-* When defining fields inline in `defineObject()`, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
-* `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
+* `objectUniversalIdentifier` hedef nesneyi tanımlar. Standart nesneler için, `twenty-sdk`'den dışa aktarılan `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`'ı kullanın.
+* Alanları `defineObject()` içinde satır içi tanımlarken, `objectUniversalIdentifier`'a ihtiyacınız yoktur — üst nesneden devralınır.
+* `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
 
 ### İlişkiler
 
-Relations connect objects together. In Twenty, relations are always **bidirectional** — you define both sides, and each side references the other.
+İlişkiler nesneleri birbirine bağlar. Twenty'de ilişkiler her zaman **çift yönlüdür** — her iki tarafı da tanımlarsınız ve her taraf diğerine başvurur.
 
-There are two relation types:
+İki ilişki türü vardır:
 
-| İlişki türü   | Açıklama                                                      | Has foreign key?       |
-| ------------- | ------------------------------------------------------------- | ---------------------- |
-| `MANY_TO_ONE` | Many records of this object point to one record of the target | Yes (`joinColumnName`) |
-| `ONE_TO_MANY` | One record of this object has many records of the target      | No (inverse side)      |
+| İlişki türü   | Açıklama                                                  | Yabancı anahtar var mı? |
+| ------------- | --------------------------------------------------------- | ----------------------- |
+| `MANY_TO_ONE` | Bu nesnenin birçok kaydı, hedefin bir kaydını işaret eder | Evet (`joinColumnName`) |
+| `ONE_TO_MANY` | Bu nesnenin bir kaydı, hedefin birçok kaydına sahiptir    | Hayır (ters taraf)      |
 
-#### How relations work
+#### İlişkiler nasıl çalışır
 
-Every relation requires **two fields** that reference each other:
+Her ilişki, birbirine referans veren iki alan gerektirir:
 
-1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key
-2. The **ONE_TO_MANY** side — lives on the object that owns the collection
+1. **MANY_TO_ONE** tarafı — yabancı anahtarı tutan nesne üzerinde bulunur
+2. **ONE_TO_MANY** tarafı — koleksiyona sahip olan nesne üzerinde bulunur
 
-Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+Her iki alan da `FieldType.RELATION` kullanır ve `relationTargetFieldMetadataUniversalIdentifier` aracılığıyla birbirine karşılıklı referans verir.
 
-#### Example: Post Card has many Recipients
+#### Örnek: Posta Kartı'nın birçok Alıcısı vardır
 
-Suppose a `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+Bir `PostCard`'ın birçok `PostCardRecipient` kaydına gönderilebildiğini varsayalım. Her alıcı tam olarak bir posta kartına aittir.
 
-**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+**Adım 1: PostCard üzerinde ONE_TO_MANY tarafını tanımlayın** ("bir" taraf):
 
 ```typescript
 // src/fields/post-card-recipients-on-post-card.field.ts
@@ -203,7 +203,7 @@ export default defineField({
 });
 ```
 
-**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+**Adım 2: PostCardRecipient üzerinde MANY_TO_ONE tarafını tanımlayın** ("çok" taraf — yabancı anahtarı tutar):
 
 ```typescript
 // src/fields/post-card-on-post-card-recipient.field.ts
@@ -234,12 +234,12 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** Both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file, and import them in the other file. The build system resolves these at compile time.
+**Döngüsel içe aktarmalar:** Her iki ilişki alanı da birbirlerinin `universalIdentifier` değerine referans verir. Döngüsel içe aktarma sorunlarından kaçınmak için, alan kimliklerinizi her dosyadan adlandırılmış sabitler olarak dışa aktarın ve diğer dosyada içe aktarın. Derleme sistemi bunları derleme zamanında çözer.
 </Note>
 
-#### Relating to standard objects
+#### Standart nesnelerle ilişkilendirme
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Yerleşik bir Twenty nesnesiyle (Person, Company, vb.) ilişki oluşturmak için `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` kullanın:
 
 ```typescript
 // src/fields/person-on-self-hosting-user.field.ts
@@ -274,20 +274,20 @@ export default defineField({
 });
 ```
 
-#### Relation field properties
+#### İlişki alanı özellikleri
 
-| Özellik                                           | Zorunlu          | Açıklama                                                                                              |
-| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `type`                                            | Evet             | Must be `FieldType.RELATION`                                                                          |
-| `relationTargetObjectMetadataUniversalIdentifier` | Evet             | The `universalIdentifier` of the target object                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Evet             | The `universalIdentifier` of the matching field on the target object                                  |
-| `universalSettings.relationType`                  | Evet             | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+| Özellik                                           | Zorunlu              | Açıklama                                                                                     |
+| ------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------- |
+| `type`                                            | Evet                 | `FieldType.RELATION` olmalıdır                                                               |
+| `relationTargetObjectMetadataUniversalIdentifier` | Evet                 | Hedef nesnenin `universalIdentifier` değeri                                                  |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Evet                 | Hedef nesnedeki eşleşen alanın `universalIdentifier` değeri                                  |
+| `universalSettings.relationType`                  | Evet                 | `RelationType.MANY_TO_ONE` veya `RelationType.ONE_TO_MANY`                                   |
+| `universalSettings.onDelete`                      | Yalnızca MANY_TO_ONE | Başvurulan kayıt silindiğinde ne olacağı: `CASCADE`, `SET_NULL`, `RESTRICT` veya `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Yalnızca MANY_TO_ONE | Yabancı anahtar için veritabanı sütun adı (örn. `postCardId`)                                |
 
-#### Inline relation fields in defineObject
+#### defineObject içinde satır içi ilişki alanları
 
-You can also define relation fields directly inside `defineObject()`. In that case, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+İlişki alanlarını doğrudan `defineObject()` içinde de tanımlayabilirsiniz. Bu durumda, `objectUniversalIdentifier`'ı atlayın — üst nesneden devralınır:
 
 ```typescript
 export default defineObject({
@@ -354,21 +354,21 @@ Notlar:
 * `defaultRoleUniversalIdentifier`, rol dosyasıyla eşleşmelidir (aşağıya bakın).
 * Kurulum öncesi ve kurulum sonrası işlevler, manifest oluşturma sırasında otomatik olarak algılanır. Bkz. [Kurulum öncesi işlevler](#pre-install-functions) ve [Kurulum sonrası işlevler](#post-install-functions).
 
-#### Marketplace metadata
+#### Pazaryeri meta verileri
 
-If you plan to [publish your app](/l/tr/developers/extend/apps/publishing), these optional fields control how your app appears in the marketplace:
+Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/publishing) planlıyorsanız, bu isteğe bağlı alanlar uygulamanızın pazaryerinde nasıl görüneceğini kontrol eder:
 
-| Alan               | Açıklama                                            |
-| ------------------ | --------------------------------------------------- |
-| `author`           | Author or company name                              |
-| `category`         | App category for marketplace filtering              |
-| `logoUrl`          | Path to your app logo (relative to `./assets/`)     |
-| `screenshots`      | Array of screenshot paths (relative to `./assets/`) |
-| `aboutDescription` | Longer markdown description for the "About" tab     |
-| `websiteUrl`       | Link to your website                                |
-| `termsUrl`         | Link to terms of service                            |
-| `emailSupport`     | Support email address                               |
-| `issueReportUrl`   | Link to issue tracker                               |
+| Alan               | Açıklama                                                      |
+| ------------------ | ------------------------------------------------------------- |
+| `author`           | Yazar veya şirket adı                                         |
+| `category`         | Pazaryerinde filtreleme için uygulama kategorisi              |
+| `logoUrl`          | Uygulama logonuzun yolu (`./assets/` dizinine göre)           |
+| `screenshots`      | Ekran görüntüsü yollarının dizisi (`./assets/` dizinine göre) |
+| `aboutDescription` | "Hakkında" sekmesi için daha uzun bir markdown açıklaması     |
+| `websiteUrl`       | Web sitenize bağlantı                                         |
+| `termsUrl`         | Hizmet Koşulları'na bağlantı                                  |
+| `emailSupport`     | Destek e-posta adresi                                         |
+| `issueReportUrl`   | Sorun izleyicisine bağlantı                                   |
 
 #### Roller ve izinler
 
@@ -376,7 +376,7 @@ Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri
 
 * `TWENTY_API_KEY` olarak enjekte edilen çalışma zamanı API anahtarı bu varsayılan fonksiyon rolünden türetilir.
 * Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
-* Follow least-privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* En az ayrıcalık ilkesini izleyin: Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinlere sahip özel bir rol oluşturun ve ardından evrensel tanımlayıcısına referans verin.
 
 ##### Varsayılan fonksiyon rolü (*.role.ts)
 
@@ -429,7 +429,7 @@ Bu rolün `universalIdentifier` değeri daha sonra `application-config.ts` için
 
 Notlar:
 
-* Start from the scaffolded role, then progressively restrict it following least-privilege.
+* Oluşturulan rolden başlayın ve en az ayrıcalık ilkesini izleyerek bunu aşamalı olarak kısıtlayın.
 * `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın ihtiyaç duyduğu nesneler/alanlarla değiştirin.
 * `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Minimumda tutun; yalnızca ihtiyacınız olanları ekleyin.
 * Çalışan bir örneği Hello World uygulamasında görün: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
@@ -543,7 +543,7 @@ yarn twenty exec --preInstall
 * Uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
 * İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `preInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
 * Varsayılan zaman aşımı, daha uzun hazırlık görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `exec --preInstall`.
+* Kurulum öncesi işlevlerin tetikleyicilere ihtiyacı yoktur — kurulumdan önce platform tarafından veya `exec --preInstall` aracılığıyla manuel olarak çağrılırlar.
 
 ### Kurulum sonrası işlevler
 
@@ -581,7 +581,7 @@ yarn twenty exec --postInstall
 * Uygulama başına yalnızca bir kurulum sonrası işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
 * İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `postInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
 * Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
-* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `exec --postInstall`.
+* Kurulum sonrası işlevlerin tetikleyicilere ihtiyacı yoktur — kurulum sırasında platform tarafından veya `exec --postInstall` aracılığıyla manuel olarak çağrılırlar.
 
 ### Rota tetikleyicisi yükü
 
@@ -625,15 +625,15 @@ const handler = async (event: RoutePayload) => {
 
 `RoutePayload` türünün yapısı şu şekildedir:
 
-| Özellik                      | Tür                                   | Açıklama                                                                                 |
-| ---------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)               |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)                     |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` -> `{ id: '123' }`) |
-| `body`                       | `object \| null`                      | Ayrıştırılmış istek gövdesi (JSON)                                                       |
-| `isBase64Encoded`            | `boolean`                             | Gövdenin base64 ile kodlanıp kodlanmadığı                                                |
-| `requestContext.http.method` | `string`                              | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                             |
-| `requestContext.http.path`   | `string`                              | Ham istek yolu                                                                           |
+| Özellik                      | Tür                                   | Açıklama                                                                            |
+| ---------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)          |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)                |
+| `pathParameters`             | `Record<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri (örn., `/users/:id` -> `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Ayrıştırılmış istek gövdesi (JSON)                                                  |
+| `isBase64Encoded`            | `boolean`                             | Gövdenin base64 ile kodlanıp kodlanmadığı                                           |
+| `requestContext.http.method` | `string`                              | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                        |
+| `requestContext.http.path`   | `string`                              | Ham istek yolu                                                                      |
 
 ### HTTP başlıklarını iletme
 
@@ -675,7 +675,7 @@ const handler = async (event: RoutePayload) => {
 
 Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new logic function. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
+* **Şablondan**: `yarn twenty add` çalıştırın ve yeni bir mantık fonksiyonu ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
 * **Manuel**: Yeni bir `*.logic-function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineLogicFunction()` kullanın.
 
 ### Bir mantık işlevini araç olarak işaretleme
@@ -776,7 +776,7 @@ export default defineFrontComponent({
 
 Yeni ön uç bileşenlerini iki şekilde oluşturabilirsiniz:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new front component.
+* **Şablondan**: `yarn twenty add` çalıştırın ve yeni bir ön uç bileşeni ekleme seçeneğini seçin.
 * **Manuel**: Aynı deseni izleyerek yeni bir `.tsx` dosyası oluşturun ve `defineFrontComponent()` kullanın.
 
 ### Beceriler
@@ -811,21 +811,21 @@ export default defineSkill({
 
 Yeni yetenekleri iki şekilde oluşturabilirsiniz:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new skill.
+* **Şablondan**: `yarn twenty add` çalıştırın ve yeni bir yetenek ekleme seçeneğini seçin.
 * **Manuel**: Yeni bir dosya oluşturun ve aynı deseni izleyerek `defineSkill()` kullanın.
 
-### Typed API clients (`twenty-client-sdk`)
+### Tipli API istemcileri (`twenty-client-sdk`)
 
-The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components:
+`twenty-client-sdk` paketi, mantık fonksiyonlarınızdan ve ön uç bileşenlerinizden Twenty API ile etkileşim kurmak için iki tipli GraphQL istemcisi sağlar:
 
-| İstemci             | İçe Aktar                    | Endpoint                                       | Generated?             |
-| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
-| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
+| İstemci             | İçe Aktar                    | Uç nokta                                                      | Oluşturuldu mu?                         |
+| ------------------- | ---------------------------- | ------------------------------------------------------------- | --------------------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — çalışma alanı verileri (kayıtlar, nesneler)      | Evet, geliştirme/derleme zamanında      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — çalışma alanı yapılandırması, dosya yüklemeleri | Hayır, önceden hazırlanmış olarak gelir |
 
 #### CoreApiClient
 
-`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it's fully typed to match your objects and fields.
+`CoreApiClient`, çalışma alanı verilerini sorgulamak ve değiştirmek için ana istemcidir. `yarn twenty dev` veya `yarn twenty build` sırasında çalışma alanı şemanızdan oluşturulur; bu nedenle nesnelerinize ve alanlarınıza uyacak şekilde tamamen tiplendirilmiştir.
 
 ```typescript
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -859,15 +859,15 @@ const { createCompany } = await client.mutation({
 });
 ```
 
-The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
+İstemci bir seçim kümesi sözdizimi kullanır: Bir alanı dahil etmek için `true` geçin, bağımsız değişkenler için `__args` kullanın ve ilişkiler için nesneleri iç içe yerleştirin. Çalışma alanı şemanıza göre tam otomatik tamamlama ve tip denetimi elde edersiniz.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you try to use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema, generates a typed client using `@genql/cli`, writes the generated sources to `node_modules/twenty-client-sdk/dist/core/generated/`, and replaces the stubs in `node_modules/twenty-client-sdk/dist/core.mjs` and `node_modules/twenty-client-sdk/dist/core.cjs`.
+**CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn twenty dev` veya `yarn twenty build` çalıştırmadan kullanmaya çalışırsanız, hata verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL şemasını inceler, `@genql/cli` kullanarak tipli bir istemci üretir, üretilen kaynakları `node_modules/twenty-client-sdk/dist/core/generated/` dizinine yazar ve `node_modules/twenty-client-sdk/dist/core.mjs` ile `node_modules/twenty-client-sdk/dist/core.cjs` içindeki taslakları değiştirir.
 </Note>
 
-#### Using CoreSchema for type annotations
+#### Tür açıklamaları için CoreSchema'yı kullanma
 
-`CoreSchema` provides TypeScript types matching your workspace objects, useful for typing component state or function parameters:
+`CoreSchema`, çalışma alanı nesnelerinize uyan TypeScript türleri sağlar; bileşen durumunu veya işlev parametrelerini tiplemek için kullanışlıdır:
 
 ```typescript
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -890,7 +890,7 @@ setCompany(result.company);
 
 #### MetadataApiClient
 
-`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads:
+`MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir (oluşturma gerektirmez). Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri için `/metadata` uç noktasını sorgular:
 
 ```typescript
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -912,18 +912,18 @@ const { findManyApplications } = await metadataClient.query({
 });
 ```
 
-#### Runtime credentials
+#### Çalışma zamanı kimlik bilgileri
 
-When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
+Kodunuz Twenty üzerinde çalıştığında (mantık işlevleri veya ön uç bileşenleri), platform kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
 
-* `TWENTY_API_URL` — Base URL of the Twenty API
-* `TWENTY_API_KEY` — Short-lived key scoped to your application's default function role
+* `TWENTY_API_URL` — Twenty API'nin temel URL'si
+* `TWENTY_API_KEY` — Uygulamanızın varsayılan fonksiyon rolü kapsamına sahip kısa ömürlü anahtar
 
-You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role referenced in `defaultRoleUniversalIdentifier` in your `application-config.ts`.
+Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` ile referans verilen role göre belirlenir.
 
 #### Dosya yükleme
 
-`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields. It implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec):
+`MetadataApiClient`, dosya türü alanlara dosya eklemek için bir `uploadFile` yöntemi içerir. [GraphQL çok parçalı istek spesifikasyonunu](https://github.com/jaydenseric/graphql-multipart-request-spec) uygular:
 
 ```typescript
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -953,7 +953,7 @@ console.log(uploadedFile);
 
 Önemli noktalar:
 
-* Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
+* Alan için `universalIdentifier` kullanır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır.
 * Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
 
 ### Hello World örneği
