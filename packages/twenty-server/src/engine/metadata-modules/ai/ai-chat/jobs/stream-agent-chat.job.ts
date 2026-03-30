@@ -190,7 +190,6 @@ export class StreamAgentChatJob {
                 return this.computeMessageMetadata({
                   part,
                   modelConfig,
-                  streamUsage,
                   lastStepConversationSize,
                   totalCacheCreationTokens,
                   onUpdateUsage: (usage) => {
@@ -209,7 +208,6 @@ export class StreamAgentChatJob {
                   await this.handleStreamFinish({
                     responseMessage,
                     threadId,
-                    streamId,
                     streamUsage,
                     lastStepConversationSize,
                     modelConfig,
@@ -242,7 +240,6 @@ export class StreamAgentChatJob {
   private computeMessageMetadata({
     part,
     modelConfig,
-    streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
     onUpdateUsage,
@@ -251,10 +248,9 @@ export class StreamAgentChatJob {
   }: {
     part: { type: string; usage?: { inputTokens?: number; inputTokenDetails?: { cacheReadTokens?: number } }; totalUsage?: { inputTokens?: number; outputTokens?: number; inputTokenDetails?: { cacheReadTokens?: number }; outputTokenDetails?: { reasoningTokens?: number } }; providerMetadata?: Record<string, Record<string, unknown> | undefined> };
     modelConfig: AIModelConfig;
-    streamUsage: { inputTokens: number; outputTokens: number; inputCredits: number; outputCredits: number };
     lastStepConversationSize: number;
     totalCacheCreationTokens: number;
-    onUpdateUsage: (usage: typeof streamUsage) => void;
+    onUpdateUsage: (usage: { inputTokens: number; outputTokens: number; inputCredits: number; outputCredits: number }) => void;
     onUpdateConversationSize: (size: number) => void;
     onUpdateCacheCreationTokens: (tokens: number) => void;
   }) {
@@ -315,7 +311,6 @@ export class StreamAgentChatJob {
   private async handleStreamFinish({
     responseMessage,
     threadId,
-    streamId,
     streamUsage,
     lastStepConversationSize,
     modelConfig,
@@ -325,7 +320,6 @@ export class StreamAgentChatJob {
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     threadId: string;
-    streamId: string;
     streamUsage: { inputTokens: number; outputTokens: number; inputCredits: number; outputCredits: number };
     lastStepConversationSize: number;
     modelConfig: AIModelConfig;
