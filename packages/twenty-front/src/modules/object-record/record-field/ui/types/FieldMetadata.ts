@@ -31,6 +31,8 @@ export type FieldTextMetadata = BaseFieldMetadata & {
   placeHolder: string;
   settings?: {
     displayedMaxRows?: number;
+    validationPattern?: string;
+    validationErrorMessage?: string;
   };
 };
 

@@ -28,6 +28,8 @@ type FieldMetadataNumberSettings = {
 
 type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
+  validationPattern?: string;
+  validationErrorMessage?: string;
 };
 
 type FieldMetadataDateSettings = {

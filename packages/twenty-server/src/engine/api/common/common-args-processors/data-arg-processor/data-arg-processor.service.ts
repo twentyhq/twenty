@@ -189,7 +189,11 @@ export class DataArgProcessorService {
         return validateNumberFieldOrThrow(value, key);
       }
       case FieldMetadataType.TEXT: {
-        const validatedValue = validateTextFieldOrThrow(value, key);
+        const validatedValue = validateTextFieldOrThrow(
+          value,
+          key,
+          fieldMetadata.settings as FieldMetadataSettingsMapping[FieldMetadataType.TEXT],
+        );
 
         return transformTextField(validatedValue);
       }
