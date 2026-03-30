@@ -2,7 +2,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getNonReadableFieldInfoForViewField } from '@/object-record/record-index/utils/getNonReadableReasonForViewField';
+import { getNonReadableFieldInfoForViewField } from '@/object-record/record-index/utils/getNonReadableInfoForViewField';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
@@ -50,24 +50,24 @@ export const useHasCurrentViewNonReadableFields = (
     };
 
     for (const sort of view.viewSorts) {
-      const reason = getNonReadableFieldInfoForViewField({
+      const info = getNonReadableFieldInfoForViewField({
         fieldMetadataId: sort.fieldMetadataId,
         ...params,
       });
 
-      if (isDefined(reason)) {
-        return { ...reason, usage: 'sort' };
+      if (isDefined(info)) {
+        return { ...info, usage: 'sort' };
       }
     }
 
     for (const filter of view.viewFilters) {
-      const reason = getNonReadableFieldInfoForViewField({
+      const info = getNonReadableFieldInfoForViewField({
         fieldMetadataId: filter.fieldMetadataId,
         ...params,
       });
 
-      if (isDefined(reason)) {
-        return { ...reason, usage: 'filter' };
+      if (isDefined(info)) {
+        return { ...info, usage: 'filter' };
       }
     }
 

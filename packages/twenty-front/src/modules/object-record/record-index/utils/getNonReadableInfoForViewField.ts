@@ -21,27 +21,23 @@ export const getNonReadableFieldInfoForViewField = ({
     ObjectPermissions & { objectMetadataId: string }
   >;
 }): { fieldLabel?: string; objectLabel: string } | undefined => {
-  if (!readableFieldIds.has(fieldMetadataId)) {
-    const { fieldMetadataItem: blockedField } = getFieldMetadataItemById({
-      fieldMetadataId,
-      objectMetadataItems,
-    });
-
-    return {
-      fieldLabel: blockedField?.label,
-      objectLabel: objectMetadataItem.labelSingular,
-    };
-  }
-
   const { fieldMetadataItem } = getFieldMetadataItemById({
     fieldMetadataId,
     objectMetadataItems,
   });
 
-  if (
-    !isDefined(fieldMetadataItem) ||
-    fieldMetadataItem.type !== FieldMetadataType.RELATION
-  ) {
+  if (!isDefined(fieldMetadataItem)) {
+    return;
+  }
+
+  if (!readableFieldIds.has(fieldMetadataId)) {
+    return {
+      fieldLabel: fieldMetadataItem.label,
+      objectLabel: objectMetadataItem.labelSingular,
+    };
+  }
+
+  if (fieldMetadataItem.type !== FieldMetadataType.RELATION) {
     return;
   }
 
@@ -52,7 +48,7 @@ export const getNonReadableFieldInfoForViewField = ({
   );
 
   if (!isDefined(targetObjectMetadataItem)) {
-    return undefined;
+    return;
   }
 
   const targetObjectPermissions = getObjectPermissionsForObject(
