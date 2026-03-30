@@ -1,7 +1,5 @@
-import {
-  FRONT_COMPONENT_CONTEXT_KEY,
-  FRONT_COMPONENT_LISTENERS_KEY,
-} from 'twenty-shared/constants';
+import { FRONT_COMPONENT_CONTEXT_KEY } from '../constants/front-component-context-key';
+import { FRONT_COMPONENT_LISTENERS_KEY } from '../constants/front-component-listeners-key';
 
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
 

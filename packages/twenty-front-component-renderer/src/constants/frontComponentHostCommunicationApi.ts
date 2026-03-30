@@ -9,7 +9,7 @@ import {
   type UpdateProgressFunction,
 } from 'twenty-sdk';
 
-import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from 'twenty-shared/constants';
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from 'twenty-sdk/front-component-renderer';
 
 type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
