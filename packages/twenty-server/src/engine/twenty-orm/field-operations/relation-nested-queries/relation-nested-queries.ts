@@ -74,6 +74,37 @@ function extractCreateData<Entity extends ObjectLiteral>(
 }
 
 /**
+ * Extracts the `connect.where` from an entity's connect object, which
+ * contains the unique constraint fields (e.g., phone) used for matching.
+ */
+function extractConnectWhere<Entity extends ObjectLiteral>(
+  entity: QueryDeepPartialEntityWithNestedRelationFields<Entity>,
+  connectFieldName: string,
+): Record<string, unknown> | undefined {
+  const fieldValue: unknown = Object.entries(entity).find(
+    ([key]) => key === connectFieldName,
+  )?.[1];
+
+  if (!isRecord(fieldValue)) return undefined;
+
+  const connect = getProperty(
+    fieldValue,
+    RELATION_NESTED_QUERY_KEYWORDS.CONNECT,
+  );
+
+  if (!isRecord(connect)) return undefined;
+
+  const where = getProperty(
+    connect,
+    RELATION_NESTED_QUERY_KEYWORDS.CONNECT_WHERE,
+  );
+
+  if (!isRecord(where)) return undefined;
+
+  return where;
+}
+
+/**
  * Extracts the `id` field from an entity, or `undefined` if not set.
  */
 function getEntityId<Entity extends ObjectLiteral>(
@@ -379,14 +410,16 @@ export class RelationNestedQueries {
         }
 
         try {
-          queryBuilder.expressionMap.aliases = [];
-          queryBuilder.expressionMap.mainAlias = undefined;
+          const table = connectQueryConfig.targetObjectName;
+          const columns = Object.keys(newRecord);
+          const colList = columns.map((c) => `"${c}"`).join(', ');
+          const paramList = columns.map((_, i) => `$${i + 1}`).join(', ');
+          const values = columns.map((c) => newRecord[c]);
 
-          await queryBuilder
-            .insert()
-            .into(connectQueryConfig.targetObjectName)
-            .values(newRecord)
-            .execute();
+          await queryBuilder.connection.query(
+            `INSERT INTO "${table}" (${colList}) VALUES (${paramList})`,
+            values,
+          );
 
           recordsToConnect.push(newRecord);
         } catch {
@@ -616,7 +649,10 @@ export class RelationNestedQueries {
 
   /**
    * After connecting entities to their related records, update those records
-   * with createData fields (email, name, address, etc.) from the CSV row.
+   * with ALL available data from the CSV row:
+   * - createData fields (email, name, address — relation update fields)
+   * - connect.where fields (phone — the unique constraint used for matching)
+   *
    * This ensures that re-importing a CSV actually updates lead data.
    */
   private async applyCreateDataUpdates<Entity extends ObjectLiteral>(
@@ -638,12 +674,13 @@ export class RelationNestedQueries {
       )) {
         const entityIndex = Number(entityIndexStr);
         const entity = entities[entityIndex];
-        const createData = extractCreateData(
-          entity,
-          connectQueryConfig.connectFieldName,
-        );
+        const fieldName = connectQueryConfig.connectFieldName;
 
-        if (createData === undefined) continue;
+        const createData = extractCreateData(entity, fieldName);
+        const connectWhere = extractConnectWhere(entity, fieldName);
+
+        // Nothing to update if neither createData nor connectWhere exist
+        if (createData === undefined && connectWhere === undefined) continue;
 
         // Find the matched record
         const matchedRecord = recordsToConnect.find((record) =>
@@ -654,34 +691,39 @@ export class RelationNestedQueries {
 
         if (typeof matchedId !== 'string') continue;
 
-        const updateFields = this.flattenCreateData(createData);
+        // Merge connect.where fields (phone) + createData fields (email, name, address)
+        const allFields: [string, string][] = [];
 
-        if (updateFields.length === 0) continue;
-
-        const setClause: Record<string, unknown> = {};
-
-        for (const [col, val] of updateFields) {
-          setClause[col] = val;
+        if (connectWhere !== undefined) {
+          allFields.push(...this.flattenCreateData(connectWhere));
         }
 
-        setClause['updatedAt'] = new Date().toISOString();
+        if (createData !== undefined) {
+          for (const pair of this.flattenCreateData(createData)) {
+            // Don't duplicate fields already from connectWhere
+            if (!allFields.some(([k]) => k === pair[0])) {
+              allFields.push(pair);
+            }
+          }
+        }
+
+        if (allFields.length === 0) continue;
+
+        const table = connectQueryConfig.targetObjectName;
 
         try {
-          const table = connectQueryConfig.targetObjectName;
-          const setCols = updateFields
-            .map(([col], i) => `"${col}" = :setVal_${i}`)
+          // Build parameterized UPDATE using the workspace connection.
+          // The connection's search_path is set to the workspace schema,
+          // so raw queries resolve to the correct schema.
+          const setCols = allFields
+            .map(([col], i) => `"${col}" = $${i + 1}`)
             .join(', ');
-          const setParams: Record<string, string> = {};
+          const values = allFields.map(([, val]) => val);
+          const idParamIndex = values.length + 1;
 
-          for (const [col, val] of updateFields.entries()) {
-            setParams[`setVal_${col}`] = val[1];
-          }
-
-          // Use the workspace connection's query runner for the UPDATE
-          // to ensure correct schema context
           await queryBuilder.connection.query(
-            `UPDATE "${table}" SET ${setCols}, "updatedAt" = NOW() WHERE "id" = $${updateFields.length + 1}`,
-            [...updateFields.map(([, val]) => val), matchedId],
+            `UPDATE "${table}" SET ${setCols}, "updatedAt" = NOW() WHERE "id" = $${idParamIndex}`,
+            [...values, matchedId],
           );
         } catch {
           // Update failed — non-critical, the connect still worked
