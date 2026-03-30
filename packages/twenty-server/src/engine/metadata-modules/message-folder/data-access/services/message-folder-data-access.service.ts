@@ -73,11 +73,13 @@ export class MessageFolderDataAccessService {
 
     const channelId = (coreData.messageChannelId as string) ?? messageChannelId;
 
-    coreData.parentFolderId = await this.resolveParentFolderIdForCore(
-      workspaceId,
-      coreData.parentFolderId as string | null,
-      channelId,
-    );
+    if ('parentFolderId' in coreData) {
+      coreData.parentFolderId = await this.resolveParentFolderIdForCore(
+        workspaceId,
+        coreData.parentFolderId as string | null,
+        channelId,
+      );
+    }
 
     return coreData;
   }
