@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
 import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -14,6 +15,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 @Module({
   imports: [
     TypeOrmModule.forFeature([ConnectedAccountEntity]),
+    CalendarChannelDataAccessModule,
     ConnectedAccountDataAccessModule,
     FeatureFlagModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

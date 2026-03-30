@@ -11,6 +11,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -27,6 +28,7 @@ export class ConnectedAccountMetadataService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly repository: Repository<ConnectedAccountEntity>,
     private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
     private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -159,43 +161,73 @@ export class ConnectedAccountMetadataService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const messageChannels =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          return this.messageChannelDataAccessService.find(workspaceId, {
+    const [messageChannels, calendarChannels] = await Promise.all([
+      this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.messageChannelDataAccessService.find(workspaceId, {
             connectedAccountId: id,
-          });
-        },
+          }),
         authContext,
-      );
+      ),
+      this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.calendarChannelDataAccessService.find(workspaceId, {
+            connectedAccountId: id,
+          }),
+        authContext,
+      ),
+    ]);
 
     this.logger.log(
-      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s)`,
+      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    if (messageChannels.length > 0) {
-      const { flatObjectMetadataMaps } =
-        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps'],
-          },
-        );
+    const { flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
 
-      const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier:
-          STANDARD_OBJECTS.messageChannel.universalIdentifier,
-      });
+    if (messageChannels.length > 0) {
+      const flatMessageChannelMetadata =
+        findFlatEntityByUniversalIdentifierOrThrow({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier:
+            STANDARD_OBJECTS.messageChannel.universalIdentifier,
+        });
 
       this.workspaceEventEmitter.emitDatabaseBatchEvent({
         objectMetadataNameSingular: 'messageChannel',
         action: DatabaseEventAction.DESTROYED,
-        objectMetadata: flatObjectMetadata,
+        objectMetadata: flatMessageChannelMetadata,
         events: messageChannels.map((messageChannel) => ({
           recordId: messageChannel.id,
           properties: {
             before: messageChannel,
+          },
+        })),
+        workspaceId,
+      });
+    }
+
+    if (calendarChannels.length > 0) {
+      const flatCalendarChannelMetadata =
+        findFlatEntityByUniversalIdentifierOrThrow({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier:
+            STANDARD_OBJECTS.calendarChannel.universalIdentifier,
+        });
+
+      this.workspaceEventEmitter.emitDatabaseBatchEvent({
+        objectMetadataNameSingular: 'calendarChannel',
+        action: DatabaseEventAction.DESTROYED,
+        objectMetadata: flatCalendarChannelMetadata,
+        events: calendarChannels.map((calendarChannel) => ({
+          recordId: calendarChannel.id,
+          properties: {
+            before: calendarChannel,
           },
         })),
         workspaceId,
