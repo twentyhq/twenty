@@ -37,7 +37,32 @@ export class AgentChatResumableStreamService implements OnModuleDestroy {
     streamId: string,
     streamFactory: () => ReadableStream<string>,
   ) {
-    await this.streamContext.createNewResumableStream(streamId, streamFactory);
+    const resumableStream = await this.streamContext.createNewResumableStream(
+      streamId,
+      streamFactory,
+    );
+
+    if (!resumableStream) {
+      return;
+    }
+
+    // Read the stream to completion in the background so chunks are
+    // published to Redis and available for later resume consumers.
+    const reader = resumableStream.getReader();
+
+    void (async () => {
+      try {
+        while (true) {
+          const { done } = await reader.read();
+
+          if (done) {
+            break;
+          }
+        }
+      } catch {
+        // Stream interrupted — chunks already published are still resumable.
+      }
+    })();
   }
 
   async resumeExistingStreamAsNodeReadable(

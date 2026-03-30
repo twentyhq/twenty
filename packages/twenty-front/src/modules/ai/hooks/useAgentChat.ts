@@ -27,7 +27,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { useStore } from 'jotai';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -108,43 +108,51 @@ export const useAgentChat = (
     }
   };
 
-  const transportRef = useRef(
-    new DefaultChatTransport({
-      api: `${REST_API_BASE_URL}/agent-chat/stream`,
-      headers: () => ({
-        Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
-      }),
-      prepareReconnectToStreamRequest: ({ id }) => ({
-        api: `${REST_API_BASE_URL}/agent-chat/${id}/stream`,
-        headers: {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const transport = useMemo(
+    () =>
+      new DefaultChatTransport({
+        api: `${REST_API_BASE_URL}/agent-chat/stream`,
+        headers: () => ({
           Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
+        }),
+        prepareReconnectToStreamRequest: ({ id }) => ({
+          api: `${REST_API_BASE_URL}/agent-chat/${id}/stream`,
+          headers: {
+            Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
+          },
+        }),
+        fetch: async (input, init) => {
+          const response = await fetch(input, init);
+
+          if (response.status === 401) {
+            const retriedResponse = await retryFetchWithRenewedToken(
+              input,
+              init,
+            );
+
+            return retriedResponse ?? response;
+          }
+
+          if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({}));
+            const error = new Error(
+              errorBody.messages?.[0] ||
+                `Request failed with status ${response.status}`,
+            ) as Error & { code?: string };
+
+            if (isDefined(errorBody.code)) {
+              error.code = errorBody.code;
+            }
+            throw error;
+          }
+
+          return response;
         },
       }),
-      fetch: async (input, init) => {
-        const response = await fetch(input, init);
-
-        if (response.status === 401) {
-          const retriedResponse = await retryFetchWithRenewedToken(input, init);
-
-          return retriedResponse ?? response;
-        }
-
-        if (!response.ok) {
-          const errorBody = await response.json().catch(() => ({}));
-          const error = new Error(
-            errorBody.messages?.[0] ||
-              `Request failed with status ${response.status}`,
-          ) as Error & { code?: string };
-
-          if (isDefined(errorBody.code)) {
-            error.code = errorBody.code;
-          }
-          throw error;
-        }
-
-        return response;
-      },
-    }),
+    // Intentionally created once — closures inside (getTokenPair, etc.)
+    // read fresh values via function references, not stale captures.
+    [],
   );
 
   const {
@@ -156,7 +164,7 @@ export const useAgentChat = (
     stop,
     resumeStream,
   } = useChat({
-    transport: transportRef.current,
+    transport,
     messages: uiMessages,
     id: currentAIChatThread ?? undefined,
     experimental_throttle: 100,
@@ -201,7 +209,8 @@ export const useAgentChat = (
       );
 
       setPendingThreadIdAfterFirstSend((pendingId) => {
-        const threadIdForTitle = pendingId ?? currentAIChatThread;
+        const threadIdForTitle =
+          pendingId ?? store.get(currentAIChatThreadState.atom);
         if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
           setCurrentAIChatThreadTitle(titlePart.data.title);
           if (isDefined(threadIdForTitle)) {

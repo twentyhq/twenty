@@ -22,7 +22,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export const AgentChatAiSdkStreamEffect = () => {
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
@@ -58,19 +58,20 @@ export const AgentChatAiSdkStreamEffect = () => {
   // We call resumeStream() manually instead of using useChat's
   // resume:true option so that the stop button can coexist with
   // resumption (resume:true is incompatible with abort signals).
-  const lastResumedThreadRef = useRef<string | null>(null);
-
+  // The SDK is idempotent — calling resumeStream while already
+  // streaming is a no-op, so we only need to guard on status.
   useEffect(() => {
     if (
       currentAIChatThread !== null &&
-      currentAIChatThread !== lastResumedThreadRef.current &&
       chatState.status !== 'streaming' &&
       chatState.status !== 'submitted'
     ) {
-      lastResumedThreadRef.current = currentAIChatThread;
       chatState.resumeStream();
     }
-  }, [currentAIChatThread, chatState]);
+    // We intentionally only trigger when the thread changes, not on
+    // every status transition, to avoid resume loops.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentAIChatThread]);
 
   const setAgentChatMessages = useSetAtomComponentFamilyState(
     agentChatMessagesComponentFamilyState,
