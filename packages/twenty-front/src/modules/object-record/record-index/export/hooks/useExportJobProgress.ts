@@ -198,6 +198,9 @@ export const useExportJobPoller = () => {
         });
 
         if (isTerminal) {
+          stopPolling();
+          setActiveJob(null);
+
           // Auto-download on completion via fetch + blob
           if (normalizedStatus === 'completed' && downloadUrl) {
             try {
@@ -217,9 +220,6 @@ export const useExportJobPoller = () => {
               window.open(downloadUrl, '_blank');
             }
           }
-
-          stopPolling();
-          setActiveJob(null);
 
           try {
             localStorage.removeItem(EXPORT_JOB_STORAGE_KEY);
