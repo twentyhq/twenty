@@ -57,8 +57,8 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
     <FeatureCardContainer>
       <CardImage>
         <Image
-          src="/images/home/three-cards-feature/live-data.png"
-          alt={featureCard.heading.text}
+          src={featureCard.image.src}
+          alt={featureCard.image.alt}
           fill
           style={{ objectFit: 'cover' }}
         />

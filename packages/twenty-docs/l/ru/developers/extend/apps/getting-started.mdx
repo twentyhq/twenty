@@ -49,7 +49,7 @@ npx create-twenty-app@latest my-app --minimal
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -123,7 +123,7 @@ my-twenty-app/
 В общих чертах:
 
 * **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипт `twenty`, который делегирует выполнение локальному CLI `twenty`. Выполните `yarn twenty help`, чтобы вывести список всех доступных команд.
-* **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
+* **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, coverage folders, log files, and `.env*` files.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
 * **.oxlintrc.json** и **tsconfig.json**: Обеспечивают линтинг и конфигурацию TypeScript для исходников вашего приложения на TypeScript.
@@ -167,8 +167,8 @@ export default defineObject({
 
 Позднее команды добавят больше файлов и папок:
 
-* `yarn twenty dev` автоматически сгенерирует два типизированных клиента API в `node_modules/twenty-sdk/generated`: `CoreApiClient` (для данных рабочего пространства через `/graphql`) и `MetadataApiClient` (для конфигурации рабочего пространства и загрузки файлов через `/metadata`).
-* `yarn twenty entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов, ролей, навыков и многого другого.
+* `yarn twenty dev` will auto-generate the typed `CoreApiClient` (for workspace data via `/graphql`) into `node_modules/twenty-client-sdk/`. The `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`) ships pre-built and is available immediately. Import them from `twenty-client-sdk/core` and `twenty-client-sdk/metadata` respectively.
+* `yarn twenty add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Аутентификация
 

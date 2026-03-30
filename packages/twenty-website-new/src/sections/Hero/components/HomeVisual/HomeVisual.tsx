@@ -1,4 +1,5 @@
 import { Image } from '@/design-system/components';
+import type { ImageType } from '@/design-system/components/Image/types/Image';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -25,7 +26,8 @@ const StyledBackgroundImage = styled(Image)`
   width: 98%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    width: 850px;
+    max-width: 850px;
+    width: 100%;
   }
 `;
 
@@ -41,15 +43,21 @@ const StyledForegroundImage = styled(Image)`
     justify-self: center;
     margin-right: ${theme.spacing(40)};
     margin-top: ${theme.spacing(17.5)};
-    width: 800px;
+    max-width: 800px;
+    width: 100%;
   }
 `;
 
-export function HomeVisual() {
+type HomeVisualProps = {
+  background: ImageType;
+  foreground: ImageType;
+};
+
+export function HomeVisual({ background, foreground }: HomeVisualProps) {
   return (
     <StyledHomeVisual>
-      <StyledBackgroundImage src="/images/home/hero/background.png" alt="" />
-      <StyledForegroundImage src="/images/home/hero/foreground.png" alt="" />
+      <StyledBackgroundImage src={background.src} alt={background.alt} />
+      <StyledForegroundImage src={foreground.src} alt={foreground.alt} />
     </StyledHomeVisual>
   );
 }
