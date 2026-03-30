@@ -87,7 +87,7 @@ export const requestDbViaRestApi = (
   const options = {
     url: `${
       bundle.authData.apiUrl || process.env.SERVER_BASE_URL
-    }/rest/${objectNamePlural}?limit:3`,
+    }/rest/${objectNamePlural}?limit=3`,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
