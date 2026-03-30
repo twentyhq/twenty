@@ -29,8 +29,7 @@ import { DefaultChatTransport } from 'ai';
 import { useStore } from 'jotai';
 import { useCallback, useMemo, useState } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
-import { isValidUuid } from 'twenty-shared/utils/validation/isValidUuid';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const useAgentChat = (
