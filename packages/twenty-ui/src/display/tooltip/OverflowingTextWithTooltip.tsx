@@ -3,8 +3,8 @@ import { type ReactNode, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from '@ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 const spacing4 = themeCssVariables.spacing[4];

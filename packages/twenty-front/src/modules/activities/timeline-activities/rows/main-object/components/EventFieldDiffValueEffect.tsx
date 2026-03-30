@@ -32,7 +32,7 @@ export const EventFieldDiffValueEffect = ({
   useEffect(() => {
     if (!isDefined(diffRecord)) return;
 
-    let fieldValue: typeof diffRecord = diffRecord;
+    let fieldValue = diffRecord;
 
     if (
       fieldMetadataItem.type === FieldMetadataType.FILES &&
@@ -49,7 +49,7 @@ export const EventFieldDiffValueEffect = ({
       fieldValue = (diffRecord as FieldFilesValue[]).map((file) => {
         const currentFile = currentFileMap.get(file.fileId);
         if (isDefined(currentFile)) {
-          return currentFile;
+          return { ...file, url: currentFile.url };
         }
         return { ...file, isDeleted: true, url: undefined };
       });
