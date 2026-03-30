@@ -1,8 +1,9 @@
+import { type FrontComponentExecutionContext } from 'twenty-sdk';
+
 import {
-  type FrontComponentExecutionContext,
   FRONT_COMPONENT_CONTEXT_KEY,
   FRONT_COMPONENT_LISTENERS_KEY,
-} from 'twenty-sdk';
+} from 'twenty-shared/constants';
 
 type Listener = () => void;
 

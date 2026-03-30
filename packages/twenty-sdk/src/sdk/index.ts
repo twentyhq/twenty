@@ -123,9 +123,6 @@ export {
 export {
   closeSidePanel,
   enqueueSnackbar,
-  FRONT_COMPONENT_CONTEXT_KEY,
-  FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY,
-  FRONT_COMPONENT_LISTENERS_KEY,
   getFrontComponentCommandErrorDedupeKey,
   navigate,
   openCommandConfirmationModal,

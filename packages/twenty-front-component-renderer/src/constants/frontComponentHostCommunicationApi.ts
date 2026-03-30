@@ -1,7 +1,6 @@
 import {
   type CloseSidePanelFunction,
   type EnqueueSnackbarFunction,
-  FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
@@ -9,6 +8,8 @@ import {
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
 } from 'twenty-sdk';
+
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from 'twenty-shared/constants';
 
 type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;

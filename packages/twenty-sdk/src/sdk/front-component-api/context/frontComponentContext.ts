@@ -1,9 +1,11 @@
+import {
+  FRONT_COMPONENT_CONTEXT_KEY,
+  FRONT_COMPONENT_LISTENERS_KEY,
+} from 'twenty-shared/constants';
+
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
 
 type Listener = () => void;
-
-export const FRONT_COMPONENT_CONTEXT_KEY = '__twentySdkExecutionContext__';
-export const FRONT_COMPONENT_LISTENERS_KEY = '__twentySdkContextListeners__';
 
 const getListeners = (): Set<Listener> => {
   if (

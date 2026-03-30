@@ -58,8 +58,7 @@ export type FrontComponentHostCommunicationApiStore = {
   updateProgress?: UpdateProgressFunction;
 };
 
-export const FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY =
-  'frontComponentHostCommunicationApi';
+import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from 'twenty-shared/constants';
 
 declare global {
   var frontComponentHostCommunicationApi: FrontComponentHostCommunicationApiStore;
