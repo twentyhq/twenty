@@ -10395,6 +10395,11 @@ msgstr "Notes"
 msgid "now"
 msgstr "now"
 
+#. js-lingui-id: OduKuG
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Npm package"
+msgstr "Npm package"
+
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"

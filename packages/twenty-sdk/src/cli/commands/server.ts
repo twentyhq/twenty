@@ -37,10 +37,6 @@ export const registerServerCommands = (program: Command): void => {
         console.error(chalk.red(result.error.message));
         process.exit(1);
       }
-
-      console.log(
-        chalk.green(`\nLocal remote configured → ${result.data.url}`),
-      );
     });
 
   server

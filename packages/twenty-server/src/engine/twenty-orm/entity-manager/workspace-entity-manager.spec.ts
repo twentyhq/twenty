@@ -239,8 +239,6 @@ describe('WorkspaceEntityManager', () => {
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_COMMAND_MENU_ITEM_ENABLED: false,
-        IS_NAVIGATION_MENU_ITEM_ENABLED: false,
-        IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED: false,
         IS_DRAFT_EMAIL_ENABLED: false,
         IS_USAGE_ANALYTICS_ENABLED: false,
         IS_RICH_TEXT_V1_MIGRATED: false,
