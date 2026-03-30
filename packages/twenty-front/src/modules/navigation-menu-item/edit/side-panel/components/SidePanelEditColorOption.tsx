@@ -1,6 +1,7 @@
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import { isValidObjectNavigationMenuItem } from '@/navigation-menu-item/common/utils/isValidObjectNavigationMenuItem';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
 import { useUpdateNavigationMenuItemInDraft } from '@/navigation-menu-item/edit/hooks/useUpdateNavigationMenuItemInDraft';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -42,7 +43,6 @@ export const SidePanelEditColorOption = ({
   const { closeDropdown } = useCloseDropdown();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
-  const objectMetadataItemId = selectedItem?.targetObjectMetadataId;
 
   const [searchValue, setSearchValue] = useState('');
   const themeColor = color ?? 'gray';
@@ -63,10 +63,10 @@ export const SidePanelEditColorOption = ({
       color: selectedColor,
     });
 
-    if (isNonEmptyString(objectMetadataItemId)) {
+    if (isValidObjectNavigationMenuItem(selectedItem)) {
       updateInDraft('objectMetadataItems', [
         {
-          id: objectMetadataItemId,
+          id: selectedItem.targetObjectMetadataId,
           color: selectedColor,
         } as FlatObjectMetadataItem,
       ]);
