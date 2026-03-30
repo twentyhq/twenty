@@ -38,6 +38,11 @@
       "types": "./dist/cli/operations/index.d.ts",
       "import": "./dist/operations.mjs",
       "require": "./dist/operations.cjs"
+    },
+    "./build": {
+      "types": "./dist/build/index.d.ts",
+      "import": "./dist/build.mjs",
+      "require": "./dist/build.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -91,6 +96,9 @@
       ],
       "ui": [
         "dist/ui/index.d.ts"
+      ],
+      "build": [
+        "dist/build/index.d.ts"
       ]
     }
   }
