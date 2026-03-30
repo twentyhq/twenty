@@ -561,17 +561,6 @@ export const CoatApprovalDetail = ({
               const dateValue = contract[dateField] as string | null;
               const amountValue = contract[amountField] as number | null;
 
-              if (
-                !isDefined(dateValue) &&
-                !isDefined(amountValue) &&
-                index > 0
-              ) {
-                const prevAmountField =
-                  `payment${num - 1}Amount` as keyof CoatContractRecord;
-                const prevAmount = contract[prevAmountField] as number | null;
-                if (!isDefined(prevAmount)) return null;
-              }
-
               return (
                 <React.Fragment key={num}>
                   <StyledInfoLabel>Rate {num} Date</StyledInfoLabel>
