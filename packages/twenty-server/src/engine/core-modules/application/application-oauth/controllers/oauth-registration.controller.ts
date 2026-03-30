@@ -140,9 +140,6 @@ export class OAuthRegistrationController {
     const registration = this.applicationRegistrationRepository.create({
       universalIdentifier: v4(),
       name: body.client_name,
-      description: null,
-      logoUrl: body.logo_uri ?? null,
-      author: null,
       oAuthClientId: clientId,
       oAuthClientSecretHash: null,
       oAuthRedirectUris: body.redirect_uris,
@@ -150,7 +147,6 @@ export class OAuthRegistrationController {
       createdByUserId: null,
       ownerWorkspaceId: null,
       sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      websiteUrl: body.client_uri ?? null,
     });
 
     await this.applicationRegistrationRepository.save(registration);

@@ -7,6 +7,7 @@ import { AppInstallCommand } from './install';
 import { AppPublishCommand } from './publish';
 import { AppTypecheckCommand } from './typecheck';
 import { AppUninstallCommand } from './uninstall';
+import { CatalogSyncCommand } from './catalog-sync';
 import { DeployCommand } from './deploy';
 import { LogicFunctionExecuteCommand } from './exec';
 import { LogicFunctionLogsCommand } from './logs';
@@ -22,6 +23,7 @@ export const registerCommands = (program: Command): void => {
   const publishCommand = new AppPublishCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
+  const catalogSyncCommand = new CatalogSyncCommand();
   const deployCommand = new DeployCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
@@ -77,6 +79,16 @@ export const registerCommands = (program: Command): void => {
       await publishCommand.execute({
         appPath: formatPath(appPath),
         tag: options.tag,
+      });
+    });
+
+  program
+    .command('catalog-sync')
+    .description('Trigger marketplace catalog sync on the server')
+    .option('-r, --remote <name>', 'Sync on a specific remote')
+    .action(async (options) => {
+      await catalogSyncCommand.execute({
+        remote: options.remote,
       });
     });
 

@@ -25,6 +25,8 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { CheckCustomDomainValidRecordsCronJob } from 'src/engine/core-modules/workspace/crons/jobs/check-custom-domain-valid-records.cron.job';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { WorkspaceEntityCacheProviderService } from 'src/engine/core-modules/workspace/services/workspace-entity-cache-provider.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
@@ -82,6 +84,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
         ApplicationModule,
         EnterpriseModule,
         StandardObjectsPrefillModule,
+        CoreEntityCacheModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,
@@ -92,6 +95,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     WorkspaceResolver,
     WorkspaceService,
     WorkspaceGaugeService,
+    WorkspaceEntityCacheProviderService,
     BillingDisabledGuard,
     CheckCustomDomainValidRecordsCronCommand,
     CheckCustomDomainValidRecordsCronJob,

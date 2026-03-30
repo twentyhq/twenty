@@ -18,9 +18,9 @@ import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -45,8 +45,8 @@ export class McpCoreController {
   )
   async handleMcpCore(
     @Body() body: JsonRpc,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @AuthApiKey() apiKey: FlatApiKey | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,

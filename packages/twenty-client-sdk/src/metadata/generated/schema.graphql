@@ -38,9 +38,6 @@ type ApplicationRegistration {
   id: UUID!
   universalIdentifier: String!
   name: String!
-  description: String
-  logoUrl: String
-  author: String
   oAuthClientId: String!
   oAuthRedirectUris: [String!]!
   oAuthScopes: [String!]!
@@ -48,8 +45,6 @@ type ApplicationRegistration {
   sourceType: ApplicationRegistrationSourceType!
   sourcePackage: String
   latestAvailableVersion: String
-  websiteUrl: String
-  termsUrl: String
   isListed: Boolean!
   isFeatured: Boolean!
   createdAt: DateTime!
@@ -1725,20 +1720,13 @@ enum FeatureFlagKey {
   IS_UNIQUE_INDEXES_ENABLED
   IS_JSON_FILTER_ENABLED
   IS_AI_ENABLED
-  IS_APPLICATION_ENABLED
   IS_MARKETPLACE_ENABLED
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
   IS_PUBLIC_DOMAIN_ENABLED
   IS_EMAILING_DOMAIN_ENABLED
-  IS_DASHBOARD_V2_ENABLED
-  IS_ATTACHMENT_MIGRATED
-  IS_NOTE_TARGET_MIGRATED
-  IS_TASK_TARGET_MIGRATED
-  IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_COMMAND_MENU_ITEM_ENABLED
   IS_NAVIGATION_MENU_ITEM_ENABLED
-  IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED
   IS_NAVIGATION_MENU_ITEM_EDITING_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_USAGE_ANALYTICS_ENABLED
@@ -1779,6 +1767,12 @@ type ClientConfig {
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
+}
+
+type UsageBreakdownItem {
+  key: String!
+  label: String
+  creditsUsed: Float!
 }
 
 type ConfigVariable {
@@ -2380,6 +2374,26 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+type UsageTimeSeries {
+  date: String!
+  creditsUsed: Float!
+}
+
+type UsageUserDaily {
+  userWorkspaceId: String!
+  dailyUsage: [UsageTimeSeries!]!
+}
+
+type UsageAnalytics {
+  usageByUser: [UsageBreakdownItem!]!
+  usageByOperationType: [UsageBreakdownItem!]!
+  usageByModel: [UsageBreakdownItem!]!
+  timeSeries: [UsageTimeSeries!]!
+  periodStart: DateTime!
+  periodEnd: DateTime!
+  userDailyUsage: UsageUserDaily
+}
+
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
@@ -2402,89 +2416,28 @@ type File {
   createdAt: DateTime!
 }
 
-type MarketplaceAppField {
-  name: String!
-  type: String!
-  label: String!
-  description: String
-  icon: String
-  objectUniversalIdentifier: String
-  universalIdentifier: String
-}
-
-type MarketplaceAppObject {
-  universalIdentifier: String!
-  nameSingular: String!
-  namePlural: String!
-  labelSingular: String!
-  labelPlural: String!
-  description: String
-  icon: String
-  fields: [MarketplaceAppField!]!
-}
-
-type MarketplaceAppLogicFunction {
-  name: String!
-  description: String
-  timeoutSeconds: Int
-}
-
-type MarketplaceAppFrontComponent {
-  name: String!
-  description: String
-}
-
-type MarketplaceAppRoleObjectPermission {
-  objectUniversalIdentifier: String!
-  canReadObjectRecords: Boolean
-  canUpdateObjectRecords: Boolean
-  canSoftDeleteObjectRecords: Boolean
-  canDestroyObjectRecords: Boolean
-}
-
-type MarketplaceAppRoleFieldPermission {
-  objectUniversalIdentifier: String!
-  fieldUniversalIdentifier: String!
-  canReadFieldValue: Boolean
-  canUpdateFieldValue: Boolean
-}
-
-type MarketplaceAppDefaultRole {
-  id: String!
-  label: String!
-  description: String
-  canReadAllObjectRecords: Boolean!
-  canUpdateAllObjectRecords: Boolean!
-  canSoftDeleteAllObjectRecords: Boolean!
-  canDestroyAllObjectRecords: Boolean!
-  canUpdateAllSettings: Boolean!
-  canAccessAllTools: Boolean!
-  objectPermissions: [MarketplaceAppRoleObjectPermission!]!
-  fieldPermissions: [MarketplaceAppRoleFieldPermission!]!
-  permissionFlags: [String!]!
-}
-
 type MarketplaceApp {
   id: String!
   name: String!
   description: String!
   icon: String!
-  version: String!
   author: String!
   category: String!
   logo: String
-  screenshots: [String!]!
-  aboutDescription: String!
-  providers: [String!]!
-  websiteUrl: String
-  termsUrl: String
-  objects: [MarketplaceAppObject!]!
-  fields: [MarketplaceAppField!]!
-  logicFunctions: [MarketplaceAppLogicFunction!]!
-  frontComponents: [MarketplaceAppFrontComponent!]!
-  defaultRole: MarketplaceAppDefaultRole
   sourcePackage: String
   isFeatured: Boolean!
+}
+
+type MarketplaceAppDetail {
+  universalIdentifier: String!
+  id: String!
+  name: String!
+  sourceType: ApplicationRegistrationSourceType!
+  sourcePackage: String
+  latestAvailableVersion: String
+  isListed: Boolean!
+  isFeatured: Boolean!
+  manifest: JSON
 }
 
 type PublicDomain {
@@ -2573,31 +2526,6 @@ type PostgresCredentials {
   user: String!
   password: String!
   workspaceId: UUID!
-}
-
-type UsageBreakdownItem {
-  key: String!
-  label: String
-  creditsUsed: Float!
-}
-
-type UsageTimeSeries {
-  date: String!
-  creditsUsed: Float!
-}
-
-type UsageUserDaily {
-  userWorkspaceId: String!
-  dailyUsage: [UsageTimeSeries!]!
-}
-
-type UsageAnalytics {
-  usageByUser: [UsageBreakdownItem!]!
-  usageByOperationType: [UsageBreakdownItem!]!
-  timeSeries: [UsageTimeSeries!]!
-  periodStart: DateTime!
-  periodEnd: DateTime!
-  userDailyUsage: UsageUserDaily
 }
 
 type FrontComponent {
@@ -3255,6 +3183,7 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   applicationRegistrationTarballUrl(id: String!): String
+  getApplicationShareLink(id: String!): String!
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
@@ -3274,14 +3203,15 @@ type Query {
   getAiProviders: JSON!
   getModelsDevProviders: [ModelsDevProviderSuggestion!]!
   getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
+  getAdminAiUsageByWorkspace(periodStart: DateTime, periodEnd: DateTime): [UsageBreakdownItem!]!
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
   getEmailingDomains: [EmailingDomain!]!
   findManyMarketplaceApps: [MarketplaceApp!]!
-  findOneMarketplaceApp(universalIdentifier: String!): MarketplaceApp!
+  findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   findManyApplications: [Application!]!
   findOneApplication(id: UUID, universalIdentifier: UUID): Application!
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
 }
 
 input GetApiKeyInput {
@@ -3394,6 +3324,14 @@ input UsageAnalyticsInput {
   periodStart: DateTime
   periodEnd: DateTime
   userWorkspaceId: String
+  operationTypes: [UsageOperationType!]
+}
+
+enum UsageOperationType {
+  AI_CHAT_TOKEN
+  AI_WORKFLOW_TOKEN
+  WORKFLOW_EXECUTION
+  CODE_EXECUTION
 }
 
 type Mutation {
@@ -3593,6 +3531,7 @@ type Mutation {
   verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean!
+  syncMarketplaceCatalog: Boolean!
   installApplication(appRegistrationId: String!, version: String): Boolean!
   runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
   uninstallApplication(universalIdentifier: String!): Boolean!
@@ -4438,14 +4377,9 @@ input GetAuthorizationUrlForSSOInput {
 
 input CreateApplicationRegistrationInput {
   name: String!
-  description: String
-  logoUrl: String
-  author: String
   universalIdentifier: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-  websiteUrl: String
-  termsUrl: String
 }
 
 input UpdateApplicationRegistrationInput {
@@ -4455,13 +4389,8 @@ input UpdateApplicationRegistrationInput {
 
 input UpdateApplicationRegistrationPayload {
   name: String
-  description: String
-  logoUrl: String
-  author: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-  websiteUrl: String
-  termsUrl: String
   isListed: Boolean
 }
 
