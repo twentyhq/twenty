@@ -23,7 +23,10 @@ export default defineConfig(() => {
       emptyOutDir: false,
       outDir: 'dist',
       lib: {
-        entry: 'src/ui/index.ts',
+        entry: [
+          'src/ui/index.ts',
+          'src/front-component-renderer/index.ts',
+        ],
         name: 'twenty-sdk',
       },
       rollupOptions: {
@@ -46,14 +49,30 @@ export default defineConfig(() => {
         output: [
           {
             format: 'es',
-            entryFileNames: 'ui/index.mjs',
+            entryFileNames: (chunk) => {
+              if (chunk.name === 'index' && chunk.facadeModuleId?.includes('ui/index.ts')) {
+                return 'ui/index.mjs';
+              }
+              if (chunk.facadeModuleId?.includes('front-component-renderer/index.ts')) {
+                return 'front-component-renderer.mjs';
+              }
+              return '[name].mjs';
+            },
           },
           {
             format: 'cjs',
             interop: 'auto',
             esModule: true,
             exports: 'named',
-            entryFileNames: 'ui/index.cjs',
+            entryFileNames: (chunk) => {
+              if (chunk.name === 'index' && chunk.facadeModuleId?.includes('ui/index.ts')) {
+                return 'ui/index.cjs';
+              }
+              if (chunk.facadeModuleId?.includes('front-component-renderer/index.ts')) {
+                return 'front-component-renderer.cjs';
+              }
+              return '[name].cjs';
+            },
           },
         ],
       },

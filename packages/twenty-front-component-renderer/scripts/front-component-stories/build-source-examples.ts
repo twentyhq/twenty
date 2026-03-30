@@ -3,7 +3,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { getFrontComponentBuildPlugins } from 'twenty-sdk/front-component-renderer';
+import { getFrontComponentBuildPlugins } from 'twenty-sdk/front-component-renderer/build';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const exampleSourcesDir = path.resolve(

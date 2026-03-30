@@ -43,6 +43,11 @@
       "types": "./dist/front-component-renderer/index.d.ts",
       "import": "./dist/front-component-renderer.mjs",
       "require": "./dist/front-component-renderer.cjs"
+    },
+    "./front-component-renderer/build": {
+      "types": "./dist/front-component-renderer/build/index.d.ts",
+      "import": "./dist/front-component-renderer/build.mjs",
+      "require": "./dist/front-component-renderer/build.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -99,6 +104,9 @@
       ],
       "front-component-renderer": [
         "dist/front-component-renderer/index.d.ts"
+      ],
+      "front-component-renderer/build": [
+        "dist/front-component-renderer/build/index.d.ts"
       ]
     }
   }
