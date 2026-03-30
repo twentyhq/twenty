@@ -43,9 +43,11 @@ function on_exit {
 }
 trap on_exit EXIT
 
-# Use environment variables VERSION and BRANCH, with defaults if not set
+# Use environment variables VERSION and BRANCH, with defaults if not set.
+# By default, keep the Docker image tag and GitHub tag aligned to avoid
+# fetching compose/env files from a different release than the image itself.
 version=${VERSION:-$(curl -s "https://hub.docker.com/v2/repositories/twentycrm/twenty/tags" | grep -o '"name":"[^"]*"' | grep -v 'latest' | cut -d'"' -f4 | sort -V | tail -n1)}
-branch=${BRANCH:-$(curl -s https://api.github.com/repos/twentyhq/twenty/tags | grep '"name":' | head -n 1 | cut -d '"' -f 4)}
+branch=${BRANCH:-$version}
 
 echo "🚀 Using docker version $version and Github branch $branch"
 
@@ -126,7 +128,10 @@ if [ "$answer" = "n" ]; then
   exit 0
 else
   echo "🐳 Starting Docker containers..."
-  docker compose up -d
+  # Start the server dependencies first. On newer Docker Compose versions,
+  # bringing up the worker at the same time can fail the whole command while
+  # the server is still performing first-boot migrations and upgrades.
+  docker compose up -d db redis server
   # Check if port is listening
   echo "Waiting for server to be healthy, it might take a few minutes while we initialize the database..."
   # Tail logs of the server until it's ready
@@ -136,6 +141,7 @@ else
     sleep 1
   done
   kill $pid
+  docker compose up -d worker
   echo ""
   echo "✅ Server is up and running"
 fi
