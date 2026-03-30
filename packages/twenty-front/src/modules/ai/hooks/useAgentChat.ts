@@ -30,6 +30,7 @@ import { useStore } from 'jotai';
 import { useCallback, useMemo, useState } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { isValidUuid } from 'twenty-shared/utils/validation/isValidUuid';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const useAgentChat = (
@@ -315,7 +316,7 @@ export const useAgentChat = (
 
     const threadId = store.get(currentAIChatThreadState.atom);
 
-    if (isDefined(threadId)) {
+    if (isDefined(threadId) && isValidUuid(threadId)) {
       const tokenPair = getTokenPair();
 
       if (isDefined(tokenPair)) {
