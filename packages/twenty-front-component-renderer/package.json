@@ -27,8 +27,6 @@
     "@sniptt/guards": "^0.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "twenty-sdk": "workspace:*",
-    "twenty-shared": "workspace:*",
     "zod": "^4.1.11"
   },
   "devDependencies": {
@@ -47,6 +45,8 @@
     "styled-components": "^6.1.0",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
+    "twenty-sdk": "workspace:*",
+    "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1"
