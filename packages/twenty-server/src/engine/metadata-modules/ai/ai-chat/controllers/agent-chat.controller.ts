@@ -42,7 +42,7 @@ import {
 import { AgentRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/ai-agent/filters/agent-api-exception.filter';
 import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
+import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { AgentChatResumableStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-resumable-stream.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -108,7 +108,7 @@ export class AgentChatController {
       }
     }
 
-    this.agentStreamingService.streamAgentChat({
+    return this.agentStreamingService.streamAgentChat({
       threadId: body.threadId,
       messages: body.messages,
       browsingContext: body.browsingContext ?? null,

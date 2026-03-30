@@ -89,6 +89,7 @@ export class AgentChatStreamingService {
         modelId,
         lastUserMessageText: lastUserText,
         lastUserMessageParts: lastUserMessage?.parts ?? [],
+        hasTitle: !!thread.title,
       },
     );
 

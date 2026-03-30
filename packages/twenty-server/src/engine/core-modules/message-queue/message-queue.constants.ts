@@ -21,11 +21,3 @@ export enum MessageQueue {
   aiQueue = 'ai-queue',
   aiStreamQueue = 'ai-stream-queue',
 }
-
-export const QUEUE_WORKER_OPTIONS: Partial<
-  Record<MessageQueue, { concurrency: number }>
-> = {
-  // Streaming is I/O-bound (waiting for LLM tokens), so a single
-  // worker process can handle many concurrent streams.
-  [MessageQueue.aiStreamQueue]: { concurrency: 50 },
-};

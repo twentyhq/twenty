@@ -10,27 +10,28 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 @Injectable()
 export class AgentChatResumableStreamService implements OnModuleDestroy {
   private streamContext: ReturnType<typeof createResumableStreamContext>;
-  private publisher: Redis;
-  private subscriber: Redis;
+  private streamPublisher: Redis;
+  private streamSubscriber: Redis;
+  private redisClient: Redis;
 
   constructor(private readonly redisClientService: RedisClientService) {
-    const redisClient = this.redisClientService.getClient();
+    const baseClient = this.redisClientService.getClient();
 
-    this.publisher = redisClient.duplicate();
-    this.subscriber = redisClient.duplicate();
+    this.streamPublisher = baseClient.duplicate();
+    this.streamSubscriber = baseClient.duplicate();
+    this.redisClient = baseClient.duplicate();
 
-    // In a long-running NestJS server (unlike serverless), the process
-    // stays alive, so waitUntil just needs to let the promise settle.
     this.streamContext = createResumableStreamContext({
       waitUntil: () => {},
-      publisher: this.publisher,
-      subscriber: this.subscriber,
+      publisher: this.streamPublisher,
+      subscriber: this.streamSubscriber,
     });
   }
 
   async onModuleDestroy() {
-    await this.publisher.quit();
-    await this.subscriber.quit();
+    await this.streamPublisher.quit();
+    await this.streamSubscriber.quit();
+    await this.redisClient.quit();
   }
 
   async createResumableStream(
@@ -81,7 +82,7 @@ export class AgentChatResumableStreamService implements OnModuleDestroy {
     streamId: string,
     error: { code: string; message: string },
   ): Promise<void> {
-    await this.publisher.set(
+    await this.redisClient.set(
       `ai-stream:error:${streamId}`,
       JSON.stringify(error),
       'EX',
@@ -92,7 +93,7 @@ export class AgentChatResumableStreamService implements OnModuleDestroy {
   async readStreamError(
     streamId: string,
   ): Promise<{ code: string; message: string } | null> {
-    const raw = await this.publisher.get(`ai-stream:error:${streamId}`);
+    const raw = await this.redisClient.get(`ai-stream:error:${streamId}`);
 
     if (!raw) {
       return null;

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
 import type {
+  CodeExecutionData,
   ExtendedUIMessage,
   ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
@@ -24,6 +25,7 @@ import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/en
 import { AgentChatResumableStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-resumable-stream.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 
 export const STREAM_AGENT_CHAT_JOB_NAME = 'StreamAgentChatJob';
 
@@ -37,12 +39,8 @@ export type StreamAgentChatJobData = {
   modelId?: string;
   lastUserMessageText: string;
   lastUserMessageParts: ExtendedUIMessagePart[];
+  hasTitle: boolean;
 };
-
-// Channel name used for cross-instance stream cancellation via Redis pub/sub.
-// The DELETE endpoint publishes to this channel; the running job subscribes
-// and aborts the LLM connection when a message arrives.
-const getCancelChannel = (threadId: string) => `ai-stream:cancel:${threadId}`;
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
@@ -98,7 +96,14 @@ export class StreamAgentChatJob {
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository
-        .update(data.threadId, { activeStreamId: null })
+        .createQueryBuilder()
+        .update(AgentChatThreadEntity)
+        .set({ activeStreamId: null })
+        .where('id = :id AND "activeStreamId" = :streamId', {
+          id: data.threadId,
+          streamId: data.streamId,
+        })
+        .execute()
         .catch(() => {});
     }
   }
@@ -121,30 +126,15 @@ export class StreamAgentChatJob {
 
     userMessagePromise.catch(() => {});
 
-    const thread = await this.threadRepository.findOne({
-      where: { id: data.threadId },
-    });
-
-    const titlePromise = thread?.title
+    const titlePromise = data.hasTitle
       ? Promise.resolve(null)
       : this.agentChatService
           .generateTitleIfNeeded(data.threadId, data.lastUserMessageText)
           .catch(() => null);
 
-    const { stream, modelConfig } = await this.chatExecutionService.streamChat({
-      workspace,
-      userWorkspaceId: data.userWorkspaceId,
-      messages: data.messages,
-      browsingContext: data.browsingContext,
-      modelId: data.modelId,
-      abortSignal,
-    });
-
     await this.buildAndPipeStream({
-      stream,
-      modelConfig,
-      threadId: data.threadId,
-      streamId: data.streamId,
+      workspace,
+      data,
       userMessagePromise,
       titlePromise,
       abortSignal,
@@ -152,18 +142,14 @@ export class StreamAgentChatJob {
   }
 
   private async buildAndPipeStream({
-    stream,
-    modelConfig,
-    threadId,
-    streamId,
+    workspace,
+    data,
     userMessagePromise,
     titlePromise,
     abortSignal,
   }: {
-    stream: ReturnType<typeof import('ai').streamText>;
-    modelConfig: AIModelConfig;
-    threadId: string;
-    streamId: string;
+    workspace: WorkspaceEntity;
+    data: StreamAgentChatJobData;
     userMessagePromise: Promise<{ turnId: string }>;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
@@ -178,17 +164,36 @@ export class StreamAgentChatJob {
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
 
-      // On abort, onFinish does not fire, so we settle the promise
-      // here to unblock handle()'s finally cleanup.
       abortSignal.addEventListener('abort', () => resolve(), { once: true });
 
       const uiStream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
+          const onCodeExecutionUpdate = (
+            codeExecutionData: CodeExecutionData,
+          ) => {
+            writer.write({
+              type: 'data-code-execution' as const,
+              id: `code-execution-${codeExecutionData.executionId}`,
+              data: codeExecutionData,
+            });
+          };
+
+          const { stream, modelConfig } =
+            await this.chatExecutionService.streamChat({
+              workspace,
+              userWorkspaceId: data.userWorkspaceId,
+              messages: data.messages,
+              browsingContext: data.browsingContext,
+              modelId: data.modelId,
+              onCodeExecutionUpdate,
+              abortSignal,
+            });
+
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
               writer.write({
                 type: 'data-thread-title' as const,
-                id: `thread-title-${threadId}`,
+                id: `thread-title-${data.threadId}`,
                 data: { title: generatedTitle },
               });
             }
@@ -221,7 +226,7 @@ export class StreamAgentChatJob {
                 try {
                   await this.handleStreamFinish({
                     responseMessage,
-                    threadId,
+                    threadId: data.threadId,
                     streamUsage,
                     lastStepConversationSize,
                     modelConfig,
@@ -242,7 +247,7 @@ export class StreamAgentChatJob {
       const sseStream = uiStream.pipeThrough(new JsonToSseTransformStream());
 
       this.resumableStreamService
-        .createResumableStream(streamId, () => sseStream)
+        .createResumableStream(data.streamId, () => sseStream)
         .catch(reject);
     });
   }
@@ -356,10 +361,6 @@ export class StreamAgentChatJob {
     userMessagePromise: Promise<{ turnId: string }>;
   }): Promise<void> {
     if (responseMessage.parts.length === 0) {
-      await this.threadRepository.update(threadId, {
-        activeStreamId: null,
-      });
-
       return;
     }
 
@@ -381,9 +382,6 @@ export class StreamAgentChatJob {
         `"totalOutputCredits" + ${streamUsage.outputCredits}`,
       contextWindowTokens: modelConfig.contextWindowTokens,
       conversationSize: lastStepConversationSize,
-      activeStreamId: null,
     });
   }
 }
-
-export { getCancelChannel };
