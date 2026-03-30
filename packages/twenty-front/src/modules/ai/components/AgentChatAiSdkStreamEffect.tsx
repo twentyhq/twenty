@@ -97,10 +97,20 @@ export const AgentChatAiSdkStreamEffect = () => {
   );
 
   useEffect(() => {
-    const mergedMessages = mergeAgentChatFetchedAndStreamingMessages(
-      agentChatFetchedMessages,
-      chatState.messages,
-    );
+    // Only merge streaming messages while actively streaming.
+    // When idle, the SDK's internal messages have SDK-generated IDs
+    // that differ from the server-persisted IDs in fetchedMessages,
+    // so the merge would fail to deduplicate and show duplicates.
+    const isActivelyStreaming =
+      chatState.status === 'streaming' || chatState.status === 'submitted';
+
+    const mergedMessages = isActivelyStreaming
+      ? mergeAgentChatFetchedAndStreamingMessages(
+          agentChatFetchedMessages,
+          chatState.messages,
+        )
+      : agentChatFetchedMessages;
+
     setAgentChatMessages(mergedMessages);
 
     if (currentAIChatThread !== agentChatDisplayedThread) {
