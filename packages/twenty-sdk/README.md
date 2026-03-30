@@ -118,13 +118,14 @@ twenty server reset
 
 Manage remote server connections and authentication.
 
-- `twenty remote add [nameOrUrl]` — Add a new remote or re-authenticate an existing one.
+- `twenty remote add` — Add a new remote or re-authenticate an existing one.
 
   - Options:
-    - `--token <token>`: API key for non-interactive auth.
-    - `--url <url>`: Server URL (alternative to positional arg).
+    - `--api-url <apiUrl>`: Server URL.
+    - `--api-key <apiKey>`: API key for non-interactive auth.
     - `--as <name>`: Name for this remote (otherwise derived from URL hostname).
-  - Behavior: If `nameOrUrl` matches an existing remote name, re-authenticates it. Otherwise, creates a new remote and authenticates via OAuth (with API key fallback).
+    - `--local`: Connect to a local Twenty server (auto-detects port 2020 or 3000).
+  - Behavior: If `--as` matches an existing remote name, re-authenticates it. Otherwise, creates a new remote and authenticates via OAuth (with API key fallback).
 
 - `twenty remote remove <name>` — Remove a remote and its credentials.
 
@@ -143,13 +144,10 @@ Examples:
 twenty remote add
 
 # Provide values in flags (non-interactive, for CI)
-twenty remote add https://api.twenty.com --token $TWENTY_API_KEY
-
-# Name a remote explicitly
-twenty remote add https://api.twenty.com --as production
+twenty remote add --api-url https://api.twenty.com --api-key $TWENTY_API_KEY --as production
 
 # Re-authenticate an existing remote by name
-twenty remote add production
+twenty remote add --as production
 
 # Check status
 twenty remote status
@@ -188,7 +186,7 @@ Application development commands.
   - Behavior: Builds the tarball, uploads it to the server, and installs the application.
   - Options:
     - `--server <url>`: Target Twenty server URL.
-    - `--token <token>`: Auth token for the server.
+    - `--api-key <apiKey>`: Auth token for the server.
 
 - `twenty typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
 
@@ -337,7 +335,7 @@ Notes:
 If you're already running a local Twenty instance, you can connect to it instead of using Docker:
 
 ```bash
-twenty remote add http://localhost:3000 --as local
+twenty remote add --api-url http://localhost:3000 --as local
 ```
 
 ## Troubleshooting

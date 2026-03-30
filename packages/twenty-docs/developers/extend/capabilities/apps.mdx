@@ -83,10 +83,10 @@ If you're already running a local Twenty instance, you can connect to it instead
 
 ```bash filename="Terminal"
 # During scaffolding
-npx create-twenty-app@latest my-app --port 3000
+npx create-twenty-app@latest my-app
 
 # Or after scaffolding
-yarn twenty remote add --local --port 3000
+yarn twenty remote add --local
 ```
 
 From here you can:
@@ -1344,7 +1344,7 @@ This builds the app with a tarball, uploads it to the server via the `uploadAppT
 |--------|-------------|
 | `[appPath]` | Path to the app directory (defaults to current directory) |
 | `--server <url>` | Publish to a Twenty server instead of npm |
-| `--token <token>` | Authentication token for the target server |
+| `--api-key <api-key>` | Authentication api-key for the target server |
 | `--tag <tag>` | npm dist-tag (e.g. `beta`, `next`) — only for npm publish |
 
 ## Application registration

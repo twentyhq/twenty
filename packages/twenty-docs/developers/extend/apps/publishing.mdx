@@ -154,7 +154,7 @@ Before deploying, you need a configured remote pointing to the target server. Re
 Add a remote:
 
 ```bash filename="Terminal"
-yarn twenty remote add --url https://your-twenty-server.com --as production
+yarn twenty remote add --api-url https://your-twenty-server.com --as production
 ```
 
 For a local development server:
@@ -166,7 +166,7 @@ yarn twenty remote add --local --as local
 You can also authenticate with an API key for non-interactive environments:
 
 ```bash filename="Terminal"
-yarn twenty remote add --url https://your-twenty-server.com --token <api-key> --as production
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key <api-key> --as production
 ```
 
 Manage your remotes:
@@ -246,7 +246,7 @@ Start in **Development** mode while building your app. When it's ready, choose *
 | `yarn twenty catalog-sync` | Trigger marketplace catalog sync on the server | `-r, --remote <name>` — target remote |
 | `yarn twenty install` | Install a deployed app on a workspace | `-r, --remote <name>` — target remote |
 | `yarn twenty dev` | Watch and sync local changes | Uses default remote |
-| `yarn twenty remote add` | Add a server connection | `--url`, `--token`, `--as`, `--local`, `--port` |
+| `yarn twenty remote add` | Add a server connection | `--url`, `--api-key`, `--as`, `--local` |
 | `yarn twenty remote list` | List configured remotes | — |
 | `yarn twenty remote switch` | Set default remote | — |
 | `yarn twenty remote status` | Show connection status | — |
