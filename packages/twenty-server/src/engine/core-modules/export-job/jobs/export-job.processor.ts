@@ -1,7 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 import { In } from 'typeorm';
 
-import { FileFolder } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -13,13 +13,20 @@ import {
   type ExportJobData,
 } from 'src/engine/core-modules/export-job/export-job.service';
 import { ExportJobStatus } from 'src/engine/core-modules/export-job/enums/export-job-status.enum';
-import { generateCSVFromRecords } from 'src/engine/core-modules/export-job/utils/process-records-for-csv.util';
+import {
+  COMPOSITE_FIELD_SUB_FIELD_LABELS,
+  isCompositeFieldType,
+} from 'src/engine/core-modules/export-job/utils/composite-field-labels.constant';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { json2csv } from 'json-2-csv';
 
 const BATCH_SIZE = 500;
 const RELATION_BATCH_SIZE = 200;
@@ -36,6 +43,146 @@ type ExportColumn = {
   label: string;
   type: string;
 };
+
+type CsvColumn = {
+  field: string;
+  title: string;
+};
+
+/**
+ * Resolve a FlatFieldMetadata by object name + field name using
+ * the flat metadata maps from the workspace cache.
+ */
+function findFieldMetadata(
+  objectNameSingular: string,
+  fieldName: string,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+): FlatFieldMetadata | undefined {
+  const objectMetadata = Object.values(
+    flatObjectMetadataMaps.byUniversalIdentifier,
+  ).find((m) => m?.nameSingular === objectNameSingular);
+
+  if (!objectMetadata) return undefined;
+
+  return Object.values(flatFieldMetadataMaps.byUniversalIdentifier).find(
+    (f) => f?.objectMetadataId === objectMetadata.id && f?.name === fieldName,
+  );
+}
+
+/**
+ * For a given field path on a target object (e.g. "leadSource.name"),
+ * resolve the chain of labels and the final field type.
+ *
+ * Returns { label, fieldType, subObjectName } where:
+ *   label = "Lead Source / Name"
+ *   fieldType = the FieldMetadataType of the leaf field
+ *   subObjectName = the object name at the leaf level (for composite expansion)
+ */
+function resolveFieldPathMetadata(
+  targetObjectNameSingular: string,
+  fieldPath: string,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+): { label: string; fieldType: FieldMetadataType } | undefined {
+  const segments = fieldPath.split('.');
+  const labels: string[] = [];
+  let currentObjectName = targetObjectNameSingular;
+
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i];
+    const isLeaf = i === segments.length - 1;
+
+    const fieldMeta = findFieldMetadata(
+      currentObjectName,
+      segment,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
+
+    if (!fieldMeta) {
+      // Field metadata not found; use raw name as fallback
+      labels.push(segment);
+
+      if (!isLeaf) {
+        return undefined;
+      }
+
+      return { label: labels.join(' / '), fieldType: FieldMetadataType.TEXT };
+    }
+
+    labels.push(fieldMeta.label);
+
+    if (isLeaf) {
+      return {
+        label: labels.join(' / '),
+        fieldType: fieldMeta.type as FieldMetadataType,
+      };
+    }
+
+    // Not a leaf — must be a relation. Find the target object.
+    if (fieldMeta.type !== FieldMetadataType.RELATION) {
+      return undefined;
+    }
+
+    const targetObjectId = fieldMeta.relationTargetObjectMetadataId;
+
+    if (!targetObjectId) return undefined;
+
+    const targetObject = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).find((m) => m?.id === targetObjectId);
+
+    if (!targetObject) return undefined;
+
+    currentObjectName = targetObject.nameSingular;
+  }
+
+  return undefined;
+}
+
+/**
+ * Traverse a record to get a deeply nested value by dot-separated path.
+ */
+function getNestedValue(
+  record: Record<string, unknown>,
+  path: string,
+): unknown {
+  const parts = path.split('.');
+  let current: unknown = record;
+
+  for (const part of parts) {
+    if (current === null || current === undefined || typeof current !== 'object') {
+      return undefined;
+    }
+
+    current = (current as Record<string, unknown>)[part];
+  }
+
+  return current;
+}
+
+/**
+ * Generate a flat key for a relation field path (matches frontend convention).
+ * e.g. ("lead", "assignedAgent.name") => "lead__assignedAgent__name"
+ */
+function getRelationFieldFlatKey(
+  relationFieldName: string,
+  fieldPath: string,
+): string {
+  return `${relationFieldName}__${fieldPath.split('.').join('__')}`;
+}
+
+/**
+ * Sanitize a string value for CSV export (prevent formula injection).
+ */
+function sanitizeForCSV(value: string): string {
+  if (/^[=+\-@\t\r]/.test(value)) {
+    return `'${value}`;
+  }
+
+  return value;
+}
 
 @Processor({ queueName: MessageQueue.exportQueue, scope: Scope.REQUEST })
 export class ExportJobProcessor {
@@ -84,6 +231,13 @@ export class ExportJobProcessor {
       const authContext = buildSystemAuthContext(workspaceId);
       let allRecords: Record<string, unknown>[] = [];
 
+      // Get workspace metadata for filter parsing and label resolution
+      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+        ]);
+
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const repository =
@@ -92,13 +246,6 @@ export class ExportJobProcessor {
               exportJob.objectNameSingular,
               { shouldBypassPermissionChecks: true },
             );
-
-          // Get workspace metadata for filter parsing
-          const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-            await this.workspaceCacheService.getOrRecompute(workspaceId, [
-              'flatObjectMetadataMaps',
-              'flatFieldMetadataMaps',
-            ]);
 
           const flatObjectMetadata = Object.values(
             flatObjectMetadataMaps.byUniversalIdentifier,
@@ -120,7 +267,7 @@ export class ExportJobProcessor {
               parser.applyFilterToBuilder(
                 qb,
                 exportJob.objectNameSingular,
-                exportJob.filter as any,
+                exportJob.filter as Record<string, unknown>,
               );
             }
 
@@ -173,9 +320,10 @@ export class ExportJobProcessor {
           if (relationConfigs.length > 0 && allRecords.length > 0) {
             allRecords = await this.expandRelationFields(
               allRecords,
-              columns,
               relationConfigs,
               workspaceId,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
             );
           }
         },
@@ -205,11 +353,16 @@ export class ExportJobProcessor {
         return;
       }
 
-      // Build final columns (expand relation columns)
-      const finalColumns = this.buildFinalColumns(columns, relationConfigs);
+      // Build CSV columns and generate CSV
+      const csvColumns = this.buildCsvColumns(
+        columns,
+        relationConfigs,
+        exportJob.objectNameSingular,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
 
-      // Generate CSV
-      const csvContent = generateCSVFromRecords(allRecords, finalColumns);
+      const csvContent = this.generateCSV(allRecords, csvColumns);
 
       // Store in file storage
       const { workspaceCustomFlatApplication } =
@@ -268,34 +421,38 @@ export class ExportJobProcessor {
   /**
    * Fetch related records and flatten their fields onto the main records.
    *
-   * For each relation config:
-   * 1. Collect unique foreign key IDs from the main records
-   * 2. Batch-fetch related records from the target object's table
-   * 3. For each main record, look up the related record and flatten
-   *    selected sub-fields as `relationFieldName__subFieldPath`
+   * Uses createQueryBuilder().getMany() instead of find() to ensure
+   * composite fields (phones, emails, address, etc.) are properly
+   * formatted as nested objects by the workspace formatResult layer.
    */
   private async expandRelationFields(
     records: Record<string, unknown>[],
-    columns: ExportColumn[],
     relationConfigs: RelationConfig[],
     workspaceId: string,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ): Promise<Record<string, unknown>[]> {
     // Build lookup maps per relation
     const relationLookups = new Map<
       string,
-      { joinColumnName: string; lookupMap: Map<string, Record<string, unknown>> }
+      {
+        joinColumnName: string;
+        lookupMap: Map<string, Record<string, unknown>>;
+      }
     >();
 
     for (const rc of relationConfigs) {
-      // The join column is conventionally `{relationFieldName}Id`
       const joinColumnName = `${rc.relationFieldName}Id`;
 
       // Collect unique related IDs
       const relatedIds = [
         ...new Set(
           records
-            .map((r) => r[joinColumnName] as string | undefined)
-            .filter((id): id is string => typeof id === 'string' && id.length > 0),
+            .map((r) => r[joinColumnName])
+            .filter(
+              (id): id is string =>
+                typeof id === 'string' && id.length > 0,
+            ),
         ),
       ];
 
@@ -317,13 +474,18 @@ export class ExportJobProcessor {
             { shouldBypassPermissionChecks: true },
           );
 
-        // Fetch in batches
+        // Fetch in batches using createQueryBuilder + getMany
+        // (getMany calls formatResult which converts flat DB columns
+        //  into nested composite objects like phones, emails, etc.)
         for (let i = 0; i < relatedIds.length; i += RELATION_BATCH_SIZE) {
           const batchIds = relatedIds.slice(i, i + RELATION_BATCH_SIZE);
 
-          const relatedRecords = await relatedRepository.find({
-            where: { id: In(batchIds) } as any,
-          });
+          const relatedRecords = await relatedRepository
+            .createQueryBuilder(rc.targetObjectNameSingular)
+            .where(`"${rc.targetObjectNameSingular}"."id" IN (:...ids)`, {
+              ids: batchIds,
+            })
+            .getMany();
 
           for (const related of relatedRecords as Record<string, unknown>[]) {
             if (typeof related.id === 'string') {
@@ -331,6 +493,17 @@ export class ExportJobProcessor {
             }
           }
         }
+
+        // Resolve nested relations within the fetched records.
+        // Identify which selectedFieldPaths traverse a MANY_TO_ONE relation
+        // (e.g. "leadSource.name" means we need to fetch leadSource records).
+        await this.resolveNestedRelations(
+          lookupMap,
+          rc,
+          workspaceId,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
       } catch (error) {
         this.logger.warn(
           `Failed to fetch related ${rc.targetObjectNameSingular} records: ${error}`,
@@ -349,30 +522,54 @@ export class ExportJobProcessor {
 
         if (!lookup) continue;
 
-        const relatedId = record[lookup.joinColumnName] as string | undefined;
+        const relatedId = record[lookup.joinColumnName];
         const relatedRecord =
-          relatedId ? lookup.lookupMap.get(relatedId) : undefined;
+          typeof relatedId === 'string'
+            ? lookup.lookupMap.get(relatedId)
+            : undefined;
 
-        // Always include 'id' for the related record
         const selectedPaths = rc.selectedFieldPaths.includes('id')
           ? rc.selectedFieldPaths
           : ['id', ...rc.selectedFieldPaths];
 
         for (const fieldPath of selectedPaths) {
-          const flatKey = `${rc.relationFieldName}__${fieldPath}`;
           const rawValue = relatedRecord
-            ? this.getNestedValue(relatedRecord, fieldPath)
-            : '';
+            ? getNestedValue(relatedRecord, fieldPath)
+            : undefined;
 
-          if (rawValue !== null && typeof rawValue === 'object') {
-            // Composite field — flatten sub-keys
+          // Resolve field type to determine if this is a composite field
+          const fieldMeta = resolveFieldPathMetadata(
+            rc.targetObjectNameSingular,
+            fieldPath,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          );
+
+          if (
+            rawValue !== null &&
+            rawValue !== undefined &&
+            typeof rawValue === 'object' &&
+            fieldMeta &&
+            isCompositeFieldType(fieldMeta.fieldType)
+          ) {
+            // Composite field — flatten sub-keys using known sub-field names
             const obj = rawValue as Record<string, unknown>;
+            const subFieldLabels =
+              COMPOSITE_FIELD_SUB_FIELD_LABELS[fieldMeta.fieldType];
 
-            for (const [subKey, subValue] of Object.entries(obj)) {
-              if (subKey === '__typename') continue;
-              expanded[`${flatKey}__${subKey}`] = subValue ?? '';
+            if (subFieldLabels) {
+              for (const compositeKey of Object.keys(subFieldLabels)) {
+                const flatKey = `${getRelationFieldFlatKey(rc.relationFieldName, fieldPath)}__${compositeKey}`;
+
+                expanded[flatKey] = obj[compositeKey] ?? '';
+              }
             }
           } else {
+            const flatKey = getRelationFieldFlatKey(
+              rc.relationFieldName,
+              fieldPath,
+            );
+
             expanded[flatKey] = rawValue ?? '';
           }
         }
@@ -383,31 +580,186 @@ export class ExportJobProcessor {
   }
 
   /**
-   * Build final column definitions including expanded relation columns.
+   * For a relation config, identify selectedFieldPaths that traverse nested
+   * MANY_TO_ONE relations (e.g. "leadSource.name") and recursively fetch
+   * and attach those nested records.
    */
-  private buildFinalColumns(
-    columns: ExportColumn[],
-    relationConfigs: RelationConfig[],
-  ): ExportColumn[] {
-    if (relationConfigs.length === 0) {
-      return columns;
+  private async resolveNestedRelations(
+    lookupMap: Map<string, Record<string, unknown>>,
+    rc: RelationConfig,
+    workspaceId: string,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): Promise<void> {
+    // Group selectedFieldPaths by their first segment when it's a relation
+    const nestedRelationGroups = new Map<
+      string,
+      { targetObjectName: string; subPaths: string[] }
+    >();
+
+    for (const fieldPath of rc.selectedFieldPaths) {
+      const dotIndex = fieldPath.indexOf('.');
+
+      if (dotIndex === -1) continue;
+
+      const firstSegment = fieldPath.substring(0, dotIndex);
+      const restOfPath = fieldPath.substring(dotIndex + 1);
+
+      // Check if firstSegment is a RELATION field on the target object
+      const fieldMeta = findFieldMetadata(
+        rc.targetObjectNameSingular,
+        firstSegment,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+
+      if (!fieldMeta || fieldMeta.type !== FieldMetadataType.RELATION) {
+        continue;
+      }
+
+      const targetObjectId = fieldMeta.relationTargetObjectMetadataId;
+
+      if (!targetObjectId) continue;
+
+      const targetObject = Object.values(
+        flatObjectMetadataMaps.byUniversalIdentifier,
+      ).find((m) => m?.id === targetObjectId);
+
+      if (!targetObject) continue;
+
+      const existing = nestedRelationGroups.get(firstSegment);
+
+      if (existing) {
+        existing.subPaths.push(restOfPath);
+      } else {
+        nestedRelationGroups.set(firstSegment, {
+          targetObjectName: targetObject.nameSingular,
+          subPaths: [restOfPath],
+        });
+      }
     }
 
+    if (nestedRelationGroups.size === 0) return;
+
+    for (const [
+      relationFieldName,
+      { targetObjectName, subPaths },
+    ] of nestedRelationGroups) {
+      const joinColumnName = `${relationFieldName}Id`;
+
+      // Collect unique FK IDs from all records in the lookup map
+      const nestedIds = [
+        ...new Set(
+          [...lookupMap.values()]
+            .map((r) => r[joinColumnName])
+            .filter(
+              (id): id is string =>
+                typeof id === 'string' && id.length > 0,
+            ),
+        ),
+      ];
+
+      if (nestedIds.length === 0) continue;
+
+      try {
+        const nestedRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            targetObjectName,
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const nestedLookup = new Map<string, Record<string, unknown>>();
+
+        for (let i = 0; i < nestedIds.length; i += RELATION_BATCH_SIZE) {
+          const batchIds = nestedIds.slice(i, i + RELATION_BATCH_SIZE);
+
+          const nestedRecords = await nestedRepository
+            .createQueryBuilder(targetObjectName)
+            .where(`"${targetObjectName}"."id" IN (:...ids)`, {
+              ids: batchIds,
+            })
+            .getMany();
+
+          for (const nested of nestedRecords as Record<string, unknown>[]) {
+            if (typeof nested.id === 'string') {
+              nestedLookup.set(nested.id, nested);
+            }
+          }
+        }
+
+        // Recursively resolve deeper nested relations
+        const nestedRelationConfig: RelationConfig = {
+          relationFieldName,
+          relationFieldLabel: '',
+          targetObjectNameSingular: targetObjectName,
+          selectedFieldPaths: subPaths,
+        };
+
+        await this.resolveNestedRelations(
+          nestedLookup,
+          nestedRelationConfig,
+          workspaceId,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        );
+
+        // Attach nested records to parent records
+        for (const parentRecord of lookupMap.values()) {
+          const nestedId = parentRecord[joinColumnName];
+
+          if (typeof nestedId === 'string') {
+            const nestedRecord = nestedLookup.get(nestedId);
+
+            if (nestedRecord) {
+              parentRecord[relationFieldName] = nestedRecord;
+            }
+          }
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Failed to fetch nested ${targetObjectName} records: ${error}`,
+        );
+      }
+    }
+  }
+
+  /**
+   * Build CSV column definitions with proper human-readable labels.
+   *
+   * For main record fields, uses metadata labels and expands composite
+   * fields into sub-columns (e.g. Premium → Premium / Amount, Premium / Currency).
+   *
+   * For relation fields, uses metadata labels for each path segment
+   * and expands composite sub-fields at the leaf level.
+   */
+  private buildCsvColumns(
+    columns: ExportColumn[],
+    relationConfigs: RelationConfig[],
+    objectNameSingular: string,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  ): CsvColumn[] {
     const relationFieldNames = new Set(
       relationConfigs.map((rc) => rc.relationFieldName),
     );
 
-    const finalColumns: ExportColumn[] = [];
+    const csvColumns: CsvColumn[] = [];
+
+    // Always include Id as first column
+    csvColumns.push({ field: 'id', title: 'Id' });
 
     for (const col of columns) {
-      // If this column is a configured relation, replace with expanded sub-columns
+      if (col.fieldName === 'id') continue;
+
+      // Check if this column is a relation with expanded sub-fields
       if (relationFieldNames.has(col.fieldName)) {
         const rc = relationConfigs.find(
           (r) => r.relationFieldName === col.fieldName,
         );
 
         if (!rc) {
-          finalColumns.push(col);
+          csvColumns.push({ field: col.fieldName, title: col.label });
           continue;
         }
 
@@ -416,37 +768,151 @@ export class ExportJobProcessor {
           : ['id', ...rc.selectedFieldPaths];
 
         for (const fieldPath of selectedPaths) {
-          finalColumns.push({
-            fieldName: `${rc.relationFieldName}__${fieldPath}`,
-            label: `${rc.relationFieldLabel} / ${fieldPath}`,
-            type: 'TEXT',
-          });
+          const resolved = resolveFieldPathMetadata(
+            rc.targetObjectNameSingular,
+            fieldPath,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          );
+
+          if (resolved && isCompositeFieldType(resolved.fieldType)) {
+            const subFieldLabels =
+              COMPOSITE_FIELD_SUB_FIELD_LABELS[resolved.fieldType];
+
+            if (subFieldLabels) {
+              for (const [compositeKey, compositeLabel] of Object.entries(
+                subFieldLabels,
+              )) {
+                csvColumns.push({
+                  field: `${getRelationFieldFlatKey(rc.relationFieldName, fieldPath)}__${compositeKey}`,
+                  title: `${rc.relationFieldLabel} / ${resolved.label} / ${compositeLabel}`,
+                });
+              }
+            }
+          } else {
+            const label = resolved
+              ? `${rc.relationFieldLabel} / ${resolved.label}`
+              : `${rc.relationFieldLabel} / ${fieldPath}`;
+
+            csvColumns.push({
+              field: getRelationFieldFlatKey(rc.relationFieldName, fieldPath),
+              title: label,
+            });
+          }
+        }
+
+        continue;
+      }
+
+      // Main record field — check if composite and expand
+      const fieldMeta = findFieldMetadata(
+        objectNameSingular,
+        col.fieldName,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
+
+      const fieldType = fieldMeta
+        ? (fieldMeta.type as FieldMetadataType)
+        : (col.type as FieldMetadataType);
+
+      const fieldLabel = fieldMeta ? fieldMeta.label : col.label;
+
+      if (isCompositeFieldType(fieldType)) {
+        const subFieldLabels = COMPOSITE_FIELD_SUB_FIELD_LABELS[fieldType];
+
+        if (subFieldLabels) {
+          for (const [compositeKey, compositeLabel] of Object.entries(
+            subFieldLabels,
+          )) {
+            csvColumns.push({
+              field: `${col.fieldName}.${compositeKey}`,
+              title: `${fieldLabel} / ${compositeLabel}`,
+            });
+          }
         }
       } else {
-        finalColumns.push(col);
+        csvColumns.push({
+          field: col.fieldName,
+          title: fieldLabel,
+        });
       }
     }
 
-    return finalColumns;
+    return csvColumns;
   }
 
   /**
-   * Get a possibly nested value from a record (e.g., "name.firstName").
+   * Generate the final CSV string from records and column definitions.
+   *
+   * Handles:
+   * - Composite field flattening (CURRENCY amount conversion, nested objects)
+   * - CSV sanitization (formula injection prevention)
+   * - Empty field normalization
    */
-  private getNestedValue(
-    record: Record<string, unknown>,
-    path: string,
-  ): unknown {
-    const parts = path.split('.');
-    let current: unknown = record;
+  private generateCSV(
+    records: Record<string, unknown>[],
+    csvColumns: CsvColumn[],
+  ): string {
+    if (records.length === 0) return '';
 
-    for (const part of parts) {
-      if (current === null || current === undefined || typeof current !== 'object') {
-        return undefined;
+    // Process records: flatten composite fields and sanitize values
+    const processedRecords = records.map((record) => {
+      const processed: Record<string, unknown> = {};
+
+      for (const col of csvColumns) {
+        const dotIndex = col.field.indexOf('.');
+
+        if (dotIndex !== -1) {
+          // Composite field sub-key (e.g. "premium.amountMicros")
+          const parentField = col.field.substring(0, dotIndex);
+          const subKey = col.field.substring(dotIndex + 1);
+          const parentValue = record[parentField];
+
+          if (
+            parentValue !== null &&
+            parentValue !== undefined &&
+            typeof parentValue === 'object'
+          ) {
+            let subValue = (parentValue as Record<string, unknown>)[subKey];
+
+            // Convert amountMicros to human-readable amount
+            if (subKey === 'amountMicros' && typeof subValue === 'number') {
+              subValue = subValue / 1_000_000;
+            }
+
+            processed[col.field] =
+              typeof subValue === 'string'
+                ? sanitizeForCSV(subValue)
+                : (subValue ?? '');
+          } else {
+            processed[col.field] = '';
+          }
+        } else {
+          // Simple field or relation flat key
+          const value = record[col.field];
+
+          if (value === null || value === undefined) {
+            processed[col.field] = '';
+          } else if (typeof value === 'string') {
+            processed[col.field] = sanitizeForCSV(value);
+          } else if (typeof value === 'object') {
+            // Unexpected object — stringify as fallback
+            processed[col.field] = JSON.stringify(value);
+          } else {
+            processed[col.field] = value;
+          }
+        }
       }
-      current = (current as Record<string, unknown>)[part];
-    }
 
-    return current;
+      return processed;
+    });
+
+    const keys = csvColumns.map((col) => ({
+      field: col.field,
+      title: sanitizeForCSV(col.title),
+    }));
+
+    return json2csv(processedRecords, { keys, emptyFieldValue: '' });
   }
 }
