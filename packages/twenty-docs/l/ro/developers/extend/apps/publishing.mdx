@@ -12,7 +12,25 @@ Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, d
 După ce aplicația ta este [construită și testată local](/l/ro/developers/extend/apps/building), ai două căi pentru distribuire:
 
 * **Publică pe npm** — listează aplicația ta în marketplace-ul Twenty pentru ca orice spațiu de lucru să o poată descoperi și instala.
-* **Trimite un tarball** — implementează aplicația ta pe un server Twenty specific pentru utilizare internă, fără a o face disponibilă public.
+* **Implementați o arhivă tar** — încărcați aplicația direct pe un server Twenty anume pentru uz intern sau privat.
+
+Ambele căi pornesc din aceeași etapă de **build**.
+
+## Construirea aplicației
+
+Comanda `build` compilează sursele TypeScript, transpilează funcțiile de logică și componentele de front-end și generează un `manifest.json` care descrie conținutul aplicației:
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+Rezultatul este scris în `.twenty/output/`. This directory contains everything needed for distribution: compiled code, assets, the manifest, and a copy of your `package.json`.
+
+To also create a `.tgz` tarball (used by the deploy command internally, or for manual distribution):
+
+```bash filename="Terminal"
+yarn twenty build --tarball
+```
 
 ## Publicarea pe npm
 
@@ -21,29 +39,72 @@ Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketpla
 ### Cerințe
 
 * Un cont [npm](https://www.npmjs.com)
-* Numele pachetului tău **trebuie** să folosească prefixul `twenty-app-` (de ex., `twenty-app-postcard-sender`)
+* The `twenty-app` keyword **must** be listed in your `package.json` `keywords` array
+
+### Adding the required keyword
+
+The Twenty marketplace discovers apps by searching the npm registry for packages with the `twenty-app` keyword. Add it to your `package.json`:
+
+```json filename="package.json"
+{
+  "name": "twenty-app-postcard-sender",
+  "version": "1.0.0",
+  "keywords": ["twenty-app"],
+  ...
+}
+```
+
+<Note>
+The marketplace searches for `keywords:twenty-app` on the npm registry. Without this keyword, your package won't appear in the marketplace even if it has the `twenty-app-` name prefix.
+</Note>
 
 ### Pași
 
-1. **Construiește-ți aplicația** — CLI compilează sursele TypeScript și generează manifestul aplicației:
+1. **Build your app:**
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-2. **Publică pe npm** — publică pachetul construit în registrul npm:
+2. **Publish to npm:**
 
 ```bash filename="Terminal"
-npx twenty publish
+yarn twenty publish
 ```
 
-### Descoperire automată
+This runs `npm publish` from the `.twenty/output/` directory.
 
-Pachetele cu prefixul `twenty-app-` sunt descoperite automat de catalogul marketplace-ului Twenty. După publicare, aplicația ta apare în marketplace în câteva minute — fără înregistrare manuală sau aprobare necesară.
+To publish under a specific dist-tag (e.g., `beta` or `next`):
+
+```bash filename="Terminal"
+yarn twenty publish --tag beta
+```
+
+### How marketplace discovery works
+
+The Twenty server syncs its marketplace catalog from the npm registry **every hour**:
+
+1. It searches for all npm packages with the `keywords:twenty-app` keyword
+2. For each package, it fetches the `manifest.json` from the npm CDN
+3. The app's metadata (name, description, author, logo, screenshots, category) is extracted from the manifest and displayed in the marketplace
+
+After publishing, your app can take up to one hour to appear in the marketplace. To trigger the sync immediately instead of waiting for the next hourly run:
+
+```bash filename="Terminal"
+yarn twenty catalog-sync
+```
+
+To target a specific remote:
+
+```bash filename="Terminal"
+yarn twenty catalog-sync -r production
+```
+
+The metadata shown in the marketplace comes from your `defineApplication()` call in your app source code — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
 
 ### Publicare CI
 
-Proiectul generat include un workflow GitHub Actions care publică la fiecare lansare. Acesta rulează `app:build`, apoi `npm publish --provenance` din rezultatul build-ului:
+Proiectul generat include un workflow GitHub Actions care publică la fiecare lansare:
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -72,48 +133,117 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `npx twenty build`, apoi `npm publish` din `.twenty/output`.
+For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty build`, then `npm publish` from `.twenty/output`.
 
 <Tip>
 **npm provenance** este opțională, dar recomandată. Publicarea cu `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru instrucțiuni de configurare.
 </Tip>
 
-## Distribuire internă
+## Deploying to a server (tarball)
 
-Pentru aplicațiile pe care nu le dorești disponibile public — instrumente proprietare, integrări doar pentru enterprise sau build-uri experimentale — poți trimite un tarball direct pe un server Twenty.
+For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
 
-### Trimite un tarball
+### Cerințe
 
-Construiește-ți aplicația și implementeaz-o pe un server specific, într-un singur pas:
+Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
+
+Add a remote:
 
 ```bash filename="Terminal"
-npx twenty publish --server <server-url>
+yarn twenty remote add --url https://your-twenty-server.com --as production
 ```
 
-Orice spațiu de lucru de pe acel server poate apoi instala și actualiza aplicația din pagina de setări **Applications**.
+For a local development server:
+
+```bash filename="Terminal"
+yarn twenty remote add --local --as local
+```
+
+You can also authenticate with an API key for non-interactive environments:
+
+```bash filename="Terminal"
+yarn twenty remote add --url https://your-twenty-server.com --token <api-key> --as production
+```
+
+Manage your remotes:
+
+```bash filename="Terminal"
+yarn twenty remote list       # List all configured remotes
+yarn twenty remote switch prod # Set the default remote
+yarn twenty remote status     # Show active remote and auth status
+yarn twenty remote remove old # Remove a remote
+```
+
+### Deploying
+
+Build and upload your app to the server in one step:
+
+```bash filename="Terminal"
+yarn twenty deploy
+```
+
+This builds the app with `--tarball`, then uploads the tarball to the default remote via a GraphQL multipart upload.
+
+To deploy to a specific remote:
+
+```bash filename="Terminal"
+yarn twenty deploy -r production
+```
+
+### Sharing a deployed app
+
+Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
+
+1. Go to **Settings > Applications > Registrations** and open your app
+2. In the **Distribution** tab, click **Copy share link**
+3. Share this link with users on other workspaces — it takes them directly to the app's install page
+
+The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
 
 ### Gestionarea versiunilor
 
 Pentru a lansa o actualizare:
 
 1. Actualizează câmpul `version` din `package.json`
-2. Trimite un tarball nou cu `npx twenty publish --server <server-url>`
-3. Spațiile de lucru de pe acel server vor vedea actualizarea disponibilă în setările lor
+2. Run `yarn twenty deploy` (or `yarn twenty deploy -r production`)
+3. Workspaces that have the app installed will see the upgrade available in their settings
 
-<Note>
-Aplicațiile interne sunt limitate la serverul pe care sunt trimise. Acestea nu vor apărea în marketplace-ul public și nu pot fi instalate de spațiile de lucru de pe alte servere.
-</Note>
+## Installing apps
 
-## Categorii de aplicații
+Once an app is published (npm) or deployed (tarball), workspaces install it through the UI:
+
+```bash filename="Terminal"
+yarn twenty install
+```
+
+Or from the **Settings > Applications** page in the Twenty UI, where both marketplace and tarball-deployed apps can be browsed and installed.
+
+## App distribution categories
 
 Twenty organizează aplicațiile în trei categorii, în funcție de modul în care sunt distribuite:
 
-| Categorie      | Cum funcționează                                                                                                                  | Vizibilă în marketplace? |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| **Dezvoltare** | Aplicații în modul de dezvoltare local, rulate prin `yarn twenty dev`. Folosite pentru construire și testare.                     | Nu                       |
-| **Publicat**   | Aplicații publicate pe npm cu prefixul `twenty-app-`. Listate în marketplace pentru ca orice spațiu de lucru să le poată instala. | Da                       |
-| **Intern**     | Aplicații implementate prin tarball pe un server specific. Disponibile doar pentru spațiile de lucru de pe acel server.           | Nu                       |
+| Categorie              | Cum funcționează                                                                                                                 | Vizibilă în marketplace? |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **Dezvoltare**         | Aplicații în modul de dezvoltare local, rulate prin `yarn twenty dev`. Folosite pentru construire și testare.                    | Nu                       |
+| **Published (npm)**    | Apps published to npm with the `twenty-app` keyword. Listate în marketplace pentru ca orice spațiu de lucru să le poată instala. | Da                       |
+| **Internal (tarball)** | Aplicații implementate prin tarball pe un server specific. Available only to workspaces on that server via a share link.         | Nu                       |
 
 <Tip>
 Pornește în modul **Dezvoltare** în timp ce îți construiești aplicația. Când este gata, alege **Publicat** (npm) pentru distribuire largă sau **Intern** (tarball) pentru implementare privată.
 </Tip>
+
+## CLI reference
+
+| Comandă                     | Descriere                                      | Key flags                                           |
+| --------------------------- | ---------------------------------------------- | --------------------------------------------------- |
+| `yarn twenty build`         | Compile app and generate manifest              | `--tarball` — also create a `.tgz` package          |
+| `yarn twenty publish`       | Build and publish to npm                       | `--tag <tag>` — npm dist-tag (e.g., `beta`, `next`) |
+| `yarn twenty deploy`        | Build and upload tarball to a server           | `-r, --remote <name>` — target remote               |
+| `yarn twenty catalog-sync`  | Trigger marketplace catalog sync on the server | `-r, --remote <name>` — target remote               |
+| `yarn twenty install`       | Install a deployed app on a workspace          | `-r, --remote <name>` — target remote               |
+| `yarn twenty dev`           | Watch and sync local changes                   | Uses default remote                                 |
+| `yarn twenty remote add`    | Add a server connection                        | `--url`, `--token`, `--as`, `--local`, `--port`     |
+| `yarn twenty remote list`   | List configured remotes                        | —                                                   |
+| `yarn twenty remote switch` | Set default remote                             | —                                                   |
+| `yarn twenty remote status` | Show connection status                         | —                                                   |
+| `yarn twenty remote remove` | Remove a remote                                | —                                                   |
