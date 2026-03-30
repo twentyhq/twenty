@@ -315,18 +315,22 @@ export const useAgentChat = (
 
     const threadId = store.get(currentAIChatThreadState.atom);
 
-    if (isDefined(threadId) && isValidUuid(threadId)) {
-      const tokenPair = getTokenPair();
-
-      if (isDefined(tokenPair)) {
-        fetch(`${REST_API_BASE_URL}/agent-chat/${threadId}/stream`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${tokenPair.accessOrWorkspaceAgnosticToken.token}`,
-          },
-        }).catch(() => {});
-      }
+    if (!isDefined(threadId) || !isValidUuid(threadId)) {
+      return;
     }
+
+    const tokenPair = getTokenPair();
+
+    if (!isDefined(tokenPair)) {
+      return;
+    }
+
+    fetch(`${REST_API_BASE_URL}/agent-chat/${threadId}/stream`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${tokenPair.accessOrWorkspaceAgnosticToken.token}`,
+      },
+    }).catch(() => {});
   }, [stop, store]);
 
   useListenToBrowserEvent({
