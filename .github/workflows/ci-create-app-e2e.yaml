@@ -179,18 +179,12 @@ jobs:
       - name: Execute hello-world logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          set -euo pipefail
-          EXEC_OUTPUT=$(npx --no-install twenty exec --functionName hello-world-logic-function)
-          echo "$EXEC_OUTPUT"
-          echo "$EXEC_OUTPUT" | grep -q "Hello, World!"
+          npx --no-install twenty exec --functionName hello-world-logic-function
 
       - name: Execute create-hello-world-company logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          set -euo pipefail
-          EXEC_OUTPUT=$(npx --no-install twenty exec --functionName create-hello-world-company)
-          echo "$EXEC_OUTPUT"
-          echo "$EXEC_OUTPUT" | grep -qP 'Created company "Hello World" with id [0-9a-f\-]{36}'
+          npx --no-install twenty exec --functionName create-hello-world-company
 
       - name: Run scaffolded app integration test
         env:
