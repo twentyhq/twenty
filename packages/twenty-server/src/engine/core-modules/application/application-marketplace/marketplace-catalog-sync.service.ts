@@ -35,7 +35,7 @@ export class MarketplaceCatalogSyncService {
 
     for (const pkg of packages) {
       try {
-        const manifest =
+        let manifest =
           await this.marketplaceService.fetchManifestFromRegistryCdn(
             pkg.name,
             pkg.version,
@@ -49,6 +49,24 @@ export class MarketplaceCatalogSyncService {
         const universalIdentifier = manifest.application.universalIdentifier;
 
         const isFeatured = curatedIdentifiers.has(universalIdentifier);
+
+        if (!manifest.application.aboutDescription) {
+          const readme =
+            await this.marketplaceService.fetchReadmeFromRegistryCdn(
+              pkg.name,
+              pkg.version,
+            );
+
+          if (readme) {
+            manifest = {
+              ...manifest,
+              application: {
+                ...manifest.application,
+                aboutDescription: readme,
+              },
+            };
+          }
+        }
 
         const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
 
