@@ -10,10 +10,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/graphql/mutations/clearMaintenanceMode';
 import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/graphql/mutations/setMaintenanceMode';
-import {
-  GET_MAINTENANCE_MODE,
-  GetMaintenanceModeResult,
-} from '@/settings/admin-panel/health-status/graphql/queries/getMaintenanceMode';
+import { GET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/graphql/queries/getMaintenanceMode';
+import type { GetMaintenanceModeResult } from '@/settings/admin-panel/health-status/graphql/queries/getMaintenanceMode';
 
 const StyledFormRow = styled.div`
   align-items: center;
