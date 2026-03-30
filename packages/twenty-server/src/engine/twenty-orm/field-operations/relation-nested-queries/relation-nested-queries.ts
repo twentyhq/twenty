@@ -117,6 +117,28 @@ function getEntityId<Entity extends ObjectLiteral>(
   return typeof id === 'string' ? id : undefined;
 }
 
+/**
+ * Gets the schema-qualified table name for a target object by looking it up
+ * in the connection's entity metadata. Falls back to the bare table name
+ * if no metadata is found.
+ */
+function getSchemaQualifiedTable<Entity extends ObjectLiteral>(
+  queryBuilder:
+    | WorkspaceSelectQueryBuilder<Entity>
+    | SelectQueryBuilder<Entity>,
+  targetObjectName: string,
+): string {
+  const entityMeta = queryBuilder.connection.entityMetadatas.find(
+    (meta) => meta.name === targetObjectName || meta.tableName === targetObjectName,
+  );
+
+  if (entityMeta?.schema) {
+    return `"${entityMeta.schema}"."${entityMeta.tableName}"`;
+  }
+
+  return `"${targetObjectName}"`;
+}
+
 export type ImportRecordWarning = {
   entityIndex: number;
   recordId?: string;
@@ -410,21 +432,26 @@ export class RelationNestedQueries {
         }
 
         try {
-          const table = connectQueryConfig.targetObjectName;
+          const qualifiedTable = getSchemaQualifiedTable(
+            queryBuilder,
+            connectQueryConfig.targetObjectName,
+          );
           const columns = Object.keys(newRecord);
           const colList = columns.map((c) => `"${c}"`).join(', ');
           const paramList = columns.map((_, i) => `$${i + 1}`).join(', ');
           const values = columns.map((c) => newRecord[c]);
 
           await queryBuilder.connection.query(
-            `INSERT INTO "${table}" (${colList}) VALUES (${paramList})`,
+            `INSERT INTO ${qualifiedTable} (${colList}) VALUES (${paramList})`,
             values,
           );
 
           recordsToConnect.push(newRecord);
-        } catch {
-          // If creation fails, updateEntitiesWithRecordToConnectId will
-          // record a CONNECT_NOT_FOUND warning.
+        } catch (error) {
+          console.warn(
+            `[createMissingConnectRecords] Failed to create ${connectQueryConfig.targetObjectName}:`,
+            error instanceof Error ? error.message : error,
+          );
         }
       }
     }
@@ -709,12 +736,12 @@ export class RelationNestedQueries {
 
         if (allFields.length === 0) continue;
 
-        const table = connectQueryConfig.targetObjectName;
+        const qualifiedTable = getSchemaQualifiedTable(
+          queryBuilder,
+          connectQueryConfig.targetObjectName,
+        );
 
         try {
-          // Build parameterized UPDATE using the workspace connection.
-          // The connection's search_path is set to the workspace schema,
-          // so raw queries resolve to the correct schema.
           const setCols = allFields
             .map(([col], i) => `"${col}" = $${i + 1}`)
             .join(', ');
@@ -722,11 +749,14 @@ export class RelationNestedQueries {
           const idParamIndex = values.length + 1;
 
           await queryBuilder.connection.query(
-            `UPDATE "${table}" SET ${setCols}, "updatedAt" = NOW() WHERE "id" = $${idParamIndex}`,
+            `UPDATE ${qualifiedTable} SET ${setCols}, "updatedAt" = NOW() WHERE "id" = $${idParamIndex}::uuid`,
             [...values, matchedId],
           );
-        } catch {
-          // Update failed — non-critical, the connect still worked
+        } catch (error) {
+          console.warn(
+            `[applyCreateDataUpdates] Failed to update ${connectQueryConfig.targetObjectName} id=${matchedId}:`,
+            error instanceof Error ? error.message : error,
+          );
         }
       }
     }
