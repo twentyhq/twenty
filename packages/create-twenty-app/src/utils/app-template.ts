@@ -426,9 +426,7 @@ const handler = async (): Promise<{ message: string }> => {
   });
 
   if (!createCompany?.id || !createCompany?.name) {
-    throw new Error(
-      \`Failed to create company: \${JSON.stringify(createCompany)}\`,
-    );
+    throw new Error('Failed to create company: missing id or name in response');
   }
 
   return {
