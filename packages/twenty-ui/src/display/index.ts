@@ -126,6 +126,7 @@ export {
   IconBrandGraphql,
   IconBrandLinkedin,
   IconBrandOpenai,
+  IconBrandNpm,
   IconBrandX,
   IconBriefcase,
   IconBroadcast,
