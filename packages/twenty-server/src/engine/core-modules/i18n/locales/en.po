@@ -487,6 +487,7 @@ msgstr "An unexpected configuration error occurred."
 #: src/engine/metadata-modules/view/filters/view-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
+#: src/engine/core-entity-cache/exceptions/core-entity-cache.exception.ts
 msgid "An unexpected error occurred."
 msgstr "An unexpected error occurred."
 
@@ -1496,16 +1497,6 @@ msgstr "Contact auto creation policy"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
 msgid "Content cannot be empty"
 msgstr "Content cannot be empty"
-
-#. js-lingui-id: M73whl
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Context"
-msgstr "Context"
-
-#. js-lingui-id: YPzDDR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Context of the workflow run"
-msgstr "Context of the workflow run"
 
 #. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3216,11 +3207,6 @@ msgstr "Invalid captcha. Please try again."
 msgid "Invalid command menu item input."
 msgstr "Invalid command menu item input."
 
-#. js-lingui-id: C25VTR
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
-msgstr "Invalid configuration for widget \"{widgetTitle}\": Chart type {chartType} requires IS_DASHBOARD_V2_ENABLED feature flag"
-
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget"
@@ -3509,6 +3495,7 @@ msgstr "Invalid page layout widget data."
 
 #. js-lingui-id: HiaWGB
 #: src/engine/workspace-cache/exceptions/workspace-cache.exception.ts
+#: src/engine/core-entity-cache/exceptions/core-entity-cache.exception.ts
 msgid "Invalid parameters provided."
 msgstr "Invalid parameters provided."
 
@@ -5357,16 +5344,6 @@ msgstr "Other"
 msgid "Outgoing"
 msgstr "Outgoing"
 
-#. js-lingui-id: gh06VD
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Output"
-msgstr "Output"
-
-#. js-lingui-id: 5vO0WN
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Output of the workflow run"
-msgstr "Output of the workflow run"
-
 #. js-lingui-id: 6ua+9g
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Owned opportunities"
@@ -7019,11 +6996,6 @@ msgstr "This API Key has expired. Please create a new one."
 msgid "This API key has no role assigned."
 msgstr "This API key has no role assigned."
 
-#. js-lingui-id: FY4xDH
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "This chart type requires the Dashboard V2 feature to be enabled"
-msgstr "This chart type requires the Dashboard V2 feature to be enabled"
-
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
@@ -8364,6 +8336,11 @@ msgstr "Workspace ID and role mismatch."
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
 msgstr "Workspace is not ready to welcome new members"
+
+#. js-lingui-id: iN7doz
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+msgstr "Workspace limit reached. A valid enterprise key is required to create more workspaces."
 
 #. js-lingui-id: CbGxon
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts

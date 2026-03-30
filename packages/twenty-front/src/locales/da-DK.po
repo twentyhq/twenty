@@ -154,19 +154,16 @@ msgid "{0, plural, one {You do not have permission to access the {fieldsList} fi
 msgstr "{0, plural, one {Du har ikke tilladelse til at få adgang til {fieldsList} feltet} other {Du har ikke tilladelse til at få adgang til {fieldsList} felterne}}"
 
 #. js-lingui-id: dNIJYp
-#. placeholder {0}: formatNumber(totalCredits)
 #. placeholder {0}: formatNumber(datum.value)
-#: src/pages/settings/SettingsUsageUserDetail.tsx
 #: src/modules/settings/usage/components/UsagePieChart.tsx
-#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "{0} credits"
 msgstr "{0} kreditter"
 
-#. js-lingui-id: m8fdzW
-#. placeholder {0}: formatNumber(totalCredits)
+#. js-lingui-id: r4l/MK
+#. placeholder {0}: formatUsageValue(totalCredits)
 #: src/pages/settings/SettingsUsageUserDetail.tsx
-msgid "{0} credits used"
-msgstr "{0} forbrugte kreditter"
+msgid "{0} used"
+msgstr ""
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -770,6 +767,7 @@ msgstr "Handlinger brugere kan udføre på denne genstand"
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
 #: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
 #: src/modules/command-menu-item/record/constants/WorkflowCommandMenuItemsConfig.tsx
 msgid "Activate"
@@ -1265,6 +1263,7 @@ msgid "After or equal"
 msgstr "Efter eller lig med"
 
 #. js-lingui-id: fcYF58
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "agent"
 msgstr "agent"
@@ -1303,7 +1302,14 @@ msgstr ""
 msgid "Agent tokens"
 msgstr "Agenttokens"
 
+#. js-lingui-id: ftfADk
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "agents"
+msgstr ""
+
 #. js-lingui-id: 8Uv5e6
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
@@ -1313,6 +1319,11 @@ msgstr "Agent"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents powering this app"
 msgstr "Agenter, der driver denne app"
+
+#. js-lingui-id: zaHvxQ
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Agents provided by this app"
+msgstr ""
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
@@ -1328,6 +1339,7 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -1345,6 +1357,16 @@ msgstr "AI"
 #: src/modules/settings/usage/utils/getOperationTypeLabel.ts
 msgid "AI Chat"
 msgstr "AI-chat"
+
+#. js-lingui-id: E/lGXl
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "AI consumption across all workspaces."
+msgstr ""
+
+#. js-lingui-id: kkfXGh
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI consumption over time."
+msgstr ""
 
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -1367,6 +1389,61 @@ msgstr "Forberedelse af AI-anmodning"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "AI Response Schema"
 msgstr "AI Svarskema"
+
+#. js-lingui-id: tzhisR
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI Usage"
+msgstr ""
+
+#. js-lingui-id: Ad11E9
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "AI usage analytics across workspaces is available with an Enterprise key."
+msgstr ""
+
+#. js-lingui-id: zkptxb
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI usage analytics is available with an Enterprise key."
+msgstr ""
+
+#. js-lingui-id: U2F/HK
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI usage analytics requires ClickHouse. Contact your administrator."
+msgstr ""
+
+#. js-lingui-id: SknniY
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI Usage by Model"
+msgstr ""
+
+#. js-lingui-id: ehjYr9
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI Usage by Type"
+msgstr ""
+
+#. js-lingui-id: X2afmM
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI Usage by User"
+msgstr ""
+
+#. js-lingui-id: jyqPfh
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "AI Usage by Workspace"
+msgstr ""
+
+#. js-lingui-id: KLyZ6L
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+msgid "AI User Usage"
+msgstr ""
+
+#. js-lingui-id: TLbVxH
+#: src/modules/settings/usage/utils/getOperationTypeLabel.ts
+msgid "AI Workflow"
+msgstr ""
 
 #. js-lingui-id: BAiyFV
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2398,6 +2475,8 @@ msgid "between the {startOrdinal} and {endOrdinal} of the month"
 msgstr "mellem den {startOrdinal} og {endOrdinal} i måneden"
 
 #. js-lingui-id: R+w/Va
+#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/SettingsUsage.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -2459,6 +2538,12 @@ msgstr "Boolean"
 #: src/modules/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "Both"
 msgstr "Begge"
+
+#. js-lingui-id: 1hGdwj
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "Breakdown across AI models."
+msgstr ""
 
 #. js-lingui-id: qDsMss
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -2945,6 +3030,7 @@ msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Ryd feltet eller \"X\" for at gendanne til miljø-/standardværdi."
 
 #. js-lingui-id: Gt8ndY
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Click a user to see their daily breakdown."
 msgstr "Klik på en bruger for at se deres daglige opdeling."
@@ -2986,6 +3072,8 @@ msgstr "ClickHouse er påkrævet for revisionslogge. Kontakt din administrator."
 
 #. js-lingui-id: CTdw8/
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "ClickHouse Not Configured"
 msgstr "ClickHouse er ikke konfigureret"
 
@@ -3100,6 +3188,11 @@ msgstr "kolonnedata er ikke kompatible med Multi-Select. Krævet format er '[\"o
 msgid "Columns not matched:"
 msgstr "Kolonner ikke matchet:"
 
+#. js-lingui-id: pOJNDA
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "command"
+msgstr ""
+
 #. js-lingui-id: cj9UFG
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Command copied to clipboard"
@@ -3119,6 +3212,11 @@ msgstr "Kommandomenu"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "command menu item"
 msgstr "kommando-menu menupunkt"
+
+#. js-lingui-id: 9HKBNN
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "commands"
+msgstr ""
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
@@ -3552,6 +3650,11 @@ msgstr "Indsæt koden nedenfor"
 msgid "Copy Setup Key"
 msgstr "Kopier opsætningsnøgle"
 
+#. js-lingui-id: RGCCrg
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Copy share link"
+msgstr ""
+
 #. js-lingui-id: Ej5euX
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Copy this key as it will not be visible again"
@@ -3924,15 +4027,8 @@ msgstr "Brug af kreditter"
 msgid "Credit usage breakdown for your workspace."
 msgstr "Opdeling af kreditforbrug for dit arbejdsområde."
 
-#. js-lingui-id: UQ4Hjl
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-msgid "credits"
-msgstr "kreditter"
-
 #. js-lingui-id: lDIOek
 #: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credits"
 msgstr "Kreditter"
@@ -3999,6 +4095,7 @@ msgid "Currency Code"
 msgstr "Valutakode"
 
 #. js-lingui-id: Hp1l6f
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 msgid "Current"
 msgstr "Nuværende"
@@ -4123,6 +4220,12 @@ msgstr "Cyan"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Czech"
 msgstr "Tjekkisk"
+
+#. js-lingui-id: ShUrwO
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "Daily AI Usage"
+msgstr ""
 
 #. js-lingui-id: KXQkvT
 #: src/pages/settings/SettingsUsageUserDetail.tsx
@@ -4769,8 +4872,6 @@ msgstr "Beskriv, hvad du vil have AI'en til at gøre..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -4781,11 +4882,6 @@ msgstr "Beskriv, hvad du vil have AI'en til at gøre..."
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Description"
 msgstr "Beskrivelse"
-
-#. js-lingui-id: CuAMy4
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-msgid "Description of the application"
-msgstr "Beskrivelse af applikationen"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -5373,6 +5469,11 @@ msgstr "E-mail skal være gyldig"
 msgid "Email or domain is already in blocklist"
 msgstr "E-mail eller domæne er allerede på blokeringslisten"
 
+#. js-lingui-id: jvneza
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Email support"
+msgstr ""
+
 #. js-lingui-id: +VjrH/
 #: src/modules/side-panel/hooks/useOpenEmailThreadInSidePanel.ts
 msgid "Email Thread"
@@ -5777,10 +5878,17 @@ msgstr "Indtast din API-nøgle"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Enterprise"
 msgstr "Virksomhed"
+
+#. js-lingui-id: rmZVdg
+#: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
+msgid "Enterprise feature"
+msgstr ""
 
 #. js-lingui-id: Kjjkt3
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
@@ -6654,6 +6762,7 @@ msgid "Featured only"
 msgstr "Kun fremhævede"
 
 #. js-lingui-id: 2lOBKV
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
 msgstr "felt"
@@ -6988,11 +7097,6 @@ msgstr "fra {startDay} til {endDay}"
 msgid "front component"
 msgstr "frontkomponent"
 
-#. js-lingui-id: +M+QLN
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "front components"
-msgstr ""
-
 #. js-lingui-id: IvIKDS
 #: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
@@ -7015,13 +7119,7 @@ msgstr "Fuld adgang"
 msgid "Function name"
 msgstr "Funktionsnavn"
 
-#. js-lingui-id: SHkEmV
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "functions"
-msgstr "funktioner"
-
 #. js-lingui-id: xANKBj
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Functions"
 msgstr "Funktioner"
@@ -8752,11 +8850,18 @@ msgid "Logged in as {impersonatedUser}"
 msgstr "Logget ind som {impersonatedUser}"
 
 #. js-lingui-id: sTlKkx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "logic function"
 msgstr "logikfunktion"
 
+#. js-lingui-id: qqnB9E
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "logic functions"
+msgstr ""
+
 #. js-lingui-id: QTVVDd
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 msgid "Logic functions"
 msgstr "Logikfunktioner"
@@ -9213,10 +9318,10 @@ msgstr "Måned i året"
 msgid "monthly"
 msgstr "månedligt"
 
-#. js-lingui-id: Sew/cK
+#. js-lingui-id: +8Nek/
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-msgid "Monthly subscription"
-msgstr "Månedligt abonnement"
+msgid "Monthly"
+msgstr ""
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -9339,7 +9444,6 @@ msgstr "mySkill"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTableRow.tsx
@@ -9351,7 +9455,7 @@ msgstr "mySkill"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
-#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/UsageByUserTableSection.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -9398,11 +9502,6 @@ msgstr "Navnet kan ikke være tomt"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Navngivelse i både ental (f.eks. 'Faktura') og flertal (f.eks. 'Fakturaer') former."
-
-#. js-lingui-id: 9H6m8L
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-msgid "Name of the application"
-msgstr "Navn på applikationen"
 
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -9460,10 +9559,25 @@ msgstr "Naviger til forrige version"
 msgid "Navigate to previous workflow"
 msgstr "Naviger til forrige workflow"
 
+#. js-lingui-id: Vn3jYy
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Navigation items"
+msgstr ""
+
+#. js-lingui-id: 9o7X1c
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Navigation items added by this app"
+msgstr ""
+
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "navigation menu item"
 msgstr "menupunkt i navigationsmenuen"
+
+#. js-lingui-id: jRptK+
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Navigation menu items"
+msgstr ""
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
@@ -9716,6 +9830,16 @@ msgstr "Ingen agenter tilgængelige"
 msgid "No agents match your search"
 msgstr "Ingen agenter matcher din søgning"
 
+#. js-lingui-id: nPalt1
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+msgid "No AI consumption recorded for this user."
+msgstr ""
+
+#. js-lingui-id: 42kV9p
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+msgid "No AI usage data recorded yet."
+msgstr ""
+
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "No API keys assigned"
@@ -9794,11 +9918,6 @@ msgstr "Ingen legitimationsoplysninger"
 msgid "No credit consumption recorded for this user."
 msgstr "Intet kreditforbrug registreret for denne bruger."
 
-#. js-lingui-id: H7TRcV
-#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
-msgid "No credit consumption recorded yet."
-msgstr "Intet kreditforbrug registreret endnu."
-
 #. js-lingui-id: kxH3HO
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
 msgid "No currency"
@@ -9855,6 +9974,11 @@ msgstr "Ingen slettede {objectLabelSingular} fundet"
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "No deleted records matching the filter criteria were found."
 msgstr "Ingen slettede poster, der matcher filterkriterierne, blev fundet."
+
+#. js-lingui-id: RRRePs
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "No description available for this application"
+msgstr ""
 
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmailsCard.tsx
@@ -10140,7 +10264,7 @@ msgstr "Ingen udløsere konfigureret for denne funktion."
 
 #. js-lingui-id: WwlPOG
 #: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
 msgid "No usage data"
 msgstr "Ingen brugsdata"
 
@@ -10158,6 +10282,11 @@ msgstr "Ingen variabler tilgængelige"
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "No variables found"
 msgstr "Ingen variabler fundet"
+
+#. js-lingui-id: OCektF
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
+msgid "No variables to set for this application"
+msgstr ""
 
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -10331,6 +10460,7 @@ msgid "OAuth or API Key"
 msgstr "OAuth eller API-nøgle"
 
 #. js-lingui-id: pNEViR
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "object"
 msgstr "objekt"
@@ -10802,6 +10932,17 @@ msgstr "Sidelayout-fanen"
 msgid "page layout widget"
 msgstr ""
 
+#. js-lingui-id: ckYXHz
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Page layouts"
+msgstr ""
+
+#. js-lingui-id: gUojnO
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Page layouts defined by this app"
+msgstr ""
+
 #. js-lingui-id: IVBjIH
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 msgid "Page Name"
@@ -10908,6 +11049,11 @@ msgstr "Folk jeg har sendt e-mails til og modtaget e-mails fra."
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to."
 msgstr "Folk jeg har sendt e-mails til."
+
+#. js-lingui-id: qMTN0w
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+msgid "Per-day AI consumption."
+msgstr ""
 
 #. js-lingui-id: i9iYjM
 #: src/pages/settings/SettingsUsageUserDetail.tsx
@@ -11374,7 +11520,6 @@ msgid "Provider \"{0}\" removed"
 msgstr "Udbyder \"{0}\" fjernet"
 
 #. js-lingui-id: jerYcl
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Providers"
 msgstr ""
@@ -11886,6 +12031,11 @@ msgstr "Svar"
 msgid "Reply to all"
 msgstr "Svar til alle"
 
+#. js-lingui-id: tbmZmI
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Report and issue"
+msgstr ""
+
 #. js-lingui-id: /laZGZ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Request Failed"
@@ -12082,6 +12232,7 @@ msgid "Rich Text"
 msgstr "Formateret tekst"
 
 #. js-lingui-id: E1BXUR
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "role"
 msgstr "rolle"
@@ -12124,8 +12275,15 @@ msgstr ""
 msgid "Role updated successfully"
 msgstr "Rolle opdateret med succes"
 
+#. js-lingui-id: i9AFmv
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "roles"
+msgstr ""
+
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -12134,6 +12292,11 @@ msgstr "Rolle opdateret med succes"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "Roller"
+
+#. js-lingui-id: ys6cUp
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Roles defined by this app"
+msgstr ""
 
 #. js-lingui-id: Qz0FZ3
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -12480,7 +12643,7 @@ msgid "Search folders..."
 msgstr "Søg mapper..."
 
 #. js-lingui-id: uHAV+O
-#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/UsageByUserTableSection.tsx
 msgid "Search for a user..."
 msgstr "Søg efter en bruger..."
 
@@ -12552,6 +12715,8 @@ msgid "Searching the web for {query}"
 msgstr "Søger på nettet efter {query}"
 
 #. js-lingui-id: 8sgZS9
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/settings/billing/components/SubscriptionPrice.tsx
 msgid "seat / month"
@@ -13073,11 +13238,6 @@ msgstr "Indstillinger Fulde Rettigheder"
 msgid "Settings permissions"
 msgstr "Indstillinger for tilladelser"
 
-#. js-lingui-id: rl/5Qa
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Settings tab"
-msgstr ""
-
 #. js-lingui-id: dIJGKR
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Setup a tailor-made workspace"
@@ -13110,14 +13270,25 @@ msgid "Seventh"
 msgstr "Syvende"
 
 #. js-lingui-id: Z8lGw6
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Share"
 msgstr "Del"
+
+#. js-lingui-id: BkgQSO
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Share link copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Del dette link for at invitere brugere til at deltage i dit arbejdsområde"
+
+#. js-lingui-id: 69MEsn
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Share this link with other workspaces on this server to let them install this application."
+msgstr ""
 
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -13226,6 +13397,7 @@ msgid "sk-..."
 msgstr "sk-..."
 
 #. js-lingui-id: vJRTzI
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "skill"
 msgstr "færdighed"
@@ -13258,11 +13430,23 @@ msgstr "Færdighedens navn"
 msgid "Skill not found"
 msgstr "Færdighed ikke fundet"
 
+#. js-lingui-id: gPdJ1+
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "skills"
+msgstr ""
+
 #. js-lingui-id: PCSkw2
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Skills"
 msgstr "Færdigheder"
+
+#. js-lingui-id: B3q6I4
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Skills provided by this app"
+msgstr ""
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
@@ -14233,7 +14417,7 @@ msgid "This app is listed on the marketplace because it is published to npm."
 msgstr "Denne app vises på markedspladsen, fordi den er udgivet på npm."
 
 #. js-lingui-id: SYslQU
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
 msgstr "Denne applikation er ikke listet på markedspladsen. Den blev delt via et direkte link."
 
@@ -14562,6 +14746,12 @@ msgstr "Samlede jobs"
 msgid "Total time"
 msgstr "Samlet tid"
 
+#. js-lingui-id: BxecEJ
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "Track AI consumption across your workspace."
+msgstr ""
+
 #. js-lingui-id: YT/cKI
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
@@ -14884,6 +15074,7 @@ msgstr "Universelt ID"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
@@ -15077,6 +15268,7 @@ msgid "Upgrade Plan"
 msgstr "Opgrader planen"
 
 #. js-lingui-id: pKCx2F
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 msgid "Upgrade to {latestAvailableVersion}"
 msgstr "Opgrader til {latestAvailableVersion}"
@@ -15086,12 +15278,13 @@ msgstr "Opgrader til {latestAvailableVersion}"
 msgid "Upgrade to access"
 msgstr "Opgrader for at få adgang"
 
-#. js-lingui-id: jmVW3I
+#. js-lingui-id: Wurpq2
 #: src/pages/settings/security/SettingsSecurity.tsx
-msgid "Upgrade to Enterprise to access audit logs"
-msgstr "Opgrader til Enterprise for at få adgang til revisionslogge"
+msgid "Upgrade to Enterprise to access audit logs."
+msgstr ""
 
 #. js-lingui-id: +Gi3x1
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 msgid "Upgrading..."
 msgstr "Opgraderer..."
@@ -15164,7 +15357,9 @@ msgstr "us-east-1"
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 #: src/pages/settings/SettingsUsage.tsx
 #: src/pages/settings/SettingsUsage.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/settings/usage/components/UsageByUserTableSection.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Usage"
 msgstr "Brug"
 
@@ -15177,6 +15372,11 @@ msgstr "Brug på tværs af alle arbejdsområder på denne server"
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage Analytics"
 msgstr "Brugsanalyse"
+
+#. js-lingui-id: 7Kq6TI
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage analytics requires ClickHouse. Contact your administrator."
+msgstr ""
 
 #. js-lingui-id: 7vRxpC
 #: src/pages/settings/SettingsUsageUserDetail.tsx
@@ -15396,13 +15596,7 @@ msgstr "Bekræft koden fra appen"
 msgid "Verify the code from the app"
 msgstr "Bekræft koden fra appen"
 
-#. js-lingui-id: eE0JZ4
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-msgid "Version"
-msgstr "Version"
-
 #. js-lingui-id: IHIWR4
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
 msgstr "Version af applikationen"
@@ -15439,6 +15633,11 @@ msgstr "Visning"
 #. js-lingui-id: 8qPdO7
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Agent"
+msgstr ""
+
+#. js-lingui-id: noHthC
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "View AI usage breakdown"
 msgstr ""
 
 #. js-lingui-id: nK72s8
@@ -15525,6 +15724,7 @@ msgstr "Vis logge"
 
 #. js-lingui-id: 7PrSCy
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "View marketplace page"
 msgstr "Se side på markedspladsen"
 
@@ -15571,9 +15771,16 @@ msgid "View workspace activity logs"
 msgstr "Se arbejdsområdets aktivitetslogge"
 
 #. js-lingui-id: 1I6UoR
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Views"
 msgstr "Visninger"
+
+#. js-lingui-id: xF9sRg
+#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+msgid "Views created by this app"
+msgstr ""
 
 #. js-lingui-id: eedtPL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -15828,10 +16035,20 @@ msgstr "Hvor"
 msgid "Whether this model supports chain-of-thought reasoning"
 msgstr "Om denne model understøtter chain-of-thought-ræsonnering"
 
+#. js-lingui-id: dmoPOu
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "widget"
+msgstr ""
+
 #. js-lingui-id: fANaAS
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
 msgid "Widget type"
 msgstr "Widget type"
+
+#. js-lingui-id: YR3K7M
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "widgets"
+msgstr ""
 
 #. js-lingui-id: j6ncOZ
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -15921,6 +16138,7 @@ msgstr "Arbejdsgange"
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -15935,6 +16153,7 @@ msgstr "Arbejdsgange"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -16061,10 +16280,10 @@ msgstr "År"
 msgid "yearly"
 msgstr "årligt"
 
-#. js-lingui-id: Y1GwUe
+#. js-lingui-id: zkWmBh
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-msgid "Yearly subscription"
-msgstr "Årligt abonnement"
+msgid "Yearly"
+msgstr ""
 
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts

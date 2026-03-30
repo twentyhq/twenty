@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   PermissionsException,
@@ -30,7 +30,7 @@ export class WorkspaceMemberPreQueryHookService {
     workspaceMemberId?: string;
     targettedWorkspaceMemberId?: string;
     workspaceId: string;
-    apiKey?: ApiKeyEntity | null;
+    apiKey?: FlatApiKey | null;
   }) {
     if (isDefined(apiKey)) {
       return;

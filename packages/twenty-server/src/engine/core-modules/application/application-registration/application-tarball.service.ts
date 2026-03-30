@@ -63,6 +63,10 @@ export class ApplicationTarballService {
         };
       }>(contentDir, 'manifest.json');
 
+      const packageJson = await readJsonFile<{
+        version: string;
+      }>(contentDir, 'package.json');
+
       if (manifest === null) {
         throw new ApplicationRegistrationException(
           'manifest.json not found or invalid in tarball',
@@ -104,6 +108,10 @@ export class ApplicationTarballService {
           universalIdentifier,
           name: manifest.application?.displayName ?? 'Unknown App',
           sourceType: ApplicationRegistrationSourceType.TARBALL,
+          manifest,
+          latestAvailableVersion: packageJson?.version ?? null,
+          isListed: false,
+          isFeatured: false,
           oAuthClientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],
@@ -137,6 +145,12 @@ export class ApplicationTarballService {
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
+        name: manifest.application?.displayName ?? 'Unknown App',
+        manifest,
+        latestAvailableVersion: packageJson?.version ?? null,
+        isListed: false,
+        isFeatured: false,
+        ownerWorkspaceId: params.ownerWorkspaceId,
       });
 
       this.logger.log(

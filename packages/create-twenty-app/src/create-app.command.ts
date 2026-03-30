@@ -211,14 +211,14 @@ export class CreateAppCommand {
       if (!result.success) {
         console.log(
           chalk.yellow(
-            'Authentication skipped. Run `yarn twenty remote add --local` manually.',
+            'Authentication skipped. Run `yarn twenty remote add` manually.',
           ),
         );
       }
     } catch {
       console.log(
         chalk.yellow(
-          'Authentication skipped. Run `yarn twenty remote add --local` manually.',
+          'Authentication skipped. Run `yarn twenty remote add` manually.',
         ),
       );
     }
@@ -236,7 +236,7 @@ export class CreateAppCommand {
     if (!serverResult) {
       console.log(
         chalk.gray(
-          '- yarn twenty remote add --local  # Authenticate with Twenty',
+          '- yarn twenty remote add          # Authenticate with Twenty',
         ),
       );
     }

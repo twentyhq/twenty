@@ -13,6 +13,8 @@ import {
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -251,6 +253,7 @@ export class ChatExecutionService {
           registeredModel.modelId,
           { usage, cacheCreationTokens },
           workspace.id,
+          UsageOperationType.AI_CHAT_TOKEN,
           null,
           userWorkspaceId,
         );
