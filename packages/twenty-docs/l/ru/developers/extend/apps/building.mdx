@@ -15,21 +15,21 @@ description: Определяйте объекты, функции логики,
 
 SDK предоставляет вспомогательные функции для определения сущностей вашего приложения. Как описано в [Обнаружение сущностей](/l/ru/developers/extend/apps/getting-started#entity-detection), вы должны использовать `export default define<Entity>({...})`, чтобы ваши сущности были обнаружены:
 
-| Функция                          | Назначение                                                                          |
-| -------------------------------- | ----------------------------------------------------------------------------------- |
-| `defineApplication`              | Настройка метаданных приложения (обязательно, по одному на приложение)              |
-| `defineObject`                   | Определяет пользовательские объекты с полями                                        |
-| `defineField`                    | Extend existing objects with additional fields or define standalone relation fields |
-| `defineLogicFunction`            | Определение логических функций с обработчиками                                      |
-| `definePreInstallLogicFunction`  | Определяет предустановочную логическую функцию (по одной на приложение)             |
-| `definePostInstallLogicFunction` | Определяет послеустановочную логическую функцию (по одной на приложение)            |
-| `defineFrontComponent`           | Определение фронт-компонентов для настраиваемого интерфейса                         |
-| `defineRole`                     | Настраивает права роли и доступ к объектам                                          |
-| `defineView`                     | Определяйте сохранённые представления для объектов                                  |
-| `defineNavigationMenuItem`       | Определяйте ссылки боковой панели навигации                                         |
-| `defineSkill`                    | Определение навыков агента ИИ                                                       |
-| `defineAgent`                    | Define AI agents                                                                    |
-| `definePageLayout`               | Define custom page layouts                                                          |
+| Функция                          | Назначение                                                                                      |
+| -------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `defineApplication`              | Настройка метаданных приложения (обязательно, по одному на приложение)                          |
+| `defineObject`                   | Определяет пользовательские объекты с полями                                                    |
+| `defineField`                    | Расширяйте существующие объекты дополнительными полями или определяйте отдельные поля отношений |
+| `defineLogicFunction`            | Определение логических функций с обработчиками                                                  |
+| `definePreInstallLogicFunction`  | Определяет предустановочную логическую функцию (по одной на приложение)                         |
+| `definePostInstallLogicFunction` | Определяет послеустановочную логическую функцию (по одной на приложение)                        |
+| `defineFrontComponent`           | Определение фронт-компонентов для настраиваемого интерфейса                                     |
+| `defineRole`                     | Настраивает права роли и доступ к объектам                                                      |
+| `defineView`                     | Определяйте сохранённые представления для объектов                                              |
+| `defineNavigationMenuItem`       | Определяйте ссылки боковой панели навигации                                                     |
+| `defineSkill`                    | Определение навыков агента ИИ                                                                   |
+| `defineAgent`                    | Определяйте агентов ИИ                                                                          |
+| `definePageLayout`               | Определяйте пользовательские макеты страниц                                                     |
 
 Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
@@ -112,7 +112,7 @@ export default defineObject({
 * `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
 * Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
 * Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
-* You can scaffold new objects using `yarn twenty add`, which guides you through naming, fields, and relationships.
+* Вы можете сгенерировать новые объекты с помощью `yarn twenty add`, который проведёт вас через выбор именования, полей и связей.
 
 <Note>
 **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля,
@@ -124,7 +124,7 @@ export default defineObject({
 
 ### Определение полей для существующих объектов
 
-Use `defineField()` to add fields to objects you don't own — such as standard Twenty objects (Person, Company, etc.) or objects from other apps. Unlike inline fields in `defineObject()`, standalone fields require an `objectUniversalIdentifier` to specify which object they extend:
+Используйте `defineField()` для добавления полей к объектам, которые вам не принадлежат — например, к стандартным объектам Twenty (Person, Company и т. д.). или к объектам из других приложений. В отличие от встроенных полей в `defineObject()`, отдельные поля требуют `objectUniversalIdentifier`, чтобы указать, какой объект они расширяют:
 
 ```typescript
 // src/fields/company-loyalty-tier.field.ts
@@ -147,35 +147,35 @@ export default defineField({
 
 Основные моменты:
 
-* `objectUniversalIdentifier` identifies the target object. For standard objects, use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` exported from `twenty-sdk`.
-* When defining fields inline in `defineObject()`, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
-* `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
+* `objectUniversalIdentifier` определяет целевой объект. Для стандартных объектов используйте `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`, экспортируемые из `twenty-sdk`.
+* При определении полей непосредственно в `defineObject()` вам не нужен `objectUniversalIdentifier` — он наследуется от родительского объекта.
+* `defineField()` — единственный способ добавить поля к объектам, которые вы не создавали с помощью `defineObject()`.
 
 ### Связи
 
-Relations connect objects together. In Twenty, relations are always **bidirectional** — you define both sides, and each side references the other.
+Отношения связывают объекты между собой. В Twenty отношения всегда двунаправленные — вы определяете обе стороны, и каждая сторона ссылается на другую.
 
-There are two relation types:
+Существуют два типа отношений:
 
-| Тип отношения | Описание                                                      | Has foreign key?       |
-| ------------- | ------------------------------------------------------------- | ---------------------- |
-| `MANY_TO_ONE` | Many records of this object point to one record of the target | Yes (`joinColumnName`) |
-| `ONE_TO_MANY` | One record of this object has many records of the target      | No (inverse side)      |
+| Тип отношения | Описание                                                              | Есть внешний ключ?     |
+| ------------- | --------------------------------------------------------------------- | ---------------------- |
+| `MANY_TO_ONE` | Многие записи этого объекта указывают на одну запись целевого объекта | Да (`joinColumnName`)  |
+| `ONE_TO_MANY` | Одна запись этого объекта имеет много записей целевого объекта        | Нет (обратная сторона) |
 
-#### How relations work
+#### Как работают отношения
 
-Every relation requires **two fields** that reference each other:
+Каждое отношение требует **двух полей**, которые ссылаются друг на друга:
 
-1. The **MANY_TO_ONE** side — lives on the object that holds the foreign key
-2. The **ONE_TO_MANY** side — lives on the object that owns the collection
+1. Сторона **MANY_TO_ONE** — находится в объекте, который содержит внешний ключ
+2. Сторона **ONE_TO_MANY** — находится в объекте, которому принадлежит коллекция
 
-Both fields use `FieldType.RELATION` and cross-reference each other via `relationTargetFieldMetadataUniversalIdentifier`.
+Оба поля используют `FieldType.RELATION` и ссылаются друг на друга через `relationTargetFieldMetadataUniversalIdentifier`.
 
-#### Example: Post Card has many Recipients
+#### Пример: Почтовая открытка имеет много получателей
 
-Suppose a `PostCard` can be sent to many `PostCardRecipient` records. Each recipient belongs to exactly one post card.
+Предположим, `PostCard` может быть отправлен множству записей `PostCardRecipient`. Каждый получатель относится ровно к одной открытке.
 
-**Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
+**Шаг 1: Определите сторону ONE_TO_MANY на PostCard** (сторона "one"):
 
 ```typescript
 // src/fields/post-card-recipients-on-post-card.field.ts
@@ -203,7 +203,7 @@ export default defineField({
 });
 ```
 
-**Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
+**Шаг 2: Определите сторону MANY_TO_ONE на PostCardRecipient** (сторона "many" — содержит внешний ключ):
 
 ```typescript
 // src/fields/post-card-on-post-card-recipient.field.ts
@@ -234,12 +234,12 @@ export default defineField({
 ```
 
 <Note>
-**Circular imports:** Both relation fields reference each other's `universalIdentifier`. To avoid circular import issues, export your field IDs as named constants from each file, and import them in the other file. The build system resolves these at compile time.
+**Циклические импорты:** Оба поля отношений ссылаются на `universalIdentifier` друг друга. Чтобы избежать проблем с циклическими импортами, экспортируйте идентификаторы полей как именованные константы из каждого файла и импортируйте их в другом файле. Система сборки разрешает это на этапе компиляции.
 </Note>
 
-#### Relating to standard objects
+#### Связывание со стандартными объектами
 
-To create a relation with a built-in Twenty object (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Чтобы создать отношение со встроенным объектом Twenty (Person, Company и т. д.), используйте `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
 
 ```typescript
 // src/fields/person-on-self-hosting-user.field.ts
@@ -274,20 +274,20 @@ export default defineField({
 });
 ```
 
-#### Relation field properties
+#### Свойства поля отношения
 
-| Свойство                                          | Обязательно      | Описание                                                                                              |
-| ------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
-| `type`                                            | Да               | Must be `FieldType.RELATION`                                                                          |
-| `relationTargetObjectMetadataUniversalIdentifier` | Да               | The `universalIdentifier` of the target object                                                        |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Да               | The `universalIdentifier` of the matching field on the target object                                  |
-| `universalSettings.relationType`                  | Да               | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                              |
-| `universalSettings.onDelete`                      | MANY_TO_ONE only | What happens when the referenced record is deleted: `CASCADE`, `SET_NULL`, `RESTRICT`, or `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE only | Database column name for the foreign key (e.g., `postCardId`)                                         |
+| Свойство                                          | Обязательно            | Описание                                                                                        |
+| ------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------------------------------- |
+| `type`                                            | Да                     | Должно быть `FieldType.RELATION`                                                                |
+| `relationTargetObjectMetadataUniversalIdentifier` | Да                     | `universalIdentifier` целевого объекта                                                          |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Да                     | `universalIdentifier` соответствующего поля на целевом объекте                                  |
+| `universalSettings.relationType`                  | Да                     | `RelationType.MANY_TO_ONE` или `RelationType.ONE_TO_MANY`                                       |
+| `universalSettings.onDelete`                      | Только для MANY_TO_ONE | Что происходит при удалении связанной записи: `CASCADE`, `SET_NULL`, `RESTRICT` или `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Только для MANY_TO_ONE | Имя столбца базы данных для внешнего ключа (например, `postCardId`)                             |
 
-#### Inline relation fields in defineObject
+#### Встроенные поля отношений в defineObject
 
-You can also define relation fields directly inside `defineObject()`. In that case, omit `objectUniversalIdentifier` — it's inherited from the parent object:
+Вы также можете определять поля отношений непосредственно внутри `defineObject()`. В этом случае опустите `objectUniversalIdentifier` — он наследуется от родительского объекта:
 
 ```typescript
 export default defineObject({
@@ -354,21 +354,21 @@ export default defineApplication({
 * `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
 * Предустановочные и послеустановочные функции автоматически обнаруживаются во время сборки манифеста. См. [Предустановочные функции](#pre-install-functions) и [Послеустановочные функции](#post-install-functions).
 
-#### Marketplace metadata
+#### Метаданные маркетплейса
 
-If you plan to [publish your app](/l/ru/developers/extend/apps/publishing), these optional fields control how your app appears in the marketplace:
+Если вы планируете [опубликовать приложение](/l/ru/developers/extend/apps/publishing), эти необязательные поля определяют, как ваше приложение отображается в маркетплейсе:
 
-| Поле               | Описание                                            |
-| ------------------ | --------------------------------------------------- |
-| `author`           | Author or company name                              |
-| `category`         | App category for marketplace filtering              |
-| `logoUrl`          | Path to your app logo (relative to `./assets/`)     |
-| `screenshots`      | Array of screenshot paths (relative to `./assets/`) |
-| `aboutDescription` | Longer markdown description for the "About" tab     |
-| `websiteUrl`       | Link to your website                                |
-| `termsUrl`         | Link to terms of service                            |
-| `emailSupport`     | Support email address                               |
-| `issueReportUrl`   | Link to issue tracker                               |
+| Поле               | Описание                                                     |
+| ------------------ | ------------------------------------------------------------ |
+| `author`           | Имя автора или название компании                             |
+| `category`         | Категория приложения для фильтрации в маркетплейсе           |
+| `logoUrl`          | Путь к логотипу вашего приложения (относительно `./assets/`) |
+| `screenshots`      | Массив путей к скриншотам (относительно `./assets/`)         |
+| `aboutDescription` | Расширенное описание в Markdown для вкладки "About"          |
+| `websiteUrl`       | Ссылка на ваш сайт                                           |
+| `termsUrl`         | Ссылка на условия предоставления услуг                       |
+| `emailSupport`     | Адрес электронной почты поддержки                            |
+| `issueReportUrl`   | Ссылка на систему отслеживания проблем                       |
 
 #### Роли и разрешения
 
@@ -376,7 +376,7 @@ If you plan to [publish your app](/l/ru/developers/extend/apps/publishing), thes
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
-* Follow least-privilege: create a dedicated role with only the permissions your functions need, then reference its universal identifier.
+* Следуйте принципу наименьших привилегий: создайте отдельную роль только с теми правами, которые нужны вашим функциям, и укажите её универсальный идентификатор.
 
 ##### Роль функции по умолчанию (*.role.ts)
 
@@ -429,7 +429,7 @@ export default defineRole({
 
 Заметки:
 
-* Start from the scaffolded role, then progressively restrict it following least-privilege.
+* Начните со сгенерированной роли, затем постепенно ограничивайте её, следуя принципу наименьших привилегий.
 * Замените `objectPermissions` и `fieldPermissions` на объекты/поля, которые нужны вашим функциям.
 * `permissionFlags` управляют доступом к возможностям на уровне платформы. Держите их минимальными; добавляйте только то, что нужно.
 * См. рабочий пример в приложении Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
@@ -543,7 +543,7 @@ yarn twenty exec --preInstall
 * Для каждого приложения допускается только одна предустановочная функция. Сборка манифеста завершится ошибкой, если будет обнаружено более одной такой функции.
 * Параметр `universalIdentifier` функции автоматически устанавливается как `preInstallLogicFunctionUniversalIdentifier` в манифесте приложения во время сборки — вам не нужно ссылаться на него в `defineApplication()`.
 * Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы обеспечить выполнение более длительных задач подготовки.
-* Pre-install functions do not need triggers — they are invoked by the platform before installation or manually via `exec --preInstall`.
+* Предустановочным функциям не нужны триггеры — платформа вызывает их перед установкой или вручную через `exec --preInstall`.
 
 ### Послеустановочные функции
 
@@ -581,7 +581,7 @@ yarn twenty exec --postInstall
 * Для каждого приложения допускается только одна послеустановочная функция. Сборка манифеста завершится ошибкой, если будет обнаружено более одной такой функции.
 * Параметр `universalIdentifier` функции автоматически устанавливается как `postInstallLogicFunctionUniversalIdentifier` в манифесте приложения во время сборки — вам не нужно ссылаться на него в `defineApplication()`.
 * Тайм-аут по умолчанию установлен на 300 секунд (5 минут), чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
-* Post-install functions do not need triggers — they are invoked by the platform during installation or manually via `exec --postInstall`.
+* Постустановочным функциям не нужны триггеры — платформа вызывает их во время установки или вручную через `exec --postInstall`.
 
 ### Полезная нагрузка триггера маршрута
 
@@ -625,15 +625,15 @@ const handler = async (event: RoutePayload) => {
 
 Тип `RoutePayload` имеет следующую структуру:
 
-| Свойство                     | Тип                                   | Описание                                                                                 |
-| ---------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | HTTP-заголовки (только перечисленные в `forwardedRequestHeaders`)                        |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Параметры строки запроса (несколько значений объединяются запятыми)                      |
-| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern (e.g., `/users/:id` -> `{ id: '123' }`) |
-| `body`                       | `object \| null`                      | Разобранное тело запроса (JSON)                                                          |
-| `isBase64Encoded`            | `логический тип`                      | Является ли тело закодированным в base64                                                 |
-| `requestContext.http.method` | `строка`                              | Метод HTTP (GET, POST, PUT, PATCH, DELETE)                                               |
-| `requestContext.http.path`   | `строка`                              | Необработанный путь запроса                                                              |
+| Свойство                     | Тип                                   | Описание                                                                                    |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP-заголовки (только перечисленные в `forwardedRequestHeaders`)                           |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Параметры строки запроса (несколько значений объединяются запятыми)                         |
+| `pathParameters`             | `Record<string, string \| undefined>` | Параметры пути, извлечённые из шаблона маршрута (например, `/users/:id` -> `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Разобранное тело запроса (JSON)                                                             |
+| `isBase64Encoded`            | `логический тип`                      | Является ли тело закодированным в base64                                                    |
+| `requestContext.http.method` | `строка`                              | Метод HTTP (GET, POST, PUT, PATCH, DELETE)                                                  |
+| `requestContext.http.path`   | `строка`                              | Необработанный путь запроса                                                                 |
 
 ### Проброс HTTP-заголовков
 
@@ -675,7 +675,7 @@ const handler = async (event: RoutePayload) => {
 
 Вы можете создать новые функции двумя способами:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new logic function. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Сгенерировано**: Запустите `yarn twenty add` и выберите опцию добавления новой логической функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
 * **Вручную**: Создайте новый файл `*.logic-function.ts` и используйте `defineLogicFunction()`, следуя тому же шаблону.
 
 ### Пометка логической функции как инструмента
@@ -776,7 +776,7 @@ export default defineFrontComponent({
 
 Вы можете создать новые фронт-компоненты двумя способами:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new front component.
+* **Сгенерировано**: Запустите `yarn twenty add` и выберите опцию добавления нового фронт-компонента.
 * **Вручную**: Создайте новый файл `.tsx` и используйте `defineFrontComponent()`, следуя тому же шаблону.
 
 ### Навыки
@@ -811,21 +811,21 @@ export default defineSkill({
 
 Вы можете создать новые навыки двумя способами:
 
-* **Scaffolded**: Run `yarn twenty add` and choose the option to add a new skill.
+* **Сгенерировано**: Запустите `yarn twenty add` и выберите опцию добавления нового навыка.
 * **Вручную**: Создайте новый файл и используйте `defineSkill()`, следуя тому же шаблону.
 
-### Typed API clients (`twenty-client-sdk`)
+### Типизированные клиенты API (`twenty-client-sdk`)
 
-The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components:
+Пакет `twenty-client-sdk` предоставляет два типизированных клиента GraphQL для взаимодействия с API Twenty из ваших логических функций и фронт-компонентов:
 
-| Клиент              | Импорт                       | Endpoint                                       | Generated?             |
-| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
-| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
+| Клиент              | Импорт                       | Конечная точка                                                    | Генерируется?                    |
+| ------------------- | ---------------------------- | ----------------------------------------------------------------- | -------------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — данные рабочего пространства (записи, объекты)       | Да, на этапе dev/build           |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — конфигурация рабочего пространства, загрузка файлов | Нет, поставляется в готовом виде |
 
 #### CoreApiClient
 
-`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it's fully typed to match your objects and fields.
+`CoreApiClient` — основной клиент для запросов и изменений данных рабочего пространства. Он генерируется из схемы вашего рабочего пространства во время `yarn twenty dev` или `yarn twenty build`, поэтому он полностью типизирован в соответствии с вашими объектами и полями.
 
 ```typescript
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -859,15 +859,15 @@ const { createCompany } = await client.mutation({
 });
 ```
 
-The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
+Клиент использует синтаксис selection-set: передайте `true`, чтобы включить поле, используйте `__args` для аргументов и вкладывайте объекты для отношений. Вы получаете полное автодополнение и проверку типов на основе схемы вашего рабочего пространства.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you try to use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema, generates a typed client using `@genql/cli`, writes the generated sources to `node_modules/twenty-client-sdk/dist/core/generated/`, and replaces the stubs in `node_modules/twenty-client-sdk/dist/core.mjs` and `node_modules/twenty-client-sdk/dist/core.cjs`.
+**CoreApiClient генерируется на этапе dev/build.** Если вы попытаетесь использовать его, не запустив сначала `yarn twenty dev` или `yarn twenty build`, он выбросит ошибку. Генерация происходит автоматически — CLI анализирует GraphQL-схему вашего рабочего пространства, генерирует типизированный клиент с помощью `@genql/cli`, записывает сгенерированные исходники в `node_modules/twenty-client-sdk/dist/core/generated/` и заменяет заглушки в `node_modules/twenty-client-sdk/dist/core.mjs` и `node_modules/twenty-client-sdk/dist/core.cjs`.
 </Note>
 
-#### Using CoreSchema for type annotations
+#### Использование CoreSchema для аннотаций типов
 
-`CoreSchema` provides TypeScript types matching your workspace objects, useful for typing component state or function parameters:
+`CoreSchema` предоставляет типы TypeScript, соответствующие объектам вашего рабочего пространства, что полезно для типизации состояния компонентов или параметров функций:
 
 ```typescript
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -890,7 +890,7 @@ setCompany(result.company);
 
 #### MetadataApiClient
 
-`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads:
+`MetadataApiClient` поставляется в готовом виде вместе с SDK (генерация не требуется). Он выполняет запросы к эндпоинту `/metadata` для получения конфигурации рабочего пространства, приложений и загрузки файлов:
 
 ```typescript
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -912,18 +912,18 @@ const { findManyApplications } = await metadataClient.query({
 });
 ```
 
-#### Runtime credentials
+#### Учётные данные времени выполнения
 
-When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
+Когда ваш код выполняется на Twenty (логические функции или фронт-компоненты), платформа предоставляет учётные данные в виде переменных окружения:
 
-* `TWENTY_API_URL` — Base URL of the Twenty API
-* `TWENTY_API_KEY` — Short-lived key scoped to your application's default function role
+* `TWENTY_API_URL` — базовый URL API Twenty
+* `TWENTY_API_KEY` — краткоживущий ключ, ограниченный ролью функции по умолчанию вашего приложения
 
-You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role referenced in `defaultRoleUniversalIdentifier` in your `application-config.ts`.
+Вам не нужно передавать их клиентам — они автоматически читаются из `process.env`. Права ключа API определяются ролью, указанной в `defaultRoleUniversalIdentifier` в вашем `application-config.ts`.
 
 #### Загрузка файлов
 
-`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields. It implements the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec):
+`MetadataApiClient` включает метод `uploadFile` для прикрепления файлов к полям типа файла. Он реализует [спецификацию многочастных запросов GraphQL](https://github.com/jaydenseric/graphql-multipart-request-spec):
 
 ```typescript
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -953,7 +953,7 @@ console.log(uploadedFile);
 
 Основные моменты:
 
-* Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
+* Он использует `universalIdentifier` поля (а не его идентификатор, специфичный для рабочего пространства), поэтому ваш код загрузки будет работать в любом рабочем пространстве, где установлено ваше приложение.
 * Возвращаемый `url` — это подписанный URL, который можно использовать для доступа к загруженному файлу.
 
 ### Пример Hello World
