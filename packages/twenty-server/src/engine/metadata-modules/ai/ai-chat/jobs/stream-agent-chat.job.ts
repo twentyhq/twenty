@@ -12,7 +12,7 @@ import type {
 } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
+import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -61,7 +61,7 @@ export class StreamAgentChatJob {
     private readonly agentChatService: AgentChatService,
     private readonly chatExecutionService: ChatExecutionService,
     private readonly resumableStreamService: AgentChatResumableStreamService,
-    private readonly redisClientService: RedisClientService,
+    private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -77,23 +77,20 @@ export class StreamAgentChatJob {
     }
 
     // Set up cross-instance cancellation: subscribe to a Redis channel
-    // so any pod can cancel this stream by publishing to it.
+    // so any pod can cancel this stream by publishing to it. Uses a
+    // shared subscriber connection (one per worker process) instead of
+    // creating a new Redis connection per job.
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(data.threadId);
-    const subscriber = this.redisClientService.getClient().duplicate();
 
-    await subscriber.subscribe(cancelChannel);
-    subscriber.on('message', (channel: string) => {
-      if (channel === cancelChannel) {
-        abortController.abort();
-      }
+    await this.cancelSubscriberService.subscribe(cancelChannel, () => {
+      abortController.abort();
     });
 
     try {
       await this.executeStream(data, workspace, abortController.signal);
     } finally {
-      await subscriber.unsubscribe(cancelChannel).catch(() => {});
-      await subscriber.quit().catch(() => {});
+      await this.cancelSubscriberService.unsubscribe(cancelChannel);
     }
   }
 
