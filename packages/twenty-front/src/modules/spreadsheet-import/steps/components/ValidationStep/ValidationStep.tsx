@@ -80,6 +80,7 @@ const StyledScrollContainer = styled.div`
   flex-direction: column;
   flex-grow: 1;
   height: 0px;
+  overflow-y: auto;
   width: 100%;
 `;
 
