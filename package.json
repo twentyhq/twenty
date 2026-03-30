@@ -177,6 +177,7 @@
   "name": "twenty",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
+    "nodemailer": "8.0.4",
     "graphql": "16.8.1",
     "type-fest": "4.10.1",
     "typescript": "5.9.2",
