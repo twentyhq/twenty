@@ -168,9 +168,16 @@ export class RelationNestedQueries {
       queryBuilder,
     );
 
-    // For upserts, create missing related records instead of failing
+    // For upserts, create missing related records instead of failing,
+    // then update connected records with createData (email, name, address)
     if (isUpsert) {
       await this.createMissingConnectRecords(
+        recordsToConnectWithConfig,
+        queryBuilder,
+        entities,
+      );
+
+      await this.applyCreateDataUpdates(
         recordsToConnectWithConfig,
         queryBuilder,
         entities,
@@ -489,6 +496,74 @@ export class RelationNestedQueries {
     }
 
     return false;
+  }
+
+  /**
+   * After connecting entities to their related records, update those records
+   * with createData fields (email, name, address, etc.) from the CSV row.
+   * This ensures that re-importing a CSV actually updates lead data.
+   */
+  private async applyCreateDataUpdates<Entity extends ObjectLiteral>(
+    recordsToConnectWithConfig: [
+      RelationConnectQueryConfig,
+      Record<string, unknown>[],
+    ][],
+    queryBuilder:
+      | WorkspaceSelectQueryBuilder<Entity>
+      | SelectQueryBuilder<Entity>,
+    entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[],
+  ): Promise<void> {
+    for (const [
+      connectQueryConfig,
+      recordsToConnect,
+    ] of recordsToConnectWithConfig) {
+      for (const [entityIndexStr, condition] of Object.entries(
+        connectQueryConfig.recordToConnectConditionByEntityIndex,
+      )) {
+        const entityIndex = Number(entityIndexStr);
+        const entity = entities[entityIndex];
+        const connectObj = (entity as any)?.[
+          connectQueryConfig.connectFieldName
+        ]?.connect;
+        const createData = connectObj?.createData as
+          | Record<string, unknown>
+          | undefined;
+
+        if (createData === undefined) continue;
+
+        // Find the matched record
+        const matchedRecord = recordsToConnect.find((record) =>
+          condition.every(([field, value]) => record[field] === value),
+        );
+
+        if (!matchedRecord?.id) continue;
+
+        const updateFields = this.flattenCreateData(createData);
+
+        if (updateFields.length === 0) continue;
+
+        const setClause: Record<string, unknown> = {};
+
+        for (const [col, val] of updateFields) {
+          setClause[col] = val;
+        }
+
+        setClause['updatedAt'] = new Date().toISOString();
+
+        try {
+          queryBuilder.expressionMap.aliases = [];
+          queryBuilder.expressionMap.mainAlias = undefined;
+
+          await (queryBuilder as any)
+            .update(connectQueryConfig.targetObjectName)
+            .set(setClause)
+            .where('id = :updateId', { updateId: matchedRecord.id })
+            .execute();
+        } catch {
+          // Update failed — non-critical, the connect still worked
+        }
+      }
+    }
   }
 
   /**
