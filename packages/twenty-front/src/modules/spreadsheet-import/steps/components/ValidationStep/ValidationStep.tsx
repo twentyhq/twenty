@@ -288,7 +288,7 @@ export const ValidationStep = ({
 
   return (
     <>
-      <ModalContent noPadding>
+      <ModalContent noPadding overflowHidden>
         <StyledContentWrapper>
           {filterByErrors && tableData.length === 0 ? (
             <StyledNoRowsWithErrorsContainer>
