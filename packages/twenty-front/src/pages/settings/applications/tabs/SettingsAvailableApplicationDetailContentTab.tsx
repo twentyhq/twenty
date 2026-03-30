@@ -2,9 +2,9 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { type MarketplaceApp } from '~/generated-metadata/graphql';
 import {
   type ApplicationDataTableFieldItem,
   type ApplicationDataTableRow,
@@ -14,17 +14,22 @@ import { SettingsApplicationNameDescriptionTable } from '~/pages/settings/applic
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
 export const SettingsAvailableApplicationDetailContentTab = ({
-  application,
+  applicationId,
+  content,
 }: {
-  application: MarketplaceApp;
+  applicationId: string;
+  content?: Manifest;
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const { objects, fields, logicFunctions, frontComponents } = application;
+  const objects = content?.objects ?? [];
+  const fields = content?.fields ?? [];
+  const logicFunctions = content?.logicFunctions ?? [];
+  const frontComponents = content?.frontComponents ?? [];
 
   const objectRows = useMemo(
     (): ApplicationDataTableRow[] =>
-      (objects ?? []).map((appObject) => ({
+      objects.map((appObject) => ({
         key: appObject.nameSingular,
         labelPlural: appObject.labelPlural,
         icon: appObject.icon ?? undefined,
@@ -37,13 +42,13 @@ export const SettingsAvailableApplicationDetailContentTab = ({
             type: field.type,
           }),
         ),
-        tagItem: { applicationId: application.id },
+        tagItem: { applicationId },
       })),
-    [objects, application.id],
+    [objects, applicationId],
   );
 
   const fieldGroupRows = useMemo((): ApplicationDataTableRow[] => {
-    if (!isDefined(fields) || fields.length === 0) {
+    if (fields.length === 0) {
       return [];
     }
 
@@ -56,11 +61,9 @@ export const SettingsAvailableApplicationDetailContentTab = ({
     >();
 
     for (const field of fields) {
-      if (!isDefined(field.objectUniversalIdentifier)) {
-        continue;
-      }
+      const objectUid = field.objectUniversalIdentifier;
 
-      const existing = groupMap.get(field.objectUniversalIdentifier);
+      const existing = groupMap.get(objectUid);
       const fieldItem: ApplicationDataTableFieldItem = {
         key: field.name,
         label: field.label,
@@ -71,17 +74,16 @@ export const SettingsAvailableApplicationDetailContentTab = ({
       if (isDefined(existing)) {
         existing.fieldItems.push(fieldItem);
       } else {
-        groupMap.set(field.objectUniversalIdentifier, {
-          objectUniversalIdentifier: field.objectUniversalIdentifier,
+        groupMap.set(objectUid, {
+          objectUniversalIdentifier: objectUid,
           fieldItems: [fieldItem],
         });
       }
     }
 
     return Array.from(groupMap.values()).map((group) => {
-      const appObject = objects?.find(
-        (appObj) =>
-          appObj.universalIdentifier === group.objectUniversalIdentifier,
+      const appObject = objects.find(
+        (obj) => obj.universalIdentifier === group.objectUniversalIdentifier,
       );
 
       if (isDefined(appObject)) {
@@ -91,7 +93,7 @@ export const SettingsAvailableApplicationDetailContentTab = ({
           icon: appObject.icon ?? undefined,
           fieldsCount: group.fieldItems.length,
           fields: group.fieldItems,
-          tagItem: { applicationId: application.id },
+          tagItem: { applicationId },
         };
       }
 
@@ -123,7 +125,14 @@ export const SettingsAvailableApplicationDetailContentTab = ({
         tagItem: {},
       };
     });
-  }, [fields, objectMetadataItems, objects, application.id]);
+  }, [fields, objectMetadataItems, objects, applicationId]);
+
+  const roles = content?.roles ?? [];
+  const skills = content?.skills ?? [];
+  const agents = content?.agents ?? [];
+  const views = content?.views ?? [];
+  const navigationMenuItems = content?.navigationMenuItems ?? [];
+  const pageLayouts = content?.pageLayouts ?? [];
 
   return (
     <>
@@ -132,16 +141,73 @@ export const SettingsAvailableApplicationDetailContentTab = ({
         fieldGroupRows={fieldGroupRows}
       />
       <SettingsApplicationNameDescriptionTable
-        title={t`Functions`}
+        title={t`Logic functions`}
         description={t`Logic functions provided by this app`}
         sectionTitle={t`Logic functions`}
-        items={logicFunctions}
+        items={logicFunctions.map((lf) => ({
+          name: lf.name ?? lf.universalIdentifier,
+          description: lf.description,
+        }))}
       />
       <SettingsApplicationNameDescriptionTable
         title={t`Front components`}
         description={t`UI components provided by this app`}
         sectionTitle={t`Front components`}
-        items={frontComponents}
+        items={frontComponents.map((fc) => ({
+          name: fc.name ?? fc.universalIdentifier,
+          description: fc.description,
+        }))}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Roles`}
+        description={t`Roles defined by this app`}
+        sectionTitle={t`Roles`}
+        items={roles.map((role) => ({
+          name: role.label,
+          description: role.description,
+        }))}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Skills`}
+        description={t`Skills provided by this app`}
+        sectionTitle={t`Skills`}
+        items={skills.map((skill) => ({
+          name: skill.label ?? skill.name,
+          description: skill.description,
+        }))}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Agents`}
+        description={t`Agents provided by this app`}
+        sectionTitle={t`Agents`}
+        items={agents.map((agent) => ({
+          name: agent.label ?? agent.name,
+          description: agent.description,
+        }))}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Views`}
+        description={t`Views created by this app`}
+        sectionTitle={t`Views`}
+        items={views.map((view) => ({
+          name: view.name,
+        }))}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Navigation menu items`}
+        description={t`Navigation items added by this app`}
+        sectionTitle={t`Navigation items`}
+        items={navigationMenuItems.map((item) => ({
+          name: item.name ?? item.universalIdentifier,
+        }))}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Page layouts`}
+        description={t`Page layouts defined by this app`}
+        sectionTitle={t`Page layouts`}
+        items={pageLayouts.map((layout) => ({
+          name: layout.name,
+        }))}
       />
     </>
   );
