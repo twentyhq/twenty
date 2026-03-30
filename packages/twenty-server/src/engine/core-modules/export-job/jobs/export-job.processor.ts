@@ -318,6 +318,9 @@ export class ExportJobProcessor {
 
           // Fetch relation data if configured
           if (relationConfigs.length > 0 && allRecords.length > 0) {
+            this.logger.log(
+              `Expanding ${relationConfigs.length} relation fields for ${allRecords.length} records`,
+            );
             allRecords = await this.expandRelationFields(
               allRecords,
               relationConfigs,
@@ -494,9 +497,11 @@ export class ExportJobProcessor {
           }
         }
 
+        this.logger.log(
+          `Fetched ${lookupMap.size} ${rc.targetObjectNameSingular} records, resolving nested relations`,
+        );
+
         // Resolve nested relations within the fetched records.
-        // Identify which selectedFieldPaths traverse a MANY_TO_ONE relation
-        // (e.g. "leadSource.name" means we need to fetch leadSource records).
         await this.resolveNestedRelations(
           lookupMap,
           rc,

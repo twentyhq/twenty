@@ -3,9 +3,7 @@ import { useCallback, useContext } from 'react';
 
 import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
 import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
-import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -16,15 +14,11 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { ExportRelationFieldConfigModal } from '@/object-record/record-index/export/components/ExportRelationFieldConfigModal';
 import { START_EXPORT_JOB } from '@/object-record/record-index/export/graphql/mutations/startExportJob';
 import { useExportableRelationFields } from '@/object-record/record-index/export/hooks/useExportableRelationFields';
 import { useExportJobProgress } from '@/object-record/record-index/export/hooks/useExportJobProgress';
-import { type ExportConfig } from '@/object-record/record-index/export/types/ExportConfig';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -90,15 +84,15 @@ export const ExportMultipleRecordsCommand = () => {
     recordIndexId,
   );
 
-  const visibleFieldNames = visibleRecordFields.map(
-    (field: RecordField) => {
+  const visibleFieldNames = visibleRecordFields
+    .map((field: RecordField) => {
       const fieldMetadataItem = objectMetadataItem.fields.find(
         (f) => f.id === field.fieldMetadataItemId,
       );
 
       return fieldMetadataItem?.name ?? '';
-    },
-  ).filter(Boolean);
+    })
+    .filter(Boolean);
 
   const columns = visibleRecordFields
     .map((field: RecordField) => {
@@ -125,91 +119,68 @@ export const ExportMultipleRecordsCommand = () => {
   const { startTracking } = useExportJobProgress();
   const { closeCommandMenu } = useCloseCommandMenu({});
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { openModal } = useModal();
 
   const actionConfig = useContext(CommandConfigContext);
-  const { containerType } = useContext(CommandMenuContext);
 
-  const relationExportModalId = `${actionConfig?.key ?? 'export'}-relation-export-modal-${containerType}`;
+  const handleClick = useCallback(async () => {
+    // Auto-build relation configs: select all available sub-fields
+    const relationConfigs = exportableRelationFields.map((erf) => ({
+      relationFieldName: erf.fieldName,
+      relationFieldLabel: erf.fieldLabel,
+      targetObjectNameSingular: erf.targetObjectNameSingular,
+      selectedFieldPaths: erf.exportableSubFields.map((sf) => sf.fieldPath),
+    }));
 
-  const isModalOpened = useAtomComponentStateValue(
-    isModalOpenedComponentState,
-    relationExportModalId,
-  );
+    try {
+      const { data } = await apolloClient.mutate<StartExportJobResponse>({
+        mutation: START_EXPORT_JOB,
+        variables: {
+          objectNameSingular: objectMetadataItem.nameSingular,
+          columns,
+          filter: queryFilter,
+          orderBy: findManyRecordsParams.orderBy,
+          relationConfigs:
+            relationConfigs.length > 0 ? relationConfigs : undefined,
+        },
+      });
 
-  const startExportJob = useCallback(
-    async (relationConfigs?: ExportConfig['relationConfigs']) => {
-      try {
-        const { data } = await apolloClient.mutate<StartExportJobResponse>({
-          mutation: START_EXPORT_JOB,
-          variables: {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            columns,
-            filter: queryFilter,
-            orderBy: findManyRecordsParams.orderBy,
-            relationConfigs: relationConfigs ?? undefined,
-          },
+      const exportJob = data?.startExportJob;
+
+      if (exportJob?.id) {
+        startTracking({
+          exportJobId: exportJob.id,
+          objectNameSingular: objectMetadataItem.nameSingular,
+          objectNamePlural: objectMetadataItem.namePlural,
         });
-
-        const exportJob = data?.startExportJob;
-
-        if (exportJob?.id) {
-          startTracking({
-            exportJobId: exportJob.id,
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectNamePlural: objectMetadataItem.namePlural,
-          });
-        }
-
-        closeCommandMenu();
-      } catch (error) {
-        enqueueErrorSnackBar({
-          message: `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        });
-        closeCommandMenu();
       }
-    },
-    [
-      apolloClient,
-      objectMetadataItem.nameSingular,
-      columns,
-      queryFilter,
-      findManyRecordsParams.orderBy,
-      startTracking,
-      closeCommandMenu,
-      enqueueErrorSnackBar,
-    ],
-  );
+
+      closeCommandMenu();
+    } catch (error) {
+      enqueueErrorSnackBar({
+        message: `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      });
+      closeCommandMenu();
+    }
+  }, [
+    apolloClient,
+    objectMetadataItem.nameSingular,
+    objectMetadataItem.namePlural,
+    columns,
+    queryFilter,
+    findManyRecordsParams.orderBy,
+    exportableRelationFields,
+    startTracking,
+    closeCommandMenu,
+    enqueueErrorSnackBar,
+  ]);
 
   if (!isDefined(actionConfig)) {
     return null;
   }
 
-  const handleClick = async () => {
-    if (exportableRelationFields.length > 0) {
-      openModal(relationExportModalId);
-
-      return;
-    }
-
-    await startExportJob();
-  };
-
   return (
     <CommandConfigContext.Provider value={actionConfig}>
-      <>
-        <CommandMenuItemDisplay onClick={handleClick} />
-        {isModalOpened && (
-          <ExportRelationFieldConfigModal
-            modalId={relationExportModalId}
-            objectMetadataItem={objectMetadataItem}
-            visibleFieldNames={visibleFieldNames}
-            onExport={async (config) => {
-              await startExportJob(config.relationConfigs);
-            }}
-          />
-        )}
-      </>
+      <CommandMenuItemDisplay onClick={handleClick} />
     </CommandConfigContext.Provider>
   );
 };

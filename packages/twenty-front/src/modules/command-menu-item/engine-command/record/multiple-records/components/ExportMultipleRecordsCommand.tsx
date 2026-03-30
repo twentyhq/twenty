@@ -1,8 +1,7 @@
 import { useApolloClient } from '@apollo/client/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
 import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
 import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
@@ -16,13 +15,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { ExportRelationFieldConfigModal } from '@/object-record/record-index/export/components/ExportRelationFieldConfigModal';
 import { START_EXPORT_JOB } from '@/object-record/record-index/export/graphql/mutations/startExportJob';
 import { useExportableRelationFields } from '@/object-record/record-index/export/hooks/useExportableRelationFields';
 import { useExportJobProgress } from '@/object-record/record-index/export/hooks/useExportJobProgress';
-import { type ExportConfig } from '@/object-record/record-index/export/types/ExportConfig';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -48,15 +44,12 @@ const ExportMultipleRecordsCommandContent = ({
 }) => {
   const apolloClient = useApolloClient();
   const { startTracking } = useExportJobProgress();
-  const { isInitializedRef, setIsInitialized } =
-    useIsHeadlessEngineCommandEffectInitialized();
   const startedRef = useRef(false);
 
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
     EngineCommandComponentInstanceContext,
   );
   const unmountEngineCommand = useUnmountEngineCommand();
-  const { openModal } = useModal();
 
   // Get current filters
   const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
@@ -123,78 +116,53 @@ const ExportMultipleRecordsCommandContent = ({
     visibleFieldNames,
   });
 
-  const hasRelationFields = exportableRelationFields.length > 0;
+  const doExport = useCallback(async () => {
+    if (startedRef.current) return;
+    startedRef.current = true;
 
-  const relationExportModalId = `${engineCommandId}-relation-export-modal`;
+    // Auto-build relation configs: select all available sub-fields
+    const relationConfigs = exportableRelationFields.map((erf) => ({
+      relationFieldName: erf.fieldName,
+      relationFieldLabel: erf.fieldLabel,
+      targetObjectNameSingular: erf.targetObjectNameSingular,
+      selectedFieldPaths: erf.exportableSubFields.map((sf) => sf.fieldPath),
+    }));
 
-  const doExport = useCallback(
-    async (relationConfigs?: ExportConfig['relationConfigs']) => {
-      if (startedRef.current) return;
-      startedRef.current = true;
+    const { data } = await apolloClient.mutate<StartExportJobResponse>({
+      mutation: START_EXPORT_JOB,
+      variables: {
+        objectNameSingular: objectMetadataItem.nameSingular,
+        columns,
+        filter: queryFilter,
+        orderBy: findManyRecordsParams.orderBy,
+        relationConfigs:
+          relationConfigs.length > 0 ? relationConfigs : undefined,
+      },
+    });
 
-      const { data } = await apolloClient.mutate<StartExportJobResponse>({
-        mutation: START_EXPORT_JOB,
-        variables: {
-          objectNameSingular: objectMetadataItem.nameSingular,
-          columns,
-          filter: queryFilter,
-          orderBy: findManyRecordsParams.orderBy,
-          relationConfigs: relationConfigs ?? undefined,
-        },
+    const exportJob = data?.startExportJob;
+
+    if (exportJob?.id) {
+      startTracking({
+        exportJobId: exportJob.id,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        objectNamePlural: objectMetadataItem.namePlural,
       });
-
-      const exportJob = data?.startExportJob;
-
-      if (exportJob?.id) {
-        startTracking({
-          exportJobId: exportJob.id,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          objectNamePlural: objectMetadataItem.namePlural,
-        });
-      }
-
-      unmountEngineCommand(engineCommandId);
-    },
-    [
-      apolloClient,
-      objectMetadataItem.nameSingular,
-      columns,
-      queryFilter,
-      findManyRecordsParams.orderBy,
-      startTracking,
-      unmountEngineCommand,
-      engineCommandId,
-    ],
-  );
-
-  // Open the relation config modal on mount when relation fields exist
-  useEffect(() => {
-    if (!hasRelationFields || isInitializedRef.current) {
-      return;
     }
 
-    setIsInitialized(true);
-    openModal(relationExportModalId);
+    unmountEngineCommand(engineCommandId);
   }, [
-    hasRelationFields,
-    isInitializedRef,
-    setIsInitialized,
-    openModal,
-    relationExportModalId,
+    apolloClient,
+    objectMetadataItem.nameSingular,
+    objectMetadataItem.namePlural,
+    columns,
+    queryFilter,
+    findManyRecordsParams.orderBy,
+    exportableRelationFields,
+    startTracking,
+    unmountEngineCommand,
+    engineCommandId,
   ]);
-
-  if (hasRelationFields) {
-    return (
-      <ExportRelationFieldConfigModal
-        modalId={relationExportModalId}
-        objectMetadataItem={objectMetadataItem}
-        visibleFieldNames={visibleFieldNames}
-        onExport={async (config) => {
-          await doExport(config.relationConfigs);
-        }}
-      />
-    );
-  }
 
   return <HeadlessEngineCommandWrapperEffect execute={doExport} />;
 };

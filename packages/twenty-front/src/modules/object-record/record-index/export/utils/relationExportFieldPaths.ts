@@ -84,12 +84,16 @@ export const buildExportableRelationFieldPaths = ({
   parentFieldLabels = [],
   parentFieldNames = [],
   visitedObjectMetadataKeys = new Set<string>(),
+  currentRelationDepth = 0,
+  maxRelationDepth = 1,
 }: {
   objectMetadataItem: RelationExportObjectMetadataItem;
   objectMetadataItems: RelationExportObjectMetadataItem[];
   parentFieldLabels?: string[];
   parentFieldNames?: string[];
   visitedObjectMetadataKeys?: Set<string>;
+  currentRelationDepth?: number;
+  maxRelationDepth?: number;
 }): ExportableRelationFieldPath[] => {
   const nextVisitedObjectMetadataKeys = new Set(visitedObjectMetadataKeys);
   nextVisitedObjectMetadataKeys.add(getObjectMetadataKey(objectMetadataItem));
@@ -103,6 +107,11 @@ export const buildExportableRelationFieldPaths = ({
       field.type === FieldMetadataType.RELATION &&
       field.relation?.type === RelationType.MANY_TO_ONE
     ) {
+      // Stop recursing into deeper relations beyond maxRelationDepth
+      if (currentRelationDepth >= maxRelationDepth) {
+        return [];
+      }
+
       const targetObjectNameSingular =
         field.relation?.targetObjectMetadata?.nameSingular;
 
@@ -132,6 +141,8 @@ export const buildExportableRelationFieldPaths = ({
         parentFieldLabels: [...parentFieldLabels, field.label ?? field.name],
         parentFieldNames: [...parentFieldNames, field.name],
         visitedObjectMetadataKeys: nextVisitedObjectMetadataKeys,
+        currentRelationDepth: currentRelationDepth + 1,
+        maxRelationDepth,
       });
     }
 
