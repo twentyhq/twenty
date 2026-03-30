@@ -29,6 +29,7 @@ type CreateAppOptions = {
   name?: string;
   displayName?: string;
   description?: string;
+  skipLocalInstance?: boolean;
 };
 
 export class CreateAppCommand {
@@ -61,18 +62,20 @@ export class CreateAppCommand {
 
       let serverResult: ServerStartResult | undefined;
 
-      const shouldStartServer = await this.shouldStartServer();
+      if (!options.skipLocalInstance) {
+        const shouldStartServer = await this.shouldStartServer();
 
-      if (shouldStartServer) {
-        const startResult = await serverStart({
-          onProgress: (message: string) => console.log(chalk.gray(message)),
-        });
+        if (shouldStartServer) {
+          const startResult = await serverStart({
+            onProgress: (message: string) => console.log(chalk.gray(message)),
+          });
 
-        if (startResult.success) {
-          serverResult = startResult.data;
-          await this.promptConnectToLocal(serverResult.url);
-        } else {
-          console.log(chalk.yellow(`\n${startResult.error.message}`));
+          if (startResult.success) {
+            serverResult = startResult.data;
+            await this.promptConnectToLocal(serverResult.url);
+          } else {
+            console.log(chalk.yellow(`\n${startResult.error.message}`));
+          }
         }
       }
 
