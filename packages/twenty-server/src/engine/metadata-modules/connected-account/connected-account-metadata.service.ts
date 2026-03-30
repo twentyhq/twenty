@@ -173,31 +173,34 @@ export class ConnectedAccountMetadataService {
       `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s)`,
     );
 
-    const { flatObjectMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
+    if (messageChannels.length > 0) {
+      const { flatObjectMetadataMaps } =
+        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatObjectMetadataMaps'],
+          },
+        );
 
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: STANDARD_OBJECTS.messageChannel.universalIdentifier,
-    });
+      const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier:
+          STANDARD_OBJECTS.messageChannel.universalIdentifier,
+      });
 
-    this.workspaceEventEmitter.emitDatabaseBatchEvent({
-      objectMetadataNameSingular: 'messageChannel',
-      action: DatabaseEventAction.DESTROYED,
-      objectMetadata: flatObjectMetadata,
-      events: messageChannels.map((messageChannel) => ({
-        recordId: messageChannel.id,
-        properties: {
-          before: messageChannel,
-        },
-      })),
-      workspaceId,
-    });
+      this.workspaceEventEmitter.emitDatabaseBatchEvent({
+        objectMetadataNameSingular: 'messageChannel',
+        action: DatabaseEventAction.DESTROYED,
+        objectMetadata: flatObjectMetadata,
+        events: messageChannels.map((messageChannel) => ({
+          recordId: messageChannel.id,
+          properties: {
+            before: messageChannel,
+          },
+        })),
+        workspaceId,
+      });
+    }
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {

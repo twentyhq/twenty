@@ -50,5 +50,9 @@ export class MessagingMessageChannelDeletionCleanupJob {
         messageChannelId: data.messageChannelId,
       },
     );
+
+    await this.messageCleanerService.cleanOrphanMessagesAndThreads(
+      data.workspaceId,
+    );
   }
 }
