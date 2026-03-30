@@ -303,6 +303,14 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `command-menu/hooks/__tests__/useCommandMenuCloseWithValidation.test.tsx`                                   | **NEW** — Regression test: deleted new records bypass required-fields close/back modal                                                                |
 | `object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer.ts`                 | Added `isNewRecord: true` so "Add new" from relation fields is tracked for validation                                                                 |
 
+### Timeline Relation Field Diffs
+
+| File                                                                                                                                    | Modification                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `engine/core-modules/event-emitter/utils/object-record-changed-values.ts`                                                               | Maps relation FK join column changes (e.g., `agentId`) to relation field names (e.g., `agent`) in timeline diffs                         |
+| `activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx`                                                          | Branches RELATION/MORPH_RELATION fields to dedicated relation value renderer instead of synthetic record store                            |
+| `activities/timeline-activities/rows/main-object/components/EventFieldDiffRelationValue.tsx`                                            | **NEW** — Fetches related record by FK UUID via `useFindOneRecord` and renders `RecordChip`                                               |
+
 ### Other Frontend
 
 | File                                                                                                                        | Modification                                                                                                                    |

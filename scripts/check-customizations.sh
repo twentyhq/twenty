@@ -1072,6 +1072,20 @@ check_file_not_contains \
   "mock-views-data.ts must not contain Opportunity TABLE view"
 
 echo ""
+echo "--- Timeline Relation Field Diffs ---"
+check_file_contains \
+  "packages/twenty-server/src/engine/core-modules/event-emitter/utils/object-record-changed-values.ts" \
+  "fieldIdByJoinColumnName" \
+  "Timeline diff must map relation FK join columns to field names"
+check_file_contains \
+  "packages/twenty-front/src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx" \
+  "EventFieldDiffRelationValue" \
+  "Timeline field diff must branch RELATION fields to dedicated relation renderer"
+check_file_exists \
+  "packages/twenty-front/src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiffRelationValue.tsx" \
+  "Relation diff value component must exist"
+
+echo ""
 
 # ==========================================================
 # Summary

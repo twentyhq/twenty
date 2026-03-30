@@ -149,6 +149,106 @@ describe('objectRecordChangedValues', () => {
     expect(result).toEqual(expectedChanges);
   });
 
+  it('maps relation join column changes to the relation field name', () => {
+    const relationFieldId = 'agent-field-id';
+    const relationUniversalId = 'agent-universal-id';
+
+    const objectMetadataWithRelation: FlatObjectMetadata = {
+      ...mockObjectMetadata,
+      fieldIds: [relationFieldId],
+    };
+
+    const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          [relationUniversalId]: {
+            id: relationFieldId,
+            name: 'agent',
+            type: FieldMetadataType.RELATION,
+            universalIdentifier: relationUniversalId,
+            settings: { relationType: 'MANY_TO_ONE' },
+          } as unknown as FlatFieldMetadata,
+        },
+        universalIdentifierById: {
+          [relationFieldId]: relationUniversalId,
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+    const oldRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516r',
+      agentId: 'old-agent-uuid',
+    };
+    const newRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516r',
+      agentId: 'new-agent-uuid',
+    };
+
+    const result = objectRecordChangedValues(
+      oldRecord,
+      newRecord,
+      objectMetadataWithRelation,
+      flatFieldMetadataMapsWithRelation,
+    );
+
+    // Should use field name 'agent', not join column name 'agentId'
+    expect(result).toEqual({
+      agent: { before: 'old-agent-uuid', after: 'new-agent-uuid' },
+    });
+    expect(result).not.toHaveProperty('agentId');
+  });
+
+  it('excludes eagerly-loaded relation objects from the diff', () => {
+    const relationFieldId = 'agent-field-id';
+    const relationUniversalId = 'agent-universal-id';
+
+    const objectMetadataWithRelation: FlatObjectMetadata = {
+      ...mockObjectMetadata,
+      fieldIds: [relationFieldId],
+    };
+
+    const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          [relationUniversalId]: {
+            id: relationFieldId,
+            name: 'agent',
+            type: FieldMetadataType.RELATION,
+            universalIdentifier: relationUniversalId,
+            settings: { relationType: 'MANY_TO_ONE' },
+          } as unknown as FlatFieldMetadata,
+        },
+        universalIdentifierById: {
+          [relationFieldId]: relationUniversalId,
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+    const oldRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516s',
+      agent: { id: 'old-uuid', name: 'Old Agent' },
+      agentId: 'old-uuid',
+    };
+    const newRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516s',
+      agent: { id: 'new-uuid', name: 'New Agent' },
+      agentId: 'new-uuid',
+    };
+
+    const result = objectRecordChangedValues(
+      oldRecord,
+      newRecord,
+      objectMetadataWithRelation,
+      flatFieldMetadataMapsWithRelation,
+    );
+
+    // Should include the join column change mapped to the field name
+    // but NOT the eagerly-loaded relation object
+    expect(result).toEqual({
+      agent: { before: 'old-uuid', after: 'new-uuid' },
+    });
+  });
+
   it('ignores changes to POSITION fields', () => {
     const positionFieldId = 'position-field-id';
     const positionUniversalId = 'position-universal-id';

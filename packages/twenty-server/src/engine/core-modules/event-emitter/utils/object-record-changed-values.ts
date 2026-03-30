@@ -35,17 +35,23 @@ export const objectRecordChangedValues = (
   objectMetadataItem: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    objectMetadataItem,
-  );
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      objectMetadataItem,
+    );
 
   return Object.keys(newRecord).reduce(
     (acc, key) => {
       const fieldId = fieldIdByName[key];
-      const field = fieldId
+      const joinColumnFieldId = !fieldId
+        ? fieldIdByJoinColumnName[key]
+        : undefined;
+      const resolvedFieldId = fieldId ?? joinColumnFieldId;
+
+      const field = resolvedFieldId
         ? findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldId,
+            flatEntityId: resolvedFieldId,
             flatEntityMaps: flatFieldMetadataMaps,
           })
         : undefined;
@@ -53,12 +59,20 @@ export const objectRecordChangedValues = (
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];
 
+      if (key === 'updatedAt' || key === 'searchVector') {
+        return acc;
+      }
+
+      // Skip eagerly-loaded relation objects (matched by field name, not join column)
       if (
-        key === 'updatedAt' ||
-        key === 'searchVector' ||
-        field?.type === FieldMetadataType.RELATION ||
-        field?.type === FieldMetadataType.POSITION
+        fieldId &&
+        (field?.type === FieldMetadataType.RELATION ||
+          field?.type === FieldMetadataType.MORPH_RELATION)
       ) {
+        return acc;
+      }
+
+      if (field?.type === FieldMetadataType.POSITION) {
         return acc;
       }
 
@@ -70,7 +84,10 @@ export const objectRecordChangedValues = (
         return acc;
       }
 
-      acc[key] = { before: oldRecordValue, after: newRecordValue };
+      // Use the relation field name as the output key for join column changes
+      const outputKey = joinColumnFieldId && field ? field.name : key;
+
+      acc[outputKey] = { before: oldRecordValue, after: newRecordValue };
 
       return acc;
     },

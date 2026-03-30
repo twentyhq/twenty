@@ -1,15 +1,17 @@
 import { styled } from '@linaria/react';
 
 import { EventFieldDiffLabel } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffLabel';
+import { EventFieldDiffRelationValue } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffRelationValue';
 import { EventFieldDiffValue } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue';
 import { EventFieldDiffValueEffect } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { Trans } from '@lingui/react/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventFieldDiffProps = {
-  diffRecord: Record<string, any>;
+  diffRecord: Record<string, unknown>;
   mainObjectMetadataItem: EnrichedObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem | undefined;
   diffArtificialRecordStoreId: string;
@@ -47,9 +49,14 @@ export const EventFieldDiff = ({
   const isObjectEmpty = (obj: Record<string, unknown>): boolean =>
     Object.values(obj).every(isValueEmpty);
 
+  const isRelationField =
+    fieldMetadataItem.type === FieldMetadataType.RELATION ||
+    fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
+
   const isUpdatedToEmpty =
     isValueEmpty(diffRecord) ||
-    (typeof diffRecord === 'object' &&
+    (!isRelationField &&
+      typeof diffRecord === 'object' &&
       diffRecord !== null &&
       isObjectEmpty(diffRecord));
 
@@ -60,6 +67,11 @@ export const EventFieldDiff = ({
         <StyledEmptyValue>
           <Trans>Empty</Trans>
         </StyledEmptyValue>
+      ) : isRelationField ? (
+        <EventFieldDiffRelationValue
+          diffRecord={diffRecord}
+          fieldMetadataItem={fieldMetadataItem}
+        />
       ) : (
         <>
           <EventFieldDiffValueEffect
