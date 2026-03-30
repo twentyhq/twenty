@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
 
+import { FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -30,6 +31,15 @@ export const getRecordImageIdentifier = ({
       : null;
   }
 
+  //TODO: Temporary solution before imageIdentifier refactor
+  if (signUrl && flatObjectMetadata.nameSingular === 'person') {
+    const avatarFileId = (record.avatarFile as FileOutput[])?.[0]?.fileId;
+    if (!isDefined(avatarFileId)) {
+      return null;
+    }
+    return signUrl(avatarFileId);
+  }
+
   if (!isDefined(flatObjectMetadata.imageIdentifierFieldMetadataId)) {
     return null;
   }
@@ -55,11 +65,7 @@ export const getRecordImageIdentifier = ({
     return null;
   }
 
-  if (
-    signUrl &&
-    (flatObjectMetadata.nameSingular === 'person' ||
-      flatObjectMetadata.nameSingular === 'workspaceMember')
-  ) {
+  if (signUrl && flatObjectMetadata.nameSingular === 'workspaceMember') {
     return signUrl(rawImageValue);
   }
 
