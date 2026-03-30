@@ -9,18 +9,19 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 
 应用可通过自定义对象、字段、逻辑函数、AI 技能和 UI 组件来扩展 Twenty——全部以代码进行管理。
 
-**你现在可以做什么:**
+**What you can build:**
 
-* 以代码定义自定义对象和字段（受管理的数据模型）
-* 使用自定义触发器（HTTP 路由、cron、数据库事件）构建逻辑函数
-* 为 AI 智能体定义技能
-* 构建在 Twenty 的 UI 中渲染的前端组件
-* 将同一个应用部署到多个工作空间
+* Custom objects, fields, views, and navigation items to shape your data model
+* Logic functions triggered by HTTP routes, cron schedules, or database events
+* Front components that render directly inside Twenty's UI
+* Skills that extend Twenty's AI agents
+* Deploy an app across multiple workspaces
 
 ## 先决条件
 
-* Node.js 24+ 和 Yarn 4
-* Docker (用于本地 Twenty 开发服务器)
+* Node.js 24+
+* Yarn 4
+* Docker (or a running local Twenty instance)
 
 ## 开始使用
 
@@ -29,21 +30,9 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-脚手架工具支持两种模式，用于控制包含哪些示例文件：
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 从这里您可以：
 

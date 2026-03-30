@@ -9,18 +9,19 @@ Uygulamalar şu anda alfa testinde. Özellik işlevsel ancak hâlâ gelişmekte.
 
 Uygulamalar, Twenty'yi özel nesneler, alanlar, mantık işlevleri, Yapay Zeka yetenekleri ve UI bileşenleriyle genişletmenizi sağlar — tümü kod olarak yönetilir.
 
-**Bugün Yapabilecekleriniz:**
+**What you can build:**
 
-* Özel nesneleri ve alanları kod olarak tanımlayın (yönetilen veri modeli)
-* Özel tetikleyicilerle mantık işlevleri oluşturun (HTTP routes, cron, database events)
-* Yapay zekâ ajanları için becerileri tanımlayın
-* Twenty'nin UI'si içinde görüntülenen ön bileşenler oluşturun
-* Aynı uygulamayı birden çok çalışma alanına dağıtın
+* Custom objects, fields, views, and navigation items to shape your data model
+* Logic functions triggered by HTTP routes, cron schedules, or database events
+* Front components that render directly inside Twenty's UI
+* Skills that extend Twenty's AI agents
+* Deploy an app across multiple workspaces
 
 ## Ön Gereksinimler
 
-* Node.js 24+ ve Yarn 4
-* Docker (yerel Twenty geliştirme sunucusu için)
+* Node.js 24+
+* Yarn 4
+* Docker (or a running local Twenty instance)
 
 ## Başlarken
 
@@ -29,21 +30,9 @@ Resmi iskelet oluşturucu aracını kullanarak yeni bir uygulama oluşturun, ard
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 Buradan şunları yapabilirsiniz:
 

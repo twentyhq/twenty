@@ -9,18 +9,19 @@ Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stál
 
 Aplikace vám umožňují rozšířit Twenty o vlastní objekty, pole, logické funkce, AI schopnosti a komponenty uživatelského rozhraní — vše je spravováno jako kód.
 
-**Co můžete dělat už dnes:**
+**What you can build:**
 
-* Definujte vlastní objekty a pole jako kód (spravovaný datový model)
-* Vytvářejte logické funkce s vlastními spouštěči (HTTP routy, cron, databázové události)
-* Definujte dovednosti agentů AI
-* Vytvářejte frontendové komponenty, které se vykreslují uvnitř uživatelského rozhraní Twenty
-* Nasazujte stejnou aplikaci do více pracovních prostorů
+* Custom objects, fields, views, and navigation items to shape your data model
+* Logic functions triggered by HTTP routes, cron schedules, or database events
+* Front components that render directly inside Twenty's UI
+* Skills that extend Twenty's AI agents
+* Deploy an app across multiple workspaces
 
 ## Předpoklady
 
-* Node.js 24+ a Yarn 4
-* Docker (pro místní vývojový server Twenty)
+* Node.js 24+
+* Yarn 4
+* Docker (or a running local Twenty instance)
 
 ## Začínáme
 
@@ -29,21 +30,9 @@ Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a 
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Nástroj pro generování kostry podporuje dva režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 Odtud můžete:
 

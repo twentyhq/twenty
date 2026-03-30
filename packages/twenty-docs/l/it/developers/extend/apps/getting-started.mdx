@@ -9,18 +9,19 @@ Le app sono attualmente in fase alfa. La funzionalità è funzionante ma ancora 
 
 Le app ti permettono di estendere Twenty con oggetti, campi, funzioni logiche, competenze IA e componenti UI personalizzati — il tutto gestito come codice.
 
-**Cosa puoi fare oggi:**
+**What you can build:**
 
-* Definisci oggetti e campi personalizzati come codice (modello dati gestito)
-* Crea funzioni logiche con trigger personalizzati (route HTTP, cron, eventi del database)
-* Definisci le abilità per gli agenti IA
-* Crea componenti front-end che vengono renderizzati all'interno della UI di Twenty
-* Distribuisci la stessa app su più spazi di lavoro
+* Custom objects, fields, views, and navigation items to shape your data model
+* Logic functions triggered by HTTP routes, cron schedules, or database events
+* Front components that render directly inside Twenty's UI
+* Skills that extend Twenty's AI agents
+* Deploy an app across multiple workspaces
 
 ## Prerequisiti
 
-* Node.js 24+ e Yarn 4
-* Docker (per il server di sviluppo locale di Twenty)
+* Node.js 24+
+* Yarn 4
+* Docker (or a running local Twenty instance)
 
 ## Per iniziare
 
@@ -29,21 +30,9 @@ Crea una nuova app utilizzando lo scaffolder ufficiale, quindi autenticati e ini
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Lo strumento di scaffolding supporta due modalità per controllare quali file di esempio vengono inclusi:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 Da qui puoi:
 

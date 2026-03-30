@@ -9,18 +9,19 @@ Apps befinden sich derzeit in der Alpha-Testphase. Die Funktion ist funktionsfä
 
 Apps ermöglichen es Ihnen, Twenty mit benutzerdefinierten Objekten, Feldern, Logikfunktionen, KI-Fähigkeiten und UI-Komponenten zu erweitern — alles als Code verwaltet.
 
-**Was Sie heute tun können:**
+**What you can build:**
 
-* Benutzerdefinierte Objekte und Felder als Code definieren (verwaltetes Datenmodell)
-* Erstellen Sie Logikfunktionen mit benutzerdefinierten Triggern (HTTP-Routen, cron, Datenbankereignisse)
-* Fähigkeiten für KI-Agenten definieren
-* Erstellen Sie Frontend-Komponenten, die in der Twenty-UI gerendert werden
-* Dieselbe App in mehreren Workspaces bereitstellen
+* Custom objects, fields, views, and navigation items to shape your data model
+* Logic functions triggered by HTTP routes, cron schedules, or database events
+* Front components that render directly inside Twenty's UI
+* Skills that extend Twenty's AI agents
+* Deploy an app across multiple workspaces
 
 ## Voraussetzungen
 
-* Node.js 24+ und Yarn 4
-* Docker (für den lokalen Twenty-Dev-Server)
+* Node.js 24+
+* Yarn 4
+* Docker (or a running local Twenty instance)
 
 ## Erste Schritte
 
@@ -29,21 +30,9 @@ Erstellen Sie mit dem offiziellen Scaffolder eine neue App, authentifizieren Sie
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Das Scaffolding-Tool unterstützt zwei Modi, um zu steuern, welche Beispieldateien enthalten sind:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 Von hier aus können Sie:
 

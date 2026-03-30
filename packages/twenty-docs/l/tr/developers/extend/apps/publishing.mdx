@@ -102,6 +102,10 @@ yarn twenty catalog-sync -r production
 
 Pazar yerinde gösterilen meta veriler, uygulamanızın kaynak kodundaki `defineApplication()` çağrısından gelir — `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` ve `termsUrl` gibi alanlar.
 
+<Note>
+If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+</Note>
+
 ### CI üzerinden yayımlama
 
 İskelet proje, her sürümde yayımlayan bir GitHub Actions iş akışını içerir:

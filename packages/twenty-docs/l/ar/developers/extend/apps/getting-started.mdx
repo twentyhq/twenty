@@ -9,18 +9,19 @@ description: أنشئ أول تطبيق Twenty خلال دقائق.
 
 تتيح لك التطبيقات توسيع Twenty باستخدام كائنات وحقول ووظائف منطقية ومهارات ذكاء اصطناعي ومكونات واجهة مستخدم مخصصة — جميعها تُدار ككود.
 
-**ما الذي يمكنك فعله اليوم:**
+**What you can build:**
 
-* عرِّف كائنات وحقولًا مخصصة على شكل كود (نموذج بيانات مُدار)
-* أنشئ وظائف منطقية مع مشغلات مخصصة (مسارات HTTP، cron، أحداث قاعدة البيانات)
-* حدد المهارات لوكلاء الذكاء الاصطناعي
-* أنشئ مكونات واجهية تُعرَض داخل واجهة مستخدم Twenty
-* انشر التطبيق نفسه عبر مساحات عمل متعددة
+* Custom objects, fields, views, and navigation items to shape your data model
+* Logic functions triggered by HTTP routes, cron schedules, or database events
+* Front components that render directly inside Twenty's UI
+* Skills that extend Twenty's AI agents
+* Deploy an app across multiple workspaces
 
 ## المتطلبات الأساسية
 
-* Node.js 24+ وYarn 4
-* Docker (لخادم تطوير Twenty المحلي)
+* Node.js 24+
+* Yarn 4
+* Docker (or a running local Twenty instance)
 
 ## البدء
 
@@ -29,21 +30,9 @@ description: أنشئ أول تطبيق Twenty خلال دقائق.
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-يدعم المُهيئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 من هنا يمكنك:
 

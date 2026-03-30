@@ -9,18 +9,19 @@ description: Создайте своё первое приложение Twenty 
 
 Приложения позволяют расширять Twenty с помощью пользовательских объектов, полей, логических функций, навыков ИИ и UI-компонентов — всё это управляется как код.
 
-**Что вы можете делать уже сегодня:**
+**What you can build:**
 
-* Определяйте пользовательские объекты и поля в виде кода (управляемая модель данных)
-* Создавайте логические функции с пользовательскими триггерами (HTTP-маршруты, cron, события базы данных)
-* Определяйте навыки для ИИ-агентов
-* Создавайте фронтенд-компоненты, которые отображаются внутри интерфейса Twenty
-* Развёртывайте одно и то же приложение в нескольких рабочих пространствах
+* Custom objects, fields, views, and navigation items to shape your data model
+* Logic functions triggered by HTTP routes, cron schedules, or database events
+* Front components that render directly inside Twenty's UI
+* Skills that extend Twenty's AI agents
+* Deploy an app across multiple workspaces
 
 ## Требования
 
-* Node.js 24+ и Yarn 4
-* Docker (для локального сервера разработки Twenty)
+* Node.js 24+
+* Yarn 4
+* Docker (or a running local Twenty instance)
 
 ## Начало работы
 
@@ -29,21 +30,9 @@ description: Создайте своё первое приложение Twenty 
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Генератор каркаса поддерживает два режима для управления тем, какие файлы-примеры включаются:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 Отсюда вы можете:
 

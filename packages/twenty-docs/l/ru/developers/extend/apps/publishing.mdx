@@ -102,6 +102,10 @@ yarn twenty catalog-sync -r production
 
 Метаданные, отображаемые в маркетплейсе, берутся из вызова `defineApplication()` в исходном коде вашего приложения — из таких полей, как `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` и `termsUrl`.
 
+<Note>
+If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+</Note>
+
 ### Публикация через CI
 
 Сгенерированный шаблоном проект включает рабочий процесс GitHub Actions, который выполняет публикацию при каждом релизе:
@@ -238,8 +242,8 @@ Twenty группирует приложения в три категории в
 | --------------------------- | -------------------------------------------------------- | ------------------------------------------------------- |
 | `yarn twenty build`         | Скомпилировать приложение и сгенерировать манифест       | `--tarball` — также создать пакет `.tgz`                |
 | `yarn twenty publish`       | Собрать и опубликовать в npm                             | `--tag <tag>` — dist-tag npm (например, `beta`, `next`) |
-| `yarn twenty deploy`        | Собрать и загрузить tarball на сервер                    | `-r, --remote <name>` — целевой remote                  |
-| `yarn twenty catalog-sync`  | Запустить на сервере синхронизацию каталога маркетплейса | `-r, --remote <name>` — целевой remote                  |
+| `yarn twenty deploy`        | Собрать и загрузить tarball на сервер                    | `-r, --remote <name>` — целевой удалённый репозиторий   |
+| `yarn twenty catalog-sync`  | Запустить на сервере синхронизацию каталога маркетплейса | `-r, --remote <name>` — целевой удалённый репозиторий   |
 | `yarn twenty install`       | Установить развернутое приложение в рабочем пространстве | `-r, --remote <name>` — целевой remote                  |
 | `yarn twenty dev`           | Отслеживать и синхронизировать локальные изменения       | Использует remote по умолчанию                          |
 | `yarn twenty remote add`    | Добавить подключение к серверу                           | `--url`, `--token`, `--as`, `--local`, `--port`         |

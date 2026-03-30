@@ -102,6 +102,10 @@ yarn twenty catalog-sync -r production
 
 市场中显示的元数据来自你在应用源代码中调用的 `defineApplication()` —— 诸如 `displayName`、`description`、`author`、`category`、`logoUrl`、`screenshots`、`aboutDescription`、`websiteUrl` 和 `termsUrl` 等字段。
 
+<Note>
+如果您的应用未在 `defineApplication()` 中定义 `aboutDescription`，市场将自动使用 npm 上您的软件包的 `README.md` 作为关于页面内容。 这意味着您可以为 npm 和 Twenty 市场维护同一个 README。 如果您希望在市场中使用不同的描述，请显式设置 `aboutDescription`。
+</Note>
+
 ### CI 发布
 
 脚手架项目包含一个 GitHub Actions 工作流，会在每次发版时自动发布：

@@ -38,7 +38,7 @@ yarn twenty dev
 
 ### Gestione del server locale
 
-L'SDK include comandi per gestire un server di sviluppo locale di Twenty (immagine Docker all-in-one con PostgreSQL, Redis, server e worker):
+The SDK includes commands to manage a local Twenty dev server (all-in-one Docker image with PostgreSQL, Redis, server, and worker on port 2020). These commands only apply to the Docker-based dev server — they do not manage a Twenty instance started from source (e.g. `npx nx start twenty-server` on port 3000):
 
 ```bash filename="Terminal"
 # Avvia il server locale (scarica l'immagine se necessario)

@@ -102,6 +102,10 @@ yarn twenty catalog-sync -r production
 
 I metadati mostrati nel marketplace provengono dalla chiamata a `defineApplication()` nel codice sorgente della tua app — campi come `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` e `termsUrl`.
 
+<Note>
+If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+</Note>
+
 ### Pubblicazione con CI
 
 Il progetto generato include un workflow di GitHub Actions che pubblica a ogni release:
