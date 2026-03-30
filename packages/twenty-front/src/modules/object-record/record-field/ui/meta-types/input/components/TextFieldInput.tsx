@@ -36,10 +36,12 @@ export const TextFieldInput = () => {
     'Value does not match the required format';
 
   const validate = (text: string): boolean => {
-    if (validationPattern && text) {
+    const trimmed = text.trim();
+
+    if (validationPattern && trimmed) {
       const regex = new RegExp(validationPattern);
 
-      if (!regex.test(text)) {
+      if (!regex.test(trimmed)) {
         enqueueErrorSnackBar({ message: validationErrorMessage });
         return false;
       }
@@ -82,10 +84,10 @@ export const TextFieldInput = () => {
   };
 
   const handleChange = (newText: string) => {
-    if (validationPattern && newText) {
+    if (validationPattern && newText.trim()) {
       const regex = new RegExp(validationPattern);
 
-      setIsFieldInError(!regex.test(newText));
+      setIsFieldInError(!regex.test(newText.trim()));
     } else {
       setIsFieldInError(false);
     }
