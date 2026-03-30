@@ -13,6 +13,7 @@ export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.Workflow,
   FileFolder.AgentChat,
   FileFolder.AppTarball,
+  FileFolder.Export,
 ] as const;
 
 export type SupportedFileFolder = (typeof SUPPORTED_FILE_FOLDERS)[number];

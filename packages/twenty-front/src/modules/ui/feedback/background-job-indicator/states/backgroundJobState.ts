@@ -17,6 +17,7 @@ export type BackgroundJobData = {
   warningCount: number;
   failureCount: number;
   onCancel?: () => void;
+  downloadUrl?: string;
 };
 
 export const backgroundJobsState = createAtomState<BackgroundJobData[]>({

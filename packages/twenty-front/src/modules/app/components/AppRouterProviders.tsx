@@ -20,6 +20,7 @@ import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/
 
 import { HeadlessEngineCommandMountRoot } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandMountRoot';
 import { HeadlessFrontComponentMountRoot } from '@/front-components/components/HeadlessFrontComponentMountRoot';
+import { ExportJobRecoveryEffect } from '@/object-record/record-index/export/components/ExportJobRecoveryEffect';
 import { ImportJobRecoveryEffect } from '@/spreadsheet-import/components/ImportJobRecoveryEffect';
 import { BackgroundJobIndicator } from '@/ui/feedback/background-job-indicator/components/BackgroundJobIndicator';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
@@ -75,6 +76,7 @@ export const AppRouterProviders = () => {
                                 <HeadlessFrontComponentMountRoot />
                                 <HeadlessEngineCommandMountRoot />
                                 <ImportJobRecoveryEffect />
+                                <ExportJobRecoveryEffect />
                                 <BackgroundJobIndicator />
                               </StrictMode>
                             </DialogManager>

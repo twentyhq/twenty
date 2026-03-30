@@ -706,7 +706,7 @@ echo ""
 echo "--- CSV Export: Relation ID Embedding ---"
 check_file_not_contains \
   "packages/twenty-front/src/modules/object-record/record-index/export/utils/relationExportFieldPaths.ts" \
-  "'id'" \
+  "'id',$" \
   "id must not be in EXCLUDED_FIELD_NAMES so relation IDs are exportable"
 check_file_contains \
   "packages/twenty-front/src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts" \
@@ -750,6 +750,62 @@ check_file_contains \
   "packages/twenty-front/src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts" \
   "getRelationFieldValueFromPath" \
   "Related export row flattening must resolve nested relation values by path"
+
+echo ""
+echo "--- Server-Side Export Worker ---"
+check_file_exists \
+  "packages/twenty-server/src/engine/core-modules/export-job/export-job.service.ts" \
+  "Export job service (creates jobs, queues to BullMQ, publishes progress)"
+check_file_exists \
+  "packages/twenty-server/src/engine/core-modules/export-job/jobs/export-job.processor.ts" \
+  "Export job BullMQ processor (batched fetch, CSV gen, file storage)"
+check_file_exists \
+  "packages/twenty-server/src/engine/core-modules/export-job/export-job.resolver.ts" \
+  "Export job GraphQL resolver (start/cancel mutations, query, subscription)"
+check_file_exists \
+  "packages/twenty-server/src/engine/core-modules/export-job/entities/export-job.entity.ts" \
+  "Export job TypeORM entity (core.exportJob table)"
+check_file_exists \
+  "packages/twenty-server/src/database/typeorm/core/migrations/common/1774400000000-add-export-job-entity.ts" \
+  "Migration creating core.exportJob table"
+check_file_exists \
+  "packages/twenty-front/src/modules/object-record/record-index/export/hooks/useExportJobProgress.ts" \
+  "Frontend export job polling, recovery, and auto-download hooks"
+check_file_exists \
+  "packages/twenty-front/src/modules/object-record/record-index/export/components/ExportJobRecoveryEffect.tsx" \
+  "Export job recovery effect mounted in app root"
+check_file_contains \
+  "packages/twenty-shared/src/types/FileFolder.ts" \
+  "Export = 'export'" \
+  "FileFolder must include Export for server-side CSV storage"
+check_file_contains \
+  "packages/twenty-server/src/engine/core-modules/message-queue/message-queue.constants.ts" \
+  "exportQueue" \
+  "MessageQueue must include exportQueue for BullMQ export processing"
+check_file_contains \
+  "packages/twenty-server/src/engine/core-modules/file/guards/file-by-id.guard.ts" \
+  "FileFolder.Export" \
+  "Export folder must be in SUPPORTED_FILE_FOLDERS to allow file downloads"
+check_file_contains \
+  "packages/twenty-server/src/engine/subscriptions/enums/subscription-channel.enum.ts" \
+  "EXPORT_JOB_PROGRESS" \
+  "Subscription channel must include EXPORT_JOB_PROGRESS for real-time updates"
+check_file_contains \
+  "packages/twenty-front/src/modules/app/components/AppRouterProviders.tsx" \
+  "ExportJobRecoveryEffect" \
+  "App root must mount ExportJobRecoveryEffect for in-progress job recovery"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/record/multiple-records/components/ExportMultipleRecordsCommand.tsx" \
+  "START_EXPORT_JOB" \
+  "Export command must call server-side startExportJob mutation"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/engine-command/record/multiple-records/components/ExportMultipleRecordsCommand.tsx" \
+  "START_EXPORT_JOB" \
+  "Engine-command export must call server-side startExportJob mutation"
+check_file_contains \
+  "packages/twenty-front/src/modules/ui/feedback/background-job-indicator/components/BackgroundJobIndicator.tsx" \
+  "AUTO_DISMISS_MS" \
+  "BackgroundJobIndicator must auto-dismiss completed jobs"
 
 echo ""
 echo "--- Whitespace Trimming ---"

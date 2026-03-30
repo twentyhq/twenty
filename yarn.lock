@@ -56808,6 +56808,7 @@ __metadata:
     imapflow: "npm:1.2.1"
     ioredis: "npm:5.6.0"
     jsdom: "npm:^26.1.0"
+    json-2-csv: "npm:^5.4.0"
     json-schema: "npm:0.4.0"
     jsonwebtoken: "npm:9.0.2"
     libphonenumber-js: "npm:1.11.5"

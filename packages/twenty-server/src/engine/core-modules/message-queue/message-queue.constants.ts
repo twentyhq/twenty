@@ -21,4 +21,5 @@ export enum MessageQueue {
   aiQueue = 'ai-queue',
   ingestionQueue = 'ingestion-queue',
   importQueue = 'import-queue',
+  exportQueue = 'export-queue',
 }

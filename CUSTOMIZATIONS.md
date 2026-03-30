@@ -172,6 +172,60 @@ Full ingestion pipeline engine — configurable pull/push data pipelines with fi
 | `object-record/record-index/export/utils/relationExportFieldPaths.ts` | Builds recursive relation export field paths, nested GraphQL selections, and flat CSV keys |
 | `object-record/record-index/export/types/ExportConfig.ts`             | Stores selected related export fields as dotted field paths (`selectedFieldPaths`)         |
 
+### Server-Side Export Worker
+
+Moves CSV export from browser-only to a BullMQ background job. The server fetches records, generates CSV with relation expansion, stores via FileStorageService, and the frontend polls for completion then auto-downloads.
+
+**New server module: `packages/twenty-server/src/engine/core-modules/export-job/`**
+
+| File                                    | Purpose                                                           |
+| --------------------------------------- | ----------------------------------------------------------------- |
+| `enums/export-job-status.enum.ts`       | PENDING/PROCESSING/COMPLETED/FAILED/CANCELLED status enum         |
+| `entities/export-job.entity.ts`         | TypeORM entity for `core.exportJob` table                         |
+| `dtos/export-job.dto.ts`                | GraphQL DTOs for export job state                                 |
+| `export-job.service.ts`                 | Creates jobs, queues to BullMQ, publishes progress via subscriptions |
+| `export-job.resolver.ts`               | GraphQL mutations (start/cancel), query, subscription             |
+| `export-job.module.ts`                  | NestJS module                                                     |
+| `jobs/export-job.processor.ts`          | BullMQ processor: batched fetch, filter parsing, CSV gen, file storage |
+| `jobs/export-job-processor.module.ts`   | Processor module registration                                     |
+| `utils/process-records-for-csv.util.ts` | Server-side CSV transformation (CURRENCY, RELATION, composite)    |
+
+**New migration:**
+
+| File                                                                                          | Purpose                          |
+| --------------------------------------------------------------------------------------------- | -------------------------------- |
+| `database/typeorm/core/migrations/common/1774400000000-add-export-job-entity.ts`              | Creates `core.exportJob` table   |
+
+**New frontend files:**
+
+| File (under `packages/twenty-front/src/modules/`)                           | Purpose                                         |
+| --------------------------------------------------------------------------- | ----------------------------------------------- |
+| `object-record/record-index/export/graphql/mutations/startExportJob.ts`     | GraphQL mutation to start server-side export     |
+| `object-record/record-index/export/graphql/mutations/cancelExportJob.ts`    | GraphQL mutation to cancel export                |
+| `object-record/record-index/export/graphql/queries/exportJob.ts`            | GraphQL query to poll export status              |
+| `object-record/record-index/export/states/activeExportJobState.ts`          | Jotai atom for active export tracking            |
+| `object-record/record-index/export/hooks/useExportJobProgress.ts`          | Poller, recovery, tracking hooks                 |
+| `object-record/record-index/export/components/ExportJobRecoveryEffect.tsx` | Mounts recovery+poller in app root               |
+
+**Modified upstream files:**
+
+| File                                                                                                       | Modification                                                  |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `packages/twenty-shared/src/types/FileFolder.ts`                                                          | Added `Export = 'export'`                                     |
+| `packages/twenty-server/src/engine/core-modules/message-queue/message-queue.constants.ts`                 | Added `exportQueue`                                           |
+| `packages/twenty-server/src/engine/core-modules/message-queue/message-queue-priority.constant.ts`         | Added export queue priority                                   |
+| `packages/twenty-server/src/engine/core-modules/message-queue/message-queue-concurrency.constant.ts`      | Added export queue concurrency                                |
+| `packages/twenty-server/src/engine/subscriptions/enums/subscription-channel.enum.ts`                      | Added `EXPORT_JOB_PROGRESS`                                   |
+| `packages/twenty-server/src/engine/core-modules/message-queue/jobs.module.ts`                             | Registered `ExportJobProcessorModule`                         |
+| `packages/twenty-server/src/engine/core-modules/core-engine.module.ts`                                    | Registered `ExportJobModule`                                  |
+| `packages/twenty-server/src/engine/core-modules/file/guards/file-by-id.guard.ts`                         | Added `FileFolder.Export` to `SUPPORTED_FILE_FOLDERS`         |
+| `packages/twenty-server/src/engine/core-modules/file/interfaces/file-folder.interface.ts`                 | Added `Export` folder config                                  |
+| `packages/twenty-front/src/modules/app/components/AppRouterProviders.tsx`                                 | Mounted `ExportJobRecoveryEffect`                             |
+| `packages/twenty-front/src/modules/command-menu-item/record/.../ExportMultipleRecordsCommand.tsx`         | Rewired to call server mutation instead of browser-side fetch |
+| `packages/twenty-front/src/modules/command-menu-item/engine-command/.../ExportMultipleRecordsCommand.tsx` | Rewired to call server mutation instead of browser-side fetch |
+| `packages/twenty-front/src/modules/ui/feedback/background-job-indicator/states/backgroundJobState.ts`     | Added optional `downloadUrl` to `BackgroundJobData`           |
+| `packages/twenty-front/src/modules/ui/feedback/background-job-indicator/.../BackgroundJobIndicator.tsx`   | Added auto-dismiss on success (5s)                            |
+
 ### Server-Side Import: Upsert Relation Connect Tolerance
 
 | File                                                                                                    | Modification                                                                                                |

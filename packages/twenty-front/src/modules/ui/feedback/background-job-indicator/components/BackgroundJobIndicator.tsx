@@ -1,28 +1,28 @@
 import {
-  useBackgroundJobs,
   useBackgroundJob,
+  useBackgroundJobs,
 } from '@/ui/feedback/background-job-indicator/hooks/useBackgroundJob';
 import type { BackgroundJobData } from '@/ui/feedback/background-job-indicator/states/backgroundJobState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useEffect } from 'react';
 import {
-  IconCheck,
   IconAlertTriangle,
-  IconX,
   IconSquareRoundedCheck,
+  IconX,
 } from 'twenty-ui/display';
 import { CircularProgressBar, ProgressBar } from 'twenty-ui/feedback';
 import { LightIconButton } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledStack = styled.div`
-  position: fixed;
   bottom: ${themeCssVariables.spacing[3]};
-  right: ${themeCssVariables.spacing[3]};
-  z-index: 10000;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  position: fixed;
+  right: ${themeCssVariables.spacing[3]};
+  z-index: 10000;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     left: 0;
@@ -37,10 +37,10 @@ const StyledCard = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
+  overflow: hidden;
   padding: ${themeCssVariables.spacing[2]};
   position: relative;
   width: 296px;
-  overflow: hidden;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-radius: 0;
@@ -64,8 +64,8 @@ const StyledIcon = styled.div`
 
 const StyledMessage = styled.div`
   color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
   flex: 1;
+  font-size: ${themeCssVariables.font.size.sm};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -74,8 +74,8 @@ const StyledMessage = styled.div`
 const StyledActions = styled.div`
   align-items: center;
   display: flex;
-  margin-left: auto;
   flex-shrink: 0;
+  margin-left: auto;
 `;
 
 const StyledDetails = styled.div`
@@ -86,10 +86,12 @@ const StyledDetails = styled.div`
 `;
 
 const StyledProgressContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[6]};
   padding-top: ${themeCssVariables.spacing[2]};
-  padding-bottom: ${themeCssVariables.spacing[1]};
 `;
+
+const AUTO_DISMISS_MS = 5000;
 
 const BackgroundJobCard = ({ job }: { job: BackgroundJobData }) => {
   const { removeJob } = useBackgroundJob();
@@ -97,6 +99,14 @@ const BackgroundJobCard = ({ job }: { job: BackgroundJobData }) => {
   const isRunning = job.status === 'pending' || job.status === 'processing';
   const isDone = job.status === 'completed';
   const isFailed = job.status === 'failed';
+
+  useEffect(() => {
+    if (!isDone) return;
+
+    const timer = setTimeout(() => removeJob(job.id), AUTO_DISMISS_MS);
+
+    return () => clearTimeout(timer);
+  }, [isDone, job.id, removeJob]);
   const percent =
     job.totalItems > 0
       ? Math.round((job.processedItems / job.totalItems) * 100)
@@ -126,10 +136,7 @@ const BackgroundJobCard = ({ job }: { job: BackgroundJobData }) => {
             />
           )}
           {isFailed && (
-            <IconAlertTriangle
-              size={16}
-              color={themeCssVariables.color.red}
-            />
+            <IconAlertTriangle size={16} color={themeCssVariables.color.red} />
           )}
           {job.status === 'cancelled' && <IconX size={16} />}
         </StyledIcon>
