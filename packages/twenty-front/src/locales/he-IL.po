@@ -194,6 +194,12 @@ msgstr ""
 msgid "{0} — failed"
 msgstr ""
 
+#. js-lingui-id: TaEcpg
+#. placeholder {0}: skippedColumnHeaders.length
+#: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+msgid "{0} columns from your file were not mapped and will not be imported:"
+msgstr ""
+
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(totalCredits)
 #. placeholder {0}: formatNumber(datum.value)

@@ -23,6 +23,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { IconInfoCircle } from 'twenty-ui/display';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
@@ -96,6 +97,32 @@ const StyledNoRowsWithErrorsContainer = styled.div`
   display: flex;
   justify-content: center;
   margin: auto 0;
+`;
+
+const StyledSkippedBanner = styled.div`
+  align-items: flex-start;
+  background: ${themeCssVariables.accent.secondary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+`;
+
+const StyledSkippedIcon = styled.div`
+  color: ${themeCssVariables.color.blue};
+  flex-shrink: 0;
+  padding-top: 1px;
+`;
+
+const StyledSkippedText = styled.div`
+  line-height: 1.4;
+`;
+
+const StyledSkippedColumns = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
 `;
 
 type ValidationStepProps = {
@@ -203,6 +230,19 @@ export const ValidationStep = ({
     [fields, importedColumns],
   );
 
+  const skippedColumnHeaders = useMemo(
+    () =>
+      importedColumns
+        .filter(
+          (col) =>
+            col.type === SpreadsheetColumnType.empty ||
+            col.type === SpreadsheetColumnType.ignored,
+        )
+        .map((col) => col.header)
+        .filter((header) => header.trim().length > 0),
+    [importedColumns],
+  );
+
   const tableData = useMemo(() => {
     if (filterByErrors) {
       return data.filter((value) => {
@@ -291,6 +331,19 @@ export const ValidationStep = ({
     <>
       <ModalContent noPadding overflowHidden>
         <StyledContentWrapper>
+          {skippedColumnHeaders.length > 0 && (
+            <StyledSkippedBanner>
+              <StyledSkippedIcon>
+                <IconInfoCircle size={16} />
+              </StyledSkippedIcon>
+              <StyledSkippedText>
+                {t`${skippedColumnHeaders.length} columns from your file were not mapped and will not be imported:`}{' '}
+                <StyledSkippedColumns>
+                  {skippedColumnHeaders.join(', ')}
+                </StyledSkippedColumns>
+              </StyledSkippedText>
+            </StyledSkippedBanner>
+          )}
           {filterByErrors && tableData.length === 0 ? (
             <StyledNoRowsWithErrorsContainer>
               <Trans>No rows with errors</Trans>
