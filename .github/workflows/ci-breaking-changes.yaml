@@ -86,6 +86,8 @@ jobs:
         run: |
           echo "Attempting to merge main into current branch..."
 
+          git config user.email "ci@twenty.com"
+          git config user.name "CI"
           git fetch origin main
 
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -99,8 +101,8 @@ jobs:
             echo "❌ Merge failed due to conflicts"
             echo "⚠️ Falling back to comparing current branch against main without merge"
 
-            # Abort the failed merge
-            git merge --abort
+            # Abort the failed merge (may not exist if merge never started)
+            git merge --abort 2>/dev/null || true
 
             echo "merged=false" >> $GITHUB_OUTPUT
             echo "BRANCH_STATE=conflicts" >> $GITHUB_ENV
