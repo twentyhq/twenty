@@ -27,6 +27,7 @@ import {
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -41,6 +42,7 @@ import {
 import { AgentRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/ai-agent/filters/agent-api-exception.filter';
 import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { AgentChatResumableStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-resumable-stream.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -59,6 +61,7 @@ export class AgentChatController {
     private readonly billingService: BillingService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly redisClientService: RedisClientService,
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
   ) {}
@@ -154,6 +157,22 @@ export class AgentChatController {
     @Param('threadId') threadId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
+    const thread = await this.threadRepository.findOne({
+      where: { id: threadId, userWorkspaceId },
+    });
+
+    if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
+      return { success: true };
+    }
+
+    // Publish a cancel signal via Redis pub/sub. The BullMQ worker
+    // processing this thread's stream subscribes to this channel and
+    // will abort the LLM connection when the message arrives — stopping
+    // token generation and billing immediately.
+    const redis = this.redisClientService.getClient();
+
+    await redis.publish(getCancelChannel(threadId), 'cancel');
+
     await this.threadRepository.update(
       { id: threadId, userWorkspaceId },
       { activeStreamId: null },

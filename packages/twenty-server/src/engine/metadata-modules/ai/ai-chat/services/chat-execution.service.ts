@@ -63,6 +63,7 @@ export type ChatExecutionOptions = {
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
   modelId?: string;
+  abortSignal?: AbortSignal;
 };
 
 export type ChatExecutionResult = {
@@ -93,6 +94,7 @@ export class ChatExecutionService {
     browsingContext,
     onCodeExecutionUpdate,
     modelId,
+    abortSignal,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -227,6 +229,7 @@ export class ChatExecutionService {
       model: registeredModel.model,
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
+      abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
       experimental_repairToolCall: async ({

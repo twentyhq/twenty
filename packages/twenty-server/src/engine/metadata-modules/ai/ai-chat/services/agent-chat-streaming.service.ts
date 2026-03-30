@@ -1,35 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  createUIMessageStream,
-  generateId,
-  pipeUIMessageStreamToResponse,
-} from 'ai';
+import { generateId, UI_MESSAGE_STREAM_HEADERS } from 'ai';
 import { type Response } from 'express';
-import {
-  type CodeExecutionData,
-  type ExtendedUIMessage,
-} from 'twenty-shared/ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type Repository } from 'typeorm';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
-import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import {
+  STREAM_AGENT_CHAT_JOB_NAME,
+  type StreamAgentChatJobData,
+} from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 
 import { AgentChatResumableStreamService } from './agent-chat-resumable-stream.service';
-import { AgentChatService } from './agent-chat.service';
-import { ChatExecutionService } from './chat-execution.service';
 
 export type StreamAgentChatOptions = {
   threadId: string;
@@ -41,13 +33,20 @@ export type StreamAgentChatOptions = {
   modelId?: string;
 };
 
+// Max time to wait for the BullMQ worker to create the resumable stream
+// in Redis before giving up and returning an error to the client.
+const STREAM_READY_TIMEOUT_MS = 10_000;
+const STREAM_READY_POLL_INTERVAL_MS = 100;
+
 @Injectable()
 export class AgentChatStreamingService {
+  private readonly logger = new Logger(AgentChatStreamingService.name);
+
   constructor(
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
-    private readonly agentChatService: AgentChatService,
-    private readonly chatExecutionService: ChatExecutionService,
+    @InjectMessageQueue(MessageQueue.aiStreamQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly resumableStreamService: AgentChatResumableStreamService,
   ) {}
 
@@ -74,236 +73,76 @@ export class AgentChatStreamingService {
       );
     }
 
-    // Fire user-message save without awaiting to avoid delaying time-to-first-letter.
-    // The promise is awaited inside onFinish where we need the turnId.
+    const streamId = generateId();
     const lastUserMessage = messages[messages.length - 1];
     const lastUserText =
       lastUserMessage?.parts.find((part) => part.type === 'text')?.text ?? '';
 
-    const userMessagePromise = this.agentChatService.addMessage({
-      threadId: thread.id,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts:
-          lastUserMessage?.parts.filter(
-            (part) => part.type === 'text' || part.type === 'file',
-          ) ?? [],
-      },
+    // Mark the thread as actively streaming so clients can resume
+    await this.threadRepository.update(thread.id, {
+      activeStreamId: streamId,
     });
 
-    // Prevent unhandled rejection if onFinish never runs (e.g. stream
-    // setup error or empty response early-return). The real error still
-    // surfaces when awaited in onFinish.
-    userMessagePromise.catch(() => {});
+    // Enqueue the streaming job — a BullMQ worker will run streamText()
+    // and write SSE chunks to the Redis resumable stream.
+    await this.messageQueueService.add<StreamAgentChatJobData>(
+      STREAM_AGENT_CHAT_JOB_NAME,
+      {
+        threadId: thread.id,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages,
+        browsingContext,
+        modelId,
+        lastUserMessageText: lastUserText,
+        lastUserMessageParts: lastUserMessage?.parts ?? [],
+      },
+    );
 
-    // Title generation runs in parallel with AI streaming so it's
-    // typically ready by the time onFinish fires
-    const titlePromise = thread.title
-      ? Promise.resolve(null)
-      : this.agentChatService
-          .generateTitleIfNeeded(thread.id, lastUserText)
-          .catch(() => null);
-
+    // Pipe the Redis resumable stream to the HTTP response.
+    // The worker may not have started writing yet, so we poll until
+    // the stream appears in Redis (typically <200ms).
     try {
-      const uiStream = createUIMessageStream<ExtendedUIMessage>({
-        execute: async ({ writer }) => {
-          const onCodeExecutionUpdate = (data: CodeExecutionData) => {
-            writer.write({
-              type: 'data-code-execution' as const,
-              id: `code-execution-${data.executionId}`,
-              data,
-            });
-          };
+      const nodeReadable = await this.waitForResumableStream(streamId);
 
-          const { stream, modelConfig } =
-            await this.chatExecutionService.streamChat({
-              workspace,
-              userWorkspaceId,
-              messages,
-              browsingContext,
-              onCodeExecutionUpdate,
-              modelId,
-            });
+      if (!nodeReadable) {
+        this.logger.error(
+          `Stream ${streamId} did not become available within timeout`,
+        );
+        response.status(500).json({ error: 'Stream failed to start' });
 
-          let streamUsage = {
-            inputTokens: 0,
-            outputTokens: 0,
-            inputCredits: 0,
-            outputCredits: 0,
-          };
-          let lastStepConversationSize = 0;
-          let totalCacheCreationTokens = 0;
+        return;
+      }
 
-          writer.merge(
-            stream.toUIMessageStream({
-              onError: (error) => {
-                return error instanceof Error ? error.message : String(error);
-              },
-              sendStart: false,
-              messageMetadata: ({ part }) => {
-                if (part.type === 'finish-step') {
-                  const stepInput = part.usage?.inputTokens ?? 0;
-                  const stepCached =
-                    part.usage?.inputTokenDetails?.cacheReadTokens ?? 0;
-                  const stepCacheCreation = extractCacheCreationTokens(
-                    (
-                      part as {
-                        providerMetadata?: Record<
-                          string,
-                          Record<string, unknown> | undefined
-                        >;
-                      }
-                    ).providerMetadata,
-                  );
-
-                  totalCacheCreationTokens += stepCacheCreation;
-                  lastStepConversationSize =
-                    stepInput + stepCached + stepCacheCreation;
-                }
-
-                if (part.type === 'finish') {
-                  const { inputCredits, outputCredits, tokenCounts } =
-                    computeStreamCosts(
-                      modelConfig,
-                      part.totalUsage,
-                      totalCacheCreationTokens,
-                    );
-
-                  streamUsage = {
-                    inputTokens: tokenCounts.totalInputTokens,
-                    outputTokens: tokenCounts.outputTokens,
-                    inputCredits,
-                    outputCredits,
-                  };
-
-                  return {
-                    createdAt: new Date().toISOString(),
-                    usage: {
-                      inputTokens: tokenCounts.totalInputTokens,
-                      outputTokens: tokenCounts.outputTokens,
-                      cachedInputTokens: tokenCounts.cachedInputTokens,
-                      inputCredits: toDisplayCredits(inputCredits),
-                      outputCredits: toDisplayCredits(outputCredits),
-                      conversationSize: lastStepConversationSize,
-                    },
-                    model: {
-                      contextWindowTokens: modelConfig.contextWindowTokens,
-                    },
-                  };
-                }
-
-                return undefined;
-              },
-              onFinish: async ({ responseMessage }) => {
-                if (responseMessage.parts.length === 0) {
-                  return;
-                }
-
-                const userMessage = await userMessagePromise;
-
-                await this.agentChatService.addMessage({
-                  threadId: thread.id,
-                  uiMessage: responseMessage,
-                  turnId: userMessage.turnId,
-                });
-
-                await this.threadRepository.update(thread.id, {
-                  totalInputTokens: () =>
-                    `"totalInputTokens" + ${streamUsage.inputTokens}`,
-                  totalOutputTokens: () =>
-                    `"totalOutputTokens" + ${streamUsage.outputTokens}`,
-                  totalInputCredits: () =>
-                    `"totalInputCredits" + ${streamUsage.inputCredits}`,
-                  totalOutputCredits: () =>
-                    `"totalOutputCredits" + ${streamUsage.outputCredits}`,
-                  contextWindowTokens: modelConfig.contextWindowTokens,
-                  conversationSize: lastStepConversationSize,
-                  activeStreamId: null,
-                });
-
-                const generatedTitle = await titlePromise;
-
-                if (generatedTitle) {
-                  writer.write({
-                    type: 'data-thread-title' as const,
-                    id: `thread-title-${thread.id}`,
-                    data: { title: generatedTitle },
-                  });
-                }
-              },
-              sendReasoning: true,
-            }),
-          );
-        },
-      });
-
-      pipeUIMessageStreamToResponse({
-        stream: uiStream,
-        response,
-        // Pipe the SSE stream into a Redis-backed resumable stream so
-        // onFinish fires even if the client disconnects (page refresh)
-        // and reconnecting clients can pick up where they left off.
-        consumeSseStream: async ({ stream }) => {
-          const streamId = generateId();
-
-          await this.threadRepository.update(thread.id, {
-            activeStreamId: streamId,
-          });
-
-          try {
-            await this.resumableStreamService.createResumableStream(
-              streamId,
-              () => stream,
-            );
-          } catch {
-            await this.threadRepository.update(thread.id, {
-              activeStreamId: null,
-            });
-
-            // Fall back to consuming the stream without persistence
-            // so onFinish still fires even if Redis is unavailable.
-            stream.pipeTo(new WritableStream()).catch(() => {});
-          }
-        },
-      });
+      response.writeHead(200, UI_MESSAGE_STREAM_HEADERS);
+      nodeReadable.pipe(response);
     } catch (error) {
       response.end();
       throw error;
     }
   }
-}
 
-function computeStreamCosts(
-  modelConfig: AIModelConfig,
-  totalUsage:
-    | {
-        inputTokens?: number;
-        outputTokens?: number;
-        inputTokenDetails?: { cacheReadTokens?: number };
-        outputTokenDetails?: { reasoningTokens?: number };
+  private async waitForResumableStream(streamId: string) {
+    const maxAttempts = Math.ceil(
+      STREAM_READY_TIMEOUT_MS / STREAM_READY_POLL_INTERVAL_MS,
+    );
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const readable =
+        await this.resumableStreamService.resumeExistingStreamAsNodeReadable(
+          streamId,
+        );
+
+      if (readable) {
+        return readable;
       }
-    | undefined,
-  cacheCreationTokens: number,
-) {
-  const breakdown = computeCostBreakdown(modelConfig, {
-    inputTokens: totalUsage?.inputTokens,
-    outputTokens: totalUsage?.outputTokens,
-    cachedInputTokens: totalUsage?.inputTokenDetails?.cacheReadTokens,
-    reasoningTokens: totalUsage?.outputTokenDetails?.reasoningTokens,
-    cacheCreationTokens,
-  });
 
-  return {
-    inputCredits: Math.round(
-      convertDollarsToBillingCredits(breakdown.inputCostInDollars),
-    ),
-    outputCredits: Math.round(
-      convertDollarsToBillingCredits(breakdown.outputCostInDollars),
-    ),
-    tokenCounts: {
-      totalInputTokens: breakdown.tokenCounts.totalInputTokens,
-      outputTokens: totalUsage?.outputTokens ?? 0,
-      cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
-    },
-  };
+      await new Promise((resolve) =>
+        setTimeout(resolve, STREAM_READY_POLL_INTERVAL_MS),
+      );
+    }
+
+    return null;
+  }
 }
