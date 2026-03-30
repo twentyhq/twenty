@@ -38,7 +38,14 @@ export { useFrontComponentId } from './hooks/useFrontComponentId';
 export { useRecordId } from './hooks/useRecordId';
 export { useUserId } from './hooks/useUserId';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
+export {
+  FRONT_COMPONENT_CONTEXT_KEY,
+  FRONT_COMPONENT_LISTENERS_KEY,
+} from './context/frontComponentContext';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
+export {
+  FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY,
+} from './globals/frontComponentHostCommunicationApi';
 export type {
   CloseSidePanelFunction,
   CommandConfirmationModalAccent,

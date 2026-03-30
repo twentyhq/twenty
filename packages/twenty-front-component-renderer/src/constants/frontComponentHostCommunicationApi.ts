@@ -1,6 +1,7 @@
 import {
   type CloseSidePanelFunction,
   type EnqueueSnackbarFunction,
+  FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
@@ -20,7 +21,11 @@ type FrontComponentHostCommunicationApiStore = {
   updateProgress?: UpdateProgressFunction;
 };
 
-globalThis.frontComponentHostCommunicationApi ??= {};
+(globalThis as Record<string, unknown>)[
+  FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY
+] ??= {};
 
 export const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApiStore =
-  globalThis.frontComponentHostCommunicationApi;
+  (globalThis as Record<string, unknown>)[
+    FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY
+  ] as FrontComponentHostCommunicationApiStore;

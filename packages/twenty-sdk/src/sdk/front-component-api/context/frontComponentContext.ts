@@ -2,24 +2,26 @@ import { type FrontComponentExecutionContext } from '../types/FrontComponentExec
 
 type Listener = () => void;
 
-const CONTEXT_KEY = '__twentySdkExecutionContext__';
-const LISTENERS_KEY = '__twentySdkContextListeners__';
+export const FRONT_COMPONENT_CONTEXT_KEY = '__twentySdkExecutionContext__';
+export const FRONT_COMPONENT_LISTENERS_KEY = '__twentySdkContextListeners__';
 
 const getListeners = (): Set<Listener> => {
-  if (!(globalThis as Record<string, unknown>)[LISTENERS_KEY]) {
-    (globalThis as Record<string, unknown>)[LISTENERS_KEY] =
+  if (
+    !(globalThis as Record<string, unknown>)[FRONT_COMPONENT_LISTENERS_KEY]
+  ) {
+    (globalThis as Record<string, unknown>)[FRONT_COMPONENT_LISTENERS_KEY] =
       new Set<Listener>();
   }
 
   return (globalThis as Record<string, unknown>)[
-    LISTENERS_KEY
+    FRONT_COMPONENT_LISTENERS_KEY
   ] as Set<Listener>;
 };
 
 export const getFrontComponentExecutionContext =
   (): FrontComponentExecutionContext => {
     return (globalThis as Record<string, unknown>)[
-      CONTEXT_KEY
+      FRONT_COMPONENT_CONTEXT_KEY
     ] as FrontComponentExecutionContext;
   };
 
