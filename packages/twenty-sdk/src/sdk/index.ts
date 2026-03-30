@@ -133,7 +133,6 @@ export {
   useFrontComponentId,
   useRecordId,
   useUserId,
-  
 } from './front-component-api';
 export type {
   CloseSidePanelFunction,

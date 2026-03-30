@@ -8,9 +8,7 @@ import { type FrontComponentExecutionContext } from '../types/FrontComponentExec
 type Listener = () => void;
 
 const getListeners = (): Set<Listener> => {
-  if (
-    !(globalThis as Record<string, unknown>)[FRONT_COMPONENT_LISTENERS_KEY]
-  ) {
+  if (!(globalThis as Record<string, unknown>)[FRONT_COMPONENT_LISTENERS_KEY]) {
     (globalThis as Record<string, unknown>)[FRONT_COMPONENT_LISTENERS_KEY] =
       new Set<Listener>();
   }
