@@ -1,5 +1,6 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { HERO_DATA } from '@/app/(home)/constants/hero';
+import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
 import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/constants/three-cards-feature';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/constants/three-cards-illustration';
@@ -8,6 +9,7 @@ import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
+import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
@@ -16,6 +18,17 @@ import { theme } from '@/theme';
 export default function HomePage() {
   return (
     <>
+      <Menu.Root
+        scheme="primary"
+        navItems={MENU_DATA.navItems}
+        socialLinks={MENU_DATA.socialLinks}
+      >
+        <Menu.Logo scheme="primary" />
+        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
+        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Cta scheme="primary" />
+      </Menu.Root>
+
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
         <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
         <Hero.Body page={Pages.Home} body={HERO_DATA.body} size="sm" />

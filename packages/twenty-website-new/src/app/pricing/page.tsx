@@ -1,4 +1,5 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
+import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/pricing/constants/hero';
 import { Eyebrow, LinkButton } from '@/design-system/components';
@@ -6,12 +7,24 @@ import { Pages } from '@/enums/pages';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
+import { Menu } from '@/sections/Menu/components';
 import { Plans } from '@/sections/Plans/components';
 import { theme } from '@/theme';
 
 export default function PricingPage() {
   return (
     <>
+      <Menu.Root
+        scheme="primary"
+        navItems={MENU_DATA.navItems}
+        socialLinks={MENU_DATA.socialLinks}
+      >
+        <Menu.Logo scheme="primary" />
+        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
+        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Cta scheme="primary" />
+      </Menu.Root>
+
       <Hero.Root backgroundColor={theme.colors.secondary.background[5]}>
         <Hero.Heading page={Pages.Pricing} segments={HERO_DATA.heading} />
         <Hero.Body page={Pages.Pricing} body={HERO_DATA.body} />

@@ -18,7 +18,11 @@ export { PlusIcon } from "./functional/Plus";
 export { RectangleFillIcon } from "./functional/RectangleFill";
 export { RectangleOutlineIcon } from "./functional/RectangleOutline";
 export { Logo } from "./logo/Logo";
-export { DiscordIcon } from "./social/Discord";
-export { GitHubIcon } from "./social/GitHub";
-export { LinkedInIcon } from "./social/LinkedIn";
-export { XIcon } from "./social/X";
+export {
+  DiscordIcon,
+  GitHubIcon,
+  LinkedInIcon,
+  SOCIAL_ICONS,
+  XIcon,
+  type SocialIconProps,
+} from './social';
