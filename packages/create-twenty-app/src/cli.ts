@@ -82,15 +82,14 @@ const program = new Command(packageJson.name)
 
 program.exitOverride();
 
-program.parseAsync().catch((error) => {
+try {
+  program.parse();
+} catch (error) {
   if (error instanceof CommanderError) {
     process.exit(error.exitCode);
-  }
-  if (error instanceof Error && error.name === 'ExitPromptError') {
-    process.exit(0);
   }
   if (error instanceof Error) {
     console.error(chalk.red('Error:'), error.message);
     process.exit(1);
   }
-});
+}

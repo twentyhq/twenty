@@ -35,38 +35,38 @@ export class MarketplaceCatalogSyncService {
 
     for (const pkg of packages) {
       try {
-        let manifest =
+        const fetchedManifest =
           await this.marketplaceService.fetchManifestFromRegistryCdn(
             pkg.name,
             pkg.version,
           );
 
-        if (!manifest) {
+        if (!fetchedManifest) {
           this.logger.debug(`Skipping ${pkg.name}: no manifest found on CDN`);
           continue;
         }
 
-        const universalIdentifier = manifest.application.universalIdentifier;
+        const universalIdentifier =
+          fetchedManifest.application.universalIdentifier;
 
         const isFeatured = curatedIdentifiers.has(universalIdentifier);
 
-        if (!manifest.application.aboutDescription) {
-          const readme =
-            await this.marketplaceService.fetchReadmeFromRegistryCdn(
-              pkg.name,
-              pkg.version,
-            );
+        const aboutDescription =
+          fetchedManifest.application.aboutDescription ??
+          (await this.marketplaceService.fetchReadmeFromRegistryCdn(
+            pkg.name,
+            pkg.version,
+          ));
 
-          if (readme) {
-            manifest = {
-              ...manifest,
+        const manifest = aboutDescription
+          ? {
+              ...fetchedManifest,
               application: {
-                ...manifest.application,
-                aboutDescription: readme,
+                ...fetchedManifest.application,
+                aboutDescription,
               },
-            };
-          }
-        }
+            }
+          : fetchedManifest;
 
         const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
 

@@ -27,9 +27,6 @@ export { serverStart } from './server-start';
 export type { ServerStartOptions, ServerStartResult } from './server-start';
 export { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 
-// Config
-export { ConfigService } from '@/cli/utilities/config/config-service';
-
 // Shared types and error codes
 export {
   APP_ERROR_CODES,

@@ -10,7 +10,6 @@ import * as path from 'path';
 import { basename } from 'path';
 import {
   authLoginOAuth,
-  ConfigService,
   detectLocalServer,
   serverStart,
   type ServerStartResult,
@@ -221,27 +220,10 @@ export class CreateAppCommand {
       },
     ]);
 
-    if (!startDocker) {
-      console.log(
-        chalk.gray(
-          'Skipping server setup. You can start one later with `yarn twenty server start`.',
-        ),
-      );
-    }
-
     return startDocker;
   }
 
   private async promptConnectToLocal(serverUrl: string): Promise<void> {
-    const configService = new ConfigService();
-    const config = await configService.getConfigForRemote('local');
-
-    if (config.accessToken || config.apiKey) {
-      console.log(chalk.gray('Already authenticated to local instance.'));
-
-      return;
-    }
-
     const { shouldAuthenticate } = await inquirer.prompt([
       {
         type: 'confirm',

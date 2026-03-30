@@ -27,6 +27,8 @@ export class CheckServerOrchestratorStep {
     this.notify = notify;
   }
 
+  private hasRetried = false;
+
   async execute(): Promise<boolean> {
     const step = this.state.steps.checkServer;
     const validateAuth = await this.apiService.validateAuth();
@@ -34,7 +36,8 @@ export class CheckServerOrchestratorStep {
     if (!validateAuth.serverUp) {
       const detectedUrl = await detectLocalServer();
 
-      if (detectedUrl) {
+      if (detectedUrl && !this.hasRetried) {
+        this.hasRetried = true;
         const configService = new ConfigService();
 
         await configService.setConfig({ apiUrl: detectedUrl });

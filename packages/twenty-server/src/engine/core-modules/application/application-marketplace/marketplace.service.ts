@@ -92,7 +92,7 @@ export class MarketplaceService {
         responseType: 'text',
       });
 
-      if (typeof data !== 'string' || data.trim().length === 0) {
+      if (!data || data.trim().length === 0) {
         return null;
       }
 
