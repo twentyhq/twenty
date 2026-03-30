@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -12,6 +12,8 @@ export type CacheLockOptions = {
 
 @Injectable()
 export class CacheLockService {
+  private readonly logger = new Logger(CacheLockService.name);
+
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineLock)
     private readonly cacheStorageService: CacheStorageService,
@@ -35,7 +37,13 @@ export class CacheLockService {
         try {
           return await fn();
         } finally {
-          await this.cacheStorageService.releaseLock(key);
+          try {
+            await this.cacheStorageService.releaseLock(key);
+          } catch (releaseError) {
+            this.logger.warn(
+              `Failed to release lock for key "${key}": ${releaseError}`,
+            );
+          }
         }
       }
 

@@ -6929,6 +6929,11 @@ msgstr "Filter by record ID"
 msgid "Filter group rule options"
 msgstr "Filter group rule options"
 
+#. js-lingui-id: YrBWVK
+#: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
+msgid "filtering"
+msgstr "filtering"
+
 #. js-lingui-id: cSev+j
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
@@ -10496,6 +10501,11 @@ msgstr "Object Events"
 msgid "Object ID"
 msgstr "Object ID"
 
+#. js-lingui-id: PezPrT
+#: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
+msgid "Object not shared"
+msgstr "Object not shared"
+
 #. js-lingui-id: wZpAXW
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "object permission"
@@ -13569,6 +13579,11 @@ msgstr "Sort by"
 msgid "Sort By Group"
 msgstr "Sort By Group"
 
+#. js-lingui-id: fLIwZB
+#: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
+msgid "sorting"
+msgstr "sorting"
+
 #. js-lingui-id: 0pWTum
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
@@ -14510,6 +14525,19 @@ msgstr "This subdomain is reserved"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
 msgstr "This value will be saved to the database."
+
+#. js-lingui-id: esVnxk
+#. placeholder {0}: nonReadableViewFieldInfo.fieldLabel
+#. placeholder {1}: nonReadableViewFieldInfo.objectLabel
+#: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
+msgid "This view uses {usageLabel} on field \"{0}\" on \"{1}\" which is not accessible."
+msgstr "This view uses {usageLabel} on field \"{0}\" on \"{1}\" which is not accessible."
+
+#. js-lingui-id: IbwUNd
+#. placeholder {0}: nonReadableViewFieldInfo.objectLabel
+#: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
+msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
+msgstr "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 
 #. js-lingui-id: yByRxz
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -15723,6 +15751,11 @@ msgstr "View Logs"
 msgid "View marketplace page"
 msgstr "View marketplace page"
 
+#. js-lingui-id: sAPirx
+#: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
+msgid "View not shared"
+msgstr "View not shared"
+
 #. js-lingui-id: ecVcAx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
 #: src/modules/command-menu-item/record-agnostic/constants/RecordAgnosticCommandMenuItemsConfig.tsx
@@ -16346,6 +16379,11 @@ msgstr "You do not have permission to access the {objectName} object"
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "You do not have permission to view this widget"
 msgstr "You do not have permission to view this widget"
+
+#. js-lingui-id: SDVtJI
+#: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
+msgid "You don't have access to this object."
+msgstr "You don't have access to this object."
 
 #. js-lingui-id: M2lYgq
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx

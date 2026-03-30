@@ -1,4 +1,4 @@
-import { UsersIcon } from "@/icons/informative/Users";
+import { UsersIcon } from '@/icons';
 import { theme } from "@/theme";
 import { styled } from "@linaria/react";
 import { ClientCountShape } from "./ClientCountShape";
