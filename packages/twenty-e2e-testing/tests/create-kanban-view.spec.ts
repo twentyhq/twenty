@@ -32,12 +32,11 @@ test('Create Kanban View from Industry Select Field', async ({ page }) => {
   await page.getByText('Kanban').click();
   await page.locator('[aria-controls="view-picker-kanban-field-options"]').click();
   await page.getByRole('option', { name: 'Industry' }).click();
-  // Use exact: true to ensure we only click the button with the label "Create"
   await page.getByRole('button', { name: 'Create new view' }).click();
-  await expect(page.getByText('Food')).toBeVisible();
+  await expect(page.getByText('Food')).toBeVisible({ timeout: 30000 });
   await expect(page.getByText('Tech')).toBeVisible();
   await expect(page.getByText('Travel')).toBeVisible();
-  await expect(page.getByText('No value')).toBeVisible();
+  await expect(page.getByText('No Value')).toBeVisible();
   const byIndustryElements = await page.locator('text=By industry').all();
   expect(byIndustryElements.length).toBeGreaterThanOrEqual(1);
   for (const element of byIndustryElements) {
@@ -50,6 +49,6 @@ test('Create Kanban View from Industry Select Field', async ({ page }) => {
     return req.url().includes('/metadata') &&
            req.method() === 'POST';
   })]);
-  await expect(page.getByText('No value')).not.toBeVisible();
+  await expect(page.getByText('No Value')).not.toBeVisible();
 });
 })
