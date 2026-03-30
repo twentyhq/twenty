@@ -125,11 +125,11 @@ export class NavigationMenuItemRecordIdentifierService {
       record,
       flatObjectMetadata: objectMetadata,
       flatFieldMetadataMaps,
-      signUrl: (fileId: string) =>
+      signUrl: (fileId: string, fileFolder: FileFolder) =>
         this.fileUrlService.signFileByIdUrl({
           fileId,
           workspaceId,
-          fileFolder: FileFolder.FilesField,
+          fileFolder,
         }),
     });
 
