@@ -103,7 +103,7 @@ yarn twenty catalog-sync -r production
 Метаданные, отображаемые в маркетплейсе, берутся из вызова `defineApplication()` в исходном коде вашего приложения — из таких полей, как `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` и `termsUrl`.
 
 <Note>
-If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+Если ваше приложение не определяет `aboutDescription` в `defineApplication()`, маркетплейс автоматически использует `README.md` вашего пакета из npm в качестве содержимого страницы «О приложении». Это означает, что вы можете поддерживать единый README как для npm, так и для маркетплейса Twenty. Если вы хотите другое описание в маркетплейсе, явно задайте `aboutDescription`.
 </Note>
 
 ### Публикация через CI
