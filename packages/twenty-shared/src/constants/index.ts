@@ -28,11 +28,9 @@ export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountA
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
-export {
-  FRONT_COMPONENT_CONTEXT_KEY,
-  FRONT_COMPONENT_LISTENERS_KEY,
-  FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY,
-} from './FrontComponentGlobalKeys';
+export { FRONT_COMPONENT_CONTEXT_KEY } from './FrontComponentContextKey';
+export { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from './FrontComponentHostCommunicationApiKey';
+export { FRONT_COMPONENT_LISTENERS_KEY } from './FrontComponentListenersKey';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';
 export { IANA_TIME_ZONES } from './IanaTimeZones';
 export { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from './LabelIdentifierFieldMetadataTypes';
