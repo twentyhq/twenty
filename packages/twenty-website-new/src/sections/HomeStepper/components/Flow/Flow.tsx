@@ -1,45 +1,36 @@
 'use client';
 
 import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
-import { useEffect, useState } from 'react';
-import { Content } from '../Content/Content';
-import { Root } from '../Root/Root';
+import { useState, type RefObject } from 'react';
+import { SyncScrollProgressFromContainerEffect } from '../../effect-components/SyncScrollProgressFromContainerEffect';
+import { LeftColumn } from '../LeftColumn/LeftColumn';
+import { RightColumn } from '../RightColumn/RightColumn';
 import { Visual } from '../Visual/Visual';
 
 type FlowProps = {
+  scrollContainerRef: RefObject<HTMLElement | null>;
   steps: HomeStepperStepType[];
 };
 
-export function Flow({ steps }: FlowProps) {
+export function Flow({ scrollContainerRef, steps }: FlowProps) {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-
-  useEffect(() => {
-    setActiveImageIndex(0);
-  }, [activeStepIndex]);
-
-  useEffect(() => {
-    const imageList = steps[activeStepIndex]?.images ?? [];
-    if (imageList.length <= 1) {
-      return;
-    }
-    const timerId = window.setInterval(() => {
-      setActiveImageIndex((previous) => (previous + 1) % imageList.length);
-    }, 5000);
-    return () => window.clearInterval(timerId);
-  }, [activeStepIndex, steps]);
-
-  const images = steps[activeStepIndex]?.images ?? [];
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   return (
-    <Root>
-      <Content
-        activeImageIndex={activeImageIndex}
+    <>
+      <SyncScrollProgressFromContainerEffect
+        scrollContainerRef={scrollContainerRef}
+        onScrollProgress={setScrollProgress}
+      />
+      <LeftColumn
         activeStepIndex={activeStepIndex}
         onActiveStepChange={setActiveStepIndex}
+        scrollProgress={scrollProgress}
         steps={steps}
       />
-      <Visual activeImageIndex={activeImageIndex} images={images} />
-    </Root>
+      <RightColumn>
+        <Visual />
+      </RightColumn>
+    </>
   );
 }

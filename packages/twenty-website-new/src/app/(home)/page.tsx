@@ -1,6 +1,7 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { HELPED_DATA } from '@/app/(home)/constants/helped';
 import { HERO_DATA } from '@/app/(home)/constants/hero';
+import { HOME_STEPPER_DATA } from '@/app/(home)/constants/home-stepper';
 import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
 import { TESTIMONIALS_DATA } from '@/app/(home)/constants/testimonials';
@@ -12,6 +13,7 @@ import { Pages } from '@/enums/pages';
 import { Faq } from '@/sections/Faq/components';
 import { Helped } from '@/sections/Helped/components';
 import { Hero } from '@/sections/Hero/components';
+import { HomeStepper } from '@/sections/HomeStepper/components';
 import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
 import { Testimonials } from '@/sections/Testimonials/components';
@@ -90,7 +92,7 @@ export default function HomePage() {
         />
       </ThreeCards.Root>
 
-      {/* <HomeStepper.Flow steps={HOME_STEPPER_DATA.steps} /> */}
+      <HomeStepper.ScrollSection steps={HOME_STEPPER_DATA.steps} />
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Home} align="center">

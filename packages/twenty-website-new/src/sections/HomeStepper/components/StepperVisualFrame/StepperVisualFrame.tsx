@@ -44,7 +44,7 @@ const shapeImageClassName = css`
 
 type StepperVisualFrameProps = {
   backgroundSrc: string;
-  children: ReactNode;
+  children?: ReactNode;
   shapeSrc: string;
 };
 
