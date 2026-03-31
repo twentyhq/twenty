@@ -1,6 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -37,13 +39,13 @@ export class BackfillDatasourceToWorkspaceCommand extends ActiveOrSuspendedWorks
       where: { id: workspaceId },
     });
 
-    if (!workspace) {
+    if (!isDefined(workspace)) {
       this.logger.warn(`Workspace ${workspaceId} not found, skipping`);
 
       return;
     }
 
-    if (workspace.databaseSchema) {
+    if (isNonEmptyString(workspace.databaseSchema)) {
       this.logger.log(
         `Workspace ${workspaceId} already has databaseSchema="${workspace.databaseSchema}", skipping`,
       );
@@ -56,20 +58,16 @@ export class BackfillDatasourceToWorkspaceCommand extends ActiveOrSuspendedWorks
       order: { createdAt: 'DESC' },
     });
 
-    if (!dataSource) {
-      this.logger.warn(
-        `No dataSource found for workspace ${workspaceId}, skipping`,
+    if (!isDefined(dataSource)) {
+      throw new Error(
+        `No dataSource row found for workspace ${workspaceId}. Cannot backfill databaseSchema.`,
       );
-
-      return;
     }
 
-    if (!dataSource.schema) {
-      this.logger.warn(
-        `DataSource for workspace ${workspaceId} has no schema set, skipping`,
+    if (!isNonEmptyString(dataSource.schema)) {
+      throw new Error(
+        `DataSource for workspace ${workspaceId} has an empty schema. Cannot backfill databaseSchema.`,
       );
-
-      return;
     }
 
     if (isDryRun) {
