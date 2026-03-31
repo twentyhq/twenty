@@ -17,7 +17,7 @@ const shouldRetryOnAlternateEndpoint = (error: unknown) => {
 
 const testAuthentication = async (z: ZObject, bundle: Bundle) => {
   try {
-    return await requestDb({
+    return requestDb({
       z,
       bundle,
       query: CURRENT_WORKSPACE_QUERY,
@@ -28,7 +28,7 @@ const testAuthentication = async (z: ZObject, bundle: Bundle) => {
       throw error;
     }
 
-    return await requestDb({
+    return requestDb({
       z,
       bundle,
       query: CURRENT_WORKSPACE_QUERY,
