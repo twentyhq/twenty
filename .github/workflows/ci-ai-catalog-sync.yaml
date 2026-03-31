@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 10
     env:
       NODE_OPTIONS: '--max-old-space-size=4096'
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
