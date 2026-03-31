@@ -121,6 +121,37 @@ describe('useSidePanelHistory', () => {
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
   });
 
+  it('should clear navigation stack immediately when closeSidePanelMenu is called', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.ViewRecord,
+        pageTitle: 'Company',
+        pageIcon: IconList,
+        pageId: '1',
+      });
+    });
+
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
+      {
+        page: SidePanelPages.ViewRecord,
+        pageTitle: 'Company',
+        pageIcon: IconList,
+        pageId: '1',
+      },
+    ]);
+
+    act(() => {
+      result.current.commandMenu.closeSidePanelMenu();
+    });
+
+    // Stack must be cleared immediately after closeSidePanelMenu(), without
+    // waiting for the close animation cleanup — otherwise stale entries block
+    // reopening the same record via openRecordInSidePanel.
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
+  });
+
   it('should navigate to a page in history', () => {
     const { result } = renderHooks();
 
