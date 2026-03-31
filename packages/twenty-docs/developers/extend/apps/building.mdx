@@ -11,8 +11,7 @@ The `twenty-sdk` package provides typed building blocks to create your app. This
 
 ## DefineEntity functions
 
-The SDK provides functions to define your app entities. You must use `export default defineEntity({...})` for the SDK to detect your entities:
-These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+The SDK provides functions to define your app entities. You must use `export default defineEntity({...})` for the SDK to detect your entities. These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
 <Note>
   **File organization is up to you.**
@@ -112,8 +111,8 @@ If you plan to [publish your app](/developers/extend/apps/publishing), these opt
 |-------|-------------|
 | `author` | Author or company name |
 | `category` | App category for marketplace filtering |
-| `logoUrl` | Path to your app logo (relative to `./assets/`) |
-| `screenshots` | Array of screenshot paths (relative to `./assets/`) |
+| `logoUrl` | Path to your app logo (e.g., `public/logo.png`) |
+| `screenshots` | Array of screenshot paths (e.g., `public/screenshot-1.png`) |
 | `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
 | `websiteUrl` | Link to your website |
 | `termsUrl` | Link to terms of service |
@@ -1475,3 +1474,56 @@ yarn twenty typecheck
 ```
 
 This runs `tsc --noEmit` and reports any type errors.
+
+## CLI reference
+
+Beyond `dev`, `build`, `add`, and `typecheck`, the CLI provides commands for executing functions, viewing logs, and managing app installations.
+
+### Executing functions (`yarn twenty exec`)
+
+Run a logic function manually without triggering it via HTTP, cron, or database event:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute pre-install or post-install functions
+yarn twenty exec --preInstall
+yarn twenty exec --postInstall
+```
+
+### Viewing function logs (`yarn twenty logs`)
+
+Stream execution logs for your app's logic functions:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+</Note>
+
+### Uninstalling an app (`yarn twenty uninstall`)
+
+Remove your app from the active workspace:
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```

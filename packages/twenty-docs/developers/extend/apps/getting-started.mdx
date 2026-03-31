@@ -30,7 +30,14 @@ You will be prompted to enter a name and a description for your app. Press **Ent
 This creates a new folder called `my-twenty-app` with everything you need.
 
 <Note>
-Add `--minimal` to scaffold a bare-bones app with only the essential files (no examples).
+The scaffolder supports these flags:
+
+- `--minimal` — scaffold only the essential files (no examples)
+- `--exhaustive` — scaffold all example entities (default)
+- `--name <name>` — set the app name (skips the prompt)
+- `--display-name <displayName>` — set the display name (skips the prompt)
+- `--description <description>` — set the description (skips the prompt)
+- `--skip-local-instance` — skip the local server setup prompt
 </Note>
 
 ## Step 2: Set up a local Twenty instance
@@ -193,6 +200,9 @@ With `--minimal`, only the core files are created: `application-config.ts`, `rol
 | `src/views/` | Saved view configurations. |
 | `src/navigation-menu-items/` | Custom links in the sidebar navigation. |
 | `src/skills/` | Skills that extend Twenty's AI agents. |
+| `src/agents/` | AI agents with custom prompts. |
+| `src/page-layouts/` | Custom page layouts for record views. |
+| `src/__tests__/` | Integration tests (setup + example test). |
 | `public/` | Static assets (images, fonts) served with your app. |
 
 ## Managing remotes
