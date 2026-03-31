@@ -6,7 +6,7 @@ import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSc
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type MouseEvent, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   IconChevronDown,
   IconPlus,
@@ -193,8 +193,7 @@ export const WorkflowOutputSchemaBuilder = ({
                       testId="remove-output-field-button"
                       Icon={IconX}
                       size="small"
-                      onClick={(event: MouseEvent<HTMLButtonElement>) => {
-                        event.stopPropagation();
+                      onClick={() => {
                         removeField(field.id);
                       }}
                     />
