@@ -64,6 +64,7 @@ type OverflowingTextWithTooltipProps = {
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
   tooltipDelay?: TooltipDelay;
+  alwaysShowTooltip?: boolean;
 } & (
   | {
       text: string | null | undefined;
@@ -82,6 +83,7 @@ export const OverflowingTextWithTooltip = ({
   displayedMaxRows,
   tooltipContent,
   tooltipDelay = TooltipDelay.mediumDelay,
+  alwaysShowTooltip = false,
 }: OverflowingTextWithTooltipProps) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -146,7 +148,7 @@ export const OverflowingTextWithTooltip = ({
       )}
 
       {shouldRenderTooltip &&
-        isTitleOverflowing &&
+        (isTitleOverflowing || alwaysShowTooltip) &&
         isDefined(tooltipText) &&
         createPortal(
           <div onClick={handleTooltipClick}>

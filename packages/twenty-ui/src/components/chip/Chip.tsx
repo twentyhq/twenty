@@ -30,6 +30,7 @@ export type ChipProps = {
   clickable?: boolean;
   label: string;
   tooltipLabel?: string;
+  alwaysShowTooltip?: boolean;
   isLabelHidden?: boolean;
   isBold?: boolean;
   maxWidth?: number;
@@ -174,6 +175,7 @@ export const Chip = ({
   size = ChipSize.Small,
   label,
   tooltipLabel,
+  alwaysShowTooltip = false,
   isLabelHidden = false,
   isBold = false,
   disabled = false,
@@ -206,6 +208,7 @@ export const Chip = ({
           size={size}
           text={label}
           tooltipContent={tooltipLabel}
+          alwaysShowTooltip={alwaysShowTooltip}
         />
       ) : !forceEmptyText && !isLabelHidden ? (
         <StyledDiv>{emptyLabel}</StyledDiv>

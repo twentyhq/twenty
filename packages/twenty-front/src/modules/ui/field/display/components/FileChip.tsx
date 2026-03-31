@@ -54,6 +54,7 @@ export const FileChip = ({
       >
         <Chip
           label={file.label}
+          alwaysShowTooltip={isDeleted}
           tooltipLabel={
             isDeleted ? t`File no longer exists - ${file.label}` : undefined
           }
