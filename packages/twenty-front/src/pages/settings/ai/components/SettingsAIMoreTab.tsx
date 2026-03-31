@@ -37,28 +37,12 @@ export const SettingsAIMoreTab = () => {
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
 
-  const [workspaceInstructions, setWorkspaceInstructions] = useState(
-    currentWorkspace?.aiAdditionalInstructions ?? '',
-  );
-  const [originalInstructions, setOriginalInstructions] = useState(
-    currentWorkspace?.aiAdditionalInstructions ?? '',
-  );
-
-  const handleWorkspaceInstructionsInit = () => {
-    if (currentWorkspace?.aiAdditionalInstructions !== undefined) {
-      setWorkspaceInstructions(currentWorkspace.aiAdditionalInstructions ?? '');
-      setOriginalInstructions(currentWorkspace.aiAdditionalInstructions ?? '');
-    }
-  };
-
-  if (
-    currentWorkspace?.aiAdditionalInstructions !== undefined &&
-    originalInstructions === '' &&
-    currentWorkspace.aiAdditionalInstructions !== null &&
-    currentWorkspace.aiAdditionalInstructions !== originalInstructions
-  ) {
-    handleWorkspaceInstructionsInit();
-  }
+  const initialInstructions =
+    currentWorkspace?.aiAdditionalInstructions ?? '';
+  const [workspaceInstructions, setWorkspaceInstructions] =
+    useState(initialInstructions);
+  const [originalInstructions, setOriginalInstructions] =
+    useState(initialInstructions);
 
   const autoSave = useDebouncedCallback(async (newValue: string) => {
     if (!currentWorkspace?.id || newValue === originalInstructions) {
