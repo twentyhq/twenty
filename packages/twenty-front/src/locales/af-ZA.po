@@ -6892,6 +6892,12 @@ msgstr ""
 msgid "File label"
 msgstr "Lêeretiket"
 
+#. js-lingui-id: QWWgBD
+#. placeholder {0}: file.label
+#: src/modules/ui/field/display/components/FileChip.tsx
+msgid "File no longer exists - {0}"
+msgstr ""
+
 #. js-lingui-id: ncBVqE
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 msgid "File upload failed"
