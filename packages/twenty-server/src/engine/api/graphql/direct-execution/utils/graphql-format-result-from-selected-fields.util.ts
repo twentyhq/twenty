@@ -25,13 +25,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  capitalize,
   getConnectionTypename,
   getEdgeTypename,
   getGroupByConnectionTypename,
   getNodeTypename,
   isDefined,
   isEmptyObject,
+  pascalCase,
 } from 'twenty-shared/utils';
 
 type GraphQLFormatInput = {
@@ -196,7 +196,7 @@ const backfillNullValuesAndComputeTypeNameForCompositeField = (
 
   for (const key of Object.keys(selectedFields)) {
     if (key === '__typename') {
-      formatted.__typename = capitalize(fieldMetadataType);
+      formatted.__typename = pascalCase(fieldMetadataType);
       continue;
     }
 
