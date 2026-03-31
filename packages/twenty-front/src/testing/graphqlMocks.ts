@@ -25,7 +25,11 @@ import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-r
 
 import { type Task } from '@/activities/types/Task';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
-import { getConnectionTypename, getEdgeTypename, isDefined } from 'twenty-shared/utils';
+import {
+  getConnectionTypename,
+  getEdgeTypename,
+  isDefined,
+} from 'twenty-shared/utils';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { mockedApiKeys } from '~/testing/mock-data/generated/metadata/api-keys/mock-api-keys-data';
