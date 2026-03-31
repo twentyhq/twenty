@@ -1,5 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+import { getEdgeTypename } from 'twenty-shared/utils';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
