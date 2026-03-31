@@ -67,6 +67,8 @@ export const useSidePanelHistory = () => {
     const newNavigationStack = currentNavigationStack.slice(0, -1);
     const lastNavigationStackItem = newNavigationStack.at(-1);
 
+    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
+
     if (!isDefined(lastNavigationStackItem)) {
       closeSidePanelMenu();
       return;
@@ -79,8 +81,6 @@ export const useSidePanelHistory = () => {
       Icon: lastNavigationStackItem.pageIcon,
       instanceId: lastNavigationStackItem.pageId,
     });
-
-    store.set(sidePanelNavigationStackState.atom, newNavigationStack);
 
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
   }, [cleanupCurrentPage, closeSidePanelMenu, store]);
