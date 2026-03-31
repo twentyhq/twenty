@@ -19,6 +19,18 @@ import {
 } from '@/cli/utilities/dev/ui/components/dev-ui-entity-section';
 import React from 'react';
 
+const MAX_INLINE_ERROR_LENGTH = 120;
+
+const truncateError = (error: string): string => {
+  const firstLine = error.split('\n')[0];
+
+  if (firstLine.length <= MAX_INLINE_ERROR_LENGTH) {
+    return firstLine;
+  }
+
+  return `${firstLine.slice(0, MAX_INLINE_ERROR_LENGTH)}…`;
+};
+
 export const DevUiSyncStatusIndicator = ({
   state,
 }: {
@@ -33,7 +45,7 @@ export const DevUiSyncStatusIndicator = ({
   return (
     <Text color={config.color}>
       {icon} {label}
-      {state.pipeline.error && `: ${state.pipeline.error}`}
+      {state.pipeline.error && `: ${truncateError(state.pipeline.error)}`}
     </Text>
   );
 };

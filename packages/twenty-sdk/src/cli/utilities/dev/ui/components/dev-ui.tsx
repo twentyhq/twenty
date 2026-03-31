@@ -4,7 +4,7 @@ import { DevUiEntityLegend } from '@/cli/utilities/dev/ui/components/dev-ui-enti
 import { DevUiEventItem } from '@/cli/utilities/dev/ui/components/dev-ui-event-log';
 import { InkProvider, useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
 import { type DevUiStateManager } from '@/cli/utilities/dev/ui/dev-ui-state-manager';
-import React, { useReducer, useEffect } from 'react';
+import React, { useEffect, useReducer, useRef } from 'react';
 
 const ACTIVE_PIPELINE_STATUSES = new Set(['building', 'syncing']);
 const ANIMATION_TICK_MS = 120;
@@ -18,11 +18,42 @@ const DevUI = ({
 
   const [, forceRender] = useReducer((tick: number) => tick + 1, 0);
 
+  const lastRenderedRef = useRef({
+    eventsLength: 0,
+    pipelineStatus: '',
+    isSyncing: false,
+  });
+
   useEffect(() => {
-    return uiStateManager.subscribe(() => forceRender());
+    return uiStateManager.subscribe(() => {
+      const snapshot = uiStateManager.getSnapshot();
+
+      if (ACTIVE_PIPELINE_STATUSES.has(snapshot.pipeline.status)) {
+        forceRender();
+
+        return;
+      }
+
+      const last = lastRenderedRef.current;
+
+      if (
+        snapshot.events.length !== last.eventsLength ||
+        snapshot.pipeline.status !== last.pipelineStatus ||
+        snapshot.pipeline.isSyncing !== last.isSyncing
+      ) {
+        forceRender();
+      }
+    });
   }, [uiStateManager]);
 
   const state = uiStateManager.getSnapshot();
+
+  lastRenderedRef.current = {
+    eventsLength: state.events.length,
+    pipelineStatus: state.pipeline.status,
+    isSyncing: state.pipeline.isSyncing,
+  };
+
   const isActive = ACTIVE_PIPELINE_STATUSES.has(state.pipeline.status);
 
   useEffect(() => {
