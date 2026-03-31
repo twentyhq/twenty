@@ -1,24 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsUUID,
-  ValidateIf,
-} from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AtLeastOneOf } from 'src/engine/metadata-modules/view-field-group/dtos/validators/at-least-one-of.validator';
 
 @InputType()
+@AtLeastOneOf(['viewFieldId', 'fieldMetadataId'])
 export class UpsertFieldsWidgetFieldInput {
   @IsOptional()
   @IsUUID()
-  @ValidateIf((o) => !o.fieldMetadataId)
-  @IsNotEmpty({
-    message: 'viewFieldId is required when fieldMetadataId is not provided',
-  })
   @Field(() => UUIDScalarType, {
     nullable: true,
     description:
@@ -28,10 +19,6 @@ export class UpsertFieldsWidgetFieldInput {
 
   @IsOptional()
   @IsUUID()
-  @ValidateIf((o) => !o.viewFieldId)
-  @IsNotEmpty({
-    message: 'fieldMetadataId is required when viewFieldId is not provided',
-  })
   @Field(() => UUIDScalarType, {
     nullable: true,
     description:
