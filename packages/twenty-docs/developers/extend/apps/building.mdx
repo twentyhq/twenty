@@ -1070,6 +1070,29 @@ Key points:
 </Accordion>
 </AccordionGroup>
 
+## Public assets (`public/` folder)
+
+The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+
+### How it works
+
+- **During `yarn twenty build`**: all files in `public/` are copied to `.twenty/output/public/` and listed in the manifest as `publicAssets` with their checksums.
+- **During `yarn twenty dev`**: a file watcher monitors `public/` for changes. When you add, update, or delete a file, it is synced to the server automatically.
+- **On the server**: files are uploaded via the `uploadApplicationFile` API and classified as `PublicAsset`.
+
+### Supported file types
+
+The asset pipeline supports a wide range of formats:
+
+| Category | Formats |
+|----------|---------|
+| Images | jpg, jpeg, png, gif, webp, svg, bmp, ico |
+| Documents | pdf, doc, docx, xls, xlsx, ppt, pptx, txt, csv |
+| Data | json, xml, zip, tar, gz |
+| Media | mp3, mp4, avi, mov |
+
+Any file type not in this list is uploaded with a generic `application/octet-stream` MIME type.
+
 ## Scaffolding entities with `yarn twenty add`
 
 Instead of creating entity files by hand, you can use the interactive scaffolder:

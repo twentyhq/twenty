@@ -82,7 +82,11 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This watches your source files, rebuilds on every change, and syncs your app to the local Twenty server automatically. You should see a live status panel in your terminal:
+This watches your source files, rebuilds on every change, and syncs your app to the local Twenty server automatically. You should see a live status panel in your terminal.
+
+<Warning>
+Dev mode is only available on Twenty instances running in development (`NODE_ENV=development`). Production instances reject dev sync requests. Use `yarn twenty deploy` to deploy to production servers — see [Publishing Apps](/developers/extend/apps/publishing) for details.
+</Warning>
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Dev mode terminal output" />
