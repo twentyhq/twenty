@@ -19,8 +19,9 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
+  IconArrowUpRight,
   IconCodeCircle,
   IconListDetails,
   IconPlus,
@@ -34,6 +35,13 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
+
+const StyledTabsRow = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -171,12 +179,23 @@ export const SettingsObjectDetailPage = () => {
         }
       >
         <SettingsPageContainer>
-          <TabList
-            tabs={tabs}
-            componentInstanceId={
-              SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-            }
-          />
+          <StyledTabsRow>
+            <TabList
+              tabs={tabs}
+              componentInstanceId={
+                SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+              }
+            />
+            <Button
+              Icon={IconArrowUpRight}
+              title={t`See records`}
+              variant="tertiary"
+              size="small"
+              to={getAppPath(AppPath.RecordIndexPage, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            />
+          </StyledTabsRow>
           <StyledContentContainer>
             {renderActiveTabContent()}
           </StyledContentContainer>

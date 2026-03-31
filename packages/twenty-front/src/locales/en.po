@@ -6887,6 +6887,12 @@ msgstr "File field not found for attachment object"
 msgid "File label"
 msgstr "File label"
 
+#. js-lingui-id: QWWgBD
+#. placeholder {0}: file.label
+#: src/modules/ui/field/display/components/FileChip.tsx
+msgid "File no longer exists - {0}"
+msgstr "File no longer exists - {0}"
+
 #. js-lingui-id: ncBVqE
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 msgid "File upload failed"
@@ -10697,6 +10703,7 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Only the timestamp & participants will be shared with your team."
 
 #. js-lingui-id: 1TNIig
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 msgid "Open"
@@ -11697,6 +11704,7 @@ msgstr "record"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
+#: src/modules/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem.tsx
 msgid "Record"
 msgstr "Record"
 
@@ -12809,6 +12817,11 @@ msgstr "See active version"
 msgid "See all {relationLabelPlural} linked to this record"
 msgstr "See all {relationLabelPlural} linked to this record"
 
+#. js-lingui-id: sFsCOG
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "See data model settings"
+msgstr "See data model settings"
+
 #. js-lingui-id: f4Lu+X
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "See deleted dashboards"
@@ -12838,6 +12851,12 @@ msgstr "See deleted workflows"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "See Fields"
 msgstr "See Fields"
+
+#. js-lingui-id: vn4aKq
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+msgid "See records"
+msgstr "See records"
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx

@@ -12,7 +12,7 @@ import {
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
-import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts-and-fields-widget-view-fields.command';
+import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { IdentifyFieldPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-field-permission-metadata.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
 import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
@@ -60,13 +60,15 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillNavigationMenuItemTypeCommand: BackfillNavigationMenuItemTypeCommand,
     protected readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
     protected readonly deleteOrphanNavigationMenuItemsCommand: DeleteOrphanNavigationMenuItemsCommand,
-    protected readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
     protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
     protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
     protected readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
     protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
     protected readonly makeWorkflowSearchableCommand: MakeWorkflowSearchableCommand,
+
+    // 1.21 Commands
+    protected readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
   ) {
     super(
       workspaceRepository,
@@ -92,7 +94,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateRichTextToTextCommand,
       this.deleteOrphanNavigationMenuItemsCommand,
       this.backfillCommandMenuItemsCommand,
-      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
       this.seedCliApplicationRegistrationCommand,
       this.migrateMessagingInfrastructureToMetadataCommand,
       this.backfillSelectFieldOptionIdsCommand,
@@ -100,9 +101,14 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.makeWorkflowSearchableCommand,
     ];
 
+    const commands_1210: VersionCommands = [
+      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
+    ];
+
     this.allCommands = {
       '1.19.0': [],
       '1.20.0': commands_1200,
+      '1.21.0': commands_1210,
     };
   }
 

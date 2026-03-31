@@ -11,6 +11,7 @@ type NavigationMenuItemOrphanDropTargetProps = {
   children?: ReactNode;
   sectionId?: NavigationSections;
   droppableId?: string;
+  highlightPosition?: 'top' | 'bottom';
 };
 
 export const NavigationMenuItemOrphanDropTarget = ({
@@ -19,6 +20,7 @@ export const NavigationMenuItemOrphanDropTarget = ({
   children,
   sectionId = NavigationSections.WORKSPACE,
   droppableId = NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS,
+  highlightPosition = 'bottom',
 }: NavigationMenuItemOrphanDropTargetProps) => (
   <NavigationItemDropTarget
     folderId={null}
@@ -26,6 +28,7 @@ export const NavigationMenuItemOrphanDropTarget = ({
     sectionId={sectionId}
     compact={compact}
     dropTargetIdOverride={getDndKitDropTargetId(droppableId, index)}
+    highlightPosition={highlightPosition}
   >
     {children}
   </NavigationItemDropTarget>
