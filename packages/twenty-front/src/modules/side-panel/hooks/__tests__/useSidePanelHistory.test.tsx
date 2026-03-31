@@ -100,10 +100,13 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenuHistory.goBackFromSidePanel();
-      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
     });
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
+
+    act(() => {
+      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
+    });
     expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
       SidePanelPages.CommandMenuDisplay,
     );
@@ -113,6 +116,34 @@ describe('useSidePanelHistory', () => {
       Icon: undefined,
     });
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+  });
+
+  it('should clear navigation stack immediately when closeSidePanelMenu is called', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.ViewRecord,
+        pageTitle: 'Company',
+        pageIcon: IconList,
+        pageId: '1',
+      });
+    });
+
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
+      {
+        page: SidePanelPages.ViewRecord,
+        pageTitle: 'Company',
+        pageIcon: IconList,
+        pageId: '1',
+      },
+    ]);
+
+    act(() => {
+      result.current.commandMenu.closeSidePanelMenu();
+    });
+
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
   });
 
   it('should navigate to a page in history', () => {
