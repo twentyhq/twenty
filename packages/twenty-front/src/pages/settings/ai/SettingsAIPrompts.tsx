@@ -26,7 +26,8 @@ const StyledTokenBadge = styled.span`
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing['1.5']};
+  padding: ${themeCssVariables.spacing['0.5']}
+    ${themeCssVariables.spacing['1.5']};
   white-space: nowrap;
 `;
 
