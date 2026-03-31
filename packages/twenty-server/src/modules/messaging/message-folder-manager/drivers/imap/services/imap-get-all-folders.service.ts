@@ -74,9 +74,11 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
     if (isDefined(sentFolder)) {
       const sentMailbox = mailboxList.find((m) => m.path === sentFolder.path);
-      const uidValidity = sentMailbox
-        ? await this.getUidValidity(client, sentMailbox)
-        : null;
+      const sentIsNoselect = sentMailbox?.flags?.has('\\Noselect') ?? false;
+      const uidValidity =
+        sentMailbox && !sentIsNoselect
+          ? await this.getUidValidity(client, sentMailbox)
+          : null;
 
       const externalId = uidValidity
         ? `${sentFolder.path}:${uidValidity.toString()}`
@@ -94,7 +96,11 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     for (const mailbox of mailboxList) {
-      const uidValidity = await this.getUidValidity(client, mailbox);
+      // Skip getUidValidity for \Noselect folders — they don't support STATUS command
+      const isNoselect = mailbox.flags?.has('\\Noselect');
+      const uidValidity = isNoselect
+        ? null
+        : await this.getUidValidity(client, mailbox);
       const externalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
         : mailbox.path;
