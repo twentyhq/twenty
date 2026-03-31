@@ -42,14 +42,14 @@ describe('isFieldMetadataEligibleForFieldsWidget', () => {
     ).toBe(false);
   });
 
-  it('should include id field when it is the label identifier', () => {
+  it('should exclude id field even when it is the label identifier', () => {
     expect(
       isFieldMetadataEligibleForFieldsWidget({
         fieldName: 'id',
         fieldType: FieldMetadataType.UUID,
         isLabelIdentifierField: true,
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('should include a normal field', () => {
@@ -70,5 +70,25 @@ describe('isFieldMetadataEligibleForFieldsWidget', () => {
         isLabelIdentifierField: false,
       }),
     ).toBe(true);
+  });
+
+  it('should exclude a label identifier field', () => {
+    expect(
+      isFieldMetadataEligibleForFieldsWidget({
+        fieldName: 'name',
+        fieldType: FieldMetadataType.TEXT,
+        isLabelIdentifierField: true,
+      }),
+    ).toBe(false);
+  });
+
+  it('should exclude deletedAt field even when it is the label identifier', () => {
+    expect(
+      isFieldMetadataEligibleForFieldsWidget({
+        fieldName: 'deletedAt',
+        fieldType: FieldMetadataType.DATE_TIME,
+        isLabelIdentifierField: true,
+      }),
+    ).toBe(false);
   });
 });
