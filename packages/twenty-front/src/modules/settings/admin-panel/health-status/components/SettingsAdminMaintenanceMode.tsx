@@ -47,7 +47,7 @@ const StyledStatusRow = styled.div`
 
 export const SettingsAdminMaintenanceMode = () => {
   const maintenanceMode = useAtomStateValue(maintenanceModeState);
-  const setMaintenanceModeAtom = useSetAtomState(maintenanceModeState);
+  const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
   const [isEnabled, setIsEnabled] = useState(isDefined(maintenanceMode));
   const [startAt, setStartAt] = useState(
@@ -78,14 +78,14 @@ export const SettingsAdminMaintenanceMode = () => {
         },
       });
 
-      setMaintenanceModeAtom({
+      setMaintenanceMode({
         __typename: 'ClientConfigMaintenanceMode',
         startAt: startISO,
         endAt: endISO,
         link: isNonEmptyString(linkValue) ? linkValue : undefined,
       });
     },
-    [setMaintenanceModeMutation, setMaintenanceModeAtom],
+    [setMaintenanceModeMutation, setMaintenanceMode],
   );
 
   const handleToggle = useCallback(
@@ -94,7 +94,7 @@ export const SettingsAdminMaintenanceMode = () => {
 
       if (!checked) {
         await clearMaintenanceModeMutation();
-        setMaintenanceModeAtom(null);
+        setMaintenanceMode(null);
         setStartAt('');
         setEndAt('');
         setLink('');
@@ -104,7 +104,7 @@ export const SettingsAdminMaintenanceMode = () => {
     },
     [
       clearMaintenanceModeMutation,
-      setMaintenanceModeAtom,
+      setMaintenanceMode,
       startAt,
       endAt,
       link,
