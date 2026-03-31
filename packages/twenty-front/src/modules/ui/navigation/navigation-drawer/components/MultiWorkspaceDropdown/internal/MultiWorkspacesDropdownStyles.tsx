@@ -8,6 +8,7 @@ export const StyledContainer = styled.div<{
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
   display: flex;
@@ -16,6 +17,7 @@ export const StyledContainer = styled.div<{
   max-width: 100%;
   min-width: 0;
   padding: calc(${themeCssVariables.spacing[1]} - 1px);
+  width: fit-content;
   &:hover {
     background-color: ${themeCssVariables.background.transparent.lighter};
     border: 1px solid ${themeCssVariables.border.color.medium};

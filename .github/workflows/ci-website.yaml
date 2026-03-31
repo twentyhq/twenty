@@ -27,6 +27,9 @@ jobs:
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
+        credentials:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres

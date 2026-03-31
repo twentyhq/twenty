@@ -1,6 +1,6 @@
 import { Body } from '@/design-system/components/Body/Body';
 import { Heading } from '@/design-system/components/Heading/Heading';
-import { ProblemPointType } from '@/sections/Problem/types';
+import type { ProblemPointType } from '@/sections/Problem/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import React from 'react';
@@ -28,7 +28,8 @@ const StyledPoint = styled.div`
   row-gap: ${theme.spacing(2)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    width: 380px;
+    max-width: 380px;
+    width: 100%;
   }
 `;
 

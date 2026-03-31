@@ -1,7 +1,10 @@
 import { LinkButton } from '@/design-system/components';
-import { ArrowRightUpIcon } from '@/icons';
-import { NAV_ITEMS } from '@/sections/Menu/constants/nav-items';
-import { SOCIAL_LINKS } from '@/sections/Menu/constants/social-links';
+import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
+import type {
+  MenuNavItemType,
+  MenuScheme,
+  MenuSocialLinkType,
+} from '@/sections/Menu/types';
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
@@ -9,10 +12,9 @@ import { styled } from '@linaria/react';
 import Link from 'next/link';
 import React from 'react';
 
-const DrawerPopup = styled(Drawer.Popup)`
-  background: ${theme.colors.primary.background[100]};
-  display: flex;
-  flex-direction: column;
+const StyledDrawerContent = styled.div`
+  display: grid;
+  grid-template-rows: 1fr auto auto;
   height: 100vh;
   left: 0;
   overflow-y: auto;
@@ -24,21 +26,26 @@ const DrawerPopup = styled(Drawer.Popup)`
   top: 0;
   width: 100vw;
   z-index: 90;
+
+  &[data-scheme='primary'] {
+    background: ${theme.colors.primary.background[100]};
+  }
+
+  &[data-scheme='secondary'] {
+    background: ${theme.colors.secondary.background[100]};
+  }
 `;
 
 const NavigationContainer = styled.nav`
-  align-items: stretch;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${theme.spacing(8)};
-  justify-content: center;
+  align-content: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${theme.spacing(8)};
   width: 100%;
 `;
 
 const NavItem = styled(Link)`
   border-radius: ${theme.radius(2)};
-  color: ${theme.colors.primary.text[100]};
   display: block;
   font-family: ${theme.font.family.mono};
   font-size: ${theme.font.size(8)};
@@ -49,6 +56,14 @@ const NavItem = styled(Link)`
   text-transform: uppercase;
   width: 100%;
 
+  &[data-scheme='primary'] {
+    color: ${theme.colors.primary.text[100]};
+  }
+
+  &[data-scheme='secondary'] {
+    color: ${theme.colors.secondary.text[100]};
+  }
+
   &:focus-visible {
     outline: 1px solid ${theme.colors.highlight[100]};
     outline-offset: 1px;
@@ -58,8 +73,8 @@ const NavItem = styled(Link)`
 const HorizontalSeparator = styled(Separator)`
   background: repeating-linear-gradient(
     90deg,
-    ${theme.colors.primary.border[60]} 0,
-    ${theme.colors.primary.border[60]} 1px,
+    var(--separator-color) 0,
+    var(--separator-color) 1px,
     transparent 2px,
     transparent 4px
   );
@@ -74,20 +89,33 @@ const CtaContainer = styled.div`
 
 const SocialContainer = styled.div`
   align-items: center;
-  display: flex;
-  gap: ${theme.spacing(6)};
+  column-gap: ${theme.spacing(6)};
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
 `;
 
 const SocialItem = styled.a`
   align-items: center;
   border-radius: ${theme.radius(1)};
-  color: ${theme.colors.primary.text[100]};
-  display: flex;
+  column-gap: ${theme.spacing(3)};
+  display: grid;
   font-size: ${theme.font.size(3)};
   font-weight: ${theme.font.weight.medium};
-  gap: ${theme.spacing(3)};
+  grid-auto-flow: column;
   line-height: 14px;
   text-decoration: none;
+  white-space: nowrap;
+
+  &[data-scheme='primary'] {
+    color: ${theme.colors.primary.text[100]};
+  }
+
+  &[data-scheme='secondary'] {
+    color: ${theme.colors.secondary.text[100]};
+  }
 
   &:focus-visible {
     outline: 1px solid ${theme.colors.highlight[100]};
@@ -96,26 +124,63 @@ const SocialItem = styled.a`
 `;
 
 const Divider = styled(Separator)`
-  border-left: 1px solid ${theme.colors.primary.border[40]};
   height: 10px;
   width: 0px;
+
+  &[data-scheme='primary'] {
+    border-left: 1px solid ${theme.colors.primary.border[40]};
+  }
+
+  &[data-scheme='secondary'] {
+    border-left: 1px solid ${theme.colors.secondary.border[40]};
+  }
 `;
 
-export function MenuDrawer() {
+type MenuDrawerProps = {
+  navItems: MenuNavItemType[];
+  scheme: MenuScheme;
+  socialLinks: MenuSocialLinkType[];
+};
+
+export function MenuDrawer({
+  navItems,
+  scheme,
+  socialLinks,
+}: MenuDrawerProps) {
+  const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
+
+  const iconFillColor =
+    scheme === 'primary'
+      ? theme.colors.secondary.background[100]
+      : theme.colors.primary.background[100];
+
+  const separatorColor =
+    scheme === 'primary'
+      ? theme.colors.primary.border[60]
+      : theme.colors.secondary.border[60];
+
   return (
     <Drawer.Portal>
-      <DrawerPopup aria-label="Navigation menu">
-        <NavigationContainer aria-label="Mobile navigation">
-          {NAV_ITEMS.map((item, index) => (
+      <Drawer.Popup aria-label="Navigation menu">
+        <StyledDrawerContent data-scheme={scheme}>
+          <NavigationContainer aria-label="Mobile navigation">
+          {navItems.map((item, index) => (
             <React.Fragment key={item.href}>
               <Drawer.Close
                 nativeButton={false}
-                render={<NavItem href={item.href} />}
+                render={
+                  <NavItem data-scheme={scheme} href={item.href} />
+                }
               >
                 {item.label}
               </Drawer.Close>
-              {index < NAV_ITEMS.length - 1 && (
-                <HorizontalSeparator orientation="horizontal" />
+              {index < navItems.length - 1 && (
+                <HorizontalSeparator
+                  orientation="horizontal"
+                  style={
+                    { '--separator-color': separatorColor } as React.CSSProperties
+                  }
+                />
               )}
             </React.Fragment>
           ))}
@@ -123,7 +188,7 @@ export function MenuDrawer() {
 
         <CtaContainer>
           <LinkButton
-            color="secondary"
+            color={buttonColor}
             href="https://app.twenty.com/welcome"
             label="Log in"
             type="anchor"
@@ -132,35 +197,44 @@ export function MenuDrawer() {
         </CtaContainer>
 
         <SocialContainer>
-          {SOCIAL_LINKS.filter((item) => item.showInDrawer).map(
-            (item, index) => (
-              <React.Fragment key={item.href}>
-                {index > 0 && <Divider orientation="vertical" />}
-                <SocialItem
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.ariaLabel}
-                >
-                  <item.icon
-                    size={14}
-                    fillColor={theme.colors.secondary.background[100]}
-                    aria-hidden="true"
-                  />
-                  {item.label}
-                  {item.label && (
-                    <ArrowRightUpIcon
-                      size={8}
-                      strokeColor={theme.colors.highlight[100]}
+          {socialLinks
+            .filter((item) => item.showInDrawer)
+            .map((item, index) => {
+              const IconComponent = SOCIAL_ICONS[item.icon];
+              if (!IconComponent) return null;
+
+              return (
+                <React.Fragment key={item.href}>
+                  {index > 0 && (
+                    <Divider data-scheme={scheme} orientation="vertical" />
+                  )}
+                  <SocialItem
+                    data-scheme={scheme}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.ariaLabel}
+                  >
+                    <IconComponent
+                      size={14}
+                      fillColor={iconFillColor}
                       aria-hidden="true"
                     />
-                  )}
-                </SocialItem>
-              </React.Fragment>
-            ),
-          )}
+                    {item.label}
+                    {item.label && (
+                      <ArrowRightUpIcon
+                        size={8}
+                        strokeColor={theme.colors.highlight[100]}
+                        aria-hidden="true"
+                      />
+                    )}
+                  </SocialItem>
+                </React.Fragment>
+              );
+            })}
         </SocialContainer>
-      </DrawerPopup>
+        </StyledDrawerContent>
+      </Drawer.Popup>
     </Drawer.Portal>
   );
 }

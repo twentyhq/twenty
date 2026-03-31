@@ -1,7 +1,10 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Int, Mutation, Query } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import GraphQLJSON from 'graphql-type-json';
+import { In, type Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
@@ -10,6 +13,8 @@ import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-pan
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
+import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 import { ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { ConfigVariablesDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables.dto';
@@ -41,6 +46,7 @@ import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
@@ -75,6 +81,9 @@ export class AdminPanelResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
+    private readonly usageAnalyticsService: UsageAnalyticsService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -498,5 +507,48 @@ export class AdminPanelResolver {
     this.aiModelRegistryService.refreshRegistry();
 
     return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => [UsageBreakdownItemDTO])
+  async getAdminAiUsageByWorkspace(
+    @Args('periodStart', { type: () => Date, nullable: true })
+    periodStart?: Date,
+    @Args('periodEnd', { type: () => Date, nullable: true })
+    periodEnd?: Date,
+  ): Promise<UsageBreakdownItemDTO[]> {
+    const defaultEnd = new Date();
+    const defaultStart = new Date();
+
+    defaultStart.setDate(defaultStart.getDate() - 30);
+
+    const useDollarMode = !this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+    const items = await this.usageAnalyticsService.getAdminAiUsageByWorkspace({
+      periodStart: periodStart ?? defaultStart,
+      periodEnd: periodEnd ?? defaultEnd,
+      useDollarMode,
+    });
+
+    if (items.length === 0) {
+      return items;
+    }
+
+    const workspaceIds = items.map((item) => item.key);
+    const workspaces = await this.workspaceRepository.find({
+      where: { id: In(workspaceIds) },
+      select: { id: true, displayName: true },
+    });
+
+    const nameMap = new Map(
+      workspaces
+        .filter((workspace) => isDefined(workspace.displayName))
+        .map((workspace) => [workspace.id, workspace.displayName!]),
+    );
+
+    return items.map((item) => ({
+      ...item,
+      label: nameMap.get(item.key),
+    }));
   }
 }

@@ -270,6 +270,17 @@
         "supportsReasoning": true
       },
       {
+        "name": "gpt-5.3-chat-latest",
+        "label": "GPT-5.3 Chat (latest)",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 1.75,
+        "outputCostPerMillionTokens": 14,
+        "cachedInputCostPerMillionTokens": 0.175,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 16384,
+        "modalities": ["image"]
+      },
+      {
         "name": "gpt-5.4-nano",
         "label": "GPT-5.4 nano",
         "modelFamily": "GPT",
@@ -853,6 +864,16 @@
         "supportsReasoning": true
       },
       {
+        "name": "gemma-3-27b-it",
+        "label": "Gemma 3 27B",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0,
+        "outputCostPerMillionTokens": 0,
+        "contextWindowTokens": 131072,
+        "maxOutputTokens": 8192,
+        "modalities": ["image"]
+      },
+      {
         "name": "gemini-2.5-pro-preview-06-05",
         "label": "Gemini 2.5 Pro Preview 06-05",
         "modelFamily": "GEMINI",
@@ -1100,6 +1121,17 @@
         "modalities": ["image"]
       },
       {
+        "name": "mistral-small-2603",
+        "label": "Mistral Small 4",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.6,
+        "contextWindowTokens": 256000,
+        "maxOutputTokens": 256000,
+        "modalities": ["image"],
+        "supportsReasoning": true
+      },
+      {
         "name": "ministral-3b-latest",
         "label": "Ministral 3B (latest)",
         "modelFamily": "MISTRAL",
@@ -1273,11 +1305,12 @@
         "name": "mistral-small-latest",
         "label": "Mistral Small (latest)",
         "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.3,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "modalities": ["image"]
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.6,
+        "contextWindowTokens": 256000,
+        "maxOutputTokens": 256000,
+        "modalities": ["image"],
+        "supportsReasoning": true
       },
       {
         "name": "open-mistral-7b",

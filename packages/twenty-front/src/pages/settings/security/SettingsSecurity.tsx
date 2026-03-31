@@ -8,6 +8,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { Separator } from '@/settings/components/Separator';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -25,6 +26,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
@@ -38,7 +40,6 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -250,49 +251,53 @@ export const SettingsSecurity = () => {
                 />
               }
             />
-            <Card rounded>
-              <SettingsOptionCardContentButton
-                Icon={IconHistory}
-                title={t`Workspace Events`}
-                description={
-                  !isClickHouseConfigured
-                    ? t`ClickHouse is required for audit logs. Contact your administrator.`
-                    : !hasEnterpriseAccess
-                      ? t`Upgrade to Enterprise to access audit logs`
+            {hasEnterpriseAccess ? (
+              <Card rounded>
+                <SettingsOptionCardContentButton
+                  Icon={IconHistory}
+                  title={t`Workspace Events`}
+                  description={
+                    !isClickHouseConfigured
+                      ? t`ClickHouse is required for audit logs. Contact your administrator.`
                       : t`View and filter events, page views, object changes`
-                }
-                Button={
-                  <StyledLinkContainer>
-                    <Link
-                      to={getSettingsPath(SettingsPath.EventLogs)}
-                      data-disabled={!isEventLogsEnabled}
-                    >
-                      <Button
-                        title={t`View Logs`}
-                        variant="secondary"
-                        size="small"
-                        disabled={!isEventLogsEnabled}
-                      />
-                    </Link>
-                  </StyledLinkContainer>
-                }
+                  }
+                  Button={
+                    <StyledLinkContainer>
+                      <Link
+                        to={getSettingsPath(SettingsPath.EventLogs)}
+                        data-disabled={!isEventLogsEnabled}
+                      >
+                        <Button
+                          title={t`View Logs`}
+                          variant="secondary"
+                          size="small"
+                          disabled={!isEventLogsEnabled}
+                        />
+                      </Link>
+                    </StyledLinkContainer>
+                  }
+                />
+                {isEventLogsEnabled && (
+                  <>
+                    <Separator />
+                    <SettingsOptionCardContentCounter
+                      Icon={IconClockHour8}
+                      title={t`Log retention`}
+                      description={t`Number of days to retain audit logs (30-1095 days)`}
+                      value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                      onChange={handleEventLogRetentionDaysChange}
+                      minValue={30}
+                      maxValue={1095}
+                      showButtons={false}
+                    />
+                  </>
+                )}
+              </Card>
+            ) : (
+              <SettingsEnterpriseFeatureGateCard
+                description={t`Upgrade to Enterprise to access audit logs.`}
               />
-              {isEventLogsEnabled && (
-                <>
-                  <Separator />
-                  <SettingsOptionCardContentCounter
-                    Icon={IconClockHour8}
-                    title={t`Log retention`}
-                    description={t`Number of days to retain audit logs (30-1095 days)`}
-                    value={currentWorkspace?.eventLogRetentionDays ?? 90}
-                    onChange={handleEventLogRetentionDaysChange}
-                    minValue={30}
-                    maxValue={1095}
-                    showButtons={false}
-                  />
-                </>
-              )}
-            </Card>
+            )}
           </Section>
           <Section>
             <H2Title

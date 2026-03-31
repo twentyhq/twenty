@@ -15,19 +15,21 @@ Il pacchetto twenty-sdk fornisce blocchi tipizzati e funzioni helper da usare ne
 
 L'SDK fornisce funzioni helper per definire le entità della tua app. Come descritto in [Rilevamento delle entità](/l/it/developers/extend/apps/getting-started#entity-detection), devi usare `export default define<Entity>({...})` affinché le tue entità vengano rilevate:
 
-| Funzione                         | Scopo                                                                   |
-| -------------------------------- | ----------------------------------------------------------------------- |
-| `defineApplication`              | Configura i metadati dell'applicazione (obbligatorio, uno per app)      |
-| `defineObject`                   | Definisci oggetti personalizzati con campi                              |
-| `defineLogicFunction`            | Definisci funzioni logiche con handler                                  |
-| `definePreInstallLogicFunction`  | Definisci una funzione logica di pre-installazione (una per app)        |
-| `definePostInstallLogicFunction` | Definisci una funzione logica di post-installazione (una per app)       |
-| `defineFrontComponent`           | Definisci componenti front-end per un'interfaccia utente personalizzata |
-| `defineRole`                     | Configura i permessi dei ruoli e l'accesso agli oggetti                 |
-| `defineField`                    | Estendi gli oggetti esistenti con campi aggiuntivi                      |
-| `defineView`                     | Definisci viste salvate per gli oggetti                                 |
-| `defineNavigationMenuItem`       | Definisci i link di navigazione della barra laterale                    |
-| `defineSkill`                    | Definisci le competenze dell'agente IA                                  |
+| Funzione                         | Scopo                                                                                           |
+| -------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `defineApplication`              | Configura i metadati dell'applicazione (obbligatorio, uno per app)                              |
+| `defineObject`                   | Definisci oggetti personalizzati con campi                                                      |
+| `defineField`                    | Estendi gli oggetti esistenti con campi aggiuntivi oppure definisci campi di relazione autonomi |
+| `defineLogicFunction`            | Definisci funzioni logiche con handler                                                          |
+| `definePreInstallLogicFunction`  | Definisci una funzione logica di pre-installazione (una per app)                                |
+| `definePostInstallLogicFunction` | Definisci una funzione logica di post-installazione (una per app)                               |
+| `defineFrontComponent`           | Definisci componenti front-end per un'interfaccia utente personalizzata                         |
+| `defineRole`                     | Configura i permessi dei ruoli e l'accesso agli oggetti                                         |
+| `defineView`                     | Definisci viste salvate per gli oggetti                                                         |
+| `defineNavigationMenuItem`       | Definisci i link di navigazione della barra laterale                                            |
+| `defineSkill`                    | Definisci le competenze dell'agente IA                                                          |
+| `defineAgent`                    | Definisci gli agenti IA                                                                         |
+| `definePageLayout`               | Definisci layout di pagina personalizzati                                                       |
 
 Queste funzioni convalidano la configurazione in fase di build e offrono il completamento automatico nell'IDE e la sicurezza dei tipi.
 
@@ -36,7 +38,7 @@ Queste funzioni convalidano la configurazione in fase di build e offrono il comp
 Gli oggetti personalizzati descrivono sia lo schema sia il comportamento per i record nel tuo spazio di lavoro. Usa `defineObject()` per definire oggetti con convalida integrata:
 
 ```typescript
-// src/app/postCard.object.ts
+// src/objects/postCard.object.ts
 import { defineObject, FieldType } from 'twenty-sdk';
 
 enum PostCardStatus {
@@ -110,7 +112,7 @@ Punti chiave:
 * Il `universalIdentifier` deve essere univoco e stabile tra i deployment.
 * Ogni campo richiede un `name`, `type`, `label` e il proprio `universalIdentifier` stabile.
 * L'array `fields` è facoltativo: puoi definire oggetti senza campi personalizzati.
-* Puoi generare nuovi oggetti con `yarn twenty entity:add`, che ti guida nella denominazione, nei campi e nelle relazioni.
+* Puoi generare nuovi oggetti con `yarn twenty add`, che ti guida nella denominazione, nei campi e nelle relazioni.
 
 <Note>
 **I campi base vengono creati automaticamente.** Quando definisci un oggetto personalizzato, Twenty aggiunge automaticamente i campi standard
@@ -119,6 +121,197 @@ Non è necessario definirli nel tuo array `fields` — aggiungi solo i tuoi camp
 Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel tuo array `fields`,
 ma non è consigliato.
 </Note>
+
+### Definire campi sugli oggetti esistenti
+
+Usa `defineField()` per aggiungere campi a oggetti che non possiedi — come gli oggetti standard di Twenty (Person, Company, ecc.) o oggetti di altre app. A differenza dei campi inline in `defineObject()`, i campi autonomi richiedono un `objectUniversalIdentifier` per specificare quale oggetto estendono:
+
+```typescript
+// src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+Punti chiave:
+
+* `objectUniversalIdentifier` identifica l'oggetto di destinazione. Per gli oggetti standard, usa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` esportati da `twenty-sdk`.
+* Quando definisci campi inline in `defineObject()`, **non** hai bisogno di `objectUniversalIdentifier` — viene ereditato dall'oggetto padre.
+* `defineField()` è l'unico modo per aggiungere campi a oggetti che non hai creato con `defineObject()`.
+
+### Relazioni
+
+Le relazioni collegano gli oggetti tra loro. In Twenty, le relazioni sono sempre **bidirezionali** — definisci entrambi i lati e ciascun lato fa riferimento all'altro.
+
+Esistono due tipi di relazione:
+
+| Tipo di relazione | Descrizione                                                           | Ha una chiave esterna? |
+| ----------------- | --------------------------------------------------------------------- | ---------------------- |
+| `MANY_TO_ONE`     | Molti record di questo oggetto puntano a un record della destinazione | Sì (`joinColumnName`)  |
+| `ONE_TO_MANY`     | Un record di questo oggetto ha molti record della destinazione        | No (lato inverso)      |
+
+#### Come funzionano le relazioni
+
+Ogni relazione richiede **due campi** che fanno riferimento l'uno all'altro:
+
+1. Il lato **MANY_TO_ONE** — risiede sull'oggetto che detiene la chiave esterna
+2. Il lato **ONE_TO_MANY** — risiede sull'oggetto che possiede la collezione
+
+Entrambi i campi usano `FieldType.RELATION` e si riferiscono reciprocamente tramite `relationTargetFieldMetadataUniversalIdentifier`.
+
+#### Esempio: Post Card ha molti destinatari
+
+Supponiamo che un `PostCard` possa essere inviato a molti record `PostCardRecipient`. Ogni destinatario appartiene esattamente a una sola cartolina.
+
+**Passaggio 1: definisci il lato ONE_TO_MANY su PostCard** (il lato "uno"):
+
+```typescript
+// src/fields/post-card-recipients-on-post-card.field.ts
+import { defineField, FieldType, RelationType } from 'twenty-sdk';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+// Import from the other side
+import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  icon: 'IconUsers',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+**Passaggio 2: definisci il lato MANY_TO_ONE su PostCardRecipient** (il lato "molti" — contiene la chiave esterna):
+
+```typescript
+// src/fields/post-card-on-post-card-recipient.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_FIELD_ID = 'b2222222-2222-2222-2222-222222222222';
+// Import from the other side
+import { POST_CARD_RECIPIENTS_FIELD_ID } from './post-card-recipients-on-post-card.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCard',
+  label: 'Post Card',
+  icon: 'IconMail',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'postCardId',
+  },
+});
+```
+
+<Note>
+**Importazioni circolari:** Entrambi i campi di relazione fanno riferimento all'`universalIdentifier` dell'altro. Per evitare problemi di importazioni circolari, esporta gli ID dei campi come costanti denominate da ciascun file e importale nell'altro file. Il sistema di build le risolve in fase di compilazione.
+</Note>
+
+#### Relazioni con gli oggetti standard
+
+Per creare una relazione con un oggetto Twenty integrato (Person, Company, ecc.), usa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+
+```typescript
+// src/fields/person-on-self-hosting-user.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+
+export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+
+export default defineField({
+  universalIdentifier: PERSON_FIELD_ID,
+  objectUniversalIdentifier: SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  description: 'Person matching with the self hosting user',
+  isNullable: true,
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'personId',
+  },
+});
+```
+
+#### Proprietà dei campi di relazione
+
+| Proprietà                                         | Obbligatorio     | Descrizione                                                                                                |
+| ------------------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| `tipo`                                            | Sì               | Deve essere `FieldType.RELATION`                                                                           |
+| `relationTargetObjectMetadataUniversalIdentifier` | Sì               | L'`universalIdentifier` dell'oggetto di destinazione                                                       |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Sì               | L'`universalIdentifier` del campo corrispondente sull'oggetto di destinazione                              |
+| `universalSettings.relationType`                  | Sì               | `RelationType.MANY_TO_ONE` or `RelationType.ONE_TO_MANY`                                                   |
+| `universalSettings.onDelete`                      | Solo MANY_TO_ONE | Cosa accade quando il record referenziato viene eliminato: `CASCADE`, `SET_NULL`, `RESTRICT` o `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Solo MANY_TO_ONE | Nome della colonna del database per la chiave esterna (ad es., `postCardId`)                               |
+
+#### Campi di relazione inline in defineObject
+
+Puoi anche definire i campi di relazione direttamente all'interno di `defineObject()`. In tal caso, ometti `objectUniversalIdentifier` — viene ereditato dall'oggetto padre:
+
+```typescript
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCardRecipient',
+  // ...
+  fields: [
+    {
+      universalIdentifier: POST_CARD_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'postCard',
+      label: 'Post Card',
+      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.CASCADE,
+        joinColumnName: 'postCardId',
+      },
+    },
+    // ... other fields
+  ],
+});
+```
 
 ### Configurazione dell'applicazione (application-config.ts)
 
@@ -160,6 +353,22 @@ Note:
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
 * Le funzioni di pre-installazione e post-installazione vengono rilevate automaticamente durante la build del manifesto. Vedi [Funzioni di pre-installazione](#pre-install-functions) e [Funzioni di post-installazione](#post-install-functions).
+
+#### Metadati del marketplace
+
+Se prevedi di [pubblicare la tua app](/l/it/developers/extend/apps/publishing), questi campi opzionali controllano come la tua app appare nel marketplace:
+
+| Campo              | Descrizione                                                                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `autore`           | Nome dell'autore o dell'azienda                                                                                                     |
+| `categoria`        | Categoria dell'app per il filtraggio nel marketplace                                                                                |
+| `logoUrl`          | Percorso del logo della tua app (relativo a `./assets/`)                                                                            |
+| `screenshots`      | Array di percorsi degli screenshot (relativi a `./assets/`)                                                                         |
+| `aboutDescription` | Descrizione markdown più lunga per la scheda "Informazioni". Se omesso, il marketplace utilizza il `README.md` del pacchetto da npm |
+| `websiteUrl`       | Link al tuo sito web                                                                                                                |
+| `termsUrl`         | Link ai Termini di servizio                                                                                                         |
+| `emailSupport`     | Indirizzo email di supporto                                                                                                         |
+| `issueReportUrl`   | Link al sistema di tracciamento dei problemi                                                                                        |
 
 #### Ruoli e permessi
 
@@ -230,7 +439,7 @@ Note:
 Ogni file di funzione usa `defineLogicFunction()` per esportare una configurazione con un handler e trigger opzionali.
 
 ```typescript
-// src/app/createPostCard.logic-function.ts
+// src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import { CoreApiClient, type Person } from 'twenty-sdk/generated';
@@ -324,7 +533,7 @@ export default definePreInstallLogicFunction({
 Puoi anche eseguire manualmente la funzione di pre-installazione in qualsiasi momento utilizzando la CLI:
 
 ```bash filename="Terminal"
-yarn twenty function:execute --preInstall
+yarn twenty exec --preInstall
 ```
 
 Punti chiave:
@@ -334,7 +543,7 @@ Punti chiave:
 * È consentita una sola funzione di pre-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
 * L'`universalIdentifier` della funzione viene impostato automaticamente come `preInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
 * Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di preparazione più lunghe.
-* Le funzioni di pre-installazione non necessitano di trigger — vengono invocate dalla piattaforma prima dell'installazione o manualmente tramite `function:execute --preInstall`.
+* Le funzioni di pre-installazione non necessitano di trigger — vengono invocate dalla piattaforma prima dell'installazione o manualmente tramite `exec --preInstall`.
 
 ### Funzioni post-installazione
 
@@ -362,7 +571,7 @@ export default definePostInstallLogicFunction({
 Puoi anche eseguire manualmente la funzione di post-installazione in qualsiasi momento utilizzando la CLI:
 
 ```bash filename="Terminal"
-yarn twenty function:execute --postInstall
+yarn twenty exec --postInstall
 ```
 
 Punti chiave:
@@ -372,7 +581,7 @@ Punti chiave:
 * È consentita una sola funzione di post-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
 * L'`universalIdentifier` della funzione viene impostato automaticamente come `postInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
 * Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di configurazione più lunghe, come il popolamento dei dati.
-* Le funzioni di post-installazione non necessitano di trigger — vengono invocate dalla piattaforma durante l'installazione o manualmente tramite `function:execute --postInstall`.
+* Le funzioni di post-installazione non necessitano di trigger — vengono invocate dalla piattaforma durante l'installazione o manualmente tramite `exec --postInstall`.
 
 ### Payload del trigger di route
 
@@ -416,15 +625,15 @@ const handler = async (event: RoutePayload) => {
 
 Il tipo `RoutePayload` ha la seguente struttura:
 
-| Proprietà                    | Tipo                                  | Descrizione                                                                                     |
-| ---------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `headers`                    | `Record<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                           |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                 |
-| `pathParameters`             | `Record<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route (ad es., `/users/:id` → `{ id: '123' }`) |
-| `body`                       | `object \| null`                      | Corpo della richiesta analizzato (JSON)                                                         |
-| `isBase64Encoded`            | `boolean`                             | Indica se il corpo è codificato in base64                                                       |
-| `requestContext.http.method` | `string`                              | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                     |
-| `requestContext.http.path`   | `string`                              | Percorso della richiesta non elaborato                                                          |
+| Proprietà                    | Tipo                                  | Descrizione                                                                                      |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `headers`                    | `Record<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                            |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                  |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route (ad es., `/users/:id` -> `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Corpo della richiesta analizzato (JSON)                                                          |
+| `isBase64Encoded`            | `boolean`                             | Indica se il corpo è codificato in base64                                                        |
+| `requestContext.http.method` | `string`                              | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                      |
+| `requestContext.http.path`   | `string`                              | Percorso della richiesta non elaborato                                                           |
 
 ### Inoltro delle intestazioni HTTP
 
@@ -466,7 +675,7 @@ const handler = async (event: RoutePayload) => {
 
 Puoi creare nuove funzioni in due modi:
 
-* **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere una nuova funzione logica. Questo genera un file iniziale con un handler e una configurazione.
+* **Generata dallo scaffolder**: Esegui `yarn twenty add` e scegli l'opzione per aggiungere una nuova funzione logica. Questo genera un file iniziale con un handler e una configurazione.
 * **Manuale**: Crea un nuovo file `*.logic-function.ts` e usa `defineLogicFunction()`, seguendo lo stesso schema.
 
 ### Contrassegnare una funzione logica come strumento
@@ -478,7 +687,7 @@ Per contrassegnare una funzione logica come strumento, imposta `isTool: true` e 
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -567,7 +776,7 @@ Punti chiave:
 
 Puoi creare nuovi componenti front-end in due modi:
 
-* **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere un nuovo componente front-end.
+* **Generata dallo scaffolder**: Esegui `yarn twenty add` e scegli l'opzione per aggiungere un nuovo componente front-end.
 * **Manuale**: Crea un nuovo file `.tsx` e usa `defineFrontComponent()`, seguendo lo stesso schema.
 
 ### Abilità
@@ -602,47 +811,122 @@ Punti chiave:
 
 Puoi creare nuove skill in due modi:
 
-* **Generata dallo scaffolder**: Esegui `yarn twenty entity:add` e scegli l'opzione per aggiungere una nuova skill.
+* **Generata dallo scaffolder**: Esegui `yarn twenty add` e scegli l'opzione per aggiungere una nuova skill.
 * **Manuale**: Crea un nuovo file e usa `defineSkill()`, seguendo lo stesso schema.
 
-### Client tipizzati generati
+### Client API tipizzati (`twenty-client-sdk`)
 
-Due client tipizzati sono generati automaticamente da `yarn twenty dev` e salvati in `node_modules/twenty-sdk/generated` in base allo schema del tuo spazio di lavoro:
+Il pacchetto `twenty-client-sdk` fornisce due client GraphQL tipizzati per interagire con l'API di Twenty dalle tue funzioni logiche e dai componenti front-end:
 
-* **`CoreApiClient`** — interroga l'endpoint `/graphql` per i dati dello spazio di lavoro
-* **`MetadataApiClient`** — interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro e il caricamento dei file
+| Client              | Importa                      | Endpoint                                                                 | Generato?                  |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------------ | -------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — dati dello spazio di lavoro (record, oggetti)               | Sì, in fase di dev/build   |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurazione dello spazio di lavoro, caricamenti di file | No, fornito pronto all'uso |
+
+#### CoreApiClient
+
+`CoreApiClient` è il client principale per interrogare e modificare i dati dello spazio di lavoro. Viene **generato dallo schema del tuo spazio di lavoro** durante `yarn twenty dev` o `yarn twenty build`, quindi è completamente tipizzato per corrispondere ai tuoi oggetti e campi.
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const client = new CoreApiClient();
-const { me } = await client.query({ me: { id: true, displayName: true } });
 
-const metadataClient = new MetadataApiClient();
-const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: true,
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
 ```
 
-Entrambi i client vengono rigenerati automaticamente da `yarn twenty dev` ogni volta che i tuoi oggetti o campi cambiano.
+Il client utilizza una sintassi a selection-set: passa `true` per includere un campo, usa `__args` per gli argomenti e annida oggetti per le relazioni. Ottieni completamento automatico e controllo dei tipi completi basati sullo schema del tuo spazio di lavoro.
 
-#### Credenziali di runtime nelle funzioni logiche
+<Note>
+**CoreApiClient viene generato in fase di dev/build.** Se provi a usarlo senza eseguire prima `yarn twenty dev` o `yarn twenty build`, genererà un errore. La generazione avviene automaticamente — la CLI esegue l'introspezione dello schema GraphQL del tuo spazio di lavoro, genera un client tipizzato usando `@genql/cli`, scrive le sorgenti generate in `node_modules/twenty-client-sdk/dist/core/generated/` e sostituisce gli stub in `node_modules/twenty-client-sdk/dist/core.mjs` e `node_modules/twenty-client-sdk/dist/core.cjs`.
+</Note>
 
-Quando la tua funzione viene eseguita su Twenty, la piattaforma inietta le credenziali come variabili d'ambiente prima dell'esecuzione del tuo codice:
+#### Utilizzo di CoreSchema per le annotazioni di tipo
 
-* `TWENTY_API_URL`: URL di base dell'API Twenty a cui punta la tua app.
-* `TWENTY_API_KEY`: Chiave a breve durata con ambito al ruolo funzione predefinito della tua applicazione.
+`CoreSchema` fornisce tipi TypeScript corrispondenti agli oggetti del tuo spazio di lavoro, utili per tipizzare lo stato dei componenti o i parametri delle funzioni:
 
-Note:
+```typescript
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
 
-* Non è necessario passare URL o chiave API al client generato. Legge `TWENTY_API_URL` e `TWENTY_API_KEY` da process.env in fase di esecuzione.
-* I permessi della chiave API sono determinati dal ruolo referenziato nel tuo `application-config.ts` tramite `defaultRoleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni logiche della tua applicazione.
-* Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Concedi solo i permessi necessari alle tue funzioni, quindi punta `defaultRoleUniversalIdentifier` all'identificatore universale di quel ruolo.
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+#### MetadataApiClient
+
+`MetadataApiClient` è fornito pronto all'uso con l'SDK (nessuna generazione richiesta). Interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro, le applicazioni e i caricamenti di file:
+
+```typescript
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// Query workspace info
+const { currentWorkspace } = await metadataClient.query({
+  currentWorkspace: { id: true, displayName: true },
+});
+
+// List installed applications
+const { findManyApplications } = await metadataClient.query({
+  findManyApplications: {
+    id: true,
+    name: true,
+    version: true,
+  },
+});
+```
+
+#### Credenziali di runtime
+
+Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
+
+* `TWENTY_API_URL` — URL di base dell'API di Twenty
+* `TWENTY_API_KEY` — Chiave a breve durata con ambito al ruolo funzione predefinito della tua applicazione
+
+Non è **necessario** passarle ai client — vengono lette automaticamente da `process.env`. I permessi della chiave API sono determinati dal ruolo referenziato in `defaultRoleUniversalIdentifier` nel tuo `application-config.ts`.
 
 #### Caricamento dei file
 
-Il `MetadataApiClient` generato include un metodo `uploadFile` per allegare file ai campi di tipo file sugli oggetti del tuo spazio di lavoro. Poiché i client GraphQL standard non supportano nativamente il caricamento di file multipart, il client fornisce questo metodo dedicato che implementa la [specifica della richiesta GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec) dietro le quinte.
+`MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file. Implementa la [specifica delle richieste GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec):
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -652,23 +936,12 @@ const fileBuffer = fs.readFileSync('./invoice.pdf');
 const uploadedFile = await metadataClient.uploadFile(
   fileBuffer,                                         // file contents as a Buffer
   'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
 );
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
-```
-
-La firma del metodo:
-
-```typescript
-uploadFile(
-  fileBuffer: Buffer,
-  filename: string,
-  contentType: string,
-  fieldMetadataUniversalIdentifier: string,
-): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
 ```
 
 | Parametro                          | Tipo     | Descrizione                                                              |
@@ -680,8 +953,7 @@ uploadFile(
 
 Punti chiave:
 
-* Il metodo `uploadFile` è disponibile su `MetadataApiClient` perché la mutazione di upload viene risolta dall'endpoint `/metadata`.
-* Usa l'`universalIdentifier` del campo (non il suo ID specifico dello spazio di lavoro), quindi il tuo codice di upload funziona in qualsiasi spazio di lavoro in cui la tua app è installata — coerentemente con il modo in cui le app fanno riferimento ai campi altrove.
+* Usa l'`universalIdentifier` del campo (non il suo ID specifico dello spazio di lavoro), quindi il tuo codice di upload funziona in qualsiasi spazio di lavoro in cui la tua app è installata.
 * L'`url` restituito è un URL firmato che puoi usare per accedere al file caricato.
 
 ### Esempio Hello World

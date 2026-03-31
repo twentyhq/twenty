@@ -17,6 +17,10 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       },
       benefits: undefined,
       attribution: undefined,
+      illustration: {
+        src: 'https://app.endlesstools.io/embed/21767ad6-67f4-4941-a668-6cf772c27621',
+        title: 'Endless Tools Editor',
+      },
     },
     {
       heading: { text: 'Real-time data', fontFamily: 'sans' },
@@ -25,6 +29,10 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       },
       benefits: undefined,
       attribution: undefined,
+      illustration: {
+        src: 'https://app.endlesstools.io/embed/9c504c9c-46f9-423c-98b3-2e840ddb3b1e',
+        title: 'Endless Tools Editor',
+      },
     },
     {
       heading: { text: 'Stay in Flow', fontFamily: 'sans' },
@@ -33,6 +41,10 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       },
       benefits: undefined,
       attribution: undefined,
+      illustration: {
+        src: 'https://app.endlesstools.io/embed/8d577747-2718-4e7e-87a6-dd9c334f3903',
+        title: 'Endless Tools Editor',
+      },
     },
   ],
 };

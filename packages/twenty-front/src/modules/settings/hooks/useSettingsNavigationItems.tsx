@@ -22,7 +22,6 @@ import {
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
-  IconChartBar,
   IconCurrencyDollar,
   IconDoorEnter,
   IconHelpCircle,
@@ -76,12 +75,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
   const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isApplicationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APPLICATION_ENABLED,
-  );
-  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
-  );
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
@@ -166,15 +159,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Usage`,
-          path: SettingsPath.Usage,
-          Icon: IconChartBar,
-          isHidden:
-            !isUsageAnalyticsEnabled ||
-            isBillingEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
           label: t`APIs & Webhooks`,
           path: SettingsPath.ApiWebhooks,
           Icon: IconApi,
@@ -191,9 +175,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Apps`,
           path: SettingsPath.Applications,
           Icon: IconPlug,
-          isHidden:
-            !isApplicationEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
           modifier: 'new',
         },
         {

@@ -1,8 +1,6 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
-
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
   ApplicationException,
@@ -14,17 +12,13 @@ import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/serv
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
+@UseGuards(WorkspaceAuthGuard)
 export class ApplicationOAuthResolver {
   constructor(
     private readonly applicationTokenService: ApplicationTokenService,
@@ -32,7 +26,6 @@ export class ApplicationOAuthResolver {
 
   @Mutation(() => ApplicationTokenPairDTO)
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async renewApplicationToken(
     @Args('applicationRefreshToken') applicationRefreshToken: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

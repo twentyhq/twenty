@@ -1,4 +1,5 @@
 import { Logo as LogoIcon } from '@/icons';
+import type { MenuScheme } from '@/sections/Menu/types';
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { styled } from '@linaria/react';
@@ -6,11 +7,11 @@ import Link from 'next/link';
 
 const LogoContainer = styled.div`
   align-items: center;
-  display: flex;
+  display: grid;
 `;
 
 const LogoLink = styled(Link)`
-  display: flex;
+  display: grid;
   text-decoration: none;
 
   &:focus-visible {
@@ -19,7 +20,21 @@ const LogoLink = styled(Link)`
   }
 `;
 
-export function Logo() {
+type LogoProps = {
+  scheme: MenuScheme;
+};
+
+export function Logo({ scheme }: LogoProps) {
+  const fillColor =
+    scheme === 'primary'
+      ? theme.colors.primary.background[100]
+      : theme.colors.secondary.background[100];
+
+  const backgroundColor =
+    scheme === 'primary'
+      ? theme.colors.secondary.background[100]
+      : theme.colors.primary.background[100];
+
   return (
     <LogoContainer>
       <Drawer.Close
@@ -28,8 +43,8 @@ export function Logo() {
       >
         <LogoIcon
           size={40}
-          fillColor={theme.colors.primary.background[100]}
-          backgroundColor={theme.colors.secondary.background[100]}
+          fillColor={fillColor}
+          backgroundColor={backgroundColor}
         />
       </Drawer.Close>
     </LogoContainer>

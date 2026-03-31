@@ -8,6 +8,7 @@ import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/a
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
@@ -24,6 +25,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ]),
     ApplicationRegistrationVariableModule,
     ApplicationModule,
+    DomainServerConfigModule,
     FeatureFlagModule,
     PermissionsModule,
     FileStorageModule,

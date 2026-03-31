@@ -9,22 +9,11 @@
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "remote:add": "twenty remote add --local",
-    "remote:status": "twenty remote status",
-    "remote:switch": "twenty remote switch",
-    "remote:list": "twenty remote list",
-    "remote:remove": "twenty remote remove",
-    "dev": "twenty dev",
-    "add": "twenty add",
-    "logs": "twenty logs",
-    "exec": "twenty exec",
-    "uninstall": "twenty uninstall",
-    "help": "twenty help",
-    "lint": "oxlint -c .oxlintrc.json .",
-    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
+    "twenty": "twenty"
   },
   "dependencies": {
-    "twenty-sdk": "latest"
+    "twenty-sdk": "latest",
+    "twenty-client-sdk": "latest"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

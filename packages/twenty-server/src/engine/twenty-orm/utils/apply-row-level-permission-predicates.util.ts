@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   Brackets,
   NotBrackets,
@@ -33,14 +32,6 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
   authContext,
   featureFlagMap,
 }: ApplyRowLevelPermissionPredicatesArgs<T>): void => {
-  if (
-    featureFlagMap[
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-    ] !== true
-  ) {
-    return;
-  }
-
   const userWorkspaceId = isUserAuthContext(authContext)
     ? authContext.userWorkspaceId
     : undefined;

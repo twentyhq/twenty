@@ -81,7 +81,7 @@ In a project created with `create-twenty-app` (recommended), use `yarn twenty <c
 
 ### Server
 
-Manage a local Twenty dev server (all-in-one Docker image).
+Manage a local Twenty dev server (all-in-one Docker image on port 2020). These commands only apply to the Docker-based dev server — they do not manage a Twenty instance started from source (e.g. `npx nx start twenty-server` on port 3000).
 
 - `twenty server start` — Start the local server (pulls image if needed). Automatically configures the `local` remote.
   - Options:

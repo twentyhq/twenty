@@ -23,7 +23,6 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -68,10 +67,6 @@ export const AdvancedFilterSidePanelValueFormInput = ({
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
-
-  const featureFlags = useFeatureFlagsMap();
-  const isWholeDayFilterEnabled =
-    featureFlags.IS_DATE_TIME_WHOLE_DAY_FILTER_ENABLED ?? false;
 
   const handleChange = (newValue: JsonValue) => {
     if (isString(newValue)) {
@@ -196,7 +191,6 @@ export const AdvancedFilterSidePanelValueFormInput = ({
 
   const field = {
     type:
-      isWholeDayFilterEnabled === true &&
       recordFilter.type === FieldMetadataType.DATE_TIME &&
       recordFilter.operand === RecordFilterOperand.IS
         ? FieldMetadataType.DATE
