@@ -1,15 +1,38 @@
-import { isNull, isObject } from '@sniptt/guards';
-import { RelationType } from 'twenty-shared/types';
-import { isDefined, isEmptyObject, pascalCase } from 'twenty-shared/utils';
+import { isNull } from '@sniptt/guards';
+import { ObjectRecord, RelationType } from 'twenty-shared/types';
 
-import { CONNECTION_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/connection-method-names';
-import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import {
+  GraphqlDirectExecutionException,
+  GraphqlDirectExecutionExceptionCode,
+} from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
+
+import {
+  isConnection,
+  isConnectionArray,
+  isGroupByConnection,
+  isObjectRecord,
+  isObjectRecordArray,
+} from 'src/engine/api/graphql/direct-execution/utils/graphql-is-resolver-output-type.util';
+import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
+import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
+import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
+import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  getConnectionTypename,
+  getEdgeTypename,
+  getGroupByConnectionTypename,
+  getNodeTypename,
+  isDefined,
+  isEmptyObject,
+  pascalCase,
+} from 'twenty-shared/utils';
 
 type GraphQLFormatInput = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -22,15 +45,8 @@ type GraphQLFormatContext = GraphQLFormatInput & {
   fieldMetadataByNameCache: Map<string, Map<string, FlatFieldMetadata>>;
 };
 
-type GraphQLObjectTypeKind =
-  | 'connection'
-  | 'groupByConnection'
-  | 'edge'
-  | 'node'
-  | 'pageInfo';
-
 export const graphQLFormatResultFromSelectedFields = (
-  result: unknown,
+  result: ResolverOutput,
   selectedFields: Record<string, object>,
   objectNameSingular: string,
   input: GraphQLFormatInput,
@@ -40,59 +56,75 @@ export const graphQLFormatResultFromSelectedFields = (
     fieldMetadataByNameCache: new Map(),
   };
 
-  const objectTypeKind = inferObjectTypeKind(context.method);
-
-  return format(
-    result,
-    selectedFields,
-    objectNameSingular,
-    objectTypeKind,
-    context,
-  );
-};
-
-const format = (
-  value: unknown,
-  selectedFields: Record<string, object>,
-  objectNameSingular: string,
-  objectTypeKind: GraphQLObjectTypeKind,
-  context: GraphQLFormatContext,
-): unknown => {
-  if (value === null || value === undefined) {
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map((item) =>
-      format(item, selectedFields, objectNameSingular, objectTypeKind, context),
-    );
-  }
-
-  if (isObject(value)) {
-    return backfillNullValuesAndComputeTypeName(
-      value as Record<string, unknown>,
+  if (isObjectRecord(result)) {
+    return backfillNullValuesAndComputeTypeNameForObjectRecord(
+      result,
       selectedFields,
       objectNameSingular,
-      objectTypeKind,
       context,
     );
   }
 
-  return value;
+  if (isObjectRecordArray(result)) {
+    return result.map((item) =>
+      backfillNullValuesAndComputeTypeNameForObjectRecord(
+        item,
+        selectedFields,
+        objectNameSingular,
+        context,
+      ),
+    );
+  }
+
+  if (isGroupByConnection(result)) {
+    return backfillNullValuesAndComputeTypeNameForGroupByConnection(
+      result,
+      selectedFields,
+      objectNameSingular,
+      context,
+    );
+  }
+
+  if (isConnection(result)) {
+    return backfillNullValuesAndComputeTypeNameForConnection(
+      result,
+      selectedFields,
+      objectNameSingular,
+      context,
+    );
+  }
+
+  if (isConnectionArray(result)) {
+    return backfillNullValuesAndComputeTypeNameForConnectionArray(
+      result,
+      selectedFields,
+      objectNameSingular,
+      context,
+    );
+  }
+
+  if (result === null || result === undefined) {
+    return result;
+  }
+
+  throw new GraphqlDirectExecutionException(
+    'Invalid result type',
+    GraphqlDirectExecutionExceptionCode.INVALID_RESULT_TYPE,
+    { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+  );
 };
 
-const backfillNullValuesAndComputeTypeName = (
-  record: Record<string, unknown>,
+const backfillNullValuesAndComputeTypeNameForObjectRecord = (
+  record: ObjectRecord,
   selectedFields: Record<string, object>,
   objectNameSingular: string,
-  objectTypeKind: GraphQLObjectTypeKind,
   context: GraphQLFormatContext,
 ): Record<string, unknown> => {
   const formatted: Record<string, unknown> = {};
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
     if (key === '__typename') {
-      formatted.__typename = deriveTypeName(objectNameSingular, objectTypeKind);
+      formatted.__typename = getNodeTypename(objectNameSingular);
       continue;
     }
 
@@ -110,29 +142,24 @@ const backfillNullValuesAndComputeTypeName = (
       continue;
     }
 
-    const childObjectTypeKind = CONNECTION_FIELD_TO_OBJECT_TYPE_KIND[key];
-
-    if (isDefined(childObjectTypeKind)) {
-      formatted[key] = format(
-        value,
-        subFields as Record<string, object>,
-        objectNameSingular,
-        childObjectTypeKind,
-        context,
-      );
-      continue;
-    }
-
     const relationInfo = findRelationInfo(objectNameSingular, key, context);
 
     if (isDefined(relationInfo)) {
-      formatted[key] = format(
-        value,
-        subFields as Record<string, object>,
-        relationInfo.targetObjectNameSingular,
-        relationInfo.objectTypeKind,
-        context,
-      );
+      if (relationInfo.relationType === RelationType.ONE_TO_MANY) {
+        formatted[key] = backfillNullValuesAndComputeTypeNameForConnection(
+          value as IConnection<ObjectRecord, IEdge<ObjectRecord>>,
+          subFields as Record<string, object>,
+          relationInfo.targetObjectNameSingular,
+          context,
+        );
+      } else {
+        formatted[key] = backfillNullValuesAndComputeTypeNameForObjectRecord(
+          value,
+          subFields as Record<string, object>,
+          relationInfo.targetObjectNameSingular,
+          context,
+        );
+      }
       continue;
     }
 
@@ -179,45 +206,121 @@ const backfillNullValuesAndComputeTypeNameForCompositeField = (
   return formatted;
 };
 
-const deriveTypeName = (
+const backfillNullValuesAndComputeTypeNameForConnection = (
+  connection: IConnection<ObjectRecord, IEdge<ObjectRecord>>,
+  selectedFields: Record<string, object>,
   objectNameSingular: string,
-  objectTypeKind: GraphQLObjectTypeKind,
-): string => {
-  const pascal = pascalCase(objectNameSingular);
+  context: GraphQLFormatContext,
+): Record<string, unknown> => {
+  const formatted: Record<string, unknown> = {};
 
-  switch (objectTypeKind) {
-    case 'connection':
-      return `${pascal}Connection`;
-    case 'groupByConnection':
-      return `${pascal}GroupByConnection`;
-    case 'edge':
-      return `${pascal}Edge`;
-    case 'node':
-      return pascal;
-    case 'pageInfo':
-      return 'PageInfo';
+  for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (key === '__typename') {
+      formatted.__typename = getConnectionTypename(objectNameSingular);
+      continue;
+    }
+
+    if (key === 'edges') {
+      formatted.edges = connection.edges.map((edge) => {
+        const edgeFormatted: Record<string, unknown> = {};
+
+        for (const [edgeKey, edgeSubFields] of Object.entries(
+          subFields as Record<string, object>,
+        )) {
+          if (edgeKey === '__typename') {
+            edgeFormatted.__typename = getEdgeTypename(objectNameSingular);
+            continue;
+          }
+
+          if (edgeKey === 'cursor') {
+            edgeFormatted.cursor = edge.cursor;
+            continue;
+          }
+
+          if (edgeKey === 'node') {
+            edgeFormatted.node =
+              backfillNullValuesAndComputeTypeNameForObjectRecord(
+                edge.node,
+                edgeSubFields as Record<string, object>,
+                objectNameSingular,
+                context,
+              );
+            continue;
+          }
+        }
+
+        return edgeFormatted;
+      });
+      continue;
+    }
+
+    if (key === 'pageInfo') {
+      const pageInfoFormatted: Record<string, unknown> = {};
+
+      for (const pageInfoKey of Object.keys(
+        subFields as Record<string, object>,
+      )) {
+        if (pageInfoKey === '__typename') {
+          pageInfoFormatted.__typename = 'PageInfo';
+          continue;
+        }
+
+        pageInfoFormatted[pageInfoKey] =
+          (connection.pageInfo as unknown as Record<string, unknown>)[
+            pageInfoKey
+          ] ?? null;
+      }
+
+      formatted.pageInfo = pageInfoFormatted;
+      continue;
+    }
+
+    //aggregate fields
+    formatted[key] =
+      (connection as unknown as Record<string, unknown>)[key] ?? null;
   }
+
+  return formatted;
 };
 
-const inferObjectTypeKind = (method: string): GraphQLObjectTypeKind => {
-  if (method === RESOLVER_METHOD_NAMES.GROUP_BY) {
-    return 'groupByConnection';
+const backfillNullValuesAndComputeTypeNameForGroupByConnection = (
+  connection: IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>,
+  selectedFields: Record<string, object>,
+  objectNameSingular: string,
+  context: GraphQLFormatContext,
+): Record<string, unknown> => {
+  const formatted = backfillNullValuesAndComputeTypeNameForConnection(
+    connection,
+    selectedFields,
+    objectNameSingular,
+    context,
+  );
+
+  if ('__typename' in selectedFields) {
+    formatted.__typename = getGroupByConnectionTypename(objectNameSingular);
   }
 
-  if (CONNECTION_METHOD_NAMES.has(method)) {
-    return 'connection';
+  if ('groupByDimensionValues' in selectedFields) {
+    formatted.groupByDimensionValues = connection.groupByDimensionValues;
   }
 
-  return 'node';
+  return formatted;
 };
 
-const CONNECTION_FIELD_TO_OBJECT_TYPE_KIND: Record<
-  string,
-  GraphQLObjectTypeKind
-> = {
-  edges: 'edge',
-  node: 'node',
-  pageInfo: 'pageInfo',
+const backfillNullValuesAndComputeTypeNameForConnectionArray = (
+  connections: IConnection<ObjectRecord, IEdge<ObjectRecord>>[],
+  selectedFields: Record<string, object>,
+  objectNameSingular: string,
+  context: GraphQLFormatContext,
+): Record<string, unknown>[] => {
+  return connections.map((connection) =>
+    backfillNullValuesAndComputeTypeNameForConnection(
+      connection,
+      selectedFields,
+      objectNameSingular,
+      context,
+    ),
+  );
 };
 
 const getOrBuildFieldMetadataByNameMap = (
@@ -278,7 +381,7 @@ const findFieldMetadataByName = (
 
 type RelationInfo = {
   targetObjectNameSingular: string;
-  objectTypeKind: GraphQLObjectTypeKind;
+  relationType: RelationType;
 };
 
 const findRelationInfo = (
@@ -308,13 +411,8 @@ const findRelationInfo = (
     return undefined;
   }
 
-  const objectTypeKind: GraphQLObjectTypeKind =
-    fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY
-      ? 'connection'
-      : 'node';
-
   return {
     targetObjectNameSingular: targetObjectMetadata.nameSingular,
-    objectTypeKind,
+    relationType: fieldMetadata.settings.relationType,
   };
 };

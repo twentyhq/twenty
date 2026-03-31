@@ -14,7 +14,8 @@ export default defineObject({
   labelPlural: 'Example items',
   description: 'A sample custom object',
   icon: 'IconBox',
-  labelIdentifierFieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {
       universalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,

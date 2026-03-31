@@ -1,7 +1,3 @@
-import { styled } from '@linaria/react';
-import { Link } from 'react-router-dom';
-
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -13,28 +9,18 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import {
-  H2Title,
   IconChartBar,
   IconCpu,
-  IconFileText,
   IconSettingsBolt,
   IconSparkles,
   IconTool,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
-import { SettingsAIMCP } from './components/SettingsAIMCP';
+import { SettingsAIMoreTab } from '~/pages/settings/ai/components/SettingsAIMoreTab';
 import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
 import { SettingsAIUsageTab } from './components/SettingsAIUsageTab';
 import { SettingsAgentSkills } from './components/SettingsAgentSkills';
 import { SettingsToolsTable } from './components/SettingsToolsTable';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
-
-const StyledLinkContainer = styled.div`
-  > a {
-    text-decoration: none;
-  }
-`;
 
 export const SettingsAI = () => {
   const activeTabId = useAtomComponentStateValue(
@@ -104,35 +90,7 @@ export const SettingsAI = () => {
         {isSkillsTab && <SettingsAgentSkills />}
         {isToolsTab && <SettingsToolsTable />}
         {isUsageTab && <SettingsAIUsageTab />}
-        {isMoreTab && (
-          <>
-            <Section>
-              <H2Title
-                title={t`System Prompt`}
-                description={t`View and customize AI instructions`}
-              />
-              <Card rounded>
-                <SettingsOptionCardContentButton
-                  Icon={IconFileText}
-                  title={t`System Prompt`}
-                  description={t`View the AI system prompt and add custom instructions`}
-                  Button={
-                    <StyledLinkContainer>
-                      <Link to={getSettingsPath(SettingsPath.AIPrompts)}>
-                        <Button
-                          title={t`Configure`}
-                          variant="secondary"
-                          size="small"
-                        />
-                      </Link>
-                    </StyledLinkContainer>
-                  }
-                />
-              </Card>
-            </Section>
-            <SettingsAIMCP />
-          </>
-        )}
+        {isMoreTab && <SettingsAIMoreTab />}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
