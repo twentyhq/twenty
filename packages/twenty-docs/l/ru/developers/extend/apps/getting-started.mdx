@@ -9,18 +9,19 @@ description: Создайте своё первое приложение Twenty 
 
 Приложения позволяют расширять Twenty с помощью пользовательских объектов, полей, логических функций, навыков ИИ и UI-компонентов — всё это управляется как код.
 
-**Что вы можете делать уже сегодня:**
+**Что вы можете создать:**
 
-* Определяйте пользовательские объекты и поля в виде кода (управляемая модель данных)
-* Создавайте логические функции с пользовательскими триггерами (HTTP-маршруты, cron, события базы данных)
-* Определяйте навыки для ИИ-агентов
-* Создавайте фронтенд-компоненты, которые отображаются внутри интерфейса Twenty
-* Развёртывайте одно и то же приложение в нескольких рабочих пространствах
+* Пользовательские объекты, поля, представления и элементы навигации для формирования вашей модели данных
+* Логические функции, запускаемые маршрутами HTTP, расписаниями cron или событиями базы данных
+* Фронтенд-компоненты, которые непосредственно отображаются внутри интерфейса Twenty
+* Навыки, расширяющие возможности ИИ-агентов Twenty
+* Разверните приложение в нескольких рабочих пространствах
 
 ## Требования
 
-* Node.js 24+ и Yarn 4
-* Docker (для локального сервера разработки Twenty)
+* Node.js 24+
+* Yarn 4
+* Docker (или запущенный локальный экземпляр Twenty)
 
 ## Начало работы
 
@@ -29,27 +30,15 @@ description: Создайте своё первое приложение Twenty 
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Генератор каркаса поддерживает два режима для управления тем, какие файлы-примеры включаются:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Используйте параметр `--minimal`, чтобы создать минимальную установку
 
 Отсюда вы можете:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -123,7 +112,7 @@ my-twenty-app/
 В общих чертах:
 
 * **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипт `twenty`, который делегирует выполнение локальному CLI `twenty`. Выполните `yarn twenty help`, чтобы вывести список всех доступных команд.
-* **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
+* **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
 * **.oxlintrc.json** и **tsconfig.json**: Обеспечивают линтинг и конфигурацию TypeScript для исходников вашего приложения на TypeScript.
@@ -167,8 +156,8 @@ export default defineObject({
 
 Позднее команды добавят больше файлов и папок:
 
-* `yarn twenty dev` автоматически сгенерирует два типизированных клиента API в `node_modules/twenty-sdk/generated`: `CoreApiClient` (для данных рабочего пространства через `/graphql`) и `MetadataApiClient` (для конфигурации рабочего пространства и загрузки файлов через `/metadata`).
-* `yarn twenty entity:add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов, ролей, навыков и многого другого.
+* `yarn twenty dev` автоматически сгенерирует типизированный `CoreApiClient` (для данных рабочего пространства через `/graphql`) в `node_modules/twenty-client-sdk/`. `MetadataApiClient` (для конфигурации рабочего пространства и загрузки файлов через `/metadata`) поставляется в предсобранном виде и доступен сразу. Импортируйте их из `twenty-client-sdk/core` и `twenty-client-sdk/metadata` соответственно.
+* `yarn twenty add` добавит файлы определений сущностей в `src/` для ваших пользовательских объектов, функций, фронтенд-компонентов, ролей, навыков и многого другого.
 
 ## Аутентификация
 

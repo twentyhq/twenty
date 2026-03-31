@@ -15,19 +15,21 @@ Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare 
 
 SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. După cum este descris în [Detectarea entităților](/l/ro/developers/extend/apps/getting-started#entity-detection), trebuie să folosiți `export default define<Entity>({...})` pentru ca entitățile să fie detectate:
 
-| Funcție                          | Scop                                                                   |
-| -------------------------------- | ---------------------------------------------------------------------- |
-| `defineApplication`              | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
-| `defineObject`                   | Definiți obiecte personalizate cu câmpuri                              |
-| `defineLogicFunction`            | Definiți funcții de logică cu handleri                                 |
-| `definePreInstallLogicFunction`  | Definește o funcție logică de pre-instalare (una per aplicație)        |
-| `definePostInstallLogicFunction` | Definește o funcție logică post-instalare (una per aplicație)          |
-| `defineFrontComponent`           | Definiți componente Front pentru interfața de utilizator personalizată |
-| `defineRole`                     | Configurați permisiunile rolurilor și accesul la obiecte               |
-| `defineField`                    | Extindeți obiectele existente cu câmpuri suplimentare                  |
-| `defineView`                     | Definește vizualizări salvate pentru obiecte                           |
-| `defineNavigationMenuItem`       | Definește linkuri de navigare în bara laterală                         |
-| `defineSkill`                    | Definiți abilități pentru agentul AI                                   |
+| Funcție                          | Scop                                                                                               |
+| -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `defineApplication`              | Configurați metadatele aplicației (obligatoriu, una per aplicație)                                 |
+| `defineObject`                   | Definiți obiecte personalizate cu câmpuri                                                          |
+| `defineField`                    | Extindeți obiectele existente cu câmpuri suplimentare sau definiți câmpuri de relație independente |
+| `defineLogicFunction`            | Definiți funcții de logică cu handleri                                                             |
+| `definePreInstallLogicFunction`  | Definește o funcție logică de pre-instalare (una per aplicație)                                    |
+| `definePostInstallLogicFunction` | Definește o funcție logică post-instalare (una per aplicație)                                      |
+| `defineFrontComponent`           | Definiți componente Front pentru interfața de utilizator personalizată                             |
+| `defineRole`                     | Configurați permisiunile rolurilor și accesul la obiecte                                           |
+| `defineView`                     | Definește vizualizări salvate pentru obiecte                                                       |
+| `defineNavigationMenuItem`       | Definește linkuri de navigare în bara laterală                                                     |
+| `defineSkill`                    | Definiți abilități pentru agentul AI                                                               |
+| `defineAgent`                    | Definiți agenți AI                                                                                 |
+| `definePageLayout`               | Definiți machete de pagină personalizate                                                           |
 
 Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
@@ -36,7 +38,7 @@ Aceste funcții validează configurația în timpul build-ului și oferă comple
 Obiectele personalizate descriu atât schema, cât și comportamentul înregistrărilor din spațiul dvs. de lucru. Utilizați `defineObject()` pentru a defini obiecte cu validare încorporată:
 
 ```typescript
-// src/app/postCard.object.ts
+// src/objects/postCard.object.ts
 import { defineObject, FieldType } from 'twenty-sdk';
 
 enum PostCardStatus {
@@ -110,7 +112,7 @@ Puncte cheie:
 * `universalIdentifier` trebuie să fie unic și stabil între implementări.
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Matricea `fields` este opțională — puteți defini obiecte fără câmpuri personalizate.
-* Puteți genera obiecte noi folosind `yarn twenty entity:add`, care vă ghidează prin denumire, câmpuri și relații.
+* Puteți genera obiecte noi folosind `yarn twenty add`, care vă ghidează prin denumire, câmpuri și relații.
 
 <Note>
 **Câmpurile de bază sunt create automat.** Când definiți un obiect personalizat, Twenty adaugă automat câmpuri standard
@@ -119,6 +121,197 @@ Nu trebuie să le definiți în tabloul `fields` — adăugați doar câmpurile 
 Puteți suprascrie câmpurile implicite definind un câmp cu același nume în tabloul `fields`,
 dar acest lucru nu este recomandat.
 </Note>
+
+### Definirea câmpurilor pe obiecte existente
+
+Utilizați `defineField()` pentru a adăuga câmpuri la obiecte pe care nu le dețineți — cum ar fi obiectele standard Twenty (Person, Company etc.). sau obiecte din alte aplicații. Spre deosebire de câmpurile inline din `defineObject()`, câmpurile independente necesită un `objectUniversalIdentifier` pentru a specifica obiectul pe care îl extind:
+
+```typescript
+// src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+Puncte cheie:
+
+* `objectUniversalIdentifier` identifică obiectul țintă. Pentru obiectele standard, utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` exportați din `twenty-sdk`.
+* Atunci când definiți câmpuri inline în `defineObject()`, nu aveți nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte.
+* `defineField()` este singura modalitate de a adăuga câmpuri la obiecte pe care nu le-ați creat cu `defineObject()`.
+
+### Relații
+
+Relațiile conectează obiectele între ele. În Twenty, relațiile sunt întotdeauna bidirecționale — definiți ambele părți, iar fiecare parte o referențiază pe cealaltă.
+
+Există două tipuri de relații:
+
+| Tip relație   | Descriere                                                                          | Are cheie străină?    |
+| ------------- | ---------------------------------------------------------------------------------- | --------------------- |
+| `MANY_TO_ONE` | Multe înregistrări ale acestui obiect indică către o singură înregistrare a țintei | Da (`joinColumnName`) |
+| `ONE_TO_MANY` | O înregistrare a acestui obiect are multe înregistrări ale țintei                  | Nu (partea inversă)   |
+
+#### Cum funcționează relațiile
+
+Fiecare relație necesită **două câmpuri** care se referențiază reciproc:
+
+1. Partea **MANY_TO_ONE** — se află pe obiectul care deține cheia străină
+2. Partea **ONE_TO_MANY** — se află pe obiectul care deține colecția
+
+Ambele câmpuri folosesc `FieldType.RELATION` și se referențiază încrucișat prin `relationTargetFieldMetadataUniversalIdentifier`.
+
+#### Exemplu: Post Card are mulți destinatari
+
+Presupuneți că un `PostCard` poate fi trimis către multe înregistrări `PostCardRecipient`. Fiecare destinatar aparține exact unui Post Card.
+
+**Pasul 1: Definiți partea ONE_TO_MANY pe PostCard** (partea "one"):
+
+```typescript
+// src/fields/post-card-recipients-on-post-card.field.ts
+import { defineField, FieldType, RelationType } from 'twenty-sdk';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+// Import from the other side
+import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  icon: 'IconUsers',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+**Pasul 2: Definiți partea MANY_TO_ONE pe PostCardRecipient** (partea "many" — deține cheia străină):
+
+```typescript
+// src/fields/post-card-on-post-card-recipient.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_FIELD_ID = 'b2222222-2222-2222-2222-222222222222';
+// Import from the other side
+import { POST_CARD_RECIPIENTS_FIELD_ID } from './post-card-recipients-on-post-card.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCard',
+  label: 'Post Card',
+  icon: 'IconMail',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'postCardId',
+  },
+});
+```
+
+<Note>
+**Importuri circulare:** Ambele câmpuri de relație se referă unul la celălalt prin `universalIdentifier`. Pentru a evita problemele de import circular, exportați ID-urile câmpurilor ca constante denumite din fiecare fișier și importați-le în celălalt fișier. Sistemul de build le rezolvă în timpul compilării.
+</Note>
+
+#### Relaționarea cu obiectele standard
+
+Pentru a crea o relație cu un obiect Twenty încorporat (Person, Company etc.), utilizați `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+
+```typescript
+// src/fields/person-on-self-hosting-user.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+
+export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+
+export default defineField({
+  universalIdentifier: PERSON_FIELD_ID,
+  objectUniversalIdentifier: SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  description: 'Person matching with the self hosting user',
+  isNullable: true,
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'personId',
+  },
+});
+```
+
+#### Proprietăți ale câmpului de relație
+
+| Proprietate                                       | Obligatoriu      | Descriere                                                                                                             |
+| ------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `tip`                                             | Da               | Trebuie să fie `FieldType.RELATION`                                                                                   |
+| `relationTargetObjectMetadataUniversalIdentifier` | Da               | `universalIdentifier` al obiectului țintă                                                                             |
+| `relationTargetFieldMetadataUniversalIdentifier`  | Da               | `universalIdentifier` al câmpului corespunzător de pe obiectul țintă                                                  |
+| `universalSettings.relationType`                  | Da               | `RelationType.MANY_TO_ONE` sau `RelationType.ONE_TO_MANY`                                                             |
+| `universalSettings.onDelete`                      | Doar MANY_TO_ONE | Ce se întâmplă atunci când înregistrarea referențiată este ștearsă: `CASCADE`, `SET_NULL`, `RESTRICT` sau `NO_ACTION` |
+| `universalSettings.joinColumnName`                | Doar MANY_TO_ONE | Numele coloanei din baza de date pentru cheia străină (de ex., `postCardId`)                                          |
+
+#### Câmpuri de relație inline în defineObject
+
+Puteți defini, de asemenea, câmpuri de relație direct în `defineObject()`. În acest caz, omiteți `objectUniversalIdentifier` — este moștenit de la obiectul părinte:
+
+```typescript
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCardRecipient',
+  // ...
+  fields: [
+    {
+      universalIdentifier: POST_CARD_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'postCard',
+      label: 'Post Card',
+      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.CASCADE,
+        joinColumnName: 'postCardId',
+      },
+    },
+    // ... other fields
+  ],
+});
+```
 
 ### Configurația aplicației (application-config.ts)
 
@@ -160,6 +353,22 @@ Notițe:
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
 * `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
 * Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului. Vezi [Funcții de pre-instalare](#pre-install-functions) și [Funcții post-instalare](#post-install-functions).
+
+#### Metadate pentru marketplace
+
+Dacă intenționați să [publicați aplicația](/l/ro/developers/extend/apps/publishing), aceste câmpuri opționale controlează modul în care aplicația apare în marketplace:
+
+| Câmp               | Descriere                                                                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `autor`            | Numele autorului sau al companiei                                                                                              |
+| `categorie`        | Categoria aplicației pentru filtrarea în marketplace                                                                           |
+| `logoUrl`          | Calea către logo-ul aplicației (relativă la `./assets/`)                                                                       |
+| `screenshots`      | Listă de căi către capturi de ecran (relative la `./assets/`)                                                                  |
+| `aboutDescription` | Descriere markdown mai lungă pentru fila "About". Dacă este omis, marketplace-ul folosește `README.md` al pachetului de pe npm |
+| `websiteUrl`       | Link către site-ul dvs.                                                                                                        |
+| `termsUrl`         | Link către termenii de serviciu                                                                                                |
+| `emailSupport`     | Adresă de e-mail pentru suport                                                                                                 |
+| `issueReportUrl`   | Link către sistemul de urmărire a problemelor                                                                                  |
 
 #### Roluri și permisiuni
 
@@ -230,7 +439,7 @@ Notițe:
 Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
 
 ```typescript
-// src/app/createPostCard.logic-function.ts
+// src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import { CoreApiClient, type Person } from 'twenty-sdk/generated';
@@ -324,7 +533,7 @@ export default definePreInstallLogicFunction({
 Poți, de asemenea, să execuți manual funcția de pre-instalare oricând folosind CLI:
 
 ```bash filename="Terminal"
-yarn twenty function:execute --preInstall
+yarn twenty exec --preInstall
 ```
 
 Puncte cheie:
@@ -334,7 +543,7 @@ Puncte cheie:
 * Este permisă o singură funcție de pre-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
 * Proprietatea `universalIdentifier` a funcției este setată automat ca `preInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de pregătire mai lungi.
-* Funcțiile de pre-instalare nu au nevoie de declanșatoare — sunt invocate de platformă înainte de instalare sau manual prin `function:execute --preInstall`.
+* Funcțiile de pre-instalare nu au nevoie de declanșatoare — sunt invocate de platformă înainte de instalare sau manual prin `exec --preInstall`.
 
 ### Funcții post-instalare
 
@@ -362,7 +571,7 @@ export default definePostInstallLogicFunction({
 Poți, de asemenea, să execuți manual funcția post-instalare oricând folosind CLI:
 
 ```bash filename="Terminal"
-yarn twenty function:execute --postInstall
+yarn twenty exec --postInstall
 ```
 
 Puncte cheie:
@@ -372,7 +581,7 @@ Puncte cheie:
 * Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
 * Proprietatea `universalIdentifier` a funcției este setată automat ca `postInstallLogicFunctionUniversalIdentifier` în manifestul aplicației în timpul build-ului — nu este nevoie să o referi în `defineApplication()`.
 * Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
-* Funcțiile post-instalare nu au nevoie de declanșatoare — sunt invocate de platformă în timpul instalării sau manual prin `function:execute --postInstall`.
+* Funcțiile post-instalare nu au nevoie de declanșatoare — sunt invocate de platformă în timpul instalării sau manual prin `exec --postInstall`.
 
 ### Payload-ul declanșatorului de rută
 
@@ -416,15 +625,15 @@ const handler = async (event: RoutePayload) => {
 
 Tipul `RoutePayload` are următoarea structură:
 
-| Proprietate                  | Tip                                   | Descriere                                                                            |
-| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
-| `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                       |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                          |
-| `pathParameters`             | `Record<string, string \| undefined>` | Parametri de cale extrași din modelul rutei (de ex., `/users/:id` → `{ id: '123' }`) |
-| `body`                       | `object \| null`                      | Corpul cererii analizat (JSON)                                                       |
-| `isBase64Encoded`            | `boolean`                             | Indică dacă corpul este codificat în base64                                          |
-| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                          |
-| `requestContext.http.path`   | `string`                              | Calea brută a cererii                                                                |
+| Proprietate                  | Tip                                   | Descriere                                                                             |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                        |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                           |
+| `pathParameters`             | `Record<string, string \| undefined>` | Parametri de cale extrași din modelul rutei (de ex., `/users/:id` -> `{ id: '123' }`) |
+| `body`                       | `object \| null`                      | Corpul cererii analizat (JSON)                                                        |
+| `isBase64Encoded`            | `boolean`                             | Indică dacă corpul este codificat în base64                                           |
+| `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                           |
+| `requestContext.http.path`   | `string`                              | Calea brută a cererii                                                                 |
 
 ### Transmiterea anteturilor HTTP
 
@@ -466,7 +675,7 @@ const handler = async (event: RoutePayload) => {
 
 Puteți crea funcții noi în două moduri:
 
-* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o funcție logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Generat**: Rulați `yarn twenty add` și alegeți opțiunea de a adăuga o funcție de logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
 * **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
 
 ### Marcarea unei funcții logice drept instrument
@@ -478,7 +687,7 @@ Pentru a marca o funcție logică drept instrument, setați `isTool: true` și f
 ```typescript
 // src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
   const client = new CoreApiClient();
@@ -567,7 +776,7 @@ Puncte cheie:
 
 Puteți crea componente Front noi în două moduri:
 
-* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o componentă frontend nouă.
+* **Generat**: Rulați `yarn twenty add` și alegeți opțiunea de a adăuga o componentă Front nouă.
 * **Manual**: Creați un fișier nou `.tsx` și folosiți `defineFrontComponent()`, urmând același model.
 
 ### Abilități
@@ -602,47 +811,122 @@ Puncte cheie:
 
 Puteți crea abilități noi în două moduri:
 
-* **Generat**: Rulați `yarn twenty entity:add` și alegeți opțiunea de a adăuga o abilitate nouă.
+* **Generat**: Rulați `yarn twenty add` și alegeți opțiunea de a adăuga o abilitate nouă.
 * **Manual**: Creați un fișier nou și folosiți `defineSkill()`, urmând același model.
 
-### Clienți tipizați generați
+### Clienți API tipați (`twenty-client-sdk`)
 
-Doi clienți tipizați sunt generați automat de `yarn twenty dev` și stocați în `node_modules/twenty-sdk/generated`, pe baza schemei spațiului tău de lucru:
+Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a interacționa cu API-ul Twenty din funcțiile de logică și componentele Front:
 
-* **`CoreApiClient`** — interoghează endpointul `/graphql` pentru datele spațiului de lucru
-* **`MetadataApiClient`** — interoghează endpointul `/metadata` pentru configurarea spațiului de lucru și încărcarea fișierelor
+| Client              | Importați                    | Endpoint                                                            | Generat?                     |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------- | ---------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — date ale spațiului de lucru (înregistrări, obiecte)    | Da, în timpul dev/build      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurarea spațiului de lucru, încărcări de fișiere | Nu, este livrat preconstruit |
+
+#### CoreApiClient
+
+`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. Este generat din schema spațiului dvs. de lucru în timpul `yarn twenty dev` sau `yarn twenty build`, astfel încât este complet tipat pentru a corespunde obiectelor și câmpurilor dvs.
 
 ```typescript
-import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/generated';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const client = new CoreApiClient();
-const { me } = await client.query({ me: { id: true, displayName: true } });
 
-const metadataClient = new MetadataApiClient();
-const { currentWorkspace } = await metadataClient.query({ currentWorkspace: { id: true } });
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: true,
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
 ```
 
-Ambii clienți sunt regenerați automat de `yarn twenty dev` ori de câte ori obiectele sau câmpurile tale se schimbă.
+Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare a tipurilor complete, pe baza schemei spațiului dvs. de lucru.
 
-#### Acreditări la runtime în funcțiile de logică
+<Note>
+**CoreApiClient este generat în timpul dev/build.** Dacă încercați să îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare. Generarea are loc automat — CLI-ul introspectează schema GraphQL a spațiului dvs. de lucru, generează un client tipat folosind `@genql/cli`, scrie sursele generate în `node_modules/twenty-client-sdk/dist/core/generated/` și înlocuiește stubs-urile din `node_modules/twenty-client-sdk/dist/core.mjs` și `node_modules/twenty-client-sdk/dist/core.cjs`.
+</Note>
 
-Când funcția rulează pe Twenty, platforma injectează acreditări ca variabile de mediu înainte de execuția codului:
+#### Folosirea CoreSchema pentru adnotări de tip
 
-* `TWENTY_API_URL`: URL-ul de bază al API-ului Twenty către care țintește aplicația.
-* `TWENTY_API_KEY`: Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației.
+`CoreSchema` oferă tipuri TypeScript care se potrivesc obiectelor din spațiul dvs. de lucru, utile pentru tiparea stării componentelor sau a parametrilor funcțiilor:
 
-Notițe:
+```typescript
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
 
-* Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
-* Permisiunile cheii API sunt determinate de rolul referențiat în `application-config.ts` prin `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
-* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `defaultRoleUniversalIdentifier` la identificatorul universal al acelui rol.
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+#### MetadataApiClient
+
+`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere:
+
+```typescript
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// Query workspace info
+const { currentWorkspace } = await metadataClient.query({
+  currentWorkspace: { id: true, displayName: true },
+});
+
+// List installed applications
+const { findManyApplications } = await metadataClient.query({
+  findManyApplications: {
+    id: true,
+    name: true,
+    version: true,
+  },
+});
+```
+
+#### Acreditări la rulare
+
+Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
+
+* `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
+* `TWENTY_API_KEY` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
+
+Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul referențiat în `defaultRoleUniversalIdentifier` din `application-config.ts`.
 
 #### Încărcarea fișierelor
 
-Clientul `MetadataApiClient` generat include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier ale obiectelor din spațiul tău de lucru. Deoarece clienții GraphQL standard nu acceptă în mod nativ încărcarea fișierelor multipart, clientul oferă această metodă dedicată care implementează, sub capotă, [specificația cererilor GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec).
+`MetadataApiClient` include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier. Implementează [specificația pentru cereri GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec):
 
 ```typescript
-import { MetadataApiClient } from 'twenty-sdk/generated';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
@@ -652,23 +936,12 @@ const fileBuffer = fs.readFileSync('./invoice.pdf');
 const uploadedFile = await metadataClient.uploadFile(
   fileBuffer,                                         // file contents as a Buffer
   'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type (defaults to 'application/octet-stream')
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universal identifier
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
 );
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
-```
-
-Semnătura metodei:
-
-```typescript
-uploadFile(
-  fileBuffer: Buffer,
-  filename: string,
-  contentType: string,
-  fieldMetadataUniversalIdentifier: string,
-): Promise<{ id: string; path: string; size: number; createdAt: string; url: string }>
 ```
 
 | Parametru                          | Tip      | Descriere                                                                                   |
@@ -680,8 +953,7 @@ uploadFile(
 
 Puncte cheie:
 
-* Metoda `uploadFile` este disponibilă pe `MetadataApiClient` deoarece mutația de încărcare este rezolvată de endpointul `/metadata`.
-* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul tău de încărcare funcționează în orice spațiu de lucru în care aplicația ta este instalată — în concordanță cu modul în care aplicațiile fac referire la câmpuri în rest.
+* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
 * `url` returnat este un URL semnat pe care îl poți folosi pentru a accesa fișierul încărcat.
 
 ### Exemplu Hello World

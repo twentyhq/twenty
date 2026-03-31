@@ -92,7 +92,11 @@ export const useRecordIndexLazyFetchRecords = ({
     recordIndexId,
   );
 
-  const queryFilter = computeContextStoreFilters({
+  const isEmptySelection =
+    contextStoreTargetedRecordsRule.mode === 'selection' &&
+    contextStoreTargetedRecordsRule.selectedRecordIds.length === 0;
+
+  const contextStoreFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     contextStoreFilterGroups,
@@ -100,6 +104,10 @@ export const useRecordIndexLazyFetchRecords = ({
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });
+
+  const queryFilter = isEmptySelection
+    ? findManyRecordsParams.filter
+    : contextStoreFilter;
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,

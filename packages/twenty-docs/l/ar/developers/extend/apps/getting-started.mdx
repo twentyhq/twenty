@@ -9,18 +9,19 @@ description: أنشئ أول تطبيق Twenty خلال دقائق.
 
 تتيح لك التطبيقات توسيع Twenty باستخدام كائنات وحقول ووظائف منطقية ومهارات ذكاء اصطناعي ومكونات واجهة مستخدم مخصصة — جميعها تُدار ككود.
 
-**ما الذي يمكنك فعله اليوم:**
+**ما الذي يمكنك بناؤه:**
 
-* عرِّف كائنات وحقولًا مخصصة على شكل كود (نموذج بيانات مُدار)
-* أنشئ وظائف منطقية مع مشغلات مخصصة (مسارات HTTP، cron، أحداث قاعدة البيانات)
-* حدد المهارات لوكلاء الذكاء الاصطناعي
-* أنشئ مكونات واجهية تُعرَض داخل واجهة مستخدم Twenty
-* انشر التطبيق نفسه عبر مساحات عمل متعددة
+* كائنات مخصّصة، وحقول، وطرق عرض، وعناصر تنقّل لتشكيل نموذج بياناتك
+* دوال منطقية يتم تشغيلها عبر مسارات HTTP، وجداول cron، أو أحداث قاعدة البيانات
+* مكوّنات واجهة أمامية تُعرَض مباشرة داخل واجهة مستخدم Twenty
+* مهارات توسّع قدرات وكلاء الذكاء الاصطناعي في Twenty
+* انشر تطبيقاً عبر مساحات عمل متعددة
 
 ## المتطلبات الأساسية
 
-* Node.js 24+ وYarn 4
-* Docker (لخادم تطوير Twenty المحلي)
+* Node.js 24+
+* Yarn 4
+* Docker (أو مثيل Twenty محلي قيد التشغيل)
 
 ## البدء
 
@@ -29,27 +30,15 @@ description: أنشئ أول تطبيق Twenty خلال دقائق.
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-يدعم المُهيئ وضعين للتحكم في ملفات الأمثلة التي سيتم تضمينها:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> استخدم الخيار `--minimal` لتهيئة تثبيت مصغّر
 
 من هنا يمكنك:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -123,7 +112,7 @@ my-twenty-app/
 بشكل عام:
 
 * **package.json**: يصرّح باسم التطبيق والإصدار والمحرّكات (Node 24+، Yarn 4)، ويضيف `twenty-sdk` بالإضافة إلى نص برمجي `twenty` يفوِّض إلى `twenty` CLI المحلي. شغِّل `yarn twenty help` لعرض جميع الأوامر المتاحة.
-* **.gitignore**: يتجاهل العناصر الشائعة مثل `node_modules` و`.yarn` و`generated/` (عميل مضبوط الأنواع) و`dist/` و`build/` ومجلدات التغطية وملفات السجلات وملفات `.env*`.
+* **.gitignore**: يتجاهل العناصر الشائعة مثل `node_modules` و`.yarn` و`.twenty/` و`dist/` و`build/` ومجلدات التغطية وملفات السجلات وملفات `.env*`.
 * **yarn.lock**، **.yarnrc.yml**، **.yarn/**: تقوم بقفل وتكوين حزمة أدوات Yarn 4 المستخدمة في المشروع.
 * **.nvmrc**: يثبّت إصدار Node.js المتوقع للمشروع.
 * **.oxlintrc.json** و **tsconfig.json**: يقدّمان إعدادات الفحص والتهيئة لـ TypeScript لمصادر TypeScript في تطبيقك.
@@ -167,8 +156,8 @@ export default defineObject({
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
-* سيقوم `yarn twenty dev` بتوليد عميلين API مضبوطي الأنواع تلقائيًا في `node_modules/twenty-sdk/generated`: `CoreApiClient` (لبيانات مساحة العمل عبر `/graphql`) و`MetadataApiClient` (لتكوين مساحة العمل وتحميل الملفات عبر `/metadata`).
-* `yarn twenty entity:add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
+* `yarn twenty dev` سيولّد تلقائياً `CoreApiClient` مضبوط الأنواع (لبيانات مساحة العمل عبر `/graphql`) داخل `node_modules/twenty-client-sdk/`. `MetadataApiClient` (لتهيئة مساحة العمل ورفع الملفات عبر `/metadata`) يأتي مُبنًى مسبقاً ومتاحاً على الفور. استوردْهما من `twenty-client-sdk/core` و`twenty-client-sdk/metadata` على الترتيب.
+* `yarn twenty add` سيضيف ملفات تعريف الكيانات ضمن `src/` لكائناتك المخصّصة، والوظائف، ومكوّنات الواجهة الأمامية، والأدوار، والمهارات، وغير ذلك.
 
 ## المصادقة
 

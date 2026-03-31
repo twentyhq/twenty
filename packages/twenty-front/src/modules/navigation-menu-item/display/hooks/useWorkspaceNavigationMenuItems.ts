@@ -1,6 +1,4 @@
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
@@ -9,22 +7,13 @@ export const useWorkspaceNavigationMenuItems = (): {
 } => {
   const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
-  const views = useAtomStateValue(viewsSelector);
 
-  const workspaceNavViewIds = new Set(
+  const objectMetadataIdsInWorkspaceNav = new Set(
     rawWorkspaceNavigationMenuItems
-      .map((item) => item.viewId)
-      .filter((viewId) => isDefined(viewId)),
-  );
-
-  const objectMetadataIdsInWorkspaceNav = new Set([
-    ...views
-      .filter((view) => workspaceNavViewIds.has(view.id))
-      .map((view) => view.objectMetadataId),
-    ...rawWorkspaceNavigationMenuItems
+      .filter((item) => item.type === NavigationMenuItemType.OBJECT)
       .map((item) => item.targetObjectMetadataId)
       .filter((objectMetadataId) => isDefined(objectMetadataId)),
-  ]);
+  );
 
   return {
     objectMetadataIdsInWorkspaceNav,

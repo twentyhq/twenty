@@ -12,11 +12,11 @@ import {
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
 // To avoid dynamic import issues in Jest
@@ -69,9 +69,9 @@ describe('ApprovedAccessDomainService', () => {
           },
         },
         {
-          provide: FileService,
+          provide: FileUrlService,
           useValue: {
-            signFileUrl: jest
+            signFileByIdUrl: jest
               .fn()
               .mockReturnValue('https://signed-url.com/logo.png'),
           },

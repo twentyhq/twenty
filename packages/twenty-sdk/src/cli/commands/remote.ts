@@ -108,7 +108,7 @@ export const registerRemoteCommands = (program: Command): void => {
             if (!detectedUrl) {
               console.error(
                 chalk.red(
-                  'No local Twenty server found on ports 2020 or 3000.\n' +
+                  'No local Twenty server found.\n' +
                     'Start one with: yarn twenty server start',
                 ),
               );
