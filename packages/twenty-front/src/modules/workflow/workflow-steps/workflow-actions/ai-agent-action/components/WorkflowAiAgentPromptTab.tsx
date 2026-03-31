@@ -1,14 +1,13 @@
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
 import { schemaToFields } from '@/ai/utils/schemaToFields';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -28,6 +27,7 @@ type WorkflowAiAgentPromptTabProps = {
   prompt: string;
   readonly: boolean;
   onPromptChange: (value: string) => void;
+  onActionUpdate?: (action: WorkflowAiAgentAction) => void;
 };
 
 export const WorkflowAiAgentPromptTab = ({
@@ -35,6 +35,7 @@ export const WorkflowAiAgentPromptTab = ({
   prompt,
   readonly,
   onPromptChange,
+  onActionUpdate,
 }: WorkflowAiAgentPromptTabProps) => {
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
@@ -42,8 +43,6 @@ export const WorkflowAiAgentPromptTab = ({
     variant: 'pinned-default',
   });
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
-  const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
-  const flow = useFlowOrThrow();
 
   const [outputSchemaFields, setOutputSchemaFields] = useState<
     OutputSchemaField[]
@@ -79,9 +78,12 @@ export const WorkflowAiAgentPromptTab = ({
       ...response.data?.updateOneAgent,
     });
 
-    await updateWorkflowVersionStep({
-      workflowVersionId: flow.workflowVersionId,
-      step: action,
+    onActionUpdate?.({
+      ...action,
+      settings: {
+        ...action.settings,
+        outputSchema: agentResponseSchemaToOutputSchema(schema),
+      },
     });
   };
 

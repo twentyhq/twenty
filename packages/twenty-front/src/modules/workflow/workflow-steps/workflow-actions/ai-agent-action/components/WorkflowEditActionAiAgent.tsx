@@ -196,6 +196,11 @@ export const WorkflowEditActionAiAgent = ({
             prompt={prompt}
             readonly={actionOptions.readonly === true}
             onPromptChange={handleAgentPromptChange}
+            onActionUpdate={
+              actionOptions.readonly === true
+                ? undefined
+                : actionOptions.onActionUpdate
+            }
           />
         </WorkflowStepBody>
       )}
