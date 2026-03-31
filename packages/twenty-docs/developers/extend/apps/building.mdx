@@ -1290,7 +1290,7 @@ Key points:
   When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
 
   - `TWENTY_API_URL` — Base URL of the Twenty API
-  - `APP_ACCESS_TOKEN_ENV_KEY` — Short-lived key scoped to your application's default function role
+  - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
 
   You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role referenced in `defaultRoleUniversalIdentifier` in your `application-config.ts`.
 </Note>
