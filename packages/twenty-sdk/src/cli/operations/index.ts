@@ -25,6 +25,7 @@ export type { FunctionExecuteOptions } from './execute';
 // Server
 export { serverStart } from './server-start';
 export type { ServerStartOptions, ServerStartResult } from './server-start';
+export { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 
 // Shared types and error codes
 export {

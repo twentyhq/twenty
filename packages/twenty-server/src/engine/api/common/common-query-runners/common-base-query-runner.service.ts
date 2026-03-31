@@ -6,6 +6,9 @@ import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-ru
 
 import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
+import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
+import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
+import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import {
@@ -63,6 +66,12 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly dataArgProcessor: DataArgProcessorService;
   @Inject()
   protected readonly filterArgProcessor: FilterArgProcessorService;
+  @Inject()
+  protected readonly groupByArgProcessor: GroupByArgProcessorService;
+  @Inject()
+  protected readonly orderByArgProcessor: OrderByArgProcessorService;
+  @Inject()
+  protected readonly orderByWithGroupByArgProcessor: OrderByWithGroupByArgProcessorService;
   @Inject()
   protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()

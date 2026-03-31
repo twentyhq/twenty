@@ -73,6 +73,39 @@ export class MarketplaceService {
     }
   }
 
+  async fetchReadmeFromRegistryCdn(
+    packageName: string,
+    version: string,
+  ): Promise<string | null> {
+    const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
+    const url = buildRegistryCdnUrl({
+      cdnBaseUrl,
+      packageName,
+      version,
+      filePath: 'README.md',
+    });
+
+    try {
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Twenty-Marketplace' },
+        timeout: 5_000,
+        responseType: 'text',
+      });
+
+      if (!data || data.trim().length === 0) {
+        return null;
+      }
+
+      return data;
+    } catch {
+      this.logger.debug(
+        `Could not fetch README from CDN for ${packageName}@${version}`,
+      );
+
+      return null;
+    }
+  }
+
   async fetchAppsFromRegistry(): Promise<RegistryPackageInfo[]> {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
 
