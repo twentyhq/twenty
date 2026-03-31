@@ -10708,6 +10708,7 @@ msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Yalnızca zaman damgası ve katılımcılar ekibinizle paylaşılacak."
 
 #. js-lingui-id: 1TNIig
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/command-menu-item/components/RecordShowSidePanelOpenRecordButton.tsx
 msgid "Open"
@@ -12820,6 +12821,11 @@ msgstr "Aktif sürümü gör"
 msgid "See all {relationLabelPlural} linked to this record"
 msgstr "Bu kayda bağlı tüm {relationLabelPlural} listesini görüntüle"
 
+#. js-lingui-id: sFsCOG
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "See data model settings"
+msgstr ""
+
 #. js-lingui-id: f4Lu+X
 #: src/modules/command-menu-item/record/constants/DashboardCommandMenuItemsConfig.tsx
 msgid "See deleted dashboards"
@@ -12849,6 +12855,11 @@ msgstr "Silinmiş iş akışlarını gör"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "See Fields"
 msgstr "Alanları Gör"
+
+#. js-lingui-id: vn4aKq
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "See records"
+msgstr ""
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
