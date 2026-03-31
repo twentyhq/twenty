@@ -9,13 +9,14 @@ import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
+import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
 import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/clearMaintenanceMode';
 import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/setMaintenanceMode';
+import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { EventLogDatePickerInput } from '~/pages/settings/security/event-logs/components/EventLogDatePickerInput';
 
 type MaintenanceFormState = {
   startAt: Date | undefined;
@@ -57,14 +58,23 @@ const StyledStatusRow = styled.div`
 `;
 
 export const SettingsAdminMaintenanceMode = () => {
-  const maintenanceMode = useAtomStateValue(maintenanceModeState);
+  const adminPanelMaintenanceMode = useAtomStateValue(
+    adminPanelMaintenanceModeState,
+  );
+  const setAdminPanelMaintenanceMode = useSetAtomState(
+    adminPanelMaintenanceModeState,
+  );
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
-  const [isEnabled, setIsEnabled] = useState(isDefined(maintenanceMode));
-  const [formState, setFormState] = useState<MaintenanceFormState>(
-    buildInitialFormState(maintenanceMode),
+  const [isEnabled, setIsEnabled] = useState(
+    isDefined(adminPanelMaintenanceMode),
   );
-  const [isSaved, setIsSaved] = useState(isDefined(maintenanceMode));
+  const [formState, setFormState] = useState<MaintenanceFormState>(
+    buildInitialFormState(adminPanelMaintenanceMode),
+  );
+  const [isSaved, setIsSaved] = useState(
+    isDefined(adminPanelMaintenanceMode),
+  );
 
   const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE);
   const [clearMaintenanceModeMutation] = useMutation(CLEAR_MAINTENANCE_MODE);
@@ -77,25 +87,29 @@ export const SettingsAdminMaintenanceMode = () => {
 
       const startISO = state.startAt.toISOString();
       const endISO = state.endAt.toISOString();
+      const linkValue = isNonEmptyString(state.link)
+        ? state.link
+        : undefined;
 
       await setMaintenanceModeMutation({
-        variables: {
-          startAt: startISO,
-          endAt: endISO,
-          link: isNonEmptyString(state.link) ? state.link : undefined,
-        },
+        variables: { startAt: startISO, endAt: endISO, link: linkValue },
       });
 
-      setMaintenanceMode({
-        __typename: 'ClientConfigMaintenanceMode',
+      const maintenanceData = {
         startAt: startISO,
         endAt: endISO,
-        link: isNonEmptyString(state.link) ? state.link : undefined,
+        link: linkValue,
+      };
+
+      setAdminPanelMaintenanceMode(maintenanceData);
+      setMaintenanceMode({
+        __typename: 'ClientConfigMaintenanceMode',
+        ...maintenanceData,
       });
 
       setIsSaved(true);
     },
-    [setMaintenanceModeMutation, setMaintenanceMode],
+    [setMaintenanceModeMutation, setAdminPanelMaintenanceMode, setMaintenanceMode],
   );
 
   const handleToggle = useCallback(
@@ -104,12 +118,13 @@ export const SettingsAdminMaintenanceMode = () => {
 
       if (!checked) {
         await clearMaintenanceModeMutation();
+        setAdminPanelMaintenanceMode(null);
         setMaintenanceMode(null);
         setFormState({ startAt: undefined, endAt: undefined, link: '' });
         setIsSaved(false);
       }
     },
-    [clearMaintenanceModeMutation, setMaintenanceMode],
+    [clearMaintenanceModeMutation, setAdminPanelMaintenanceMode, setMaintenanceMode],
   );
 
   const handleDateChange = useCallback(
@@ -132,14 +147,13 @@ export const SettingsAdminMaintenanceMode = () => {
     saveMaintenanceMode(formState);
   }, [formState, saveMaintenanceMode]);
 
-  const isScheduled = isDefined(maintenanceMode);
+  const isScheduled = isDefined(adminPanelMaintenanceMode);
 
-  const formattedStartDate = isDefined(maintenanceMode)
-    ? new Date(maintenanceMode.startAt).toLocaleDateString(undefined, {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric',
-      })
+  const formattedStartDate = isScheduled
+    ? new Date(adminPanelMaintenanceMode.startAt).toLocaleDateString(
+        undefined,
+        { month: '2-digit', day: '2-digit', year: 'numeric' },
+      )
     : '';
 
   const toggleDescription = isScheduled
@@ -163,12 +177,12 @@ export const SettingsAdminMaintenanceMode = () => {
         {isEnabled && (
           <CardContent>
             <StyledFormContainer>
-              <EventLogDatePickerInput
+              <SettingsDatePickerInput
                 label={t`Start date`}
                 value={formState.startAt}
                 onChange={handleDateChange('startAt')}
               />
-              <EventLogDatePickerInput
+              <SettingsDatePickerInput
                 label={t`End date`}
                 value={formState.endAt}
                 onChange={handleDateChange('endAt')}
