@@ -205,7 +205,7 @@ export const WorkflowOutputSchemaBuilder = ({
                         placeholder={t`e.g., summary, status, count`}
                         defaultValue={field.name}
                         onChange={(value) =>
-                          updateField(field.id, { name: value })
+                          updateField(field.id, { name: value.trim() })
                         }
                         readonly={readonly}
                       />
