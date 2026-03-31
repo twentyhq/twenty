@@ -19,9 +19,14 @@ import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
-import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  SettingsPath,
+} from 'twenty-shared/types';
 import {
   generateILikeFiltersForCompositeFields,
+  getAppPath,
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
@@ -29,6 +34,7 @@ import {
   AppTooltip,
   Avatar,
   H2Title,
+  IconArrowUpRight,
   IconChevronRight,
   IconMail,
   IconReload,
@@ -36,7 +42,7 @@ import {
   Status,
   TooltipDelay,
 } from 'twenty-ui/display';
-import { IconButton, SearchInput } from 'twenty-ui/input';
+import { Button, IconButton, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useQuery } from '@apollo/client/react';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
@@ -87,6 +93,9 @@ const StyledTextContainerWithEllipsis = styled.div`
 `;
 
 const StyledSearchContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -380,6 +389,15 @@ export const SettingsWorkspaceMembers = () => {
                 value={searchFilter}
                 onChange={handleSearchChange}
                 placeholder={t`Search a team member...`}
+              />
+              <Button
+                Icon={IconArrowUpRight}
+                title={t`Open`}
+                variant="secondary"
+                size="medium"
+                to={getAppPath(AppPath.RecordIndexPage, {
+                  objectNamePlural: 'workspaceMembers',
+                })}
               />
             </StyledSearchContainer>
             <StyledTableContainer hasMoreRows={hasNextPage}>
