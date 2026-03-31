@@ -94,7 +94,14 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     for (const mailbox of mailboxList) {
-      const uidValidity = await this.getUidValidity(client, mailbox);
+      const isNoselect = mailbox.flags?.has('\\Noselect');
+
+      // Skip STATUS command for \Noselect container folders — they are
+      // hierarchy-only and don't support STATUS, but we still need them
+      // in pathToExternalIdMap so child folders can resolve parentFolderId.
+      const uidValidity = isNoselect
+        ? null
+        : await this.getUidValidity(client, mailbox);
       const externalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
         : mailbox.path;
