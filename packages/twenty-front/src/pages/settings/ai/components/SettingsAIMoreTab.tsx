@@ -37,8 +37,7 @@ export const SettingsAIMoreTab = () => {
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
 
-  const initialInstructions =
-    currentWorkspace?.aiAdditionalInstructions ?? '';
+  const initialInstructions = currentWorkspace?.aiAdditionalInstructions ?? '';
   const [workspaceInstructions, setWorkspaceInstructions] =
     useState(initialInstructions);
   const [originalInstructions, setOriginalInstructions] =
