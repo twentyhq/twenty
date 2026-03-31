@@ -24,7 +24,6 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { copyFormattedFieldValue } from 'src/engine/twenty-orm/utils/copy-formatted-field-value.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -189,10 +188,7 @@ function formatResultInternal<T>(
     );
 
     // @ts-expect-error legacy noImplicitAny
-    newData[key] = copyFormattedFieldValue({
-      value: formattedFieldValue,
-      fieldType: fieldMetadata.type,
-    });
+    newData[key] = formattedFieldValue;
   }
 
   // After assembling composite fields, handle those with missing required subfields
