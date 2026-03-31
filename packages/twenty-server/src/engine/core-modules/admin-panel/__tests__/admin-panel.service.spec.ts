@@ -5,7 +5,7 @@ import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-pan
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -85,7 +85,7 @@ describe('AdminPanelService', () => {
           },
         },
         {
-          provide: FileService,
+          provide: FileUrlService,
           useValue: {},
         },
         {

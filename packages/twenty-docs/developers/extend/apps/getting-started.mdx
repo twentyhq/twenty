@@ -9,17 +9,18 @@ Apps are currently in alpha testing. The feature is functional but still evolvin
 
 Apps let you extend Twenty with custom objects, fields, logic functions, AI skills, and UI components — all managed as code.
 
-**What you can do today:**
-- Define custom objects and fields as code (managed data model)
-- Build logic functions with custom triggers (HTTP routes, cron, database events)
-- Define skills for AI agents
-- Build front components that render inside Twenty's UI
-- Deploy the same app across multiple workspaces
+**What you can build:**
+- Custom objects, fields, views, and navigation items to shape your data model
+- Logic functions triggered by HTTP routes, cron schedules, or database events
+- Front components that render directly inside Twenty's UI
+- Skills that extend Twenty's AI agents
+- Deploy an app across multiple workspaces
 
 ## Prerequisites
 
-- Node.js 24+ and Yarn 4
-- Docker (for the local Twenty dev server)
+- Node.js 24+
+- Yarn 4
+- Docker (or a running local Twenty instance)
 
 ## Getting Started
 
@@ -28,21 +29,9 @@ Create a new app using the official scaffolder, then authenticate and start deve
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-The scaffolder supports two modes for controlling which example files are included:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 From here you can:
 

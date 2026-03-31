@@ -110,7 +110,7 @@ npx create-twenty-app@latest my-app -m
 
 ## Local server
 
-The scaffolder can start a local Twenty dev server for you (all-in-one Docker image with PostgreSQL, Redis, server, and worker). You can also manage it manually:
+The scaffolder can start a local Twenty dev server for you (all-in-one Docker image with PostgreSQL, Redis, server, and worker on port 2020). These commands only apply to the Docker-based dev server — they do not manage a Twenty instance started from source (e.g. `npx nx start twenty-server` on port 3000). You can also manage it manually:
 
 ```bash
 yarn twenty server start     # Start (pulls image if needed)
