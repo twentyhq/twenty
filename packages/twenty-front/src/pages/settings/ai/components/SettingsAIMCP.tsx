@@ -4,7 +4,6 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type Monaco } from '@monaco-editor/react';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { CodeEditor, IconButton } from 'twenty-ui/input';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
@@ -33,6 +32,11 @@ const StyledCoverCardContent = styled(CardContent)`
   padding: 0;
 `;
 
+const StyledCopyButton = styled(IconButton)`
+  background-color: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+`;
+
 const StyledEditorContainer = styled.div`
   .monaco-editor,
   .monaco-editor .overflow-guard {
@@ -45,31 +49,6 @@ const StyledEditorContainer = styled.div`
   }
 `;
 
-const MCP_CODE_EDITOR_THEME_ID = 'mcp-config-theme';
-
-// is this standard?
-// maybe we should use the base code editor theme?
-const defineMcpCodeEditorTheme = (monaco: Monaco) => {
-  monaco.editor.defineTheme(MCP_CODE_EDITOR_THEME_ID, {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [
-      { token: 'string.key.json', foreground: 'D19A66' },
-      { token: 'string.value.json', foreground: '98C379' },
-      { token: 'number.json', foreground: '98C379' },
-      { token: 'keyword.json', foreground: '98C379' },
-      { token: 'delimiter.bracket.json', foreground: 'ABB2BF' },
-      { token: 'delimiter.array.json', foreground: 'ABB2BF' },
-      { token: 'delimiter.colon.json', foreground: 'ABB2BF' },
-      { token: 'delimiter.comma.json', foreground: 'ABB2BF' },
-    ],
-    colors: {
-      'editor.background': '#00000000',
-    },
-  });
-  monaco.editor.setTheme(MCP_CODE_EDITOR_THEME_ID);
-};
-
 type McpAuthMethod = 'oauth' | 'api-key';
 
 export const SettingsAIMCP = () => {
@@ -79,8 +58,8 @@ export const SettingsAIMCP = () => {
   const { colorScheme } = useContext(ThemeContext);
   const coverImage =
     colorScheme === 'light'
-      ? '/images/ai/ai-mcp-cover-light.png'
-      : '/images/ai/ai-mcp-cover-dark.png';
+      ? '/images/ai/ai-mcp-cover-light.svg'
+      : '/images/ai/ai-mcp-cover-dark.svg';
 
   const oauthConfig = JSON.stringify(
     {
@@ -165,7 +144,7 @@ export const SettingsAIMCP = () => {
                 dropdownWidth={GenericDropdownContentWidth.Medium}
                 dropdownOffset={{ x: 0, y: 4 }}
               />
-              <IconButton
+              <StyledCopyButton
                 Icon={IconCopy}
                 onClick={() => {
                   copyToClipboard(
@@ -179,7 +158,6 @@ export const SettingsAIMCP = () => {
             <CodeEditor
               value={activeConfig}
               language="json"
-              onMount={(_editor, monaco) => defineMcpCodeEditorTheme(monaco)}
               options={codeEditorOptions}
               height={editorHeight}
             />
