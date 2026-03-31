@@ -1,4 +1,4 @@
-import { FeatureDataType } from '@/sections/Feature/types';
+import type { FeatureDataType } from '@/sections/Feature/types';
 
 export const FEATURE_DATA: FeatureDataType = {
   eyebrow: {
