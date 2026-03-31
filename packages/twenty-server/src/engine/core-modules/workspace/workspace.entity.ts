@@ -19,6 +19,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WorkspacePlan } from 'src/engine/core-modules/workspace/enums/workspace-plan.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -56,6 +57,10 @@ import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webh
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
+});
+
+registerEnumType(WorkspacePlan, {
+  name: 'WorkspacePlan',
 });
 
 @Check(
@@ -176,6 +181,15 @@ export class WorkspaceEntity {
   })
   @Index('IDX_WORKSPACE_ACTIVATION_STATUS')
   activationStatus: WorkspaceActivationStatus;
+
+  @Field(() => WorkspacePlan)
+  @Column({
+    type: 'enum',
+    enumName: 'workspace_plan_enum',
+    enum: WorkspacePlan,
+    default: WorkspacePlan.FREE,
+  })
+  plan: WorkspacePlan;
 
   @Column({ type: 'timestamptz', nullable: true })
   suspendedAt: Date | null;

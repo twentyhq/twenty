@@ -17,6 +17,37 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import {
+  BILLING_PLAN_FEATURES,
+  BILLING_PRICES_DISPLAY_MXN,
+  getFormattedPrice,
+} from 'src/engine/core-modules/billing/constants/billing-prices-mxn.constant';
+
+export interface PlanDetails {
+  planKey: BillingPlanKey;
+  name: string;
+  description: string;
+  features: string[];
+  limits: {
+    users: number;
+    records: number;
+    aiCreditsPerMonth: number;
+  };
+  prices: {
+    monthly: {
+      amount: number | null;
+      currency: string;
+      formatted: string;
+      savings?: string;
+    };
+    yearly: {
+      amount: number | null;
+      currency: string;
+      formatted: string;
+      savings?: string;
+    };
+  };
+}
 
 @Injectable()
 export class BillingPlanService {
@@ -146,5 +177,51 @@ export class BillingPlanService {
       meteredProductsPrices,
       licensedProductsPrices,
     };
+  }
+
+  async getPlanDetails(planKey: BillingPlanKey): Promise<PlanDetails> {
+    const features = BILLING_PLAN_FEATURES[planKey];
+    const prices = BILLING_PRICES_DISPLAY_MXN[planKey];
+
+    if (!features || !prices) {
+      throw new BillingException(
+        `Plan ${planKey} not found`,
+        BillingExceptionCode.BILLING_PLAN_NOT_FOUND,
+      );
+    }
+
+    return {
+      planKey,
+      name: features.name,
+      description: features.description,
+      features: features.features,
+      limits: features.limits,
+      prices: {
+        monthly: {
+          amount: prices.monthly.amount,
+          currency: prices.monthly.currency,
+          formatted: prices.monthly.formatted,
+          savings: prices.monthly.savings,
+        },
+        yearly: {
+          amount: prices.yearly.amount,
+          currency: prices.yearly.currency,
+          formatted: prices.yearly.formatted,
+          savings: prices.yearly.savings,
+        },
+      },
+    };
+  }
+
+  async listPlanDetails(): Promise<PlanDetails[]> {
+    const planKeys = Object.values(BillingPlanKey);
+    const planDetails: PlanDetails[] = [];
+
+    for (const planKey of planKeys) {
+      const details = await this.getPlanDetails(planKey);
+      planDetails.push(details);
+    }
+
+    return planDetails;
   }
 }
