@@ -29,6 +29,8 @@ export type ChipProps = {
   disabled?: boolean;
   clickable?: boolean;
   label: string;
+  tooltipLabel?: string;
+  alwaysShowTooltip?: boolean;
   isLabelHidden?: boolean;
   isBold?: boolean;
   maxWidth?: number;
@@ -172,6 +174,8 @@ const renderRightComponent = (
 export const Chip = ({
   size = ChipSize.Small,
   label,
+  tooltipLabel,
+  alwaysShowTooltip = false,
   isLabelHidden = false,
   isBold = false,
   disabled = false,
@@ -200,7 +204,12 @@ export const Chip = ({
     >
       {leftComponent}
       {!isLabelHidden && isDefined(label) && isNonEmptyString(label) ? (
-        <OverflowingTextWithTooltip size={size} text={label} />
+        <OverflowingTextWithTooltip
+          size={size}
+          text={label}
+          tooltipContent={tooltipLabel}
+          alwaysShowTooltip={alwaysShowTooltip}
+        />
       ) : !forceEmptyText && !isLabelHidden ? (
         <StyledDiv>{emptyLabel}</StyledDiv>
       ) : (

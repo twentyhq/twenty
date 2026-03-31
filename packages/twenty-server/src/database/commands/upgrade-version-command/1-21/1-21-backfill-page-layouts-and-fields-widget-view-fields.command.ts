@@ -87,7 +87,7 @@ const isRelationTargetAvailable = (
 };
 
 @Command({
-  name: 'upgrade:1-20:backfill-page-layouts-and-fields-widget-view-fields',
+  name: 'upgrade:1-21:backfill-page-layouts-and-fields-widget-view-fields',
   description:
     'Backfill RECORD_PAGE page layouts, sync FIELDS_WIDGET view fields, create FIELD widgets, and enable IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
 })
@@ -594,7 +594,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       }
     }
 
-    // Build object ID → objectMetadata map
+    // Build object ID -> objectMetadata map
     const objectById = new Map<string, FlatObjectMetadata>();
 
     for (const obj of Object.values(
@@ -605,7 +605,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       }
     }
 
-    // Build object ID → RECORD_PAGE layout map
+    // Build object ID -> RECORD_PAGE layout map
     const recordPageLayoutByObjectId = new Map<
       string,
       { id: string; universalIdentifier: string }
@@ -626,7 +626,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       }
     }
 
-    // Build pageLayoutId → home tab map
+    // Build pageLayoutId -> home tab map
     const homeTabByPageLayoutId = new Map<
       string,
       {
@@ -655,7 +655,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
     // Group fields by objectMetadataId
     const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
 
-    // Map morphId → all field IDs sharing that morphId (for dedup)
+    // Map morphId -> all field IDs sharing that morphId (for dedup)
     const fieldIdsByMorphId = new Map<string, string[]>();
 
     for (const field of Object.values(
