@@ -272,7 +272,7 @@ export const EXPECTED_MANIFEST: Manifest = {
         },
       ],
       type: FieldType.SELECT,
-      universalIdentifier: '8b9c0d1e-2f3a-4b5c-8d7e-8f9a0b1c2d3e',
+      universalIdentifier: 'b602dbd9-e511-49ce-b6d3-b697218dc69c',
     },
     {
       objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
@@ -280,7 +280,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Priority',
       name: 'priority',
       type: FieldType.NUMBER,
-      universalIdentifier: '7a8b9c0d-1e2f-4a4b-8c6d-7e8f9a0b1c2d',
+      universalIdentifier: '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
     },
     {
       label: 'Recipient',
