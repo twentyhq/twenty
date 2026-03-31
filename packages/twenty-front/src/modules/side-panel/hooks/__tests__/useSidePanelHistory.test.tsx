@@ -100,10 +100,16 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenuHistory.goBackFromSidePanel();
-      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
     });
 
+    // Stack must be cleared immediately after goBackFromSidePanel(), without
+    // waiting for the close animation cleanup — otherwise stale entries block
+    // reopening the same record via openRecordInSidePanel.
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
+
+    act(() => {
+      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
+    });
     expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
       SidePanelPages.CommandMenuDisplay,
     );
