@@ -97,23 +97,6 @@ const StyledFilterInput = styled.input`
   }
 `;
 
-const StyledFilterSelect = styled.select`
-  appearance: none;
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.primary};
-  cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.md};
-  outline: none;
-  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
-  width: 100%;
-  box-sizing: border-box;
-
-  &:focus {
-    border-color: ${({ theme }) => theme.color.blue};
-  }
-`;
 
 const INITIAL_FILTER: CoachingFilterValues = { searchTerm: '' };
 
@@ -161,9 +144,16 @@ export const CoachingLeftPanel = ({
         />
 
         <StyledFilterLabel>Full Name</StyledFilterLabel>
-        <StyledFilterSelect>
-          <option value="">Search...</option>
-        </StyledFilterSelect>
+        <StyledFilterInput
+          placeholder="Search..."
+          value={filterValues.searchTerm}
+          onChange={(event) =>
+            onFilterChange({
+              ...filterValues,
+              searchTerm: event.target.value,
+            })
+          }
+        />
       </StyledFiltersContainer>
       <CoachingCustomerList
         customers={customers}
