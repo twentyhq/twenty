@@ -169,6 +169,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'viewSort':
       case 'permissionFlag':
       case 'objectPermission':
+      case 'fieldPermission':
       case 'webhook': {
         if (!isDefined(idByUniversalIdentifier)) {
           return action;

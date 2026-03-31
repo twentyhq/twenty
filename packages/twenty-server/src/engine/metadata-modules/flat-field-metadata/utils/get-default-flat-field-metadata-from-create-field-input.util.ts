@@ -53,6 +53,7 @@ export const getDefaultFlatFieldMetadata = ({
     relationTargetFieldMetadataUniversalIdentifier: null,
     viewFilterUniversalIdentifiers: [],
     viewFieldUniversalIdentifiers: [],
+    fieldPermissionUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],

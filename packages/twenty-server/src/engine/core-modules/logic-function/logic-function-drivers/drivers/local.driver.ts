@@ -113,6 +113,7 @@ export class LocalDriver implements LogicFunctionDriver {
 
     await this.sdkClientArchiveService.downloadAndExtractToPackage({
       workspaceId: flatApplication.workspaceId,
+      applicationId: flatApplication.id,
       applicationUniversalIdentifier,
       targetPackagePath: sdkPackagePath,
     });

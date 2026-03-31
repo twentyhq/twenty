@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceMetadataVersionException,
@@ -19,6 +20,7 @@ export class WorkspaceMetadataVersionService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async incrementMetadataVersion(workspaceId: string): Promise<void> {
@@ -46,6 +48,11 @@ export class WorkspaceMetadataVersionService {
     await this.workspaceCacheStorageService.setMetadataVersion(
       workspaceId,
       newMetadataVersion,
+    );
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
     );
   }
 }

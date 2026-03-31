@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { type DataSource, type EntityManager } from 'typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { type DataSource, type EntityManager, Repository } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   PermissionsException,
@@ -14,18 +18,35 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @Injectable()
 export class WorkspaceDataSourceService {
   constructor(
-    private readonly dataSourceService: DataSourceService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly dataSourceService: DataSourceService,
   ) {}
 
   public async checkSchemaExists(workspaceId: string) {
-    const dataSource =
+    const isDataSourceMigrated = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_DATASOURCE_MIGRATED,
+      workspaceId,
+    );
+
+    if (isDataSourceMigrated) {
+      const workspace = await this.workspaceRepository.findOne({
+        select: ['databaseSchema'],
+        where: { id: workspaceId },
+      });
+
+      return isNonEmptyString(workspace?.databaseSchema);
+    }
+
+    const dataSources =
       await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
         workspaceId,
       );
 
-    return dataSource.length > 0;
+    return dataSources.length > 0;
   }
 
   /**

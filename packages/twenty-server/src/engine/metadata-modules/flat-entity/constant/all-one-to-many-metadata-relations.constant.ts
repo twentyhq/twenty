@@ -42,7 +42,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       metadataName: 'viewSort',
       universalFlatEntityForeignKeyAggregator: 'viewSortUniversalIdentifiers',
     },
-    fieldPermissions: null,
+    fieldPermissions: {
+      metadataName: 'fieldPermission',
+      flatEntityForeignKeyAggregator: 'fieldPermissionIds',
+      universalFlatEntityForeignKeyAggregator:
+        'fieldPermissionUniversalIdentifiers',
+    },
     indexFieldMetadatas: null,
     viewFields: {
       metadataName: 'viewField',
@@ -91,7 +96,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'objectPermissionUniversalIdentifiers',
     },
-    fieldPermissions: null,
+    fieldPermissions: {
+      metadataName: 'fieldPermission',
+      flatEntityForeignKeyAggregator: 'fieldPermissionIds',
+      universalFlatEntityForeignKeyAggregator:
+        'fieldPermissionUniversalIdentifiers',
+    },
     views: {
       metadataName: 'view',
       flatEntityForeignKeyAggregator: 'viewIds',
@@ -161,7 +171,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'permissionFlagUniversalIdentifiers',
     },
-    fieldPermissions: null,
+    fieldPermissions: {
+      metadataName: 'fieldPermission',
+      flatEntityForeignKeyAggregator: 'fieldPermissionIds',
+      universalFlatEntityForeignKeyAggregator:
+        'fieldPermissionUniversalIdentifiers',
+    },
     rowLevelPermissionPredicates: {
       metadataName: 'rowLevelPermissionPredicate',
       flatEntityForeignKeyAggregator: 'rowLevelPermissionPredicateIds',
@@ -178,6 +193,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   roleTarget: {},
   permissionFlag: {},
   objectPermission: {},
+  fieldPermission: {},
   pageLayout: {
     tabs: {
       metadataName: 'pageLayoutTab',

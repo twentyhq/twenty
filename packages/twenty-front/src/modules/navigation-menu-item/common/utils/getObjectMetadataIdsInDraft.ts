@@ -1,28 +1,18 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-type NavigationMenuItemDraftForObjectIds = {
-  viewId?: string | null;
-  targetObjectMetadataId?: string | null;
-};
-
-type ViewForObjectIds = {
-  id: string;
-  objectMetadataId: string;
-};
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getObjectMetadataIdsInDraft = (
-  draft: NavigationMenuItemDraftForObjectIds[],
-  views: ViewForObjectIds[],
+  draft: Pick<NavigationMenuItem, 'type' | 'targetObjectMetadataId'>[],
 ): Set<string> =>
   draft.reduce<Set<string>>((ids, item) => {
-    const view = isDefined(item.viewId)
-      ? views.find((view) => view.id === item.viewId)
-      : undefined;
-    if (isDefined(view)) {
-      ids.add(view.objectMetadataId);
+    if (item.type !== NavigationMenuItemType.OBJECT) {
+      return ids;
     }
+
     if (isDefined(item.targetObjectMetadataId)) {
       ids.add(item.targetObjectMetadataId);
     }
+
     return ids;
   }, new Set<string>());

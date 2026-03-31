@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -95,8 +96,9 @@ export class FlatViewFieldValidatorService {
     }
 
     if (
+      flatView.type !== ViewType.FIELDS_WIDGET &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
-      updatedFlatViewField.fieldMetadataUniversalIdentifier
+        updatedFlatViewField.fieldMetadataUniversalIdentifier
     ) {
       const otherFlatViewFields =
         findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
@@ -127,6 +129,7 @@ export class FlatViewFieldValidatorService {
       flatViewFieldMaps: optimisticFlatViewFieldMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+      flatViewMaps,
     },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
@@ -177,11 +180,18 @@ export class FlatViewFieldValidatorService {
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
       existingFlatViewField.fieldMetadataUniversalIdentifier
     ) {
-      validationResult.errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`Label identifier view field cannot be deleted`,
-        userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
+      const flatView = findFlatEntityByUniversalIdentifier({
+        universalIdentifier: existingFlatViewField.viewUniversalIdentifier,
+        flatEntityMaps: flatViewMaps,
       });
+
+      if (!isDefined(flatView) || flatView.type !== ViewType.FIELDS_WIDGET) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Label identifier view field cannot be deleted`,
+          userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
+        });
+      }
     }
 
     return validationResult;
@@ -289,8 +299,9 @@ export class FlatViewFieldValidatorService {
     }
 
     if (
+      flatView.type !== ViewType.FIELDS_WIDGET &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
-      flatViewFieldToValidate.fieldMetadataUniversalIdentifier
+        flatViewFieldToValidate.fieldMetadataUniversalIdentifier
     ) {
       validationResult.errors.push(
         ...validateLabelIdentifierFieldMetadataIdFlatViewField({
@@ -299,6 +310,7 @@ export class FlatViewFieldValidatorService {
         }),
       );
     } else if (
+      flatView.type !== ViewType.FIELDS_WIDGET &&
       otherFlatViewFields.some(
         (flatViewField) =>
           flatViewField.fieldMetadataUniversalIdentifier ===

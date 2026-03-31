@@ -9,18 +9,19 @@ Uygulamalar şu anda alfa testinde. Özellik işlevsel ancak hâlâ gelişmekte.
 
 Uygulamalar, Twenty'yi özel nesneler, alanlar, mantık işlevleri, Yapay Zeka yetenekleri ve UI bileşenleriyle genişletmenizi sağlar — tümü kod olarak yönetilir.
 
-**Bugün Yapabilecekleriniz:**
+**Oluşturabilecekleriniz:**
 
-* Özel nesneleri ve alanları kod olarak tanımlayın (yönetilen veri modeli)
-* Özel tetikleyicilerle mantık işlevleri oluşturun (HTTP routes, cron, database events)
-* Yapay zekâ ajanları için becerileri tanımlayın
-* Twenty'nin UI'si içinde görüntülenen ön bileşenler oluşturun
-* Aynı uygulamayı birden çok çalışma alanına dağıtın
+* Veri modelinizi şekillendirmek için özel nesneler, alanlar, görünümler ve gezinti öğeleri
+* HTTP rotaları, cron zamanlamaları veya veritabanı olayları tarafından tetiklenen mantık işlevleri
+* Twenty'nin UI'si içinde doğrudan görüntülenen ön uç bileşenleri
+* Twenty'nin yapay zeka ajanlarını genişleten beceriler
+* Bir uygulamayı birden çok çalışma alanına dağıtın
 
 ## Ön Gereksinimler
 
-* Node.js 24+ ve Yarn 4
-* Docker (yerel Twenty geliştirme sunucusu için)
+* Node.js 24+
+* Yarn 4
+* Docker (veya çalışan yerel bir Twenty örneği)
 
 ## Başlarken
 
@@ -29,27 +30,15 @@ Resmi iskelet oluşturucu aracını kullanarak yeni bir uygulama oluşturun, ard
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-İskelet oluşturucu, hangi örnek dosyaların dahil edileceğini kontrol etmek için iki modu destekler:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Minimal bir kurulum iskeleti oluşturmak için `--minimal` seçeneğini kullanın
 
 Buradan şunları yapabilirsiniz:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -123,7 +112,7 @@ my-twenty-app/
 Genel hatlarıyla:
 
 * **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve `twenty-sdk` ile yerel `twenty` CLI'sine yetki devreden bir `twenty` betiği ekler. Tüm mevcut komutları listelemek için `yarn twenty help` komutunu çalıştırın.
-* **.gitignore**: `node_modules`, `.yarn`, `generated/` (türlendirilmiş istemci), `dist/`, `build/`, kapsam klasörleri, günlük dosyaları ve `.env*` dosyaları gibi yaygın artifaktları yok sayar.
+* **.gitignore**: `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, kapsam klasörleri, günlük dosyaları ve `.env*` dosyaları gibi yaygın artifaktları yok sayar.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Proje tarafından kullanılan Yarn 4 araç zincirini kilitler ve yapılandırır.
 * **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
 * **.oxlintrc.json** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
@@ -167,8 +156,8 @@ export default defineObject({
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
-* `yarn twenty dev`, `node_modules/twenty-sdk/generated` içinde iki tiplendirilmiş API istemcisini otomatik olarak oluşturur: `CoreApiClient` (`/graphql` üzerinden çalışma alanı verileri için) ve `MetadataApiClient` (çalışma alanı yapılandırması ve `/metadata` üzerinden dosya yüklemeleri için).
-* `yarn twenty entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz, rolleriniz, yetenekleriniz ve daha fazlası için `src/` altında varlık tanım dosyaları ekler.
+* `yarn twenty dev`, türlendirilmiş `CoreApiClient`'i (çalışma alanı verileri için `/graphql` aracılığıyla) `node_modules/twenty-client-sdk/` içine otomatik olarak oluşturur. `MetadataApiClient` (çalışma alanı yapılandırması ve dosya yüklemeleri için `/metadata` aracılığıyla) önceden derlenmiş olarak gelir ve hemen kullanılabilir. Bunları sırasıyla `twenty-client-sdk/core` ve `twenty-client-sdk/metadata` içinden içe aktarın.
+* `yarn twenty add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz, rolleriniz, yetenekleriniz ve daha fazlası için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
 

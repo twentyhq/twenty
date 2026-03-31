@@ -9,18 +9,19 @@ Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stál
 
 Aplikace vám umožňují rozšířit Twenty o vlastní objekty, pole, logické funkce, AI schopnosti a komponenty uživatelského rozhraní — vše je spravováno jako kód.
 
-**Co můžete dělat už dnes:**
+**Co můžete vytvořit:**
 
-* Definujte vlastní objekty a pole jako kód (spravovaný datový model)
-* Vytvářejte logické funkce s vlastními spouštěči (HTTP routy, cron, databázové události)
-* Definujte dovednosti agentů AI
-* Vytvářejte frontendové komponenty, které se vykreslují uvnitř uživatelského rozhraní Twenty
-* Nasazujte stejnou aplikaci do více pracovních prostorů
+* Vlastní objekty, pole, zobrazení a položky navigace pro utváření vašeho datového modelu
+* Logické funkce spouštěné trasami HTTP, plánovačem cron nebo událostmi databáze
+* Frontendové komponenty, které se vykreslují přímo uvnitř uživatelského rozhraní Twenty
+* Dovednosti, které rozšiřují možnosti AI agentů Twenty
+* Nasazení aplikace napříč více pracovními prostory
 
 ## Předpoklady
 
-* Node.js 24+ a Yarn 4
-* Docker (pro místní vývojový server Twenty)
+* Node.js 24+
+* Yarn 4
+* Docker (nebo běžící lokální instance Twenty)
 
 ## Začínáme
 
@@ -29,27 +30,15 @@ Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a 
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Nástroj pro generování kostry podporuje dva režimy pro řízení toho, které ukázkové soubory jsou zahrnuty:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Použijte volbu `--minimal` k vygenerování minimální instalace
 
 Odtud můžete:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -123,7 +112,7 @@ S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.
 V kostce:
 
 * **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skript `twenty`, který deleguje na lokální `twenty` CLI. Spusťte `yarn twenty help` pro výpis všech dostupných příkazů.
-* **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `generated/` (typovaný klient), `dist/`, `build/`, složky s coverage, logy a soubory `.env*`.
+* **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, složky s coverage, soubory s logy a soubory `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
 * **.oxlintrc.json** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
@@ -167,8 +156,8 @@ export default defineObject({
 
 Pozdější příkazy přidají další soubory a složky:
 
-* `yarn twenty dev` automaticky vygeneruje dva typované API klienty v `node_modules/twenty-sdk/generated`: `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) a `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`).
-* `yarn twenty entity:add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
+* `yarn twenty dev` automaticky vygeneruje typovaný `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) do `node_modules/twenty-client-sdk/`. `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`) je dodáván předpřipravený a je okamžitě k dispozici. Importujte je z `twenty-client-sdk/core` a `twenty-client-sdk/metadata` v uvedeném pořadí.
+* `yarn twenty add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
 
 ## Ověření
 

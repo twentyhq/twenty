@@ -9,17 +9,18 @@ Apps are currently in alpha testing. The feature is functional but still evolvin
 
 Apps let you extend Twenty with custom objects, fields, logic functions, AI skills, and UI components — all managed as code.
 
-**What you can do today:**
-- Define custom objects and fields as code (managed data model)
-- Build logic functions with custom triggers (HTTP routes, cron, database events)
-- Define skills for AI agents
-- Build front components that render inside Twenty's UI
-- Deploy the same app across multiple workspaces
+**What you can build:**
+- Custom objects, fields, views, and navigation items to shape your data model
+- Logic functions triggered by HTTP routes, cron schedules, or database events
+- Front components that render directly inside Twenty's UI
+- Skills that extend Twenty's AI agents
+- Deploy an app across multiple workspaces
 
 ## Prerequisites
 
-- Node.js 24+ and Yarn 4
-- Docker (for the local Twenty dev server)
+- Node.js 24+
+- Yarn 4
+- Docker (or a running local Twenty instance)
 
 ## Getting Started
 
@@ -28,27 +29,15 @@ Create a new app using the official scaffolder, then authenticate and start deve
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-The scaffolder supports two modes for controlling which example files are included:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Use `--minimal` option to scaffold a minimal installation
 
 From here you can:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -122,7 +111,7 @@ With `--minimal`, only the core files are created (`application-config.ts`, `rol
 At a high level:
 
 - **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus a `twenty` script that delegates to the local `twenty` CLI. Run `yarn twenty help` to list all available commands.
-- **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
+- **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, coverage folders, log files, and `.env*` files.
 - **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
 - **.nvmrc**: Pins the Node.js version expected by the project.
 - **.oxlintrc.json** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
@@ -165,8 +154,8 @@ export default defineObject({
 
 Later commands will add more files and folders:
 
-- `yarn twenty dev` will auto-generate two typed API clients in `node_modules/twenty-sdk/generated`: `CoreApiClient` (for workspace data via `/graphql`) and `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`).
-- `yarn twenty entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
+- `yarn twenty dev` will auto-generate the typed `CoreApiClient` (for workspace data via `/graphql`) into `node_modules/twenty-client-sdk/`. The `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`) ships pre-built and is available immediately. Import them from `twenty-client-sdk/core` and `twenty-client-sdk/metadata` respectively.
+- `yarn twenty add` will add entity definition files under `src/` for your custom objects, functions, front components, roles, skills, and more.
 
 ## Authentication
 

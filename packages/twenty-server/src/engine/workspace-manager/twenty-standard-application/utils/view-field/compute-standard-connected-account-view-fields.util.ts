@@ -69,21 +69,6 @@ export const computeStandardConnectedAccountViewFields = (
       },
     }),
 
-    connectedAccountRecordPageFieldsHandle: createStandardViewFieldFlatMetadata(
-      {
-        ...args,
-        objectName: 'connectedAccount',
-        context: {
-          viewName: 'connectedAccountRecordPageFields',
-          viewFieldName: 'handle',
-          fieldName: 'handle',
-          position: 0,
-          isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      },
-    ),
     connectedAccountRecordPageFieldsProvider:
       createStandardViewFieldFlatMetadata({
         ...args,

@@ -11,12 +11,8 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import {
-  FeatureFlagKey,
-  RowLevelPermissionPredicateOperand,
-} from 'twenty-shared/types';
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -36,12 +32,6 @@ describe('group-by with records respects row-level permission predicates', () =>
   let companyNameFieldMetadataId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: {
@@ -175,12 +165,6 @@ describe('group-by with records respects row-level permission predicates', () =>
         input: { idToDelete: customRoleId },
       });
     }
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
   });
 
   it('filters records in group-by results based on RLS predicates', async () => {

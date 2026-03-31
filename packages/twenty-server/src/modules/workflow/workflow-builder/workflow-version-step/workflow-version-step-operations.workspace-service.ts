@@ -432,16 +432,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const workflowVersion =
-          await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-            workflowVersionId,
-            workspaceId,
-          });
-
         const newAgent = await this.agentService.createOneAgent(
           {
-            label:
-              'Workflow Agent' + workflowVersion.workflowId.substring(0, 4),
+            label: 'Workflow Agent ' + baseStep.id.substring(0, 4),
             icon: 'IconRobot',
             description: '',
             prompt:
@@ -707,9 +700,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           workspaceId,
         });
 
+        const clonedStepId = v4();
+
         const clonedAgent = await this.agentService.createOneAgent(
           {
-            label: existingAgent.label,
+            label: existingAgent.label + ' ' + clonedStepId.substring(0, 4),
             icon: existingAgent.icon ?? undefined,
             description: existingAgent.description ?? undefined,
             prompt: existingAgent.prompt,
@@ -723,7 +718,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         return {
           ...step,
-          id: v4(),
+          id: clonedStepId,
           nextStepIds: [],
           position: duplicatedStepPosition,
           settings: {

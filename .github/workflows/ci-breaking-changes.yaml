@@ -36,6 +36,9 @@ jobs:
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
+        credentials:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: postgres
@@ -50,10 +53,16 @@ jobs:
           --health-retries 5
       redis:
         image: redis
+        credentials:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
       clickhouse:
         image: clickhouse/clickhouse-server:25.8.8
+        credentials:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
           CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
@@ -77,6 +86,8 @@ jobs:
         run: |
           echo "Attempting to merge main into current branch..."
 
+          git config user.email "ci@twenty.com"
+          git config user.name "CI"
           git fetch origin main
 
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -90,8 +101,8 @@ jobs:
             echo "❌ Merge failed due to conflicts"
             echo "⚠️ Falling back to comparing current branch against main without merge"
 
-            # Abort the failed merge
-            git merge --abort
+            # Abort the failed merge (may not exist if merge never started)
+            git merge --abort 2>/dev/null || true
 
             echo "merged=false" >> $GITHUB_OUTPUT
             echo "BRANCH_STATE=conflicts" >> $GITHUB_ENV
@@ -143,7 +154,6 @@ jobs:
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
           npx nx run twenty-server:database:init:prod
-          npx nx run twenty-server:database:migrate:prod
 
       - name: Seed current branch database with test data
         run: |
@@ -296,7 +306,6 @@ jobs:
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
           npx nx run twenty-server:database:init:prod
-          npx nx run twenty-server:database:migrate:prod
 
       - name: Seed main branch database with test data
         run: |
@@ -395,12 +404,36 @@ jobs:
           # Clean up temp directory
           rm -rf /tmp/current-branch-files
 
+      - name: Validate downloaded schema files
+        id: validate-schemas
+        run: |
+          valid=true
+
+          for file in main-schema-introspection.json current-schema-introspection.json \
+                      main-metadata-schema-introspection.json current-metadata-schema-introspection.json \
+                      main-rest-api.json current-rest-api.json \
+                      main-rest-metadata-api.json current-rest-metadata-api.json; do
+            if [ ! -f "$file" ] || ! jq empty "$file" 2>/dev/null; then
+              echo "::warning::Invalid or missing schema file: $file"
+              valid=false
+            fi
+          done
+
+          echo "valid=$valid" >> $GITHUB_OUTPUT
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
       - name: Install OpenAPI Diff Tool
         run: |
           # Using the Java-based OpenAPITools/openapi-diff via Docker
           echo "Using OpenAPITools/openapi-diff via Docker"
 
       - name: Generate GraphQL Schema Diff Reports
+        if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== INSTALLING GRAPHQL INSPECTOR CLI ==="
           npm install -g @graphql-inspector/cli
@@ -411,7 +444,6 @@ jobs:
           echo "Checking GraphQL schema for changes..."
           if graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >/dev/null 2>&1; then
             echo "✅ No changes in GraphQL schema"
-            # Don't create a diff file for no changes
           else
             echo "⚠️ Changes detected in GraphQL schema, generating report..."
             echo "# GraphQL Schema Changes" > graphql-schema-diff.md
@@ -429,7 +461,6 @@ jobs:
           echo "Checking GraphQL metadata schema for changes..."
           if graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >/dev/null 2>&1; then
             echo "✅ No changes in GraphQL metadata schema"
-            # Don't create a diff file for no changes
           else
             echo "⚠️ Changes detected in GraphQL metadata schema, generating report..."
             echo "# GraphQL Metadata Schema Changes" > graphql-metadata-diff.md
@@ -448,6 +479,7 @@ jobs:
           ls -la *-diff.md 2>/dev/null || echo "No diff files generated (no changes detected)"
 
       - name: Check REST API Breaking Changes
+        if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
 
@@ -516,6 +548,7 @@ jobs:
           fi
 
       - name: Check REST Metadata API Breaking Changes
+        if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== CHECKING REST METADATA API FOR BREAKING CHANGES ==="
 

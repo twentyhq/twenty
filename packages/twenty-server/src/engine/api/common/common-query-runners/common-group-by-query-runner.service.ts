@@ -405,6 +405,15 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     return {
       ...args,
+      groupBy: this.groupByArgProcessor.process({
+        groupBy: args.groupBy,
+      }),
+      orderBy: this.orderByWithGroupByArgProcessor.process({
+        orderBy: args.orderBy,
+      }),
+      orderByForRecords: this.orderByArgProcessor.process({
+        orderBy: args.orderByForRecords,
+      }),
       filter: this.filterArgProcessor.process({
         filter: args.filter,
         flatObjectMetadata,
