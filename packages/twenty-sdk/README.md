@@ -186,7 +186,7 @@ Application development commands.
   - Behavior: Builds the tarball, uploads it to the server, and installs the application.
   - Options:
     - `--server <url>`: Target Twenty server URL.
-    - `--api-key <apiKey>`: Auth token for the server.
+    - `-r, --remote <name>`: Deploy to a specific remote.
 
 - `twenty typecheck [appPath]` — Run TypeScript type checking on the application (runs `tsc --noEmit`). Exits with code 1 if type errors are found.
 
