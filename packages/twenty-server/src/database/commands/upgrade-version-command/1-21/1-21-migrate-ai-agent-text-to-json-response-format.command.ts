@@ -1,16 +1,18 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { DataSource, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
+import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -47,13 +49,11 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspe
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -64,7 +64,7 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspe
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const textAgents = await this.findTextFormatAgents(workspaceId);
+    const textAgents = await this.findTextFormatCustomAgents(workspaceId);
 
     if (textAgents.length === 0) {
       this.logger.log(
@@ -82,55 +82,82 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspe
       return;
     }
 
-    const textAgentIds = textAgents.map(
-      (agent: { id: string }) => agent.id,
-    );
+    await this.migrateAgentsToJson(workspaceId, textAgents);
 
-    await this.migrateAgentsToJson(textAgentIds);
+    const textAgentIds = textAgents.map((agent) => agent.id);
 
     await this.updateWorkflowStepOutputSchemas(workspaceId, textAgentIds);
-    await this.invalidateCaches(workspaceId);
 
     this.logger.log(
       `Successfully migrated ${textAgents.length} agent(s) to JSON response format for workspace ${workspaceId}`,
     );
   }
 
-  private async findTextFormatAgents(
+  private async findTextFormatCustomAgents(
     workspaceId: string,
-  ): Promise<{ id: string }[]> {
-    const queryRunner = this.coreDataSource.createQueryRunner();
+  ): Promise<FlatAgent[]> {
+    const { flatAgentMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatAgentMaps'],
+    );
 
-    await queryRunner.connect();
-
-    try {
-      return await queryRunner.query(
-        `SELECT "id" FROM core."agent"
-         WHERE "workspaceId" = $1
-           AND ("responseFormat" IS NULL
-             OR "responseFormat"->>'type' = 'text'
-             OR "responseFormat"->>'type' IS NULL)`,
-        [workspaceId],
-      );
-    } finally {
-      await queryRunner.release();
-    }
+    return Object.values(flatAgentMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatAgent) => this.isTextFormatCustomAgent(flatAgent));
   }
 
-  private async migrateAgentsToJson(agentIds: string[]): Promise<void> {
-    const queryRunner = this.coreDataSource.createQueryRunner();
+  private isTextFormatCustomAgent(flatAgent: FlatAgent): boolean {
+    if (!flatAgent.isCustom) {
+      return false;
+    }
 
-    await queryRunner.connect();
+    const responseFormat = flatAgent.responseFormat as
+      | {
+          type?: string;
+        }
+      | null
+      | undefined;
 
-    try {
-      await queryRunner.query(
-        `UPDATE core."agent"
-         SET "responseFormat" = $1
-         WHERE "id" = ANY($2)`,
-        [JSON.stringify(TEXT_AGENT_DEFAULT_JSON_RESPONSE_FORMAT), agentIds],
+    return !isDefined(responseFormat?.type) || responseFormat.type === 'text';
+  }
+
+  private async migrateAgentsToJson(
+    workspaceId: string,
+    textAgents: FlatAgent[],
+  ): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
       );
-    } finally {
-      await queryRunner.release();
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            agent: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: textAgents.map((textAgent) => ({
+                ...textAgent,
+                responseFormat: TEXT_AGENT_DEFAULT_JSON_RESPONSE_FORMAT,
+              })),
+            },
+          },
+          workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      this.logger.error(
+        `Failed to migrate agents to JSON response format:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+      );
+      throw new Error(
+        `Failed to migrate text-format agents for workspace ${workspaceId}`,
+      );
     }
   }
 
@@ -200,21 +227,5 @@ export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspe
         `Updated output schemas in ${updatedVersionCount} workflow version(s) for workspace ${workspaceId}`,
       );
     }
-  }
-
-  private async invalidateCaches(workspaceId: string): Promise<void> {
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatAgentMaps',
-    ]);
-
-    await this.workspaceMetadataVersionService.incrementMetadataVersion(
-      workspaceId,
-    );
-
-    await this.workspaceCacheStorageService.flush(workspaceId);
-
-    this.logger.log(
-      `Cache invalidated and metadata version incremented for workspace ${workspaceId}`,
-    );
   }
 }
