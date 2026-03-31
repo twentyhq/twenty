@@ -152,15 +152,29 @@ export const useSelectableListHotKeys = (
 
   useHotkeysOnFocusedElement({
     keys: Key.ArrowLeft,
-    callback: () => handleSelect('left'),
+    callback: (keyboardEvent) => {
+      const target = keyboardEvent.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+      handleSelect('left');
+    },
     focusId,
     dependencies: [handleSelect],
+    options: { preventDefault: false },
   });
 
   useHotkeysOnFocusedElement({
     keys: Key.ArrowRight,
-    callback: () => handleSelect('right'),
+    callback: (keyboardEvent) => {
+      const target = keyboardEvent.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+      handleSelect('right');
+    },
     focusId,
     dependencies: [handleSelect],
+    options: { preventDefault: false },
   });
 };
