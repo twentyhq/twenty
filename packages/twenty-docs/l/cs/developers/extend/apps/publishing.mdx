@@ -102,6 +102,10 @@ yarn twenty catalog-sync -r production
 
 Metadata zobrazená v tržišti pocházejí z volání `defineApplication()` ve zdrojovém kódu vaší aplikace — z polí jako `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` a `termsUrl`.
 
+<Note>
+Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`, tržiště automaticky použije soubor `README.md` vašeho balíčku z npm jako obsah stránky O aplikaci. To znamená, že můžete spravovat jediný soubor README jak pro npm, tak pro tržiště Twenty. Pokud chcete v tržišti jiný popis, explicitně nastavte `aboutDescription`.
+</Note>
+
 ### Publikování pomocí CI
 
 Vygenerovaný projekt obsahuje pracovní postup GitHub Actions, který publikuje při každém vydání:
@@ -238,8 +242,8 @@ Začněte v režimu **Development** při sestavování své aplikace. Až bude p
 | --------------------------- | ----------------------------------------------------- | --------------------------------------------------- |
 | `yarn twenty build`         | Sestaví aplikaci a vygeneruje manifest                | `--tarball` — také vytvoří balíček `.tgz`           |
 | `yarn twenty publish`       | Sestaví a publikuje na npm                            | `--tag <tag>` — npm dist-tag (např. `beta`, `next`) |
-| `yarn twenty deploy`        | Sestaví a nahraje tarball na server                   | `-r, --remote <name>` — cílový vzdálený server      |
-| `yarn twenty catalog-sync`  | Spustí synchronizaci katalogu tržiště na serveru      | `-r, --remote <name>` — cílový vzdálený server      |
+| `yarn twenty deploy`        | Sestaví a nahraje tarball na server                   | `-r, --remote <name>` — cílový vzdálený repozitář   |
+| `yarn twenty catalog-sync`  | Spustí synchronizaci katalogu tržiště na serveru      | `-r, --remote <name>` — cílový vzdálený repozitář   |
 | `yarn twenty install`       | Nainstaluje nasazenou aplikaci do pracovního prostoru | `-r, --remote <name>` — cílový vzdálený server      |
 | `yarn twenty dev`           | Sleduje a synchronizuje lokální změny                 | Používá výchozí vzdálený server                     |
 | `yarn twenty remote add`    | Přidá připojení k serveru                             | `--url`, `--token`, `--as`, `--local`, `--port`     |

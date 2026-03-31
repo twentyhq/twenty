@@ -217,7 +217,7 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
     expect(result.flatViewFieldsToCreate).toHaveLength(1);
   });
 
-  it('should exclude id field unless it is the label identifier', () => {
+  it('should always exclude id field even when it is the label identifier', () => {
     const idUid = v4();
 
     const fields = [
@@ -244,7 +244,7 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
 
     expect(resultWithout.flatViewFieldsToCreate).toHaveLength(1);
 
-    // With label identifier match: id included
+    // With id as label identifier: id still excluded (label identifier fields are excluded)
     const resultWith = computeFieldsWidgetViewFieldsAndGroupsToCreate({
       objectFlatFieldMetadatas: fields,
       viewUniversalIdentifier,
@@ -252,7 +252,7 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
       labelIdentifierFieldMetadataUniversalIdentifier: idUid,
     });
 
-    expect(resultWith.flatViewFieldsToCreate).toHaveLength(2);
+    expect(resultWith.flatViewFieldsToCreate).toHaveLength(1);
   });
 
   it('should set correct applicationUniversalIdentifier on all entities', () => {
@@ -339,24 +339,15 @@ describe('computeFieldsWidgetViewFieldsAndGroupsToCreate', () => {
       labelIdentifierFieldMetadataUniversalIdentifier: labelUid,
     });
 
-    expect(result.flatViewFieldsToCreate).toHaveLength(3);
+    // Label identifier field is excluded by isFieldMetadataEligibleForFieldsWidget
+    expect(result.flatViewFieldsToCreate).toHaveLength(2);
 
-    // The label identifier field must be at the lowest position
+    // The label identifier field should not be in the results
     const labelField = result.flatViewFieldsToCreate.find(
       (vf) => vf.fieldMetadataUniversalIdentifier === labelUid,
     );
 
-    expect(labelField).toBeDefined();
-    expect(labelField!.position).toBe(0);
-
-    // Other fields should have higher positions
-    const otherPositions = result.flatViewFieldsToCreate
-      .filter((vf) => vf.fieldMetadataUniversalIdentifier !== labelUid)
-      .map((vf) => vf.position);
-
-    otherPositions.forEach((pos) => {
-      expect(pos).toBeGreaterThan(0);
-    });
+    expect(labelField).toBeUndefined();
   });
 
   it('should make RELATION and MORPH_RELATION fields invisible by default', () => {

@@ -9,18 +9,19 @@ Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, d
 
 Aplicațiile vă permit să extindeți Twenty cu obiecte personalizate, câmpuri, funcții logice, abilități IA și componente UI — toate gestionate ca cod.
 
-**Ce puteți face astăzi:**
+**Ce puteți construi:**
 
-* Definiți obiecte și câmpuri personalizate sub formă de cod (model de date gestionat)
-* Construiți funcții logice cu declanșatoare personalizate (rute HTTP, cron, evenimente ale bazei de date)
-* Definiți abilități pentru agenți de IA
-* Construiți componente front-end care se afișează în interfața Twenty
-* Implementați aceeași aplicație în mai multe spații de lucru
+* Obiecte, câmpuri, vizualizări și elemente de navigare personalizate pentru a defini modelul dumneavoastră de date
+* Funcții logice declanșate de rute HTTP, programări cron sau evenimente din baza de date
+* Componente front-end care se afișează direct în interfața Twenty
+* Abilități care extind capabilitățile agenților AI ai Twenty
+* Implementați o aplicație în mai multe spații de lucru
 
 ## Cerințe
 
-* Node.js 24+ și Yarn 4
-* Docker (pentru serverul local de dezvoltare Twenty)
+* Node.js 24+
+* Yarn 4
+* Docker (sau o instanță Twenty locală în execuție)
 
 ## Începeți
 
@@ -29,21 +30,9 @@ Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Folosiți opțiunea `--minimal` pentru a genera o instalare minimă
 
 De aici puteți:
 

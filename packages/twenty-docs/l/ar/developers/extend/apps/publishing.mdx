@@ -102,6 +102,10 @@ yarn twenty catalog-sync -r production
 
 تأتي بيانات التعريف المعروضة في السوق من استدعائك لـ `defineApplication()` في الشيفرة المصدرية لتطبيقك — حقول مثل `displayName` و`description` و`author` و`category` و`logoUrl` و`screenshots` و`aboutDescription` و`websiteUrl` و`termsUrl`.
 
+<Note>
+إذا لم يحدد تطبيقك `aboutDescription` في `defineApplication()`، فسيستخدم السوق تلقائيًا ملف `README.md` الخاص بحزمتك من npm كمحتوى لصفحة حول. هذا يعني أنه يمكنك الاحتفاظ بملف README واحد لكل من npm وسوق Twenty. إذا كنت تريد وصفًا مختلفًا في السوق، فقم بتعيين `aboutDescription` بشكل صريح.
+</Note>
+
 ### النشر عبر CI
 
 يتضمن المشروع المُولَّد سير عمل GitHub Actions يقوم بالنشر عند كل إصدار:

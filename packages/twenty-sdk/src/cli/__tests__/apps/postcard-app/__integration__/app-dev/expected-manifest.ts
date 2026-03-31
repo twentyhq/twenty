@@ -598,6 +598,17 @@ export const EXPECTED_MANIFEST: Manifest = {
         relationType: RelationType.MANY_TO_ONE,
       },
     },
+    // Field on standard company object
+    {
+      defaultValue: false,
+      description: 'Whether the company can receive postcards',
+      icon: 'IconMailbox',
+      label: 'Can Receive Postcards',
+      name: 'canReceivePostcards',
+      objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+      type: FieldType.BOOLEAN,
+      universalIdentifier: 'f922fdb8-10a9-4f11-a1d0-992a779f6dff',
+    },
   ],
   objects: [
     {
@@ -1516,7 +1527,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           isVisible: true,
           position: 0,
           size: 200,
-          universalIdentifier: 'bf1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
+          universalIdentifier: 'fd959c6f-3465-4a3a-b7ad-3f4004fffc9a',
         },
       ],
       icon: 'IconLink',
@@ -1561,6 +1572,14 @@ export const EXPECTED_MANIFEST: Manifest = {
           position: 0,
           size: 200,
           universalIdentifier: 'bf1a2b3c-0003-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          fieldMetadataUniversalIdentifier:
+            'd3a2b3c4-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+          isVisible: true,
+          position: 1,
+          size: 150,
+          universalIdentifier: 'bf1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
         },
       ],
       icon: 'IconUser',

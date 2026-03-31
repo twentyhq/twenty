@@ -9609,6 +9609,9 @@ export default {
             "viewFieldId": [
                 3
             ],
+            "fieldMetadataId": [
+                3
+            ],
             "isVisible": [
                 6
             ],

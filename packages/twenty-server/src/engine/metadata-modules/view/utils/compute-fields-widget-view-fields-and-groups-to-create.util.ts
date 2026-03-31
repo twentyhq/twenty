@@ -6,6 +6,7 @@ import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-f
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewFieldGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field-group.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { isFieldMetadataEligibleForFieldsWidget } from 'twenty-shared/utils';
 
 export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
   objectFlatFieldMetadatas,
@@ -24,14 +25,14 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
   const createdAt = new Date().toISOString();
   const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
-  const eligibleFields = objectFlatFieldMetadatas.filter(
-    (field) =>
-      field.name !== 'deletedAt' &&
-      field.type !== FieldMetadataType.TS_VECTOR &&
-      field.type !== FieldMetadataType.POSITION &&
-      (field.name !== 'id' ||
+  const eligibleFields = objectFlatFieldMetadatas.filter((field) =>
+    isFieldMetadataEligibleForFieldsWidget({
+      fieldName: field.name,
+      fieldType: field.type,
+      isLabelIdentifierField:
         field.universalIdentifier ===
-          labelIdentifierFieldMetadataUniversalIdentifier),
+        labelIdentifierFieldMetadataUniversalIdentifier,
+    }),
   );
 
   const standardFields = eligibleFields.filter((field) => !field.isCustom);
