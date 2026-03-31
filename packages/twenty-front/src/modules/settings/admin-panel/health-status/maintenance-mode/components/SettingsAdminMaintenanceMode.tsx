@@ -3,7 +3,6 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconLink, IconTool, Status } from 'twenty-ui/display';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
@@ -16,47 +15,27 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { EventLogDatePickerInput } from '~/pages/settings/security/event-logs/components/EventLogDatePickerInput';
 
 type MaintenanceFormState = {
-  startAt: string;
-  endAt: string;
+  startAt: Date | undefined;
+  endAt: Date | undefined;
   link: string;
 };
 
-const isoToDatetimeLocal = (isoString: string): string => {
-  const instant = Temporal.Instant.from(isoString);
-  const utcDateTime = instant.toZonedDateTimeISO('UTC');
-
-  return utcDateTime.toPlainDateTime().toString().slice(0, 16);
-};
-
-const datetimeLocalToISO = (localValue: string): string => {
-  const plainDateTime = Temporal.PlainDateTime.from(localValue);
-  const zonedDateTime = plainDateTime.toZonedDateTime('UTC');
-
-  return zonedDateTime.toInstant().toString();
-};
-
-const formatDisplayDate = (isoString: string): string => {
-  const instant = Temporal.Instant.from(isoString);
-  const utcDateTime = instant.toZonedDateTimeISO('UTC');
-
-  return utcDateTime.toLocaleString(undefined, {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-  });
-};
-
 const buildInitialFormState = (
-  maintenanceMode: { startAt: string; endAt: string; link?: string | null } | null,
+  maintenanceMode: {
+    startAt: string;
+    endAt: string;
+    link?: string | null;
+  } | null,
 ): MaintenanceFormState => ({
   startAt: isDefined(maintenanceMode)
-    ? isoToDatetimeLocal(maintenanceMode.startAt)
-    : '',
+    ? new Date(maintenanceMode.startAt)
+    : undefined,
   endAt: isDefined(maintenanceMode)
-    ? isoToDatetimeLocal(maintenanceMode.endAt)
-    : '',
+    ? new Date(maintenanceMode.endAt)
+    : undefined,
   link: maintenanceMode?.link ?? '',
 });
 
@@ -92,15 +71,12 @@ export const SettingsAdminMaintenanceMode = () => {
 
   const saveMaintenanceMode = useCallback(
     async (state: MaintenanceFormState) => {
-      if (
-        !isNonEmptyString(state.startAt) ||
-        !isNonEmptyString(state.endAt)
-      ) {
+      if (!isDefined(state.startAt) || !isDefined(state.endAt)) {
         return;
       }
 
-      const startISO = datetimeLocalToISO(state.startAt);
-      const endISO = datetimeLocalToISO(state.endAt);
+      const startISO = state.startAt.toISOString();
+      const endISO = state.endAt.toISOString();
 
       await setMaintenanceModeMutation({
         variables: {
@@ -129,28 +105,45 @@ export const SettingsAdminMaintenanceMode = () => {
       if (!checked) {
         await clearMaintenanceModeMutation();
         setMaintenanceMode(null);
-        setFormState({ startAt: '', endAt: '', link: '' });
+        setFormState({ startAt: undefined, endAt: undefined, link: '' });
         setIsSaved(false);
       }
     },
     [clearMaintenanceModeMutation, setMaintenanceMode],
   );
 
-  const handleFieldChange = useCallback(
-    (field: keyof MaintenanceFormState) => (value: string) => {
-      setFormState((previous) => ({ ...previous, [field]: value }));
+  const handleDateChange = useCallback(
+    (field: 'startAt' | 'endAt') => (value: Date | undefined) => {
+      const nextState = { ...formState, [field]: value };
+
+      setFormState(nextState);
       setIsSaved(false);
+      saveMaintenanceMode(nextState);
     },
-    [],
+    [formState, saveMaintenanceMode],
   );
 
-  const handleFieldBlur = useCallback(() => {
+  const handleLinkChange = useCallback((value: string) => {
+    setFormState((previous) => ({ ...previous, link: value }));
+    setIsSaved(false);
+  }, []);
+
+  const handleLinkBlur = useCallback(() => {
     saveMaintenanceMode(formState);
   }, [formState, saveMaintenanceMode]);
 
   const isScheduled = isDefined(maintenanceMode);
+
+  const formattedStartDate = isDefined(maintenanceMode)
+    ? new Date(maintenanceMode.startAt).toLocaleDateString(undefined, {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+      })
+    : '';
+
   const toggleDescription = isScheduled
-    ? t`Planned for ${formatDisplayDate(maintenanceMode.startAt)}`
+    ? t`Planned for ${formattedStartDate}`
     : undefined;
 
   return (
@@ -170,30 +163,22 @@ export const SettingsAdminMaintenanceMode = () => {
         {isEnabled && (
           <CardContent>
             <StyledFormContainer>
-              <TextInput
+              <EventLogDatePickerInput
                 label={t`Start date`}
-                type="datetime-local"
                 value={formState.startAt}
-                onChange={handleFieldChange('startAt')}
-                onBlur={handleFieldBlur}
-                rightAdornment="UTC"
-                fullWidth
+                onChange={handleDateChange('startAt')}
               />
-              <TextInput
+              <EventLogDatePickerInput
                 label={t`End date`}
-                type="datetime-local"
                 value={formState.endAt}
-                onChange={handleFieldChange('endAt')}
-                onBlur={handleFieldBlur}
-                rightAdornment="UTC"
-                fullWidth
+                onChange={handleDateChange('endAt')}
               />
               <TextInput
                 label={t`Link`}
                 type="url"
                 value={formState.link}
-                onChange={handleFieldChange('link')}
-                onBlur={handleFieldBlur}
+                onChange={handleLinkChange}
+                onBlur={handleLinkBlur}
                 LeftIcon={IconLink}
                 placeholder="https://status.example.com"
                 fullWidth
@@ -205,7 +190,7 @@ export const SettingsAdminMaintenanceMode = () => {
                 <StyledStatusRow>
                   <Status
                     color="orange"
-                    text={t`Planned for ${formatDisplayDate(maintenanceMode.startAt)}`}
+                    text={t`Planned for ${formattedStartDate}`}
                   />
                 </StyledStatusRow>
               )}
