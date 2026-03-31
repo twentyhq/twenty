@@ -163,7 +163,7 @@ export class CreateAppCommand {
         includeExampleNavigationMenuItem: false,
         includeExampleSkill: false,
         includeExampleAgent: false,
-        includeExampleIntegrationTest: false,
+        includeExampleIntegrationTest: true,
       };
     }
 
