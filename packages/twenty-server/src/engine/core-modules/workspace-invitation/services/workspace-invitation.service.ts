@@ -41,6 +41,10 @@ import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class WorkspaceInvitationService {
+  private normalizeInvitationEmail(email: string) {
+    return email.trim().toLowerCase();
+  }
+
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
@@ -76,7 +80,15 @@ export class WorkspaceInvitationService {
         throw new Error('Invalid invitation token');
       }
 
-      if (!appToken.context?.email || appToken.context?.email !== email) {
+      const normalizedEmail = this.normalizeInvitationEmail(email);
+      const normalizedInvitationEmail = appToken.context?.email
+        ? this.normalizeInvitationEmail(appToken.context.email)
+        : undefined;
+
+      if (
+        !normalizedInvitationEmail ||
+        normalizedInvitationEmail !== normalizedEmail
+      ) {
         throw new Error('Email does not match the invitation');
       }
 
@@ -94,13 +106,17 @@ export class WorkspaceInvitationService {
   }
 
   async findInvitationsByEmail(email: string) {
+    const normalizedEmail = this.normalizeInvitationEmail(email);
+
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
       .innerJoinAndSelect('appToken.workspace', 'workspace')
       .where('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       })
-      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere('LOWER("appToken".context->>\'email\') = :email', {
+        email: normalizedEmail,
+      })
       .andWhere('appToken.deletedAt IS NULL')
       .andWhere('appToken.expiresAt > :now', {
         now: new Date(),
@@ -109,6 +125,8 @@ export class WorkspaceInvitationService {
   }
 
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
+    const normalizedEmail = this.normalizeInvitationEmail(email);
+
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
       .where('"appToken"."workspaceId" = :workspaceId', {
@@ -117,7 +135,9 @@ export class WorkspaceInvitationService {
       .andWhere('"appToken".type = :type', {
         type: AppTokenType.InvitationToken,
       })
-      .andWhere('"appToken".context->>\'email\' = :email', { email })
+      .andWhere('LOWER("appToken".context->>\'email\') = :email', {
+        email: normalizedEmail,
+      })
       .getOne();
   }
 
@@ -160,9 +180,11 @@ export class WorkspaceInvitationService {
     workspace: WorkspaceEntity,
     roleId?: string,
   ) {
+    const normalizedEmail = this.normalizeInvitationEmail(email);
+
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
-      email.toLowerCase(),
+      normalizedEmail,
     );
 
     if (maybeWorkspaceInvitation) {
@@ -191,7 +213,7 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.generateInvitationToken(workspace.id, email, roleId);
+    return this.generateInvitationToken(workspace.id, normalizedEmail, roleId);
   }
 
   async deleteWorkspaceInvitation(appTokenId: string, workspaceId: string) {
@@ -402,6 +424,7 @@ export class WorkspaceInvitationService {
     email: string,
     roleId?: string,
   ) {
+    const normalizedEmail = this.normalizeInvitationEmail(email);
     const expiresIn = this.twentyConfigService.get(
       'INVITATION_TOKEN_EXPIRES_IN',
     );
@@ -421,7 +444,7 @@ export class WorkspaceInvitationService {
       type: AppTokenType.InvitationToken,
       value: crypto.randomBytes(32).toString('hex'),
       context: {
-        email,
+        email: normalizedEmail,
         ...(isDefined(roleId) ? { roleId } : {}),
       },
     });

@@ -168,6 +168,30 @@ describe('WorkspaceInvitationService', () => {
       ).resolves.not.toThrow();
     });
 
+    it('should normalize the invitation email before saving it', async () => {
+      const email = 'Test@Example.com';
+      const workspace = { id: 'workspace-id' } as WorkspaceEntity;
+
+      jest.spyOn(appTokenRepository, 'createQueryBuilder').mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null),
+      } as any);
+
+      jest.spyOn(userWorkspaceRepository, 'exists').mockResolvedValue(false);
+      const generateInvitationTokenSpy = jest
+        .spyOn(service, 'generateInvitationToken')
+        .mockResolvedValue({} as AppTokenEntity);
+
+      await service.createWorkspaceInvitation(email, workspace);
+
+      expect(generateInvitationTokenSpy).toHaveBeenCalledWith(
+        workspace.id,
+        'test@example.com',
+        undefined,
+      );
+    });
+
     it('should throw an exception if invitation already exists', async () => {
       const email = 'test@example.com';
       const workspace = { id: 'workspace-id' } as WorkspaceEntity;
@@ -181,6 +205,28 @@ describe('WorkspaceInvitationService', () => {
       await expect(
         service.createWorkspaceInvitation(email, workspace),
       ).rejects.toThrow(WorkspaceInvitationException);
+    });
+  });
+
+  describe('validatePersonalInvitation', () => {
+    it('should accept mixed-case invitation emails', async () => {
+      const workspace = { id: 'workspace-id' } as WorkspaceEntity;
+
+      jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue({
+        context: { email: 'Dj@NextGen-CR.com' },
+        expiresAt: new Date(Date.now() + 60_000),
+        workspace,
+      } as AppTokenEntity);
+
+      await expect(
+        service.validatePersonalInvitation({
+          workspacePersonalInviteToken: 'token-value',
+          email: 'dj@nextgen-cr.com',
+        }),
+      ).resolves.toEqual({
+        isValid: true,
+        workspace,
+      });
     });
   });
 
