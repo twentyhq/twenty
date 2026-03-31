@@ -43,14 +43,14 @@ describe('isFieldMetadataEligibleForFieldsWidget', () => {
     ).toBe(false);
   });
 
-  it('should include id field when it is the label identifier', () => {
+  it('should exclude id field even when it is the label identifier', () => {
     expect(
       isFieldMetadataEligibleForFieldsWidget({
         fieldName: 'id',
         fieldType: FieldMetadataType.UUID,
         isLabelIdentifierField: true,
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('should include a normal field', () => {
