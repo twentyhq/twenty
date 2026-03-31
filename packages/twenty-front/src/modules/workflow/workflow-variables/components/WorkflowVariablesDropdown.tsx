@@ -1,7 +1,5 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
@@ -14,56 +12,41 @@ import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
 const StyledDropdownVariableButtonContainer = styled.div<{
-  isUnfolded?: boolean;
-  transparentBackground?: boolean;
   disabled?: boolean;
 }>`
   align-items: center;
-  background-color: ${({ transparentBackground }) =>
-    transparentBackground
-      ? 'transparent'
-      : themeCssVariables.background.transparent.lighter};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  background-color: transparent;
+  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
+  justify-content: center;
   padding: ${themeCssVariables.spacing[2]};
   user-select: none;
-  &:hover {
-    background: ${({ isUnfolded, transparentBackground }) =>
-      transparentBackground
-        ? 'transparent'
-        : isUnfolded
-          ? themeCssVariables.background.transparent.medium
-          : themeCssVariables.background.transparent.light};
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  }
 `;
 
 export const WorkflowVariablesDropdown = ({
+  clickableComponent,
+  disabled,
+  fieldTypesToExclude,
   instanceId,
   onVariableSelect,
-  disabled,
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
-  fieldTypesToExclude,
-  clickableComponent,
 }: {
+  clickableComponent?: React.ReactNode;
+  disabled?: boolean;
+  fieldTypesToExclude?: InputSchemaPropertyType[];
   instanceId: string;
   onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-  fieldTypesToExclude?: InputSchemaPropertyType[];
-  disabled?: boolean;
-  clickableComponent?: React.ReactNode;
 }) => {
   const { theme } = useContext(ThemeContext);
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
   const { closeDropdown } = useCloseDropdown();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
@@ -100,13 +83,9 @@ export const WorkflowVariablesDropdown = ({
 
   if (disabled === true || noAvailableVariables) {
     return (
-      <StyledDropdownVariableButtonContainer
-        isUnfolded={isDropdownOpen}
-        disabled={true}
-        transparentBackground
-      >
+      <StyledDropdownVariableButtonContainer disabled={true}>
         <IconVariablePlus
-          size={theme.icon.size.sm}
+          size={theme.icon.size.md}
           color={theme.font.color.light}
         />
       </StyledDropdownVariableButtonContainer>
@@ -119,11 +98,8 @@ export const WorkflowVariablesDropdown = ({
       isDropdownInModal={true}
       clickableComponent={
         clickableComponent ?? (
-          <StyledDropdownVariableButtonContainer
-            isUnfolded={isDropdownOpen}
-            transparentBackground
-          >
-            <IconVariablePlus size={theme.icon.size.sm} />
+          <StyledDropdownVariableButtonContainer>
+            <IconVariablePlus size={theme.icon.size.md} />
           </StyledDropdownVariableButtonContainer>
         )
       }
