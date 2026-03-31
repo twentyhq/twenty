@@ -1,55 +1,29 @@
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconLink, IconTool, Status } from 'twenty-ui/display';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
-import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
 import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/clearMaintenanceMode';
 import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/setMaintenanceMode';
+import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-type MaintenanceFormState = {
-  startAt: Date | undefined;
-  endAt: Date | undefined;
-  link: string;
-};
-
-const buildInitialFormState = (
-  maintenanceMode: {
-    startAt: string;
-    endAt: string;
-    link?: string | null;
-  } | null,
-): MaintenanceFormState => ({
-  startAt: isDefined(maintenanceMode)
-    ? new Date(maintenanceMode.startAt)
-    : undefined,
-  endAt: isDefined(maintenanceMode)
-    ? new Date(maintenanceMode.endAt)
-    : undefined,
-  link: maintenanceMode?.link ?? '',
-});
 
 const StyledFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledHint = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-  margin-top: -${themeCssVariables.spacing[2]};
 `;
 
 const StyledStatusRow = styled.div`
@@ -66,94 +40,124 @@ export const SettingsAdminMaintenanceMode = () => {
   );
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
-  const [isEnabled, setIsEnabled] = useState(
-    isDefined(adminPanelMaintenanceMode),
-  );
-  const [formState, setFormState] = useState<MaintenanceFormState>(
-    buildInitialFormState(adminPanelMaintenanceMode),
-  );
-  const [isSaved, setIsSaved] = useState(
-    isDefined(adminPanelMaintenanceMode),
-  );
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE);
   const [clearMaintenanceModeMutation] = useMutation(CLEAR_MAINTENANCE_MODE);
 
-  const saveMaintenanceMode = useCallback(
-    async (state: MaintenanceFormState) => {
-      if (!isDefined(state.startAt) || !isDefined(state.endAt)) {
+  const isEnabled = isDefined(adminPanelMaintenanceMode);
+
+  const startDate =
+    isEnabled && isNonEmptyString(adminPanelMaintenanceMode.startAt)
+      ? new Date(adminPanelMaintenanceMode.startAt)
+      : undefined;
+
+  const endDate =
+    isEnabled && isNonEmptyString(adminPanelMaintenanceMode.endAt)
+      ? new Date(adminPanelMaintenanceMode.endAt)
+      : undefined;
+
+  const isScheduled = isDefined(startDate) && isDefined(endDate);
+
+  const saveToBackend = useCallback(
+    async (startAt: string, endAt: string, link?: string) => {
+      if (!isNonEmptyString(startAt) || !isNonEmptyString(endAt)) {
         return;
       }
 
-      const startISO = state.startAt.toISOString();
-      const endISO = state.endAt.toISOString();
-      const linkValue = isNonEmptyString(state.link)
-        ? state.link
-        : undefined;
+      try {
+        await setMaintenanceModeMutation({
+          variables: { startAt, endAt, link },
+        });
 
-      await setMaintenanceModeMutation({
-        variables: { startAt: startISO, endAt: endISO, link: linkValue },
-      });
-
-      const maintenanceData = {
-        startAt: startISO,
-        endAt: endISO,
-        link: linkValue,
-      };
-
-      setAdminPanelMaintenanceMode(maintenanceData);
-      setMaintenanceMode({
-        __typename: 'ClientConfigMaintenanceMode',
-        ...maintenanceData,
-      });
-
-      setIsSaved(true);
+        setMaintenanceMode({
+          __typename: 'ClientConfigMaintenanceMode',
+          startAt,
+          endAt,
+          link,
+        });
+      } catch (error: unknown) {
+        enqueueErrorSnackBar({
+          message:
+            error instanceof Error
+              ? error.message
+              : t`Failed to set maintenance mode.`,
+        });
+      }
     },
-    [setMaintenanceModeMutation, setAdminPanelMaintenanceMode, setMaintenanceMode],
+    [setMaintenanceModeMutation, setMaintenanceMode, enqueueErrorSnackBar],
   );
 
   const handleToggle = useCallback(
     async (checked: boolean) => {
-      setIsEnabled(checked);
-
-      if (!checked) {
+      if (checked) {
+        setAdminPanelMaintenanceMode({ startAt: '', endAt: '' });
+      } else {
         await clearMaintenanceModeMutation();
         setAdminPanelMaintenanceMode(null);
         setMaintenanceMode(null);
-        setFormState({ startAt: undefined, endAt: undefined, link: '' });
-        setIsSaved(false);
       }
     },
-    [clearMaintenanceModeMutation, setAdminPanelMaintenanceMode, setMaintenanceMode],
+    [
+      clearMaintenanceModeMutation,
+      setAdminPanelMaintenanceMode,
+      setMaintenanceMode,
+    ],
   );
 
   const handleDateChange = useCallback(
     (field: 'startAt' | 'endAt') => (value: Date | undefined) => {
-      const nextState = { ...formState, [field]: value };
+      if (!isDefined(adminPanelMaintenanceMode)) {
+        return;
+      }
 
-      setFormState(nextState);
-      setIsSaved(false);
-      saveMaintenanceMode(nextState);
+      const isoValue = isDefined(value) ? value.toISOString() : '';
+      const nextState = { ...adminPanelMaintenanceMode, [field]: isoValue };
+
+      setAdminPanelMaintenanceMode(nextState);
+      saveToBackend(
+        nextState.startAt,
+        nextState.endAt,
+        isNonEmptyString(nextState.link) ? nextState.link : undefined,
+      );
     },
-    [formState, saveMaintenanceMode],
+    [adminPanelMaintenanceMode, setAdminPanelMaintenanceMode, saveToBackend],
   );
 
-  const handleLinkChange = useCallback((value: string) => {
-    setFormState((previous) => ({ ...previous, link: value }));
-    setIsSaved(false);
-  }, []);
+  const handleLinkChange = useCallback(
+    (value: string) => {
+      if (!isDefined(adminPanelMaintenanceMode)) {
+        return;
+      }
+
+      setAdminPanelMaintenanceMode({
+        ...adminPanelMaintenanceMode,
+        link: value,
+      });
+    },
+    [adminPanelMaintenanceMode, setAdminPanelMaintenanceMode],
+  );
 
   const handleLinkBlur = useCallback(() => {
-    saveMaintenanceMode(formState);
-  }, [formState, saveMaintenanceMode]);
+    if (!isDefined(adminPanelMaintenanceMode)) {
+      return;
+    }
 
-  const isScheduled = isDefined(adminPanelMaintenanceMode);
+    saveToBackend(
+      adminPanelMaintenanceMode.startAt,
+      adminPanelMaintenanceMode.endAt,
+      isNonEmptyString(adminPanelMaintenanceMode.link)
+        ? adminPanelMaintenanceMode.link
+        : undefined,
+    );
+  }, [adminPanelMaintenanceMode, saveToBackend]);
 
   const formattedStartDate = isScheduled
-    ? new Date(adminPanelMaintenanceMode.startAt).toLocaleDateString(
-        undefined,
-        { month: '2-digit', day: '2-digit', year: 'numeric' },
-      )
+    ? startDate.toLocaleDateString(undefined, {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+      })
     : '';
 
   const toggleDescription = isScheduled
@@ -179,28 +183,30 @@ export const SettingsAdminMaintenanceMode = () => {
             <StyledFormContainer>
               <SettingsDatePickerInput
                 label={t`Start date`}
-                value={formState.startAt}
+                value={startDate}
                 onChange={handleDateChange('startAt')}
               />
               <SettingsDatePickerInput
                 label={t`End date`}
-                value={formState.endAt}
+                value={endDate}
                 onChange={handleDateChange('endAt')}
               />
-              <TextInput
-                label={t`Link`}
-                type="url"
-                value={formState.link}
-                onChange={handleLinkChange}
-                onBlur={handleLinkBlur}
-                LeftIcon={IconLink}
-                placeholder="https://status.example.com"
-                fullWidth
-              />
-              <StyledHint>
-                {t`If there's no link, no button will appear.`}
-              </StyledHint>
-              {isScheduled && isSaved && (
+              <div>
+                <TextInput
+                  label={t`Link`}
+                  type="url"
+                  value={adminPanelMaintenanceMode.link ?? ''}
+                  onChange={handleLinkChange}
+                  onBlur={handleLinkBlur}
+                  LeftIcon={IconLink}
+                  placeholder="https://status.example.com"
+                  fullWidth
+                />
+                <InputHint>
+                  {t`If there's no link, no button will appear.`}
+                </InputHint>
+              </div>
+              {isScheduled && (
                 <StyledStatusRow>
                   <Status
                     color="orange"

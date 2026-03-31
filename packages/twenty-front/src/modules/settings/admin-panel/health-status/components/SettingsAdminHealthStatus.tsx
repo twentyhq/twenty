@@ -1,6 +1,6 @@
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import { SettingsAdminHealthStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatusListCard';
-import { AdminPanelMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/AdminPanelMaintenanceModeFetchEffect';
+import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
 import { SettingsAdminMaintenanceMode } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
@@ -24,7 +24,7 @@ export const SettingsAdminHealthStatus = () => {
 
   return (
     <>
-      <AdminPanelMaintenanceModeFetchEffect />
+      <SettingsAdminMaintenanceModeFetchEffect />
       <Section>
         <H2Title
           title={t`Health Status`}
