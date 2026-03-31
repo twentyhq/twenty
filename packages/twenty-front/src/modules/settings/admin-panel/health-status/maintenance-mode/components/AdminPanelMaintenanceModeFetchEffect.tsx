@@ -9,7 +9,7 @@ import {
 } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/queries/getMaintenanceMode';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-export const AdminPanelMaintenanceModeEffect = () => {
+export const AdminPanelMaintenanceModeFetchEffect = () => {
   const { data } = useQuery<GetMaintenanceModeResult>(GET_MAINTENANCE_MODE, {
     fetchPolicy: 'network-only',
   });

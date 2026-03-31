@@ -2,7 +2,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import { FloatingPortal, offset, flip, useFloating } from '@floating-ui/react';
+import {
+  autoUpdate,
+  FloatingPortal,
+  offset,
+  flip,
+  useFloating,
+} from '@floating-ui/react';
 
 import {
   DateTimePicker,
@@ -14,6 +20,8 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { isDefined } from 'twenty-shared/utils';
 import { IconCalendar } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID = 'settings-date-picker-floating';
 
 const StyledInputContainer = styled.div`
   position: relative;
@@ -78,6 +86,7 @@ export const SettingsDatePickerInput = ({
     open: isOpen,
     placement: 'bottom-start',
     middleware: [offset(4), flip()],
+    whileElementsMounted: autoUpdate,
   });
 
   const handleClose = () => {
@@ -90,6 +99,7 @@ export const SettingsDatePickerInput = ({
     callback: handleClose,
     enabled: isOpen,
     excludedClickOutsideIds: [
+      SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID,
       MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
       MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
     ],
@@ -147,6 +157,7 @@ export const SettingsDatePickerInput = ({
           <StyledFloatingContainer
             ref={refs.setFloating}
             style={floatingStyles}
+            data-click-outside-id={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
           >
             <OverlayContainer>
               <DateTimePicker
