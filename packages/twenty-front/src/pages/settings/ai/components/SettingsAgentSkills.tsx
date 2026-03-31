@@ -25,6 +25,7 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 
 const StyledCoverImage = styled.div`
+  background-position: center;
   background-size: cover;
   height: 160px;
   overflow: hidden;
