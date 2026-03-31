@@ -10,15 +10,9 @@ import {
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
-import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
-import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
-import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-missing-standard-views.command';
-import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
-import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
-import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
-import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts-and-fields-widget-view-fields.command';
+import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { IdentifyFieldPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-field-permission-metadata.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
 import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
@@ -56,14 +50,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly workspaceVersionService: WorkspaceVersionService,
     protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
 
-    // 1.19 Commands
-    protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
-    protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
-    protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
-    protected readonly backfillMissingStandardViewsCommand: BackfillMissingStandardViewsCommand,
-    protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
-    protected readonly seedServerIdCommand: SeedServerIdCommand,
-
     // 1.20 Commands
     protected readonly identifyPermissionFlagMetadataCommand: IdentifyPermissionFlagMetadataCommand,
     protected readonly makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
@@ -74,13 +60,15 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly backfillNavigationMenuItemTypeCommand: BackfillNavigationMenuItemTypeCommand,
     protected readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
     protected readonly deleteOrphanNavigationMenuItemsCommand: DeleteOrphanNavigationMenuItemsCommand,
-    protected readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
     protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
     protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
     protected readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
     protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
     protected readonly makeWorkflowSearchableCommand: MakeWorkflowSearchableCommand,
+
+    // 1.21 Commands
+    protected readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
   ) {
     super(
       workspaceRepository,
@@ -91,16 +79,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       workspaceVersionService,
       coreMigrationRunnerService,
     );
-
-    const commands_1190: VersionCommands = [
-      this.fixRoleAndAgentUniversalIdentifiersCommand,
-      this.backfillSystemFieldsIsSystemCommand,
-      this.addMissingSystemFieldsToStandardObjectsCommand,
-      this.backfillMessageChannelMessageAssociationMessageFolderCommand,
-      this.backfillMissingStandardViewsCommand,
-      this.fixRoleAndAgentUniversalIdentifiersCommand,
-      this.seedServerIdCommand,
-    ];
 
     const commands_1200: VersionCommands = [
       this.identifyPermissionFlagMetadataCommand,
@@ -116,7 +94,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateRichTextToTextCommand,
       this.deleteOrphanNavigationMenuItemsCommand,
       this.backfillCommandMenuItemsCommand,
-      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
       this.seedCliApplicationRegistrationCommand,
       this.migrateMessagingInfrastructureToMetadataCommand,
       this.backfillSelectFieldOptionIdsCommand,
@@ -124,9 +101,14 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.makeWorkflowSearchableCommand,
     ];
 
+    const commands_1210: VersionCommands = [
+      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
+    ];
+
     this.allCommands = {
-      '1.19.0': commands_1190,
+      '1.19.0': [],
       '1.20.0': commands_1200,
+      '1.21.0': commands_1210,
     };
   }
 

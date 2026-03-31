@@ -17,6 +17,7 @@ import {
   IconAlertTriangle,
   IconBook,
   IconBox,
+  IconBrandNpm,
   IconCheck,
   IconCommand,
   IconDownload,
@@ -221,6 +222,11 @@ export const SettingsAvailableApplicationDetails = () => {
   const sourceType = detail?.sourceType;
   const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
   const registrationId = detail?.id;
+  const sourcePackage = detail?.sourcePackage;
+  const sourcePackageUrl =
+    isNpmApp && detail?.sourcePackage
+      ? `https://www.npmjs.com/package/${detail.sourcePackage}`
+      : undefined;
 
   const isUnlisted = isDefined(detail) && !detail.isListed;
   const installedApp = applicationData?.findOneApplication;
@@ -517,6 +523,16 @@ export const SettingsAvailableApplicationDetails = () => {
                       >
                         <IconAlertTriangle size={16} />
                         {t`Report and issue`}
+                      </StyledLink>
+                    )}
+                    {sourcePackageUrl && (
+                      <StyledLink
+                        href={sourcePackageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <IconBrandNpm size={16} />
+                        {t`Npm package`}
                       </StyledLink>
                     )}
                   </StyledSidebarSection>

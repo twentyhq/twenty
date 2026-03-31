@@ -51,6 +51,9 @@ export class AgentChatThreadEntity {
   @Column({ type: 'bigint', default: 0 })
   totalOutputCredits: number;
 
+  @Column({ type: 'varchar', nullable: true })
+  activeStreamId: string | null;
+
   @OneToMany(() => AgentTurnEntity, (turn) => turn.thread)
   turns: EntityRelation<AgentTurnEntity[]>;
 
