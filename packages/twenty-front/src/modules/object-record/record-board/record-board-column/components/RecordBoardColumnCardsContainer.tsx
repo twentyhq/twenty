@@ -73,6 +73,7 @@ export const RecordBoardColumnCardsContainer = ({
           ></div>
         )}
       </Draggable>
+      {droppableProvided?.placeholder}
       <StyledNewButtonContainer>
         <RecordBoardColumnNewRecordButton />
       </StyledNewButtonContainer>

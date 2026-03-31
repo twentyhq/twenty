@@ -74,7 +74,6 @@ export const RecordBoardColumn = ({
                 recordBoardColumnId={recordBoardColumnId}
               />
             </DragAndDropLibraryLegacyReRenderBreaker>
-            {droppableProvided.placeholder}
           </StyledColumn>
         )}
       </Droppable>
