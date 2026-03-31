@@ -102,9 +102,6 @@ describe('useSidePanelHistory', () => {
       result.current.commandMenuHistory.goBackFromSidePanel();
     });
 
-    // Stack must be cleared immediately after goBackFromSidePanel(), without
-    // waiting for the close animation cleanup — otherwise stale entries block
-    // reopening the same record via openRecordInSidePanel.
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
 
     act(() => {
@@ -146,9 +143,6 @@ describe('useSidePanelHistory', () => {
       result.current.commandMenu.closeSidePanelMenu();
     });
 
-    // Stack must be cleared immediately after closeSidePanelMenu(), without
-    // waiting for the close animation cleanup — otherwise stale entries block
-    // reopening the same record via openRecordInSidePanel.
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
   });
 
