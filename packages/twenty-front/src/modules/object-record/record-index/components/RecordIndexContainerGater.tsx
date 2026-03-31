@@ -17,7 +17,6 @@ import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
@@ -31,9 +30,7 @@ const StyledIndexContainer = styled.div`
 
 export const RecordIndexContainerGater = () => {
   const store = useStore();
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
-  );
+
   const { recordIndexId, objectMetadataItem } =
     useRecordIndexIdFromCurrentContextStore();
 
