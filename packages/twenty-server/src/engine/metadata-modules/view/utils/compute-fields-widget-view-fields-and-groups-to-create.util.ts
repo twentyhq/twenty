@@ -3,10 +3,10 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
-import { isFieldMetadataEligibleForFieldsWidget } from 'src/engine/metadata-modules/view/utils/is-field-metadata-eligible-for-fields-widget.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewFieldGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field-group.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { isFieldMetadataEligibleForFieldsWidget } from 'twenty-shared/utils';
 
 export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
   objectFlatFieldMetadatas,

@@ -25,5 +25,9 @@ export const isFieldMetadataEligibleForFieldsWidget = ({
     return false;
   }
 
+  if (isLabelIdentifierField) {
+    return false;
+  }
+
   return true;
 };

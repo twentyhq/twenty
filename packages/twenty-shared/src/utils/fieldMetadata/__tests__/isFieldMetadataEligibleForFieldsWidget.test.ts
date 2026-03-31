@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { isFieldMetadataEligibleForFieldsWidget } from 'twenty-shared/utils';
+import { FieldMetadataType } from '@/types';
+import { isFieldMetadataEligibleForFieldsWidget } from '@/utils/fieldMetadata/isFieldMetadataEligibleForFieldsWidget';
 
 describe('isFieldMetadataEligibleForFieldsWidget', () => {
   it('should exclude deletedAt field', () => {

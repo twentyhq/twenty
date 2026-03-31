@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataEligibleForFieldsWidget,
+} from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -32,7 +35,6 @@ import {
   ViewFieldGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { isFieldMetadataEligibleForFieldsWidget } from 'src/engine/metadata-modules/view/utils/is-field-metadata-eligible-for-fields-widget.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 

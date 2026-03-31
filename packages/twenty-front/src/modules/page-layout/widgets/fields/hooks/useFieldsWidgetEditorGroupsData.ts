@@ -1,5 +1,5 @@
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useFieldsWidgetFieldMetadataItems } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFieldMetadataItems';
 import { type FieldsWidgetEditorMode } from '@/page-layout/widgets/fields/types/FieldsWidgetEditorMode';
 import {
   type FieldsWidgetGroup,
@@ -7,7 +7,11 @@ import {
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { useViewById } from '@/views/hooks/useViewById';
 import { useMemo } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataEligibleForFieldsWidget,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 type UseFieldsWidgetEditorGroupsDataParams = {
   viewId: string | null;
@@ -29,8 +33,8 @@ export const useFieldsWidgetEditorGroupsData = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const { inlineFieldMetadataItems, legacyActivityTargetFieldMetadataItems } =
-    useFieldsWidgetFieldMetadataItems({
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
       objectNameSingular,
     });
 
@@ -44,10 +48,18 @@ export const useFieldsWidgetEditorGroupsData = ({
       return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
     }
 
-    const eligibleFieldMetadataIds = new Set([
-      ...inlineFieldMetadataItems.map((f) => f.id),
-      ...(legacyActivityTargetFieldMetadataItems ?? []).map((f) => f.id),
-    ]);
+    const eligibleFieldMetadataIds = new Set(
+      objectMetadataItem.fields
+        .filter((field) =>
+          isFieldMetadataEligibleForFieldsWidget({
+            fieldName: field.name,
+            fieldType: field.type,
+            isLabelIdentifierField:
+              field.id === labelIdentifierFieldMetadataItem?.id,
+          }),
+        )
+        .map((field) => field.id),
+    );
 
     const buildMissingFields = ({
       existingFieldMetadataIds,
@@ -188,12 +200,7 @@ export const useFieldsWidgetEditorGroupsData = ({
     }
 
     return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
-  }, [
-    objectMetadataItem,
-    view,
-    inlineFieldMetadataItems,
-    legacyActivityTargetFieldMetadataItems,
-  ]);
+  }, [objectMetadataItem, view, labelIdentifierFieldMetadataItem]);
 
   return {
     ...result,
