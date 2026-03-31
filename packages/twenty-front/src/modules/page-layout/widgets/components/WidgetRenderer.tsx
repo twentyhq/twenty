@@ -167,6 +167,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       isDragging={isDragging}
       isResizing={isResizing}
       isLastWidget={isLastWidget}
+      // stratum: shrink FIELD (relation card) widgets to content height — remove when upstream fixes this
+      shrinkToContent={widget.type === WidgetType.FIELD}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-widget-id={widget.id}

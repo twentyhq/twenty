@@ -12,6 +12,10 @@ type WidgetCardStyledProps = {
   headerLess?: boolean;
   isLastWidget?: boolean;
   hasClickHandler: boolean;
+  // stratum: FIELD widgets (relation cards) should shrink to their content
+  // rather than stretching to fill the full tab height. Remove when upstream
+  // fixes WidgetCard to not force height:100% on sparse relation widgets.
+  shrinkToContent?: boolean;
 };
 
 const computeBorderColor = (
@@ -87,7 +91,8 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
 
   flex-direction: column;
 
-  height: 100%;
+  // stratum: use fit-content when shrinkToContent is set (see prop comment above)
+  height: ${({ shrinkToContent }) => (shrinkToContent === true ? 'fit-content' : '100%')};
 
   padding: ${({ variant, isEditable, headerLess }) => {
     if (variant === 'dashboard' && headerLess === true) return '0';
@@ -146,6 +151,8 @@ export type WidgetCardProps = {
   isResizing: boolean;
   headerLess?: boolean;
   isLastWidget?: boolean;
+  // stratum: see styled prop comment above
+  shrinkToContent?: boolean;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   className?: string;
   children?: React.ReactNode;
@@ -163,6 +170,7 @@ export const WidgetCard = ({
   isResizing,
   headerLess,
   isLastWidget,
+  shrinkToContent,
   onClick,
   className,
   children,
@@ -180,6 +188,7 @@ export const WidgetCard = ({
       isResizing={isResizing}
       headerLess={headerLess}
       isLastWidget={isLastWidget}
+      shrinkToContent={shrinkToContent}
       hasClickHandler={isDefined(onClick)}
       onClick={onClick}
       className={className}
