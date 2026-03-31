@@ -1,4 +1,5 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
+import { HELPED_DATA } from '@/app/(home)/constants/helped';
 import { HERO_DATA } from '@/app/(home)/constants/hero';
 import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
@@ -9,6 +10,7 @@ import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Faq } from '@/sections/Faq/components';
+import { Helped } from '@/sections/Helped/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
@@ -106,6 +108,10 @@ export default function HomePage() {
           featureCards={THREE_CARDS_FEATURE_DATA.featureCards}
         />
       </ThreeCards.Root>
+
+      <Helped.Root backgroundColor={theme.colors.secondary.background[5]}>
+        <Helped.Scene data={HELPED_DATA} />
+      </Helped.Root>
 
       <Testimonials.Root
         backgroundColor={theme.colors.secondary.background[5]}
