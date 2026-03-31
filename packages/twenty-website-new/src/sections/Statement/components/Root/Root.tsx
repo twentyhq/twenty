@@ -37,7 +37,8 @@ type RootProps = {
 export function Root({ backgroundColor, children, color }: RootProps) {
   const cssVariables = {
     '--statement-emphasis': color,
-    '--statement-line': 'color-mix(in srgb, var(--statement-emphasis) 40%, transparent)',
+    '--statement-line':
+      'color-mix(in srgb, var(--statement-emphasis) 40%, transparent)',
   } as CSSProperties;
 
   return (

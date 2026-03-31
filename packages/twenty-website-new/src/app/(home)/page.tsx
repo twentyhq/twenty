@@ -2,6 +2,7 @@ import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { HERO_DATA } from '@/app/(home)/constants/hero';
 import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
+import { TESTIMONIALS_DATA } from '@/app/(home)/constants/testimonials';
 import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/constants/three-cards-feature';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/constants/three-cards-illustration';
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
@@ -11,6 +12,7 @@ import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
+import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
@@ -105,12 +107,21 @@ export default function HomePage() {
         />
       </ThreeCards.Root>
 
+      <Testimonials.Root
+        backgroundColor={theme.colors.secondary.background[5]}
+        color={theme.colors.primary.text[100]}
+        shapeFillColor={theme.colors.primary.background[100]}
+      >
+        <Testimonials.Carousel
+          eyebrow={TESTIMONIALS_DATA.eyebrow}
+          illustration={TESTIMONIALS_DATA.illustration}
+          testimonials={TESTIMONIALS_DATA.testimonials}
+        />
+      </Testimonials.Root>
+
       <Faq.Root illustration={FAQ_DATA.illustration}>
         <Faq.Intro>
-          <Eyebrow
-            colorScheme="secondary"
-            heading={FAQ_DATA.eyebrow.heading}
-          />
+          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />
           <Faq.Cta>
             <LinkButton
