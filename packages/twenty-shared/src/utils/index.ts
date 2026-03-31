@@ -137,6 +137,12 @@ export { formatToShortNumber } from './format/formatToShortNumber';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getURLSafely } from './getURLSafely';
+export {
+  getNodeTypename,
+  getConnectionTypename,
+  getEdgeTypename,
+  getGroupByConnectionTypename,
+} from './graphql/graphql-get-typename.util';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export {
   sanitizeURL,
