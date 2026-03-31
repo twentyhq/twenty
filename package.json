@@ -180,6 +180,7 @@
     "graphql": "16.8.1",
     "type-fest": "4.10.1",
     "typescript": "5.9.2",
+    "nodemailer": "8.0.4",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
     "@lingui/core": "5.1.2",
     "@types/qs": "6.9.16",
