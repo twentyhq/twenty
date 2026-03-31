@@ -6,12 +6,17 @@ import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSc
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type MouseEvent, useState } from 'react';
-import { IconChevronDown, IconPlus, IconX } from 'twenty-ui/display';
+import { type MouseEvent, useContext, useState } from 'react';
+import {
+  IconChevronDown,
+  IconPlus,
+  IconVariable,
+  IconX,
+} from 'twenty-ui/display';
 import { AnimatedLightIconButton, LightIconButton } from 'twenty-ui/input';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];
@@ -98,6 +103,7 @@ export const WorkflowOutputSchemaBuilder = ({
   onChange,
   readonly,
 }: WorkflowOutputSchemaBuilderProps) => {
+  const { theme } = useContext(ThemeContext);
   const [expandedFieldIds, setExpandedFieldIds] = useState<Set<string>>(
     () => new Set(fields.map((field) => field.id)),
   );
@@ -174,6 +180,7 @@ export const WorkflowOutputSchemaBuilder = ({
                   isExpanded={isExpanded}
                 >
                   <StyledTitleContainer>
+                    <IconVariable size={theme.icon.size.sm} />
                     <span>{field.name || t`Untitled field`}</span>
                   </StyledTitleContainer>
                   <AnimatedLightIconButton
