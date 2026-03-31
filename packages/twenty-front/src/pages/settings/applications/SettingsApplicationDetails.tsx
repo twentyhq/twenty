@@ -14,6 +14,7 @@ import {
   IconSettings,
 } from 'twenty-ui/display';
 import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
+import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -40,11 +41,8 @@ export const SettingsApplicationDetails = () => {
 
   const application = data?.findOneApplication;
 
-  const applicationName = application?.name;
-
-  const title = !isDefined(application)
-    ? t`Application details`
-    : applicationName;
+  const applicationName = application?.name ?? t`Application details`;
+  const applicationDescription = application?.description ?? undefined;
 
   const settingsCustomTabFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
@@ -94,7 +92,12 @@ export const SettingsApplicationDetails = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={title}
+      title={
+        <SettingsApplicationDetailTitle
+          displayName={applicationName}
+          description={applicationDescription}
+        />
+      }
       links={[
         {
           children: t`Workspace`,
@@ -104,7 +107,7 @@ export const SettingsApplicationDetails = () => {
           children: t`Applications`,
           href: getSettingsPath(SettingsPath.Applications),
         },
-        { children: `${title}` },
+        { children: applicationName },
       ]}
     >
       <SettingsPageContainer>

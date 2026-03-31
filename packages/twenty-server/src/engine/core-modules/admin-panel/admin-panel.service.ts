@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import semver from 'semver';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import * as z from 'zod';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
 import { type ConfigVariablesGroupDataDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
@@ -19,7 +19,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
@@ -33,7 +33,7 @@ export class AdminPanelService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly fileService: FileService,
+    private readonly fileUrlService: FileUrlService,
     private readonly secureHttpClientService: SecureHttpClientService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -81,12 +81,13 @@ export class AdminPanelService {
         id: userWorkspace.workspace.id,
         name: userWorkspace.workspace.displayName ?? '',
         totalUsers: userWorkspace.workspace.workspaceUsers.length,
-        logo: userWorkspace.workspace.logo
-          ? this.fileService.signFileUrl({
-              url: userWorkspace.workspace.logo,
+        logo: isDefined(userWorkspace.workspace.logoFileId)
+          ? this.fileUrlService.signFileByIdUrl({
+              fileId: userWorkspace.workspace.logoFileId,
               workspaceId: userWorkspace.workspace.id,
+              fileFolder: FileFolder.CorePicture,
             })
-          : userWorkspace.workspace.logo,
+          : undefined,
         allowImpersonation: userWorkspace.workspace.allowImpersonation,
         workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
           subdomain: userWorkspace.workspace.subdomain,

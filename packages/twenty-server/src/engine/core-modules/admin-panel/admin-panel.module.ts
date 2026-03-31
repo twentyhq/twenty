@@ -22,6 +22,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
+import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -42,6 +43,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     SecureHttpClientModule,
     ApplicationRegistrationModule,
+    UsageModule,
   ],
   providers: [
     AdminPanelResolver,

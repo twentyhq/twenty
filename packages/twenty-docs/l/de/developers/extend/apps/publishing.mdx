@@ -12,7 +12,25 @@ Apps befinden sich derzeit in der Alpha-Testphase. Die Funktion ist funktionsfä
 Sobald Ihre App [lokal gebaut und getestet](/l/de/developers/extend/apps/building) wurde, haben Sie zwei Möglichkeiten, sie zu verteilen:
 
 * **Auf npm veröffentlichen** — führen Sie Ihre App im Twenty-Marktplatz auf, damit jeder Arbeitsbereich sie entdecken und installieren kann.
-* **Einen Tarball pushen** — stellen Sie Ihre App auf einem bestimmten Twenty-Server für die interne Nutzung bereit, ohne sie öffentlich verfügbar zu machen.
+* **Einen Tarball bereitstellen** — Laden Sie Ihre App direkt auf einen bestimmten Twenty-Server für die interne oder private Nutzung hoch.
+
+Beide Pfade beginnen mit demselben **Build**-Schritt.
+
+## Erstellen Ihrer App
+
+Der Befehl `build` kompiliert Ihre TypeScript-Quelltexte, transpiliert Logikfunktionen und Frontend-Komponenten und erzeugt eine `manifest.json`, die die Inhalte Ihrer App beschreibt:
+
+```bash filename="Terminal"
+yarn twenty build
+```
+
+Die Ausgabe wird in `.twenty/output/` geschrieben. Dieses Verzeichnis enthält alles, was für die Verteilung benötigt wird: kompilierter Code, Assets, das Manifest und eine Kopie Ihrer `package.json`.
+
+Um zusätzlich ein `.tgz`-Tarball zu erstellen (wird intern vom Deploy-Befehl verwendet oder für die manuelle Verteilung):
+
+```bash filename="Terminal"
+yarn twenty build --tarball
+```
 
 ## Auf npm veröffentlichen
 
@@ -21,29 +39,76 @@ Die Veröffentlichung auf npm macht Ihre App im Twenty-Marktplatz auffindbar. Je
 ### Anforderungen
 
 * Ein [npm](https://www.npmjs.com)-Konto
-* Ihr Paketname **muss** das Präfix `twenty-app-` verwenden (z. B. `twenty-app-postcard-sender`)
+* Das Schlüsselwort `twenty-app` **muss** in Ihrem `package.json`-`keywords`-Array aufgeführt sein
+
+### Das erforderliche Schlüsselwort hinzufügen
+
+Der Twenty-Marktplatz entdeckt Apps, indem er die npm-Registry nach Paketen mit dem Schlüsselwort `twenty-app` durchsucht. Fügen Sie es zu Ihrer `package.json` hinzu:
+
+```json filename="package.json"
+{
+  "name": "twenty-app-postcard-sender",
+  "version": "1.0.0",
+  "keywords": ["twenty-app"],
+  ...
+}
+```
+
+<Note>
+Der Marktplatz sucht in der npm-Registry nach `keywords:twenty-app`. Ohne dieses Schlüsselwort erscheint Ihr Paket nicht im Marktplatz, selbst wenn es das Namenspräfix `twenty-app-` hat.
+</Note>
 
 ### Schritte
 
-1. **App erstellen** — die CLI kompiliert Ihre TypeScript-Quellen und erzeugt das Anwendungsmanifest:
+1. **Erstellen Ihrer App:**
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-2. **Auf npm veröffentlichen** — pushen Sie das gebaute Paket in die npm-Registry:
+2. **Auf npm veröffentlichen:**
 
 ```bash filename="Terminal"
-npx twenty publish
+yarn twenty publish
 ```
 
-### Automatische Erkennung
+Dies führt `npm publish` aus dem Verzeichnis `.twenty/output/` aus.
 
-Pakete mit dem Präfix `twenty-app-` werden vom Twenty-Marktplatzkatalog automatisch erkannt. Nach der Veröffentlichung erscheint Ihre App innerhalb weniger Minuten im Marktplatz — keine manuelle Registrierung oder Genehmigung erforderlich.
+Um unter einem bestimmten dist-tag zu veröffentlichen (z. B. `beta` oder `next`):
+
+```bash filename="Terminal"
+yarn twenty publish --tag beta
+```
+
+### So funktioniert die Marktplatz-Erkennung
+
+Der Twenty-Server synchronisiert seinen Marktplatzkatalog **stündlich** mit der npm-Registry:
+
+1. Er sucht nach allen npm-Paketen mit dem Schlüsselwort `keywords:twenty-app`
+2. Für jedes Paket ruft er die `manifest.json` vom npm-CDN ab
+3. Die Metadaten der App (Name, Beschreibung, Autor, Logo, Screenshots, Kategorie) werden aus dem Manifest extrahiert und im Marktplatz angezeigt
+
+Nach der Veröffentlichung kann es bis zu einer Stunde dauern, bis Ihre App im Marktplatz erscheint. Um die Synchronisierung sofort auszulösen, statt auf den nächsten stündlichen Lauf zu warten:
+
+```bash filename="Terminal"
+yarn twenty catalog-sync
+```
+
+Um ein bestimmtes Remote anzusteuern:
+
+```bash filename="Terminal"
+yarn twenty catalog-sync -r production
+```
+
+Die im Marktplatz angezeigten Metadaten stammen aus Ihrem `defineApplication()`-Aufruf im Quellcode Ihrer App — Felder wie `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` und `termsUrl`.
+
+<Note>
+Wenn deine App keine `aboutDescription` in `defineApplication()` definiert, verwendet der Marktplatz automatisch die `README.md` deines Pakets von npm als Inhalt der Über-uns-Seite. Das bedeutet, dass du eine einzige README sowohl für npm als auch für den Twenty-Marktplatz pflegen kannst. Wenn du im Marktplatz eine andere Beschreibung möchtest, setze `aboutDescription` explizit.
+</Note>
 
 ### CI-Veröffentlichung
 
-Das vorgefertigte Projekt enthält einen GitHub-Actions-Workflow, der bei jedem Release eine Veröffentlichung durchführt. Er führt `app:build` aus und danach `npm publish --provenance` aus dem Build-Output:
+Das vorgefertigte Projekt enthält einen GitHub-Actions-Workflow, der bei jedem Release eine Veröffentlichung durchführt:
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -72,48 +137,117 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-Für andere CI-Systeme (GitLab CI, CircleCI usw.) gelten die gleichen drei Befehle: `yarn install`, `npx twenty build` und anschließend `npm publish` aus `.twenty/output`.
+Für andere CI-Systeme (GitLab CI, CircleCI usw.) gelten die gleichen drei Befehle: `yarn install`, `yarn twenty build` und anschließend `npm publish` aus `.twenty/output`.
 
 <Tip>
 **npm-Provenance** ist optional, wird jedoch empfohlen. Das Veröffentlichen mit `--provenance` fügt Ihrem npm-Eintrag ein Vertrauensabzeichen hinzu, sodass Nutzer überprüfen können, dass das Paket aus einem bestimmten Commit in einer öffentlichen CI-Pipeline gebaut wurde. Siehe die [npm-Provenance-Dokumentation](https://docs.npmjs.com/generating-provenance-statements) für Einrichtungshinweise.
 </Tip>
 
-## Interne Verteilung
+## Bereitstellung auf einem Server (Tarball)
 
-Für Apps, die Sie nicht öffentlich verfügbar machen möchten — proprietäre Tools, nur für Unternehmen bestimmte Integrationen oder experimentelle Builds — können Sie einen Tarball direkt auf einen Twenty-Server pushen.
+Für Apps, die Sie nicht öffentlich verfügbar machen möchten — proprietäre Tools, ausschließlich für Unternehmen bestimmte Integrationen oder experimentelle Builds — können Sie einen Tarball direkt auf einem Twenty-Server bereitstellen.
 
-### Einen Tarball pushen
+### Voraussetzungen
 
-Erstellen Sie Ihre App und stellen Sie sie in einem Schritt auf einem bestimmten Server bereit:
+Bevor Sie bereitstellen, benötigen Sie ein konfiguriertes Remote, das auf den Zielserver zeigt. Remotes speichern die Server-URL und Anmeldeinformationen lokal in `~/.twenty/config.json`.
+
+Ein Remote hinzufügen:
 
 ```bash filename="Terminal"
-npx twenty publish --server <server-url>
+yarn twenty remote add --url https://your-twenty-server.com --as production
 ```
 
-Jeder Arbeitsbereich auf diesem Server kann die App anschließend über die Seite **Applications** in den Einstellungen installieren und aktualisieren.
+Für einen lokalen Entwicklungsserver:
+
+```bash filename="Terminal"
+yarn twenty remote add --local --as local
+```
+
+Sie können sich in nicht interaktiven Umgebungen auch mit einem API-Schlüssel authentifizieren:
+
+```bash filename="Terminal"
+yarn twenty remote add --url https://your-twenty-server.com --token <api-key> --as production
+```
+
+Ihre Remotes verwalten:
+
+```bash filename="Terminal"
+yarn twenty remote list       # List all configured remotes
+yarn twenty remote switch prod # Set the default remote
+yarn twenty remote status     # Show active remote and auth status
+yarn twenty remote remove old # Remove a remote
+```
+
+### Bereitstellen
+
+Bauen und laden Sie Ihre App in einem Schritt auf den Server hoch:
+
+```bash filename="Terminal"
+yarn twenty deploy
+```
+
+Dies baut die App mit `--tarball` und lädt anschließend den Tarball per GraphQL-Multipart-Upload auf das Standard-Remote hoch.
+
+Um auf ein bestimmtes Remote bereitzustellen:
+
+```bash filename="Terminal"
+yarn twenty deploy -r production
+```
+
+### Eine bereitgestellte App freigeben
+
+Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken andere Arbeitsbereiche auf demselben Server sie nicht durch Stöbern. So geben Sie eine bereitgestellte App frei:
+
+1. Gehen Sie zu **Einstellungen > Anwendungen > Registrierungen** und öffnen Sie Ihre App
+2. Klicken Sie im Tab **Distribution** auf **Freigabelink kopieren**
+3. Teilen Sie diesen Link mit Nutzern in anderen Arbeitsbereichen — er führt sie direkt zur Installationsseite der App
+
+Der Freigabelink verwendet die Basis-URL des Servers (ohne Workspace-Subdomain), sodass er für jeden Arbeitsbereich auf dem Server funktioniert.
 
 ### Versionsverwaltung
 
 So veröffentlichen Sie ein Update:
 
 1. Erhöhen Sie das Feld `version` in Ihrer `package.json`
-2. Pushen Sie einen neuen Tarball mit `npx twenty publish --server <server-url>`
-3. Arbeitsbereiche auf diesem Server sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
+2. Führen Sie `yarn twenty deploy` aus (oder `yarn twenty deploy -r production`)
+3. Arbeitsbereiche, die die App installiert haben, sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
 
-<Note>
-Interne Apps sind auf den Server beschränkt, auf den sie gepusht werden. Sie erscheinen nicht im öffentlichen Marktplatz und können von Arbeitsbereichen auf anderen Servern nicht installiert werden.
-</Note>
+## Apps installieren
 
-## App-Kategorien
+Sobald eine App veröffentlicht (npm) oder bereitgestellt (Tarball) wurde, installieren Arbeitsbereiche sie über die Benutzeroberfläche:
+
+```bash filename="Terminal"
+yarn twenty install
+```
+
+Oder über die Seite **Einstellungen > Anwendungen** in der Twenty-Oberfläche, wo sowohl Marktplatz- als auch per Tarball bereitgestellte Apps durchsucht und installiert werden können.
+
+## Kategorien der App-Verteilung
 
 Twenty organisiert Apps in drei Kategorien, basierend auf ihrer Vertriebsart:
 
-| Kategorie          | Wie es funktioniert                                                                                                                  | Im Marktplatz sichtbar? |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| **Entwicklung**    | Lokale Apps im Entwicklungsmodus, die über `yarn twenty dev` ausgeführt werden. Zum Erstellen und Testen verwendet.                  | Nein                    |
-| **Veröffentlicht** | Auf npm veröffentlichte Apps mit dem Präfix `twenty-app-`. Im Marktplatz gelistet, damit jeder Arbeitsbereich sie installieren kann. | Ja                      |
-| **Intern**         | Apps, die per Tarball auf einen bestimmten Server bereitgestellt werden. Nur für Arbeitsbereiche auf diesem Server verfügbar.        | Nein                    |
+| Kategorie                | Wie es funktioniert                                                                                                                            | Im Marktplatz sichtbar? |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **Entwicklung**          | Lokale Apps im Entwicklungsmodus, die über `yarn twenty dev` ausgeführt werden. Zum Erstellen und Testen verwendet.                            | Nein                    |
+| **Veröffentlicht (npm)** | Auf npm veröffentlichte Apps mit dem Schlüsselwort `twenty-app`. Im Marktplatz gelistet, damit jeder Arbeitsbereich sie installieren kann.     | Ja                      |
+| **Intern (Tarball)**     | Apps, die per Tarball auf einen bestimmten Server bereitgestellt werden. Nur für Arbeitsbereiche auf diesem Server per Freigabelink verfügbar. | Nein                    |
 
 <Tip>
 Beginnen Sie im **Entwicklungsmodus**, während Sie Ihre App erstellen. Wenn sie bereit ist, wählen Sie **Veröffentlicht** (npm) für die breite Verteilung oder **Intern** (Tarball) für die private Bereitstellung.
 </Tip>
+
+## CLI-Referenz
+
+| Befehl                      | Beschreibung                                                    | Wichtige Flags                                      |
+| --------------------------- | --------------------------------------------------------------- | --------------------------------------------------- |
+| `yarn twenty build`         | App kompilieren und Manifest erzeugen                           | `--tarball` — zusätzlich ein `.tgz`-Paket erstellen |
+| `yarn twenty publish`       | Bauen und auf npm veröffentlichen                               | `--tag <tag>` — npm-dist-tag (z. B. `beta`, `next`) |
+| `yarn twenty deploy`        | Tarball bauen und auf einen Server hochladen                    | `-r, --remote <name>` — Ziel-Remote                 |
+| `yarn twenty catalog-sync`  | Synchronisierung des Marktplatzkatalogs auf dem Server auslösen | `-r, --remote <name>` — Ziel-Remote                 |
+| `yarn twenty install`       | Eine bereitgestellte App in einem Arbeitsbereich installieren   | `-r, --remote <name>` — Ziel-Remote                 |
+| `yarn twenty dev`           | Lokale Änderungen beobachten und synchronisieren                | Verwendet das Standard-Remote                       |
+| `yarn twenty remote add`    | Eine Serververbindung hinzufügen                                | `--url`, `--token`, `--as`, `--local`, `--port`     |
+| `yarn twenty remote list`   | Konfigurierte Remotes auflisten                                 | —                                                   |
+| `yarn twenty remote switch` | Standard-Remote festlegen                                       | —                                                   |
+| `yarn twenty remote status` | Verbindungsstatus anzeigen                                      | —                                                   |
+| `yarn twenty remote remove` | Ein Remote entfernen                                            | —                                                   |

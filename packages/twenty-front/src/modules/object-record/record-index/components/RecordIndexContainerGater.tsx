@@ -2,8 +2,6 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
-import { LayoutCustomizationObjectNotSharedEmptyState } from '@/layout-customization/components/LayoutCustomizationObjectNotSharedEmptyState';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
@@ -11,6 +9,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
+import { RecordIndexEmptyStateNotShared } from '@/object-record/record-index/components/RecordIndexEmptyStateNotShared';
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
@@ -23,7 +22,6 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { NotFound } from '~/pages/not-found/NotFound';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -66,10 +64,6 @@ export const RecordIndexContainerGater = () => {
     recordIndexId,
   );
 
-  if (!hasObjectReadPermissions && !isLayoutCustomizationModeEnabled) {
-    return <NotFound />;
-  }
-
   return (
     <>
       <RecordIndexContextProvider
@@ -102,16 +96,18 @@ export const RecordIndexContainerGater = () => {
               <PageTitle title={objectMetadataItem.labelPlural} />
               <RecordIndexPageHeader />
               <MainContainerLayoutWithSidePanel>
-                {hasObjectReadPermissions ? (
-                  <StyledIndexContainer
-                    className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
-                  >
-                    <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                    <RecordIndexContainer />
-                  </StyledIndexContainer>
-                ) : (
-                  <LayoutCustomizationObjectNotSharedEmptyState />
-                )}
+                <StyledIndexContainer
+                  className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+                >
+                  {hasObjectReadPermissions ? (
+                    <>
+                      <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                      <RecordIndexContainer />
+                    </>
+                  ) : (
+                    <RecordIndexEmptyStateNotShared />
+                  )}
+                </StyledIndexContainer>
               </MainContainerLayoutWithSidePanel>
             </CommandMenuComponentInstanceContext.Provider>
           </RecordComponentInstanceContextsWrapper>

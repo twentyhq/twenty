@@ -1,0 +1,112 @@
+{
+  "name": "twenty-front-component-renderer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-front-component-renderer/src",
+  "projectType": "library",
+  "tags": ["scope:frontend"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx rimraf dist && npx vite build -c vite.config.ts",
+          "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist"
+        ],
+        "parallel": false
+      }
+    },
+    "typecheck": {},
+    "lint": {},
+    "generate-remote-dom-elements": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": [
+        "{projectRoot}/scripts/remote-dom/**/*",
+        "{projectRoot}/src/constants/**/*",
+        "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
+        "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
+      ],
+      "outputs": [
+        "{projectRoot}/src/host/generated/*",
+        "{projectRoot}/src/remote/generated/*"
+      ],
+      "options": {
+        "cwd": "packages/twenty-front-component-renderer",
+        "command": "tsx -r tsconfig-paths/register scripts/remote-dom/generate-remote-dom-elements.ts"
+      },
+      "configurations": {
+        "verbose": {
+          "command": "tsx -r tsconfig-paths/register scripts/remote-dom/generate-remote-dom-elements.ts --verbose"
+        }
+      }
+    },
+    "storybook:prebuild": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "generate-remote-dom-elements",
+        {
+          "target": "build:sdk",
+          "projects": "twenty-sdk"
+        },
+        {
+          "target": "build:individual",
+          "projects": "twenty-ui"
+        },
+        {
+          "target": "build:individual",
+          "projects": "twenty-shared"
+        }
+      ],
+      "inputs": [
+        "{projectRoot}/scripts/front-component-stories/**/*",
+        "{projectRoot}/src/__stories__/example-sources/*",
+        "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*"
+      ],
+      "outputs": ["{projectRoot}/src/__stories__/example-sources-built/*"],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/front-component-stories/build-source-examples.ts"
+      }
+    },
+    "storybook:build": {
+      "dependsOn": ["storybook:prebuild"],
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:serve:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "port": 6008
+      }
+    },
+    "storybook:serve:static": {
+      "options": {
+        "buildTarget": "twenty-front-component-renderer:storybook:build",
+        "port": 6008
+      },
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:test": {
+      "dependsOn": ["storybook:prebuild"],
+      "options": {
+        "command": "vitest run --coverage --config vitest.storybook.config.ts --shard={args.shard}"
+      }
+    },
+    "storybook:test:no-coverage": {
+      "dependsOn": ["storybook:prebuild"],
+      "options": {
+        "command": "vitest run --config vitest.storybook.config.ts --shard={args.shard}"
+      }
+    },
+    "storybook:coverage": {}
+  }
+}

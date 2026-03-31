@@ -9,18 +9,19 @@ Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, d
 
 Aplicațiile vă permit să extindeți Twenty cu obiecte personalizate, câmpuri, funcții logice, abilități IA și componente UI — toate gestionate ca cod.
 
-**Ce puteți face astăzi:**
+**Ce puteți construi:**
 
-* Definiți obiecte și câmpuri personalizate sub formă de cod (model de date gestionat)
-* Construiți funcții logice cu declanșatoare personalizate (rute HTTP, cron, evenimente ale bazei de date)
-* Definiți abilități pentru agenți de IA
-* Construiți componente front-end care se afișează în interfața Twenty
-* Implementați aceeași aplicație în mai multe spații de lucru
+* Obiecte, câmpuri, vizualizări și elemente de navigare personalizate pentru a defini modelul dumneavoastră de date
+* Funcții logice declanșate de rute HTTP, programări cron sau evenimente din baza de date
+* Componente front-end care se afișează direct în interfața Twenty
+* Abilități care extind capabilitățile agenților AI ai Twenty
+* Implementați o aplicație în mai multe spații de lucru
 
 ## Cerințe
 
-* Node.js 24+ și Yarn 4
-* Docker (pentru serverul local de dezvoltare Twenty)
+* Node.js 24+
+* Yarn 4
+* Docker (sau o instanță Twenty locală în execuție)
 
 ## Începeți
 
@@ -29,27 +30,15 @@ Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-Generatorul de schelet acceptă două moduri pentru a controla ce fișiere de exemplu sunt incluse:
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> Folosiți opțiunea `--minimal` pentru a genera o instalare minimă
 
 De aici puteți:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -123,7 +112,7 @@ Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `
 Pe scurt:
 
 * **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus un script `twenty` care deleagă către CLI-ul local `twenty`. Rulați `yarn twenty help` pentru a lista toate comenzile disponibile.
-* **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
+* **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
 * **.oxlintrc.json** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
@@ -167,8 +156,8 @@ export default defineObject({
 
 Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
 
-* `yarn twenty dev` va genera automat doi clienți API tipizați în `node_modules/twenty-sdk/generated`: `CoreApiClient` (pentru datele spațiului de lucru prin `/graphql`) și `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`).
-* `yarn twenty entity:add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele, funcțiile, componentele front-end, rolurile, abilitățile și altele.
+* `yarn twenty dev` va genera automat `CoreApiClient` tipizat (pentru datele spațiului de lucru prin `/graphql`) în `node_modules/twenty-client-sdk/`. `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`) este livrat preconstruit și este disponibil imediat. Importați-le din `twenty-client-sdk/core` și `twenty-client-sdk/metadata`, respectiv.
+* `yarn twenty add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele personalizate, funcțiile, componentele front-end, rolurile, abilitățile și altele.
 
 ## Autentificare
 

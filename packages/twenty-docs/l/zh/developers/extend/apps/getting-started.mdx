@@ -9,18 +9,19 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 
 应用可通过自定义对象、字段、逻辑函数、AI 技能和 UI 组件来扩展 Twenty——全部以代码进行管理。
 
-**你现在可以做什么:**
+**你可以构建的内容:**
 
-* 以代码定义自定义对象和字段（受管理的数据模型）
-* 使用自定义触发器（HTTP 路由、cron、数据库事件）构建逻辑函数
-* 为 AI 智能体定义技能
-* 构建在 Twenty 的 UI 中渲染的前端组件
+* 自定义对象、字段、视图和导航项，以塑造你的数据模型
+* 由 HTTP 路由、cron 调度或数据库事件触发的逻辑函数
+* 在 Twenty 的 UI 中直接渲染的前端组件
+* 用于扩展 Twenty 的 AI 代理的技能
 * 将同一个应用部署到多个工作空间
 
 ## 先决条件
 
-* Node.js 24+ 和 Yarn 4
-* Docker (用于本地 Twenty 开发服务器)
+* Node.js 24+
+* Yarn 4
+* Docker (或正在运行的本地 Twenty 实例)
 
 ## 开始使用
 
@@ -29,27 +30,15 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 ```bash filename="Terminal"
 # Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-
-# Start dev mode: automatically syncs local changes to your workspace
-yarn twenty dev
 ```
 
-脚手架工具支持两种模式，用于控制包含哪些示例文件：
-
-```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
-npx create-twenty-app@latest my-app
-
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
-```
+> 使用 `--minimal` 选项生成最简安装脚手架
 
 从这里您可以：
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn twenty entity:add
+yarn twenty add
 
 # Watch your application's function logs
 yarn twenty function:logs
@@ -123,7 +112,7 @@ my-twenty-app/
 总体来说：
 
 * **package.json**：声明应用名称、版本、引擎（Node 24+、Yarn 4），并添加 `twenty-sdk` 以及一个 `twenty` 脚本，该脚本会委托给本地的 `twenty` CLI。 运行 `yarn twenty help` 以列出所有可用命令。
-* **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
+* **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`.twenty/`、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
 * **.oxlintrc.json** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
@@ -167,8 +156,8 @@ export default defineObject({
 
 后续命令将添加更多文件和文件夹：
 
-* `yarn twenty dev` 会在 `node_modules/twenty-sdk/generated` 中自动生成两个类型化 API 客户端：`CoreApiClient`（通过 `/graphql` 获取工作区数据）和 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）。
-* `yarn twenty entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件、角色、技能等添加实体定义文件。
+* `yarn twenty dev` 会自动生成类型化的 `CoreApiClient`（通过 `/graphql` 获取工作区数据），并写入 `node_modules/twenty-client-sdk/`。 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）为预构建版本，可立即使用。 分别从 `twenty-client-sdk/core` 和 `twenty-client-sdk/metadata` 导入它们。
+* `yarn twenty add` 会在 `src/` 下为你的自定义对象、函数、前端组件、角色、技能等添加实体定义文件。
 
 ## 身份验证
 

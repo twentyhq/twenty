@@ -1,8 +1,11 @@
+import { getFolderNavigationMenuItemLabel } from '@/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel';
+import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
+import { getObjectNavigationMenuItemLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemLabel';
+import { getRecordNavigationMenuItemLabel } from '@/navigation-menu-item/display/record/utils/getRecordNavigationMenuItemLabel';
+import { getViewNavigationMenuItemLabel } from '@/navigation-menu-item/display/view/utils/getViewNavigationMenuItemLabel';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
-import { ViewKey } from '@/views/types/ViewKey';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getNavigationMenuItemLabel = (
@@ -14,35 +17,16 @@ export const getNavigationMenuItemLabel = (
   views: Pick<View, 'id' | 'name' | 'objectMetadataId' | 'key'>[],
 ): string => {
   switch (item.type) {
-    case NavigationMenuItemType.OBJECT: {
-      const objectMetadataItem = objectMetadataItems.find(
-        (meta) => meta.id === item.targetObjectMetadataId,
-      );
-      return objectMetadataItem?.labelPlural ?? '';
-    }
-    case NavigationMenuItemType.VIEW: {
-      const view = views.find((view) => view.id === item.viewId);
-      if (!isDefined(view)) {
-        return '';
-      }
-      if (view.key === ViewKey.INDEX) {
-        const objectMetadataItem = objectMetadataItems.find(
-          (meta) => meta.id === view.objectMetadataId,
-        );
-        return objectMetadataItem?.labelPlural ?? view.name;
-      }
-      return view.name;
-    }
-    case NavigationMenuItemType.LINK: {
-      const linkUrl = (item.link ?? '').trim();
-      return (item.name ?? linkUrl) || 'Link';
-    }
-    case NavigationMenuItemType.RECORD: {
-      return item.targetRecordIdentifier?.labelIdentifier ?? '';
-    }
-    case NavigationMenuItemType.FOLDER: {
-      return item.name ?? 'Folder';
-    }
+    case NavigationMenuItemType.OBJECT:
+      return getObjectNavigationMenuItemLabel(item, objectMetadataItems);
+    case NavigationMenuItemType.VIEW:
+      return getViewNavigationMenuItemLabel(item, views);
+    case NavigationMenuItemType.LINK:
+      return getLinkNavigationMenuItemLabel(item);
+    case NavigationMenuItemType.RECORD:
+      return getRecordNavigationMenuItemLabel(item);
+    case NavigationMenuItemType.FOLDER:
+      return getFolderNavigationMenuItemLabel(item);
     default:
       return item.name ?? '';
   }

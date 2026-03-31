@@ -151,6 +151,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           kanbanAggregateOperationViewUniversalIdentifiers: [],
           calendarViewUniversalIdentifiers: [],
           mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+          fieldPermissionUniversalIdentifiers: [],
           universalSettings: null,
           viewSortUniversalIdentifiers: [],
         };

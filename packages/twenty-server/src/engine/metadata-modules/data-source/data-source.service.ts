@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type FindManyOptions, Repository } from 'typeorm';
 
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   DataSourceException,
   DataSourceExceptionCode,
@@ -10,20 +11,30 @@ import {
 
 import { DataSourceEntity } from './data-source.entity';
 
+// @deprecated - This service is being deprecated. During the transition,
+// writes go to both the dataSource table and workspace table (dual-write).
+// Reads should progressively migrate to use workspace.databaseSchema
+// or the deterministic getWorkspaceSchemaName(workspaceId) utility.
 @Injectable()
 export class DataSourceService {
   constructor(
     @InjectRepository(DataSourceEntity)
     private readonly dataSourceMetadataRepository: Repository<DataSourceEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async createDataSourceMetadata(
     workspaceId: string,
     workspaceSchema: string,
   ): Promise<DataSourceEntity> {
-    // TODO: Double check if this is the correct way to do this
     const dataSource = await this.dataSourceMetadataRepository.findOne({
       where: { workspaceId },
+    });
+
+    // Dual-write: always keep workspace.databaseSchema in sync
+    await this.workspaceRepository.update(workspaceId, {
+      databaseSchema: workspaceSchema,
     });
 
     if (dataSource) {
@@ -36,12 +47,16 @@ export class DataSourceService {
     });
   }
 
+  // @deprecated - Use workspace.activationStatus or workspace.databaseSchema
+  // to check if a workspace has been initialized instead.
   async getManyDataSourceMetadata(
     options: FindManyOptions<DataSourceEntity> = {},
   ): Promise<DataSourceEntity[]> {
     return this.dataSourceMetadataRepository.find(options);
   }
 
+  // @deprecated - Use workspace.databaseSchema or
+  // getWorkspaceSchemaName(workspaceId) instead.
   async getDataSourcesMetadataFromWorkspaceId(
     workspaceId: string,
   ): Promise<DataSourceEntity[]> {
@@ -51,6 +66,8 @@ export class DataSourceService {
     });
   }
 
+  // @deprecated - Use workspace.databaseSchema or
+  // getWorkspaceSchemaName(workspaceId) instead.
   async getLastDataSourceMetadataFromWorkspaceId(
     workspaceId: string,
   ): Promise<DataSourceEntity | null> {
@@ -60,6 +77,8 @@ export class DataSourceService {
     });
   }
 
+  // @deprecated - Use workspace.databaseSchema or
+  // getWorkspaceSchemaName(workspaceId) instead.
   async getLastDataSourceMetadataFromWorkspaceIdOrFail(
     workspaceId: string,
   ): Promise<DataSourceEntity> {
@@ -78,5 +97,10 @@ export class DataSourceService {
 
   async delete(workspaceId: string): Promise<void> {
     await this.dataSourceMetadataRepository.delete({ workspaceId });
+
+    // Dual-write: clear workspace.databaseSchema on delete
+    await this.workspaceRepository.update(workspaceId, {
+      databaseSchema: null,
+    });
   }
 }

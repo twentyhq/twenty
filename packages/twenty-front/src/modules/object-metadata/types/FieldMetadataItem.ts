@@ -20,12 +20,14 @@ export type FieldMetadataItem = Omit<
   | '__typename'
   | 'applicationId'
   | 'defaultValue'
+  | 'objectMetadataId'
   | 'options'
   | 'relation'
   | 'morphRelations'
 > & {
   __typename?: string;
   applicationId?: string;
+  objectMetadataId?: string;
   defaultValue?: any;
   options?: FieldMetadataItemOption[] | null;
   relation?: FieldMetadataItemRelation | null;

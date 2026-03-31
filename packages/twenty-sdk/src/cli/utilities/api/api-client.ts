@@ -51,7 +51,7 @@ export class ApiClient {
         if (error.response?.status === 401) {
           console.error(
             chalk.red(
-              'Authentication failed. Run `twenty remote add` to authenticate.',
+              'Authentication failed. Run `yarn twenty remote add` to authenticate.',
             ),
           );
         } else if (error.response?.status === 403) {

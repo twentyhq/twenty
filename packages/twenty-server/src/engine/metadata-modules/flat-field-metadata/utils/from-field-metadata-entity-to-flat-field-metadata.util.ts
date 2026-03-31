@@ -106,6 +106,8 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
       [],
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
+    fieldPermissionIds:
+      fieldMetadataEntity.fieldPermissions?.map(({ id }) => id) ?? [],
     applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier,
@@ -130,6 +132,10 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
     viewSortIds: fieldMetadataEntity.viewSorts?.map(({ id }) => id) ?? [],
     viewSortUniversalIdentifiers:
       fieldMetadataEntity.viewSorts?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    fieldPermissionUniversalIdentifiers:
+      fieldMetadataEntity.fieldPermissions?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
     universalSettings: settingsWithUniversalIdentifiers,

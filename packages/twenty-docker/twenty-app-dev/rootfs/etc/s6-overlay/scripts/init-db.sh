@@ -32,11 +32,11 @@ has_schema=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
 
 if [ "$has_schema" = "f" ]; then
   echo "Database appears to be empty, running initial setup..."
-  NODE_OPTIONS="--max-old-space-size=1500" node ./dist/scripts/setup-db.js
+  NODE_OPTIONS="--max-old-space-size=1500" node ./dist/database/scripts/setup-db.js
 fi
 
 # Always run migrations (idempotent — skips already-applied ones)
-yarn database:migrate:prod
+yarn database:migrate:prod --force
 
 yarn command:prod cache:flush
 yarn command:prod upgrade

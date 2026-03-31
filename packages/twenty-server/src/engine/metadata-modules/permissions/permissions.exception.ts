@@ -42,6 +42,7 @@ export enum PermissionsExceptionCode {
   UPSERT_FIELD_PERMISSION_FAILED = 'UPSERT_FIELD_PERMISSION_FAILED',
   PERMISSION_NOT_FOUND = 'PERMISSION_NOT_FOUND',
   OBJECT_PERMISSION_NOT_FOUND = 'OBJECT_PERMISSION_NOT_FOUND',
+  FIELD_PERMISSION_NOT_FOUND = 'FIELD_PERMISSION_NOT_FOUND',
   EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'EMPTY_FIELD_PERMISSION_NOT_ALLOWED',
   JOIN_COLUMN_NAME_REQUIRED = 'JOIN_COLUMN_NAME_REQUIRED',
   COMPOSITE_TYPE_NOT_FOUND = 'COMPOSITE_TYPE_NOT_FOUND',
@@ -128,6 +129,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Permission not found.`;
     case PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND:
       return msg`Object permission not found.`;
+    case PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND:
+      return msg`Field permission not found.`;
     case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
       return msg`Empty field permissions are not allowed.`;
     case PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED:
@@ -184,6 +187,7 @@ export enum PermissionsExceptionMessage {
   FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT = 'Field restriction only makes sense on readable object',
   FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'Field restriction on update only makes sense on updatable object',
   OBJECT_PERMISSION_NOT_FOUND = 'Object permission not found',
+  FIELD_PERMISSION_NOT_FOUND = 'Field permission not found',
   EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'Empty field permission not allowed',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'Role must be assignable to at least one target type',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'Role cannot be assigned to users',

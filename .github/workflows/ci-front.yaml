@@ -25,6 +25,7 @@ jobs:
         package.json
         yarn.lock
         packages/twenty-front/**
+        packages/twenty-front-component-renderer/**
         packages/twenty-ui/**
         packages/twenty-shared/**
         packages/twenty-sdk/**
@@ -93,7 +94,7 @@ jobs:
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
-          npx nx build twenty-sdk
+          npx nx build twenty-front-component-renderer
       - name: Download storybook build
         uses: actions/download-artifact@v4
         with:

@@ -15,4 +15,5 @@ export const DARK_BACKGROUND: Record<string, string> = {
   noDeletedRecord:
     '/images/placeholders/dark-background/no_deleted_record_bg.png',
   noWidgets: '/images/placeholders/dark-background/no_widgets_bg.png',
+  notShared: '/images/placeholders/dark-background/not_shared_bg.png',
 };

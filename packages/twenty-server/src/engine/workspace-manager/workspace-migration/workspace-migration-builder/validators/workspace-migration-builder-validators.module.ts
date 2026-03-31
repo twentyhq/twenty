@@ -6,6 +6,7 @@ import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-mo
 import { FlatAgentValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service';
 import { FlatCommandMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service';
 import { FlatFieldMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service';
+import { FlatFieldPermissionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service';
 import { FlatFrontComponentValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service';
 import { FlatLogicFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service';
@@ -40,6 +41,7 @@ import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/worksp
     FlatViewGroupValidatorService,
     FlatViewFieldGroupValidatorService,
     FlatViewSortValidatorService,
+    FlatFieldPermissionValidatorService,
     FlatObjectPermissionValidatorService,
     FlatPermissionFlagValidatorService,
     FlatIndexValidatorService,
@@ -70,6 +72,7 @@ import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/worksp
     FlatViewGroupValidatorService,
     FlatViewFieldGroupValidatorService,
     FlatViewSortValidatorService,
+    FlatFieldPermissionValidatorService,
     FlatObjectPermissionValidatorService,
     FlatPermissionFlagValidatorService,
     FlatIndexValidatorService,

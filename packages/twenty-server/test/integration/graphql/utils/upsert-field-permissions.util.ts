@@ -1,27 +1,14 @@
-import { createUpsertFieldPermissionsOperation } from 'test/integration/graphql/utils/upsert-field-permissions-operation-factory.util';
+import { upsertFieldPermissionsQueryFactory } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-export const upsertFieldPermissions = async ({
-  roleId,
-  fieldPermissions,
-  selectedFields,
-}: {
-  roleId: string;
-  fieldPermissions: Array<{
-    objectMetadataId: string;
-    fieldMetadataId: string;
-    canReadFieldValue?: boolean | null;
-    canUpdateFieldValue?: boolean | null;
-  }>;
-  selectedFields?: string[];
-}) => {
-  const operation = createUpsertFieldPermissionsOperation(
-    roleId,
-    fieldPermissions,
-    selectedFields,
-  );
+import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 
-  const response = await makeMetadataAPIRequest(operation);
+export const upsertFieldPermissions = async (
+  input: UpsertFieldPermissionsInput,
+) => {
+  const graphqlOperation = upsertFieldPermissionsQueryFactory({ input });
+
+  const response = await makeMetadataAPIRequest(graphqlOperation);
 
   return {
     data: response.body.data,

@@ -14,9 +14,10 @@ export type ApplicationManifest = SyncableEntityOptions & {
   logoUrl?: string;
   screenshots?: string[];
   aboutDescription?: string;
-  providers?: string[];
   websiteUrl?: string;
   termsUrl?: string;
+  emailSupport?: string;
+  issueReportUrl?: string;
   preInstallLogicFunctionUniversalIdentifier?: string;
   postInstallLogicFunctionUniversalIdentifier?: string;
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
