@@ -790,6 +790,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
           },
           objectMetadataId: object.id,
           objectMetadataUniversalIdentifier: object.universalIdentifier,
+          isActive: true,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,

@@ -167,7 +167,7 @@ export class PageLayoutUpdateService {
         flatViewMaps,
       });
 
-    const orphanedViewIds = this.collectOrphanedViewIdsFromDeletedWidgets({
+    const orphanedViewIds = this.collectOrphanedViewIdsFromDeactivatedWidgets({
       widgetsToUpdate,
       tabsToUpdate,
       flatPageLayoutWidgetMaps,
@@ -286,7 +286,9 @@ export class PageLayoutUpdateService {
       existingObjects: existingTabs,
       receivedObjects: tabs,
       propertiesToCompare: FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
+      isEntityIncluded: (entity) => entity.isActive,
     });
+
 
     const now = new Date();
 
@@ -313,6 +315,7 @@ export class PageLayoutUpdateService {
           icon: null,
           layoutMode: tabInput.layoutMode ?? PageLayoutTabLayoutMode.GRID,
           overrides: null,
+          isActive: true,
         };
       },
     );
@@ -346,12 +349,12 @@ export class PageLayoutUpdateService {
           title: tabInput.title,
           position: tabInput.position,
           layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
-          deletedAt: null,
+          isActive: true,
           updatedAt: now.toISOString(),
         };
       });
 
-    const tabsToDelete: FlatPageLayoutTab[] = idsToDelete
+    const tabsToDeactivate: FlatPageLayoutTab[] = idsToDelete
       .map((tabId) => {
         const existingTab = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: tabId,
@@ -364,7 +367,7 @@ export class PageLayoutUpdateService {
 
         return {
           ...existingTab,
-          deletedAt: now.toISOString(),
+          isActive: false,
           updatedAt: now.toISOString(),
         };
       })
@@ -375,7 +378,7 @@ export class PageLayoutUpdateService {
       tabsToUpdate: [
         ...tabsToUpdate,
         ...tabsToRestoreAndUpdate,
-        ...tabsToDelete,
+        ...tabsToDeactivate,
       ],
       tabsToDelete: [],
     };
@@ -501,6 +504,7 @@ export class PageLayoutUpdateService {
       existingObjects: existingWidgets,
       receivedObjects: widgets,
       propertiesToCompare: FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
+      isEntityIncluded: (entity) => entity.isActive,
     });
 
     const now = new Date();
@@ -527,6 +531,7 @@ export class PageLayoutUpdateService {
             workspaceCustomApplicationUniversalIdentifier,
           conditionalDisplay: null,
           overrides: null,
+          isActive: true,
           universalConfiguration:
             fromPageLayoutWidgetConfigurationToUniversalConfiguration({
               configuration: widgetInput.configuration,
@@ -595,7 +600,7 @@ export class PageLayoutUpdateService {
             flatObjectMetadataMaps,
           }),
           configuration: restoredConfiguration,
-          deletedAt: null,
+          isActive: true,
           updatedAt: now.toISOString(),
           ...(isDefined(restoredConfiguration) && {
             universalConfiguration:
@@ -614,7 +619,7 @@ export class PageLayoutUpdateService {
         };
       });
 
-    const widgetsToDelete: FlatPageLayoutWidget[] = idsToDelete
+    const widgetsToDeactivate: FlatPageLayoutWidget[] = idsToDelete
       .map((widgetId) => {
         const existingWidget = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: widgetId,
@@ -627,7 +632,7 @@ export class PageLayoutUpdateService {
 
         return {
           ...existingWidget,
-          deletedAt: now.toISOString(),
+          isActive: false,
           updatedAt: now.toISOString(),
         };
       })
@@ -638,7 +643,7 @@ export class PageLayoutUpdateService {
       widgetsToUpdate: [
         ...widgetsToUpdate,
         ...widgetsToRestoreAndUpdate,
-        ...widgetsToDelete,
+        ...widgetsToDeactivate,
       ],
     };
   }
@@ -665,7 +670,7 @@ export class PageLayoutUpdateService {
     });
   }
 
-  private collectOrphanedViewIdsFromDeletedWidgets({
+  private collectOrphanedViewIdsFromDeactivatedWidgets({
     widgetsToUpdate,
     tabsToUpdate,
     flatPageLayoutWidgetMaps,
@@ -678,11 +683,11 @@ export class PageLayoutUpdateService {
     >['flatPageLayoutWidgetMaps'];
   }): string[] {
     const viewIdsToDelete = new Set<string>();
-    const directlyDeletedWidgetIds = new Set<string>();
+    const directlyDeactivatedWidgetIds = new Set<string>();
 
     for (const widget of widgetsToUpdate) {
-      if (isDefined(widget.deletedAt)) {
-        directlyDeletedWidgetIds.add(widget.id);
+      if (!widget.isActive) {
+        directlyDeactivatedWidgetIds.add(widget.id);
         const viewId = this.getViewIdFromFieldsWidget(widget);
 
         if (isDefined(viewId)) {
@@ -691,9 +696,9 @@ export class PageLayoutUpdateService {
       }
     }
 
-    const deletedTabIds = new Set(
+    const deactivatedTabIds = new Set(
       tabsToUpdate
-        .filter((tab) => isDefined(tab.deletedAt))
+        .filter((tab) => !tab.isActive)
         .map((tab) => tab.id),
     );
 
@@ -703,8 +708,8 @@ export class PageLayoutUpdateService {
 
     for (const widget of allExistingWidgets) {
       if (
-        !isDefined(widget.deletedAt) &&
-        deletedTabIds.has(widget.pageLayoutTabId)
+        widget.isActive &&
+        deactivatedTabIds.has(widget.pageLayoutTabId)
       ) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
 
@@ -716,9 +721,9 @@ export class PageLayoutUpdateService {
 
     for (const widget of allExistingWidgets) {
       if (
-        !isDefined(widget.deletedAt) &&
-        !directlyDeletedWidgetIds.has(widget.id) &&
-        !deletedTabIds.has(widget.pageLayoutTabId)
+        widget.isActive &&
+        !directlyDeactivatedWidgetIds.has(widget.id) &&
+        !deactivatedTabIds.has(widget.pageLayoutTabId)
       ) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
 

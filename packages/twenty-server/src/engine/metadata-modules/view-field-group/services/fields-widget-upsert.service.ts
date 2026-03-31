@@ -858,6 +858,7 @@ export class FieldsWidgetUpsertService {
       isVisible: inputGroup.isVisible,
       viewId,
       viewUniversalIdentifier,
+      isActive: true,
       overrides: null,
       createdAt: now,
       updatedAt: now,

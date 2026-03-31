@@ -25,9 +25,7 @@ export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
 }): FlatPageLayoutWithTabsAndWidgets => {
   const tabs = Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
     .filter(isDefined)
-    .filter(
-      (tab) => tab.pageLayoutId === layout.id && !isDefined(tab.deletedAt),
-    )
+    .filter((tab) => tab.pageLayoutId === layout.id && tab.isActive)
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
 
   const tabsWithWidgets: FlatPageLayoutTabWithWidgets[] = tabs.map((tab) => {
@@ -37,7 +35,7 @@ export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
       .filter(isDefined)
       .filter(
         (widget) =>
-          widget.pageLayoutTabId === tab.id && !isDefined(widget.deletedAt),
+          widget.pageLayoutTabId === tab.id && widget.isActive,
       );
 
     return {
