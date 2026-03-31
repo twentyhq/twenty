@@ -27,16 +27,29 @@ export function HelpedSceneScrollLayoutEffect({
       sectionRef,
     };
 
-    const run = () => {
+    let rafId: number | null = null;
+
+    const flushLayout = () => {
+      rafId = null;
       applyHelpedSceneLayout(refs, cards);
     };
 
-    run();
-    window.addEventListener('scroll', run, { passive: true });
-    window.addEventListener('resize', run);
+    const scheduleLayout = () => {
+      if (rafId !== null) {
+        return;
+      }
+      rafId = window.requestAnimationFrame(flushLayout);
+    };
+
+    applyHelpedSceneLayout(refs, cards);
+    window.addEventListener('scroll', scheduleLayout, { passive: true });
+    window.addEventListener('resize', scheduleLayout);
     return () => {
-      window.removeEventListener('scroll', run);
-      window.removeEventListener('resize', run);
+      window.removeEventListener('scroll', scheduleLayout);
+      window.removeEventListener('resize', scheduleLayout);
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
     };
   }, [cardRefs, cards, headlineRef, innerRef, sectionRef]);
 
