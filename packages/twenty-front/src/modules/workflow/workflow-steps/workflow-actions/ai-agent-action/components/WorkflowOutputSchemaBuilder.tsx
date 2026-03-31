@@ -186,7 +186,7 @@ export const WorkflowOutputSchemaBuilder = ({
                   <AnimatedLightIconButton
                     Icon={IconChevronDown}
                     size="small"
-                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                    animate={{ rotate: isExpanded ? -180 : 0 }}
                   />
                   {showRemoveFieldButton && (
                     <LightIconButton
