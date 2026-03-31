@@ -53,8 +53,7 @@ export const InformationBannerMaintenance = () => {
       buttonIcon={isDefined(maintenanceLink) ? IconExternalLink : undefined}
       buttonOnClick={
         isDefined(maintenanceLink)
-          ? () =>
-              window.open(maintenanceLink, '_blank', 'noopener,noreferrer')
+          ? () => window.open(maintenanceLink, '_blank', 'noopener,noreferrer')
           : undefined
       }
     />

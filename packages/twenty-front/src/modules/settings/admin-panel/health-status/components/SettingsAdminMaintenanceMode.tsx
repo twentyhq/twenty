@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { H2Title, Status } from 'twenty-ui/display';
@@ -73,18 +73,7 @@ const fromDatetimeLocalToISO = (localValue: string): string => {
 export const SettingsAdminMaintenanceMode = () => {
   const { data, refetch } = useQuery<GetMaintenanceModeResult>(
     GET_MAINTENANCE_MODE,
-    {
-      fetchPolicy: 'network-only',
-      onCompleted: (result: GetMaintenanceModeResult) => {
-        const maintenance = result?.getMaintenanceMode;
-
-        if (isDefined(maintenance)) {
-          setStartAt(toDatetimeLocalValue(maintenance.startAt));
-          setEndAt(toDatetimeLocalValue(maintenance.endAt));
-          setLink(maintenance.link ?? '');
-        }
-      },
-    },
+    { fetchPolicy: 'network-only' },
   );
 
   const [setMaintenanceModeMutation, { loading: settingMaintenance }] =
@@ -98,6 +87,15 @@ export const SettingsAdminMaintenanceMode = () => {
   const [startAt, setStartAt] = useState('');
   const [endAt, setEndAt] = useState('');
   const [link, setLink] = useState('');
+
+  const hasInitializedFromServer = useRef(false);
+
+  if (isDefined(currentMaintenance) && !hasInitializedFromServer.current) {
+    hasInitializedFromServer.current = true;
+    setStartAt(toDatetimeLocalValue(currentMaintenance.startAt));
+    setEndAt(toDatetimeLocalValue(currentMaintenance.endAt));
+    setLink(currentMaintenance.link ?? '');
+  }
 
   const handleActivate = useCallback(async () => {
     if (!isNonEmptyString(startAt) || !isNonEmptyString(endAt)) {
