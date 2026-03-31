@@ -179,7 +179,6 @@ export class TypeMapperService {
       [FieldMetadataType.FILES, RawJsonFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
       [FieldMetadataType.RICH_TEXT, RichTextFilterType],
-      [FieldMetadataType.RICH_TEXT_V2, RichTextFilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
       [FieldMetadataType.MULTI_SELECT, MultiSelectFilterType],
       [FieldMetadataType.SELECT, SelectFilterType],
@@ -208,7 +207,6 @@ export class TypeMapperService {
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.FILES, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
-      [FieldMetadataType.RICH_TEXT_V2, OrderByDirectionType],
       [FieldMetadataType.ARRAY, OrderByDirectionType],
       [FieldMetadataType.TS_VECTOR, OrderByDirectionType], // TODO: Add TSVectorOrderByType
     ]);

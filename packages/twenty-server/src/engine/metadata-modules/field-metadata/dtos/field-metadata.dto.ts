@@ -70,6 +70,9 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
 
   @IsEnum(FieldMetadataType)
   @IsNotEmpty()
+  @Transform(({ value }) =>
+    value === 'RICH_TEXT_V2' ? FieldMetadataType.RICH_TEXT : value,
+  )
   @Field(() => FieldMetadataType)
   type: T;
 
