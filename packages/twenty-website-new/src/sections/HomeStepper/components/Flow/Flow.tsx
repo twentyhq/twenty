@@ -1,13 +1,13 @@
 'use client';
 
-import type { HeroStepperStepType } from '@/sections/HeroStepper/types/HeroStepperStep';
+import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
 import { useEffect, useState } from 'react';
 import { Content } from '../Content/Content';
 import { Root } from '../Root/Root';
 import { Visual } from '../Visual/Visual';
 
 type FlowProps = {
-  steps: HeroStepperStepType[];
+  steps: HomeStepperStepType[];
 };
 
 export function Flow({ steps }: FlowProps) {

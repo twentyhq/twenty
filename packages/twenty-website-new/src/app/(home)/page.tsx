@@ -90,7 +90,7 @@ export default function HomePage() {
         />
       </ThreeCards.Root>
 
-      {/* <HeroStepper.Flow steps={STEPPER_DATA.steps} /> */}
+      {/* <HomeStepper.Flow steps={HOME_STEPPER_DATA.steps} /> */}
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Home} align="center">

@@ -1,7 +1,7 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import type { HeroStepperContentProps } from '@/sections/HeroStepper/types';
+import type { HomeStepperContentProps } from '@/sections/HomeStepper/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, type ReactNode } from 'react';
@@ -108,10 +108,10 @@ const StepBlock = styled.div`
 type ProgressRailProps = {
   activeImageIndex: number;
   activeStepIndex: number;
-  steps: HeroStepperContentProps['steps'];
+  steps: HomeStepperContentProps['steps'];
 };
 
-function HeroProgressRail({
+function HomeProgressRail({
   activeImageIndex,
   activeStepIndex,
   steps,
@@ -149,7 +149,7 @@ export function Content({
   activeStepIndex,
   onActiveStepChange,
   steps,
-}: HeroStepperContentProps) {
+}: HomeStepperContentProps) {
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -192,7 +192,7 @@ export function Content({
 
   return (
     <ContentRoot>
-      <HeroProgressRail
+      <HomeProgressRail
         activeImageIndex={activeImageIndex}
         activeStepIndex={activeStepIndex}
         steps={steps}

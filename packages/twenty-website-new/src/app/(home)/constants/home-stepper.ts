@@ -1,6 +1,6 @@
-import type { HeroStepperDataType } from '@/sections/HeroStepper/types';
+import type { HomeStepperDataType } from '@/sections/HomeStepper/types';
 
-export const STEPPER_DATA: HeroStepperDataType = {
+export const HOME_STEPPER_DATA: HomeStepperDataType = {
   steps: [
     {
       heading: [
