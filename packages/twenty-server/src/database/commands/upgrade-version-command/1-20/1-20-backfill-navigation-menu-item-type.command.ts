@@ -85,6 +85,10 @@ export class BackfillNavigationMenuItemTypeCommand extends ActiveOrSuspendedWork
     queryRunner: ReturnType<DataSource['createQueryRunner']>,
   ): Promise<void> {
     await queryRunner.query(
+      `UPDATE "core"."navigationMenuItem" SET "type" = 'OBJECT' WHERE "type" = 'VIEW' AND "targetObjectMetadataId" IS NOT NULL AND "targetRecordId" IS NULL`,
+    );
+
+    await queryRunner.query(
       `UPDATE "core"."navigationMenuItem" SET "type" = 'RECORD' WHERE "type" IS NULL AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL`,
     );
 
