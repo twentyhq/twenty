@@ -105,9 +105,7 @@ export const SettingsDatePickerInput = ({
     ],
   });
 
-  const handleDateTimeSelect = (
-    newDateTime: Temporal.ZonedDateTime | null,
-  ) => {
+  const handleDateTimeSelect = (newDateTime: Temporal.ZonedDateTime | null) => {
     if (isDefined(newDateTime)) {
       onChange(new Date(newDateTime.epochMilliseconds));
     }

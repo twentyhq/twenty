@@ -33,9 +33,7 @@ const formatMaintenanceDateTime = (
 
 export const InformationBannerMaintenance = () => {
   const maintenanceMode = useAtomStateValue(maintenanceModeState);
-  const currentWorkspaceMember = useAtomStateValue(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { timeZone } = useDateTimeFormat();
 
   const [isDismissed, setIsDismissed] = useState(() => {
