@@ -31,7 +31,7 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [{ id: '3', name: 'Object 3' }],
       toUpdate: [],
       toRestoreAndUpdate: [],
-      idsToDelete: ['2'],
+      idsToRemove: ['2'],
     });
   });
 
@@ -50,7 +50,7 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [],
       toUpdate: [],
       toRestoreAndUpdate: [],
-      idsToDelete: [],
+      idsToRemove: [],
     });
   });
 
@@ -69,7 +69,7 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [{ id: '1', name: 'Object 1' }],
       toUpdate: [],
       toRestoreAndUpdate: [],
-      idsToDelete: [],
+      idsToRemove: [],
     });
   });
 
@@ -88,7 +88,7 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [],
       toUpdate: [],
       toRestoreAndUpdate: [],
-      idsToDelete: ['1'],
+      idsToRemove: ['1'],
     });
   });
 
@@ -107,7 +107,7 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [],
       toUpdate: [{ id: '1', name: 'Updated Object 1' }],
       toRestoreAndUpdate: [],
-      idsToDelete: [],
+      idsToRemove: [],
     });
   });
 
@@ -128,11 +128,11 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [],
       toUpdate: [],
       toRestoreAndUpdate: [{ id: '1', name: 'Restored Object 1' }],
-      idsToDelete: [],
+      idsToRemove: [],
     });
   });
 
-  it('should not include excluded objects in idsToDelete', () => {
+  it('should not include excluded objects in idsToRemove', () => {
     const existingObjects = [
       { id: '1', name: 'Object 1', deletedAt: null },
       { id: '2', name: 'Object 2', deletedAt: '2024-01-01' },
@@ -150,7 +150,7 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [],
       toUpdate: [],
       toRestoreAndUpdate: [],
-      idsToDelete: ['1'],
+      idsToRemove: ['1'],
     });
   });
 
@@ -169,11 +169,11 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [],
       toUpdate: [],
       toRestoreAndUpdate: [{ id: '1', name: 'Restored Object 1' }],
-      idsToDelete: [],
+      idsToRemove: [],
     });
   });
 
-  it('should not include inactive objects in idsToDelete when using isActive', () => {
+  it('should not include inactive objects in idsToRemove when using isActive', () => {
     const existingObjects = [
       { id: '1', name: 'Object 1', isActive: true },
       { id: '2', name: 'Object 2', isActive: false },
@@ -191,7 +191,7 @@ describe('computeDiffBetweenObjects', () => {
       toCreate: [],
       toUpdate: [],
       toRestoreAndUpdate: [],
-      idsToDelete: ['1'],
+      idsToRemove: ['1'],
     });
   });
 });

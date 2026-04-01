@@ -10,6 +10,7 @@ import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -280,7 +281,7 @@ export class PageLayoutUpdateService {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
       toRestoreAndUpdate: entitiesToRestoreAndUpdate,
-      idsToDelete,
+      idsToRemove,
     } = computeDiffBetweenObjects<
       FlatPageLayoutTab,
       UpdatePageLayoutTabWithWidgetsInput
@@ -355,41 +356,29 @@ export class PageLayoutUpdateService {
         };
       });
 
-    const tabsToDeactivate: FlatPageLayoutTab[] = [];
-    const tabsToHardDelete: FlatPageLayoutTab[] = [];
+    const tabsToRemove = idsToRemove
+      .map((tabId) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: tabId,
+          flatEntityMaps: flatPageLayoutTabMaps,
+        }),
+      )
+      .filter(isDefined);
 
-    for (const tabId of idsToDelete) {
-      const existingTab = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: tabId,
-        flatEntityMaps: flatPageLayoutTabMaps,
-      });
-
-      if (!isDefined(existingTab)) {
-        continue;
-      }
-
-      if (
-        existingTab.applicationUniversalIdentifier ===
-        workspaceCustomApplicationUniversalIdentifier
-      ) {
-        tabsToHardDelete.push(existingTab);
-      } else {
-        tabsToDeactivate.push({
-          ...existingTab,
-          isActive: false,
-          updatedAt: now.toISOString(),
-        });
-      }
-    }
+    const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
+      entitiesToRemove: tabsToRemove,
+      workspaceCustomApplicationUniversalIdentifier,
+      now: now.toISOString(),
+    });
 
     return {
       tabsToCreate,
       tabsToUpdate: [
         ...tabsToUpdate,
         ...tabsToRestoreAndUpdate,
-        ...tabsToDeactivate,
+        ...toDeactivate,
       ],
-      tabsToDelete: tabsToHardDelete,
+      tabsToDelete: toHardDelete,
     };
   }
 
@@ -508,7 +497,7 @@ export class PageLayoutUpdateService {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
       toRestoreAndUpdate: entitiesToRestoreAndUpdate,
-      idsToDelete,
+      idsToRemove,
     } = computeDiffBetweenObjects<
       FlatPageLayoutWidget,
       UpdatePageLayoutWidgetWithIdInput
@@ -631,41 +620,29 @@ export class PageLayoutUpdateService {
         };
       });
 
-    const widgetsToDeactivate: FlatPageLayoutWidget[] = [];
-    const widgetsToHardDelete: FlatPageLayoutWidget[] = [];
+    const widgetsToRemove = idsToRemove
+      .map((widgetId) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: widgetId,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        }),
+      )
+      .filter(isDefined);
 
-    for (const widgetId of idsToDelete) {
-      const existingWidget = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: widgetId,
-        flatEntityMaps: flatPageLayoutWidgetMaps,
-      });
-
-      if (!isDefined(existingWidget)) {
-        continue;
-      }
-
-      if (
-        existingWidget.applicationUniversalIdentifier ===
-        workspaceCustomApplicationUniversalIdentifier
-      ) {
-        widgetsToHardDelete.push(existingWidget);
-      } else {
-        widgetsToDeactivate.push({
-          ...existingWidget,
-          isActive: false,
-          updatedAt: now.toISOString(),
-        });
-      }
-    }
+    const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
+      entitiesToRemove: widgetsToRemove,
+      workspaceCustomApplicationUniversalIdentifier,
+      now: now.toISOString(),
+    });
 
     return {
       widgetsToCreate,
       widgetsToUpdate: [
         ...widgetsToUpdate,
         ...widgetsToRestoreAndUpdate,
-        ...widgetsToDeactivate,
+        ...toDeactivate,
       ],
-      widgetsToDelete: widgetsToHardDelete,
+      widgetsToDelete: toHardDelete,
     };
   }
 

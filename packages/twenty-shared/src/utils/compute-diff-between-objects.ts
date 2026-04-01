@@ -5,7 +5,7 @@ type Diff<T extends { id: string }> = {
   toCreate: T[];
   toUpdate: T[];
   toRestoreAndUpdate: T[];
-  idsToDelete: string[];
+  idsToRemove: string[];
 };
 
 const extractProperties = <T extends { id: string }>(
@@ -76,7 +76,7 @@ export const computeDiffBetweenObjects = <
     }
   }
 
-  const idsToDelete = existingObjects
+  const idsToRemove = existingObjects
     .filter((existingEntity) => isEntityIncluded(existingEntity))
     .filter((existingEntity) => !receivedEntitiesMap.has(existingEntity.id))
     .map((entity) => entity.id);
@@ -85,6 +85,6 @@ export const computeDiffBetweenObjects = <
     toCreate,
     toUpdate,
     toRestoreAndUpdate,
-    idsToDelete,
+    idsToRemove,
   };
 };
