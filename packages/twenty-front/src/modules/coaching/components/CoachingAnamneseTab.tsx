@@ -223,18 +223,55 @@ export const CoachingAnamneseTab = ({
 
     for (const submission of formSubmissions) {
       const date = formatDate(submission.submittedAt as string | null);
-      const question = String(submission.formTitle ?? '').trim();
-      const answer = String(submission.responseData ?? '').trim();
-
       if (!date) continue;
 
       if (!groups.has(date)) {
         groups.set(date, []);
       }
 
+      const responseData = String(submission.responseData ?? '').trim();
+      const formTitle = String(submission.formTitle ?? '').trim();
+
+      // Try parsing responseData as JSON array of {question, answer}
+      if (responseData.startsWith('[')) {
+        try {
+          const parsed = JSON.parse(responseData);
+          if (Array.isArray(parsed)) {
+            for (const entry of parsed) {
+              groups.get(date)!.push({
+                question: String(entry.question ?? '').trim() || '—',
+                answer: String(entry.answer ?? '').trim() || '—',
+              });
+            }
+            continue;
+          }
+        } catch {
+          // not valid JSON, fall through
+        }
+      }
+
+      // Try parsing as JSON object {key: value}
+      if (responseData.startsWith('{')) {
+        try {
+          const parsed = JSON.parse(responseData);
+          if (typeof parsed === 'object' && parsed !== null) {
+            for (const [key, value] of Object.entries(parsed)) {
+              groups.get(date)!.push({
+                question: key,
+                answer: String(value ?? '').trim() || '—',
+              });
+            }
+            continue;
+          }
+        } catch {
+          // not valid JSON, fall through
+        }
+      }
+
+      // Fallback: use formTitle as question, responseData as answer
       groups.get(date)!.push({
-        question: question || '—',
-        answer: answer || '—',
+        question: formTitle || '—',
+        answer: responseData || '—',
       });
     }
 
