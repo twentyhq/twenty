@@ -50,13 +50,10 @@ If attaching to a different object (Person, Opportunity, etc.), rename the param
 #### Logic Function Code
 
 ```typescript
-import { v4 as uuidv4 } from 'uuid';
-
 export const main = async (
   params: { companyId: string },
 ) => {
   const { companyId } = params;
-  const uuid = uuidv4();
   // Replace with your Twenty GraphQL endpoint
   // Cloud: https://api.twenty.com/graphql
   // Self-hosted: https://your-domain.com/graphql
@@ -84,7 +81,6 @@ export const main = async (
   const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
 
   // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
-  // (it doesn't have universal identifier like fields of standard objects)
   const response = await fetch(restEndpoint, {
       method: 'GET',
       headers: {
@@ -108,8 +104,8 @@ export const main = async (
     query: uploadMutation,
     variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
   }));
-  uploadForm.append('map', JSON.stringify({ '1': ['variables.file'] }));
-  uploadForm.append('1', pdfFile);
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
 
   const uploadResponse = await fetch(graphqlEndpoint, {
     method: 'POST',
@@ -156,8 +152,7 @@ export const main = async (
               fileId: fileId,
               label: filename
             }
-          ],
-          id: uuid
+          ]
         },
       },
     }),
