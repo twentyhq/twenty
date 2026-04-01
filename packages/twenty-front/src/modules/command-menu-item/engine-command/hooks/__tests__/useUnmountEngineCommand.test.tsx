@@ -54,10 +54,7 @@ describe('useUnmountCommand', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
-    store.set(
-      commandMenuItemProgressFamilyState.atomFamily('cmd-1'),
-      50,
-    );
+    store.set(commandMenuItemProgressFamilyState.atomFamily('cmd-1'), 50);
 
     const { result } = renderHook(() => useUnmountCommand(), { wrapper });
 

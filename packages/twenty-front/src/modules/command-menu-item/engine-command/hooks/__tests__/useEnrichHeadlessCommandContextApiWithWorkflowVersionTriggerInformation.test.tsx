@@ -27,9 +27,8 @@ jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
 jest.mock(
   '@/command-menu-item/engine-command/utils/buildTriggerWorkflowVersionPayloads',
   () => ({
-    buildTriggerWorkflowVersionPayloads:
-      (...args: unknown[]) =>
-        mockBuildTriggerWorkflowVersionPayloads(...args),
+    buildTriggerWorkflowVersionPayloads: (...args: unknown[]) =>
+      mockBuildTriggerWorkflowVersionPayloads(...args),
   }),
 );
 
@@ -168,8 +167,7 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
           {
             headlessEngineCommandContextApi: buildBaseContextApi(),
             workflowVersionId: 'wf-version-1',
-            availabilityType:
-              CommandMenuItemAvailabilityType.RECORD_SELECTION,
+            availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
           },
         );
     });
@@ -217,8 +215,7 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
         {
           headlessEngineCommandContextApi,
           workflowVersionId: 'wf-version-1',
-          availabilityType:
-            CommandMenuItemAvailabilityType.RECORD_SELECTION,
+          availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
         },
       );
     });
