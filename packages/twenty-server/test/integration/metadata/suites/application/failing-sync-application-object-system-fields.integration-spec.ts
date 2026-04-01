@@ -207,12 +207,25 @@ describe('Sync application should fail due to object system fields integrity', (
   );
 
   it('should fail when trying to delete a system field after a successful sync', async () => {
+    const labelIdentifierFieldUniversalIdentifier = uuidv4();
     const testObject = buildDefaultObjectManifest({
       nameSingular: 'deleteSystemFieldObject',
       namePlural: 'deleteSystemFieldObjects',
       labelSingular: 'Delete System Field Object',
       labelPlural: 'Delete System Field Objects',
       description: 'Object for testing system field deletion',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        labelIdentifierFieldUniversalIdentifier,
+      additionalFields: [
+        {
+          universalIdentifier: labelIdentifierFieldUniversalIdentifier,
+          type: FieldMetadataType.TEXT,
+          name: 'labelIdentifierField',
+          label: 'Label Identifier Field',
+          description: 'Label identifier field',
+          icon: 'IconTextCaption',
+        },
+      ],
     });
 
     const validManifest = buildManifest({
@@ -244,12 +257,25 @@ describe('Sync application should fail due to object system fields integrity', (
   }, 60000);
 
   it('should fail when trying to update a system field after a successful sync', async () => {
+    const labelIdentifierFieldUniversalIdentifier = uuidv4();
     const testObject = buildDefaultObjectManifest({
       nameSingular: 'updateSystemFieldObject',
       namePlural: 'updateSystemFieldObjects',
       labelSingular: 'Update System Field Object',
       labelPlural: 'Update System Field Objects',
       description: 'Object for testing system field update',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        labelIdentifierFieldUniversalIdentifier,
+      additionalFields: [
+        {
+          universalIdentifier: labelIdentifierFieldUniversalIdentifier,
+          type: FieldMetadataType.TEXT,
+          name: 'labelIdentifierField',
+          label: 'Label Identifier Field',
+          description: 'Label identifier field',
+          icon: 'IconTextCaption',
+        },
+      ],
     });
 
     const validManifest = buildManifest({

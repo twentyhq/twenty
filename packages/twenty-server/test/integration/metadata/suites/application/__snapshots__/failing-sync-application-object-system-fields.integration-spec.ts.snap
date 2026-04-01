@@ -13,11 +13,6 @@ exports[`Sync application should fail due to object system fields integrity shou
               "message": "System fields cannot be deleted",
               "userFriendlyMessage": "System fields cannot be deleted",
             },
-            {
-              "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "Cannot delete, please update the label identifier field first",
-              "userFriendlyMessage": "Cannot delete, please update the label identifier field first",
-            },
           ],
           "flatEntityMinimalInformation": {
             "name": "id",
