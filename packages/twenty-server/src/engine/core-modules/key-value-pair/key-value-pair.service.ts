@@ -66,47 +66,63 @@ export class KeyValuePairService<
     },
     queryRunner?: QueryRunner,
   ) {
+    const normalizedUserId = userId ?? null;
+    const normalizedWorkspaceId = workspaceId ?? null;
     const hasNullUserAndWorkspace =
-      userId === null && workspaceId === null;
+      normalizedUserId === null && normalizedWorkspaceId === null;
+    const keyValuePairRepository = queryRunner
+      ? queryRunner.manager.getRepository(KeyValuePairEntity)
+      : this.keyValuePairRepository;
 
     const upsertData = {
-      userId,
-      workspaceId,
+      userId: normalizedUserId,
+      workspaceId: normalizedWorkspaceId,
       key,
       value,
       type,
     };
 
-    const conflictPaths = hasNullUserAndWorkspace
-      ? ['key']
-      : Object.keys(upsertData).filter(
-          (conflictPath) =>
-            ['userId', 'workspaceId', 'key'].includes(conflictPath) &&
-            // @ts-expect-error legacy noImplicitAny
-            upsertData[conflictPath] !== undefined,
-        );
+    if (hasNullUserAndWorkspace) {
+      const existingKeyValuePair = await keyValuePairRepository.findOne({
+        where: {
+          userId: IsNull(),
+          workspaceId: IsNull(),
+          key,
+          type,
+        },
+      });
 
-    const indexPredicate = hasNullUserAndWorkspace
-      ? '"userId" is NULL AND "workspaceId" is NULL'
-      : userId === null
+      if (existingKeyValuePair) {
+        await keyValuePairRepository.update(existingKeyValuePair.id, {
+          value,
+        });
+
+        return;
+      }
+
+      await keyValuePairRepository.insert(upsertData);
+
+      return;
+    }
+
+    const conflictPaths = Object.keys(upsertData).filter(
+      (conflictPath) =>
+        ['userId', 'workspaceId', 'key'].includes(conflictPath) &&
+        // @ts-expect-error legacy noImplicitAny
+        upsertData[conflictPath] !== undefined,
+    );
+
+    const indexPredicate =
+      normalizedUserId === null
         ? '"userId" is NULL'
-        : workspaceId === null
+        : normalizedWorkspaceId === null
           ? '"workspaceId" is NULL'
           : undefined;
 
-    if (queryRunner) {
-      await queryRunner.manager
-        .getRepository(KeyValuePairEntity)
-        .upsert(upsertData, {
-          conflictPaths,
-          indexPredicate,
-        });
-    } else {
-      await this.keyValuePairRepository.upsert(upsertData, {
-        conflictPaths,
-        indexPredicate,
-      });
-    }
+    await keyValuePairRepository.upsert(upsertData, {
+      conflictPaths,
+      indexPredicate,
+    });
   }
 
   async delete(

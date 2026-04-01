@@ -18,7 +18,9 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @CoreResolver()
 export class ClientConfigResolver {
-  constructor(private readonly maintenanceModeService: MaintenanceModeService) {}
+  constructor(
+    private readonly maintenanceModeService: MaintenanceModeService,
+  ) {}
 
   @Query(() => Boolean)
   @UseGuards(NoPermissionGuard)
