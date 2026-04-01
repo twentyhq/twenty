@@ -211,13 +211,13 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL \
     APP_VERSION=$APP_VERSION \
     NODE_ENV=development \
-    NODE_PORT=3000 \
+    NODE_PORT=2020 \
     DISABLE_DB_MIGRATIONS=true \
     DISABLE_CRON_JOBS_REGISTRATION=true \
     IS_BILLING_ENABLED=false \
     SIGN_IN_PREFILLED=true
 
-EXPOSE 3000
+EXPOSE 2020
 VOLUME ["/data/postgres", "/app/.local-storage"]
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty

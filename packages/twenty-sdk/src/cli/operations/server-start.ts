@@ -126,8 +126,6 @@ const innerServerStart = async (
   } else {
     onProgress?.('Starting Twenty container...');
 
-    const serverUrl = `http://localhost:${port}`;
-
     const runResult = spawnSync(
       'docker',
       [
@@ -135,10 +133,12 @@ const innerServerStart = async (
         '-d',
         '--name',
         CONTAINER_NAME,
-        '-e',
-        `SERVER_URL=${serverUrl}`,
         '-p',
-        `${port}:3000`,
+        `${port}:${port}`,
+        '-e',
+        `NODE_PORT=${port}`,
+        '-e',
+        `SERVER_URL=http://localhost:${port}`,
         '-v',
         'twenty-app-dev-data:/data/postgres',
         '-v',

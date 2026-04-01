@@ -244,11 +244,13 @@ Two Docker volumes are created to persist data between restarts:
 - `twenty-app-dev-data` — PostgreSQL database
 - `twenty-app-dev-storage` — file storage
 
-If port 2020 is already in use (e.g., another Twenty instance or a different service), you can start on a different port:
+If port 2020 is already in use, you can start on a different port:
 
 ```bash filename="Terminal"
 yarn twenty server start --port 3030
 ```
+
+The CLI automatically configures the container's internal `NODE_PORT` and `SERVER_URL` to match the chosen port, so logic functions, OAuth, and all other internal networking work correctly.
 
 Once started, the server is automatically registered as the `local` remote in your CLI config.
 
