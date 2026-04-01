@@ -1,4 +1,8 @@
 import { MENU_DATA } from '@/app/(home)/constants/menu';
+import { EDITORIAL_ONE } from '@/app/why-twenty/constants/editorial-one';
+import { EDITORIAL_TWO } from '@/app/why-twenty/constants/editorial-two';
+import { EDITORIAL_THREE } from '@/app/why-twenty/constants/editorial-three';
+import { EDITORIAL_FOUR } from '@/app/why-twenty/constants/editorial-four';
 import { HERO_DATA } from '@/app/why-twenty/constants/hero';
 import { QUOTE_DATA } from '@/app/why-twenty/constants/quote';
 import { SIGNOFF_DATA } from '@/app/why-twenty/constants/signoff';
@@ -6,6 +10,7 @@ import { STATEMENT_ONE } from '@/app/why-twenty/constants/statement-one';
 import { STATEMENT_TWO } from '@/app/why-twenty/constants/statement-two';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { Editorial } from '@/sections/Editorial/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { Quote } from '@/sections/Quote/components';
@@ -41,10 +46,48 @@ export default function WhyTwentyPage() {
         />
       </Hero.Root>
 
+      <Editorial.Root
+        backgroundColor={theme.colors.secondary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        mutedColor={theme.colors.secondary.text[60]}
+      >
+        <Editorial.Intro>
+          <Editorial.Eyebrow
+            colorScheme="secondary"
+            eyebrow={EDITORIAL_ONE.eyebrow!}
+          />
+          <Editorial.Heading segments={EDITORIAL_ONE.heading!} />
+        </Editorial.Intro>
+        <Editorial.Body body={EDITORIAL_ONE.body} layout="two-column" />
+      </Editorial.Root>
+
       <Quote.Root backgroundColor={theme.colors.secondary.background[100]}>
         <Quote.Visual illustration={QUOTE_DATA.illustration} />
         <Quote.Heading segments={QUOTE_DATA.heading} />
       </Quote.Root>
+
+      <Editorial.Root
+        backgroundColor={theme.colors.secondary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        mutedColor={theme.colors.secondary.text[60]}
+      >
+        <Editorial.Body body={EDITORIAL_TWO.body} layout="centered" />
+      </Editorial.Root>
+
+      <Editorial.Root
+        backgroundColor={theme.colors.secondary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        mutedColor={theme.colors.secondary.text[60]}
+      >
+        <Editorial.Intro>
+          <Editorial.Eyebrow
+            colorScheme="secondary"
+            eyebrow={EDITORIAL_THREE.eyebrow!}
+          />
+          <Editorial.Heading segments={EDITORIAL_THREE.heading!} />
+        </Editorial.Intro>
+        <Editorial.Body body={EDITORIAL_THREE.body} layout="indented" />
+      </Editorial.Root>
 
       <Statement.Root
         backgroundColor={theme.colors.secondary.background[100]}
@@ -59,6 +102,21 @@ export default function WhyTwentyPage() {
       >
         <Statement.Heading segments={STATEMENT_TWO.heading} />
       </Statement.Root>
+
+      <Editorial.Root
+        backgroundColor={theme.colors.primary.background[100]}
+        color={theme.colors.primary.text[100]}
+        mutedColor={theme.colors.primary.text[60]}
+      >
+        <Editorial.Intro>
+          <Editorial.Eyebrow
+            colorScheme="primary"
+            eyebrow={EDITORIAL_FOUR.eyebrow!}
+          />
+          <Editorial.Heading segments={EDITORIAL_FOUR.heading!} />
+        </Editorial.Intro>
+        <Editorial.Body body={EDITORIAL_FOUR.body} layout="two-column" />
+      </Editorial.Root>
 
       <Signoff.Root
         backgroundColor={theme.colors.primary.background[100]}
