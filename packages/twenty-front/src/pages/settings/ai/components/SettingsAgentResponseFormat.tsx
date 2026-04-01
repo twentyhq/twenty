@@ -48,16 +48,13 @@ export const SettingsAgentResponseFormat = ({
     if (newType === 'json') {
       setVisualBuilderFields(schemaToFields(schema));
     }
-    const emptySchema: AgentResponseSchema = {
-      type: 'object' as const,
-      properties: {},
-      required: [],
-      additionalProperties: false as const,
-    };
-    onResponseFormatChange({
-      type: newType,
-      schema: newType === 'text' ? emptySchema : schema,
-    });
+
+    // TODO: Remove text response format support once prod migration upgrades legacy agents to JSON format.
+    onResponseFormatChange(
+      newType === 'text'
+        ? { type: 'text' }
+        : { type: 'json', schema },
+    );
   };
 
   const handleVisualBuilderChange = (updatedFields: OutputSchemaField[]) => {
@@ -76,6 +73,7 @@ export const SettingsAgentResponseFormat = ({
         value={formatType}
         onChange={handleFormatTypeChange}
         options={[
+          // TODO: Remove string option once text response format support is fully dropped.
           { label: t`String`, value: 'text' as const },
           { label: t`JSON`, value: 'json' as const },
         ]}
