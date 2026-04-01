@@ -47,6 +47,7 @@ const getCommandMenuContextApi = (
   objectMetadataItem: {
     id: 'company-id',
   },
+  objectMetadataLabel: 'Company',
   numberOfSelectedRecords,
   objectPermissions: {
     objectMetadataId: 'company-id',
