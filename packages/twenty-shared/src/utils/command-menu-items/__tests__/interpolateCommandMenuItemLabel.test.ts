@@ -29,6 +29,7 @@ const buildContext = (
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},
+  objectMetadataLabel: '',
   ...overrides,
 });
 
@@ -311,6 +312,73 @@ describe('interpolateCommandMenuItemLabel', () => {
           context,
         }),
       ).toBe('Delete people');
+    });
+  });
+
+  describe('objectMetadataLabel interpolation', () => {
+    it('should resolve singular label with capitalize transform', () => {
+      const context = buildContext({
+        objectMetadataLabel: 'person',
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Delete ${capitalize(objectMetadataLabel)}',
+          context,
+        }),
+      ).toBe('Delete Person');
+    });
+
+    it('should resolve plural label with capitalize transform', () => {
+      const context = buildContext({
+        objectMetadataLabel: 'companies',
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Export ${capitalize(objectMetadataLabel)}',
+          context,
+        }),
+      ).toBe('Export Companies');
+    });
+
+    it('should resolve objectMetadataLabel without transform', () => {
+      const context = buildContext({
+        objectMetadataLabel: 'people',
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: '${objectMetadataLabel} selected',
+          context,
+        }),
+      ).toBe('people selected');
+    });
+
+    it('should resolve objectMetadataLabel with lowercase transform', () => {
+      const context = buildContext({
+        objectMetadataLabel: 'Person',
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Create ${lowercase(objectMetadataLabel)}',
+          context,
+        }),
+      ).toBe('Create person');
+    });
+
+    it('should return empty segment when objectMetadataLabel is empty', () => {
+      const context = buildContext({
+        objectMetadataLabel: '',
+      });
+
+      expect(
+        interpolateCommandMenuItemLabel({
+          label: 'Delete ${capitalize(objectMetadataLabel)}',
+          context,
+        }),
+      ).toBe('Delete ');
     });
   });
 });

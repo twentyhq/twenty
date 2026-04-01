@@ -16,17 +16,12 @@ import { computeRecordShowComponentInstanceId } from '@/object-record/record-sho
 import { PageHeaderToggleSidePanelButton } from '@/ui/layout/page-header/components/PageHeaderToggleSidePanelButton';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const RecordShowPage = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
-  );
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
   );
 
   const parameters = useParams<{
@@ -62,10 +57,8 @@ export const RecordShowPage = () => {
               objectRecordId={objectRecordId}
             >
               <RecordShowCommandMenu />
-              {isCommandMenuItemEnabled ? (
-                !isLayoutCustomizationModeEnabled && (
-                  <CommandMenuItemMoreActionsButton />
-                )
+              {!isLayoutCustomizationModeEnabled ? (
+                <CommandMenuItemMoreActionsButton />
               ) : (
                 <PageHeaderToggleSidePanelButton />
               )}
