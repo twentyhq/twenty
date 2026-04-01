@@ -4,8 +4,8 @@ export const COACHING_LIST_GQL_FIELDS: RecordGqlOperationGqlRecordFields = {
   id: true,
   name: true,
   createdAt: true,
-  fullName: true,
+  wpUserId: true,
   email: true,
-  phone: true,
-  city: true,
+  displayName: true,
+  registeredDate: true,
 };

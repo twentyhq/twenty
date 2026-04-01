@@ -6,8 +6,8 @@ export type CoachingCustomerRecord = {
   id: string;
   name: string;
   createdAt: string;
-  fullName: string | null;
+  wpUserId: string | null;
   email: string | null;
-  phone: string | null;
-  city: string | null;
+  displayName: string | null;
+  registeredDate: string | null;
 };

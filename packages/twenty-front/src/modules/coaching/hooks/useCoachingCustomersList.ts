@@ -14,10 +14,9 @@ const buildCoachingFilter = (
 
   return {
     or: [
-      { name: { ilike: `%${filterValues.searchTerm}%` } },
-      { fullName: { ilike: `%${filterValues.searchTerm}%` } },
+      { displayName: { ilike: `%${filterValues.searchTerm}%` } },
       { email: { ilike: `%${filterValues.searchTerm}%` } },
-      { appUserId: { ilike: `%${filterValues.searchTerm}%` } },
+      { wpUserId: { ilike: `%${filterValues.searchTerm}%` } },
     ],
   };
 };
@@ -31,7 +30,7 @@ export const useCoachingCustomersList = (
     useFindManyRecords({
       objectNameSingular: COACHING_OBJECT_NAME_SINGULAR,
       filter,
-      orderBy: [{ name: 'AscNullsLast' }],
+      orderBy: [{ displayName: 'AscNullsLast' }],
       recordGqlFields: COACHING_LIST_GQL_FIELDS,
       limit: COACHING_LIST_PAGE_SIZE,
     });

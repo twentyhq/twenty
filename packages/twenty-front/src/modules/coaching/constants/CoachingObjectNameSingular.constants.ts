@@ -1,1 +1,1 @@
-export const COACHING_OBJECT_NAME_SINGULAR = 'tobCustomer';
+export const COACHING_OBJECT_NAME_SINGULAR = 'tobAppUser';

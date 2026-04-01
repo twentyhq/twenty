@@ -235,9 +235,9 @@ export const CoachingCustomerDetail = ({
   customerId,
 }: CoachingCustomerDetailProps) => {
   const [activeTab, setActiveTab] = useState<TabName>('Overview');
-  const { customer, loading } = useCoachingCustomerDetail(customerId);
-  const customerEmail = (customer?.email as string | null) ?? null;
-  const wpUserId = (customer?.appUserId as string | null) ?? null;
+  const { appUser, customer, loading } = useCoachingCustomerDetail(customerId);
+  const customerEmail = (appUser?.email as string | null) ?? null;
+  const wpUserId = (appUser?.wpUserId as string | null) ?? null;
   const { subscriptions, loading: subsLoading } =
     useCoachingSubscriptions(customerEmail);
 
@@ -245,8 +245,8 @@ export const CoachingCustomerDetail = ({
     return <StyledLoadingContainer>Loading...</StyledLoadingContainer>;
   }
 
-  if (!customer) {
-    return <StyledLoadingContainer>Customer not found</StyledLoadingContainer>;
+  if (!appUser) {
+    return <StyledLoadingContainer>User not found</StyledLoadingContainer>;
   }
 
   return (
@@ -287,19 +287,21 @@ export const CoachingCustomerDetail = ({
                 <StyledInfoCardCell>
                   <StyledInfoLabel>App User Id</StyledInfoLabel>
                   <StyledInfoValue>
-                    {renderValue(customer.id as string)}
+                    {renderValue(wpUserId)}
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
                   <StyledInfoLabel>App User Email</StyledInfoLabel>
                   <StyledInfoValue>
-                    {renderValue(customer.email as string | null)}
+                    {renderValue(customerEmail)}
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
                   <StyledInfoLabel>Registration Date</StyledInfoLabel>
                   <StyledInfoValue>
-                    {renderValue(formatDate(customer.createdAt as string))}
+                    {renderValue(
+                      formatDate(appUser.registeredDate as string | null),
+                    )}
                   </StyledInfoValue>
                 </StyledInfoCardCell>
               </StyledInfoCardGrid>
@@ -390,19 +392,24 @@ export const CoachingCustomerDetail = ({
                 <StyledInfoCardCell>
                   <StyledInfoLabel>Full Name</StyledInfoLabel>
                   <StyledInfoValue>
-                    {renderValue(customer.fullName as string | null)}
+                    {renderValue(
+                      (customer?.fullName as string | null) ??
+                        (appUser.displayName as string | null),
+                    )}
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
                   <StyledInfoLabel>Customer Email</StyledInfoLabel>
                   <StyledInfoValue>
-                    {renderValue(customer.email as string | null)}
+                    {renderValue(
+                      (customer?.email as string | null) ?? customerEmail,
+                    )}
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
                   <StyledInfoLabel>Phone</StyledInfoLabel>
                   <StyledInfoValue>
-                    {renderValue(customer.phone as string | null)}
+                    {renderValue(customer?.phone as string | null)}
                   </StyledInfoValue>
                 </StyledInfoCardCell>
               </StyledInfoCardGrid>
