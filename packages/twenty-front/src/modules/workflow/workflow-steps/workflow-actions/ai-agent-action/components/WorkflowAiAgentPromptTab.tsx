@@ -1,3 +1,4 @@
+import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
@@ -19,8 +20,10 @@ import {
   type ModelConfiguration,
 } from 'twenty-shared/ai';
 import { useDebouncedCallback } from 'use-debounce';
-import { UpdateOneAgentDocument } from '~/generated-metadata/graphql';
-import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
+import {
+  UpdateOneAgentDocument,
+  type UpdateOneAgentMutationVariables,
+} from '~/generated-metadata/graphql';
 
 type WorkflowAiAgentPromptTabProps = {
   action: WorkflowAiAgentAction;
@@ -61,21 +64,35 @@ export const WorkflowAiAgentPromptTab = ({
       : [createDefaultOutputSchemaField()];
   });
 
-  const updateResponseSchema = async (schema: AgentResponseSchema) => {
-    if (readonly || !workflowAiAgentActionAgent) return;
+  const updateAgentField = async (
+    input: Omit<UpdateOneAgentMutationVariables['input'], 'id'>,
+  ) => {
+    if (readonly || !workflowAiAgentActionAgent) {
+      return;
+    }
 
     const response = await updateAgent({
       variables: {
         input: {
           id: workflowAiAgentActionAgent.id,
-          responseFormat: { type: 'json' as const, schema },
+          ...input,
         },
       },
     });
 
-    setWorkflowAiAgentActionAgent({
-      ...workflowAiAgentActionAgent,
-      ...response.data?.updateOneAgent,
+    setWorkflowAiAgentActionAgent((currentWorkflowAiAgentActionAgent) =>
+      currentWorkflowAiAgentActionAgent
+        ? {
+            ...currentWorkflowAiAgentActionAgent,
+            ...response.data?.updateOneAgent,
+          }
+        : currentWorkflowAiAgentActionAgent,
+    );
+  };
+
+  const updateResponseSchema = async (schema: AgentResponseSchema) => {
+    await updateAgentField({
+      responseFormat: { type: 'json' as const, schema },
     });
 
     onActionUpdate?.({
@@ -99,32 +116,16 @@ export const WorkflowAiAgentPromptTab = ({
   const agent = workflowAiAgentActionAgent;
 
   const handleModelChange = async (modelId: string) => {
-    if (readonly) return;
-
-    const response = await updateAgent({
-      variables: { input: { id: agent.id, modelId } },
-    });
-
-    setWorkflowAiAgentActionAgent({
-      ...agent,
-      ...response.data?.updateOneAgent,
+    await updateAgentField({
+      modelId,
     });
   };
 
   const handleModelConfigurationChange = async (
     configuration: ModelConfiguration,
   ) => {
-    if (readonly) return;
-
-    const response = await updateAgent({
-      variables: {
-        input: { id: agent.id, modelConfiguration: configuration },
-      },
-    });
-
-    setWorkflowAiAgentActionAgent({
-      ...agent,
-      ...response.data?.updateOneAgent,
+    await updateAgentField({
+      modelConfiguration: configuration,
     });
   };
 
