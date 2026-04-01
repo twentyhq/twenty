@@ -49,7 +49,7 @@ export const useStepsOutputSchema = () => {
         // has run on all workspaces.
         const persistedOutputSchema =
           step.type === 'AI_AGENT' &&
-          (!step.settings?.outputSchema ||
+          (!isDefined(step.settings?.outputSchema) ||
             Object.keys(step.settings.outputSchema).length === 0)
             ? {
                 response: {
