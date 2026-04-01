@@ -12,6 +12,7 @@ import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-object
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { type PipelineWorkspaceEntity } from 'src/modules/pipeline/standard-objects/pipeline.workspace-entity';
 import { type TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -41,7 +42,14 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
   owner: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   ownerId: string | null;
-  /** @deprecated */
-  probability: string;
+  probability: number;
+  leadSource: string | null;
+  lostReason: string | null;
+  lostReasonDescription: string | null;
+  pipeline: EntityRelation<PipelineWorkspaceEntity> | null;
+  pipelineId: string | null;
+  stageChangedAt: Date | null;
+  daysInStage: number;
+  weightedAmount: number | null;
   searchVector: string;
 }
