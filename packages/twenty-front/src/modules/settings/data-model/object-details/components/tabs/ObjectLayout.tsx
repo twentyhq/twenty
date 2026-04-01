@@ -6,6 +6,7 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconLayoutDashboard } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -30,7 +31,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
   const firstRecord = records[0];
 
   const handleCustomizeRecordPage = () => {
-    if (!firstRecord) {
+    if (!isDefined(firstRecord)) {
       return;
     }
 
@@ -52,7 +53,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
         title={t`Customize record page`}
         Icon={<IconLayoutDashboard size={theme.icon.size.md} />}
         onClick={handleCustomizeRecordPage}
-        disabled={!firstRecord}
+        disabled={!isDefined(firstRecord)}
       />
     </Section>
   );

@@ -11,6 +11,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { TabButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
@@ -202,7 +203,7 @@ export const TabList = ({
             </StyledInnerContainer>
           </StyledNodeDimension>
 
-          {rightComponent && (
+          {isDefined(rightComponent) && (
             <StyledRightContainer>{rightComponent}</StyledRightContainer>
           )}
         </StyledContainer>
