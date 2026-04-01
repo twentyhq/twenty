@@ -19,6 +19,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
@@ -220,8 +221,11 @@ export const FormDateFieldInput = ({
 
   const isVariable = Boolean(isStandaloneVariableString(defaultValue));
 
-  const plainDateValue =
-    isVariable || !isDefined(defaultValue) || defaultValue === ''
+  const plainDateValueFromProps =
+    isVariable ||
+    !isDefined(defaultValue) ||
+    defaultValue === '' ||
+    defaultValue === 'null'
       ? null
       : defaultValue.includes('T')
         ? Temporal.Instant.from(defaultValue)
@@ -229,6 +233,11 @@ export const FormDateFieldInput = ({
             .toPlainDate()
             .toString()
         : Temporal.PlainDate.from(defaultValue).toString();
+
+  const plainDateValue =
+    draftValue.type === 'static' && isNonEmptyString(draftValue.value)
+      ? draftValue.value
+      : plainDateValueFromProps;
 
   const handleMaskedDatePointerDownCapture = () => {
     if (readonly) {
