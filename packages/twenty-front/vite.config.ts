@@ -32,6 +32,7 @@ export default defineConfig(({ mode }) => {
   const port = isNonEmptyString(REACT_APP_PORT)
     ? parseInt(REACT_APP_PORT)
     : 3001;
+  const shouldAliasTwentyUiSource = mode === 'development';
 
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
@@ -246,9 +247,50 @@ export default defineConfig(({ mode }) => {
       },
     },
     resolve: {
-      alias: {
-        path: 'rollup-plugin-node-polyfills/polyfills/path',
-      },
+      alias: [
+        ...(shouldAliasTwentyUiSource
+          ? [
+              {
+                find: /^twenty-ui\/theme-light\.css$/,
+                replacement: path.resolve(
+                  __dirname,
+                  '../twenty-ui/src/theme-constants/theme-light.css',
+                ),
+              },
+              {
+                find: /^twenty-ui\/theme-dark\.css$/,
+                replacement: path.resolve(
+                  __dirname,
+                  '../twenty-ui/src/theme-constants/theme-dark.css',
+                ),
+              },
+              {
+                find: /^twenty-ui\/(.+)$/,
+                replacement: path.resolve(
+                  __dirname,
+                  '../twenty-ui/src/$1/index.ts',
+                ),
+              },
+              {
+                find: /^twenty-ui$/,
+                replacement: path.resolve(__dirname, '../twenty-ui/src/index.ts'),
+              },
+              {
+                find: '@ui/',
+                replacement: path.resolve(__dirname, '../twenty-ui/src/') + '/',
+              },
+              {
+                find: '@assets/',
+                replacement:
+                  path.resolve(__dirname, '../twenty-ui/src/assets/') + '/',
+              },
+            ]
+          : []),
+        {
+          find: 'path',
+          replacement: 'rollup-plugin-node-polyfills/polyfills/path',
+        },
+      ],
     },
   };
 });

@@ -97,10 +97,10 @@ const CHANNEL_CONFIG: Record<string, { color: string; label: string }> = {
   chat: { color: '#3B82F6', label: 'Live Chat' },
 };
 
-const STATUS_CONFIG: Record<string: any> = {
+const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
   sent: { color: '#3B82F6', label: 'Enviado' },
   delivered: { color: '#10B981', label: 'Entregado' },
-  read: { color: '#8B5CF6', label: 'Leído' },
+  read: { color: '#8B5CF6', label: 'Leido' },
   failed: { color: '#EF4444', label: 'Fallido' },
 };
 
@@ -135,7 +135,7 @@ export const SettingsOmnichannel = () => {
     >
       <StyledContainer>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <H2Title title={t('Canales de Comunicación')} />
+          <H2Title title={t('Canales de Comunicacion')} />
           <IconButton Icon={IconPlus} variant="primary" size="small" onClick={() => {}} />
         </div>
 
@@ -181,9 +181,7 @@ export const SettingsOmnichannel = () => {
                     {message.content?.substring(0, 100)}
                     {message.content?.length > 100 ? '...' : ''}
                   </MessageContent>
-                  <MessageMeta>
-                    {formatDate(message.receivedAt)} • {status.label}
-                  </MessageMeta>
+                  <MessageMeta>{`${formatDate(message.receivedAt)} - ${status.label}`}</MessageMeta>
                 </MessageItem>
               );
             })}
@@ -193,3 +191,4 @@ export const SettingsOmnichannel = () => {
     </SubMenuTopBarContainer>
   );
 };
+
