@@ -5,7 +5,8 @@ import Skeleton from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { logicFunctionsSelector } from '@/settings/logic-functions/states/logicFunctionsSelector';
+import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { type LogicFunction } from '@/logic-functions/types/LogicFunction';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -28,7 +29,6 @@ import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type LogicFunction } from '@/settings/logic-functions/states/logicFunctionsState';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import {
   SettingsSystemToolTableRow,

@@ -1,5 +1,5 @@
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
-import { logicFunctionsSelector } from '@/settings/logic-functions/states/logicFunctionsSelector';
+import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
