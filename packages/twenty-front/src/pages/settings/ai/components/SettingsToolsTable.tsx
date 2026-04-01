@@ -4,10 +4,10 @@ import { useContext, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { logicFunctionsSelector } from '@/settings/logic-functions/states/logicFunctionsSelector';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconChevronRight } from 'twenty-ui/display';
@@ -33,7 +33,7 @@ const StyledTableHeaderRowContainer = styled.div`
 
 export const SettingsToolsTable = () => {
   const { theme } = useContext(ThemeContext);
-  const logicFunctions = useAtomStateValue(logicFunctionsState);
+  const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
   const { t } = useLingui();
   const [customSearchTerm, setCustomSearchTerm] = useState('');
