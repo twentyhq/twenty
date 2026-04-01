@@ -201,7 +201,7 @@ const innerServerStart = async (
         '-v',
         'twenty-app-dev-data:/data/postgres',
         '-v',
-        'twenty-app-dev-storage:/app/.local-storage',
+        'twenty-app-dev-storage:/app/packages/twenty-server/.local-storage',
         IMAGE,
       ],
       { stdio: 'inherit' },
