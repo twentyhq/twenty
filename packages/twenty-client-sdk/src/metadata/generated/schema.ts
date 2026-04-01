@@ -6258,8 +6258,10 @@ fields?: (UpsertFieldsWidgetFieldInput[] | null)}
 export interface UpsertFieldsWidgetGroupInput {id: Scalars['UUID'],name: Scalars['String'],position: Scalars['Float'],isVisible: Scalars['Boolean'],fields: UpsertFieldsWidgetFieldInput[]}
 
 export interface UpsertFieldsWidgetFieldInput {
-/** The id of the view field */
-viewFieldId: Scalars['UUID'],isVisible: Scalars['Boolean'],position: Scalars['Float']}
+/** The id of the view field. Required if fieldMetadataId is not provided. */
+viewFieldId?: (Scalars['UUID'] | null),
+/** The id of the field metadata. Used to create a new view field when viewFieldId is not provided. */
+fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float']}
 
 export interface CreateApiKeyInput {name: Scalars['String'],expiresAt: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
 

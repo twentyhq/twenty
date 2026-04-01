@@ -40,6 +40,7 @@ import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution
 import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
+import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { CreateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/create-many-resolver.factory';
@@ -207,12 +208,12 @@ export class DirectExecutionService {
               objectIdByNameSingular,
             );
 
-          const result = await this.executeField({
+          const result = (await this.executeField({
             entry,
             args,
             graphqlPartialResolveInfo,
             workspaceSchemaBuilderContext,
-          });
+          })) as ResolverOutput;
 
           const formattedResult = graphQLFormatResultFromSelectedFields(
             result,
