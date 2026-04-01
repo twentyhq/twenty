@@ -15,17 +15,17 @@ import {
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
 import { execSync, spawn, spawnSync } from 'node:child_process';
+import chalk from 'chalk';
 
 const HEALTH_POLL_INTERVAL_MS = 2000;
 const HEALTH_TIMEOUT_MS = 180 * 1000;
 const MILESTONE_START = '==> START ';
 const MILESTONE_DONE = '==> DONE';
 
-const waitForHealthy = async (
-  port: number,
-  onProgress?: (message: string) => void,
-): Promise<boolean> => {
+const waitForHealthy = async (port: number): Promise<boolean> => {
   const startTime = Date.now();
+  const onProgress = (message: string) =>
+    process.stdout.write(chalk.gray(message));
 
   const logStream = spawn(
     'docker',
@@ -42,15 +42,15 @@ const waitForHealthy = async (
 
     if (startIndex !== -1) {
       if (hasPendingStep) {
-        process.stdout.write('Done\n');
+        onProgress('Done\n');
       }
 
       const message = trimmed.slice(startIndex + MILESTONE_START.length);
 
-      process.stdout.write(`==>  ${message}... `);
+      onProgress(`==>  ${message}... `);
       hasPendingStep = true;
     } else if (doneIndex !== -1 && hasPendingStep) {
-      process.stdout.write('Done\n');
+      onProgress('Done\n');
       hasPendingStep = false;
     }
   };
@@ -73,7 +73,7 @@ const waitForHealthy = async (
     while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
       if (await checkServerHealth(port)) {
         if (hasPendingStep) {
-          process.stdout.write('Done\n');
+          onProgress('Done\n');
         }
 
         return true;
@@ -85,7 +85,7 @@ const waitForHealthy = async (
     }
 
     if (hasPendingStep) {
-      process.stdout.write('Failed\n');
+      onProgress('Failed\n');
     }
 
     return false;
@@ -142,7 +142,7 @@ const innerServerStart = async (
 
     onProgress?.('Container is running, waiting for it to become healthy...');
 
-    const healthy = await waitForHealthy(port, onProgress);
+    const healthy = await waitForHealthy(port);
 
     if (!healthy) {
       return {
@@ -220,7 +220,7 @@ const innerServerStart = async (
 
   onProgress?.('Waiting for Twenty to be ready...');
 
-  const healthy = await waitForHealthy(port, onProgress);
+  const healthy = await waitForHealthy(port);
 
   if (!healthy) {
     return {
