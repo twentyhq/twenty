@@ -64,7 +64,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
     closeDropdown();
   };
 
-  const layoutLabels: Partial<Record<FieldDisplayMode, string>> = {
+  const layoutLabels: Record<(typeof LAYOUT_OPTIONS)[number]['id'], string> = {
     [FieldDisplayMode.FIELD]: t`Field`,
     [FieldDisplayMode.CARD]: t`Card`,
   };
