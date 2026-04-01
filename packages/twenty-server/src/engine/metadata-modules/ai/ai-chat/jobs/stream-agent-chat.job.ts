@@ -9,23 +9,23 @@ import type {
 } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
-import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import type { AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatResumableStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-resumable-stream.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import type { AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 
 export const STREAM_AGENT_CHAT_JOB_NAME = 'StreamAgentChatJob';
 
@@ -164,6 +164,7 @@ export class StreamAgentChatJob {
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
+      let compactionEvent: { prunedMessageCount: number } | null = null;
 
       abortSignal.addEventListener('abort', () => resolve(), { once: true });
 
@@ -180,6 +181,7 @@ export class StreamAgentChatJob {
           };
 
           const onCompaction = (event: { prunedMessageCount: number }) => {
+            compactionEvent = event;
             writer.write({
               type: 'data-compaction' as const,
               id: `compaction-${data.threadId}`,
@@ -237,8 +239,24 @@ export class StreamAgentChatJob {
               },
               onFinish: async ({ responseMessage }) => {
                 try {
+                  const messageToSave = compactionEvent
+                    ? {
+                        ...responseMessage,
+                        parts: [
+                          {
+                            type: 'data-compaction' as const,
+                            data: {
+                              prunedMessageCount:
+                                compactionEvent.prunedMessageCount,
+                            },
+                          },
+                          ...responseMessage.parts,
+                        ],
+                      }
+                    : responseMessage;
+
                   await this.handleStreamFinish({
-                    responseMessage,
+                    responseMessage: messageToSave,
                     threadId: data.threadId,
                     streamUsage,
                     lastStepConversationSize,
