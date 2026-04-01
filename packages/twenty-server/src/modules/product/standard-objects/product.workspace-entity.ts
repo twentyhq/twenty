@@ -18,5 +18,15 @@ export class ProductWorkspaceEntity extends BaseWorkspaceEntity {
   isActive: boolean;
   category: string | null;
   imageUrl: string | null;
+  type: string | null;
+  unit: string | null;
+  weight: number | null;
+  dimensions: string | null;
+  isInventoryEnabled: boolean;
+  stockQuantity: number | null;
+  reorderPoint: number | null;
+  leadTimeDays: number | null;
+  isTaxable: boolean;
+  taxCategory: string | null;
   searchVector: string;
 }
