@@ -297,6 +297,16 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **Modo somente ambiente:** Se você definir `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adicione estas variáveis ao seu arquivo `.env`.
 </Warning>
 
+## Armazenamento S3
+
+<Warning>
+Por padrão, o Twenty armazena os arquivos enviados no sistema de arquivos local. Para implantações em produção, use o S3 ou um serviço compatível com S3 (MinIO, DigitalOcean Spaces, etc.) para garantir que os arquivos persistam entre reinicializações do contêiner e possam escalar em várias instâncias de servidor.
+</Warning>
+
+Defina `STORAGE_TYPE=S_3` e configure as variáveis `STORAGE_S3_*` pelo painel de administração ou `.env`. Veja a [referência de config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) para a lista completa de variáveis do S3.
+
+Ao usar o S3 com recursos dependentes de CORS (por exemplo, downloads de arquivos no navegador), verifique se o seu bucket permite a origem do seu frontend do Twenty na sua configuração de CORS.
+
 ## Funções lógicas e interpretador de código
 
 O Twenty oferece suporte a funções lógicas para fluxos de trabalho e ao interpretador de código para análise de dados com IA. Ambos executam código fornecido pelo usuário e exigem configuração explícita por motivos de segurança.
