@@ -315,8 +315,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     accent: 'default',
     isPinned: false,
     shouldBeRegistered: ({ selectedRecord, isRemote }) =>
-      (isDefined(selectedRecord) ? !selectedRecord.isRemote : !isRemote) ??
-      true,
+      isDefined(selectedRecord) ? !selectedRecord.isRemote : !isRemote,
     availableOn: [
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
