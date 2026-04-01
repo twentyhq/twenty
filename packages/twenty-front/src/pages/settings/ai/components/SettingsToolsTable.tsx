@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useState } from 'react';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,8 +20,12 @@ import {
   H2Title,
   IconChevronRight,
   IconCode,
+  IconDatabase,
   IconLock,
+  IconPlayerPlay,
   IconPuzzle,
+  IconSettings,
+  IconTable,
   IconTool,
 } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
@@ -29,18 +33,31 @@ import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { type ToolIndexEntry } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import {
-  SettingsSystemToolTableRow,
-  type SystemTool,
-} from './SettingsSystemToolTableRow';
 import {
   SettingsToolTableRow,
   TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from './SettingsToolTableRow';
 
 type CustomToolItem = { kind: 'custom'; tool: LogicFunction };
-type SystemToolItem = { kind: 'system'; tool: SystemTool };
+type SystemToolItem = { kind: 'system'; tool: ToolIndexEntry };
+
+// TODO: we will also need to handle object icons for custom tools
+const getCategoryIcon = (category: string) => {
+  switch (category.toLowerCase()) {
+    case 'database':
+      return IconDatabase;
+    case 'workflow':
+      return IconPlayerPlay;
+    case 'metadata':
+      return IconSettings;
+    case 'view':
+      return IconTable;
+    default:
+      return IconCode;
+  }
+};
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -67,7 +84,7 @@ export const SettingsToolsTable = () => {
   const isManaged = (applicationId?: string | null) =>
     isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
-  const getToolLink = (tool: LogicFunction) => {
+  const getCustomToolLink = (tool: LogicFunction) => {
     const applicationId = (tool as { applicationId?: string }).applicationId;
     if (isDefined(applicationId)) {
       return getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
@@ -79,6 +96,11 @@ export const SettingsToolsTable = () => {
       logicFunctionId: tool.id,
     });
   };
+
+  const getSystemToolLink = (tool: ToolIndexEntry) =>
+    getSettingsPath(SettingsPath.AISystemToolDetail, {
+      toolName: tool.name,
+    });
 
   const customTools: CustomToolItem[] = logicFunctions
     .filter((fn) => fn.isTool === true)
@@ -180,31 +202,40 @@ export const SettingsToolsTable = () => {
         </StyledTableHeaderRowContainer>
         {showSkeleton
           ? Array.from({ length: 3 }).map((_, index) => (
-              <Skeleton height={32} borderRadius={4} key={index} />
+              <SkeletonTheme
+                baseColor={theme.background.tertiary}
+                highlightColor={theme.background.transparent.lighter}
+                borderRadius={4}
+              >
+                <Skeleton height={32} borderRadius={4} key={index} />
+              </SkeletonTheme>
             ))
-          : filteredTools.map((item) =>
-              item.kind === 'custom' ? (
-                <SettingsToolTableRow
-                  key={item.tool.id}
-                  LeftIcon={IconCode}
-                  name={item.tool.name}
-                  isCustom={true}
-                  applicationId={item.tool.applicationId}
-                  action={
-                    <IconChevronRight
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  }
-                  link={getToolLink(item.tool)}
-                />
-              ) : (
-                <SettingsSystemToolTableRow
-                  key={item.tool.name}
-                  tool={item.tool}
-                />
-              ),
-            )}
+          : filteredTools.map((item) => (
+              <SettingsToolTableRow
+                key={item.kind === 'custom' ? item.tool.id : item.tool.name}
+                LeftIcon={
+                  item.kind === 'custom'
+                    ? IconCode
+                    : getCategoryIcon(item.tool.category)
+                }
+                name={item.tool.name}
+                isCustom={item.kind === 'custom'}
+                applicationId={
+                  item.kind === 'custom' ? item.tool.applicationId : undefined
+                }
+                action={
+                  <IconChevronRight
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                }
+                link={
+                  item.kind === 'custom'
+                    ? getCustomToolLink(item.tool)
+                    : getSystemToolLink(item.tool)
+                }
+              />
+            ))}
       </Table>
     </Section>
   );

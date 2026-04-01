@@ -55,9 +55,7 @@ export const SettingsToolTableRow = ({
         <OverflowingTextWithTooltip text={name} />
       </TableCell>
       <TableCell>
-        <SettingsItemTypeTag
-          item={{ isCustom, applicationId }}
-        />
+        <SettingsItemTypeTag item={{ isCustom, applicationId }} />
       </TableCell>
       <TableCell
         align="right"

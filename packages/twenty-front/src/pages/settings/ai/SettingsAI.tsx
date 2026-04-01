@@ -125,7 +125,7 @@ export const SettingsAI = () => {
     <SubMenuTopBarContainer
       title={t`AI`}
       actionButton={
-        (isSkillsTab && (
+        isSkillsTab ? (
           <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
             <Button
               Icon={IconPlus}
@@ -134,8 +134,7 @@ export const SettingsAI = () => {
               size="small"
             />
           </UndecoratedLink>
-        )) ||
-        (isToolsTab && (
+        ) : isToolsTab ? (
           <Button
             Icon={IconPlus}
             title={t`New Tool`}
@@ -144,7 +143,7 @@ export const SettingsAI = () => {
             onClick={handleCreateTool}
             disabled={isCreatingTool}
           />
-        ))
+        ) : undefined
       }
       links={[
         {
