@@ -46,9 +46,7 @@ export const SettingsToolTableRow = ({
         minWidth="0"
         overflow="hidden"
       >
-        <StyledIconContainer>
-          {leftIcon}
-        </StyledIconContainer>
+        <StyledIconContainer>{leftIcon}</StyledIconContainer>
         <OverflowingTextWithTooltip text={name} />
       </TableCell>
       <TableCell minWidth="0" overflow="hidden">

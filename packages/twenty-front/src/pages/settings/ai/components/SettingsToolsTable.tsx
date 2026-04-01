@@ -124,18 +124,10 @@ export const SettingsToolsTable = () => {
   const isManaged = (applicationId?: string | null) =>
     isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
-  const getCustomToolLink = (tool: LogicFunction) => {
-    const applicationId = (tool as { applicationId?: string }).applicationId;
-    if (isDefined(applicationId)) {
-      return getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-        applicationId,
-        logicFunctionId: tool.id,
-      });
-    }
-    return getSettingsPath(SettingsPath.LogicFunctionDetail, {
+  const getCustomToolLink = (tool: LogicFunction) =>
+    getSettingsPath(SettingsPath.AICustomToolDetail, {
       logicFunctionId: tool.id,
     });
-  };
 
   const getSystemToolLink = (tool: ToolIndexEntry) =>
     getSettingsPath(SettingsPath.AISystemToolDetail, {
@@ -307,7 +299,7 @@ export const SettingsToolsTable = () => {
 
               const appLabel =
                 item.kind === 'custom'
-                  ? application?.name ?? t`Custom`
+                  ? (application?.name ?? t`Custom`)
                   : t`Standard`;
 
               return (
