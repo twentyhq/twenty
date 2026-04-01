@@ -20,11 +20,14 @@ jest.mock(
   }),
 );
 
-jest.mock('@/front-components/hooks/useUpdateFrontComponentApolloCache', () => ({
-  useUpdateFrontComponentApolloCache: () => ({
-    updateFrontComponentApolloCache: mockUpdateFrontComponentApolloCache,
+jest.mock(
+  '@/front-components/hooks/useUpdateFrontComponentApolloCache',
+  () => ({
+    useUpdateFrontComponentApolloCache: () => ({
+      updateFrontComponentApolloCache: mockUpdateFrontComponentApolloCache,
+    }),
   }),
-}));
+);
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
 
@@ -58,9 +61,7 @@ describe('useOnFrontComponentUpdated', () => {
       }),
     );
 
-    expect(
-      mockUseListenToMetadataOperationBrowserEvent,
-    ).toHaveBeenCalledWith({
+    expect(mockUseListenToMetadataOperationBrowserEvent).toHaveBeenCalledWith({
       metadataName: AllMetadataName.frontComponent,
       onMetadataOperationBrowserEvent: mockUpdateFrontComponentApolloCache,
     });
