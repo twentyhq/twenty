@@ -57,6 +57,13 @@ export const mapDBPartToUIMessagePart = (
           state: part.state!,
         },
       };
+    case 'data-compaction':
+      return {
+        type: part.type,
+        data: {
+          prunedMessageCount: Number(part.textContent),
+        },
+      };
     default:
       {
         if (part.type.includes('tool-') === true) {
