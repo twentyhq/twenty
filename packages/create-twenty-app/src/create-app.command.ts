@@ -39,7 +39,7 @@ export class CreateAppCommand {
 
     try {
       const exampleOptions = this.resolveExampleOptions(
-        options.mode ?? 'exhaustive',
+        options.mode ?? 'minimal',
       );
 
       await this.validateDirectory(appDirectory);

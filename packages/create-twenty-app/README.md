@@ -33,8 +33,8 @@ The scaffolder will:
 
 | Flag           | Behavior                                                                                         |
 | -------------- | ------------------------------------------------------------------------------------------------ |
-| `--exhaustive` | **(default)** Creates all example entities                                                       |
-| `--minimal`    | Creates only core files (`application-config.ts`, `default-role.ts`, pre/post-install functions) |
+| `--minimal`    | **(default)** Creates only core files (`application-config.ts`, `default-role.ts`, pre/post-install functions) |
+| `--exhaustive` | Creates all example entities                                                                                  |
 
 Other flags:
 

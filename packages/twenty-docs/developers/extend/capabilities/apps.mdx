@@ -70,11 +70,11 @@ yarn twenty remote add --local
 The scaffolder supports two modes for controlling which example files are included:
 
 ```bash filename="Terminal"
-# Default (exhaustive): all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+# Default (minimal): only core files (application-config.ts and default-role.ts)
 npx create-twenty-app@latest my-app
 
-# Minimal: only core files (application-config.ts and default-role.ts)
-npx create-twenty-app@latest my-app --minimal
+# Exhaustive: all examples (object, field, logic function, front component, view, navigation menu item, skill, agent)
+npx create-twenty-app@latest my-app --exhaustive
 ```
 
 ### How to use a local Twenty instance
@@ -131,7 +131,7 @@ When you run `npx create-twenty-app@latest my-twenty-app`, the scaffolder:
 - Creates config files and scripts wired to the `twenty` CLI
 - Generates core files (application config, default function role, pre-install and post-install functions) plus example files based on the scaffolding mode
 
-A freshly scaffolded app with the default `--exhaustive` mode looks like this:
+A freshly scaffolded app with `--exhaustive` mode looks like this:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/

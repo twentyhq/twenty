@@ -32,8 +32,8 @@ This creates a new folder called `my-twenty-app` with everything you need.
 <Note>
 The scaffolder supports these flags:
 
-- `--minimal` — scaffold only the essential files (no examples)
-- `--exhaustive` — scaffold all example entities (default)
+- `--minimal` — scaffold only the essential files, no examples (default)
+- `--exhaustive` — scaffold all example entities
 - `--name <name>` — set the app name (skips the prompt)
 - `--display-name <displayName>` — set the display name (skips the prompt)
 - `--description <description>` — set the description (skips the prompt)
@@ -139,7 +139,7 @@ Head over to [Building Apps](/developers/extend/apps/building) for a detailed gu
 
 ## Project structure
 
-The scaffolder generates the following file structure (shown with the default `--exhaustive` mode, which includes examples for every entity type):
+The scaffolder generates the following file structure (shown with `--exhaustive` mode, which includes examples for every entity type):
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -190,7 +190,7 @@ my-twenty-app/
       └── example-agent.ts                # Example AI agent definition
 ```
 
-With `--minimal`, only the core files are created: `application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`.
+By default (`--minimal`), only the core files are created: `application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`. Use `--exhaustive` to include all the example files shown above.
 
 ### Key files
 
