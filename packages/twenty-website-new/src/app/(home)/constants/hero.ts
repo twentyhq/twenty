@@ -9,12 +9,4 @@ export const HERO_DATA: HeroHomeDataType = {
   body: {
     text: 'Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.',
   },
-  background: {
-    src: '/images/home/hero/background.png',
-    alt: '',
-  },
-  foreground: {
-    src: '/images/home/hero/foreground.png',
-    alt: '',
-  },
 };

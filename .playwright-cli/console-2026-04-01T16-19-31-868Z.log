@@ -1,0 +1,24 @@
+[     169ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/_next/image?url=%2Fimages%2Fhome%2Flogo-bar%2Ffrench-republic.png&w=96&q=75:0
+[     170ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/_next/image?url=%2Fimages%2Fhome%2Flogo-bar%2Fbayer.png&w=96&q=75:0
+[     170ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/_next/image?url=%2Fimages%2Fhome%2Flogo-bar%2Fpwc.png&w=96&q=75:0
+[     170ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/_next/image?url=%2Fimages%2Fhome%2Flogo-bar%2Fxero.png&w=96&q=75:0
+[     284ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/why-twenty?_rsc=1r34m:0
+[     286ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/partner?_rsc=1r34m:0
+[     287ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/pricing?_rsc=1r34m:0
+[     287ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/product?_rsc=1r34m:0
+[     868ms] [WARNING] THREE.Material: 'repeat' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[     868ms] [WARNING] THREE.Material: 'power' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[     952ms] [WARNING] THREE.Material: 'repeat' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[     952ms] [WARNING] THREE.Material: 'power' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[     982ms] [WARNING] THREE.Material: 'repeat' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[     983ms] [WARNING] THREE.Material: 'power' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    1009ms] [WARNING] THREE.Material: 'repeat' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    1009ms] [WARNING] THREE.Material: 'power' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    1042ms] [WARNING] THREE.Material: 'repeat' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    1042ms] [WARNING] THREE.Material: 'power' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    1069ms] [WARNING] THREE.Material: 'repeat' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    1069ms] [WARNING] THREE.Material: 'power' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    4201ms] [WARNING] THREE.Material: 'repeat' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[    4201ms] [WARNING] THREE.Material: 'power' is not a property of THREE.MeshStandardMaterial. @ https://app.endlesstools.io/_next/static/chunks/7eaa6a7d-fb85572c2dfc44cc.js?dpl=dpl_8YiuCn185rBqCTz5eLtKPzXFiVaU:0
+[   54594ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/_next/image?url=%2Fimages%2Fhome%2Fstepper%2Fbackground.png&w=750&q=75:0
+[   54594ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:3012/_next/image?url=%2Fimages%2Fhome%2Fstepper%2Fbackground-shape.png&w=750&q=75:0
