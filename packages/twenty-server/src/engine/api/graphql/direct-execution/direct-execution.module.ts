@@ -4,6 +4,7 @@ import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.modul
 import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { WorkspaceResolverNameMapCacheService } from 'src/engine/api/graphql/direct-execution/services/workspace-resolver-name-map-cache.service';
 import { WorkspaceResolverBuilderModule } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.module';
+import { WorkspaceGraphqlSchemaSDLModule } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -13,6 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
     WorkspaceResolverBuilderModule,
+    WorkspaceGraphqlSchemaSDLModule,
   ],
   providers: [DirectExecutionService, WorkspaceResolverNameMapCacheService],
   exports: [DirectExecutionService],

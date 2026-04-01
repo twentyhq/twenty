@@ -4,6 +4,8 @@ import { type MessageDescriptor } from '@lingui/core';
 import { type Request } from 'express';
 import {
   GraphQLError,
+  buildSchema,
+  execute,
   type DocumentNode,
   type FieldNode,
   type GraphQLFormattedError,
@@ -41,6 +43,7 @@ import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-ex
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
+import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { CreateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/create-many-resolver.factory';
@@ -84,6 +87,7 @@ export class DirectExecutionService {
   constructor(
     private readonly workspaceFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceGraphqlSchemaSDLService: WorkspaceGraphqlSchemaSDLService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly i18nService: I18nService,
     private readonly findManyResolverFactory: FindManyResolverFactory,
@@ -250,6 +254,41 @@ export class DirectExecutionService {
       }
 
       return { data };
+    } catch (error) {
+      return { errors: [this.formatError(error, req)] };
+    }
+  }
+
+  async executeIntrospection(
+    req: Request,
+    document: DocumentNode,
+  ): Promise<DirectExecutionResult | null> {
+    try {
+      if (!isDefined(req.workspace)) {
+        return null;
+      }
+
+      const schemaSDLResult =
+        await this.workspaceGraphqlSchemaSDLService.getOrComputeSchemaSDL(
+          req.workspace,
+          req.application?.id ?? undefined,
+        );
+
+      if (!isDefined(schemaSDLResult)) {
+        return null;
+      }
+
+      const schema = buildSchema(schemaSDLResult.sdl);
+      const result = await execute({
+        schema,
+        document,
+        variableValues: (req.body?.variables as Record<string, unknown>) ?? {},
+      });
+
+      return {
+        data: result.data as Record<string, unknown> | undefined,
+        errors: result.errors?.map((error) => error.toJSON()),
+      };
     } catch (error) {
       return { errors: [this.formatError(error, req)] };
     }

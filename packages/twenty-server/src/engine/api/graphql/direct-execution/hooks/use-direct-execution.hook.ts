@@ -8,6 +8,7 @@ import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execu
 import { computeSkipWorkspaceSchemaCreation } from 'src/engine/api/graphql/direct-execution/utils/compute-skip-workspace-schema-creation.util';
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
 import { hasOnlyGeneratedWorkspaceResolvers } from 'src/engine/api/graphql/direct-execution/utils/has-only-generated-workspace-resolvers.util';
+import { isIntrospectionDocument } from 'src/engine/api/graphql/direct-execution/utils/is-introspection-document.util';
 import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
@@ -61,6 +62,20 @@ export function useDirectExecution(
         isSubscriptionOperation(document, operationName)
       ) {
         return;
+      }
+
+      if (isIntrospectionDocument(document, operationName)) {
+        const introspectionResult =
+          await config.directExecutionService.executeIntrospection(
+            req,
+            document,
+          );
+
+        if (isNull(introspectionResult)) {
+          return;
+        }
+
+        return endResponse(Response.json(introspectionResult));
       }
 
       if (
