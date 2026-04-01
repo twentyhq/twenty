@@ -66,9 +66,7 @@ export const SettingsToolParameterTable = ({
         <TableRow
           key={paramName}
           gridTemplateColumns={PARAMETER_TABLE_GRID}
-          hoverBackgroundColor={
-            themeCssVariables.background.transparent.light
-          }
+          hoverBackgroundColor={themeCssVariables.background.transparent.light}
         >
           <TableCell
             overflow="hidden"
