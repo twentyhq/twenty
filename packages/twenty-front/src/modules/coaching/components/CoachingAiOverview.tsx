@@ -59,6 +59,55 @@ const formatSinceDate = (dateString: string | null): string | null => {
   }
 };
 
+const analyzeSessionTypes = (sessions: ObjectRecord[]): string | null => {
+  if (sessions.length === 0) return null;
+
+  const titleCounts = new Map<string, number>();
+
+  for (const session of sessions) {
+    const title = String(session.sessionTitle ?? '').trim();
+    if (title) {
+      titleCounts.set(title, (titleCounts.get(title) ?? 0) + 1);
+    }
+  }
+
+  if (titleCounts.size === 0) return null;
+
+  // Find most attended session type
+  const sorted = Array.from(titleCounts.entries()).sort(
+    (a, b) => b[1] - a[1],
+  );
+  const topSession = sorted[0];
+
+  // Check recent sessions (last 30 days)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const recentSessions = sessions.filter((s) => {
+    const dt = s.sessionDatetime as string | null;
+    return dt && new Date(dt) >= thirtyDaysAgo;
+  });
+
+  const recentTitleCounts = new Map<string, number>();
+  for (const session of recentSessions) {
+    const title = String(session.sessionTitle ?? '').trim();
+    if (title) {
+      recentTitleCounts.set(title, (recentTitleCounts.get(title) ?? 0) + 1);
+    }
+  }
+
+  const recentSorted = Array.from(recentTitleCounts.entries()).sort(
+    (a, b) => b[1] - a[1],
+  );
+
+  if (recentSorted.length > 0) {
+    const recentTop = recentSorted[0];
+    return `Recently prioritized "${recentTop[0]}" (${recentTop[1]}x in last 30 days). Most attended overall: "${topSession[0]}" (${topSession[1]}x total)`;
+  }
+
+  return `Most attended session type: "${topSession[0]}" (${topSession[1]}x)`;
+};
+
 const buildSummary = (
   registeredDate: string | null,
   subscriptions: ObjectRecord[],
@@ -105,9 +154,15 @@ const buildSummary = (
     parts.push('No subscriptions');
   }
 
-  // Sessions
+  // Sessions + type analysis
   if (sessions.length > 0) {
-    parts.push(`${sessions.length} session${sessions.length > 1 ? 's' : ''} attended`);
+    parts.push(
+      `${sessions.length} session${sessions.length > 1 ? 's' : ''} attended`,
+    );
+    const sessionInsight = analyzeSessionTypes(sessions);
+    if (sessionInsight) {
+      parts.push(sessionInsight);
+    }
   } else {
     parts.push('No sessions recorded');
   }
@@ -119,7 +174,9 @@ const buildSummary = (
       String(t.status ?? '').toLowerCase() !== 'closed',
   );
   if (openTickets.length > 0) {
-    parts.push(`${openTickets.length} open ticket${openTickets.length > 1 ? 's' : ''}`);
+    parts.push(
+      `${openTickets.length} open ticket${openTickets.length > 1 ? 's' : ''}`,
+    );
   } else {
     parts.push('No open tickets');
   }
