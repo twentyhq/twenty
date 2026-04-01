@@ -6,9 +6,8 @@ const isEntityIncludedByDeletedAt = (entity: {
   deletedAt: string | null;
 }): boolean => !isDefined(entity.deletedAt);
 
-const isEntityIncludedByIsActive = (entity: {
-  isActive: boolean;
-}): boolean => entity.isActive;
+const isEntityIncludedByIsActive = (entity: { isActive: boolean }): boolean =>
+  entity.isActive;
 
 describe('computeDiffBetweenObjects', () => {
   it('should return the correct diff', () => {
@@ -156,9 +155,7 @@ describe('computeDiffBetweenObjects', () => {
   });
 
   it('should restore and update inactive objects when using isActive', () => {
-    const existingObjects = [
-      { id: '1', name: 'Object 1', isActive: false },
-    ];
+    const existingObjects = [{ id: '1', name: 'Object 1', isActive: false }];
     const receivedObjects = [{ id: '1', name: 'Restored Object 1' }];
 
     const diff = computeDiffBetweenObjects({
