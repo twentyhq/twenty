@@ -9,11 +9,11 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import {
   type FrontComponentSeedProjectFile,
   getFrontComponentSeedProjectFiles,
 } from 'src/engine/metadata-modules/front-component/utils/get-front-component-seed-project-files.util';
-import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { type SeedFrontComponentDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
 
 @Injectable()

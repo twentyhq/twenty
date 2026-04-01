@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import {
   defineFrontComponent,
   enqueueSnackbar,
   unmountFrontComponent,
 } from '@/sdk';
+import { useEffect } from 'react';
 
 const ShowNotification = () => {
   useEffect(() => {
@@ -26,8 +26,7 @@ const ShowNotification = () => {
 export default defineFrontComponent({
   universalIdentifier: 'seed-front-component-show-notification',
   name: 'Show Notification',
-  description:
-    'A sample headless front component that displays a notification',
+  description: 'A sample headless front component that displays a notification',
   isHeadless: true,
   component: ShowNotification,
 });
