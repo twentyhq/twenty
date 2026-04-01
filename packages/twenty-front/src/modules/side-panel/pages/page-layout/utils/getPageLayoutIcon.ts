@@ -21,6 +21,8 @@ export const getPageLayoutIcon = (page: PageLayoutSidePanelPage) => {
       return IconAppWindow;
     case SidePanelPages.PageLayoutFieldsSettings:
       return IconList;
+    case SidePanelPages.PageLayoutFieldSettings:
+      return IconList;
     case SidePanelPages.PageLayoutRecordTableSettings:
       return IconTable;
     default:

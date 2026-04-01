@@ -1,6 +1,5 @@
 import { type CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { type CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { type ShouldBeRegisteredFunctionParams } from '@/command-menu-item/types/ShouldBeRegisteredFunctionParams';
 import { type MessageDescriptor } from '@lingui/core';
 import {
   type CommandMenuItemViewType,
@@ -24,7 +23,7 @@ export type CommandMenuItemConfig = {
   isPrimaryCTA?: boolean;
   accent?: MenuItemAccent;
   availableOn?: CommandMenuItemViewType[];
-  shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
+  shouldBeRegistered?: () => boolean;
   component: React.ReactNode;
   hotKeys?: Nullable<string[]>;
   requiredPermissionFlag?: PermissionFlagType;

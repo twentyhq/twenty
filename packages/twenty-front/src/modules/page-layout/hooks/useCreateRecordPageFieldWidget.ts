@@ -52,11 +52,15 @@ export const useCreateRecordPageFieldWidget = () => {
         }),
     );
 
-    const availableRelationField = boxedRelationFieldMetadataItems.find(
+    const unusedRelationField = boxedRelationFieldMetadataItems.find(
       (field) => !usedFieldMetadataIds.has(field.id),
     );
 
-    const fieldMetadataId = availableRelationField?.id ?? '';
+    const selectedField =
+      unusedRelationField ?? boxedRelationFieldMetadataItems[0];
+
+    const fieldMetadataId = selectedField?.id ?? '';
+    const title = selectedField?.label ?? '';
 
     const positionIndex = existingWidgets.length;
     const widgetId = uuidv4();
@@ -64,6 +68,7 @@ export const useCreateRecordPageFieldWidget = () => {
     const newWidget = createDefaultFieldWidget({
       id: widgetId,
       pageLayoutTabId: tabId,
+      title,
       fieldMetadataId,
       objectMetadataId: objectMetadataItem.id,
       positionIndex,
