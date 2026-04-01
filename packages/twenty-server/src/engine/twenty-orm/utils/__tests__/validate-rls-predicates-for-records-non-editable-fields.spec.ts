@@ -3,6 +3,7 @@
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
 
@@ -11,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
-  TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -109,53 +109,106 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
     universalIdentifiersByApplicationId: {},
   });
 
-  const createMockRLSPredicateMaps = (): FlatRowLevelPermissionPredicateMaps => ({
-    byUniversalIdentifier: {
-      'rls-predicate-owner-empty': {
-        id: 'rls-predicate-owner-empty',
-        objectMetadataId: 'object-id-123',
-        fieldMetadataId: 'owner-field-id',
-        operand: 'is',
-        value: null,
-        roleId: 'role-id-123',
-        deletedAt: null,
-        rowLevelPermissionPredicateGroupId: 'rls-group-1',
-        workspaceMemberFieldMetadataId: null,
-        workspaceMemberSubFieldName: null,
-        subFieldName: null,
-        universalIdentifier: 'rls-predicate-owner-empty',
-        applicationUniversalIdentifier: 'app-id-123',
-        roleUniversalIdentifier: 'role-id-123',
-        objectMetadataUniversalIdentifier: 'object-id-123',
-        fieldMetadataUniversalIdentifier: 'owner-field-id',
-        rowLevelPermissionPredicateGroupUniversalIdentifier: 'rls-group-1',
+  const createMockRLSPredicateMaps =
+    (): FlatRowLevelPermissionPredicateMaps => ({
+      byUniversalIdentifier: {
+        'rls-predicate-owner-empty': {
+          id: 'rls-predicate-owner-empty',
+          objectMetadataId: 'object-id-123',
+          fieldMetadataId: 'owner-field-id',
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          roleId: 'role-id-123',
+          deletedAt: null,
+          rowLevelPermissionPredicateGroupId: 'rls-group-1',
+          workspaceMemberFieldMetadataId: null,
+          workspaceMemberSubFieldName: null,
+          subFieldName: null,
+          universalIdentifier: 'rls-predicate-owner-empty',
+          applicationUniversalIdentifier: 'app-id-123',
+          roleUniversalIdentifier: 'role-id-123',
+          objectMetadataUniversalIdentifier: 'object-id-123',
+          fieldMetadataUniversalIdentifier: 'owner-field-id',
+          rowLevelPermissionPredicateGroupUniversalIdentifier: 'rls-group-1',
+        },
       },
-    },
-    universalIdentifierById: {
-      'rls-predicate-owner-empty': 'rls-predicate-owner-empty',
-    },
-    universalIdentifiersByApplicationId: {},
-  });
+      universalIdentifierById: {
+        'rls-predicate-owner-empty': 'rls-predicate-owner-empty',
+      },
+      universalIdentifiersByApplicationId: {},
+    });
 
-  const createMockRLSGroupMaps = (): FlatRowLevelPermissionPredicateGroupMaps => ({
-    byUniversalIdentifier: {
-      'rls-group-1': {
-        id: 'rls-group-1',
-        roleId: 'role-id-123',
-        logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
-        parentRowLevelPermissionPredicateGroupId: null,
-        deletedAt: null,
-        universalIdentifier: 'rls-group-1',
-        applicationUniversalIdentifier: 'app-id-123',
-        roleUniversalIdentifier: 'role-id-123',
-        parentRowLevelPermissionPredicateGroupUniversalIdentifier: null,
+  const createMockRLSPredicateMapsForEditableField =
+    (): FlatRowLevelPermissionPredicateMaps => ({
+      byUniversalIdentifier: {
+        'rls-predicate-owner-required-user': {
+          id: 'rls-predicate-owner-required-user',
+          objectMetadataId: 'object-id-123',
+          fieldMetadataId: 'owner-field-id',
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: 'member-id-123', // Must be current workspace member
+          roleId: 'role-id-123',
+          deletedAt: null,
+          rowLevelPermissionPredicateGroupId: 'rls-group-2',
+          workspaceMemberFieldMetadataId: null,
+          workspaceMemberSubFieldName: null,
+          subFieldName: null,
+          universalIdentifier: 'rls-predicate-owner-required-user',
+          applicationUniversalIdentifier: 'app-id-123',
+          roleUniversalIdentifier: 'role-id-123',
+          objectMetadataUniversalIdentifier: 'object-id-123',
+          fieldMetadataUniversalIdentifier: 'owner-field-id',
+          rowLevelPermissionPredicateGroupUniversalIdentifier: 'rls-group-2',
+        },
       },
-    },
-    universalIdentifierById: {
-      'rls-group-1': 'rls-group-1',
-    },
-    universalIdentifiersByApplicationId: {},
-  });
+      universalIdentifierById: {
+        'rls-predicate-owner-required-user':
+          'rls-predicate-owner-required-user',
+      },
+      universalIdentifiersByApplicationId: {},
+    });
+
+  const createMockRLSGroupMaps =
+    (): FlatRowLevelPermissionPredicateGroupMaps => ({
+      byUniversalIdentifier: {
+        'rls-group-1': {
+          id: 'rls-group-1',
+          roleId: 'role-id-123',
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          parentRowLevelPermissionPredicateGroupId: null,
+          deletedAt: null,
+          universalIdentifier: 'rls-group-1',
+          applicationUniversalIdentifier: 'app-id-123',
+          roleUniversalIdentifier: 'role-id-123',
+          parentRowLevelPermissionPredicateGroupUniversalIdentifier: null,
+        },
+      },
+      universalIdentifierById: {
+        'rls-group-1': 'rls-group-1',
+      },
+      universalIdentifiersByApplicationId: {},
+    });
+
+  const createMockRLSGroupMapsForEditableField =
+    (): FlatRowLevelPermissionPredicateGroupMaps => ({
+      byUniversalIdentifier: {
+        'rls-group-2': {
+          id: 'rls-group-2',
+          roleId: 'role-id-123',
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          parentRowLevelPermissionPredicateGroupId: null,
+          deletedAt: null,
+          universalIdentifier: 'rls-group-2',
+          applicationUniversalIdentifier: 'app-id-123',
+          roleUniversalIdentifier: 'role-id-123',
+          parentRowLevelPermissionPredicateGroupUniversalIdentifier: null,
+        },
+      },
+      universalIdentifierById: {
+        'rls-group-2': 'rls-group-2',
+      },
+      universalIdentifiersByApplicationId: {},
+    });
 
   const createMockWorkspaceInternalContext = (
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -181,8 +234,10 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
     userWorkspaceRoleMap: {
       'user-id-123': 'role-id-123',
     },
-    eventEmitterService: null as unknown as WorkspaceInternalContext['eventEmitterService'],
-    coreDataSource: null as unknown as WorkspaceInternalContext['coreDataSource'],
+    eventEmitterService:
+      null as unknown as WorkspaceInternalContext['eventEmitterService'],
+    coreDataSource:
+      null as unknown as WorkspaceInternalContext['coreDataSource'],
   });
 
   const createMockUserAuthContext = (): WorkspaceAuthContext => ({
@@ -221,7 +276,9 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
         },
       };
 
-      const internalContext = createMockWorkspaceInternalContext(flatFieldMetadataMaps);
+      const internalContext = createMockWorkspaceInternalContext(
+        flatFieldMetadataMaps,
+      );
       const authContext = createMockUserAuthContext();
 
       // Record being created with owner field empty (null)
@@ -267,13 +324,19 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
         },
       };
 
-      const internalContext = createMockWorkspaceInternalContext(flatFieldMetadataMaps);
+      const internalContext: WorkspaceInternalContext = {
+        ...createMockWorkspaceInternalContext(flatFieldMetadataMaps),
+        flatRowLevelPermissionPredicateMaps:
+          createMockRLSPredicateMapsForEditableField(),
+        flatRowLevelPermissionPredicateGroupMaps:
+          createMockRLSGroupMapsForEditableField(),
+      };
       const authContext = createMockUserAuthContext();
 
       // Record with owner field that does NOT match permission (not empty, and not the current user)
       const record = {
         id: 'record-id-123',
-        owner: 'someone-else-id',
+        owner: 'someone-else-id', // This doesn't match the required 'member-id-123'
       };
 
       expect(() => {
@@ -316,7 +379,9 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
         },
       };
 
-      const internalContext = createMockWorkspaceInternalContext(flatFieldMetadataMaps);
+      const internalContext = createMockWorkspaceInternalContext(
+        flatFieldMetadataMaps,
+      );
       const authContext = createMockUserAuthContext();
 
       const record = {

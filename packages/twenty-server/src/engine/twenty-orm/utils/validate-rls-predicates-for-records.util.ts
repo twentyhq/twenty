@@ -8,6 +8,8 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
@@ -76,6 +78,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
       recordFilter,
       objectMetadata,
       objectRecordsPermissions,
+      internalContext.flatFieldMetadataMaps,
     );
 
     if (!recordFilter || Object.keys(recordFilter).length === 0) {
@@ -109,11 +112,29 @@ const filterOutNonEditableFieldPredicates = (
   filter: Record<string, unknown>,
   objectMetadata: FlatObjectMetadata,
   objectRecordsPermissions: ObjectsPermissions,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): Record<string, unknown> => {
   const restrictedFields =
     objectRecordsPermissions[objectMetadata.id]?.restrictedFields ?? {};
 
-  return filterPredicateRecursive(filter, restrictedFields);
+  // Build a mapping of field names to fieldMetadataIds
+  const fieldNameToMetadataIdMap = Object.values(
+    flatFieldMetadataMaps.byUniversalIdentifier,
+  ).reduce(
+    (map, field) => {
+      if (isDefined(field)) {
+        map[field.name] = field.id;
+      }
+      return map;
+    },
+    {} as Record<string, string>,
+  );
+
+  return filterPredicateRecursive(
+    filter,
+    restrictedFields,
+    fieldNameToMetadataIdMap,
+  );
 };
 
 const filterPredicateRecursive = (
@@ -122,13 +143,16 @@ const filterPredicateRecursive = (
     string,
     { canRead?: boolean | null; canUpdate?: boolean | null }
   >,
+  fieldNameToMetadataIdMap: Record<string, string>,
 ): Record<string, unknown> => {
   const result: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(filter)) {
     if (key === 'and' && Array.isArray(value)) {
       const filtered = value
-        .map((item) => filterPredicateRecursive(item, restrictedFields))
+        .map((item) =>
+          filterPredicateRecursive(item, restrictedFields, fieldNameToMetadataIdMap),
+        )
         .filter((item) => Object.keys(item).length > 0);
 
       if (filtered.length > 0) {
@@ -136,7 +160,9 @@ const filterPredicateRecursive = (
       }
     } else if (key === 'or' && Array.isArray(value)) {
       const filtered = value
-        .map((item) => filterPredicateRecursive(item, restrictedFields))
+        .map((item) =>
+          filterPredicateRecursive(item, restrictedFields, fieldNameToMetadataIdMap),
+        )
         .filter((item) => Object.keys(item).length > 0);
 
       if (filtered.length > 0) {
@@ -146,6 +172,7 @@ const filterPredicateRecursive = (
       const filtered = filterPredicateRecursive(
         value as Record<string, unknown>,
         restrictedFields,
+        fieldNameToMetadataIdMap,
       );
 
       if (Object.keys(filtered).length > 0) {
@@ -153,13 +180,23 @@ const filterPredicateRecursive = (
       }
     } else {
       // This is a field reference - check if it's editable
-      const fieldPermission = restrictedFields[key];
-      const isEditable =
-        !isDefined(fieldPermission) ||
-        fieldPermission.canUpdate !== false;
+      // Key is a field name (e.g., "owner", "companyId")
+      // We need to look up the fieldMetadataId for this field name
+      const fieldMetadataId = fieldNameToMetadataIdMap[key];
 
-      if (isEditable) {
+      if (!isDefined(fieldMetadataId)) {
+        // Field not found in metadata - keep the predicate (could be a system field)
         result[key] = value;
+      } else {
+        // Look up the field permissions using the fieldMetadataId
+        const fieldPermission = restrictedFields[fieldMetadataId];
+        const isEditable =
+          !isDefined(fieldPermission) || fieldPermission.canUpdate !== false;
+
+        if (isEditable) {
+          result[key] = value;
+        }
+        // If not editable, skip this predicate (don't add to result)
       }
     }
   }
