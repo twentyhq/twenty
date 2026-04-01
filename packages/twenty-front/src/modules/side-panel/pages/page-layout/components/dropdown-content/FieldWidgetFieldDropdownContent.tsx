@@ -1,5 +1,6 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -50,6 +51,8 @@ export const FieldWidgetFieldDropdownContent = () => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+
   const { closeDropdown } = useCloseDropdown();
 
   const { getIcon } = useIcons();
@@ -69,6 +72,17 @@ export const FieldWidgetFieldDropdownContent = () => {
         fieldMetadataId,
       },
     });
+
+    const selectedField = boxedRelationFieldMetadataItems.find(
+      (field) => field.id === fieldMetadataId,
+    );
+
+    if (widgetInEditMode && selectedField) {
+      updatePageLayoutWidget(widgetInEditMode.id, {
+        title: selectedField.label,
+      });
+    }
+
     closeDropdown();
   };
 

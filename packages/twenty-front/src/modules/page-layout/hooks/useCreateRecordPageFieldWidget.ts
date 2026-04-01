@@ -57,6 +57,7 @@ export const useCreateRecordPageFieldWidget = () => {
     );
 
     const fieldMetadataId = availableRelationField?.id ?? '';
+    const title = availableRelationField?.label ?? '';
 
     const positionIndex = existingWidgets.length;
     const widgetId = uuidv4();
@@ -64,6 +65,7 @@ export const useCreateRecordPageFieldWidget = () => {
     const newWidget = createDefaultFieldWidget({
       id: widgetId,
       pageLayoutTabId: tabId,
+      title,
       fieldMetadataId,
       objectMetadataId: objectMetadataItem.id,
       positionIndex,
