@@ -58,9 +58,6 @@ export const main = async (
   // Cloud: https://api.twenty.com/graphql
   // Self-hosted: https://your-domain.com/graphql
   const graphqlEndpoint = 'https://api.twenty.com/graphql';
-  // Cloud: https://api.twenty.com/rest/metadata/objects
-  // Self-hosted: https://your-domain.com/rest/metadata/objects
-  const restEndpoint = 'https://api.twenty.com/rest/metadata/objects';
 
   // Replace with your API key from Settings → APIs
   const authToken = 'YOUR_API_KEY';
@@ -80,15 +77,34 @@ export const main = async (
   const pdfBlob = await pdfResponse.blob();
   const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
 
+  const fieldMetadataIdQuery = ```
+    query FindUploadFileFieldMetadataId {
+      objects {
+        edges {
+          node {
+            nameSingular
+            fieldsList {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  ```;
+
   // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
-  const response = await fetch(restEndpoint, {
-      method: 'GET',
+  const response = await fetch(graphqlEndpoint, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${authToken}`
+      },
+      body: {
+        query: fieldMetadataIdQuery,
       }
     });
   const result = await response.json();
-  const uploadFileFieldMetadataId = result.data.objects.find((object) => object.nameSingular === 'attachment').fields.find((field) => field.name === 'file').id;
+  const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
 
   // Step 3: Upload the file via GraphQL multipart upload
   const uploadMutation = `
@@ -172,14 +188,14 @@ export const main = async (
 
 #### To attach to a different object
 
-Replace `companyId` with the appropriate field:
+Replace `targetCompanyId` with the appropriate field:
 
 | Object | Field Name |
 |--------|------------|
-| Company | `companyId` |
-| Person | `personId` |
-| Opportunity | `opportunityId` |
-| Custom Object | `yourCustomObjectId` |
+| Company | `targetCompanyId` |
+| Person | `targetPersonId` |
+| Opportunity | `targetOpportunityId` |
+| Custom Object | `targetYourCustomObjectId` |
 
 Update both the function parameter and the `variables.data` object in the attachment mutation.
 
