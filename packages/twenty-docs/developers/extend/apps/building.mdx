@@ -719,7 +719,7 @@ Front components are React components that render directly inside Twenty's UI. T
 
 #### Basic example
 
-The quickest way to see a front component in action is to register it as a **quick action command**. This makes it accessible from a button on the top right of the page:
+The quickest way to see a front component in action is to register it as a **command**. Adding a `command` field with `isPinned: true` makes it appear as a quick-action button in the top-right corner of the page — no page layout needed:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -749,15 +749,15 @@ export default defineFrontComponent({
 });
 ```
 
-After syncing with `yarn twenty dev`, you can see the `⚡️ Hello` quick action on the top right of the page:
+After syncing with `yarn twenty dev`, the quick action appears in the top-right corner of the page:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Installed app — Content tab" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
 </div>
 
-Click on the button to see the component in action:
+Click it to render the component inline.
 
-  {/* TODO: add screenshot of a front component rendered on a record page */}
+{/* TODO: add screenshot of the rendered front component */}
 
 #### Configuration fields
 
@@ -768,11 +768,11 @@ Click on the button to see the component in action:
 | `name` | No | Display name |
 | `description` | No | Description of what the component does |
 | `isHeadless` | No | Set to `true` if the component has no visible UI (see below) |
-| `command` | No | Register the component as a command in the command menu (see below) |
+| `command` | No | Register the component as a command (see [command options](#command-options) below) |
 
 #### Placing a front component on a page
 
-Front components are not visible by default — you need to place them on a page using a **page layout**. See the [definePageLayout](#definelayout) section for how to add a `FRONT_COMPONENT` widget to a record page tab.
+Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See the [definePageLayout](#definepagelayout) section for details.
 
 #### Headless components (`isHeadless: true`)
 
@@ -859,47 +859,105 @@ Front components can trigger navigation, modals, and notifications using functio
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
 
-#### Registering a command
+#### Command options
 
-You can make a front component available from the **command menu** (Cmd+K) by adding a `command` field:
-
-```tsx src/front-components/quick-action.tsx
-import { defineFrontComponent } from 'twenty-sdk';
-
-const QuickAction = () => {
-  return <div>Running quick action...</div>;
-};
-
-export default defineFrontComponent({
-  universalIdentifier: 'c3d4e5f6-a7b8-9012-cdef-345678901234',
-  name: 'quick-action',
-  description: 'A command-triggered component',
-  component: QuickAction,
-  command: {
-    universalIdentifier: 'bd0505af-97c6-4edf-b0b6-8c2b3fdf9e44',
-    label: 'Run Quick Action',
-    shortLabel: 'Quick Action',
-    icon: 'IconBolt',
-    isPinned: true,
-    availabilityType: 'GLOBAL',
-  },
-});
-```
-
-{/* TODO: add screenshot of a front component appearing in the Cmd+K command menu */}
-
-Command options:
+Adding a `command` field to `defineFrontComponent` registers the component in the command menu (Cmd+K). If `isPinned` is `true`, it also appears as a quick-action button in the top-right corner of the page.
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | `universalIdentifier` | Yes | Stable unique ID for the command |
-| `label` | Yes | Full label shown in the command menu |
-| `shortLabel` | No | Shorter label for compact views |
-| `icon` | No | Icon displayed next to the label |
-| `isPinned` | No | Pin the command for quick access |
-| `availabilityType` | No | `'GLOBAL'`, `'RECORD_SELECTION'`, or `'FALLBACK'` |
-| `availabilityObjectUniversalIdentifier` | No | Restrict to a specific object type |
-| `conditionalAvailabilityExpression` | No | Boolean or expression to control visibility |
+| `label` | Yes | Full label shown in the command menu (Cmd+K) |
+| `shortLabel` | No | Shorter label displayed on the pinned quick-action button |
+| `icon` | No | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`) |
+| `isPinned` | No | When `true`, shows the command as a quick-action button in the top-right corner of the page |
+| `availabilityType` | No | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
+| `availabilityObjectUniversalIdentifier` | No | Restrict the command to pages of a specific object type (e.g. only on Company records) |
+| `conditionalAvailabilityExpression` | No | A boolean expression to dynamically control whether the command is visible (see below) |
+
+#### Conditional availability expressions
+
+The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+
+```tsx
+import {
+  defineFrontComponent,
+  pageType,
+  numberOfSelectedRecords,
+  objectPermissions,
+  everyEquals,
+  isDefined,
+} from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'bulk-action',
+  component: BulkAction,
+  command: {
+    universalIdentifier: '...',
+    label: 'Bulk Update',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: everyEquals(
+      objectPermissions,
+      'canUpdateObjectRecords',
+      true,
+    ),
+  },
+});
+```
+
+**Context variables** — these represent the current state of the page:
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `pageType` | `string` | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel` | `boolean` | Whether the component is rendered in a side panel |
+| `numberOfSelectedRecords` | `number` | Number of currently selected records |
+| `isSelectAll` | `boolean` | Whether "select all" is active |
+| `selectedRecords` | `array` | The selected record objects |
+| `favoriteRecordIds` | `array` | IDs of favorited records |
+| `objectPermissions` | `object` | Permissions for the current object type |
+| `targetObjectReadPermissions` | `object` | Read permissions for the target object |
+| `targetObjectWritePermissions` | `object` | Write permissions for the target object |
+| `featureFlags` | `object` | Active feature flags |
+| `objectMetadataItem` | `object` | Metadata of the current object type |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter |
+
+**Operators** — combine variables into boolean expressions:
+
+| Operator | Description |
+|----------|-------------|
+| `isDefined(value)` | `true` if the value is not null/undefined |
+| `isNonEmptyString(value)` | `true` if the value is a non-empty string |
+| `includes(array, value)` | `true` if the array contains the value |
+| `includesEvery(array, prop, value)` | `true` if every item's property includes the value |
+| `every(array, prop)` | `true` if the property is truthy on every item |
+| `everyDefined(array, prop)` | `true` if the property is defined on every item |
+| `everyEquals(array, prop, value)` | `true` if the property equals the value on every item |
+| `some(array, prop)` | `true` if the property is truthy on at least one item |
+| `someDefined(array, prop)` | `true` if the property is defined on at least one item |
+| `someEquals(array, prop, value)` | `true` if the property equals the value on at least one item |
+| `someNonEmptyString(array, prop)` | `true` if the property is a non-empty string on at least one item |
+| `none(array, prop)` | `true` if the property is falsy on every item |
+| `noneDefined(array, prop)` | `true` if the property is undefined on every item |
+| `noneEquals(array, prop, value)` | `true` if the property does not equal the value on any item |
+
+#### Public assets
+
+Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+See the [public assets section](#accessing-public-assets-with-getpublicasseturl) for details.
 
 #### Styling
 
