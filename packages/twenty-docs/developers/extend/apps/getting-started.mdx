@@ -244,7 +244,7 @@ Two Docker volumes are created to persist data between restarts:
 - `twenty-app-dev-data` — PostgreSQL database
 - `twenty-app-dev-storage` — file storage
 
-You can specify a custom port:
+If port 2020 is already in use (e.g., another Twenty instance or a different service), you can start on a different port:
 
 ```bash filename="Terminal"
 yarn twenty server start --port 3030
