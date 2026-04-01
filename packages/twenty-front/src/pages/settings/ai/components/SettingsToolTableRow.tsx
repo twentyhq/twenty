@@ -1,22 +1,21 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ComponentType, type ReactNode } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { IconCode, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type LogicFunction } from '~/generated-metadata/graphql';
-
-type ToolWithApplicationId = LogicFunction & {
-  applicationId?: string | null;
-};
-
 export type SettingsToolTableRowProps = {
-  tool: ToolWithApplicationId;
+  LeftIcon: ComponentType<{ size: number }>;
+  name: string;
+  isCustom?: boolean;
+  applicationId?: string | null;
   action?: ReactNode;
   link?: string;
+  onClick?: () => void;
+  isClickable?: boolean;
 };
 
 export const TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 100px 36px';
@@ -28,14 +27,21 @@ const StyledIconContainer = styled.div`
 `;
 
 export const SettingsToolTableRow = ({
-  tool,
+  LeftIcon,
+  name,
+  isCustom,
+  applicationId,
   action,
   link,
+  onClick,
+  isClickable,
 }: SettingsToolTableRowProps) => {
   return (
     <TableRow
       gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       to={link}
+      onClick={onClick}
+      isClickable={isClickable}
     >
       <TableCell
         color={themeCssVariables.font.color.primary}
@@ -44,13 +50,13 @@ export const SettingsToolTableRow = ({
         overflow="hidden"
       >
         <StyledIconContainer>
-          <IconCode size={16} />
+          <LeftIcon size={16} />
         </StyledIconContainer>
-        <OverflowingTextWithTooltip text={tool.name} />
+        <OverflowingTextWithTooltip text={name} />
       </TableCell>
       <TableCell>
         <SettingsItemTypeTag
-          item={{ isCustom: true, applicationId: tool.applicationId }}
+          item={{ isCustom, applicationId }}
         />
       </TableCell>
       <TableCell

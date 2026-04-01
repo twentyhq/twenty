@@ -24,10 +24,10 @@ import {
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsAIMoreTab } from '~/pages/settings/ai/components/SettingsAIMoreTab';
+import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
 import { SettingsAIUsageTab } from './components/SettingsAIUsageTab';
 import { SettingsAgentSkills } from './components/SettingsAgentSkills';
-import { SettingsToolsTable } from './components/SettingsToolsTable';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
 
 export const SettingsAI = () => {
@@ -125,7 +125,7 @@ export const SettingsAI = () => {
     <SubMenuTopBarContainer
       title={t`AI`}
       actionButton={
-        isSkillsTab ? (
+        (isSkillsTab && (
           <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
             <Button
               Icon={IconPlus}
@@ -134,7 +134,8 @@ export const SettingsAI = () => {
               size="small"
             />
           </UndecoratedLink>
-        ) : isToolsTab ? (
+        )) ||
+        (isToolsTab && (
           <Button
             Icon={IconPlus}
             title={t`New Tool`}
@@ -143,7 +144,7 @@ export const SettingsAI = () => {
             onClick={handleCreateTool}
             disabled={isCreatingTool}
           />
-        ) : undefined
+        ))
       }
       links={[
         {
@@ -160,7 +161,7 @@ export const SettingsAI = () => {
         />
         {isModelsTab && <SettingsAIModelsTab />}
         {isSkillsTab && <SettingsAgentSkills />}
-        {isToolsTab && <SettingsToolsTable />}
+        {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAIUsageTab />}
         {isMoreTab && <SettingsAIMoreTab />}
       </SettingsPageContainer>

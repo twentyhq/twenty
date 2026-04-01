@@ -4,9 +4,6 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 
 import { GET_TOOL_INPUT_SCHEMA } from '@/ai/graphql/queries/getToolInputSchemas';
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
@@ -16,7 +13,6 @@ import {
   IconPlayerPlay,
   IconSettings,
   IconTable,
-  OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -25,6 +21,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+import { SettingsToolTableRow } from './SettingsToolTableRow';
 
 type GetToolInputSchemaQuery = {
   getToolInputSchema: object | null;
@@ -40,32 +37,6 @@ export type SystemTool = {
 export type SettingsSystemToolTableRowProps = {
   tool: SystemTool;
 };
-
-const StyledSystemToolTableRowContainer = styled.div`
-  > div,
-  > a {
-    opacity: 0.7;
-
-    &[data-clickable='true']:hover {
-      opacity: 0.85;
-    }
-  }
-`;
-
-export const StyledSystemToolTableRow = (
-  props: React.ComponentProps<typeof TableRow>,
-) => (
-  <StyledSystemToolTableRowContainer>
-    {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-    <TableRow gridTemplateColumns="1fr 100px 36px" {...props} />
-  </StyledSystemToolTableRowContainer>
-);
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-`;
 
 const StyledExpandableContent = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -120,8 +91,6 @@ export const SettingsSystemToolTableRow = ({
   const hasInputSchema =
     isDefined(inputSchema) && Object.keys(inputSchema).length > 0;
 
-  const Icon = getCategoryIcon(tool.category);
-
   const handleRowClick = () => {
     if (!schemaData && !schemaLoading) {
       fetchSchema();
@@ -131,36 +100,20 @@ export const SettingsSystemToolTableRow = ({
 
   return (
     <>
-      <StyledSystemToolTableRow
-        key={tool.name}
-        onClick={handleRowClick}
-        isClickable
-      >
-        <TableCell
-          color={themeCssVariables.font.color.primary}
-          gap={themeCssVariables.spacing[2]}
-          minWidth="0"
-          overflow="hidden"
-        >
-          <StyledIconContainer>
-            <Icon size={16} />
-          </StyledIconContainer>
-          <OverflowingTextWithTooltip text={tool.name} />
-        </TableCell>
-        <TableCell>
-          <SettingsItemTypeTag item={{ isCustom: false }} />
-        </TableCell>
-        <TableCell
-          align="right"
-          padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
-        >
-          {isExpanded ? (
+      <SettingsToolTableRow
+        LeftIcon={getCategoryIcon(tool.category)}
+        name={tool.name}
+        isCustom={false}
+        action={
+          isExpanded ? (
             <IconChevronDown size={16} />
           ) : (
             <IconChevronRight size={16} />
-          )}
-        </TableCell>
-      </StyledSystemToolTableRow>
+          )
+        }
+        onClick={handleRowClick}
+        isClickable
+      />
 
       <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
         <StyledExpandableContent>
