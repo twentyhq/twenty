@@ -1,17 +1,18 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const mockActions = createMockCommandMenuItems({});
 
 const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === 'add-to-favorites-single-record',
+  (action) => action.key === EngineComponentKey.ADD_TO_FAVORITES,
 );
 
 if (!addToFavoritesCommandMenuItem) {

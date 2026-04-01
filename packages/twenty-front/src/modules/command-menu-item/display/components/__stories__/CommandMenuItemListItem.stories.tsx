@@ -1,10 +1,12 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+
 import { CommandListItem } from '@/command-menu-item/display/components/CommandListItem';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 type Story = StoryObj<typeof CommandListItem>;
 
@@ -17,11 +19,11 @@ const mockActions = createMockCommandMenuItems({
 });
 
 const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === 'add-to-favorites-single-record',
+  (action) => action.key === EngineComponentKey.ADD_TO_FAVORITES,
 );
 
 const goToPeopleCommandMenuItem = mockActions.find(
-  (action) => action.key === 'go-to-people',
+  (action) => action.key === EngineComponentKey.GO_TO_PEOPLE,
 );
 
 const meta: Meta<typeof CommandListItem> = {
