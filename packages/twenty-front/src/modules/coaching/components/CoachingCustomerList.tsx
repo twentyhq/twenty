@@ -97,7 +97,7 @@ export const CoachingCustomerList = ({
         return (
           <CoachingCustomerListItem
             key={customerRecord.id}
-            name={customerRecord.name || customerRecord.fullName || ''}
+            name={customerRecord.displayName || customerRecord.name || ''}
             email={customerRecord.email}
             isSelected={customerRecord.id === selectedCustomerId}
             onClick={() => onSelectCustomer(customerRecord.id)}
