@@ -126,6 +126,9 @@ const getColumnExpression = (
     case FieldMetadataType.PHONES:
       return `COALESCE(${quotedColumnName}, '')`;
 
+    case FieldMetadataType.UUID:
+      return `COALESCE(${quotedColumnName}::text, '')`;
+
     default:
       return `COALESCE(public.unaccent_immutable(${quotedColumnName}), '')`;
   }
