@@ -4169,6 +4169,7 @@ msgid "Customization"
 msgstr "Tùy chỉnh"
 
 #. js-lingui-id: srRMnJ
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditObjectViewBase.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView.tsx
@@ -4189,6 +4190,16 @@ msgstr "Tùy chỉnh trường"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Customize page layouts and UI structure"
 msgstr "Tùy chỉnh bố cục trang và cấu trúc giao diện người dùng"
+
+#. js-lingui-id: LMX+xC
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+msgid "Customize record page"
+msgstr ""
+
+#. js-lingui-id: 1KIzk7
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+msgid "Customize the layout for this role"
+msgstr ""
 
 #. js-lingui-id: ZBgSzH
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -8534,6 +8545,7 @@ msgid "Launch manually"
 msgstr "Khởi chạy thủ công"
 
 #. js-lingui-id: rdU729
+#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
