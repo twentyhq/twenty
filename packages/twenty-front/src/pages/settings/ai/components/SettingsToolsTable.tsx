@@ -4,17 +4,14 @@ import { useContext, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconChevronRight, IconPlus } from 'twenty-ui/display';
-import { Button, SearchInput } from 'twenty-ui/input';
+import { H2Title, IconChevronRight } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -34,25 +31,13 @@ const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledFooterContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[4]};
-`;
-
 export const SettingsToolsTable = () => {
   const { theme } = useContext(ThemeContext);
   const logicFunctions = useAtomStateValue(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
-  const { createLogicFunction } = usePersistLogicFunction();
-
   const { t } = useLingui();
-  const navigate = useNavigate();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [customSearchTerm, setCustomSearchTerm] = useState('');
   const [builtInSearchTerm, setBuiltInSearchTerm] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
 
   const tools = useMemo(
     () => logicFunctions.filter((fn) => fn.isTool === true),
@@ -98,44 +83,6 @@ export const SettingsToolsTable = () => {
   );
 
   const showSkeleton = toolIndexLoading && tools.length === 0;
-
-  const handleCreateTool = async () => {
-    setIsCreating(true);
-    try {
-      const result = await createLogicFunction({
-        input: {
-          name: 'new-tool',
-          isTool: true,
-        },
-      });
-
-      if (result.status === 'successful' && isDefined(result.response?.data)) {
-        const newLogicFunction = result.response.data.createOneLogicFunction;
-        enqueueSuccessSnackBar({ message: t`Tool created` });
-
-        const applicationId = (newLogicFunction as { applicationId?: string })
-          .applicationId;
-        if (isDefined(applicationId)) {
-          navigate(
-            getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-              applicationId,
-              logicFunctionId: newLogicFunction.id,
-            }),
-          );
-        } else {
-          navigate(
-            getSettingsPath(SettingsPath.LogicFunctionDetail, {
-              logicFunctionId: newLogicFunction.id,
-            }),
-          );
-        }
-      }
-    } catch {
-      enqueueErrorSnackBar({ message: t`Failed to create tool` });
-    } finally {
-      setIsCreating(false);
-    }
-  };
 
   const getToolLink = (tool: (typeof tools)[0]) => {
     const applicationId = (tool as { applicationId?: string }).applicationId;
@@ -193,16 +140,6 @@ export const SettingsToolsTable = () => {
               ))}
         </Table>
 
-        <StyledFooterContainer>
-          <Button
-            Icon={IconPlus}
-            title={t`New Tool`}
-            size="small"
-            variant="secondary"
-            onClick={handleCreateTool}
-            disabled={isCreating}
-          />
-        </StyledFooterContainer>
       </Section>
 
       <Section>
