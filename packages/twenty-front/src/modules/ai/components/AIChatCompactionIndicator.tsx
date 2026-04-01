@@ -5,8 +5,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIndicatorContainer = styled.div`
   align-items: center;
-  background: none;
-  border: none;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
