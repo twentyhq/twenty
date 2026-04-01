@@ -23,9 +23,7 @@ describe('isHeadlessTriggerWorkflowVersionCommandContextApi', () => {
     };
 
     expect(
-      isHeadlessTriggerWorkflowVersionCommandContextApi(
-        triggerWorkflowContext,
-      ),
+      isHeadlessTriggerWorkflowVersionCommandContextApi(triggerWorkflowContext),
     ).toBe(true);
   });
 
@@ -42,9 +40,7 @@ describe('isHeadlessTriggerWorkflowVersionCommandContextApi', () => {
     };
 
     expect(
-      isHeadlessTriggerWorkflowVersionCommandContextApi(
-        frontComponentContext,
-      ),
+      isHeadlessTriggerWorkflowVersionCommandContextApi(frontComponentContext),
     ).toBe(false);
   });
 });
