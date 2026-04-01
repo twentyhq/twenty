@@ -52,7 +52,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   deleteRecords: {
     universalIdentifier: 'd5a55d57-ed1d-4791-89b8-53b7e121d69d',
-    label: 'Delete ${capitalize(objectMetadataItem.labelPlural)}',
+    label: 'Delete ${capitalize(objectMetadataLabel)}',
     icon: 'IconTrash',
     isPinned: false,
     position: 3,
@@ -67,7 +67,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   restoreRecords: {
     universalIdentifier: '2d733846-8cc5-4314-ab79-916ae0801baa',
-    label: 'Restore ${capitalize(objectMetadataItem.labelPlural)}',
+    label: 'Restore ${capitalize(objectMetadataLabel)}',
     icon: 'IconRefresh',
     isPinned: true,
     position: 5,
@@ -82,7 +82,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   destroyRecords: {
     universalIdentifier: '0ea2ebc4-02ca-4d15-b424-5352b9e487df',
-    label: 'Permanently destroy ${capitalize(objectMetadataItem.labelPlural)}',
+    label: 'Permanently destroy ${capitalize(objectMetadataLabel)}',
     icon: 'IconTrashX',
     isPinned: false,
     position: 7,
@@ -142,7 +142,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   exportRecords: {
     universalIdentifier: 'c6f5c54d-d52b-4e75-8188-2190d77126f2',
-    label: 'Export ${capitalize(objectMetadataItem.labelPlural)}',
+    label: 'Export ${capitalize(objectMetadataLabel)}',
     icon: 'IconFileExport',
     isPinned: false,
     position: 12,
