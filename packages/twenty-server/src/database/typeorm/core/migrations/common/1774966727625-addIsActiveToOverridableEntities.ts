@@ -18,6 +18,19 @@ export class AddIsActiveToOverridableEntities1774966727625
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayoutWidget" ADD "isActive" boolean NOT NULL DEFAULT true`,
     );
+
+    await queryRunner.query(
+      `UPDATE "core"."viewFieldGroup" SET "isActive" = false WHERE "deletedAt" IS NOT NULL`,
+    );
+    await queryRunner.query(
+      `UPDATE "core"."viewField" SET "isActive" = false WHERE "deletedAt" IS NOT NULL`,
+    );
+    await queryRunner.query(
+      `UPDATE "core"."pageLayoutTab" SET "isActive" = false WHERE "deletedAt" IS NOT NULL`,
+    );
+    await queryRunner.query(
+      `UPDATE "core"."pageLayoutWidget" SET "isActive" = false WHERE "deletedAt" IS NOT NULL`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

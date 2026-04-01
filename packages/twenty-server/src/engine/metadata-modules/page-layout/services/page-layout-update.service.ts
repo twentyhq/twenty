@@ -290,7 +290,6 @@ export class PageLayoutUpdateService {
       isEntityIncluded: (entity) => entity.isActive,
     });
 
-
     const now = new Date();
 
     const tabsToCreate: FlatPageLayoutTab[] = entitiesToCreate.map(
@@ -729,9 +728,7 @@ export class PageLayoutUpdateService {
     }
 
     const deactivatedTabIds = new Set(
-      tabsToUpdate
-        .filter((tab) => !tab.isActive)
-        .map((tab) => tab.id),
+      tabsToUpdate.filter((tab) => !tab.isActive).map((tab) => tab.id),
     );
 
     const allExistingWidgets = Object.values(
@@ -739,10 +736,7 @@ export class PageLayoutUpdateService {
     ).filter(isDefined);
 
     for (const widget of allExistingWidgets) {
-      if (
-        widget.isActive &&
-        deactivatedTabIds.has(widget.pageLayoutTabId)
-      ) {
+      if (widget.isActive && deactivatedTabIds.has(widget.pageLayoutTabId)) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
 
         if (isDefined(viewId)) {

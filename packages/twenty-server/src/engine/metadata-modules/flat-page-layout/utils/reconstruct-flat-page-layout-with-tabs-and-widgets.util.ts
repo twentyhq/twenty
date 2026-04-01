@@ -33,10 +33,7 @@ export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
       flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (widget) =>
-          widget.pageLayoutTabId === tab.id && widget.isActive,
-      );
+      .filter((widget) => widget.pageLayoutTabId === tab.id && widget.isActive);
 
     return {
       ...tab,

@@ -141,17 +141,13 @@ export class FieldsWidgetUpsertService {
       flatViewFieldGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (group) => group.isActive && group.viewId === viewId,
-      );
+      .filter((group) => group.isActive && group.viewId === viewId);
 
     const existingViewFields = Object.values(
       flatViewFieldMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (field) => field.isActive && field.viewId === viewId,
-      );
+      .filter((field) => field.isActive && field.viewId === viewId);
 
     if (hasGroups) {
       await this.upsertFieldsWidgetWithGroups({
@@ -466,6 +462,7 @@ export class FieldsWidgetUpsertService {
           aggregateOperation: null,
           overrides: null,
           universalOverrides: null,
+          isActive: true,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -475,22 +472,18 @@ export class FieldsWidgetUpsertService {
 
     const customGroupsToDelete = groupsToDeactivate.filter(
       (group) =>
-        group.applicationUniversalIdentifier ===
-        applicationUniversalIdentifier,
+        group.applicationUniversalIdentifier === applicationUniversalIdentifier,
     );
     const standardGroupsToDeactivate = groupsToDeactivate.filter(
       (group) =>
-        group.applicationUniversalIdentifier !==
-        applicationUniversalIdentifier,
+        group.applicationUniversalIdentifier !== applicationUniversalIdentifier,
     );
 
-    const deactivatedGroupUpdates = standardGroupsToDeactivate.map(
-      (group) => ({
-        ...group,
-        isActive: false,
-        updatedAt: now,
-      }),
-    );
+    const deactivatedGroupUpdates = standardGroupsToDeactivate.map((group) => ({
+      ...group,
+      isActive: false,
+      updatedAt: now,
+    }));
 
     const remainingActiveGroups = existingGroups.filter((group) =>
       inputGroupIds.has(group.id),
@@ -702,6 +695,7 @@ export class FieldsWidgetUpsertService {
           aggregateOperation: null,
           overrides: null,
           universalOverrides: null,
+          isActive: true,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -710,22 +704,18 @@ export class FieldsWidgetUpsertService {
 
     const customGroupsToDelete = groupsToDeactivate.filter(
       (group) =>
-        group.applicationUniversalIdentifier ===
-        applicationUniversalIdentifier,
+        group.applicationUniversalIdentifier === applicationUniversalIdentifier,
     );
     const standardGroupsToDeactivate = groupsToDeactivate.filter(
       (group) =>
-        group.applicationUniversalIdentifier !==
-        applicationUniversalIdentifier,
+        group.applicationUniversalIdentifier !== applicationUniversalIdentifier,
     );
 
-    const deactivatedGroupUpdates = standardGroupsToDeactivate.map(
-      (group) => ({
-        ...group,
-        isActive: false,
-        updatedAt: now,
-      }),
-    );
+    const deactivatedGroupUpdates = standardGroupsToDeactivate.map((group) => ({
+      ...group,
+      isActive: false,
+      updatedAt: now,
+    }));
 
     const viewFieldsToReassign =
       this.buildViewFieldReassignmentsForDeactivatedGroups({
@@ -844,8 +834,7 @@ export class FieldsWidgetUpsertService {
           null;
 
         const shouldOverride = isCallerOverridingEntity({
-          callerApplicationUniversalIdentifier:
-            applicationUniversalIdentifier,
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
           entityApplicationUniversalIdentifier:
             field.applicationUniversalIdentifier,
           workspaceCustomApplicationUniversalIdentifier:
