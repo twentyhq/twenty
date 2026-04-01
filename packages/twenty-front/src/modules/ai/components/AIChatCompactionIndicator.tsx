@@ -3,13 +3,7 @@ import { useContext } from 'react';
 import { IconTransform } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledToggleButton = styled.div`
+const StyledIndicatorContainer = styled.div`
   align-items: center;
   background: none;
   border: none;
@@ -33,15 +27,13 @@ export const AIChatCompactionIndicator = () => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledContainer>
-      <StyledToggleButton>
-        <StyledIconTextContainer>
-          <IconTransform size={theme.icon.size.sm} />
-          <StyledDisplayMessage>
-            The conversation has been compacted
-          </StyledDisplayMessage>
-        </StyledIconTextContainer>
-      </StyledToggleButton>
-    </StyledContainer>
+    <StyledIndicatorContainer>
+      <StyledIconTextContainer>
+        <IconTransform size={theme.icon.size.sm} />
+        <StyledDisplayMessage>
+          The conversation has been compacted
+        </StyledDisplayMessage>
+      </StyledIconTextContainer>
+    </StyledIndicatorContainer>
   );
 };
