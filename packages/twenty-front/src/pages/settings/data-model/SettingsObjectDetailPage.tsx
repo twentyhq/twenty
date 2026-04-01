@@ -14,7 +14,11 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  SettingsPath,
+} from 'twenty-shared/types';
 
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -114,7 +118,10 @@ export const SettingsObjectDetailPage = () => {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT,
       title: t`Layout`,
       Icon: IconLayout,
-      hide: !isRecordPageLayoutEditingEnabled,
+      hide:
+        !isRecordPageLayoutEditingEnabled ||
+        objectMetadataItem.isRemote ||
+        objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
     },
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.INDEXES,
