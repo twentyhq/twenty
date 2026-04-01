@@ -140,12 +140,12 @@ export class UploadFilesOrchestratorStep {
         message: `Uploaded ${this.uploadedCount}/${this.totalQueued} files (${this.failedCount} failed)`,
         status: 'error',
       });
-    } else if (!this.verbose) {
-      this.state.addEvent({
-        message: `Successfully uploaded ${this.uploadedCount} file${this.uploadedCount !== 1 ? 's' : ''}`,
-        status: 'success',
-      });
     }
+
+    this.state.addEvent({
+      message: `Successfully uploaded ${this.uploadedCount} file${this.uploadedCount !== 1 ? 's' : ''}`,
+      status: 'success',
+    });
 
     this.resetCounters();
   }

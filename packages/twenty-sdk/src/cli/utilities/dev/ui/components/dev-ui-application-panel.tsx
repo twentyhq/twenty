@@ -113,11 +113,7 @@ export const DevUiApplicationPanel = ({
           const entities = groupedEntities.get(type) ?? [];
 
           return (
-            <DevUiEntitySection
-              key={type}
-              type={type}
-              entities={entities}
-            />
+            <DevUiEntitySection key={type} type={type} entities={entities} />
           );
         })}
       </Box>
