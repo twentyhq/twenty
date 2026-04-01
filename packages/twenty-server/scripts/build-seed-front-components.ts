@@ -15,15 +15,9 @@ const SEED_PROJECT_DIR = resolve(
   '../src/engine/metadata-modules/front-component/constants/seed-project',
 );
 
-const sdkIndividualIndex = resolve(
-  __dirname,
-  '../../twenty-sdk/dist/sdk/index.js',
-);
-
 const alias: Record<string, string> = {
   react: join(ROOT_NODE_MODULES, 'react'),
   'react-dom': join(ROOT_NODE_MODULES, 'react-dom'),
-  '@/sdk': sdkIndividualIndex,
 };
 
 const COMPONENTS = ['hello-world', 'show-notification'];
