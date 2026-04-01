@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 
 type CoachingTicketsTabProps = {
+  email: string | null;
   wpUserId: string | null;
 };
 
@@ -137,6 +138,21 @@ const StyledPanelBody = styled.div`
   overflow-y: auto;
 `;
 
+const stripHtml = (html: string): string => {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+};
+
 const getStatusColor = (status: string | null | undefined) => {
   if (!status) return '#888';
   const lower = String(status).toLowerCase();
@@ -161,8 +177,8 @@ const formatDateTime = (dateString: string | null | undefined) => {
   }
 };
 
-export const CoachingTicketsTab = ({ wpUserId }: CoachingTicketsTabProps) => {
-  const { tickets, loading } = useCoachingTickets(wpUserId);
+export const CoachingTicketsTab = ({ email, wpUserId }: CoachingTicketsTabProps) => {
+  const { tickets, loading } = useCoachingTickets(email, wpUserId);
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
   if (loading) {
@@ -272,13 +288,13 @@ export const CoachingTicketsTab = ({ wpUserId }: CoachingTicketsTabProps) => {
           <StyledContentPanel>
             <StyledContentHeader>Anfrage</StyledContentHeader>
             <StyledContentBody>
-              {String(selectedTicket.content ?? 'No content')}
+              {stripHtml(String(selectedTicket.content ?? 'No content'))}
             </StyledContentBody>
           </StyledContentPanel>
           <StyledContentPanel>
             <StyledContentHeader>Inhalt Aktivität</StyledContentHeader>
             <StyledContentBody>
-              {String(selectedTicket.title ?? '')}
+              {stripHtml(String(selectedTicket.title ?? ''))}
             </StyledContentBody>
           </StyledContentPanel>
         </StyledContentSection>

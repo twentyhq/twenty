@@ -1,3 +1,4 @@
+import { CoachingAiOverview } from '@/coaching/components/CoachingAiOverview';
 import { CoachingAnamneseTab } from '@/coaching/components/CoachingAnamneseTab';
 import { CoachingSessionsTab } from '@/coaching/components/CoachingSessionsTab';
 import { CoachingTicketsTab } from '@/coaching/components/CoachingTicketsTab';
@@ -277,6 +278,15 @@ export const CoachingCustomerDetail = ({
             </StyledActionButton>
           </StyledActionRow>
 
+          {/* AI Overview */}
+          <CoachingAiOverview
+            registeredDate={appUser.registeredDate as string | null}
+            email={customerEmail}
+            wpUserId={wpUserId}
+            subscriptions={subscriptions}
+            subsLoading={subsLoading}
+          />
+
           {/* App's Information */}
           <StyledSection>
             <StyledSectionHeader>
@@ -432,7 +442,7 @@ export const CoachingCustomerDetail = ({
       ) : activeTab === 'Anamnesebogen' ? (
         <CoachingAnamneseTab email={customerEmail} wpUserId={wpUserId} />
       ) : activeTab === 'Tickets' ? (
-        <CoachingTicketsTab wpUserId={wpUserId} />
+        <CoachingTicketsTab email={customerEmail} wpUserId={wpUserId} />
       ) : (
         <StyledPlaceholder>{activeTab} — coming soon</StyledPlaceholder>
       )

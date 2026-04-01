@@ -1,5 +1,7 @@
 import { useCoachingFormSubmissions } from '@/coaching/hooks/useCoachingFormSubmissions';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
+import { IconSparkles } from 'twenty-ui/display';
 
 type CoachingAnamneseTabProps = {
   email: string | null;
@@ -12,25 +14,79 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
+// -- AI Overview --
+
+const StyledOverviewCard = styled.div`
+  background: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-left: 3px solid ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledOverviewIcon = styled.div`
+  color: ${({ theme }) => theme.color.blue};
+  flex-shrink: 0;
+  margin-top: 2px;
+`;
+
+const StyledOverviewContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledOverviewTitle = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
+
+const StyledOverviewText = styled.span`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  line-height: 1.5;
+`;
+
+// -- Date Group --
+
+const StyledDateGroup = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledDateHeader = styled.div`
+  background: ${({ theme }) => theme.background.tertiary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => `${theme.border.radius.sm} ${theme.border.radius.sm} 0 0`};
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(4)}`};
+`;
+
+// -- Table --
+
 const StyledTable = styled.table`
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-collapse: collapse;
+  border-top: none;
   width: 100%;
 `;
 
 const StyledTableHeader = styled.th`
   background: ${({ theme }) => theme.background.tertiary};
-  border-bottom: 2px solid ${({ theme }) => theme.border.color.medium};
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
   text-align: left;
 `;
 
-const StyledTableRow = styled.tr<{ isHighlighted?: boolean }>`
-  background: ${({ isHighlighted, theme }) =>
-    isHighlighted ? theme.background.transparent.light : 'transparent'};
-
+const StyledTableRow = styled.tr`
   &:hover {
     background: ${({ theme }) => theme.background.transparent.lighter};
   }
@@ -42,6 +98,11 @@ const StyledTableCell = styled.td`
   font-size: ${({ theme }) => theme.font.size.sm};
   padding: ${({ theme }) => `${theme.spacing(2)} ${theme.spacing(3)}`};
   vertical-align: top;
+`;
+
+const StyledQuestionCell = styled(StyledTableCell)`
+  color: ${({ theme }) => theme.font.color.secondary};
+  max-width: 400px;
 `;
 
 const StyledEmptyText = styled.div`
@@ -57,33 +118,14 @@ const StyledLoadingText = styled.div`
   text-align: center;
 `;
 
-type FormEntry = {
+type FormRow = {
   question: string;
   answer: string;
 };
 
-const parseResponseData = (
-  responseData: string | null | undefined,
-): FormEntry[] => {
-  if (!responseData) return [];
-  try {
-    const parsed = JSON.parse(responseData as string);
-    if (Array.isArray(parsed)) {
-      return parsed.map((entry: { question?: string; answer?: string }) => ({
-        question: entry.question || '',
-        answer: entry.answer || '',
-      }));
-    }
-    if (typeof parsed === 'object') {
-      return Object.entries(parsed).map(([key, value]) => ({
-        question: key,
-        answer: String(value),
-      }));
-    }
-  } catch {
-    // not JSON
-  }
-  return [];
+type DateGroup = {
+  date: string;
+  rows: FormRow[];
 };
 
 const formatDate = (dateString: string | null | undefined) => {
@@ -96,8 +138,75 @@ const formatDate = (dateString: string | null | undefined) => {
       year: 'numeric',
     });
   } catch {
-    return dateString;
+    return String(dateString);
   }
+};
+
+const buildAnamneseInsight = (groups: DateGroup[]): string | null => {
+  if (groups.length === 0) return null;
+
+  const parts: string[] = [];
+
+  parts.push(
+    `${groups.length} form submission${groups.length > 1 ? 's' : ''} on record`,
+  );
+
+  // Count total Q&As
+  const totalQA = groups.reduce((sum, g) => sum + g.rows.length, 0);
+  parts.push(`${totalQA} questions answered`);
+
+  // Look for pain scale answers to detect trends
+  const painScaleAnswers: { date: string; value: number }[] = [];
+  for (const group of groups) {
+    for (const row of group.rows) {
+      const q = row.question.toLowerCase();
+      if (
+        q.includes('schmerzen') &&
+        q.includes('skala') &&
+        !isNaN(Number(row.answer))
+      ) {
+        painScaleAnswers.push({
+          date: group.date,
+          value: Number(row.answer),
+        });
+      }
+    }
+  }
+
+  if (painScaleAnswers.length >= 2) {
+    const first = painScaleAnswers[painScaleAnswers.length - 1];
+    const last = painScaleAnswers[0];
+    if (last.value < first.value) {
+      parts.push(
+        `Pain level improved from ${first.value} to ${last.value}`,
+      );
+    } else if (last.value > first.value) {
+      parts.push(
+        `Pain level increased from ${first.value} to ${last.value}`,
+      );
+    } else {
+      parts.push(`Pain level stable at ${last.value}`);
+    }
+  }
+
+  // Look for stress answers
+  const stressAnswers: { date: string; answer: string }[] = [];
+  for (const group of groups) {
+    for (const row of group.rows) {
+      if (row.question.toLowerCase().includes('stress')) {
+        stressAnswers.push({ date: group.date, answer: row.answer });
+      }
+    }
+  }
+
+  if (stressAnswers.length > 0) {
+    const latest = stressAnswers[0];
+    if (latest.answer.toLowerCase().includes('extrem')) {
+      parts.push('High stress reported in latest submission');
+    }
+  }
+
+  return parts.join('. ') + '.';
 };
 
 export const CoachingAnamneseTab = ({
@@ -109,6 +218,32 @@ export const CoachingAnamneseTab = ({
     wpUserId,
   );
 
+  const dateGroups = useMemo((): DateGroup[] => {
+    const groups = new Map<string, FormRow[]>();
+
+    for (const submission of formSubmissions) {
+      const date = formatDate(submission.submittedAt as string | null);
+      const question = String(submission.formTitle ?? '').trim();
+      const answer = String(submission.responseData ?? '').trim();
+
+      if (!date) continue;
+
+      if (!groups.has(date)) {
+        groups.set(date, []);
+      }
+
+      groups.get(date)!.push({
+        question: question || '—',
+        answer: answer || '—',
+      });
+    }
+
+    return Array.from(groups.entries()).map(([date, rows]) => ({
+      date,
+      rows,
+    }));
+  }, [formSubmissions]);
+
   if (loading) {
     return <StyledLoadingText>Loading form submissions...</StyledLoadingText>;
   }
@@ -117,38 +252,47 @@ export const CoachingAnamneseTab = ({
     return <StyledEmptyText>No form submissions found</StyledEmptyText>;
   }
 
-  // Flatten all form submissions into question/answer rows
-  const rows: { date: string; question: string; answer: string }[] = [];
-  for (const submission of formSubmissions) {
-    const date = formatDate(submission.submittedAt as string | null);
-    const entries = parseResponseData(
-      submission.responseData as string | null,
-    );
-    for (const entry of entries) {
-      rows.push({ date, question: entry.question, answer: entry.answer });
-    }
-  }
+  const insight = buildAnamneseInsight(dateGroups);
 
   return (
     <StyledContainer>
-      <StyledTable>
-        <thead>
-          <tr>
-            <StyledTableHeader>Submission Date</StyledTableHeader>
-            <StyledTableHeader>Question</StyledTableHeader>
-            <StyledTableHeader>Answer</StyledTableHeader>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, index) => (
-            <StyledTableRow key={index} isHighlighted={index === 0}>
-              <StyledTableCell>{row.date}</StyledTableCell>
-              <StyledTableCell>{row.question}</StyledTableCell>
-              <StyledTableCell>{row.answer}</StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </tbody>
-      </StyledTable>
+      {/* AI Insight */}
+      {insight && (
+        <StyledOverviewCard>
+          <StyledOverviewIcon>
+            <IconSparkles size={20} />
+          </StyledOverviewIcon>
+          <StyledOverviewContent>
+            <StyledOverviewTitle>Anamnesebogen Insights</StyledOverviewTitle>
+            <StyledOverviewText>{insight}</StyledOverviewText>
+          </StyledOverviewContent>
+        </StyledOverviewCard>
+      )}
+
+      {/* Grouped by date */}
+      {dateGroups.map((group) => (
+        <StyledDateGroup key={group.date}>
+          <StyledDateHeader>{group.date}</StyledDateHeader>
+          <StyledTable>
+            <thead>
+              <tr>
+                <StyledTableHeader style={{ width: '50%' }}>
+                  Question
+                </StyledTableHeader>
+                <StyledTableHeader>Answer</StyledTableHeader>
+              </tr>
+            </thead>
+            <tbody>
+              {group.rows.map((row, index) => (
+                <StyledTableRow key={index}>
+                  <StyledQuestionCell>{row.question}</StyledQuestionCell>
+                  <StyledTableCell>{row.answer}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </tbody>
+          </StyledTable>
+        </StyledDateGroup>
+      ))}
     </StyledContainer>
   );
 };
