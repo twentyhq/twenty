@@ -38,6 +38,8 @@ import {
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -105,6 +107,11 @@ export abstract class RestApiBaseHandler {
       }
 
       roleId = userWorkspaceRoleId;
+    } else if (
+      isApplicationAuthContext(authContext) &&
+      isDefined(authContext.application.defaultRoleId)
+    ) {
+      roleId = authContext.application.defaultRoleId;
     } else {
       throw new PermissionsException(
         'Authentication context is invalid',
