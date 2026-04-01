@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import styled from '@emotion/styled';
 import { H2Title, IconButton, Badge } from 'twenty-ui';
 import { IconPlus, IconGripVertical } from '@tabler/icons-react';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -93,12 +95,23 @@ const DealTitle = styled.div`
   font-weight: 600;
   font-size: 14px;
   color: ${({ theme }) => theme.font.color.primary};
+  margin-bottom: 4px;
 `;
 
 const DealCompany = styled.div`
   font-size: 12px;
   color: ${({ theme }) => theme.font.color.secondary};
   margin-bottom: 8px;
+`;
+
+const DealStage = styled.div<{ color?: string }>`
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  background: ${({ color }) => color ?? '#3B82F6'}20;
+  color: ${({ color }) => color ?? '#3B82F6'};
+  font-weight: 500;
 `;
 
 const DealFooter = styled.div`
@@ -117,6 +130,15 @@ const DealDate = styled.div`
   font-size: 11px;
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
+
+const STAGE_MAP: Record<string, { name: string; color: string }> = {
+  new: { name: 'Nuevo', color: '#3B82F6' },
+  discovery: { name: 'Descubrimiento', color: '#8B5CF6' },
+  proposal: { name: 'Propuesta', color: '#F59E0B' },
+  negotiation: { name: 'Negociación', color: '#EF4444' },
+  closed_won: { name: 'Cerrado Ganado', color: '#10B981' },
+  closed_lost: { name: 'Cerrado Perdido', color: '#6B7280' },
+};
 
 const AddDealButton = styled.button`
   display: flex;
@@ -168,15 +190,6 @@ const SummaryLabel = styled.div`
   text-transform: uppercase;
 `;
 
-export interface Deal {
-  id: string;
-  title: string;
-  company: string;
-  value: number;
-  stage: string;
-  createdAt: string;
-}
-
 const PIPELINE_STAGES = [
   { id: 'new', name: 'Nuevo', color: '#3B82F6' },
   { id: 'discovery', name: 'Descubrimiento', color: '#8B5CF6' },
@@ -186,19 +199,35 @@ const PIPELINE_STAGES = [
   { id: 'closed_lost', name: 'Cerrado Perdido', color: '#6B7280' },
 ];
 
-const MOCK_DEALS: Deal[] = [
-  { id: '1', title: 'Demo with Acme Corp', company: 'Acme Corp', value: 15000, stage: 'new', createdAt: '2024-01-15' },
-  { id: '2', title: 'Enterprise License', company: 'Tech Solutions', value: 45000, stage: 'discovery', createdAt: '2024-01-10' },
-  { id: '3', title: 'Startup Package', company: 'Innovate Labs', value: 8000, stage: 'proposal', createdAt: '2024-01-08' },
-  { id: '4', title: 'Annual Contract', company: 'Global Inc', value: 72000, stage: 'negotiation', createdAt: '2024-01-05' },
-  { id: '5', title: 'SMB Deal', company: 'Local Shop', value: 3500, stage: 'closed_won', createdAt: '2024-01-01' },
-  { id: '6', title: 'Consulting', company: 'Expert Co', value: 12000, stage: 'new', createdAt: '2024-01-18' },
-  { id: '7', title: 'Expansion', company: 'Big Corp', value: 55000, stage: 'proposal', createdAt: '2024-01-12' },
-];
-
 export const SettingsPipeline = () => {
   const { t } = useTranslation();
-  const [deals] = useState<Deal[]>(MOCK_DEALS);
+  
+  const { objectMetadataItem: opportunityMetadata } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
+  });
+
+  const { records: opportunities, loading } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
+    limit: 100,
+  });
+
+  interface Deal {
+    id: string;
+    name: string;
+    companyName: string;
+    amount: number;
+    stage: string;
+    createdAt: string;
+  }
+
+  const deals: Deal[] = opportunities.map((opp: any) => ({
+    id: opp.id,
+    name: opp.name || 'Sin nombre',
+    companyName: opp.company?.name || 'Sin empresa',
+    amount: opp.amount?.amount ? parseFloat(opp.amount.amount) : 0,
+    stage: opp.stage || 'new',
+    createdAt: opp.createdAt || new Date().toISOString(),
+  }));
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -212,9 +241,27 @@ export const SettingsPipeline = () => {
     return deals.filter(deal => deal.stage === stageId);
   };
 
-  const totalValue = deals.reduce((sum, deal) => sum + deal.value, 0);
-  const wonValue = deals.filter(d => d.stage === 'closed_won').reduce((sum, d) => sum + d.value, 0);
+  const totalValue = deals.reduce((sum, deal) => sum + deal.amount, 0);
+  const wonValue = deals.filter(d => d.stage === 'closed_won').reduce((sum, d) => sum + d.amount, 0);
   const activeDeals = deals.filter(d => !['closed_won', 'closed_lost'].includes(d.stage)).length;
+
+  if (loading) {
+    return (
+      <SubMenuTopBarContainer
+        title={t('Pipeline de Ventas')}
+        links={[
+          { children: t('Workspace'), href: getSettingsPath(SettingsPath.Workspace) },
+          { children: t('Pipeline') },
+        ]}
+      >
+        <StyledContainer>
+          <div style={{ padding: '40px', textAlign: 'center', color: '#888' }}>
+            {t('Cargando...')}
+          </div>
+        </StyledContainer>
+      </SubMenuTopBarContainer>
+    );
+  }
 
   return (
     <SubMenuTopBarContainer
@@ -257,7 +304,7 @@ export const SettingsPipeline = () => {
         <PipelineBoard>
           {PIPELINE_STAGES.map((stage) => {
             const stageDeals = getDealsByStage(stage.id);
-            const stageValue = stageDeals.reduce((sum, d) => sum + d.value, 0);
+            const stageValue = stageDeals.reduce((sum, d) => sum + d.amount, 0);
             
             return (
               <StageColumn key={stage.id} color={stage.color}>
@@ -274,18 +321,22 @@ export const SettingsPipeline = () => {
                 </div>
                 
                 <DealList>
-                  {stageDeals.map((deal) => (
-                    <DealCard key={deal.id}>
-                      <DealHeader>
-                        <DealTitle>{deal.title}</DealTitle>
-                      </DealHeader>
-                      <DealCompany>{deal.company}</DealCompany>
-                      <DealFooter>
-                        <DealValue>{formatCurrency(deal.value)}</DealValue>
-                        <DealDate>{deal.createdAt}</DealDate>
-                      </DealFooter>
-                    </DealCard>
-                  ))}
+                  {stageDeals.map((deal) => {
+                    const stageInfo = STAGE_MAP[deal.stage] || STAGE_MAP.new;
+                    return (
+                      <DealCard key={deal.id}>
+                        <DealHeader>
+                          <DealTitle>{deal.name}</DealTitle>
+                        </DealHeader>
+                        <DealCompany>{deal.companyName}</DealCompany>
+                        <DealStage color={stageInfo.color}>{stageInfo.name}</DealStage>
+                        <DealFooter>
+                          <DealValue>{formatCurrency(deal.amount)}</DealValue>
+                          <DealDate>{new Date(deal.createdAt).toLocaleDateString('es-CO')}</DealDate>
+                        </DealFooter>
+                      </DealCard>
+                    );
+                  })}
                 </DealList>
                 
                 <AddDealButton>
