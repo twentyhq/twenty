@@ -10,11 +10,6 @@ const StyledIndicatorContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledDisplayMessage = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-`;
-
 const StyledIconTextContainer = styled.div`
   align-items: center;
   display: flex;
@@ -28,9 +23,7 @@ export const AIChatCompactionIndicator = () => {
     <StyledIndicatorContainer>
       <StyledIconTextContainer>
         <IconTransform size={theme.icon.size.sm} />
-        <StyledDisplayMessage>
-          The conversation has been compacted
-        </StyledDisplayMessage>
+        <div>The conversation has been compacted</div>
       </StyledIconTextContainer>
     </StyledIndicatorContainer>
   );
