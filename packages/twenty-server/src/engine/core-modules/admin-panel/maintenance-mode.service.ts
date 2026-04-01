@@ -1,8 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  AdminPanelException,
+  AdminPanelExceptionCode,
+} from 'src/engine/core-modules/admin-panel/admin-panel.exception';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -68,7 +72,10 @@ export class MaintenanceModeService {
 
   async setMaintenanceMode(value: MaintenanceModeValue): Promise<void> {
     if (new Date(value.endAt) <= new Date(value.startAt)) {
-      throw new BadRequestException('endAt must be after startAt');
+      throw new AdminPanelException(
+        'Maintenance mode end date must be after start date',
+        AdminPanelExceptionCode.INVALID_MAINTENANCE_MODE_TIME_RANGE,
+      );
     }
 
     await this.clearMaintenanceModeBannerDismissals();
