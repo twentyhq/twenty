@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 
 type CoachingTicketsTabProps = {
+  email: string | null;
   wpUserId: string | null;
 };
 
@@ -161,8 +162,8 @@ const formatDateTime = (dateString: string | null | undefined) => {
   }
 };
 
-export const CoachingTicketsTab = ({ wpUserId }: CoachingTicketsTabProps) => {
-  const { tickets, loading } = useCoachingTickets(wpUserId);
+export const CoachingTicketsTab = ({ email, wpUserId }: CoachingTicketsTabProps) => {
+  const { tickets, loading } = useCoachingTickets(email, wpUserId);
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
   if (loading) {

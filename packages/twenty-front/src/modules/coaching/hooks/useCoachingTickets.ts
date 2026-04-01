@@ -14,14 +14,19 @@ const TICKET_GQL_FIELDS: RecordGqlOperationGqlRecordFields = {
   resolvedAt: true,
 };
 
-export const useCoachingTickets = (customerId: string | null) => {
+export const useCoachingTickets = (
+  email: string | null,
+  wpUserId: string | null,
+) => {
   const { records, loading } = useFindManyRecords({
     objectNameSingular: 'tobSupportTicket',
-    filter: customerId ? { customerId: { eq: customerId } } : undefined,
+    filter: wpUserId
+      ? { customerId: { eq: wpUserId } }
+      : undefined,
     orderBy: [{ ticketCreatedAt: 'DescNullsLast' }],
     recordGqlFields: TICKET_GQL_FIELDS,
     limit: 100,
-    skip: !customerId,
+    skip: !wpUserId,
   });
 
   return { tickets: records, loading };
