@@ -354,24 +354,32 @@ export class PageLayoutUpdateService {
         };
       });
 
-    const tabsToDeactivate: FlatPageLayoutTab[] = idsToDelete
-      .map((tabId) => {
-        const existingTab = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: tabId,
-          flatEntityMaps: flatPageLayoutTabMaps,
-        });
+    const tabsToDeactivate: FlatPageLayoutTab[] = [];
+    const tabsToHardDelete: FlatPageLayoutTab[] = [];
 
-        if (!isDefined(existingTab)) {
-          return null;
-        }
+    for (const tabId of idsToDelete) {
+      const existingTab = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: tabId,
+        flatEntityMaps: flatPageLayoutTabMaps,
+      });
 
-        return {
+      if (!isDefined(existingTab)) {
+        continue;
+      }
+
+      if (
+        existingTab.applicationUniversalIdentifier ===
+        workspaceCustomApplicationUniversalIdentifier
+      ) {
+        tabsToHardDelete.push(existingTab);
+      } else {
+        tabsToDeactivate.push({
           ...existingTab,
           isActive: false,
           updatedAt: now.toISOString(),
-        };
-      })
-      .filter(isDefined);
+        });
+      }
+    }
 
     return {
       tabsToCreate,
@@ -380,7 +388,7 @@ export class PageLayoutUpdateService {
         ...tabsToRestoreAndUpdate,
         ...tabsToDeactivate,
       ],
-      tabsToDelete: [],
+      tabsToDelete: tabsToHardDelete,
     };
   }
 
@@ -417,9 +425,10 @@ export class PageLayoutUpdateService {
   } {
     const allWidgetsToCreate: FlatPageLayoutWidget[] = [];
     const allWidgetsToUpdate: FlatPageLayoutWidget[] = [];
+    const allWidgetsToDelete: FlatPageLayoutWidget[] = [];
 
     for (const tabInput of tabs) {
-      const { widgetsToCreate, widgetsToUpdate } =
+      const { widgetsToCreate, widgetsToUpdate, widgetsToDelete } =
         this.computeWidgetOperationsForTab({
           tabId: tabInput.id,
           widgets: tabInput.widgets,
@@ -437,12 +446,13 @@ export class PageLayoutUpdateService {
 
       allWidgetsToCreate.push(...widgetsToCreate);
       allWidgetsToUpdate.push(...widgetsToUpdate);
+      allWidgetsToDelete.push(...widgetsToDelete);
     }
 
     return {
       widgetsToCreate: allWidgetsToCreate,
       widgetsToUpdate: allWidgetsToUpdate,
-      widgetsToDelete: [],
+      widgetsToDelete: allWidgetsToDelete,
     };
   }
 
@@ -477,6 +487,7 @@ export class PageLayoutUpdateService {
   >): {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
+    widgetsToDelete: FlatPageLayoutWidget[];
   } {
     for (const widgetInput of widgets) {
       this.validateChartFieldReferences({
@@ -619,24 +630,32 @@ export class PageLayoutUpdateService {
         };
       });
 
-    const widgetsToDeactivate: FlatPageLayoutWidget[] = idsToDelete
-      .map((widgetId) => {
-        const existingWidget = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: widgetId,
-          flatEntityMaps: flatPageLayoutWidgetMaps,
-        });
+    const widgetsToDeactivate: FlatPageLayoutWidget[] = [];
+    const widgetsToHardDelete: FlatPageLayoutWidget[] = [];
 
-        if (!isDefined(existingWidget)) {
-          return null;
-        }
+    for (const widgetId of idsToDelete) {
+      const existingWidget = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: widgetId,
+        flatEntityMaps: flatPageLayoutWidgetMaps,
+      });
 
-        return {
+      if (!isDefined(existingWidget)) {
+        continue;
+      }
+
+      if (
+        existingWidget.applicationUniversalIdentifier ===
+        workspaceCustomApplicationUniversalIdentifier
+      ) {
+        widgetsToHardDelete.push(existingWidget);
+      } else {
+        widgetsToDeactivate.push({
           ...existingWidget,
           isActive: false,
           updatedAt: now.toISOString(),
-        };
-      })
-      .filter(isDefined);
+        });
+      }
+    }
 
     return {
       widgetsToCreate,
@@ -645,6 +664,7 @@ export class PageLayoutUpdateService {
         ...widgetsToRestoreAndUpdate,
         ...widgetsToDeactivate,
       ],
+      widgetsToDelete: widgetsToHardDelete,
     };
   }
 

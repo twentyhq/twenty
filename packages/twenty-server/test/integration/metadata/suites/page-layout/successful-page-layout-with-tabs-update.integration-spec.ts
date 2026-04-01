@@ -193,14 +193,20 @@ describe('Page layout with tabs update should succeed', () => {
   });
 
   afterEach(async () => {
-    await destroyOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: testTabId1 },
-    });
-    await destroyOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: testTabId2 },
-    });
+    try {
+      await destroyOnePageLayoutTab({
+        expectToFail: false,
+        input: { id: testTabId1 },
+      });
+    } catch {}
+
+    try {
+      await destroyOnePageLayoutTab({
+        expectToFail: false,
+        input: { id: testTabId2 },
+      });
+    } catch {}
+
     await destroyOnePageLayout({
       expectToFail: false,
       input: { id: testPageLayoutId },
