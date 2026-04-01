@@ -90,6 +90,7 @@ export class AgentChatStreamingService {
         lastUserMessageText: lastUserText,
         lastUserMessageParts: lastUserMessage?.parts ?? [],
         hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize ?? 0,
       },
     );
 

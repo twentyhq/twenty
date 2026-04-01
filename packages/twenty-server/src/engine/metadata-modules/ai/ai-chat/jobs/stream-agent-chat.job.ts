@@ -40,6 +40,7 @@ export type StreamAgentChatJobData = {
   lastUserMessageText: string;
   lastUserMessageParts: ExtendedUIMessagePart[];
   hasTitle: boolean;
+  conversationSizeTokens: number;
 };
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
@@ -178,6 +179,16 @@ export class StreamAgentChatJob {
             });
           };
 
+          const onCompaction = (event: { prunedMessageCount: number }) => {
+            writer.write({
+              type: 'data-compaction' as const,
+              id: `compaction-${data.threadId}`,
+              data: {
+                prunedMessageCount: event.prunedMessageCount,
+              },
+            });
+          };
+
           const { stream, modelConfig } =
             await this.chatExecutionService.streamChat({
               workspace,
@@ -186,7 +197,9 @@ export class StreamAgentChatJob {
               browsingContext: data.browsingContext,
               modelId: data.modelId,
               onCodeExecutionUpdate,
+              onCompaction,
               abortSignal,
+              conversationSizeTokens: data.conversationSizeTokens,
             });
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
