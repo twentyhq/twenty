@@ -1,7 +1,6 @@
-import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
@@ -20,7 +19,7 @@ const mockActions = createMockCommandMenuItems({
 });
 
 const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
+  (action) => action.key === 'add-to-favorites-single-record',
 );
 
 if (!addToFavoritesCommandMenuItem) {

@@ -1,7 +1,5 @@
 import { CommandListItem } from '@/command-menu-item/display/components/CommandListItem';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
-import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
-import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -19,11 +17,11 @@ const mockActions = createMockCommandMenuItems({
 });
 
 const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
+  (action) => action.key === 'add-to-favorites-single-record',
 );
 
 const goToPeopleCommandMenuItem = mockActions.find(
-  (action) => action.key === NoSelectionRecordCommandKeys.GO_TO_PEOPLE,
+  (action) => action.key === 'go-to-people',
 );
 
 const meta: Meta<typeof CommandListItem> = {
