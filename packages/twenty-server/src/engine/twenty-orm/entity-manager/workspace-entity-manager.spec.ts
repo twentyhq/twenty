@@ -247,6 +247,7 @@ describe('WorkspaceEntityManager', () => {
         IS_GRAPHQL_QUERY_TIMING_ENABLED: false,
         IS_RECORD_TABLE_WIDGET_ENABLED: false,
         IS_DATASOURCE_MIGRATED: false,
+        IS_COMMAND_MENU_ITEM_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
@@ -260,7 +261,7 @@ describe('WorkspaceEntityManager', () => {
           softDelete: jest.fn(),
         })),
       } as any,
-    } as unknown as WorkspaceInternalContext;
+    } as WorkspaceInternalContext;
 
     mockDataSource = {
       featureFlagMap: {
