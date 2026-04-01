@@ -33,14 +33,14 @@ import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
   return isDefined(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
 /**
  * Safely reads a string-keyed property from an object without casting.
  */
-function getProperty(obj: Record<string, unknown>, key: string): unknown {
+export function getProperty(obj: Record<string, unknown>, key: string): unknown {
   return obj[key];
 }
 
@@ -122,7 +122,7 @@ function getEntityId<Entity extends ObjectLiteral>(
  * in the connection's entity metadata. Falls back to the bare table name
  * if no metadata is found.
  */
-function getSchemaQualifiedTable<Entity extends ObjectLiteral>(
+export function getSchemaQualifiedTable<Entity extends ObjectLiteral>(
   queryBuilder:
     | WorkspaceSelectQueryBuilder<Entity>
     | SelectQueryBuilder<Entity>,
@@ -945,7 +945,7 @@ export class RelationNestedQueries {
  * Jaro-Winkler similarity (0–1). Gives extra weight to common prefixes,
  * making it well-suited for person name matching.
  */
-function stringSimilarity(a: string, b: string): number {
+export function stringSimilarity(a: string, b: string): number {
   if (a === b) return 1;
   if (a.length === 0 || b.length === 0) return 0;
 
@@ -962,7 +962,7 @@ function stringSimilarity(a: string, b: string): number {
   return jaro + prefixLen * 0.1 * (1 - jaro);
 }
 
-function jaroSimilarity(a: string, b: string): number {
+export function jaroSimilarity(a: string, b: string): number {
   const aLen = a.length;
   const bLen = b.length;
   const matchWindow = Math.max(0, Math.floor(Math.max(aLen, bLen) / 2) - 1);
