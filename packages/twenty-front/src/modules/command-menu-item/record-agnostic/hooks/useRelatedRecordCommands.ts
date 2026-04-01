@@ -9,7 +9,6 @@ import {
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -83,31 +82,7 @@ export const useRelatedRecordCommands = ({
       Icon: field.icon ? getIcon(field.icon) : IconPlus,
       accent: 'default',
       isPinned: false,
-      shouldBeRegistered: ({
-        selectedRecord,
-        objectPermissions,
-        getTargetObjectWritePermission,
-        objectMetadataItem,
-      }) =>
-        (isDefined(selectedRecord) &&
-          isDefined(objectMetadataItem) &&
-          isRecordReadOnly({
-            objectPermissions: {
-              canUpdateObjectRecords: objectPermissions.canUpdateObjectRecords,
-              objectMetadataId: objectMetadataItem.id,
-            },
-            objectMetadataItem,
-            isRecordDeleted: isDefined(selectedRecord.deletedAt),
-          }) &&
-          objectPermissions.canUpdateObjectRecords &&
-          getTargetObjectWritePermission(
-            targetObjectNameSingular === CoreObjectNameSingular.TaskTarget
-              ? CoreObjectNameSingular.Task
-              : targetObjectNameSingular === CoreObjectNameSingular.NoteTarget
-                ? CoreObjectNameSingular.Note
-                : targetObjectNameSingular,
-          )) ??
-        false,
+      shouldBeRegistered: () => true,
       availableOn: [
         CommandMenuItemViewType.SHOW_PAGE,
         CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,

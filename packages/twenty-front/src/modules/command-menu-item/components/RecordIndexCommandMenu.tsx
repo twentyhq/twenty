@@ -1,4 +1,3 @@
-import { PageHeaderCommandMenuButtons } from '@/command-menu-item/components/PageHeaderCommandMenuButtons';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/server-items/display/components/PinnedCommandMenuItemButtons';
 import { RecordIndexCommandMenuDropdown } from '@/command-menu-item/components/RecordIndexCommandMenuDropdown';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
@@ -9,8 +8,6 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordIndexCommandMenu = () => {
@@ -20,15 +17,11 @@ export const RecordIndexCommandMenu = () => {
   );
 
   const isMobile = useIsMobile();
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
 
-  const showEditModePinnedButtons =
-    isCommandMenuItemEnabled && isLayoutCustomizationModeEnabled;
+  const showEditModePinnedButtons = isLayoutCustomizationModeEnabled;
 
   return (
     <>
@@ -42,12 +35,7 @@ export const RecordIndexCommandMenu = () => {
               displayType="button"
               containerType="index-page-header"
             >
-              {!isMobile &&
-                (isCommandMenuItemEnabled ? (
-                  <PinnedCommandMenuItemButtons />
-                ) : (
-                  <PageHeaderCommandMenuButtons />
-                ))}
+              {!isMobile && <PinnedCommandMenuItemButtons />}
             </CommandMenuContextProvider>
           )}
           <CommandMenuContextProvider

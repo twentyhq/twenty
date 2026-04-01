@@ -7,7 +7,6 @@ import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemS
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import {
   CommandMenuItemViewType,
-  CoreObjectNameSingular,
   AppPath,
 } from 'twenty-shared/types';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
@@ -90,9 +89,7 @@ export const createMockCommandMenuItems = ({
       CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
       CommandMenuItemViewType.SHOW_PAGE,
     ],
-    shouldBeRegistered: ({ objectMetadataItem, viewType }) =>
-      objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
-      viewType === CommandMenuItemViewType.SHOW_PAGE,
+    shouldBeRegistered: () => true,
     component: (
       <CommandLink
         to={AppPath.RecordIndexPage}
