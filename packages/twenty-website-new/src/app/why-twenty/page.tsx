@@ -1,14 +1,15 @@
 import { MENU_DATA } from '@/app/(home)/constants/menu';
-import { EDITORIAL_ONE } from '@/app/why-twenty/constants/editorial-one';
-import { EDITORIAL_TWO } from '@/app/why-twenty/constants/editorial-two';
-import { EDITORIAL_THREE } from '@/app/why-twenty/constants/editorial-three';
 import { EDITORIAL_FOUR } from '@/app/why-twenty/constants/editorial-four';
+import { EDITORIAL_ONE } from '@/app/why-twenty/constants/editorial-one';
+import { EDITORIAL_THREE } from '@/app/why-twenty/constants/editorial-three';
+import { EDITORIAL_TWO } from '@/app/why-twenty/constants/editorial-two';
 import { HERO_DATA } from '@/app/why-twenty/constants/hero';
 import { MARQUEE_DATA } from '@/app/why-twenty/constants/marquee';
 import { QUOTE_DATA } from '@/app/why-twenty/constants/quote';
 import { SIGNOFF_DATA } from '@/app/why-twenty/constants/signoff';
 import { STATEMENT_ONE } from '@/app/why-twenty/constants/statement-one';
 import { STATEMENT_TWO } from '@/app/why-twenty/constants/statement-two';
+import { STEPPER_DATA } from '@/app/why-twenty/constants/stepper';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Editorial } from '@/sections/Editorial/components';
@@ -18,6 +19,7 @@ import { Menu } from '@/sections/Menu/components';
 import { Quote } from '@/sections/Quote/components';
 import { Signoff } from '@/sections/Signoff/components';
 import { Statement } from '@/sections/Statement/components';
+import { WhyTwentyStepper } from '@/sections/WhyTwentyStepper/components';
 import { theme } from '@/theme';
 
 export default function WhyTwentyPage() {
@@ -125,6 +127,12 @@ export default function WhyTwentyPage() {
         </Editorial.Intro>
         <Editorial.Body body={EDITORIAL_FOUR.body} layout="two-column" />
       </Editorial.Root>
+
+      <WhyTwentyStepper.Flow
+        body={STEPPER_DATA.body}
+        heading={STEPPER_DATA.heading}
+        illustration={STEPPER_DATA.illustration}
+      />
 
       <Signoff.Root
         backgroundColor={theme.colors.primary.background[100]}
