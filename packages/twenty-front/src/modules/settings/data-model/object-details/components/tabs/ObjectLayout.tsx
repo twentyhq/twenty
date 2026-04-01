@@ -4,9 +4,11 @@ import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/us
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { H2Title, IconLayoutDashboard } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type ObjectLayoutProps = {
@@ -14,6 +16,7 @@ type ObjectLayoutProps = {
 };
 
 export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
+  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const navigateApp = useNavigateApp();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
@@ -47,7 +50,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       />
       <SettingsCard
         title={t`Customize record page`}
-        Icon={<IconLayoutDashboard />}
+        Icon={<IconLayoutDashboard size={theme.icon.size.md} />}
         onClick={handleCustomizeRecordPage}
         disabled={!firstRecord}
       />
