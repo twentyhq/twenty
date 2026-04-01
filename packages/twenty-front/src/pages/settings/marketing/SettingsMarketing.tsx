@@ -1,10 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
-import { H2Title, Section } from 'twenty-ui';
+import { SettingsPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { H2Title, Section, IconButton } from 'twenty-ui';
 import styled from '@emotion/styled';
-import { IconMail, IconBrandWhatsapp, IconMessage } from '@tabler/icons-react';
+import { IconMail, IconBrandWhatsapp, IconMessage, IconPlus, IconChartBar } from '@tabler/icons-react';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -49,10 +50,81 @@ const CardIcon = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
+const CampaignList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const CampaignRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: ${({ theme }) => theme.background.secondary};
+  border-radius: 8px;
+  border-left: 4px solid #3B82F6;
+`;
+
+const CampaignInfo = styled.div`
+  flex: 1;
+`;
+
+const CampaignName = styled.div`
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+`;
+
+const CampaignMeta = styled.div`
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.color.secondary};
+`;
+
+const CampaignStats = styled.div`
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.color.secondary};
+`;
+
+const StatItem = styled.div`
+  text-align: center;
+`;
+
+const StatValue = styled.div`
+  font-weight: 600;
+  font-size: 16px;
+  color: ${({ theme }) => theme.font.color.primary};
+`;
+
+const StatLabel = styled.div`
+  font-size: 11px;
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 40px;
+  color: ${({ theme }) => theme.font.color.secondary};
+`;
+
+const STATUS_COLORS: Record<string, string> = {
+  active: '#10B981',
+  paused: '#F59E0B',
+  completed: '#3B82F6',
+  draft: '#6B7280',
+};
+
 export const SettingsMarketing = () => {
   const { t } = useTranslation();
 
-  const campaigns = [
+  const { records: campaigns, loading } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.Campaign,
+    limit: 50,
+  });
+
+  const campaignTypes = [
     {
       id: 'email',
       name: 'Email Marketing',
@@ -76,6 +148,11 @@ export const SettingsMarketing = () => {
     },
   ];
 
+  const formatDate = (date: string | null) => {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString('es-CO');
+  };
+
   return (
     <SubMenuTopBarContainer
       title={t('Marketing')}
@@ -85,18 +162,71 @@ export const SettingsMarketing = () => {
       ]}
     >
       <StyledContainer>
-        <H2Title title={t('Campañas de Marketing')} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <H2Title title={t('Campañas de Marketing')} />
+          <IconButton Icon={IconPlus} variant="primary" size="small" onClick={() => {}} />
+        </div>
+
         <Grid>
-          {campaigns.map((campaign) => (
-            <Card key={campaign.id} accentColor={campaign.color}>
+          {campaignTypes.map((type) => (
+            <Card key={type.id} accentColor={type.color}>
               <CardIcon>
-                <campaign.icon size={24} />
+                <type.icon size={24} />
               </CardIcon>
-              <CardTitle>{campaign.name}</CardTitle>
-              <CardDescription>{campaign.description}</CardDescription>
+              <CardTitle>{type.name}</CardTitle>
+              <CardDescription>{type.description}</CardDescription>
             </Card>
           ))}
         </Grid>
+
+        <div style={{ marginTop: '24px' }}>
+          <H2Title title={t('Campaigns Activas')} />
+        </div>
+
+        {loading ? (
+          <EmptyState>{t('Cargando...')}</EmptyState>
+        ) : campaigns.length === 0 ? (
+          <EmptyState>
+            <IconChartBar size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+            <div>{t('No hay campañas creadas')}</div>
+            <div style={{ fontSize: '13px', marginTop: '8px' }}>
+              {t('Crea tu primera campaña para comenzar')}
+            </div>
+          </EmptyState>
+        ) : (
+          <CampaignList>
+            {campaigns.map((campaign: any) => (
+              <CampaignRow key={campaign.id}>
+                <CampaignInfo>
+                  <CampaignName>{campaign.name || 'Sin nombre'}</CampaignName>
+                  <CampaignMeta>
+                    {campaign.type || 'Email'} • {campaign.startDate ? formatDate(campaign.startDate) : 'Sin fecha'} - {campaign.endDate ? formatDate(campaign.endDate) : 'Sin fecha'}
+                  </CampaignMeta>
+                </CampaignInfo>
+                <CampaignStats>
+                  <StatItem>
+                    <StatValue>{campaign.sentCount || 0}</StatValue>
+                    <StatLabel>Enviados</StatLabel>
+                  </StatItem>
+                  <StatItem>
+                    <StatValue>{campaign.openCount || 0}</StatValue>
+                    <StatLabel>Abiertos</StatLabel>
+                  </StatItem>
+                  <StatItem>
+                    <StatValue>{campaign.clickCount || 0}</StatValue>
+                    <StatLabel>Clics</StatLabel>
+                  </StatItem>
+                  <StatItem>
+                    <StatValue style={{ color: STATUS_COLORS[campaign.status] || '#6B7280' }}>
+                      {campaign.status || 'draft'}
+                    </StatValue>
+                    <StatLabel>Estado</StatLabel>
+                  </StatItem>
+                </CampaignStats>
+              </CampaignRow>
+            ))}
+          </CampaignList>
+        )}
       </StyledContainer>
     </SubMenuTopBarContainer>
   );
