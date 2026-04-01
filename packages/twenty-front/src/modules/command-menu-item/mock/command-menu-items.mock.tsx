@@ -5,10 +5,7 @@ import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-recor
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import {
-  CommandMenuItemViewType,
-  AppPath,
-} from 'twenty-shared/types';
+import { CommandMenuItemViewType, AppPath } from 'twenty-shared/types';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import {

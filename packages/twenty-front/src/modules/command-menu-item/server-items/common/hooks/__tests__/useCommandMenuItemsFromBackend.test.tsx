@@ -37,33 +37,32 @@ const mockedUseAtomStateValue = jest.mocked(useAtomStateValue);
 
 const getCommandMenuContextApi = (
   numberOfSelectedRecords: number,
-): CommandMenuContextApi =>
-  ({
-    pageType: CommandMenuContextApiPageType.INDEX_PAGE,
-    isInSidePanel: false,
-    isPageInEditMode: false,
-    favoriteRecordIds: [],
-    isSelectAll: false,
-    hasAnySoftDeleteFilterOnView: false,
-    objectMetadataItem: {
-      id: 'company-id',
-    },
-    numberOfSelectedRecords,
-    objectPermissions: {
-      objectMetadataId: 'company-id',
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: true,
-      restrictedFields: {},
-      rowLevelPermissionPredicates: [],
-      rowLevelPermissionPredicateGroups: [],
-    },
-    selectedRecords: [],
-    featureFlags: {},
-    targetObjectReadPermissions: {},
-    targetObjectWritePermissions: {},
-  });
+): CommandMenuContextApi => ({
+  pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+  isInSidePanel: false,
+  isPageInEditMode: false,
+  favoriteRecordIds: [],
+  isSelectAll: false,
+  hasAnySoftDeleteFilterOnView: false,
+  objectMetadataItem: {
+    id: 'company-id',
+  },
+  numberOfSelectedRecords,
+  objectPermissions: {
+    objectMetadataId: 'company-id',
+    canReadObjectRecords: true,
+    canUpdateObjectRecords: true,
+    canSoftDeleteObjectRecords: true,
+    canDestroyObjectRecords: true,
+    restrictedFields: {},
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
+  },
+  selectedRecords: [],
+  featureFlags: {},
+  targetObjectReadPermissions: {},
+  targetObjectWritePermissions: {},
+});
 
 const buildCommandMenuItem = ({
   id,
@@ -77,22 +76,21 @@ const buildCommandMenuItem = ({
   availabilityType: CommandMenuItemAvailabilityType;
   expression?: string;
   isPinned?: boolean;
-}): CommandMenuItemFieldsFragment =>
-  ({
-    id,
-    label: id,
-    shortLabel: `${id}-short`,
-    icon: 'Icon123',
-    position,
-    isPinned,
-    hotKeys: null,
-    engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
-    frontComponentId: null,
-    workflowVersionId: null,
-    availabilityType,
-    availabilityObjectMetadataId: 'company-id',
-    conditionalAvailabilityExpression: expression ?? null,
-  });
+}): CommandMenuItemFieldsFragment => ({
+  id,
+  label: id,
+  shortLabel: `${id}-short`,
+  icon: 'Icon123',
+  position,
+  isPinned,
+  hotKeys: null,
+  engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+  frontComponentId: null,
+  workflowVersionId: null,
+  availabilityType,
+  availabilityObjectMetadataId: 'company-id',
+  conditionalAvailabilityExpression: expression ?? null,
+});
 
 describe('useCommandMenuItemsFromBackend', () => {
   it('filters out items hidden by conditional availability expression', () => {
