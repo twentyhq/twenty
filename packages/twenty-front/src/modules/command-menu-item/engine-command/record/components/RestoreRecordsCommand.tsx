@@ -10,12 +10,8 @@ import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RestoreRecordsCommand = () => {
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    selectedRecords,
-    graphqlFilter,
-  } = useHeadlessCommandContextApi();
+  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
+    useHeadlessCommandContextApi();
 
   if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
     throw new Error(
@@ -71,9 +67,7 @@ export const RestoreRecordsCommand = () => {
     }
   };
 
-  const title = isSingleRecord
-    ? t`Restore Record`
-    : t`Restore Records`;
+  const title = isSingleRecord ? t`Restore Record` : t`Restore Records`;
   const subtitle = isSingleRecord
     ? t`Are you sure you want to restore this record?`
     : t`Are you sure you want to restore these records?`;

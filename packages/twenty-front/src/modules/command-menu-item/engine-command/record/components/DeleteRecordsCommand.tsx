@@ -10,12 +10,8 @@ import { useResetTableRowSelection } from '@/object-record/record-table/hooks/in
 import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteRecordsCommand = () => {
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    selectedRecords,
-    graphqlFilter,
-  } = useHeadlessCommandContextApi();
+  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
+    useHeadlessCommandContextApi();
 
   if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
     throw new Error(

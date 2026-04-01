@@ -11,12 +11,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroyRecordsCommand = () => {
-  const {
-    recordIndexId,
-    objectMetadataItem,
-    selectedRecords,
-    graphqlFilter,
-  } = useHeadlessCommandContextApi();
+  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
+    useHeadlessCommandContextApi();
 
   if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
     throw new Error(
