@@ -25,27 +25,13 @@ import { SidePanelWorkflowEditStepType } from '@/side-panel/pages/workflow/step/
 import { SidePanelWorkflowRunViewStep } from '@/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStep';
 import { SidePanelWorkflowViewStep } from '@/side-panel/pages/workflow/step/view/components/SidePanelWorkflowViewStep';
 import { SidePanelWorkflowSelectTriggerType } from '@/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SidePanelPages } from 'twenty-shared/types';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
-const SidePanelCommandMenuDisplayPageSwitch = () => {
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
-
-  if (isCommandMenuItemEnabled) {
-    return <SidePanelCommandMenuItemDisplayPage />;
-  }
-
-  return <SidePanelRootPage />;
-};
 
 export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
   [
     [
       SidePanelPages.CommandMenuDisplay,
-      <SidePanelCommandMenuDisplayPageSwitch />,
+      <SidePanelCommandMenuItemDisplayPage />,
     ],
     [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
     [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],

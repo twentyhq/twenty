@@ -51,11 +51,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
         workspaceId: workspaceId,
         value: true,
