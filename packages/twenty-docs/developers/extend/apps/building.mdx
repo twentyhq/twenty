@@ -1225,7 +1225,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const metadataClient = new MetadataApiClient();
 
-// List all objects in the workspace
+// List first 10 objects in the workspace
 const { objects } = await metadataClient.query({
   objects: {
     edges: {
@@ -1236,6 +1236,10 @@ const { objects } = await metadataClient.query({
         labelSingular: true,
         isCustom: true,
       },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
     },
   },
 });
