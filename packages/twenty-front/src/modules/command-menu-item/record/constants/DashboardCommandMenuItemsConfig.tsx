@@ -1,5 +1,5 @@
-import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
+import { RecordCommandKeys } from '@/command-menu-item/record/types/RecordCommandKeys';
 import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/record/single-record/dashboard/components/CancelDashboardSingleRecordCommand';
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
@@ -103,15 +103,12 @@ export const DASHBOARD_COMMAND_MENU_ITEMS_CONFIG =
       NoSelectionRecordCommandKeys.CREATE_NEW_RECORD,
       SingleRecordCommandKeys.ADD_TO_FAVORITES,
       SingleRecordCommandKeys.REMOVE_FROM_FAVORITES,
-      SingleRecordCommandKeys.DELETE,
-      SingleRecordCommandKeys.DESTROY,
-      SingleRecordCommandKeys.RESTORE,
-      MultipleRecordsCommandKeys.DELETE,
-      MultipleRecordsCommandKeys.DESTROY,
-      MultipleRecordsCommandKeys.RESTORE,
+      RecordCommandKeys.DELETE,
+      RecordCommandKeys.DESTROY,
+      RecordCommandKeys.RESTORE,
       NoSelectionRecordCommandKeys.SEE_DELETED_RECORDS,
       NoSelectionRecordCommandKeys.HIDE_DELETED_RECORDS,
-      SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW,
+      RecordCommandKeys.EXPORT,
       SingleRecordCommandKeys.NAVIGATE_TO_PREVIOUS_RECORD,
       SingleRecordCommandKeys.NAVIGATE_TO_NEXT_RECORD,
       NoSelectionRecordCommandKeys.GO_TO_WORKFLOWS,
@@ -135,12 +132,8 @@ export const DASHBOARD_COMMAND_MENU_ITEMS_CONFIG =
         position: 2,
         label: msg`Create new dashboard`,
       },
-      [SingleRecordCommandKeys.DELETE]: {
+      [RecordCommandKeys.DELETE]: {
         position: 7,
-        label: msg`Delete dashboard`,
-      },
-      [MultipleRecordsCommandKeys.DELETE]: {
-        position: 12,
         label: msg`Delete dashboards`,
       },
       [SingleRecordCommandKeys.ADD_TO_FAVORITES]: {
@@ -151,24 +144,16 @@ export const DASHBOARD_COMMAND_MENU_ITEMS_CONFIG =
         position: 9,
         isPinned: true,
       },
-      [SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW]: {
+      [RecordCommandKeys.EXPORT]: {
         position: 10,
-        label: msg`Export dashboard`,
+        label: msg`Export dashboards`,
       },
-      [SingleRecordCommandKeys.DESTROY]: {
+      [RecordCommandKeys.DESTROY]: {
         position: 11,
-        label: msg`Permanently destroy dashboard`,
-      },
-      [MultipleRecordsCommandKeys.DESTROY]: {
-        position: 13,
         label: msg`Permanently destroy dashboards`,
       },
-      [SingleRecordCommandKeys.RESTORE]: {
+      [RecordCommandKeys.RESTORE]: {
         position: 14,
-        label: msg`Restore dashboard`,
-      },
-      [MultipleRecordsCommandKeys.RESTORE]: {
-        position: 15,
         label: msg`Restore dashboards`,
       },
       [NoSelectionRecordCommandKeys.SEE_DELETED_RECORDS]: {

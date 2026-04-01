@@ -1,6 +1,6 @@
 import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
-import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
+import { RecordCommandKeys } from '@/command-menu-item/record/types/RecordCommandKeys';
 import { NoSelectionWorkflowRecordCommandKeys } from '@/command-menu-item/record/no-selection/workflow/types/NoSelectionWorkflowRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { ActivateWorkflowSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow/components/ActivateWorkflowSingleRecordCommand';
@@ -279,15 +279,10 @@ export const WORKFLOW_COMMAND_MENU_ITEMS_CONFIG =
       SingleRecordCommandKeys.NAVIGATE_TO_NEXT_RECORD,
       SingleRecordCommandKeys.ADD_TO_FAVORITES,
       SingleRecordCommandKeys.REMOVE_FROM_FAVORITES,
-      SingleRecordCommandKeys.DELETE,
-      SingleRecordCommandKeys.DESTROY,
-      SingleRecordCommandKeys.RESTORE,
-      SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX,
-      SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW,
-      MultipleRecordsCommandKeys.DELETE,
-      MultipleRecordsCommandKeys.DESTROY,
-      MultipleRecordsCommandKeys.RESTORE,
-      MultipleRecordsCommandKeys.EXPORT,
+      RecordCommandKeys.DELETE,
+      RecordCommandKeys.DESTROY,
+      RecordCommandKeys.RESTORE,
+      RecordCommandKeys.EXPORT,
       NoSelectionRecordCommandKeys.SEE_DELETED_RECORDS,
       NoSelectionRecordCommandKeys.HIDE_DELETED_RECORDS,
       NoSelectionRecordCommandKeys.GO_TO_PEOPLE,
@@ -311,12 +306,8 @@ export const WORKFLOW_COMMAND_MENU_ITEMS_CONFIG =
         position: 2,
         label: msg`Create new workflow`,
       },
-      [SingleRecordCommandKeys.DELETE]: {
+      [RecordCommandKeys.DELETE]: {
         position: 12,
-        label: msg`Delete workflow`,
-      },
-      [MultipleRecordsCommandKeys.DELETE]: {
-        position: 13,
         label: msg`Delete workflows`,
       },
       [SingleRecordCommandKeys.ADD_TO_FAVORITES]: {
@@ -327,31 +318,19 @@ export const WORKFLOW_COMMAND_MENU_ITEMS_CONFIG =
         position: 15,
         isPinned: false,
       },
-      [SingleRecordCommandKeys.DESTROY]: {
+      [RecordCommandKeys.DESTROY]: {
         position: 16,
-        label: msg`Permanently destroy workflow`,
+        label: msg`Permanently destroy workflows`,
       },
-      [SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX]: {
+      [RecordCommandKeys.EXPORT]: {
         position: 17,
-        label: msg`Export workflow`,
+        label: msg`Export workflows`,
         shouldBeRegistered: ({ selectedRecord }) =>
           !isDefined(selectedRecord?.deletedAt),
-      },
-      [SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW]: {
-        position: 18,
-        label: msg`Export workflow`,
-      },
-      [MultipleRecordsCommandKeys.EXPORT]: {
-        position: 19,
-        label: msg`Export workflows`,
       },
       [NoSelectionRecordCommandKeys.EXPORT_VIEW]: {
         position: 20,
         label: msg`Export view`,
-      },
-      [MultipleRecordsCommandKeys.DESTROY]: {
-        position: 21,
-        label: msg`Permanently destroy workflows`,
       },
       [NoSelectionRecordCommandKeys.SEE_DELETED_RECORDS]: {
         position: 22,

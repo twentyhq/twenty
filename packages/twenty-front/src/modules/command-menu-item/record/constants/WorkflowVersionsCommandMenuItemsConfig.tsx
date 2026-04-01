@@ -1,6 +1,6 @@
 import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
-import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
+import { RecordCommandKeys } from '@/command-menu-item/record/types/RecordCommandKeys';
 import { NoSelectionWorkflowRecordCommandKeys } from '@/command-menu-item/record/no-selection/workflow/types/NoSelectionWorkflowRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
 import { SeeRunsWorkflowVersionSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-versions/components/SeeRunsWorkflowVersionSingleRecordCommand';
@@ -117,9 +117,7 @@ export const WORKFLOW_VERSIONS_COMMAND_MENU_ITEMS_CONFIG =
       SingleRecordCommandKeys.NAVIGATE_TO_NEXT_RECORD,
       SingleRecordCommandKeys.ADD_TO_FAVORITES,
       SingleRecordCommandKeys.REMOVE_FROM_FAVORITES,
-      SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX,
-      SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW,
-      MultipleRecordsCommandKeys.EXPORT,
+      RecordCommandKeys.EXPORT,
       NoSelectionRecordCommandKeys.EXPORT_VIEW,
       NoSelectionRecordCommandKeys.SEE_DELETED_RECORDS,
       NoSelectionRecordCommandKeys.HIDE_DELETED_RECORDS,
@@ -141,16 +139,8 @@ export const WORKFLOW_VERSIONS_COMMAND_MENU_ITEMS_CONFIG =
         position: 6,
         isPinned: false,
       },
-      [SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX]: {
+      [RecordCommandKeys.EXPORT]: {
         position: 7,
-        label: msg`Export version`,
-      },
-      [SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW]: {
-        position: 7,
-        label: msg`Export version`,
-      },
-      [MultipleRecordsCommandKeys.EXPORT]: {
-        position: 8,
         label: msg`Export versions`,
       },
       [NoSelectionRecordCommandKeys.EXPORT_VIEW]: {

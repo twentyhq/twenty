@@ -1,9 +1,9 @@
 import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
-import { DeleteMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/DeleteMultipleRecordsCommand';
-import { DestroyMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/DestroyMultipleRecordsCommand';
-import { ExportMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/ExportMultipleRecordsCommand';
+import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
+import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
+import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
+import { RestoreRecordsCommand } from '@/command-menu-item/engine-command/record/components/RestoreRecordsCommand';
 import { MergeMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/MergeMultipleRecordsCommand';
-import { RestoreMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/RestoreMultipleRecordsCommand';
 import { UpdateMultipleRecordsCommand } from '@/command-menu-item/record/multiple-records/components/UpdateMultipleRecordsCommand';
 import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
 import { CreateNewIndexRecordNoSelectionRecordCommand } from '@/command-menu-item/record/no-selection/components/CreateNewIndexRecordNoSelectionRecordCommand';
@@ -13,17 +13,14 @@ import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/recor
 import { SeeDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/record/no-selection/components/SeeDeletedRecordsNoSelectionRecordCommand';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { AddToFavoritesSingleRecordCommand } from '@/command-menu-item/record/single-record/components/AddToFavoritesSingleRecordCommand';
-import { DeleteSingleRecordCommand } from '@/command-menu-item/record/single-record/components/DeleteSingleRecordCommand';
-import { DestroySingleRecordCommand } from '@/command-menu-item/record/single-record/components/DestroySingleRecordCommand';
 import { ExportNoteSingleRecordCommand } from '@/command-menu-item/record/single-record/components/ExportNoteSingleRecordCommand';
-import { ExportSingleRecordCommand } from '@/command-menu-item/record/single-record/components/ExportSingleRecordCommand';
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesSingleRecordCommand } from '@/command-menu-item/record/single-record/components/RemoveFromFavoritesSingleRecordCommand';
-import { RestoreSingleRecordCommand } from '@/command-menu-item/record/single-record/components/RestoreSingleRecordCommand';
 import { EditRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/record/single-record/record-page-layout/components/EditRecordPageLayoutSingleRecordCommand';
 import { RecordPageLayoutSingleRecordCommandKeys } from '@/command-menu-item/record/single-record/record-page-layout/types/RecordPageLayoutSingleRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
+import { RecordCommandKeys } from '@/command-menu-item/record/types/RecordCommandKeys';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -76,7 +73,8 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
   | NoSelectionRecordCommandKeys
   | SingleRecordCommandKeys
   | MultipleRecordsCommandKeys
-  | RecordPageLayoutSingleRecordCommandKeys,
+  | RecordPageLayoutSingleRecordCommandKeys
+  | RecordCommandKeys,
   CommandMenuItemConfig
 > = {
   [SingleRecordCommandKeys.NAVIGATE_TO_NEXT_RECORD]: {
@@ -124,11 +122,11 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
     component: <CreateNewIndexRecordNoSelectionRecordCommand />,
   },
-  [SingleRecordCommandKeys.DELETE]: {
+  [RecordCommandKeys.DELETE]: {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordCommandKeys.DELETE,
-    label: msg`Delete`,
+    key: RecordCommandKeys.DELETE,
+    label: msg`Delete records`,
     shortLabel: msg`Delete`,
     position: 3,
     Icon: IconTrash,
@@ -139,52 +137,33 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       hasAnySoftDeleteFilterOnView,
       objectPermissions,
       objectMetadataItem,
+      isRemote,
+      numberOfSelectedRecords,
     }) =>
       (!objectMetadataItem?.isSystem &&
-        isDefined(selectedRecord) &&
-        !selectedRecord.isRemote &&
+        !isRemote &&
         !hasAnySoftDeleteFilterOnView &&
         objectPermissions.canSoftDeleteObjectRecords &&
-        !isDefined(selectedRecord?.deletedAt)) ??
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
+        (numberOfSelectedRecords === 1
+          ? isDefined(selectedRecord) &&
+            !selectedRecord.isRemote &&
+            !isDefined(selectedRecord?.deletedAt)
+          : true)) ??
       false,
     availableOn: [
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
       CommandMenuItemViewType.SHOW_PAGE,
     ],
-    component: <DeleteSingleRecordCommand />,
+    component: <DeleteRecordsCommand />,
   },
-  [MultipleRecordsCommandKeys.DELETE]: {
+  [RecordCommandKeys.RESTORE]: {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: MultipleRecordsCommandKeys.DELETE,
-    label: msg`Delete records`,
-    shortLabel: msg`Delete`,
-    position: 4,
-    Icon: IconTrash,
-    accent: 'default',
-    isPinned: true,
-    shouldBeRegistered: ({
-      objectPermissions,
-      isRemote,
-      hasAnySoftDeleteFilterOnView,
-      numberOfSelectedRecords,
-      objectMetadataItem,
-    }) =>
-      (!objectMetadataItem?.isSystem &&
-        objectPermissions.canSoftDeleteObjectRecords &&
-        !isRemote &&
-        !hasAnySoftDeleteFilterOnView &&
-        isDefined(numberOfSelectedRecords) &&
-        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
-      false,
-    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
-    component: <DeleteMultipleRecordsCommand />,
-  },
-  [SingleRecordCommandKeys.RESTORE]: {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordCommandKeys.RESTORE,
-    label: msg`Restore record`,
+    key: RecordCommandKeys.RESTORE,
+    label: msg`Restore records`,
     shortLabel: msg`Restore`,
     position: 5,
     Icon: IconRefresh,
@@ -197,54 +176,33 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       isShowPage,
       hasAnySoftDeleteFilterOnView,
       objectMetadataItem,
+      numberOfSelectedRecords,
     }) =>
       (!objectMetadataItem?.isSystem &&
         !isRemote &&
-        isDefined(selectedRecord?.deletedAt) &&
         objectPermissions.canSoftDeleteObjectRecords &&
-        ((isDefined(isShowPage) && isShowPage) ||
-          (isDefined(hasAnySoftDeleteFilterOnView) &&
-            hasAnySoftDeleteFilterOnView))) ??
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
+        (numberOfSelectedRecords === 1
+          ? isDefined(selectedRecord?.deletedAt) &&
+            ((isDefined(isShowPage) && isShowPage) ||
+              (isDefined(hasAnySoftDeleteFilterOnView) &&
+                hasAnySoftDeleteFilterOnView))
+          : isDefined(hasAnySoftDeleteFilterOnView) &&
+            hasAnySoftDeleteFilterOnView)) ??
       false,
     availableOn: [
       CommandMenuItemViewType.SHOW_PAGE,
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
     ],
-    component: <RestoreSingleRecordCommand />,
+    component: <RestoreRecordsCommand />,
   },
-  [MultipleRecordsCommandKeys.RESTORE]: {
+  [RecordCommandKeys.DESTROY]: {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: MultipleRecordsCommandKeys.RESTORE,
-    label: msg`Restore records`,
-    shortLabel: msg`Restore`,
-    position: 6,
-    Icon: IconRefresh,
-    accent: 'default',
-    isPinned: true,
-    shouldBeRegistered: ({
-      objectPermissions,
-      isRemote,
-      hasAnySoftDeleteFilterOnView,
-      numberOfSelectedRecords,
-      objectMetadataItem,
-    }) =>
-      (!objectMetadataItem?.isSystem &&
-        objectPermissions.canSoftDeleteObjectRecords &&
-        !isRemote &&
-        isDefined(hasAnySoftDeleteFilterOnView) &&
-        hasAnySoftDeleteFilterOnView &&
-        isDefined(numberOfSelectedRecords) &&
-        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
-      false,
-    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
-    component: <RestoreMultipleRecordsCommand />,
-  },
-  [SingleRecordCommandKeys.DESTROY]: {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordCommandKeys.DESTROY,
-    label: msg`Permanently destroy record`,
+    key: RecordCommandKeys.DESTROY,
+    label: msg`Permanently destroy records`,
     shortLabel: msg`Destroy`,
     position: 7,
     Icon: IconTrashX,
@@ -254,46 +212,26 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
       selectedRecord,
       objectPermissions,
       isRemote,
+      hasAnySoftDeleteFilterOnView,
       objectMetadataItem,
+      numberOfSelectedRecords,
     }) =>
       (!objectMetadataItem?.isSystem &&
         objectPermissions.canDestroyObjectRecords &&
         !isRemote &&
-        isDefined(selectedRecord?.deletedAt)) ??
+        isDefined(numberOfSelectedRecords) &&
+        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT &&
+        (numberOfSelectedRecords === 1
+          ? isDefined(selectedRecord?.deletedAt)
+          : isDefined(hasAnySoftDeleteFilterOnView) &&
+            hasAnySoftDeleteFilterOnView)) ??
       false,
     availableOn: [
       CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
       CommandMenuItemViewType.SHOW_PAGE,
     ],
-    component: <DestroySingleRecordCommand />,
-  },
-  [MultipleRecordsCommandKeys.DESTROY]: {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: MultipleRecordsCommandKeys.DESTROY,
-    label: msg`Permanently destroy records`,
-    shortLabel: msg`Destroy`,
-    position: 8,
-    Icon: IconTrashX,
-    accent: 'danger',
-    isPinned: true,
-    shouldBeRegistered: ({
-      objectPermissions,
-      isRemote,
-      hasAnySoftDeleteFilterOnView,
-      numberOfSelectedRecords,
-      objectMetadataItem,
-    }) =>
-      (!objectMetadataItem?.isSystem &&
-        objectPermissions.canDestroyObjectRecords &&
-        !isRemote &&
-        isDefined(hasAnySoftDeleteFilterOnView) &&
-        hasAnySoftDeleteFilterOnView &&
-        isDefined(numberOfSelectedRecords) &&
-        numberOfSelectedRecords < BACKEND_BATCH_REQUEST_MAX_COUNT) ??
-      false,
-    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
-    component: <DestroyMultipleRecordsCommand />,
+    component: <DestroyRecordsCommand />,
   },
 
   [SingleRecordCommandKeys.ADD_TO_FAVORITES]: {
@@ -366,36 +304,25 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     availableOn: [CommandMenuItemViewType.SHOW_PAGE],
     component: <ExportNoteSingleRecordCommand />,
   },
-  [SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX]: {
+  [RecordCommandKeys.EXPORT]: {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX,
-    label: msg`Export`,
+    key: RecordCommandKeys.EXPORT,
+    label: msg`Export records`,
     shortLabel: msg`Export`,
     position: 12,
     Icon: IconFileExport,
     accent: 'default',
     isPinned: false,
-    shouldBeRegistered: ({ selectedRecord }) =>
-      isDefined(selectedRecord) && !selectedRecord.isRemote,
-    availableOn: [CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
-    component: <ExportMultipleRecordsCommand />,
-    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
-  },
-  [SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW]: {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW,
-    label: msg`Export`,
-    shortLabel: msg`Export`,
-    position: 13,
-    Icon: IconFileExport,
-    accent: 'default',
-    isPinned: false,
-    shouldBeRegistered: ({ selectedRecord }) =>
-      isDefined(selectedRecord) && !selectedRecord.isRemote,
-    availableOn: [CommandMenuItemViewType.SHOW_PAGE],
-    component: <ExportSingleRecordCommand />,
+    shouldBeRegistered: ({ selectedRecord, isRemote }) =>
+      (isDefined(selectedRecord) ? !selectedRecord.isRemote : !isRemote) ??
+      true,
+    availableOn: [
+      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
+      CommandMenuItemViewType.SHOW_PAGE,
+    ],
+    component: <ExportRecordsCommand />,
     requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [MultipleRecordsCommandKeys.UPDATE]: {
@@ -438,21 +365,6 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
     component: <MergeMultipleRecordsCommand />,
   },
-  [MultipleRecordsCommandKeys.EXPORT]: {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: MultipleRecordsCommandKeys.EXPORT,
-    label: msg`Export records`,
-    shortLabel: msg`Export`,
-    position: 16,
-    Icon: IconFileExport,
-    accent: 'default',
-    isPinned: false,
-    shouldBeRegistered: () => true,
-    availableOn: [CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION],
-    component: <ExportMultipleRecordsCommand />,
-    requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
-  },
   [NoSelectionRecordCommandKeys.IMPORT_RECORDS]: {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.Object,
@@ -483,7 +395,7 @@ export const DEFAULT_RECORD_COMMAND_MENU_ITEMS_CONFIG: Record<
     isPinned: false,
     shouldBeRegistered: () => true,
     availableOn: [CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION],
-    component: <ExportMultipleRecordsCommand />,
+    component: <ExportRecordsCommand />,
     requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
   },
   [NoSelectionRecordCommandKeys.SEE_DELETED_RECORDS]: {

@@ -9,19 +9,22 @@ import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RestoreMultipleRecordsCommand = () => {
-  const { recordIndexId, objectMetadataItem, graphqlFilter } =
-    useHeadlessCommandContextApi();
+export const RestoreRecordsCommand = () => {
+  const {
+    recordIndexId,
+    objectMetadataItem,
+    selectedRecords,
+    graphqlFilter,
+  } = useHeadlessCommandContextApi();
 
-  if (
-    !isDefined(recordIndexId) ||
-    !isDefined(objectMetadataItem) ||
-    !isDefined(graphqlFilter)
-  ) {
+  if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
     throw new Error(
-      'Record index ID, object metadata item, and graphql filter are required to restore multiple records',
+      'Record index ID and object metadata are required to restore records',
     );
   }
+
+  const isSingleRecord = selectedRecords.length === 1;
+  const recordId = selectedRecords[0]?.id;
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
@@ -36,7 +39,7 @@ export const RestoreMultipleRecordsCommand = () => {
   };
 
   const combinedFilter = {
-    ...graphqlFilter,
+    ...(graphqlFilter ?? {}),
     ...deletedAtFilter,
   };
 
@@ -49,21 +52,37 @@ export const RestoreMultipleRecordsCommand = () => {
 
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
-    const recordsToRestore = await fetchAllRecordIds();
-    const recordIdsToRestore = recordsToRestore.map((record) => record.id);
 
-    resetTableRowSelection();
+    if (isSingleRecord && isDefined(recordId)) {
+      resetTableRowSelection();
 
-    await restoreManyRecords({
-      idsToRestore: recordIdsToRestore,
-    });
+      await restoreManyRecords({
+        idsToRestore: [recordId],
+      });
+    } else {
+      const recordsToRestore = await fetchAllRecordIds();
+      const recordIdsToRestore = recordsToRestore.map((record) => record.id);
+
+      resetTableRowSelection();
+
+      await restoreManyRecords({
+        idsToRestore: recordIdsToRestore,
+      });
+    }
   };
+
+  const title = isSingleRecord
+    ? t`Restore Record`
+    : t`Restore Records`;
+  const subtitle = isSingleRecord
+    ? t`Are you sure you want to restore this record?`
+    : t`Are you sure you want to restore these records?`;
 
   return (
     <HeadlessConfirmationModalEngineCommandEffect
-      title={t`Restore Records`}
-      subtitle={t`Are you sure you want to restore these records?`}
-      confirmButtonText={t`Restore Records`}
+      title={title}
+      subtitle={subtitle}
+      confirmButtonText={title}
       confirmButtonAccent="default"
       execute={handleExecute}
     />

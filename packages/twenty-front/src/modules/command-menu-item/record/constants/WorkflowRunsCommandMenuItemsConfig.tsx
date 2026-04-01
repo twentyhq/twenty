@@ -1,6 +1,6 @@
-import { MultipleRecordsCommandKeys } from '@/command-menu-item/record/multiple-records/types/MultipleRecordsCommandKeys';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
+import { RecordCommandKeys } from '@/command-menu-item/record/types/RecordCommandKeys';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
 import { StopWorkflowRunSingleRecordCommand } from '@/command-menu-item/record/single-record/workflow-runs/components/StopWorkflowRunSingleRecordCommand';
@@ -82,9 +82,7 @@ export const WORKFLOW_RUNS_COMMAND_MENU_ITEMS_CONFIG =
       SingleRecordCommandKeys.REMOVE_FROM_FAVORITES,
       SingleRecordCommandKeys.NAVIGATE_TO_PREVIOUS_RECORD,
       SingleRecordCommandKeys.NAVIGATE_TO_NEXT_RECORD,
-      SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX,
-      SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW,
-      MultipleRecordsCommandKeys.EXPORT,
+      RecordCommandKeys.EXPORT,
       NoSelectionRecordCommandKeys.EXPORT_VIEW,
       NoSelectionRecordCommandKeys.SEE_DELETED_RECORDS,
       NoSelectionRecordCommandKeys.HIDE_DELETED_RECORDS,
@@ -106,16 +104,8 @@ export const WORKFLOW_RUNS_COMMAND_MENU_ITEMS_CONFIG =
         isPinned: false,
         position: 4,
       },
-      [SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX]: {
+      [RecordCommandKeys.EXPORT]: {
         position: 5,
-        label: msg`Export run`,
-      },
-      [SingleRecordCommandKeys.EXPORT_FROM_RECORD_SHOW]: {
-        position: 5,
-        label: msg`Export run`,
-      },
-      [MultipleRecordsCommandKeys.EXPORT]: {
-        position: 6,
         label: msg`Export runs`,
       },
       [NoSelectionRecordCommandKeys.EXPORT_VIEW]: {

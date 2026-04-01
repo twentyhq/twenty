@@ -2,6 +2,7 @@ import { Command } from '@/command-menu-item/display/components/Command';
 import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
 import { NoSelectionRecordCommandKeys } from '@/command-menu-item/record/no-selection/types/NoSelectionRecordCommandKeys';
 import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
+import { RecordCommandKeys } from '@/command-menu-item/record/types/RecordCommandKeys';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
@@ -47,7 +48,7 @@ export const createMockCommandMenuItems = ({
   {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordCommandKeys.EXPORT_FROM_RECORD_INDEX,
+    key: RecordCommandKeys.EXPORT,
     label: msg`Export`,
     shortLabel: msg`Export`,
     position: 4,
@@ -61,7 +62,7 @@ export const createMockCommandMenuItems = ({
   {
     type: CommandMenuItemType.Standard,
     scope: CommandMenuItemScope.RecordSelection,
-    key: SingleRecordCommandKeys.DELETE,
+    key: RecordCommandKeys.DELETE,
     label: msg`Delete`,
     shortLabel: msg`Delete`,
     position: 7,
