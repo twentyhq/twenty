@@ -22,6 +22,7 @@ export enum CoreObjectNameSingular {
   MessageThread = 'messageThread',
   Note = 'note',
   NoteTarget = 'noteTarget',
+  OmnichannelMessage = 'omnichannelMessage',
   Opportunity = 'opportunity',
   Person = 'person',
   Product = 'product',
