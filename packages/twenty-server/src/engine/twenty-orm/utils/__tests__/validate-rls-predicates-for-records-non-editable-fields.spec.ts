@@ -1,6 +1,10 @@
 /* @license Enterprise */
 
-import { FieldMetadataType, type ObjectsPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -14,7 +18,6 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
-import { RowLevelPermissionActionEnum } from 'twenty-shared/types';
 
 describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
   const createMockFlatObjectMetadata = (
@@ -139,7 +142,7 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
       'rls-group-1': {
         id: 'rls-group-1',
         roleId: 'role-id-123',
-        logicalOperator: 'AND',
+        logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
         parentRowLevelPermissionPredicateGroupId: null,
         deletedAt: null,
         universalIdentifier: 'rls-group-1',
@@ -178,8 +181,8 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
     userWorkspaceRoleMap: {
       'user-id-123': 'role-id-123',
     },
-    eventEmitterService: null as any,
-    coreDataSource: null as any,
+    eventEmitterService: null as unknown as WorkspaceInternalContext['eventEmitterService'],
+    coreDataSource: null as unknown as WorkspaceInternalContext['coreDataSource'],
   });
 
   const createMockUserAuthContext = (): WorkspaceAuthContext => ({
@@ -187,7 +190,7 @@ describe('validateRLSPredicatesForRecords - Non-editable Fields', () => {
     workspaceMember: {
       id: 'member-id-123',
       email: 'test@example.com',
-    } as any,
+    } as unknown as WorkspaceAuthContext['workspaceMember'],
   });
 
   describe('Issue #19201: Non-editable field with RLS permission blocking insertion', () => {
