@@ -1,6 +1,3 @@
-import { setupI18n, type I18n, type Messages } from '@lingui/core';
-import { type APP_LOCALES } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
 import { messages as afMessages } from '@/locales/generated/af-ZA';
 import { messages as arMessages } from '@/locales/generated/ar-SA';
 import { messages as caMessages } from '@/locales/generated/ca-ES';
@@ -32,6 +29,9 @@ import { messages as ukMessages } from '@/locales/generated/uk-UA';
 import { messages as viMessages } from '@/locales/generated/vi-VN';
 import { messages as zhHansMessages } from '@/locales/generated/zh-CN';
 import { messages as zhHantMessages } from '@/locales/generated/zh-TW';
+import { setupI18n, type I18n, type Messages } from '@lingui/core';
+import { type APP_LOCALES } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   en: enMessages,
@@ -47,6 +47,7 @@ const messages: Record<keyof typeof APP_LOCALES, Messages> = {
   'fi-FI': fiMessages,
   'fr-FR': frMessages,
   'he-IL': heMessages,
+  'hi-IN': enMessages,
   'hu-HU': huMessages,
   'it-IT': itMessages,
   'ja-JP': jaMessages,

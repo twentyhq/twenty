@@ -60,6 +60,7 @@ export class I18nService implements OnModuleInit {
       'fi-FI': fiMessages,
       'fr-FR': frMessages,
       'he-IL': heMessages,
+      'hi-IN': enMessages,
       'hu-HU': huMessages,
       'it-IT': itMessages,
       'ja-JP': jaMessages,
