@@ -113,7 +113,8 @@ export class WorkspaceCacheService implements OnModuleInit {
       const prefix = key.substring(0, key.lastIndexOf(':'));
 
       entriesByKey[prefix] = (entriesByKey[prefix] ?? 0) + 1;
-      versionsByKey[prefix] = (versionsByKey[prefix] ?? 0) + entry.versions.size;
+      versionsByKey[prefix] =
+        (versionsByKey[prefix] ?? 0) + entry.versions.size;
     }
 
     return {
