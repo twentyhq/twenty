@@ -38,11 +38,11 @@ const morphIdByRelationObjectNameSingular = {
 // object metadata values (e.g. "Note Targets" / IconBuildingSkyscraper)
 // that would otherwise be used for custom objects.
 const sourceFieldOverridesByRelationObjectNameSingular = {
-  noteTarget:       { label: 'Notes',               icon: 'IconNotes' },
-  taskTarget:       { label: 'Tasks',               icon: 'IconCheckbox' },
-  attachment:       { label: 'Attachments',         icon: 'IconFileImport' },
+  noteTarget: { label: 'Notes', icon: 'IconNotes' },
+  taskTarget: { label: 'Tasks', icon: 'IconCheckbox' },
+  attachment: { label: 'Attachments', icon: 'IconFileImport' },
   timelineActivity: { label: 'Timeline Activities', icon: 'IconTimelineEvent' },
-  favorite:         { label: 'Favorites',           icon: 'IconHeart' },
+  favorite: { label: 'Favorites', icon: 'IconHeart' },
 } satisfies Record<
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
   { label: string; icon: string }
@@ -113,7 +113,9 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           ] || 'IconBuildingSkyscraper';
 
         const sourceFieldOverride =
-          sourceFieldOverridesByRelationObjectNameSingular[objectMetadataNameSingular];
+          sourceFieldOverridesByRelationObjectNameSingular[
+            objectMetadataNameSingular
+          ];
 
         const morphFieldName = `target${capitalize(sourceFlatObjectMetadata.nameSingular)}`;
         const fieldName = isObjectMigratedToMorphRelations
