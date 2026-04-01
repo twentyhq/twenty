@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   DiscoveredMessageFolder,
   MessageFolder,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/services/gmail-get-all-folders.service';
 import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/services/imap-get-all-folders.service';
@@ -27,7 +28,8 @@ import { computeUpdatedFolders } from 'src/modules/messaging/message-folder-mana
 export class SyncMessageFoldersService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly messageFolderDataAccessService: MessageFolderDataAccessService,
+    @InjectRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     private readonly gmailGetAllFoldersService: GmailGetAllFoldersService,
     private readonly microsoftGetAllFoldersService: MicrosoftGetAllFoldersService,
     private readonly imapGetAllFoldersService: ImapGetAllFoldersService,
@@ -38,7 +40,7 @@ export class SyncMessageFoldersService {
     workspaceId,
   }: {
     messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
+      MessageChannelEntity,
       'id' | 'messageFolderImportPolicy'
     > & {
       connectedAccount: Pick<
@@ -80,10 +82,7 @@ export class SyncMessageFoldersService {
       | 'provider'
       | 'connectionParameters'
     >,
-    messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
-      'messageFolderImportPolicy'
-    >,
+    messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -114,6 +113,12 @@ export class SyncMessageFoldersService {
     messageChannelId: string,
     workspaceId: string,
   ): Promise<MessageFolder[]> {
+    const externalIdToUuidMap = new Map(
+      existingFolders
+        .filter((folder) => isDefined(folder.externalId))
+        .map((folder) => [folder.externalId as string, folder.id]),
+    );
+
     const foldersToCreate = computeFoldersToCreate({
       discoveredFolders,
       existingFolders,
@@ -123,6 +128,7 @@ export class SyncMessageFoldersService {
     const foldersToUpdate = computeFoldersToUpdate({
       discoveredFolders,
       existingFolders,
+      externalIdToUuidMap,
     });
 
     const folderIdsToDelete = computeFolderIdsToDelete({
@@ -132,16 +138,11 @@ export class SyncMessageFoldersService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    // TODO: Restore transaction wrapper once migration is complete — folder
-    // sync operations (create/update/delete) are no longer atomic since
-    // the data access layer routes writes across workspace and core schemas.
-    // Acceptable during transition as sync is idempotent and self-corrects.
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         if (folderIdsToDelete.length > 0) {
-          await this.messageFolderDataAccessService.update(
-            workspaceId,
-            { id: In(folderIdsToDelete) },
+          await this.messageFolderRepository.update(
+            { id: In(folderIdsToDelete), workspaceId },
             {
               pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_DELETION,
             },
@@ -150,32 +151,34 @@ export class SyncMessageFoldersService {
 
         if (foldersToUpdate.size > 0) {
           for (const [id, data] of foldersToUpdate.entries()) {
-            await this.messageFolderDataAccessService.update(
-              workspaceId,
-              { id, messageChannelId },
-              data,
+            await this.messageFolderRepository.update(
+              { id, messageChannelId, workspaceId },
+              data as Record<string, unknown>,
             );
           }
         }
 
         if (foldersToCreate.length > 0) {
           for (const folderToCreate of foldersToCreate) {
-            await this.messageFolderDataAccessService.save(
+            await this.messageFolderRepository.save({
+              ...folderToCreate,
               workspaceId,
-              folderToCreate,
-            );
+            } as unknown as MessageFolderEntity);
           }
         }
 
         const createdFolders =
           foldersToCreate.length > 0
-            ? await this.messageFolderDataAccessService.find(workspaceId, {
-                messageChannelId,
-                externalId: In(
-                  foldersToCreate
-                    .map((folder) => folder.externalId)
-                    .filter(isDefined),
-                ),
+            ? await this.messageFolderRepository.find({
+                where: {
+                  messageChannelId,
+                  externalId: In(
+                    foldersToCreate
+                      .map((folder) => folder.externalId)
+                      .filter(isDefined),
+                  ),
+                  workspaceId,
+                },
               })
             : [];
 

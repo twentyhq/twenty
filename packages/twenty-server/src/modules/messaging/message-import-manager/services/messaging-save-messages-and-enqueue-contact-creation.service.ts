@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldActorSource, MessageParticipantRole } from 'twenty-shared/types';
+import {
+  FieldActorSource,
+  MessageChannelContactAutoCreationPolicy,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -14,10 +19,6 @@ import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
-import {
-  MessageChannelContactAutoCreationPolicy,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   type Participant,
   type ParticipantWithMessageId,
@@ -44,11 +45,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
   async saveMessagesAndEnqueueContactCreation(
     messagesToSave: MessageWithParticipants[],
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannelEntity,
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    const handleAliases = connectedAccount.handleAliases?.split(',') || [];
+    const handleAliases = connectedAccount.handleAliases || [];
     const authContext = buildSystemAuthContext(workspaceId);
 
     const participantsWithMessageId =

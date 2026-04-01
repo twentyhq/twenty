@@ -1,17 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
-import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
+import { MessageChannelPendingGroupEmailsAction } from 'twenty-shared/types';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import {
-  MessageChannelPendingGroupEmailsAction,
-  MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingDeleteGroupEmailMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-group-email-messages.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 @Injectable()
 export class MessagingProcessGroupEmailActionsService {
@@ -21,22 +20,23 @@ export class MessagingProcessGroupEmailActionsService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
-    private readonly messageFolderDataAccessService: MessageFolderDataAccessService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     private readonly messagingDeleteGroupEmailMessagesService: MessagingDeleteGroupEmailMessagesService,
   ) {}
 
   async markMessageChannelAsPendingGroupEmailsAction(
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannelEntity,
     workspaceId: string,
     pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction,
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.messageChannelDataAccessService.update(
-        workspaceId,
-        { id: messageChannel.id },
+      await this.messageChannelRepository.update(
+        { id: messageChannel.id, workspaceId },
         { pendingGroupEmailsAction },
       );
     }, authContext);
@@ -47,7 +47,7 @@ export class MessagingProcessGroupEmailActionsService {
   }
 
   async processGroupEmailActions(
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannelEntity,
     workspaceId: string,
   ): Promise<void> {
     const { pendingGroupEmailsAction } = messageChannel;
@@ -89,14 +89,12 @@ export class MessagingProcessGroupEmailActionsService {
                 break;
             }
 
-            await this.messageChannelDataAccessService.update(
-              workspaceId,
-              { id: messageChannel.id },
+            await this.messageChannelRepository.update(
+              { id: messageChannel.id, workspaceId },
               {
                 pendingGroupEmailsAction:
                   MessageChannelPendingGroupEmailsAction.NONE,
               },
-              transactionManager,
             );
 
             this.logger.debug(
@@ -160,20 +158,16 @@ export class MessagingProcessGroupEmailActionsService {
     messageChannelId: string;
     transactionManager: WorkspaceEntityManager;
   }) {
-    await this.messageChannelDataAccessService.update(
-      workspaceId,
-      { id: messageChannelId },
+    await this.messageChannelRepository.update(
+      { id: messageChannelId, workspaceId },
       {
         syncCursor: '',
       },
-      transactionManager,
     );
 
-    await this.messageFolderDataAccessService.update(
-      workspaceId,
-      { messageChannelId },
+    await this.messageFolderRepository.update(
+      { messageChannelId, workspaceId },
       { syncCursor: '' },
-      transactionManager,
     );
   }
 }

@@ -1,27 +1,36 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { Repository } from 'typeorm';
 
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
-import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
-import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
-    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly createMessageChannelService: CreateMessageChannelService,
     private readonly createCalendarChannelService: CreateCalendarChannelService,
   ) {}
@@ -34,10 +43,13 @@ export class ImapSmtpCalDavAPIService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccount =
-          await this.connectedAccountDataAccessService.findOne(workspaceId, {
-            where: { id, provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV },
-          });
+        const connectedAccount = await this.connectedAccountRepository.findOne({
+          where: {
+            id,
+            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+            workspaceId,
+          },
+        });
 
         return connectedAccount as ConnectedAccountWorkspaceEntity | null;
       },
@@ -59,12 +71,36 @@ export class ImapSmtpCalDavAPIService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
+        // Resolve userWorkspaceId from workspaceMemberId
+        const workspaceMemberRepo =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+          );
+
+        const member = await workspaceMemberRepo.findOne({
+          where: { id: workspaceMemberId },
+        });
+
+        const userWorkspaceId = member
+          ? ((
+              await this.userWorkspaceRepository.findOne({
+                where: { userId: member.userId, workspaceId },
+              })
+            )?.id ?? null)
+          : null;
+
         const existingAccount = connectedAccountId
-          ? await this.connectedAccountDataAccessService.findOne(workspaceId, {
-              where: { id: connectedAccountId },
+          ? await this.connectedAccountRepository.findOne({
+              where: { id: connectedAccountId, workspaceId },
             })
-          : await this.connectedAccountDataAccessService.findOne(workspaceId, {
-              where: { handle, accountOwnerId: workspaceMemberId },
+          : await this.connectedAccountRepository.findOne({
+              where: {
+                handle,
+                userWorkspaceId:
+                  userWorkspaceId ?? '00000000-0000-0000-0000-000000000000',
+                workspaceId,
+              },
             });
 
         const newOrExistingAccountId =
@@ -74,14 +110,14 @@ export class ImapSmtpCalDavAPIService {
           await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
         const existingMessageChannel = existingAccount
-          ? await this.messageChannelDataAccessService.findOne(workspaceId, {
-              where: { connectedAccountId: existingAccount.id },
+          ? await this.messageChannelRepository.findOne({
+              where: { connectedAccountId: existingAccount.id, workspaceId },
             })
           : null;
 
         const existingCalendarChannel = existingAccount
-          ? await this.calendarChannelDataAccessService.findOne(workspaceId, {
-              where: { connectedAccountId: existingAccount.id },
+          ? await this.calendarChannelRepository.findOne({
+              where: { connectedAccountId: existingAccount.id, workspaceId },
             })
           : null;
 
@@ -95,17 +131,14 @@ export class ImapSmtpCalDavAPIService {
 
         await workspaceDataSource.transaction(
           async (manager: WorkspaceEntityManager) => {
-            await this.connectedAccountDataAccessService.save(
+            await this.connectedAccountRepository.save({
+              id: newOrExistingAccountId,
+              handle,
+              provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+              connectionParameters: input.connectionParameters,
+              userWorkspaceId,
               workspaceId,
-              {
-                id: newOrExistingAccountId,
-                handle,
-                provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-                connectionParameters: input.connectionParameters,
-                accountOwnerId: workspaceMemberId,
-              },
-              manager,
-            );
+            } as ConnectedAccountEntity);
 
             if (shouldCreateMessageChannel) {
               await this.createMessageChannelService.createMessageChannel({

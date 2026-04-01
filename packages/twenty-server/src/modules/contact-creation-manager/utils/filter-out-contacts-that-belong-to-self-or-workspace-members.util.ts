@@ -20,7 +20,7 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
 
   const allHandles = [
     connectedAccount.handle.toLowerCase(),
-    ...(connectedAccount.handleAliases?.split(',') || []).map((handle) =>
+    ...(connectedAccount.handleAliases || []).map((handle) =>
       handle.toLowerCase(),
     ),
   ];

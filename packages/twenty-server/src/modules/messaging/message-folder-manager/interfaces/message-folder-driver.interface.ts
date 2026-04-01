@@ -1,5 +1,5 @@
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
 export type DiscoveredMessageFolder = Pick<
@@ -30,9 +30,6 @@ export type MessageFolderDriver = {
       | 'handle'
       | 'connectionParameters'
     >,
-    messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
-      'messageFolderImportPolicy'
-    >,
+    messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]>;
 };

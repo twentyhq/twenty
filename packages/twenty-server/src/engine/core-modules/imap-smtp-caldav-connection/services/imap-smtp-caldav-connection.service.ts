@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   type AccountType,
   type ConnectionParameters,
@@ -22,7 +24,8 @@ export class ImapSmtpCaldavService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   async testImapConnection(
@@ -190,13 +193,13 @@ export class ImapSmtpCaldavService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccount =
-          await this.connectedAccountDataAccessService.findOne(workspaceId, {
-            where: {
-              id: connectionId,
-              provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-            },
-          });
+        const connectedAccount = await this.connectedAccountRepository.findOne({
+          where: {
+            id: connectionId,
+            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+            workspaceId,
+          },
+        });
 
         return connectedAccount as ConnectedAccountWorkspaceEntity | null;
       },

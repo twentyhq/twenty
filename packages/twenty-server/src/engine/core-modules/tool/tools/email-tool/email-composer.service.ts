@@ -20,7 +20,7 @@ import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-to
 import { EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool.type';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -34,7 +34,8 @@ export class EmailComposerService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
@@ -56,15 +57,14 @@ export class EmailComposerService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccount =
-          await this.connectedAccountDataAccessService.findOne(workspaceId, {
-            where: { id: connectedAccountId },
-            relations: {
-              messageChannels: {
-                messageFolders: true,
-              },
+        const connectedAccount = await this.connectedAccountRepository.findOne({
+          where: { id: connectedAccountId, workspaceId },
+          relations: {
+            messageChannels: {
+              messageFolders: true,
             },
-          });
+          },
+        });
 
         if (!isDefined(connectedAccount)) {
           throw new EmailToolException(
@@ -73,7 +73,7 @@ export class EmailComposerService {
           );
         }
 
-        return connectedAccount as unknown as ConnectedAccountWorkspaceEntity;
+        return connectedAccount;
       },
       authContext,
     );
@@ -86,8 +86,9 @@ export class EmailComposerService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const allAccounts =
-          await this.connectedAccountDataAccessService.find(workspaceId);
+        const allAccounts = await this.connectedAccountRepository.find({
+          where: { workspaceId },
+        });
 
         if (!allAccounts || allAccounts.length === 0) {
           throw new EmailToolException(
@@ -271,20 +272,23 @@ export class EmailComposerService {
       );
     }
 
+    const connectedAccountAsWorkspaceEntity =
+      connectedAccount as unknown as ConnectedAccountWorkspaceEntity;
+
     const { accessToken, refreshToken } =
       await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
         {
-          connectedAccount,
+          connectedAccount: connectedAccountAsWorkspaceEntity,
           workspaceId,
           messageChannelId: messageChannel.id,
         },
       );
 
     const connectedAccountWithFreshTokens = {
-      ...connectedAccount,
+      ...connectedAccountAsWorkspaceEntity,
       accessToken,
       refreshToken,
-    } as unknown as ConnectedAccountWorkspaceEntity;
+    } as ConnectedAccountWorkspaceEntity;
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 

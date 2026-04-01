@@ -11,9 +11,11 @@ import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/
 export const computeFoldersToUpdate = ({
   discoveredFolders,
   existingFolders,
+  externalIdToUuidMap,
 }: {
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
+  externalIdToUuidMap: Map<string, string>;
 }): Map<string, Partial<MessageFolderWorkspaceEntity>> => {
   const existingFoldersByExternalId = new Map(
     existingFolders.map((folder) => [folder.externalId, folder]),
@@ -33,12 +35,16 @@ export const computeFoldersToUpdate = ({
       continue;
     }
 
+    const resolvedParentFolderId = isNonEmptyString(
+      discoveredFolder.parentFolderId,
+    )
+      ? (externalIdToUuidMap.get(discoveredFolder.parentFolderId) ?? null)
+      : null;
+
     const discoveredFolderData = {
       name: discoveredFolder.name,
       isSentFolder: discoveredFolder.isSentFolder,
-      parentFolderId: isNonEmptyString(discoveredFolder.parentFolderId)
-        ? discoveredFolder.parentFolderId
-        : null,
+      parentFolderId: resolvedParentFolderId,
     };
 
     const existingFolderData = {

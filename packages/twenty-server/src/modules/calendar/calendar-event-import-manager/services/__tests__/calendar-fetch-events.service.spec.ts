@@ -1,4 +1,4 @@
-import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 
@@ -12,7 +12,7 @@ const mockGetCalendarEventsService = {
   getCalendarEvents: jest.fn(),
 };
 
-const mockCalendarChannelDataAccessService = {
+const mockCalendarChannelRepository = {
   update: jest.fn(),
 };
 
@@ -55,12 +55,12 @@ const baseConnectedAccount = {
 
 const createCalendarChannel = (
   syncCursor: string | null,
-): CalendarChannelWorkspaceEntity =>
+): CalendarChannelEntity =>
   ({
     id: 'channel-123',
     syncCursor,
     connectedAccountId: 'account-123',
-  }) as unknown as CalendarChannelWorkspaceEntity;
+  }) as unknown as CalendarChannelEntity;
 
 describe('CalendarFetchEventsService', () => {
   let service: CalendarFetchEventsService;
@@ -77,7 +77,7 @@ describe('CalendarFetchEventsService', () => {
     service = new CalendarFetchEventsService(
       mockCacheStorage as any,
       mockGlobalWorkspaceOrmManager as any,
-      mockCalendarChannelDataAccessService as any,
+      mockCalendarChannelRepository as any,
       mockCalendarChannelSyncStatusService as any,
       mockGetCalendarEventsService as any,
       mockCalendarEventImportErrorHandlerService as any,
@@ -147,9 +147,8 @@ describe('CalendarFetchEventsService', () => {
         workspaceId,
       );
 
-      expect(mockCalendarChannelDataAccessService.update).toHaveBeenCalledWith(
-        workspaceId,
-        { id: 'channel-123' },
+      expect(mockCalendarChannelRepository.update).toHaveBeenCalledWith(
+        { id: 'channel-123', workspaceId },
         { syncCursor: 'new-cursor-abc' },
       );
     });

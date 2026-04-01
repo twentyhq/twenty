@@ -1,8 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { FieldActorSource, MessageParticipantRole } from 'twenty-shared/types';
+import {
+  FieldActorSource,
+  MessageChannelContactAutoCreationPolicy,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
 
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -11,10 +16,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactJob } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
-import {
-  MessageChannelContactAutoCreationPolicy,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
@@ -34,17 +35,17 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
   const mockConnectedAccount: ConnectedAccountWorkspaceEntity = {
     id: 'connected-account-id',
     handle: 'test@example.com',
-    handleAliases: 'alias1@example.com,alias2@example.com',
+    handleAliases: ['alias1@example.com', 'alias2@example.com'],
   } as ConnectedAccountWorkspaceEntity;
 
-  const mockMessageChannel: MessageChannelWorkspaceEntity = {
+  const mockMessageChannel: MessageChannelEntity = {
     id: 'message-channel-id',
     isContactAutoCreationEnabled: true,
     contactAutoCreationPolicy:
       MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED,
     excludeNonProfessionalEmails: true,
     excludeGroupEmails: true,
-  } as MessageChannelWorkspaceEntity;
+  } as MessageChannelEntity;
 
   const mockMessages: MessageWithParticipants[] = [
     {

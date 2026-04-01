@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { Any } from 'typeorm';
 
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -26,9 +27,9 @@ import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-i
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 
 @Injectable()
 export class CalendarEventsImportService {
@@ -43,10 +44,11 @@ export class CalendarEventsImportService {
     private readonly calendarSaveEventsService: CalendarSaveEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly microsoftCalendarImportEventService: MicrosoftCalendarImportEventsService,
+    private readonly emailAliasManagerService: EmailAliasManagerService,
   ) {}
 
   public async processCalendarEventsImport(
-    calendarChannel: CalendarChannelWorkspaceEntity,
+    calendarChannel: CalendarChannelEntity,
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
     fetchedCalendarEvents?: FetchedCalendarEvent[],
@@ -104,6 +106,14 @@ export class CalendarEventsImportService {
           workspaceId,
         );
 
+        const refreshedHandleAliases =
+          await this.emailAliasManagerService.refreshHandleAliases(
+            connectedAccount,
+            workspaceId,
+          );
+
+        connectedAccount.handleAliases = refreshedHandleAliases;
+
         if (
           !isDefined(connectedAccount.handleAliases) ||
           !isDefined(calendarChannel.handle)
@@ -116,10 +126,7 @@ export class CalendarEventsImportService {
 
         const { filteredEvents, cancelledEvents } =
           filterEventsAndReturnCancelledEvents(
-            [
-              calendarChannel.handle,
-              ...connectedAccount.handleAliases.split(','),
-            ],
+            [calendarChannel.handle, ...connectedAccount.handleAliases],
             calendarEvents,
             blocklist.map((blocklist) => blocklist.handle ?? ''),
           );
@@ -148,9 +155,7 @@ export class CalendarEventsImportService {
 
         await calendarChannelEventAssociationRepository.delete({
           eventExternalId: Any(cancelledEventExternalIds),
-          calendarChannel: {
-            id: calendarChannel.id,
-          },
+          calendarChannelId: calendarChannel.id,
         });
 
         await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(

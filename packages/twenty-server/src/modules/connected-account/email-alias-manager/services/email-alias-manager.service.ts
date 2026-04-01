@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
@@ -16,13 +18,14 @@ export class EmailAliasManagerService {
     private readonly googleEmailAliasManagerService: GoogleEmailAliasManagerService,
     private readonly microsoftEmailAliasManagerService: MicrosoftEmailAliasManagerService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   public async refreshHandleAliases(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-  ) {
+  ): Promise<string[]> {
     let handleAliases: string[];
 
     switch (connectedAccount.provider) {
@@ -53,13 +56,14 @@ export class EmailAliasManagerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.connectedAccountDataAccessService.update(
-        workspaceId,
-        { id: connectedAccount.id },
+      await this.connectedAccountRepository.update(
+        { id: connectedAccount.id, workspaceId },
         {
-          handleAliases: handleAliases.join(','), // TODO: modify handleAliases to be of fieldmetadatatype array
+          handleAliases,
         },
       );
     }, authContext);
+
+    return handleAliases;
   }
 }

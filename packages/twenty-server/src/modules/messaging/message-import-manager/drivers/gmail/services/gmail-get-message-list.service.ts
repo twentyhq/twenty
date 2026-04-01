@@ -3,12 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { google } from 'googleapis';
 
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageChannelWorkspaceEntity,
-  MessageFolderImportPolicy,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -39,10 +37,7 @@ export class GmailGetMessageListService {
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced' | 'parentFolderId'
     >[],
-    messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
-      'messageFolderImportPolicy'
-    >,
+    messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(

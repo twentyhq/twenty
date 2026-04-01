@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import omit from 'lodash.omit';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { Any } from 'typeorm';
+import { Any, In, type Repository } from 'typeorm';
 
+import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
 import { type TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -17,6 +20,8 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 export class TimelineCalendarEventService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   async getCalendarEventsFromPersonIds({
@@ -79,15 +84,65 @@ export class TimelineCalendarEventService {
               person: true,
               workspaceMember: true,
             },
-            calendarChannelEventAssociations: {
-              calendarChannel: {
-                connectedAccount: {
-                  accountOwner: true,
-                },
-              },
-            },
+            calendarChannelEventAssociations: true,
           },
         });
+
+        const allCalendarChannelIds = [
+          ...new Set(
+            events.flatMap((event) =>
+              event.calendarChannelEventAssociations.map(
+                (association) => association.calendarChannelId,
+              ),
+            ),
+          ),
+        ];
+
+        const calendarChannels =
+          allCalendarChannelIds.length > 0
+            ? await this.calendarChannelRepository.find({
+                where: { id: In(allCalendarChannelIds), workspaceId },
+              })
+            : [];
+
+        const connectedAccountIds = [
+          ...new Set(
+            calendarChannels.map((channel) => channel.connectedAccountId),
+          ),
+        ];
+
+        const connectedAccountRepository =
+          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+            workspaceId,
+            'connectedAccount',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const connectedAccounts =
+          connectedAccountIds.length > 0
+            ? await connectedAccountRepository.find({
+                where: { id: Any(connectedAccountIds) },
+              })
+            : [];
+
+        const accountOwnerByAccountId = new Map(
+          connectedAccounts.map((account) => [
+            account.id,
+            account.accountOwnerId,
+          ]),
+        );
+
+        const calendarChannelMap = new Map(
+          calendarChannels.map((channel) => [
+            channel.id,
+            {
+              visibility: channel.visibility,
+              accountOwnerId: accountOwnerByAccountId.get(
+                channel.connectedAccountId,
+              ),
+            },
+          ]),
+        );
 
         const orderedEvents = events.sort(
           (a, b) => ids.indexOf(a.id) - ids.indexOf(b.id),
@@ -123,20 +178,22 @@ export class TimelineCalendarEventService {
             }),
           );
 
-          const isCalendarEventImportedByCurrentWorkspaceMember =
-            event.calendarChannelEventAssociations.some(
-              (association) =>
-                association.calendarChannel.connectedAccount.accountOwnerId ===
-                currentWorkspaceMemberId,
-            );
+          const hasFullAccess = event.calendarChannelEventAssociations.some(
+            (association) => {
+              const channel = calendarChannelMap.get(
+                association.calendarChannelId,
+              );
 
-          const visibility =
-            event.calendarChannelEventAssociations.some(
-              (association) =>
-                association.calendarChannel.visibility === 'SHARE_EVERYTHING',
-            ) || isCalendarEventImportedByCurrentWorkspaceMember
-              ? CalendarChannelVisibility.SHARE_EVERYTHING
-              : CalendarChannelVisibility.METADATA;
+              return (
+                channel?.visibility === 'SHARE_EVERYTHING' ||
+                channel?.accountOwnerId === currentWorkspaceMemberId
+              );
+            },
+          );
+
+          const visibility = hasFullAccess
+            ? CalendarChannelVisibility.SHARE_EVERYTHING
+            : CalendarChannelVisibility.METADATA;
 
           return {
             ...omit(event, [

@@ -1720,7 +1720,6 @@ export type FeatureFlag = {
 export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
-  IS_CONNECTED_ACCOUNT_MIGRATED = 'IS_CONNECTED_ACCOUNT_MIGRATED',
   IS_DATASOURCE_MIGRATED = 'IS_DATASOURCE_MIGRATED',
   IS_DIRECT_GRAPHQL_EXECUTION_ENABLED = 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED',
   IS_DRAFT_EMAIL_ENABLED = 'IS_DRAFT_EMAIL_ENABLED',
@@ -2405,7 +2404,7 @@ export type MessageFolder = {
   isSynced: Scalars['Boolean'];
   messageChannelId: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
-  parentFolderId?: Maybe<Scalars['UUID']>;
+  parentFolderId?: Maybe<Scalars['String']>;
   pendingSyncAction: MessageFolderPendingSyncAction;
   updatedAt: Scalars['DateTime'];
 };

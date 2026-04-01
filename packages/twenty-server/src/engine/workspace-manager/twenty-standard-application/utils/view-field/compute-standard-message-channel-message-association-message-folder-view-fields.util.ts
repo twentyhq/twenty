@@ -31,8 +31,8 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViewFie
           objectName: 'messageChannelMessageAssociationMessageFolder',
           context: {
             viewName: 'allMessageChannelMessageAssociationMessageFolders',
-            viewFieldName: 'messageFolder',
-            fieldName: 'messageFolder',
+            viewFieldName: 'messageFolderId',
+            fieldName: 'messageFolderId',
             position: 1,
             isVisible: true,
             size: 150,
@@ -74,8 +74,8 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViewFie
           context: {
             viewName:
               'messageChannelMessageAssociationMessageFolderRecordPageFields',
-            viewFieldName: 'messageFolder',
-            fieldName: 'messageFolder',
+            viewFieldName: 'messageFolderId',
+            fieldName: 'messageFolderId',
             position: 1,
             isVisible: true,
             size: 150,

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { MessageParticipantRole } from 'twenty-shared/types';
+import {
+  MessageChannelVisibility,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
 import { In } from 'typeorm';
 
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 

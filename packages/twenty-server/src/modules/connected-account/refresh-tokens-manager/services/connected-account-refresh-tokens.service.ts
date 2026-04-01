@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
@@ -31,7 +33,8 @@ export class ConnectedAccountRefreshTokensService {
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   async refreshAndSaveTokens(
@@ -80,9 +83,8 @@ export class ConnectedAccountRefreshTokensService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.connectedAccountDataAccessService.update(
-        workspaceId,
-        { id: connectedAccount.id },
+      await this.connectedAccountRepository.update(
+        { id: connectedAccount.id, workspaceId },
         {
           ...connectedAccountTokens,
           lastCredentialsRefreshedAt: new Date(),

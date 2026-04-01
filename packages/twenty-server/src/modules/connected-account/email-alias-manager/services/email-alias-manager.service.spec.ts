@@ -1,8 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
 import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-api-examples';
@@ -15,7 +16,7 @@ import { EmailAliasManagerService } from './email-alias-manager.service';
 describe('Email Alias Manager Service', () => {
   let emailAliasManagerService: EmailAliasManagerService;
   let microsoftEmailAliasManagerService: MicrosoftEmailAliasManagerService;
-  const mockConnectedAccountDataAccessService = {
+  const mockConnectedAccountRepository = {
     // @ts-expect-error legacy noImplicitAny
     update: jest.fn().mockResolvedValue((arg) => arg),
   };
@@ -33,8 +34,8 @@ describe('Email Alias Manager Service', () => {
         },
         EmailAliasManagerService,
         {
-          provide: ConnectedAccountDataAccessService,
-          useValue: mockConnectedAccountDataAccessService,
+          provide: getRepositoryToken(ConnectedAccountEntity),
+          useValue: mockConnectedAccountRepository,
         },
         {
           provide: GoogleEmailAliasManagerService,
@@ -79,8 +80,10 @@ describe('Email Alias Manager Service', () => {
         refreshToken: 'test-refresh-token',
       };
 
-      const expectedAliases =
-        'bertrand2@domain.onmicrosoft.com,bertrand3@otherdomain.com';
+      const expectedAliases = [
+        'bertrand2@domain.onmicrosoft.com',
+        'bertrand3@otherdomain.com',
+      ];
 
       jest.spyOn(microsoftEmailAliasManagerService, 'getHandleAliases');
 
@@ -93,9 +96,8 @@ describe('Email Alias Manager Service', () => {
         microsoftEmailAliasManagerService.getHandleAliases,
       ).toHaveBeenCalledWith(mockConnectedAccount);
 
-      expect(mockConnectedAccountDataAccessService.update).toHaveBeenCalledWith(
-        'test-workspace-id',
-        { id: mockConnectedAccount.id },
+      expect(mockConnectedAccountRepository.update).toHaveBeenCalledWith(
+        { id: mockConnectedAccount.id, workspaceId: 'test-workspace-id' },
         {
           handleAliases: expectedAliases,
         },

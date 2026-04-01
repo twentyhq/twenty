@@ -1,7 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  CalendarChannelSyncStage,
+  CalendarChannelVisibility,
+  ConnectedAccountProvider,
+  MessageChannelVisibility,
+} from 'twenty-shared/types';
 
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
@@ -11,23 +16,19 @@ import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/au
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
-import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import {
-  CalendarChannelSyncStage,
-  CalendarChannelVisibility,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mocked-uuid'),
@@ -39,20 +40,28 @@ describe('GoogleAPIsService', () => {
   let messagingChannelSyncStatusService: MessageChannelSyncStatusService;
   let createMessageChannelService: CreateMessageChannelService;
 
-  const mockConnectedAccountDataAccessService = {
+  const mockConnectedAccountRepository = {
     findOne: jest.fn(),
   };
 
-  const mockMessageChannelDataAccessService = {
+  const mockMessageChannelRepository = {
     find: jest.fn(),
   };
 
-  const mockCalendarChannelDataAccessService = {
+  const mockCalendarChannelRepository = {
     find: jest.fn(),
+  };
+
+  const mockUserWorkspaceRepository = {
+    findOne: jest.fn().mockResolvedValue({ id: 'user-workspace-id' }),
   };
 
   const mockWorkspaceMemberRepository = {
     findOneOrFail: jest.fn(),
+    findOne: jest.fn().mockResolvedValue({
+      id: 'workspace-member-id',
+      userId: 'user-id',
+    }),
   };
 
   const mockWorkspaceDataSource = {
@@ -180,16 +189,20 @@ describe('GoogleAPIsService', () => {
           },
         },
         {
-          provide: ConnectedAccountDataAccessService,
-          useValue: mockConnectedAccountDataAccessService,
+          provide: getRepositoryToken(ConnectedAccountEntity),
+          useValue: mockConnectedAccountRepository,
         },
         {
-          provide: MessageChannelDataAccessService,
-          useValue: mockMessageChannelDataAccessService,
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: mockUserWorkspaceRepository,
         },
         {
-          provide: CalendarChannelDataAccessService,
-          useValue: mockCalendarChannelDataAccessService,
+          provide: getRepositoryToken(MessageChannelEntity),
+          useValue: mockMessageChannelRepository,
+        },
+        {
+          provide: getRepositoryToken(CalendarChannelEntity),
+          useValue: mockCalendarChannelRepository,
         },
       ],
     }).compile();
@@ -224,11 +237,11 @@ describe('GoogleAPIsService', () => {
         provider: ConnectedAccountProvider.GOOGLE,
       } as ConnectedAccountWorkspaceEntity;
 
-      mockConnectedAccountDataAccessService.findOne.mockResolvedValue(
+      mockConnectedAccountRepository.findOne.mockResolvedValue(
         existingConnectedAccount,
       );
 
-      mockWorkspaceMemberRepository.findOneOrFail.mockResolvedValue({
+      mockWorkspaceMemberRepository.findOne.mockResolvedValue({
         id: 'workspace-member-id',
         userId: 'user-id',
       });
@@ -240,14 +253,15 @@ describe('GoogleAPIsService', () => {
         syncStage: CalendarChannelSyncStage.FAILED,
       };
 
-      mockCalendarChannelDataAccessService.find.mockResolvedValue([
+      mockCalendarChannelRepository.find.mockResolvedValue([
         failedCalendarChannel,
       ]);
 
-      mockMessageChannelDataAccessService.find.mockResolvedValue([]);
+      mockMessageChannelRepository.find.mockResolvedValue([]);
 
       await service.refreshGoogleRefreshToken({
         handle: 'test@example.com',
+        userId: 'user-id',
         workspaceMemberId: 'workspace-member-id',
         workspaceId: 'workspace-id',
         accessToken: 'new-access-token',

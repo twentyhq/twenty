@@ -1,8 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
@@ -18,7 +19,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
   let googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService;
   let microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService;
-  let connectedAccountDataAccessService: ConnectedAccountDataAccessService;
+  let connectedAccountRepository: { update: jest.Mock };
 
   const mockWorkspaceId = 'workspace-123';
   const mockConnectedAccountId = 'account-456';
@@ -52,7 +53,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
           },
         },
         {
-          provide: ConnectedAccountDataAccessService,
+          provide: getRepositoryToken(ConnectedAccountEntity),
           useValue: {
             update: jest.fn(),
           },
@@ -71,10 +72,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       module.get<MicrosoftAPIRefreshAccessTokenService>(
         MicrosoftAPIRefreshAccessTokenService,
       );
-    connectedAccountDataAccessService =
-      module.get<ConnectedAccountDataAccessService>(
-        ConnectedAccountDataAccessService,
-      );
+    connectedAccountRepository = module.get(
+      getRepositoryToken(ConnectedAccountEntity),
+    );
   });
 
   afterEach(() => {
@@ -103,7 +103,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();
-      expect(connectedAccountDataAccessService.update).not.toHaveBeenCalled();
+      expect(connectedAccountRepository.update).not.toHaveBeenCalled();
     });
 
     it('should refresh and save new Microsoft token when expired (lastCredentialsRefreshedAt is old)', async () => {
@@ -133,9 +133,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshToken);
-      expect(connectedAccountDataAccessService.update).toHaveBeenCalledWith(
-        mockWorkspaceId,
-        { id: mockConnectedAccountId },
+      expect(connectedAccountRepository.update).toHaveBeenCalledWith(
+        { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
           ...newTokens,
           lastCredentialsRefreshedAt: expect.any(Date),
@@ -170,9 +169,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         googleAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshToken);
-      expect(connectedAccountDataAccessService.update).toHaveBeenCalledWith(
-        mockWorkspaceId,
-        { id: mockConnectedAccountId },
+      expect(connectedAccountRepository.update).toHaveBeenCalledWith(
+        { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
           ...newTokens,
           lastCredentialsRefreshedAt: expect.any(Date),
@@ -207,9 +205,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshToken);
-      expect(connectedAccountDataAccessService.update).toHaveBeenCalledWith(
-        mockWorkspaceId,
-        { id: mockConnectedAccountId },
+      expect(connectedAccountRepository.update).toHaveBeenCalledWith(
+        { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
           ...newTokens,
           lastCredentialsRefreshedAt: expect.any(Date),
@@ -389,7 +386,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();
-      expect(connectedAccountDataAccessService.update).not.toHaveBeenCalled();
+      expect(connectedAccountRepository.update).not.toHaveBeenCalled();
     });
 
     it('should reuse existing tokens for SAML without attempting a refresh', async () => {
@@ -416,7 +413,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();
-      expect(connectedAccountDataAccessService.update).not.toHaveBeenCalled();
+      expect(connectedAccountRepository.update).not.toHaveBeenCalled();
     });
   });
 });
