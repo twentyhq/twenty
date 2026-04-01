@@ -719,27 +719,45 @@ Front components are React components that render directly inside Twenty's UI. T
 
 #### Basic example
 
-```tsx src/front-components/my-widget.tsx
+The quickest way to see a front component in action is to register it as a **quick action command**. This makes it accessible from a button on the top right of the page:
+
+```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
-const MyWidget = () => {
+const HelloWorld = () => {
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>My Custom Widget</h1>
+      <h1>Hello from my app!</h1>
       <p>This component renders inside Twenty.</p>
     </div>
   );
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'my-widget',
-  description: 'A custom widget component',
-  component: MyWidget,
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+    shortLabel: 'Hello',
+    label: 'Hello World',
+    icon: 'IconBolt',
+    isPinned: true,
+    availabilityType: 'GLOBAL',
+  },
 });
 ```
 
-{/* TODO: add screenshot of a front component rendered on a record page */}
+After syncing with `yarn twenty dev`, you can see the `⚡️ Hello` quick action on the top right of the page:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Installed app — Content tab" />
+</div>
+
+Click on the button to see the component in action:
+
+  {/* TODO: add screenshot of a front component rendered on a record page */}
 
 #### Configuration fields
 
