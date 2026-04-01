@@ -2,17 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataEligibleForFieldsWidget,
+} from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
@@ -66,6 +74,8 @@ export class FieldsWidgetUpsertService {
 
     const {
       flatPageLayoutWidgetMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       flatViewFieldGroupMaps,
       flatViewFieldMaps,
       flatViewMaps,
@@ -75,6 +85,8 @@ export class FieldsWidgetUpsertService {
           workspaceId,
           flatMapsKeys: [
             'flatPageLayoutWidgetMaps',
+            'flatFieldMetadataMaps',
+            'flatObjectMetadataMaps',
             'flatViewFieldGroupMaps',
             'flatViewFieldMaps',
             'flatViewMaps',
@@ -109,6 +121,22 @@ export class FieldsWidgetUpsertService {
       );
     }
 
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    const objectMetadata = isDefined(flatView)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatView.objectMetadataId,
+          flatEntityMaps:
+            flatObjectMetadataMaps as FlatEntityMaps<FlatObjectMetadata>,
+        })
+      : undefined;
+
+    const labelIdentifierFieldMetadataId =
+      objectMetadata?.labelIdentifierFieldMetadataId ?? null;
+
     const existingGroups = Object.values(
       flatViewFieldGroupMaps.byUniversalIdentifier,
     )
@@ -135,6 +163,8 @@ export class FieldsWidgetUpsertService {
         applicationId: workspaceCustomFlatApplication.id,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
+        labelIdentifierFieldMetadataId,
+        flatFieldMetadataMaps,
         flatViewMaps,
         flatViewFieldGroupMaps,
       });
@@ -143,9 +173,14 @@ export class FieldsWidgetUpsertService {
         inputFields: input.fields!,
         existingGroups,
         existingViewFields,
+        viewId,
         workspaceId,
+        applicationId: workspaceCustomFlatApplication.id,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
+        labelIdentifierFieldMetadataId,
+        flatFieldMetadataMaps,
+        flatViewMaps,
       });
     }
 
@@ -171,6 +206,8 @@ export class FieldsWidgetUpsertService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    labelIdentifierFieldMetadataId,
+    flatFieldMetadataMaps,
     flatViewMaps,
     flatViewFieldGroupMaps,
   }: {
@@ -181,6 +218,8 @@ export class FieldsWidgetUpsertService {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    labelIdentifierFieldMetadataId: string | null;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatViewMaps: FlatViewMaps;
     flatViewFieldGroupMaps: FlatViewFieldGroupMaps;
   }): Promise<void> {
@@ -362,6 +401,77 @@ export class FieldsWidgetUpsertService {
       return [updatedField];
     });
 
+    const viewFieldsToCreate: FlatViewField[] = [];
+
+    for (const inputGroup of inputGroups) {
+      for (const inputField of inputGroup.fields) {
+        if (
+          isDefined(inputField.viewFieldId) ||
+          !isDefined(inputField.fieldMetadataId)
+        ) {
+          continue;
+        }
+
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: inputField.fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        if (
+          !isDefined(fieldMetadata) ||
+          !isFieldMetadataEligibleForFieldsWidget({
+            fieldName: fieldMetadata.name,
+            fieldType: fieldMetadata.type,
+            isLabelIdentifierField:
+              fieldMetadata.id === labelIdentifierFieldMetadataId,
+          })
+        ) {
+          continue;
+        }
+
+        const {
+          fieldMetadataUniversalIdentifier,
+          viewUniversalIdentifier,
+          viewFieldGroupUniversalIdentifier,
+        } = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'viewField',
+          foreignKeyValues: {
+            fieldMetadataId: inputField.fieldMetadataId,
+            viewId,
+            viewFieldGroupId: inputGroup.id,
+          },
+          flatEntityMaps: {
+            flatFieldMetadataMaps,
+            flatViewMaps,
+            flatViewFieldGroupMaps: optimisticFlatViewFieldGroupMaps,
+          },
+        });
+
+        viewFieldsToCreate.push({
+          id: v4(),
+          workspaceId,
+          applicationId,
+          universalIdentifier: v4(),
+          applicationUniversalIdentifier,
+          fieldMetadataId: inputField.fieldMetadataId,
+          fieldMetadataUniversalIdentifier,
+          viewId,
+          viewUniversalIdentifier,
+          viewFieldGroupId: inputGroup.id,
+          viewFieldGroupUniversalIdentifier,
+          isVisible: inputField.isVisible,
+          size: DEFAULT_VIEW_FIELD_SIZE,
+          position: inputField.position,
+          aggregateOperation: null,
+          overrides: null,
+          universalOverrides: null,
+          createdAt: now,
+          updatedAt: now,
+          deletedAt: null,
+        });
+      }
+    }
+
     const fieldsWithStaleGroupOverrides =
       this.buildFieldUpdatesForStaleGroupOverrides({
         existingViewFields,
@@ -382,7 +492,7 @@ export class FieldsWidgetUpsertService {
               flatEntityToUpdate: groupsToUpdate,
             },
             viewField: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: viewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [
                 ...viewFieldsToUpdate,
@@ -408,14 +518,24 @@ export class FieldsWidgetUpsertService {
     inputFields,
     existingGroups,
     existingViewFields,
+    viewId,
     workspaceId,
+    applicationId,
     applicationUniversalIdentifier,
+    labelIdentifierFieldMetadataId,
+    flatFieldMetadataMaps,
+    flatViewMaps,
   }: {
     inputFields: UpsertFieldsWidgetFieldInput[];
     existingGroups: FlatViewFieldGroup[];
     existingViewFields: FlatViewField[];
+    viewId: string;
     workspaceId: string;
+    applicationId: string;
     applicationUniversalIdentifier: string;
+    labelIdentifierFieldMetadataId: string | null;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatViewMaps: FlatViewMaps;
   }): Promise<void> {
     const now = new Date().toISOString();
 
@@ -494,6 +614,68 @@ export class FieldsWidgetUpsertService {
       return [updatedField];
     });
 
+    const viewFieldsToCreate: FlatViewField[] = inputFields
+      .filter((inputField) => {
+        if (
+          isDefined(inputField.viewFieldId) ||
+          !isDefined(inputField.fieldMetadataId)
+        ) {
+          return false;
+        }
+
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: inputField.fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        return (
+          isDefined(fieldMetadata) &&
+          isFieldMetadataEligibleForFieldsWidget({
+            fieldName: fieldMetadata.name,
+            fieldType: fieldMetadata.type,
+            isLabelIdentifierField:
+              fieldMetadata.id === labelIdentifierFieldMetadataId,
+          })
+        );
+      })
+      .map((inputField) => {
+        const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
+          resolveEntityRelationUniversalIdentifiers({
+            metadataName: 'viewField',
+            foreignKeyValues: {
+              fieldMetadataId: inputField.fieldMetadataId!,
+              viewId,
+            },
+            flatEntityMaps: {
+              flatFieldMetadataMaps,
+              flatViewMaps,
+            },
+          });
+
+        return {
+          id: v4(),
+          workspaceId,
+          applicationId,
+          universalIdentifier: v4(),
+          applicationUniversalIdentifier,
+          fieldMetadataId: inputField.fieldMetadataId!,
+          fieldMetadataUniversalIdentifier,
+          viewId,
+          viewUniversalIdentifier,
+          viewFieldGroupId: null,
+          viewFieldGroupUniversalIdentifier: null,
+          isVisible: inputField.isVisible,
+          size: DEFAULT_VIEW_FIELD_SIZE,
+          position: inputField.position,
+          aggregateOperation: null,
+          overrides: null,
+          universalOverrides: null,
+          createdAt: now,
+          updatedAt: now,
+          deletedAt: null,
+        };
+      });
+
     const fieldsWithStaleGroupOverrides =
       this.buildFieldUpdatesForStaleGroupOverrides({
         existingViewFields,
@@ -514,7 +696,7 @@ export class FieldsWidgetUpsertService {
               flatEntityToUpdate: [],
             },
             viewField: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: viewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [
                 ...viewFieldsToUpdate,

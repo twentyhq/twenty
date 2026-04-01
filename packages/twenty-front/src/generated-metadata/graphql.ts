@@ -5514,10 +5514,12 @@ export type UpsertFieldPermissionsInput = {
 };
 
 export type UpsertFieldsWidgetFieldInput = {
+  /** The id of the field metadata. Used to create a new view field when viewFieldId is not provided. */
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
   isVisible: Scalars['Boolean'];
   position: Scalars['Float'];
-  /** The id of the view field */
-  viewFieldId: Scalars['UUID'];
+  /** The id of the view field. Required if fieldMetadataId is not provided. */
+  viewFieldId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpsertFieldsWidgetGroupInput = {

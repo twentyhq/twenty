@@ -671,9 +671,9 @@ msgstr "访问密钥 ID"
 msgid "Access workspace data"
 msgstr "访问工作区数据"
 
-#. js-lingui-id: W5nhmk
+#. js-lingui-id: c2UA7k
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Claude Code, Cursor, or ChatGPT. Once connected, try: \"Show me the 5 most recently created companies\" or \"Create a new person named Jane Doe\"."
+msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
 msgstr ""
 
 #. js-lingui-id: u2Cycw
@@ -899,7 +899,7 @@ msgid "Add custom endpoints, private gateways, or additional regions."
 msgstr "添加自定义端点、私有网关或其他区域。"
 
 #. js-lingui-id: GuJvBr
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "Add custom instructions specific to your workspace (appended to system prompt)"
 msgstr "添加特定于您工作区的自定义说明 (附加到系统提示词)"
 
@@ -1175,11 +1175,6 @@ msgstr "已添加 {beautifyPastDateRelative}"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistTable.tsx
 msgid "Added to blocklist"
 msgstr "已添加到拦截列表"
-
-#. js-lingui-id: y5mJau
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "Additional Instructions"
-msgstr "附加说明"
 
 #. js-lingui-id: hW/fMg
 #: src/modules/ui/field/input/components/AddressInput.tsx
@@ -2279,11 +2274,6 @@ msgstr "身份验证"
 msgid "Authentication failed"
 msgstr "身份验证失败"
 
-#. js-lingui-id: TxT0ER
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "Authentication method"
-msgstr "身份验证方法"
-
 #. js-lingui-id: H7qgYQ
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Authenticator app"
@@ -3292,7 +3282,6 @@ msgid "Configuration"
 msgstr "配置"
 
 #. js-lingui-id: iAL9tI
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Configure"
 msgstr "配置"
@@ -5219,7 +5208,7 @@ msgid "e.g. OpenAI EU"
 msgstr "例如：OpenAI EU"
 
 #. js-lingui-id: p5P8NB
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "E.g., \"We are a B2B SaaS company. Always use formal language...\""
 msgstr "例如，\"我们是一家 B2B SaaS 公司。始终使用正式语言...\""
 
@@ -6622,7 +6611,7 @@ msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
 #. js-lingui-id: 9ryUyP
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "Failed to save workspace instructions"
 msgstr "保存工作区说明失败"
 
@@ -10470,11 +10459,6 @@ msgstr "OAuth"
 msgid "OAuth Credentials"
 msgstr "OAuth 凭据"
 
-#. js-lingui-id: LNLTJB
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
-msgid "OAuth or API Key"
-msgstr "OAuth 或 API 密钥"
-
 #. js-lingui-id: pNEViR
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -11656,6 +11640,22 @@ msgstr "查看更新日志"
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Read documentation"
 msgstr "阅读文档"
+
+#. js-lingui-id: U26cMX
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+msgid "Read system prompts"
+msgstr ""
+
+#. js-lingui-id: EKsFda
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+msgid "Read the system prompts to understand how the AI works"
+msgstr ""
+
+#. js-lingui-id: 0URVx8
+#. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1, }, )
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
+msgstr ""
 
 #. js-lingui-id: afMuDE
 #: src/pages/auth/Authorize.tsx
@@ -14055,11 +14055,10 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "System Prompt"
 msgstr "系统提示"
 
@@ -15685,11 +15684,6 @@ msgstr ""
 msgid "View all evaluations"
 msgstr ""
 
-#. js-lingui-id: 3JjgWt
-#: src/pages/settings/ai/SettingsAI.tsx
-msgid "View and customize AI instructions"
-msgstr "查看并自定义 AI 说明"
-
 #. js-lingui-id: XVf/G7
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "View and filter events, page views, object changes"
@@ -15794,11 +15788,6 @@ msgstr ""
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view sort"
 msgstr "视图排序"
-
-#. js-lingui-id: FNDoRH
-#: src/pages/settings/ai/SettingsAI.tsx
-msgid "View the AI system prompt and add custom instructions"
-msgstr "查看 AI 系统提示词并添加自定义说明"
 
 #. js-lingui-id: bJAIqT
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -16232,8 +16221,8 @@ msgid "Workspace Info"
 msgstr "工作区信息"
 
 #. js-lingui-id: BYrMT0
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "Workspace Instructions"
 msgstr "工作区说明"
 
