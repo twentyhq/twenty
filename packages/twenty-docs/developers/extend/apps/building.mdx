@@ -749,8 +749,41 @@ export default defineFrontComponent({
 | `component` | Yes | A React component function |
 | `name` | No | Display name |
 | `description` | No | Description of what the component does |
-| `isHeadless` | No | Set to `true` if the component has no visible UI |
+| `isHeadless` | No | Set to `true` if the component has no visible UI (see below) |
 | `command` | No | Register the component as a command in the command menu (see below) |
+
+#### Placing a front component on a page
+
+Front components are not visible by default — you need to place them on a page using a **page layout**. See the [definePageLayout](#definelayout) section for how to add a `FRONT_COMPONENT` widget to a record page tab.
+
+#### Headless components (`isHeadless: true`)
+
+Headless components render no visible UI but still run React logic. This is useful for **effect components** — components that perform side effects when mounted, such as syncing data, starting a timer, listening to events, or triggering a notification.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
 
 #### Accessing runtime context
 
@@ -825,7 +858,7 @@ export default defineFrontComponent({
   description: 'A command-triggered component',
   component: QuickAction,
   command: {
-    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+    universalIdentifier: 'bd0505af-97c6-4edf-b0b6-8c2b3fdf9e44',
     label: 'Run Quick Action',
     shortLabel: 'Quick Action',
     icon: 'IconBolt',
@@ -849,26 +882,6 @@ Command options:
 | `availabilityType` | No | `'GLOBAL'`, `'RECORD_SELECTION'`, or `'FALLBACK'` |
 | `availabilityObjectUniversalIdentifier` | No | Restrict to a specific object type |
 | `conditionalAvailabilityExpression` | No | Boolean or expression to control visibility |
-
-#### Placing a front component on a page
-
-Front components are not visible by default — you need to place them using a `definePageLayout` (see the definePageLayout section below). In the page layout, add a widget with `type: 'FRONT_COMPONENT'`:
-
-```ts
-widgets: [
-  {
-    universalIdentifier: '...',
-    title: 'My Widget',
-    type: 'FRONT_COMPONENT',
-    configuration: {
-      configurationType: 'FRONT_COMPONENT',
-      frontComponentUniversalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-    },
-  },
-],
-```
-
-{/* TODO: add screenshot of a record page with a custom tab containing a front component widget */}
 
 #### Styling
 
