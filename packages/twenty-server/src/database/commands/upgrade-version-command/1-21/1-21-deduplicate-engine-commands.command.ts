@@ -91,9 +91,7 @@ export class DeduplicateEngineCommandsCommand extends ActiveOrSuspendedWorkspace
       standardAllFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((item) =>
-        NEW_UNIVERSAL_IDENTIFIERS.has(item.universalIdentifier),
-      )
+      .filter((item) => NEW_UNIVERSAL_IDENTIFIERS.has(item.universalIdentifier))
       .filter(
         (item) =>
           !isDefined(
