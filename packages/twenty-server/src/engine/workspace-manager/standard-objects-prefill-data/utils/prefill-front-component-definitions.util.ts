@@ -5,6 +5,7 @@ const SEED_FRONT_COMPONENT_ID_NAMESPACE =
 
 export type SeedFrontComponentDefinition = {
   id: string;
+  universalIdentifier: string;
   name: string;
   description: string;
   componentName: string;
@@ -41,6 +42,10 @@ export const getSeedFrontComponentDefinitions = (
   return [
     {
       id: helloWorldId,
+      universalIdentifier: uuidv5(
+        `${workspaceId}:seed-front-component-uid:hello-world`,
+        SEED_FRONT_COMPONENT_ID_NAMESPACE,
+      ),
       name: 'Hello World',
       description:
         'A sample visual front component that displays execution context',
@@ -51,6 +56,10 @@ export const getSeedFrontComponentDefinitions = (
     },
     {
       id: showNotificationId,
+      universalIdentifier: uuidv5(
+        `${workspaceId}:seed-front-component-uid:show-notification`,
+        SEED_FRONT_COMPONENT_ID_NAMESPACE,
+      ),
       name: 'Show Notification',
       description:
         'A sample headless front component that displays a notification',

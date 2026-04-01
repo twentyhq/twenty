@@ -114,6 +114,7 @@ export class PrefillFrontComponentService {
         ownerFlatApplication,
         input: {
           id: definition.id,
+          universalIdentifier: definition.universalIdentifier,
           name: definition.name,
           description: definition.description,
           componentName: definition.componentName,
