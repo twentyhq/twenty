@@ -31,10 +31,10 @@ The scaffolder will:
 
 ## Scaffolding modes
 
-| Flag           | Behavior                                                                                         |
-| -------------- | ------------------------------------------------------------------------------------------------ |
+| Flag           | Behavior                                                                                                       |
+| -------------- | -------------------------------------------------------------------------------------------------------------- |
 | `--minimal`    | **(default)** Creates only core files (`application-config.ts`, `default-role.ts`, pre/post-install functions) |
-| `--exhaustive` | Creates all example entities                                                                                  |
+| `--exhaustive` | Creates all example entities                                                                                   |
 
 Other flags:
 
