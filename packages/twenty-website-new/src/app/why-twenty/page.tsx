@@ -1,12 +1,15 @@
 import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { HERO_DATA } from '@/app/why-twenty/constants/hero';
 import { QUOTE_DATA } from '@/app/why-twenty/constants/quote';
+import { SIGNOFF_DATA } from '@/app/why-twenty/constants/signoff';
 import { STATEMENT_ONE } from '@/app/why-twenty/constants/statement-one';
 import { STATEMENT_TWO } from '@/app/why-twenty/constants/statement-two';
+import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { Quote } from '@/sections/Quote/components';
+import { Signoff } from '@/sections/Signoff/components';
 import { Statement } from '@/sections/Statement/components';
 import { theme } from '@/theme';
 
@@ -56,6 +59,25 @@ export default function WhyTwentyPage() {
       >
         <Statement.Heading segments={STATEMENT_TWO.heading} />
       </Statement.Root>
+
+      <Signoff.Root
+        backgroundColor={theme.colors.primary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        variant="shaped"
+        shapeFillColor={theme.colors.secondary.background[100]}
+      >
+        <Signoff.Heading segments={SIGNOFF_DATA.heading} />
+        <Signoff.Body body={SIGNOFF_DATA.body} />
+        <Signoff.Cta>
+          <LinkButton
+            color="primary"
+            href="https://app.twenty.com/welcome"
+            label="Get started"
+            type="anchor"
+            variant="contained"
+          />
+        </Signoff.Cta>
+      </Signoff.Root>
     </>
   );
 }
