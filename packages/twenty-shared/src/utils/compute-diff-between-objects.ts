@@ -27,7 +27,7 @@ type ComputeDiffBetweenObjectsParams<
   existingObjects: T[];
   receivedObjects: K[];
   propertiesToCompare: (keyof K & keyof T)[];
-  isEntityIncluded: (entity: T) => boolean;
+  isEntityIncluded: (entity: NoInfer<T>) => boolean;
 };
 
 export const computeDiffBetweenObjects = <
