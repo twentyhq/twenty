@@ -1,17 +1,15 @@
 import { styled } from '@linaria/react';
-import { type ComponentType, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsToolTableRowProps = {
-  LeftIcon: ComponentType<{ size: number }>;
+  leftIcon: ReactNode;
   name: string;
-  isCustom?: boolean;
-  applicationId?: string | null;
+  appLabel: string;
   action?: ReactNode;
   link?: string;
   onClick?: () => void;
@@ -27,10 +25,9 @@ const StyledIconContainer = styled.div`
 `;
 
 export const SettingsToolTableRow = ({
-  LeftIcon,
+  leftIcon,
   name,
-  isCustom,
-  applicationId,
+  appLabel,
   action,
   link,
   onClick,
@@ -50,12 +47,12 @@ export const SettingsToolTableRow = ({
         overflow="hidden"
       >
         <StyledIconContainer>
-          <LeftIcon size={16} />
+          {leftIcon}
         </StyledIconContainer>
         <OverflowingTextWithTooltip text={name} />
       </TableCell>
-      <TableCell>
-        <SettingsItemTypeTag item={{ isCustom, applicationId }} />
+      <TableCell minWidth="0" overflow="hidden">
+        <OverflowingTextWithTooltip text={appLabel} />
       </TableCell>
       <TableCell
         align="right"

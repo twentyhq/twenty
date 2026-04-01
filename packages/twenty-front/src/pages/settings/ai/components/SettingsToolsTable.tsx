@@ -1,4 +1,6 @@
 import { styled } from '@linaria/react';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -17,6 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
+  Avatar,
   H2Title,
   IconChevronRight,
   IconCode,
@@ -27,6 +30,7 @@ import {
   IconSettings,
   IconTable,
   IconTool,
+  useIcons,
 } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -43,7 +47,27 @@ import {
 type CustomToolItem = { kind: 'custom'; tool: LogicFunction };
 type SystemToolItem = { kind: 'system'; tool: ToolIndexEntry };
 
-// TODO: we will also need to handle object icons for custom tools
+const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
+  query FindManyApplicationsForToolTable {
+    findManyApplications {
+      id
+      name
+      universalIdentifier
+    }
+  }
+`;
+
+const FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE = gql`
+  query FindManyMarketplaceAppsForToolTable {
+    findManyMarketplaceApps {
+      id
+      universalIdentifier
+      icon
+      logo
+    }
+  }
+`;
+
 const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
     case 'database':
@@ -69,9 +93,25 @@ const StyledTableHeaderRowContainer = styled.div`
 
 export const SettingsToolsTable = () => {
   const { theme } = useContext(ThemeContext);
+  const { getIcon } = useIcons();
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
+  const { data: applicationsData } = useQuery<{
+    findManyApplications: Array<{
+      id: string;
+      name: string;
+      universalIdentifier: string;
+    }>;
+  }>(FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE);
+  const { data: marketplaceAppsData } = useQuery<{
+    findManyMarketplaceApps: Array<{
+      id: string;
+      universalIdentifier: string;
+      icon: string;
+      logo?: string | null;
+    }>;
+  }>(FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE);
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showCustomTools, setShowCustomTools] = useState(true);
@@ -109,6 +149,18 @@ export const SettingsToolsTable = () => {
   const systemTools: SystemToolItem[] = toolIndex
     .filter((systemTool) => systemTool.category !== 'LOGIC_FUNCTION')
     .map((tool) => ({ kind: 'system', tool }));
+
+  const applicationById = new Map(
+    (applicationsData?.findManyApplications ?? []).map((application) => [
+      application.id,
+      application,
+    ]),
+  );
+  const marketplaceAppByUniversalIdentifier = new Map(
+    (marketplaceAppsData?.findManyMarketplaceApps ?? []).map(
+      (marketplaceApp) => [marketplaceApp.universalIdentifier, marketplaceApp],
+    ),
+  );
 
   const filteredTools = [...customTools, ...systemTools]
     .filter((item) => {
@@ -210,32 +262,74 @@ export const SettingsToolsTable = () => {
                 <Skeleton height={32} borderRadius={4} key={index} />
               </SkeletonTheme>
             ))
-          : filteredTools.map((item) => (
-              <SettingsToolTableRow
-                key={item.kind === 'custom' ? item.tool.id : item.tool.name}
-                LeftIcon={
-                  item.kind === 'custom'
-                    ? IconCode
-                    : getCategoryIcon(item.tool.category)
-                }
-                name={item.tool.name}
-                isCustom={item.kind === 'custom'}
-                applicationId={
-                  item.kind === 'custom' ? item.tool.applicationId : undefined
-                }
-                action={
-                  <IconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                }
-                link={
-                  item.kind === 'custom'
-                    ? getCustomToolLink(item.tool)
-                    : getSystemToolLink(item.tool)
-                }
-              />
-            ))}
+          : filteredTools.map((item) => {
+              const application =
+                item.kind === 'custom' && isDefined(item.tool.applicationId)
+                  ? applicationById.get(item.tool.applicationId)
+                  : undefined;
+              const marketplaceApp = isDefined(application)
+                ? marketplaceAppByUniversalIdentifier.get(
+                    application.universalIdentifier,
+                  )
+                : undefined;
+              const MarketplaceIcon = isDefined(marketplaceApp?.icon)
+                ? getIcon(marketplaceApp.icon)
+                : undefined;
+
+              const leftIcon =
+                item.kind === 'custom' ? (
+                  isDefined(application) && isDefined(marketplaceApp?.logo) ? (
+                    <Avatar
+                      avatarUrl={marketplaceApp?.logo ?? null}
+                      placeholder={application.name}
+                      placeholderColorSeed={application.name}
+                      type="squared"
+                      size="xs"
+                    />
+                  ) : isDefined(MarketplaceIcon) ? (
+                    <MarketplaceIcon size={16} />
+                  ) : isDefined(application) ? (
+                    <Avatar
+                      placeholder={application.name}
+                      placeholderColorSeed={application.name}
+                      type="squared"
+                      size="xs"
+                    />
+                  ) : (
+                    <IconCode size={16} />
+                  )
+                ) : (
+                  (() => {
+                    const SystemToolIcon = getCategoryIcon(item.tool.category);
+                    return <SystemToolIcon size={16} />;
+                  })()
+                );
+
+              const appLabel =
+                item.kind === 'custom'
+                  ? application?.name ?? t`Custom`
+                  : t`Standard`;
+
+              return (
+                <SettingsToolTableRow
+                  key={item.kind === 'custom' ? item.tool.id : item.tool.name}
+                  leftIcon={leftIcon}
+                  name={item.tool.name}
+                  appLabel={appLabel}
+                  action={
+                    <IconChevronRight
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  }
+                  link={
+                    item.kind === 'custom'
+                      ? getCustomToolLink(item.tool)
+                      : getSystemToolLink(item.tool)
+                  }
+                />
+              );
+            })}
       </Table>
     </Section>
   );
