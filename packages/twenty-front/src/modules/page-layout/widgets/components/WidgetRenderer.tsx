@@ -106,7 +106,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     isPageLayoutInEditMode &&
     (!isRecordPageLayout ||
       (isRecordPageLayout && isRecordPageGlobalEditionEnabled) ||
-      widget.type === WidgetType.FIELDS);
+      widget.type === WidgetType.FIELDS ||
+      widget.type === WidgetType.FIELD);
 
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')

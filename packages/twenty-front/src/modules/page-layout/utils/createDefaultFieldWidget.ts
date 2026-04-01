@@ -9,12 +9,14 @@ import {
 export const createDefaultFieldWidget = ({
   id,
   pageLayoutTabId,
+  title,
   fieldMetadataId,
   objectMetadataId,
   positionIndex,
 }: {
   id: string;
   pageLayoutTabId: string;
+  title: string;
   fieldMetadataId: string;
   objectMetadataId: string;
   positionIndex: number;
@@ -23,7 +25,7 @@ export const createDefaultFieldWidget = ({
     __typename: 'PageLayoutWidget',
     id,
     pageLayoutTabId,
-    title: '',
+    title,
     type: WidgetType.FIELD,
     configuration: {
       __typename: 'FieldConfiguration',

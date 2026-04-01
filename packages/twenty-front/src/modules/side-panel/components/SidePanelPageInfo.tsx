@@ -5,9 +5,8 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 
-import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
-import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
+import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
@@ -18,6 +17,7 @@ import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLa
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { useContext } from 'react';
@@ -101,6 +101,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
         SidePanelPages.PageLayoutIframeSettings,
         SidePanelPages.PageLayoutTabSettings,
         SidePanelPages.PageLayoutFieldsSettings,
+        SidePanelPages.PageLayoutFieldSettings,
         SidePanelPages.PageLayoutRecordTableSettings,
       ].includes(pageChip.page?.page)
     : false;

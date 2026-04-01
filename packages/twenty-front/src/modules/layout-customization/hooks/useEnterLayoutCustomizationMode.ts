@@ -15,16 +15,10 @@ import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/commo
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
 
   const enterLayoutCustomizationMode = useCallback(() => {
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
@@ -54,7 +48,6 @@ export const useEnterLayoutCustomizationMode = () => {
     const currentSidePanelPage = store.get(sidePanelPageState.atom);
 
     if (
-      isCommandMenuItemEnabled &&
       isSidePanelOpened &&
       currentSidePanelPage === SidePanelPages.CommandMenuDisplay
     ) {
@@ -67,7 +60,7 @@ export const useEnterLayoutCustomizationMode = () => {
         resetNavigationStack: true,
       });
     }
-  }, [isCommandMenuItemEnabled, navigateSidePanel, store]);
+  }, [navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };
 };

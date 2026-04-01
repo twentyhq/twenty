@@ -429,7 +429,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   editRecordPageLayout: {
     universalIdentifier: 'd9794c67-1799-424f-8871-5ea771dd4a6d',
-    label: 'Edit Page Layout',
+    label: 'Edit Layout',
     icon: 'IconPencil',
     isPinned: false,
     position: 30,

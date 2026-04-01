@@ -29,6 +29,7 @@ const buildContext = (
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},
+  objectMetadataLabel: '',
   ...overrides,
 });
 

@@ -24,7 +24,9 @@ const StyledFormFieldInputInnerContainer = styled.div<
   border-bottom-right-radius: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
   border-right: ${({ multiline, hasRightElement }) =>
-    multiline || !hasRightElement ? 'auto' : 'none'};
+    multiline || !hasRightElement
+      ? `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${({ multiline, hasRightElement }) =>
     multiline || !hasRightElement ? themeCssVariables.border.radius.sm : '0'};
