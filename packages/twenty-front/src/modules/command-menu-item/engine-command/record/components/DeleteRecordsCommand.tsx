@@ -7,6 +7,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteRecordsCommand = () => {
@@ -31,9 +32,11 @@ export const DeleteRecordsCommand = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
+  const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
+
   const { incrementalDeleteManyRecords } = useIncrementalDeleteManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
-    filter: graphqlFilter ?? {},
+    filter: graphqlFilter ?? noMatchFilter,
     pageSize: DEFAULT_QUERY_PAGE_SIZE,
     delayInMsBetweenMutations: 50,
   });
@@ -60,6 +63,11 @@ export const DeleteRecordsCommand = () => {
 
       await deleteOneRecord(recordId);
     } else {
+      if (!isDefined(graphqlFilter)) {
+        throw new Error(
+          'Cannot delete multiple records without a valid filter',
+        );
+      }
       await incrementalDeleteManyRecords();
     }
   };

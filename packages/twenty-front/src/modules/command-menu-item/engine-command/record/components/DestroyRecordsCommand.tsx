@@ -33,12 +33,14 @@ export const DestroyRecordsCommand = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
+  const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
+
   const deletedAtFilter: RecordGqlOperationFilter = {
     deletedAt: { is: 'NOT_NULL' },
   };
 
-  const combinedFilter = {
-    ...(graphqlFilter ?? {}),
+  const combinedFilter: RecordGqlOperationFilter = {
+    ...(graphqlFilter ?? noMatchFilter),
     ...deletedAtFilter,
   };
 
@@ -59,6 +61,11 @@ export const DestroyRecordsCommand = () => {
         objectNamePlural: objectMetadataItem.namePlural,
       });
     } else {
+      if (!isDefined(graphqlFilter)) {
+        throw new Error(
+          'Cannot destroy multiple records without a valid filter',
+        );
+      }
       await incrementalDestroyManyRecords();
     }
   };

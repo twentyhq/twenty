@@ -30,12 +30,14 @@ export const RestoreRecordsCommand = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
+  const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
+
   const deletedAtFilter: RecordGqlOperationFilter = {
     deletedAt: { is: 'NOT_NULL' },
   };
 
-  const combinedFilter = {
-    ...(graphqlFilter ?? {}),
+  const combinedFilter: RecordGqlOperationFilter = {
+    ...(graphqlFilter ?? noMatchFilter),
     ...deletedAtFilter,
   };
 
@@ -56,6 +58,12 @@ export const RestoreRecordsCommand = () => {
         idsToRestore: [recordId],
       });
     } else {
+      if (!isDefined(graphqlFilter)) {
+        throw new Error(
+          'Cannot restore multiple records without a valid filter',
+        );
+      }
+
       const recordsToRestore = await fetchAllRecordIds();
       const recordIdsToRestore = recordsToRestore.map((record) => record.id);
 
