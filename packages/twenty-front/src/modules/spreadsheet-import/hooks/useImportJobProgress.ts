@@ -14,6 +14,7 @@ const IMPORT_JOB_STORAGE_KEY = 'activeImportJobId';
 const POLL_INTERVAL_MS = 3000;
 
 const IMPORT_JOB_STATUSES = [
+  'uploading',
   'pending',
   'processing',
   'completed',

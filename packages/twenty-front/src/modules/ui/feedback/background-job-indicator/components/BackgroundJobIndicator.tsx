@@ -96,7 +96,10 @@ const AUTO_DISMISS_MS = 5000;
 const BackgroundJobCard = ({ job }: { job: BackgroundJobData }) => {
   const { removeJob } = useBackgroundJob();
 
-  const isRunning = job.status === 'pending' || job.status === 'processing';
+  const isRunning =
+    job.status === 'uploading' ||
+    job.status === 'pending' ||
+    job.status === 'processing';
   const isDone = job.status === 'completed';
   const isFailed = job.status === 'failed';
 

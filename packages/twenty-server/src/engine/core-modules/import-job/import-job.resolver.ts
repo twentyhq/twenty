@@ -9,6 +9,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context-user.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
+  AppendRowsResultDTO,
   ImportJobDTO,
   ImportJobProgressDTO,
 } from 'src/engine/core-modules/import-job/dtos/import-job.dto';
@@ -43,6 +44,78 @@ export class ImportJobResolver {
       columnMappings,
       validatedRows,
     });
+
+    return {
+      id: job.id,
+      objectNameSingular: job.objectNameSingular,
+      fileName: job.fileName,
+      status: job.status,
+      totalRecords: job.totalRecords,
+      processedRecords: job.processedRecords,
+      successCount: job.successCount,
+      warningCount: job.warningCount,
+      failureCount: job.failureCount,
+      result: job.result,
+      createdAt: job.createdAt,
+    };
+  }
+
+  @Mutation(() => ImportJobDTO)
+  async createImportJob(
+    @Args('objectNameSingular') objectNameSingular: string,
+    @Args('columnMappings', { type: () => GraphQLJSON })
+    columnMappings: Record<string, unknown>,
+    @Args('fileName', { type: () => String, nullable: true })
+    fileName: string | undefined,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
+  ): Promise<ImportJobDTO> {
+    const job = await this.importJobService.createImportJob({
+      workspaceId: workspace.id,
+      workspaceMemberId: user.id,
+      objectNameSingular,
+      fileName,
+      columnMappings,
+    });
+
+    return {
+      id: job.id,
+      objectNameSingular: job.objectNameSingular,
+      fileName: job.fileName,
+      status: job.status,
+      totalRecords: job.totalRecords,
+      processedRecords: job.processedRecords,
+      successCount: job.successCount,
+      warningCount: job.warningCount,
+      failureCount: job.failureCount,
+      result: job.result,
+      createdAt: job.createdAt,
+    };
+  }
+
+  @Mutation(() => AppendRowsResultDTO)
+  async appendImportJobRows(
+    @Args('importJobId') importJobId: string,
+    @Args('rows', { type: () => GraphQLJSON })
+    rows: Record<string, unknown>[],
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<AppendRowsResultDTO> {
+    return this.importJobService.appendImportJobRows(
+      importJobId,
+      workspace.id,
+      rows,
+    );
+  }
+
+  @Mutation(() => ImportJobDTO)
+  async finalizeImportJob(
+    @Args('importJobId') importJobId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ImportJobDTO> {
+    const job = await this.importJobService.finalizeImportJob(
+      importJobId,
+      workspace.id,
+    );
 
     return {
       id: job.id,

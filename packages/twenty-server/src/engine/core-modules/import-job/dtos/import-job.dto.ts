@@ -39,6 +39,15 @@ export class ImportJobDTO {
   createdAt: Date;
 }
 
+@ObjectType('AppendRowsResult')
+export class AppendRowsResultDTO {
+  @Field(() => String)
+  importJobId: string;
+
+  @Field(() => Int)
+  totalRecords: number;
+}
+
 @ObjectType('ImportJobProgress')
 export class ImportJobProgressDTO {
   @Field(() => String)

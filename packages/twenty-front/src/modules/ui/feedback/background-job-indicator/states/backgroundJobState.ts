@@ -1,6 +1,7 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export type BackgroundJobStatus =
+  | 'uploading'
   | 'pending'
   | 'processing'
   | 'completed'

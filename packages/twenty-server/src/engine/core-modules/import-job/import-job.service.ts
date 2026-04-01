@@ -67,6 +67,79 @@ export class ImportJobService {
     return savedJob;
   }
 
+  async createImportJob({
+    workspaceId,
+    workspaceMemberId,
+    objectNameSingular,
+    fileName,
+    columnMappings,
+  }: {
+    workspaceId: string;
+    workspaceMemberId?: string;
+    objectNameSingular: string;
+    fileName?: string;
+    columnMappings: Record<string, unknown>;
+  }): Promise<ImportJobEntity> {
+    const importJob = this.importJobRepository.create({
+      workspaceId,
+      workspaceMemberId: workspaceMemberId ?? null,
+      objectNameSingular,
+      fileName: fileName ?? null,
+      columnMappings,
+      validatedRows: [],
+      status: ImportJobStatus.UPLOADING,
+      totalRecords: 0,
+    });
+
+    return this.importJobRepository.save(importJob);
+  }
+
+  async appendImportJobRows(
+    id: string,
+    workspaceId: string,
+    rows: Record<string, unknown>[],
+  ): Promise<{ importJobId: string; totalRecords: number }> {
+    // Append rows directly in PostgreSQL using jsonb_concat to avoid
+    // loading the full JSONB column into server memory.
+    await this.importJobRepository.query(
+      `UPDATE core."importJob"
+       SET "validatedRows" = COALESCE("validatedRows", '[]'::jsonb) || $1::jsonb,
+           "totalRecords" = "totalRecords" + $2
+       WHERE "id" = $3 AND "workspaceId" = $4 AND "status" = 'uploading'`,
+      [JSON.stringify(rows), rows.length, id, workspaceId],
+    );
+
+    const job = await this.importJobRepository.findOneByOrFail({
+      id,
+      workspaceId,
+    });
+
+    return { importJobId: job.id, totalRecords: job.totalRecords };
+  }
+
+  async finalizeImportJob(
+    id: string,
+    workspaceId: string,
+  ): Promise<ImportJobEntity> {
+    await this.importJobRepository.update(
+      { id, workspaceId, status: ImportJobStatus.UPLOADING },
+      { status: ImportJobStatus.PENDING },
+    );
+
+    const job = await this.importJobRepository.findOneByOrFail({
+      id,
+      workspaceId,
+    });
+
+    await this.importQueueService.add<ImportJobData>(
+      IMPORT_JOB_PROCESSOR_NAME,
+      { importJobId: job.id, workspaceId },
+      { retryLimit: 2 },
+    );
+
+    return job;
+  }
+
   async cancelImportJob(
     id: string,
     workspaceId: string,
