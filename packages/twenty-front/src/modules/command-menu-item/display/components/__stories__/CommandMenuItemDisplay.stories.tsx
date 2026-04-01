@@ -1,13 +1,14 @@
-import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
-import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
-import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
-import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+
+import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfigContext';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
+import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
+import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 type Story = StoryObj<typeof CommandMenuItemDisplay>;
 
@@ -20,7 +21,7 @@ const mockActions = createMockCommandMenuItems({
 });
 
 const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
+  (action) => action.key === EngineComponentKey.ADD_TO_FAVORITES,
 );
 
 if (!addToFavoritesCommandMenuItem) {

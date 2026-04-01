@@ -1,18 +1,18 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-
-import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
-import { SingleRecordCommandKeys } from '@/command-menu-item/record/single-record/types/SingleRecordCommandKeys';
-import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
-import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { ComponentDecorator } from 'twenty-ui/testing';
+
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
+import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
+import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const mockActions = createMockCommandMenuItems({});
 
 const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === SingleRecordCommandKeys.ADD_TO_FAVORITES,
+  (action) => action.key === EngineComponentKey.ADD_TO_FAVORITES,
 );
 
 if (!addToFavoritesCommandMenuItem) {
