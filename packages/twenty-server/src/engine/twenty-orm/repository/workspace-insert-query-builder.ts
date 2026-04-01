@@ -342,6 +342,8 @@ export class WorkspaceInsertQueryBuilder<
       internalContext: this.internalContext,
       authContext: this.authContext,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      objectRecordsPermissions: this.objectRecordsPermissions,
+      isInsertOperation: true,
     });
   }
 

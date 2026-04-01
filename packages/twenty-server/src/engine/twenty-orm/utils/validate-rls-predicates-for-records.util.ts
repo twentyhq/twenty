@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
-import { type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord, type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -21,6 +22,8 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
   shouldBypassPermissionChecks: boolean;
+  objectRecordsPermissions?: ObjectsPermissions;
+  isInsertOperation?: boolean;
   errorMessage?: string;
 };
 
@@ -30,6 +33,8 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   internalContext,
   authContext,
   shouldBypassPermissionChecks,
+  objectRecordsPermissions,
+  isInsertOperation = false,
   errorMessage = 'Record does not satisfy row-level security constraints of your current role',
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
   if (shouldBypassPermissionChecks) {
@@ -47,7 +52,8 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     return;
   }
 
-  const recordFilter = buildRowLevelPermissionRecordFilter({
+  // For insert operations, build a filtered record filter that excludes non-editable fields
+  let recordFilter = buildRowLevelPermissionRecordFilter({
     flatRowLevelPermissionPredicateMaps:
       internalContext.flatRowLevelPermissionPredicateMaps,
     flatRowLevelPermissionPredicateGroupMaps:
@@ -62,6 +68,19 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
 
   if (!recordFilter || Object.keys(recordFilter).length === 0) {
     return;
+  }
+
+  // For insert operations, filter out RLS predicates on non-editable fields
+  if (isInsertOperation && isDefined(objectRecordsPermissions)) {
+    recordFilter = filterOutNonEditableFieldPredicates(
+      recordFilter,
+      objectMetadata,
+      objectRecordsPermissions,
+    );
+
+    if (!recordFilter || Object.keys(recordFilter).length === 0) {
+      return;
+    }
   }
 
   for (const record of records) {
@@ -79,4 +98,71 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
       );
     }
   }
+};
+
+/**
+ * Filters out RLS predicates that reference non-editable fields.
+ * During insert, non-editable fields use system defaults, so users
+ * should not be penalized if those defaults don't match permissions.
+ */
+const filterOutNonEditableFieldPredicates = (
+  filter: Record<string, unknown>,
+  objectMetadata: FlatObjectMetadata,
+  objectRecordsPermissions: ObjectsPermissions,
+): Record<string, unknown> => {
+  const restrictedFields =
+    objectRecordsPermissions[objectMetadata.id]?.restrictedFields ?? {};
+
+  return filterPredicateRecursive(filter, restrictedFields);
+};
+
+const filterPredicateRecursive = (
+  filter: Record<string, unknown>,
+  restrictedFields: Record<
+    string,
+    { canRead?: boolean | null; canUpdate?: boolean | null }
+  >,
+): Record<string, unknown> => {
+  const result: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(filter)) {
+    if (key === 'and' && Array.isArray(value)) {
+      const filtered = value
+        .map((item) => filterPredicateRecursive(item, restrictedFields))
+        .filter((item) => Object.keys(item).length > 0);
+
+      if (filtered.length > 0) {
+        result[key] = filtered;
+      }
+    } else if (key === 'or' && Array.isArray(value)) {
+      const filtered = value
+        .map((item) => filterPredicateRecursive(item, restrictedFields))
+        .filter((item) => Object.keys(item).length > 0);
+
+      if (filtered.length > 0) {
+        result[key] = filtered;
+      }
+    } else if (key === 'not' && typeof value === 'object' && value !== null) {
+      const filtered = filterPredicateRecursive(
+        value as Record<string, unknown>,
+        restrictedFields,
+      );
+
+      if (Object.keys(filtered).length > 0) {
+        result[key] = filtered;
+      }
+    } else {
+      // This is a field reference - check if it's editable
+      const fieldPermission = restrictedFields[key];
+      const isEditable =
+        !isDefined(fieldPermission) ||
+        fieldPermission.canUpdate !== false;
+
+      if (isEditable) {
+        result[key] = value;
+      }
+    }
+  }
+
+  return result;
 };
