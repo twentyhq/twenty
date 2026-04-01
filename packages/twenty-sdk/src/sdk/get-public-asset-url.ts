@@ -33,5 +33,10 @@ export const getPublicAssetUrl = (path: string): string => {
     ? withoutLeadingSlash
     : `public/${withoutLeadingSlash}`;
 
-  return `${apiUrl}/public-assets/${workspaceId}/${applicationId}/${withPublicPrefix}`;
+  const encodedPath = withPublicPrefix
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/');
+
+  return `${apiUrl}/public-assets/${workspaceId}/${applicationId}/${encodedPath}`;
 };

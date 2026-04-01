@@ -33,6 +33,8 @@ const waitForHealthy = async (port: number): Promise<boolean> => {
     { stdio: ['ignore', 'pipe', 'pipe'] },
   );
 
+  logStream.on('error', () => {});
+
   let hasPendingStep = false;
 
   const handleLogLine = (line: string) => {
