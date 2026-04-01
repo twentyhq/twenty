@@ -11,6 +11,79 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
+// New CRM Module pages
+const SettingsPipeline = lazy(() =>
+  import('~/pages/settings/pipeline/SettingsPipeline').then((module) => ({
+    default: module.SettingsPipeline,
+  })),
+);
+
+const SettingsPipelineDeal = lazy(() =>
+  import('~/pages/settings/pipeline/SettingsPipelineDeal').then((module) => ({
+    default: module.SettingsPipelineDeal,
+  })),
+);
+
+const SettingsMarketing = lazy(() =>
+  import('~/pages/settings/marketing/SettingsMarketing').then((module) => ({
+    default: module.SettingsMarketing,
+  })),
+);
+
+const SettingsSupport = lazy(() =>
+  import('~/pages/settings/support/SettingsSupport').then((module) => ({
+    default: module.SettingsSupport,
+  })),
+);
+
+const SettingsProjects = lazy(() =>
+  import('~/pages/settings/projects/SettingsProjects').then((module) => ({
+    default: module.SettingsProjects,
+  })),
+);
+
+const SettingsGamification = lazy(() =>
+  import('~/pages/settings/gamification/SettingsGamification').then((module) => ({
+    default: module.SettingsGamification,
+  })),
+);
+
+const SettingsBI = lazy(() =>
+  import('~/pages/settings/bi/SettingsBI').then((module) => ({
+    default: module.SettingsBI,
+  })),
+);
+
+const SettingsInventory = lazy(() =>
+  import('~/pages/settings/inventory/SettingsInventory').then((module) => ({
+    default: module.SettingsInventory,
+  })),
+);
+
+const SettingsOmnichannel = lazy(() =>
+  import('~/pages/settings/omnichannel/SettingsOmnichannel').then((module) => ({
+    default: module.SettingsOmnichannel,
+  })),
+);
+
+const SettingsMarketplace = lazy(() =>
+  import('~/pages/settings/marketplace/SettingsMarketplace').then((module) => ({
+    default: module.SettingsMarketplace,
+  })),
+);
+
+const SettingsIntegrations = lazy(() =>
+  import('~/pages/settings/integrations/SettingsIntegrations').then((module) => ({
+    default: module.SettingsIntegrations,
+  })),
+);
+
+const SettingsIntegrationsDetail = lazy(() =>
+  import('~/pages/settings/integrations/SettingsIntegrationsDetail').then(
+    (module) => ({ default: module.SettingsIntegrationsDetail }),
+  ),
+);
+
 const SettingsGraphQLPlayground = lazy(() =>
   import(
     '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
@@ -783,6 +856,32 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.Updates} element={<SettingsUpdates />} />
       </Route>
+
+      {/* New CRM Modules */}
+      <Route path={SettingsPath.Pipeline} element={<SettingsPipeline />} />
+      <Route path={SettingsPath.PipelineDeal} element={<SettingsPipelineDeal />} />
+      <Route path={SettingsPath.Marketing} element={<SettingsMarketing />} />
+      <Route
+        path={SettingsPath.MarketingCampaignDetail}
+        element={<SettingsMarketing />}
+      />
+      <Route path={SettingsPath.Support} element={<SettingsSupport />} />
+      <Route
+        path={SettingsPath.SupportTicketDetail}
+        element={<SettingsSupport />}
+      />
+      <Route path={SettingsPath.Projects} element={<SettingsProjects />} />
+      <Route path={SettingsPath.ProjectDetail} element={<SettingsProjects />} />
+      <Route path={SettingsPath.Gamification} element={<SettingsGamification />} />
+      <Route path={SettingsPath.BI} element={<SettingsBI />} />
+      <Route path={SettingsPath.Inventory} element={<SettingsInventory />} />
+      <Route path={SettingsPath.Omnichannel} element={<SettingsOmnichannel />} />
+      <Route path={SettingsPath.Marketplace} element={<SettingsMarketplace />} />
+      <Route path={SettingsPath.Integrations} element={<SettingsIntegrations />} />
+      <Route
+        path={SettingsPath.IntegrationsDetail}
+        element={<SettingsIntegrationsDetail />}
+      />
     </Routes>
   </Suspense>
 );

@@ -74,4 +74,20 @@ export enum SettingsPath {
   RoleDetail = 'roles/:roleId',
   RoleObjectLevel = 'roles/:roleId/object/:objectMetadataId',
   RoleAddObjectLevel = 'roles/:roleId/add-object-permission',
+
+  // New CRM Modules
+  Pipeline = 'pipeline',
+  PipelineDeal = 'pipeline/deals/:dealId',
+  Marketing = 'marketing',
+  MarketingCampaignDetail = 'marketing/campaigns/:campaignId',
+  Support = 'support',
+  SupportTicketDetail = 'support/tickets/:ticketId',
+  Projects = 'projects',
+  ProjectDetail = 'projects/:projectId',
+  Gamification = 'gamification',
+  BI = 'bi',
+  Inventory = 'inventory',
+  Omnichannel = 'omnichannel',
+  Marketplace = 'marketplace',
+  IntegrationsDetail = 'integrations/:integrationId',
 }
