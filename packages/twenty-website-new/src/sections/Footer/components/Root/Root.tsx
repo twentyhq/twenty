@@ -2,6 +2,7 @@ import { Container } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
+import { FooterBackground } from '../FooterBackground/FooterBackground';
 import { FooterShape } from '../../FooterShape';
 
 const FooterRoot = styled.footer`
@@ -23,11 +24,6 @@ const FooterContainer = styled(Container)`
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
   }
-`;
-
-const FooterBackground = styled.div`
-  position: absolute;
-  z-index: 0;
 `;
 
 const FooterContent = styled.div`
