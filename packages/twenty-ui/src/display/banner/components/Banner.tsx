@@ -36,7 +36,10 @@ const StyledBanner = styled.div<{
   justify-content: center;
   line-height: 150%;
   min-height: 40px;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+  padding: ${({ bannerVariant }) =>
+    bannerVariant === 'secondary'
+      ? `${themeCssVariables.spacing[2]}`
+      : `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]}`};
   width: 100%;
 `;
 

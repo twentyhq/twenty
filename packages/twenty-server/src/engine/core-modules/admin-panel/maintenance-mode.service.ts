@@ -1,32 +1,59 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 
-import { type MaintenanceModeValue } from './types/maintenance-mode-value.type';
+import {
+  MAINTENANCE_MODE_BANNER_DISMISSED_KEY,
+  type MaintenanceModeBannerKeyValueTypeMap,
+} from './types/maintenance-mode-banner-key-value.type';
 
 const MAINTENANCE_MODE_KEY = 'MAINTENANCE_MODE';
 
+type MaintenanceModeValue = {
+  startAt: string;
+  endAt: string;
+  link?: string;
+};
+
+type MaintenanceModeKeyValueTypeMap = {
+  [MAINTENANCE_MODE_KEY]: MaintenanceModeValue;
+};
+
 @Injectable()
 export class MaintenanceModeService {
-  constructor(private readonly keyValuePairService: KeyValuePairService) {}
+  constructor(
+    private readonly keyValuePairService: KeyValuePairService<MaintenanceModeKeyValueTypeMap>,
+    private readonly userVarsService: UserVarsService<MaintenanceModeBannerKeyValueTypeMap>,
+  ) {}
+
+  private async clearMaintenanceModeBannerDismissals(): Promise<void> {
+    await this.userVarsService.delete({
+      key: MAINTENANCE_MODE_BANNER_DISMISSED_KEY,
+    });
+  }
 
   async getMaintenanceMode(): Promise<MaintenanceModeValue | null> {
-    const results = await this.keyValuePairService.get({
+    const maintenanceModeKeyValuePairs = await this.keyValuePairService.get({
       userId: null,
       workspaceId: null,
       type: KeyValuePairType.CONFIG_VARIABLE,
       key: MAINTENANCE_MODE_KEY,
     });
 
-    if (results.length === 0) {
+    if (maintenanceModeKeyValuePairs.length === 0) {
       return null;
     }
 
-    const value = results[0]?.value;
+    const value = (
+      maintenanceModeKeyValuePairs[0] as {
+        value?: MaintenanceModeKeyValueTypeMap[typeof MAINTENANCE_MODE_KEY];
+      }
+    )?.value;
 
     if (
       !isDefined(value) ||
@@ -36,13 +63,15 @@ export class MaintenanceModeService {
       return null;
     }
 
-    return value as MaintenanceModeValue;
+    return value;
   }
 
   async setMaintenanceMode(value: MaintenanceModeValue): Promise<void> {
     if (new Date(value.endAt) <= new Date(value.startAt)) {
       throw new BadRequestException('endAt must be after startAt');
     }
+
+    await this.clearMaintenanceModeBannerDismissals();
 
     await this.keyValuePairService.set({
       userId: null,
@@ -54,11 +83,38 @@ export class MaintenanceModeService {
   }
 
   async clearMaintenanceMode(): Promise<void> {
+    await this.clearMaintenanceModeBannerDismissals();
+
     await this.keyValuePairService.delete({
       userId: null,
       workspaceId: null,
       type: KeyValuePairType.CONFIG_VARIABLE,
       key: MAINTENANCE_MODE_KEY,
+    });
+  }
+
+  async isMaintenanceModeBannerDismissed(
+    userId: string,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const isDismissed = await this.userVarsService.get({
+      userId,
+      workspaceId,
+      key: MAINTENANCE_MODE_BANNER_DISMISSED_KEY,
+    });
+
+    return isDismissed === true;
+  }
+
+  async dismissMaintenanceModeBanner(
+    userId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.userVarsService.set({
+      userId,
+      workspaceId,
+      key: MAINTENANCE_MODE_BANNER_DISMISSED_KEY,
+      value: true,
     });
   }
 }

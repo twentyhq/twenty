@@ -66,6 +66,9 @@ export class KeyValuePairService<
     },
     queryRunner?: QueryRunner,
   ) {
+    const hasNullUserAndWorkspace =
+      userId === null && workspaceId === null;
+
     const upsertData = {
       userId,
       workspaceId,
@@ -74,18 +77,22 @@ export class KeyValuePairService<
       type,
     };
 
-    const conflictPaths = Object.keys(upsertData).filter(
-      (key) =>
-        ['userId', 'workspaceId', 'key'].includes(key) &&
-        // @ts-expect-error legacy noImplicitAny
-        upsertData[key] !== undefined,
-    );
+    const conflictPaths = hasNullUserAndWorkspace
+      ? ['key']
+      : Object.keys(upsertData).filter(
+          (conflictPath) =>
+            ['userId', 'workspaceId', 'key'].includes(conflictPath) &&
+            // @ts-expect-error legacy noImplicitAny
+            upsertData[conflictPath] !== undefined,
+        );
 
-    const indexPredicate = !userId
-      ? '"userId" is NULL'
-      : !workspaceId
-        ? '"workspaceId" is NULL'
-        : undefined;
+    const indexPredicate = hasNullUserAndWorkspace
+      ? '"userId" is NULL AND "workspaceId" is NULL'
+      : userId === null
+        ? '"userId" is NULL'
+        : workspaceId === null
+          ? '"workspaceId" is NULL'
+          : undefined;
 
     if (queryRunner) {
       await queryRunner.manager

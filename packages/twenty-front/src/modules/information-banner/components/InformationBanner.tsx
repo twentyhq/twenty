@@ -22,6 +22,10 @@ const StyledInvertedIconButton = styled(IconButton)`
   color: ${themeCssVariables.font.color.inverted} !important;
 `;
 
+const StyledSecondaryIconButton = styled(IconButton)`
+  color: inherit !important;
+`;
+
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   align-items: center;
   display: flex;
@@ -59,7 +63,9 @@ export const InformationBanner = ({
 
   const isPrimary = variant === 'primary';
 
-  const CloseIconButton = isPrimary ? StyledInvertedIconButton : IconButton;
+  const CloseIconButton = isPrimary
+    ? StyledInvertedIconButton
+    : StyledSecondaryIconButton;
 
   return (
     <InformationBannerComponentInstanceContext.Provider

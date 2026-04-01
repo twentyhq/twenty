@@ -71,7 +71,6 @@ export const SettingsAdminMaintenanceMode = () => {
         });
 
         setMaintenanceMode({
-          __typename: 'ClientConfigMaintenanceMode',
           startAt,
           endAt,
           link,

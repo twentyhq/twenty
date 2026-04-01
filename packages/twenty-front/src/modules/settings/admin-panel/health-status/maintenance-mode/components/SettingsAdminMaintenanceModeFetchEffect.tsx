@@ -3,14 +3,14 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
-import {
-  GET_MAINTENANCE_MODE,
-  type GetMaintenanceModeResult,
-} from '@/settings/admin-panel/health-status/maintenance-mode/graphql/queries/getMaintenanceMode';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import {
+  GetMaintenanceModeDocument,
+  type GetMaintenanceModeQuery,
+} from '~/generated-metadata/graphql';
 
 export const SettingsAdminMaintenanceModeFetchEffect = () => {
-  const { data } = useQuery<GetMaintenanceModeResult>(GET_MAINTENANCE_MODE, {
+  const { data } = useQuery<GetMaintenanceModeQuery>(GetMaintenanceModeDocument, {
     fetchPolicy: 'network-only',
   });
 

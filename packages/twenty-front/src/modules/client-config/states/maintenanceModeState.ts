@@ -1,8 +1,13 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import { type ClientConfigMaintenanceMode } from '~/generated-metadata/graphql';
 
+type MaintenanceModeState = Pick<
+  ClientConfigMaintenanceMode,
+  'startAt' | 'endAt' | 'link'
+>;
+
 export const maintenanceModeState =
-  createAtomState<ClientConfigMaintenanceMode | null>({
+  createAtomState<MaintenanceModeState | null>({
     key: 'maintenanceModeState',
     defaultValue: null,
   });
