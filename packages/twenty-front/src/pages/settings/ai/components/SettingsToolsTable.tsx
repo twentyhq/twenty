@@ -19,18 +19,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  Avatar,
   H2Title,
   IconChevronRight,
-  IconCode,
-  IconDatabase,
   IconLock,
-  IconPlayerPlay,
   IconPuzzle,
-  IconSettings,
-  IconTable,
   IconTool,
-  useIcons,
 } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -39,6 +32,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ToolIndexEntry } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
+import { SettingsToolIcon } from './SettingsToolIcon';
 import {
   SettingsToolTableRow,
   TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
@@ -68,21 +62,6 @@ const FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE = gql`
   }
 `;
 
-const getCategoryIcon = (category: string) => {
-  switch (category.toLowerCase()) {
-    case 'database':
-      return IconDatabase;
-    case 'workflow':
-      return IconPlayerPlay;
-    case 'metadata':
-      return IconSettings;
-    case 'view':
-      return IconTable;
-    default:
-      return IconCode;
-  }
-};
-
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
@@ -93,10 +72,13 @@ const StyledTableHeaderRowContainer = styled.div`
 
 export const SettingsToolsTable = () => {
   const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
+  const {
+    toolIndex,
+    loading: toolIndexLoading,
+    error: toolIndexError,
+  } = useGetToolIndex();
   const { data: applicationsData } = useQuery<{
     findManyApplications: Array<{
       id: string;
@@ -180,7 +162,7 @@ export const SettingsToolsTable = () => {
     })
     .sort((a, b) => a.tool.name.localeCompare(b.tool.name));
 
-  const showSkeleton = toolIndexLoading;
+  const showSkeleton = toolIndexLoading && !toolIndexError;
 
   return (
     <Section>
@@ -247,11 +229,12 @@ export const SettingsToolsTable = () => {
         {showSkeleton
           ? Array.from({ length: 3 }).map((_, index) => (
               <SkeletonTheme
+                key={index}
                 baseColor={theme.background.tertiary}
                 highlightColor={theme.background.transparent.lighter}
                 borderRadius={4}
               >
-                <Skeleton height={32} borderRadius={4} key={index} />
+                <Skeleton height={32} borderRadius={4} />
               </SkeletonTheme>
             ))
           : filteredTools.map((item) => {
@@ -264,38 +247,6 @@ export const SettingsToolsTable = () => {
                     application.universalIdentifier,
                   )
                 : undefined;
-              const MarketplaceIcon = isDefined(marketplaceApp?.icon)
-                ? getIcon(marketplaceApp.icon)
-                : undefined;
-
-              const leftIcon =
-                item.kind === 'custom' ? (
-                  isDefined(application) && isDefined(marketplaceApp?.logo) ? (
-                    <Avatar
-                      avatarUrl={marketplaceApp?.logo ?? null}
-                      placeholder={application.name}
-                      placeholderColorSeed={application.name}
-                      type="squared"
-                      size="xs"
-                    />
-                  ) : isDefined(MarketplaceIcon) ? (
-                    <MarketplaceIcon size={16} />
-                  ) : isDefined(application) ? (
-                    <Avatar
-                      placeholder={application.name}
-                      placeholderColorSeed={application.name}
-                      type="squared"
-                      size="xs"
-                    />
-                  ) : (
-                    <IconCode size={16} />
-                  )
-                ) : (
-                  (() => {
-                    const SystemToolIcon = getCategoryIcon(item.tool.category);
-                    return <SystemToolIcon size={16} />;
-                  })()
-                );
 
               const appLabel =
                 item.kind === 'custom'
@@ -305,7 +256,16 @@ export const SettingsToolsTable = () => {
               return (
                 <SettingsToolTableRow
                   key={item.kind === 'custom' ? item.tool.id : item.tool.name}
-                  leftIcon={leftIcon}
+                  leftIcon={
+                    <SettingsToolIcon
+                      kind={item.kind}
+                      category={
+                        item.kind === 'system' ? item.tool.category : undefined
+                      }
+                      application={application}
+                      marketplaceApp={marketplaceApp}
+                    />
+                  }
                   name={item.tool.name}
                   appLabel={appLabel}
                   action={

@@ -75,9 +75,9 @@ export const SettingsAI = () => {
             }),
           );
         }
+      } else {
+        enqueueErrorSnackBar({ message: t`Failed to create tool` });
       }
-    } catch {
-      enqueueErrorSnackBar({ message: t`Failed to create tool` });
     } finally {
       setIsCreatingTool(false);
     }

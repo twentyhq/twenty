@@ -12,8 +12,6 @@ export type SettingsToolTableRowProps = {
   appLabel: string;
   action?: ReactNode;
   link?: string;
-  onClick?: () => void;
-  isClickable?: boolean;
 };
 
 export const TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 100px 36px';
@@ -30,15 +28,11 @@ export const SettingsToolTableRow = ({
   appLabel,
   action,
   link,
-  onClick,
-  isClickable,
 }: SettingsToolTableRowProps) => {
   return (
     <TableRow
       gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       to={link}
-      onClick={onClick}
-      isClickable={isClickable}
     >
       <TableCell
         color={themeCssVariables.font.color.primary}

@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -16,66 +15,28 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import {
-  H2Title,
-  IconCode,
-  IconTrash,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { H2Title, IconCode, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   GetToolIndexDocument,
   GetToolInputSchemaDocument,
 } from '~/generated-metadata/graphql';
+import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
-const PARAMETER_TABLE_GRID = '160px 80px 90px 1fr';
-
-const StyledTableHeaderRow = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDescriptionCell = styled(TableCell)`
-  align-items: flex-start;
-  padding-top: ${themeCssVariables.spacing[2]};
-`;
-
-type SchemaProperty = {
-  type?: string;
-  description?: string;
-  format?: string;
-  items?: { type?: string };
-};
-
-const getDisplayType = (property: SchemaProperty): string => {
-  if (property.format) {
-    return property.format;
-  }
-
-  if (property.type === 'array' && property.items?.type) {
-    return `${property.items.type}[]`;
-  }
-
-  return property.type ?? 'any';
-};
 
 export const SettingsToolDetail = () => {
   const { toolName, logicFunctionId } = useParams();
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { updateLogicFunction, deleteLogicFunction } =
     usePersistLogicFunction();
   const { openModal } = useModal();
@@ -137,14 +98,6 @@ export const SettingsToolDetail = () => {
   const hasInputSchema =
     isDefined(inputSchema) && Object.keys(inputSchema).length > 0;
 
-  const schemaProperties = (
-    hasInputSchema ? inputSchema.properties : undefined
-  ) as Record<string, SchemaProperty> | undefined;
-
-  const requiredFields = (hasInputSchema ? inputSchema.required : undefined) as
-    | string[]
-    | undefined;
-
   const functionLink = isCustomTool
     ? isDefined(logicFunction?.applicationId)
       ? getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
@@ -159,12 +112,16 @@ export const SettingsToolDetail = () => {
   const debouncedSaveName = useDebouncedCallback(async (value: string) => {
     if (!isCustomTool || !isDefined(logicFunction)) return;
 
-    await updateLogicFunction({
+    const result = await updateLogicFunction({
       input: {
         id: logicFunction.id,
         update: { name: value },
       },
     });
+
+    if (result.status === 'failed') {
+      setEditedName(logicFunction.name);
+    }
   }, 1_000);
 
   const handleNameChange = (value: string) => {
@@ -176,12 +133,16 @@ export const SettingsToolDetail = () => {
     async (value: string) => {
       if (!isCustomTool || !isDefined(logicFunction)) return;
 
-      await updateLogicFunction({
+      const result = await updateLogicFunction({
         input: {
           id: logicFunction.id,
           update: { description: value },
         },
       });
+
+      if (result.status === 'failed') {
+        setEditedDescription(logicFunction.description ?? null);
+      }
     },
     1_000,
   );
@@ -203,6 +164,8 @@ export const SettingsToolDetail = () => {
     if (result.status === 'successful') {
       enqueueSuccessSnackBar({ message: t`Tool deleted` });
       navigate(getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'));
+    } else {
+      enqueueErrorSnackBar({ message: t`Failed to delete tool` });
     }
 
     setIsDeleting(false);
@@ -267,60 +230,11 @@ export const SettingsToolDetail = () => {
                 title={t`Parameters`}
                 description={t`Input parameters accepted by this tool`}
               />
-              {isDefined(schemaProperties) &&
-              Object.keys(schemaProperties).length > 0 ? (
-                <Table>
-                  <StyledTableHeaderRow>
-                    <TableRow gridTemplateColumns={PARAMETER_TABLE_GRID}>
-                      <TableHeader>{t`Name`}</TableHeader>
-                      <TableHeader>{t`Type`}</TableHeader>
-                      <TableHeader>{t`Required`}</TableHeader>
-                      <TableHeader>{t`Description`}</TableHeader>
-                    </TableRow>
-                  </StyledTableHeaderRow>
-                  {Object.entries(schemaProperties).map(
-                    ([paramName, property]) => (
-                      <TableRow
-                        key={paramName}
-                        gridTemplateColumns={PARAMETER_TABLE_GRID}
-                        hoverBackgroundColor={
-                          themeCssVariables.background.transparent.light
-                        }
-                      >
-                        <TableCell
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          whiteSpace="nowrap"
-                        >
-                          <Tag text={paramName} color="gray" weight="medium" />
-                        </TableCell>
-                        <TableCell
-                          color={themeCssVariables.font.color.secondary}
-                          whiteSpace="nowrap"
-                        >
-                          {getDisplayType(property)}
-                        </TableCell>
-                        <TableCell>
-                          {requiredFields?.includes(paramName) && (
-                            <Tag text={t`required`} color="red" preventShrink />
-                          )}
-                        </TableCell>
-                        <StyledDescriptionCell
-                          color={themeCssVariables.font.color.tertiary}
-                          height="auto"
-                          minWidth="0"
-                          overflow="hidden"
-                        >
-                          <OverflowingTextWithTooltip
-                            text={property.description ?? ''}
-                            displayedMaxRows={2}
-                            isTooltipMultiline
-                          />
-                        </StyledDescriptionCell>
-                      </TableRow>
-                    ),
-                  )}
-                </Table>
+              {hasInputSchema ? (
+                <SettingsToolParameterTable
+                  schemaProperties={inputSchema.properties}
+                  requiredFields={inputSchema.required}
+                />
               ) : (
                 <div>{t`No parameters`}</div>
               )}
