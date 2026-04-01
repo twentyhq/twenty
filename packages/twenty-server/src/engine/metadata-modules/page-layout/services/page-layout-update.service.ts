@@ -167,8 +167,9 @@ export class PageLayoutUpdateService {
         flatViewMaps,
       });
 
-    const orphanedViewIds = this.collectOrphanedViewIdsFromDeactivatedWidgets({
+    const orphanedViewIds = this.collectOrphanedViewIdsFromRemovedWidgets({
       widgetsToUpdate,
+      widgetsToDelete,
       tabsToUpdate,
       flatPageLayoutWidgetMaps,
     });
@@ -690,12 +691,14 @@ export class PageLayoutUpdateService {
     });
   }
 
-  private collectOrphanedViewIdsFromDeactivatedWidgets({
+  private collectOrphanedViewIdsFromRemovedWidgets({
     widgetsToUpdate,
+    widgetsToDelete,
     tabsToUpdate,
     flatPageLayoutWidgetMaps,
   }: {
     widgetsToUpdate: FlatPageLayoutWidget[];
+    widgetsToDelete: FlatPageLayoutWidget[];
     tabsToUpdate: FlatPageLayoutTab[];
     flatPageLayoutWidgetMaps: Pick<
       AllFlatEntityMaps,
@@ -703,11 +706,20 @@ export class PageLayoutUpdateService {
     >['flatPageLayoutWidgetMaps'];
   }): string[] {
     const viewIdsToDelete = new Set<string>();
-    const directlyDeactivatedWidgetIds = new Set<string>();
+    const directlyRemovedWidgetIds = new Set<string>();
+
+    for (const widget of widgetsToDelete) {
+      directlyRemovedWidgetIds.add(widget.id);
+      const viewId = this.getViewIdFromFieldsWidget(widget);
+
+      if (isDefined(viewId)) {
+        viewIdsToDelete.add(viewId);
+      }
+    }
 
     for (const widget of widgetsToUpdate) {
       if (!widget.isActive) {
-        directlyDeactivatedWidgetIds.add(widget.id);
+        directlyRemovedWidgetIds.add(widget.id);
         const viewId = this.getViewIdFromFieldsWidget(widget);
 
         if (isDefined(viewId)) {
@@ -742,7 +754,7 @@ export class PageLayoutUpdateService {
     for (const widget of allExistingWidgets) {
       if (
         widget.isActive &&
-        !directlyDeactivatedWidgetIds.has(widget.id) &&
+        !directlyRemovedWidgetIds.has(widget.id) &&
         !deactivatedTabIds.has(widget.pageLayoutTabId)
       ) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
