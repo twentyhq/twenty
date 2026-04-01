@@ -14,25 +14,84 @@ import {
   checkServerHealth,
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
-import { execSync, spawnSync } from 'node:child_process';
+import { execSync, spawn, spawnSync } from 'node:child_process';
 
 const HEALTH_POLL_INTERVAL_MS = 2000;
 const HEALTH_TIMEOUT_MS = 180 * 1000;
+const MILESTONE_START = '==> START ';
+const MILESTONE_DONE = '==> DONE';
 
-const waitForHealthy = async (port: number): Promise<boolean> => {
+const waitForHealthy = async (
+  port: number,
+  onProgress?: (message: string) => void,
+): Promise<boolean> => {
   const startTime = Date.now();
 
-  while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
-    if (await checkServerHealth(port)) {
-      return true;
+  const logStream = spawn(
+    'docker',
+    ['logs', '-f', '--since', '1s', CONTAINER_NAME],
+    { stdio: ['ignore', 'pipe', 'pipe'] },
+  );
+
+  let hasPendingStep = false;
+
+  const handleLogLine = (line: string) => {
+    const trimmed = line.trim();
+    const startIndex = trimmed.indexOf(MILESTONE_START);
+    const doneIndex = trimmed.indexOf(MILESTONE_DONE);
+
+    if (startIndex !== -1) {
+      if (hasPendingStep) {
+        process.stdout.write('Done\n');
+      }
+
+      const message = trimmed.slice(startIndex + MILESTONE_START.length);
+
+      process.stdout.write(`==>  ${message}... `);
+      hasPendingStep = true;
+    } else if (doneIndex !== -1 && hasPendingStep) {
+      process.stdout.write('Done\n');
+      hasPendingStep = false;
+    }
+  };
+
+  let logBuffer = '';
+
+  const onData = (chunk: Buffer) => {
+    logBuffer += chunk.toString();
+
+    const lines = logBuffer.split('\n');
+
+    logBuffer = lines.pop() ?? '';
+    lines.forEach(handleLogLine);
+  };
+
+  logStream.stdout?.on('data', onData);
+  logStream.stderr?.on('data', onData);
+
+  try {
+    while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
+      if (await checkServerHealth(port)) {
+        if (hasPendingStep) {
+          process.stdout.write('Done\n');
+        }
+
+        return true;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, HEALTH_POLL_INTERVAL_MS),
+      );
     }
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, HEALTH_POLL_INTERVAL_MS),
-    );
-  }
+    if (hasPendingStep) {
+      process.stdout.write('Failed\n');
+    }
 
-  return false;
+    return false;
+  } finally {
+    logStream.kill();
+  }
 };
 
 export type ServerStartOptions = {
@@ -83,7 +142,7 @@ const innerServerStart = async (
 
     onProgress?.('Container is running, waiting for it to become healthy...');
 
-    const healthy = await waitForHealthy(port);
+    const healthy = await waitForHealthy(port, onProgress);
 
     if (!healthy) {
       return {
@@ -161,7 +220,7 @@ const innerServerStart = async (
 
   onProgress?.('Waiting for Twenty to be ready...');
 
-  const healthy = await waitForHealthy(port);
+  const healthy = await waitForHealthy(port, onProgress);
 
   if (!healthy) {
     return {
