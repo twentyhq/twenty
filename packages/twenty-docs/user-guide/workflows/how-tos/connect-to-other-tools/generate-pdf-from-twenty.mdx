@@ -77,7 +77,7 @@ export const main = async (
   const pdfBlob = await pdfResponse.blob();
   const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
 
-  const fieldMetadataIdQuery = ```
+  const fieldMetadataIdQuery = `
     query FindUploadFileFieldMetadataId {
       objects {
         edges {
@@ -91,7 +91,7 @@ export const main = async (
         }
       }
     }
-  ```;
+  `;
 
   // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
   const response = await fetch(graphqlEndpoint, {
