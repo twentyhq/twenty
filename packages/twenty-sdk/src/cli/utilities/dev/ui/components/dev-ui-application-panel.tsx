@@ -68,10 +68,6 @@ export const DevUiApplicationPanel = ({
   const groupedEntities = groupEntitiesByType(state.entities);
   const appUrl = getApplicationUrl(state);
 
-  const hasEntities = ENTITY_ORDER.some(
-    (type) => (groupedEntities.get(type) ?? []).length > 0,
-  );
-
   return (
     <Box
       flexDirection="column"
@@ -112,21 +108,19 @@ export const DevUiApplicationPanel = ({
         ))}
       </Box>
 
-      {hasEntities && (
-        <Box marginLeft={2} flexDirection="column">
-          {ENTITY_ORDER.map((type) => {
-            const entities = groupedEntities.get(type) ?? [];
+      <Box marginLeft={2} flexDirection="column">
+        {ENTITY_ORDER.map((type) => {
+          const entities = groupedEntities.get(type) ?? [];
 
-            return (
-              <DevUiEntitySection
-                key={type}
-                type={type}
-                entities={entities}
-              />
-            );
-          })}
-        </Box>
-      )}
+          return (
+            <DevUiEntitySection
+              key={type}
+              type={type}
+              entities={entities}
+            />
+          );
+        })}
+      </Box>
     </Box>
   );
 };

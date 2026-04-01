@@ -74,6 +74,7 @@ export class DevModeOrchestrator {
     this.syncApplicationStep = new SyncApplicationOrchestratorStep({
       ...stepDeps,
       apiService,
+      verbose: this.verbose,
     });
     this.startWatchersStep = new StartWatchersOrchestratorStep({
       ...stepDeps,
@@ -174,6 +175,8 @@ export class DevModeOrchestrator {
     if (!isReady) {
       return;
     }
+
+    this.state.steps.ensureValidTokens.status = 'done';
 
     const buildResult = await this.buildManifestStep.execute({
       appPath: this.state.appPath,

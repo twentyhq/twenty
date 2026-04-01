@@ -15,23 +15,103 @@ export type SyncApplicationOrchestratorStepOutput = {
   error: string | null;
 };
 
+type SyncValidationEntry = {
+  flatEntityMinimalInformation?: { universalIdentifier?: string };
+  errors: { code: string; message: string; value?: string }[];
+};
+
+type StructuredSyncError = {
+  message?: string;
+  extensions?: {
+    code?: string;
+    errors?: Record<string, SyncValidationEntry[]>;
+    summary?: Record<string, number> & { totalErrors: number };
+    message?: string;
+  };
+};
+
+const formatSyncErrorEvents = (
+  error: unknown,
+): OrchestratorStateStepEvent[] | null => {
+  if (!error || typeof error !== 'object') {
+    return null;
+  }
+
+  const syncError = error as StructuredSyncError;
+  const extensions = syncError.extensions;
+
+  if (!extensions?.errors || !extensions?.summary) {
+    return null;
+  }
+
+  const events: OrchestratorStateStepEvent[] = [];
+  const totalErrors = extensions.summary.totalErrors;
+
+  events.push({
+    message: `Sync failed with ${totalErrors} error${totalErrors !== 1 ? 's' : ''}`,
+    status: 'error',
+  });
+
+  for (const [metadataName, entries] of Object.entries(extensions.errors)) {
+    const count = extensions.summary[metadataName] ?? entries.length;
+
+    events.push({
+      message: `${metadataName}: ${count} error${count !== 1 ? 's' : ''}`,
+      status: 'error',
+    });
+
+    let errorIndex = 1;
+
+    for (const entry of entries) {
+      const universalIdentifier =
+        entry.flatEntityMinimalInformation?.universalIdentifier;
+
+      for (const entryError of entry.errors) {
+        const details: string[] = [];
+
+        if (entryError.value) {
+          details.push(`value: ${entryError.value}`);
+        }
+
+        if (universalIdentifier) {
+          details.push(`universalIdentifier: ${universalIdentifier}`);
+        }
+
+        const suffix = details.length > 0 ? ` (${details.join(', ')})` : '';
+
+        events.push({
+          message: `  ${errorIndex}. ${entryError.code}: ${entryError.message}${suffix}`,
+          status: 'error',
+        });
+        errorIndex++;
+      }
+    }
+  }
+
+  return events;
+};
+
 export class SyncApplicationOrchestratorStep {
   private apiService: ApiService;
   private state: OrchestratorState;
   private notify: () => void;
+  private verbose: boolean;
 
   constructor({
     apiService,
     state,
     notify,
+    verbose,
   }: {
     apiService: ApiService;
     state: OrchestratorState;
     notify: () => void;
+    verbose?: boolean;
   }) {
     this.apiService = apiService;
     this.state = state;
     this.notify = notify;
+    this.verbose = verbose ?? false;
   }
 
   async execute(input: {
@@ -74,12 +154,30 @@ export class SyncApplicationOrchestratorStep {
       return;
     }
 
-    const errorMessage = `Sync failed with error: ${serializeError(syncResult.error)}`;
+    const errorEvents = this.verbose
+      ? null
+      : formatSyncErrorEvents(syncResult.error);
 
-    events.push({ message: errorMessage, status: 'error' });
-    step.output = { syncStatus: 'error', error: errorMessage };
+    if (errorEvents) {
+      events.push(...errorEvents);
+      events.push({
+        message: 'Add --verbose to see full error log',
+        status: 'info',
+      });
+    } else {
+      events.push({
+        message: `Sync failed with error: ${serializeError(syncResult.error)}`,
+        status: 'error',
+      });
+    }
+
+    const summaryMessage = errorEvents
+      ? errorEvents[0].message
+      : 'Sync failed';
+
+    step.output = { syncStatus: 'error', error: summaryMessage };
     step.status = 'error';
-    this.state.updatePipeline({ status: 'error', error: errorMessage });
+    this.state.updatePipeline({ status: 'error', error: summaryMessage });
     this.state.updateAllEntitiesStatus('error');
     this.state.applyStepEvents(events);
   }
