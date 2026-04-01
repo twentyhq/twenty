@@ -4,6 +4,7 @@ import { EDITORIAL_TWO } from '@/app/why-twenty/constants/editorial-two';
 import { EDITORIAL_THREE } from '@/app/why-twenty/constants/editorial-three';
 import { EDITORIAL_FOUR } from '@/app/why-twenty/constants/editorial-four';
 import { HERO_DATA } from '@/app/why-twenty/constants/hero';
+import { MARQUEE_DATA } from '@/app/why-twenty/constants/marquee';
 import { QUOTE_DATA } from '@/app/why-twenty/constants/quote';
 import { SIGNOFF_DATA } from '@/app/why-twenty/constants/signoff';
 import { STATEMENT_ONE } from '@/app/why-twenty/constants/statement-one';
@@ -12,6 +13,7 @@ import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Editorial } from '@/sections/Editorial/components';
 import { Hero } from '@/sections/Hero/components';
+import { Marquee } from '@/sections/Marquee/components';
 import { Menu } from '@/sections/Menu/components';
 import { Quote } from '@/sections/Quote/components';
 import { Signoff } from '@/sections/Signoff/components';
@@ -73,6 +75,12 @@ export default function WhyTwentyPage() {
       >
         <Editorial.Body body={EDITORIAL_TWO.body} layout="centered" />
       </Editorial.Root>
+
+      <Marquee.Root
+        backgroundColor={theme.colors.secondary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        heading={MARQUEE_DATA.heading}
+      />
 
       <Editorial.Root
         backgroundColor={theme.colors.secondary.background[100]}
