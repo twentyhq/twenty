@@ -18,8 +18,7 @@ export const mockedBackendCommandMenuItems: CommandMenuItemFieldsFragment[] = [
     position: 23,
     isPinned: false,
     hotKeys: ['G', 'P'],
-    conditionalAvailabilityExpression:
-      'targetObjectReadPermissions.person',
+    conditionalAvailabilityExpression: 'targetObjectReadPermissions.person',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     availabilityObjectMetadataId: null,
   },
