@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { Command, CommandRunner } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { StaleRegistrationCleanupCronCommand } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/commands/stale-registration-cleanup.cron.command';
@@ -66,10 +66,35 @@ export class CronRegisterAllCommand extends CommandRunner {
     super();
   }
 
-  async run(): Promise<void> {
-    this.logger.log('Registering all background sync cron jobs...');
+  private devMode = false;
 
-    const commands = [
+  @Option({
+    flags: '--dev-mode',
+    description:
+      'Only register cron jobs relevant to app development (cron triggers, marketplace sync, version check, stale cleanup)',
+    required: false,
+  })
+  parseDevMode(): boolean {
+    this.devMode = true;
+
+    return true;
+  }
+
+  private static readonly DEV_MODE_COMMANDS = new Set([
+    'CronTrigger',
+    'MarketplaceCatalogSync',
+    'ApplicationVersionCheck',
+    'StaleRegistrationCleanup',
+  ]);
+
+  async run(): Promise<void> {
+    this.logger.log(
+      this.devMode
+        ? 'Registering app-dev cron jobs...'
+        : 'Registering all background sync cron jobs...',
+    );
+
+    const allCommands = [
       {
         name: 'MessagingMessagesImport',
         command: this.messagingMessagesImportCronCommand,
@@ -163,6 +188,12 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.staleRegistrationCleanupCronCommand,
       },
     ];
+
+    const commands = this.devMode
+      ? allCommands.filter(({ name }) =>
+          CronRegisterAllCommand.DEV_MODE_COMMANDS.has(name),
+        )
+      : allCommands;
 
     let successCount = 0;
     let failureCount = 0;
