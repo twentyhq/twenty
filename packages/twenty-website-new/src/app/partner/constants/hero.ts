@@ -10,6 +10,6 @@ export const HERO_DATA: HeroIllustrationDataType = {
   },
   illustration: {
     src: 'https://app.endlesstools.io/embed/1c6c8259-3276-4cf2-84d8-6b7e87e7ec95',
-    title: 'Endless Tools Editor',
+    title: 'Partner hero illustration',
   },
 };

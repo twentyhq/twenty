@@ -1,4 +1,4 @@
-import { Container } from '@/design-system/components';
+import { Container, LazyEmbed } from '@/design-system/components';
 import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -7,9 +7,36 @@ import type { ReactNode } from 'react';
 const StyledSection = styled.section`
   background-color: ${theme.colors.secondary.background[100]};
   color: ${theme.colors.secondary.text[100]};
+  isolation: isolate;
   overflow: hidden;
   position: relative;
   width: 100%;
+`;
+
+const IllustrationLayer = styled.div`
+  inset: 0;
+  opacity: 0.45;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+`;
+
+const FaqIllustrationEmbed = styled(LazyEmbed)`
+  border: none;
+  bottom: -10%;
+  display: block;
+  height: min(52vh, 520px);
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: min(118%, 920px);
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    bottom: -14%;
+    height: min(58vh, 600px);
+    width: min(105%, 1080px);
+  }
 `;
 
 const StyledContainer = styled(Container)`
@@ -37,6 +64,17 @@ type RootProps = {
 export function Root({ children, illustration }: RootProps) {
   return (
     <StyledSection>
+      <IllustrationLayer aria-hidden>
+        <FaqIllustrationEmbed
+          allow="clipboard-write; encrypted-media; gyroscope; web-share"
+          allowFullScreen
+          eager
+          referrerPolicy="strict-origin-when-cross-origin"
+          rootMargin="400px 0px"
+          src={illustration.src}
+          title={illustration.title}
+        />
+      </IllustrationLayer>
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );

@@ -1,4 +1,5 @@
 import { FOOTER_DATA } from '@/app/(home)/constants/footer';
+import { GlbWarmCache } from '@/constants/glb-warm-cache.component';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -69,6 +70,7 @@ export default function RootLayout({
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
       >
+        <GlbWarmCache />
         <StyledMain>{children}</StyledMain>
         <Footer.Root illustration={FOOTER_DATA.illustration}>
           <Footer.Logo />

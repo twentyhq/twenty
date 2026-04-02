@@ -1,8 +1,12 @@
 import type { FooterDataType } from '@/sections/Footer/types';
 
+const FOOTER_ILLUSTRATION_SRC =
+  process.env.NEXT_PUBLIC_FOOTER_BACKGROUND_EMBED_SRC ??
+  '/illustrations/home/footer/footer.glb';
+
 export const FOOTER_DATA: FooterDataType = {
   illustration: {
-    src: 'https://app.endlesstools.io/embed/73beb0a6-bcda-410f-8e4c-a3bcd70224b0',
+    src: FOOTER_ILLUSTRATION_SRC,
     title: 'Footer background',
   },
   bottom: {
