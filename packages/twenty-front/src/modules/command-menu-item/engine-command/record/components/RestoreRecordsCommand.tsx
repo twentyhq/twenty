@@ -64,10 +64,14 @@ export const RestoreRecordsCommand = () => {
     });
   };
 
-  const title = isSingleRecord ? t`Restore Record` : t`Restore Records`;
+  const objectLabel = isSingleRecord
+    ? objectMetadataItem.labelSingular
+    : objectMetadataItem.labelPlural;
+
+  const title = t`Restore ${objectLabel}`;
   const subtitle = isSingleRecord
-    ? t`Are you sure you want to restore this record?`
-    : t`Are you sure you want to restore these records?`;
+    ? t`Are you sure you want to restore this ${objectMetadataItem.labelSingular}?`
+    : t`Are you sure you want to restore these ${objectMetadataItem.labelPlural}?`;
 
   return (
     <HeadlessConfirmationModalEngineCommandEffect
