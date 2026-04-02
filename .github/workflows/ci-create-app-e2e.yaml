@@ -107,8 +107,7 @@ jobs:
           create-twenty-app --version
           mkdir -p /tmp/e2e-test-workspace
           cd /tmp/e2e-test-workspace
-          # create-twenty-app test-app --example postcard-app --display-name "Postcard App" --description "E2E test postcard app" --skip-local-instance
-          create-twenty-app test-app --display-name "App template" --description "E2E test app template" --skip-local-instance
+          create-twenty-app test-app --example https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world --display-name "Test App" --description "E2E test app" --skip-local-instance
 
       - name: Install scaffolded app dependencies
         run: |
@@ -123,7 +122,7 @@ jobs:
           echo "--- Checking package.json references correct SDK version ---"
           node -e "
             const pkg = require('./package.json');
-            const sdkVersion = pkg.devDependencies['twenty-sdk'];
+            const sdkVersion = pkg.dependencies['twenty-sdk'];
             if (!sdkVersion.startsWith('0.0.0-ci.')) {
               console.error('Expected twenty-sdk version to start with 0.0.0-ci., got:', sdkVersion);
               process.exit(1);

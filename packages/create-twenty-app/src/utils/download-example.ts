@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { tmpdir } from 'node:os';
+import chalk from 'chalk';
 
 const TWENTY_REPO_OWNER = 'twentyhq';
 const TWENTY_REPO_NAME = 'twenty';
@@ -135,10 +136,12 @@ export const downloadExample = async (
   targetDirectory: string,
 ): Promise<void> => {
   const resolved = resolveSource(source);
+
   const { owner, repo, ref, path } = resolved;
 
-  // Validate the example exists before downloading (fast API call)
   await validateExampleExists(resolved, source);
+
+  console.log(chalk.gray(`Example '${path}' validated successfully.`));
 
   const tarballUrl = `https://codeload.github.com/${owner}/${repo}/tar.gz/${ref}`;
 
@@ -149,6 +152,8 @@ export const downloadExample = async (
 
   try {
     await fs.ensureDir(tempDir);
+
+    console.log(chalk.gray(`Downloading tarball from ${tarballUrl}...`));
 
     const response = await fetch(tarballUrl);
 
@@ -163,11 +168,19 @@ export const downloadExample = async (
       );
     }
 
+    console.log(chalk.gray('Tarball downloaded. Writing to disk...'));
+
     const tarballPath = join(tempDir, 'archive.tar.gz');
 
     const buffer = Buffer.from(await response.arrayBuffer());
 
     await fs.writeFile(tarballPath, buffer);
+
+    console.log(
+      chalk.gray(
+        `Tarball saved (${(buffer.length / 1024 / 1024).toFixed(1)} MB). Extracting...`,
+      ),
+    );
 
     execSync(`tar xzf "${tarballPath}" -C "${tempDir}"`, {
       stdio: 'pipe',
