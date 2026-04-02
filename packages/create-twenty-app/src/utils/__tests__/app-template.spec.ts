@@ -18,14 +18,14 @@ const UNIVERSAL_IDENTIFIERS_PATH = join(
   'universal-identifiers.ts',
 );
 
-// Template content matching base-application/src/constants/universal-identifiers.ts
+// Template content matching template/src/constants/universal-identifiers.ts
 const TEMPLATE_UNIVERSAL_IDENTIFIERS = `export const APP_DISPLAY_NAME = 'DISPLAY-NAME-TO-BE-GENERATED';
 export const APP_DESCRIPTION = 'DESCRIPTION-TO-BE-GENERATED';
 export const APPLICATION_UNIVERSAL_IDENTIFIER = 'UUID-TO-BE-GENERATED';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = 'UUID-TO-BE-GENERATED';
 `;
 
-// Template package.json matching base-application/package.json
+// Template package.json matching template/package.json
 const TEMPLATE_PACKAGE_JSON = {
   name: 'template-app',
   version: '0.1.0',
@@ -78,7 +78,7 @@ describe('copyBaseApplicationProject', () => {
 
     expect(fs.copy).toHaveBeenCalledTimes(1);
     expect(fs.copy).toHaveBeenCalledWith(
-      expect.stringContaining('base-application'),
+      expect.stringContaining('template'),
       testAppDirectory,
     );
   });

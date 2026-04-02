@@ -25,8 +25,8 @@
     "jest.config.mjs"
   ],
   "exclude": [
-    "src/constants/base-application/vitest.config.ts",
-    "src/constants/base-application/src/**",
-    "src/constants/base-application/tsconfig.spec.json"
+    "src/constants/template/vitest.config.ts",
+    "src/constants/template/src/**",
+    "src/constants/template/tsconfig.spec.json"
   ]
 }
