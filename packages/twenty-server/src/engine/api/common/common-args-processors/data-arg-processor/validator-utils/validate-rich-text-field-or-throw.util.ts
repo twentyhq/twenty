@@ -10,7 +10,6 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-// Matches "url":"javascript:..." or "href":"javascript:..." in serialized JSON
 const DANGEROUS_URL_IN_JSON_PATTERN =
   /"(?:url|href)"\s*:\s*"\\?\s*(?:javascript|vbscript)\s*:/i;
 
