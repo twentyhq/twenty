@@ -760,22 +760,22 @@ export default defineFrontComponent({
 
 #### Поля конфигурации
 
-| Поле                  | Обязательно | Описание                                                                            |
-| --------------------- | ----------- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | Да          | Стабильный уникальный идентификатор для этого компонента                            |
-| `component`           | Да          | Функция компонента React                                                            |
-| `name`                | Нет         | Отображаемое имя                                                                    |
-| `description`         | Нет         | Описание того, что делает компонент                                                 |
-| `isHeadless`          | Нет         | Set to `true` if the component has no visible UI (see below)                        |
-| `command`             | Нет         | Register the component as a command (see [command options](#command-options) below) |
+| Поле                  | Обязательно | Описание                                                                                           |
+| --------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Да          | Стабильный уникальный идентификатор для этого компонента                                           |
+| `component`           | Да          | Функция компонента React                                                                           |
+| `name`                | Нет         | Отображаемое имя                                                                                   |
+| `description`         | Нет         | Описание того, что делает компонент                                                                |
+| `isHeadless`          | Нет         | Установите значение `true`, если у компонента нет видимого пользовательского интерфейса (см. ниже) |
+| `command`             | Нет         | Зарегистрируйте компонент как команду (см. [параметры команды](#command-options) ниже)             |
 
-#### Placing a front component on a page
+#### Размещение фронт-компонента на странице
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See the [definePageLayout](#definepagelayout) section for details.
+Помимо команд, вы можете встроить фронт-компонент непосредственно на страницу записи, добавив его как виджет в **макет страницы**. См. раздел [definePageLayout](#definepagelayout) для подробностей.
 
-#### Headless components (`isHeadless: true`)
+#### Headless-компоненты (`isHeadless: true`)
 
-Headless components render no visible UI but still run React logic. This is useful for **effect components** — components that perform side effects when mounted, such as syncing data, starting a timer, listening to events, or triggering a notification.
+Headless-компоненты не отображают видимый UI, но при этом выполняют логику React. Это полезно для **компонентов-эффектов** — компонентов, которые выполняют побочные эффекты при монтировании, например синхронизацию данных, запуск таймера, прослушивание событий или показ уведомления.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -800,11 +800,11 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+Поскольку компонент возвращает `null`, Twenty пропускает рендеринг контейнера для него — в макете не появляется пустое место. Компонент по-прежнему имеет доступ ко всем хукам и API взаимодействия с хостом.
 
-#### Accessing runtime context
+#### Доступ к контексту времени выполнения
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+Внутри вашего компонента используйте хуки SDK для доступа к текущему пользователю, записи и экземпляру компонента:
 
 ```tsx src/front-components/record-info.tsx
 import {
@@ -835,47 +835,47 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+Доступные хуки:
 
-| Хук                                           | Returns            | Описание                                                   |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useRecordId()`                               | `string` or `null` | The current record's ID (when placed on a record page)     |
-| `useFrontComponentId()`                       | `строка`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | различается        | Access the full execution context with a selector function |
+| Хук                                           | Возвращает          | Описание                                                          |
+| --------------------------------------------- | ------------------- | ----------------------------------------------------------------- |
+| `useUserId()`                                 | `string` или `null` | ID текущего пользователя                                          |
+| `useRecordId()`                               | `string` или `null` | ID текущей записи (при размещении на странице записи)             |
+| `useFrontComponentId()`                       | `строка`            | ID этого экземпляра компонента                                    |
+| `useFrontComponentExecutionContext(selector)` | различается         | Доступ к полному контексту выполнения с помощью функции-селектора |
 
-#### Host communication API
+#### API взаимодействия с хостом
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+Компоненты фронтенда могут вызывать навигацию, модальные окна и уведомления с помощью функций из `twenty-sdk`:
 
-| Функция                                         | Описание                      |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | Закрыть боковую панель        |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| Функция                                         | Описание                         |
+| ----------------------------------------------- | -------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Перейти на страницу в приложении |
+| `openSidePanelPage(params)`                     | Открыть боковую панель           |
+| `closeSidePanel()`                              | Закрыть боковую панель           |
+| `openCommandConfirmationModal(params)`          | Показать диалог подтверждения    |
+| `enqueueSnackbar(params)`                       | Показать всплывающее уведомление |
+| `unmountFrontComponent()`                       | Размонтировать компонент         |
+| `updateProgress(progress)`                      | Обновить индикатор прогресса     |
 
-#### Command options
+#### Параметры команды
 
-Adding a `command` field to `defineFrontComponent` registers the component in the command menu (Cmd+K). If `isPinned` is `true`, it also appears as a quick-action button in the top-right corner of the page.
+Добавление поля `command` в `defineFrontComponent` регистрирует компонент в меню команд (Cmd+K). Если `isPinned` имеет значение `true`, команда также отображается как кнопка быстрого действия в правом верхнем углу страницы.
 
-| Поле                                    | Обязательно | Описание                                                                                                                                                                       |
-| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | Да          | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | Да          | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `shortLabel`                            | Нет         | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | Нет         | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | Нет         | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | Нет         | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | Нет         | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | Нет         | A boolean expression to dynamically control whether the command is visible (see below)                                                                                         |
+| Поле                                    | Обязательно | Описание                                                                                                                                                                               |
+| --------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Да          | Стабильный уникальный идентификатор для команды                                                                                                                                        |
+| `label`                                 | Да          | Полная метка, отображаемая в меню команд (Cmd+K)                                                                                                                                       |
+| `shortLabel`                            | Нет         | Короткая метка, отображаемая на закреплённой кнопке быстрого действия                                                                                                                  |
+| `icon`                                  | Нет         | Имя значка, отображаемое рядом с меткой (например, `'IconBolt'`, `'IconSend'`)                                                                                                         |
+| `isPinned`                              | Нет         | При значении `true` показывает команду как кнопку быстрого действия в правом верхнем углу страницы                                                                                     |
+| `availabilityType`                      | Нет         | Определяет, где отображается команда: `'GLOBAL'` (доступна всегда), `'RECORD_SELECTION'` (только при выборе записей) или `'FALLBACK'` (показывается, когда другие команды не подходят) |
+| `availabilityObjectUniversalIdentifier` | Нет         | Ограничивает команду страницами определённого типа объектов (например, только для записей Company)                                                                                     |
+| `conditionalAvailabilityExpression`     | Нет         | Логическое выражение для динамического управления видимостью команды (см. ниже)                                                                                                        |
 
-#### Conditional availability expressions
+#### Выражения условной доступности
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+Поле `conditionalAvailabilityExpression` позволяет управлять видимостью команды в зависимости от текущего контекста страницы. Импортируйте типизированные переменные и операторы из `twenty-sdk`, чтобы составлять выражения:
 
 ```tsx
 import {
@@ -904,45 +904,45 @@ export default defineFrontComponent({
 });
 ```
 
-**Context variables** — these represent the current state of the page:
+**Переменные контекста** — представляют текущее состояние страницы:
 
-| Переменная                     | Тип       | Описание                                                         |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `строка`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| Переменная                     | Тип       | Описание                                                                 |
+| ------------------------------ | --------- | ------------------------------------------------------------------------ |
+| `pageType`                     | `строка`  | Текущий тип страницы (например, `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Указывает, рендерится ли компонент в боковой панели                      |
+| `numberOfSelectedRecords`      | `number`  | Количество выбранных в данный момент записей                             |
+| `isSelectAll`                  | `boolean` | Активен ли режим "выбрать все"                                           |
+| `selectedRecords`              | `массив`  | Объекты выбранных записей                                                |
+| `favoriteRecordIds`            | `массив`  | ID избранных записей                                                     |
+| `objectPermissions`            | `object`  | Разрешения для текущего типа объекта                                     |
+| `targetObjectReadPermissions`  | `object`  | Права на чтение для целевого объекта                                     |
+| `targetObjectWritePermissions` | `object`  | Права на запись для целевого объекта                                     |
+| `featureFlags`                 | `object`  | Активные флаги функций                                                   |
+| `objectMetadataItem`           | `object`  | Метаданные текущего типа объекта                                         |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Есть ли у текущего представления фильтр мягкого удаления                 |
 
-**Operators** — combine variables into boolean expressions:
+**Операторы** — комбинируют переменные в логические выражения:
 
-| Operator                            | Описание                                                          |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| Оператор                            | Описание                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true`, если значение не null/undefined                                   |
+| `isNonEmptyString(value)`           | `true`, если значение — непустая строка                                   |
+| `includes(array, value)`            | `true`, если массив содержит значение                                     |
+| `includesEvery(array, prop, value)` | `true`, если свойство каждого элемента включает значение                  |
+| `every(array, prop)`                | `true`, если свойство истинно для каждого элемента                        |
+| `everyDefined(array, prop)`         | `true`, если свойство определено у каждого элемента                       |
+| `everyEquals(array, prop, value)`   | `true`, если свойство равно значению у каждого элемента                   |
+| `some(array, prop)`                 | `true`, если свойство истинно хотя бы у одного элемента                   |
+| `someDefined(array, prop)`          | `true`, если свойство определено хотя бы у одного элемента                |
+| `someEquals(array, prop, value)`    | `true`, если свойство равно значению хотя бы у одного элемента            |
+| `someNonEmptyString(array, prop)`   | `true`, если свойство является непустой строкой хотя бы у одного элемента |
+| `none(array, prop)`                 | `true`, если свойство ложно для каждого элемента                          |
+| `noneDefined(array, prop)`          | `true`, если свойство не определено ни у одного элемента                  |
+| `noneEquals(array, prop, value)`    | `true`, если свойство не равно значению ни у одного элемента              |
 
-#### Public assets
+#### Публичные ресурсы
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+Компоненты фронтенда могут получать доступ к файлам из каталога приложения `public/` с помощью `getPublicAssetUrl`:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -956,18 +956,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](#accessing-public-assets-with-getpublicasseturl) for details.
+См. [раздел о публичных ресурсах](#accessing-public-assets-with-getpublicasseturl) для подробностей.
 
 #### Стилизация
 
-Front components support multiple styling approaches. You can use:
+Компоненты фронтенда поддерживают несколько подходов к стилизации. Вы можете использовать:
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **Встроенные стили** — `style={{ color: 'red' }}`
+* **Компоненты Twenty UI** — импорт из `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar и другие)
+* **Emotion** — CSS-in-JS с `@emotion/react`
+* **Styled-components** — паттерны `styled.div`
+* **Tailwind CSS** — утилитарные классы
+* **Любая библиотека CSS-in-JS**, совместимая с React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1021,9 +1021,9 @@ export default defineSkill({
 * `description` (необязательно) предоставляет дополнительный контекст о назначении навыка.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="Определяйте ИИ-агентов с пользовательскими промптами">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Агенты — это ИИ-помощники, работающие в вашем рабочем пространстве. Используйте `defineAgent()` для создания агентов с пользовательским системным промптом:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk';
@@ -1039,17 +1039,17 @@ export default defineAgent({
 ```
 
 Основные моменты:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
+* `name` — уникальная строка-идентификатор агента (рекомендуется kebab-case).
+* `label` — отображаемое имя, показываемое в UI.
+* `prompt` — это системный промпт, определяющий поведение агента.
+* `description` (необязательно) предоставляет контекст о том, что делает агент.
 * `icon` (необязательно) задаёт значок, отображаемый в UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+* `modelId` (необязательно) переопределяет модель ИИ по умолчанию, используемую агентом.
 
 </Accordion>
 <Accordion title="defineView" description="Определяйте сохранённые представления для объектов">
 
-Views are saved configurations for how records of an object are displayed — including which fields are visible, their order, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app:
+Представления — это сохранённые конфигурации отображения записей объекта: какие поля видны, их порядок, а также применённые фильтры и группы. Используйте `defineView()` для поставки преднастроенных представлений вместе с вашим приложением:
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk';
@@ -1076,16 +1076,16 @@ export default defineView({
 ```
 
 Основные моменты:
-* `objectUniversalIdentifier` specifies which object this view applies to.
-* `key` determines the view type (e.g., `ViewKey.INDEX` for the main list view).
-* `fields` controls which columns appear and their order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also define `filters`, `filterGroups`, `groups`, and `fieldGroups` for more advanced configurations.
-* `position` controls the ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` указывает, к какому объекту применяется это представление.
+* `key` определяет тип представления (например, `ViewKey.INDEX` для основного списка).
+* `fields` управляет тем, какие столбцы отображаются и в каком порядке. Каждое поле ссылается на `fieldMetadataUniversalIdentifier`.
+* Также вы можете определить `filters`, `filterGroups`, `groups` и `fieldGroups` для более продвинутых конфигураций.
+* `position` управляет порядком, когда для одного и того же объекта существует несколько представлений.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Определяйте ссылки боковой панели навигации">
 
-Navigation menu items add custom entries to the workspace sidebar. Use `defineNavigationMenuItem()` to link to views, external URLs, or objects:
+Пункты навигационного меню добавляют пользовательские элементы в боковую панель рабочего пространства. Используйте `defineNavigationMenuItem()` для ссылок на представления, внешние URL или объекты:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
@@ -1103,15 +1103,15 @@ export default defineNavigationMenuItem({
 ```
 
 Основные моменты:
-* `type` determines what the menu item links to: `NavigationMenuItemType.VIEW` for a saved view, or `NavigationMenuItemType.LINK` for an external URL.
-* For view links, set `viewUniversalIdentifier`. For external links, set `link`.
-* `position` controls the ordering in the sidebar.
-* `icon` and `color` (optional) customize the appearance.
+* `type` определяет, на что ссылается пункт меню: `NavigationMenuItemType.VIEW` для сохранённого представления или `NavigationMenuItemType.LINK` для внешнего URL.
+* Для ссылок на представления укажите `viewUniversalIdentifier`. Для внешних ссылок укажите `link`.
+* `position` управляет порядком в боковой панели.
+* `icon` и `color` (необязательно) настраивают внешний вид.
 
 </Accordion>
-<Accordion title="definePageLayout" description="Define custom page layouts for record views">
+<Accordion title="definePageLayout" description="Определяйте пользовательские макеты страниц для представлений записей">
 
-Page layouts let you customize how a record detail page looks — which tabs appear, what widgets are inside each tab, and how they are arranged. Use `definePageLayout()` to ship custom layouts with your app:
+Макеты страниц позволяют настраивать вид страницы с деталями записи: какие вкладки отображаются, какие виджеты внутри каждой вкладки и как они расположены. Используйте `definePageLayout()` для поставки пользовательских макетов вместе с вашим приложением:
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
@@ -1148,33 +1148,33 @@ export default definePageLayout({
 ```
 
 Основные моменты:
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a front component, a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` обычно равен `'RECORD_PAGE'` для настройки детального представления конкретного объекта.
+* `objectUniversalIdentifier` указывает, к какому объекту применяется этот макет.
+* Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode` (`CANVAS` для свободного макета).
+* Каждый `widget` внутри вкладки может отображать компонент фронтенда, список связей или другие встроенные типы виджетов.
+* `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
 
 </Accordion>
 </AccordionGroup>
 
-## Public assets (`public/` folder)
+## Публичные ресурсы (папка `public/`)
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+Папка `public/` в корне вашего приложения содержит статические файлы — изображения, значки, шрифты и любые другие ресурсы, необходимые вашему приложению во время выполнения. Эти файлы автоматически включаются в сборки, синхронизируются в режиме разработки и загружаются на сервер.
 
-Files placed in `public/` are:
+Файлы, размещённые в `public/`, являются:
 
-* **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-* **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-* **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-* **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-* **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-* **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+* **Публично доступными** — после синхронизации с сервером ресурсы доступны по публичному URL. Для доступа к ним аутентификация не требуется.
+* **Доступными в компонентах фронтенда** — используйте URL ресурсов для отображения изображений, значков или любого медиа внутри ваших компонентов React.
+* **Доступными в логических функциях** — используйте URL ресурсов в письмах, ответах API или любой серверной логике.
+* **Используются для метаданных маркетплейса** — поля `logoUrl` и `screenshots` в `defineApplication()` ссылаются на файлы из этой папки (например, `public/logo.png`). Они отображаются в маркетплейсе при публикации вашего приложения.
+* **Автосинхронизация в режиме разработки** — когда вы добавляете, обновляете или удаляете файл в `public/`, он автоматически синхронизируется с сервером. Перезапуск не требуется.
+* **Включены в сборки** — `yarn twenty build` упаковывает все публичные ресурсы в выходной дистрибутив.
 
-### Accessing public assets with `getPublicAssetUrl`
+### Доступ к публичным ресурсам с помощью `getPublicAssetUrl`
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+Используйте хелпер `getPublicAssetUrl` из `twenty-sdk`, чтобы получить полный URL файла в каталоге `public/` вашего приложения. Он работает как в **логических функциях**, так и в **компонентах фронтенда**.
 
-**In a logic function:**
+**В логической функции:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
@@ -1199,7 +1199,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**В компоненте фронтенда:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -1211,19 +1211,19 @@ export default defineFrontComponent(() => {
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+Аргумент `path` задаётся относительно папки `public/` вашего приложения. И `getPublicAssetUrl('logo.png')`, и `getPublicAssetUrl('public/logo.png')` приводят к одному и тому же URL — префикс `public/`, если он есть, удаляется автоматически.
 
-## Using npm packages
+## Использование пакетов npm
 
-You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines all dependencies into the output — no `node_modules` are needed at runtime.
+Вы можете устанавливать и использовать любые пакеты npm в своём приложении. И логические функции, и компоненты фронтенда собираются с помощью [esbuild](https://esbuild.github.io/), который встраивает все зависимости в выходной файл — каталоги `node_modules` во время выполнения не нужны.
 
-### Installing a package
+### Установка пакета
 
 ```bash filename="Terminal"
 yarn add axios
 ```
 
-Then import it in your code:
+Затем импортируйте его в своём коде:
 
 ```ts src/logic-functions/fetch-data.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -1244,7 +1244,7 @@ export default defineLogicFunction({
 });
 ```
 
-The same works for front components:
+То же самое работает для компонентов фронтенда:
 
 ```tsx src/front-components/chart.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1261,27 +1261,27 @@ export default defineFrontComponent({
 });
 ```
 
-### How bundling works
+### Как работает бандлинг
 
-The build step (`yarn twenty dev` or `yarn twenty build`) uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+Этап сборки (`yarn twenty dev` или `yarn twenty build`) использует esbuild для создания одного самодостаточного файла на каждую логическую функцию и на каждый компонент фронтенда. Все импортированные пакеты встроены в бандл.
 
-**Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
+**Логические функции** выполняются в среде Node.js. Встроенные модули Node (`fs`, `path`, `crypto`, `http` и т. д.) доступны и не требуют установки.
 
-**Front components** run in a Web Worker. Node built-in modules are **not** available — only browser APIs and npm packages that work in a browser environment.
+**Компоненты фронтенда** выполняются в Web Worker. Встроенные модули Node недоступны — доступны только браузерные API и пакеты npm, работающие в браузерной среде.
 
-Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
+В обеих средах доступны как предварительно предоставленные модули `twenty-client-sdk/core` и `twenty-client-sdk/metadata` — они не включаются в бандл, а подставляются сервером во время выполнения.
 
-## Scaffolding entities with `yarn twenty add`
+## Создание заготовок сущностей с помощью `yarn twenty add`
 
-Instead of creating entity files by hand, you can use the interactive scaffolder:
+Вместо ручного создания файлов сущностей вы можете использовать интерактивный генератор:
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-This prompts you to pick an entity type and walks you through the required fields. It generates a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+Он предложит выбрать тип сущности и проведёт вас по обязательным полям. Он генерирует готовый к использованию файл со стабильным `universalIdentifier` и корректным вызовом `defineEntity()`.
 
-You can also pass the entity type directly to skip the first prompt:
+Вы также можете передать тип сущности напрямую, чтобы пропустить первый запрос:
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -1289,14 +1289,14 @@ yarn twenty add logicFunction
 yarn twenty add frontComponent
 ```
 
-### Available entity types
+### Доступные типы сущностей
 
-| Тип сущности         | Команда                              | Generated file                        |
+| Тип сущности         | Команда                              | Сгенерированный файл                  |
 | -------------------- | ------------------------------------ | ------------------------------------- |
 | Объект               | `yarn twenty add object`             | `src/objects/<name>.ts`               |
 | Поле                 | `yarn twenty add field`              | `src/fields/<name>.ts`                |
-| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Front component      | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
+| Логическая функция   | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
+| Компонент фронтенда  | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
 | Роль                 | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
 | Навык                | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
 | Агент                | `yarn twenty add agent`              | `src/agents/<name>.ts`                |

@@ -18,6 +18,7 @@ export type {
   AgentResponseFieldType,
   AgentResponseSchema,
 } from './types/agent-response-schema.type';
+export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,

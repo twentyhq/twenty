@@ -1,13 +1,13 @@
-import { styled } from '@linaria/react';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
@@ -15,8 +15,9 @@ const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
+  height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
-  padding: ${themeCssVariables.spacing[1]};
+  padding-inline: ${themeCssVariables.spacing[2]};
   transition: background-color
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 

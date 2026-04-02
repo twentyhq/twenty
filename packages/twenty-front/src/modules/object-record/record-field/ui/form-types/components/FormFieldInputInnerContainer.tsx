@@ -17,7 +17,7 @@ type FormFieldInputInnerContainerProps = {
 const StyledFormFieldInputInnerContainer = styled.div<
   Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'>
 >`
-  align-items: center;
+  align-items: ${({ multiline }) => (multiline ? 'flex-start' : 'center')};
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
