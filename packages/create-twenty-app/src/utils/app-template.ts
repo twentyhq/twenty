@@ -66,10 +66,10 @@ const updatePackageJson = async ({
   appDirectory: string;
 }) => {
   const packageJson = await fs.readJson(join(appDirectory, 'package.json'));
+
   packageJson.name = appName;
-  packageJson.devDependencies['twenty-sdk'] =
-    createTwentyAppPackageJson.version;
-  packageJson.devDependencies['twenty-client-sdk'] =
+  packageJson.dependencies['twenty-sdk'] = createTwentyAppPackageJson.version;
+  packageJson.dependencies['twenty-client-sdk'] =
     createTwentyAppPackageJson.version;
 
   await fs.writeFile(
