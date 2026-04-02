@@ -1005,16 +1005,16 @@ function findActiveItem(
       continue;
     }
 
-    if (entry.label === activeLabel) {
-      return entry;
-    }
-
     if (entry.children) {
       for (const child of entry.children) {
         if (child.label === activeLabel) {
           return child;
         }
       }
+    }
+
+    if (entry.label === activeLabel) {
+      return entry;
     }
   }
 
