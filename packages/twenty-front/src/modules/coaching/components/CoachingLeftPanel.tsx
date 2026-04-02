@@ -119,7 +119,7 @@ export const CoachingLeftPanel = ({
           <StyledFiltersIcon>
             <IconFilter size={16} />
           </StyledFiltersIcon>
-          <StyledFiltersTitle>Filters</StyledFiltersTitle>
+          <StyledFiltersTitle>Filter</StyledFiltersTitle>
         </StyledFiltersHeader>
 
         {hasActiveFilters && (
@@ -127,13 +127,13 @@ export const CoachingLeftPanel = ({
             onClick={() => onFilterChange(INITIAL_FILTER)}
           >
             <IconFilter size={14} />
-            Remove Filters
+            Filter entfernen
           </StyledRemoveFiltersButton>
         )}
 
-        <StyledFilterLabel>Keyword</StyledFilterLabel>
+        <StyledFilterLabel>Stichwort</StyledFilterLabel>
         <StyledFilterInput
-          placeholder="Keyword"
+          placeholder="Stichwort"
           value={filterValues.searchTerm}
           onChange={(event) =>
             onFilterChange({
@@ -143,9 +143,9 @@ export const CoachingLeftPanel = ({
           }
         />
 
-        <StyledFilterLabel>Full Name</StyledFilterLabel>
+        <StyledFilterLabel>Vollständiger Name</StyledFilterLabel>
         <StyledFilterInput
-          placeholder="Search..."
+          placeholder="Suchen..."
           value={filterValues.searchTerm}
           onChange={(event) =>
             onFilterChange({

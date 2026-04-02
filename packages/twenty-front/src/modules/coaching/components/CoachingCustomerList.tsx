@@ -74,7 +74,7 @@ export const CoachingCustomerList = ({
   if (loading && customers.length === 0) {
     return (
       <StyledListContainer>
-        <StyledLoadingContainer>Loading customers...</StyledLoadingContainer>
+        <StyledLoadingContainer>Kunden werden geladen...</StyledLoadingContainer>
       </StyledListContainer>
     );
   }
@@ -82,14 +82,14 @@ export const CoachingCustomerList = ({
   if (customers.length === 0) {
     return (
       <StyledListContainer>
-        <StyledEmptyContainer>No customers found</StyledEmptyContainer>
+        <StyledEmptyContainer>Keine Kunden gefunden</StyledEmptyContainer>
       </StyledListContainer>
     );
   }
 
   return (
     <StyledListContainer>
-      <StyledCountHeader>Users ({customers.length})</StyledCountHeader>
+      <StyledCountHeader>Benutzer ({customers.length})</StyledCountHeader>
       {customers.map((customer) => {
         const customerRecord =
           customer as unknown as CoachingCustomerRecord;
@@ -106,7 +106,7 @@ export const CoachingCustomerList = ({
       })}
       {hasNextPage && <StyledLoadMoreTrigger ref={ref} />}
       {loading && customers.length > 0 && (
-        <StyledLoadingMore>Loading more...</StyledLoadingMore>
+        <StyledLoadingMore>Mehr laden...</StyledLoadingMore>
       )}
     </StyledListContainer>
   );
